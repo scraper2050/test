@@ -8,8 +8,9 @@ import {
 } from "../constants/actionTypes";
 import axios from '../util/Api';
 
-export const getUser = () => {
-    return (dispatch) => {
+
+export const getUser: () => any = () => {
+    return (dispatch: any) => {
         dispatch({ type: FETCH_START });
         axios.get('/me',
         ).then(({ data }) => {
