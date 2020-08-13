@@ -1,0 +1,233 @@
+.table-middle-align {
+    tbody {
+      tr {
+        td {
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+  /* .card-box-list{
+    padding: 10px 40px;
+  } */
+  .custom-min-height{
+    min-height:435px;
+  }
+  .card-box-inner {
+    border-radius: 15px;
+    border: none;
+  }
+  .custom-card.card-box-inner{
+      color: #149CE6!important;
+  }
+  .card-box-count {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .card-box-title {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .box-purple {
+    background-color: #6f3bdd;
+    border-color: #6f3bdd;
+  }
+  .box-primary {
+    background-color: #48b8ff;
+    border-color: #48b8ff;
+  }
+  .box-orange {
+    background-color: #e95b23;
+    border-color: #e95b23;
+  }
+  .box-info {
+    background-color: #0282c5;
+    border-color: #0282c5;
+  }
+  .customTableHeader {
+    background: #505560;
+    color: #F4F4F4;
+    font-weight: bold;
+    border-radius: 8px !important;
+  }
+  .float-right {
+    float: right;
+  }
+  .tableRightBack {
+    background: #575b62;
+    color: #fff;
+    padding: 19px 15px 16px 10px !important;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  .customTableHeaderTop {
+    border-radius: 8px;
+  }
+  .customTableTitleLeft {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+  .customImg{
+    img{
+      width: 50px;
+    }
+  }
+  table {
+    tr {
+      th {
+        font-weight: 600;
+      }
+      th,
+      td {
+        font-size: 13px;
+        .job-schedule {
+          color: #0282c1;
+          padding: 7px 10px;
+          background: rgba(1, 130, 195, 0.1);
+          border-radius: 15px;
+          .pointer {
+            background: #0282c1;
+            width: 10px;
+            display: inline-block;
+            height: 10px;
+            border-radius: 10px;
+            margin-right: 5px;
+          }
+        }
+        .pending {
+          color: #febc35;
+          padding: 7px 10px;
+          background: rgba(254, 188, 53, 0.1);
+          border-radius: 15px;
+          .pointer {
+            background: #febc35;
+            width: 10px;
+            display: inline-block;
+            height: 10px;
+            border-radius: 10px;
+            margin-right: 5px;
+          }
+        }
+        .active {
+          color: #6bdb2e;
+          padding: 7px 10px;
+          background: rgba(107, 219, 46, 0.1);
+          border-radius: 15px;
+          .pointer {
+            background: #6bdb2e;
+            width: 10px;
+            display: inline-block;
+            height: 10px;
+            border-radius: 10px;
+            margin-right: 5px;
+          }
+        }
+        .not-schedule {
+          color: #9ea5b7;
+          padding: 7px 10px;
+          background: rgba(158, 165, 183, 0.1);
+          border-radius: 15px;
+          .pointer {
+            background: #9ea5b7;
+            width: 10px;
+            display: inline-block;
+            height: 10px;
+            border-radius: 10px;
+            margin-right: 5px;
+          }
+        }
+      }
+  
+      th.text-start {
+        text-align: start !important;
+      }
+    }
+  }
+  
+  .dashB-flex{
+    display: flex;
+  }
+
+  .invoice-paid {
+    display: block;
+    background: #755edc;
+    border-radius: 7px;
+    color: white;
+    height: 100%;
+    .customTableHeader {
+      background: #755edc;
+      color: white;
+      border-bottom: 0;
+    }
+    .tableRightBack {
+      background: #755edc;
+      color: white;
+    }
+    .details {
+      padding: 6px 0px 37px 16px;
+      b {
+        font-size: x-large;
+      }
+      p {
+        margin: 0;
+        font-weight: bold;
+        color: #fff;
+      }
+    }
+    canvas {
+      padding: 10px;
+    }
+  }
+  
+  .recent-info-boxes {
+    .card {
+      margin-bottom: 31px;
+    }
+  }
+  
+  .no-record {
+    text-align: center;
+    padding: 138px 0;
+  }
+  
+  .table-container {
+    &.card-body {
+      height: 283px;
+    }
+  }
+  
+  .dashboard-counts {
+    .col-lg-3 {
+      padding-left: 15px;
+      padding-right: 8px;
+    }
+  }
+  
+  .sidebar {
+    position: absolute;
+  }
+  
+  @media (min-width: 568px) and (max-width: 1024px) {
+    .responsivePadding{
+      padding: 0 7px;
+    }
+    .res-p-0{
+      padding: 0;
+    }
+    .custom-min-height{
+      min-height: 285px;
+    }
+    .groupsList{
+      .table-container{
+        height: 185px;
+      }
+    }
+    .customImg{
+      width: 35px;
+    }
+  }
+  @media (max-width: 567px) {
+    .custom-min-height{
+      min-height: 400px;
+    }
+  }

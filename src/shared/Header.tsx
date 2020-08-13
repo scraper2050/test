@@ -18,7 +18,7 @@ export const Header = () => {
                 }} />
             </Link>
             <ul className="nav navbar-nav top-nav custommenu">
-                <li className="px-3 nav-item"><Link className="nav-link" to="#/dashboard" aria-current="page">Dashboard</Link></li>
+                {/* <li className="px-3 nav-item"><Link className="nav-link" to="#/dashboard" aria-current="page">Dashboard</Link></li> */}
             </ul>
             <ul className="ml-auto navbar-nav">
                 <li className="d-md-down-none dropdown nav-item">

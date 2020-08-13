@@ -1,7 +1,9 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Header from '../shared/Header';
-import Dashboard from './Content';
+import Content from './Content';
+import Dashboard from './Dashboard';
+
 import './style.scss';
 
 export const Admin = () => {
@@ -10,7 +12,8 @@ export const Admin = () => {
             <div className="admin">
                 <Header />
                 <Switch>
-                    <Route exact path="/pr" component={Dashboard} />
+                    <Route exact path="/pr" component={Content} />
+                    <Route path="/pr/dashboard" component={Dashboard} />
                 </Switch>
             </div>
         </React.Fragment>

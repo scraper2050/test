@@ -1,6 +1,6 @@
 import React from 'react';
-import './style.scoped.scss';
 import { Link } from 'react-router-dom';
+import './style.scoped.scss';
 
 export const SignIn = () => {
     return (
