@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './style.scoped.scss';
+import axios from '../../util/Api';
 
-export const SignIn = () => {
+export const SignIn: () => JSX.Element = () => {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [valids, setValids] = useState<boolean[]>([true, true]);
+    const handleSubmit: (ev: any) => void = (ev) => {
+        ev.preventDefault();
+        const payload = {
+            email, password
+        };
+        axios.post("/login", payload).then(({data}) => {
+            console.log("response -> ", data);
+        });
+    }
     return (
         <div className="ng-star-inserted">
             <div className="app-body">
@@ -17,8 +30,7 @@ export const SignIn = () => {
                                     <div className="col-md-8 mx-auto">
                                         <div className="card mx-6">
                                             <div className="card-body p-4 custom_card signin_card">
-                                                <form className="form-validate mb-lg ng-untouched ng-pristine ng-invalid" name="loginForm" noValidate
-                                                    role="form" ng-reflect-form="[object Object]">
+                                                <form className="form-validate mb-lg ng-untouched ng-pristine ng-invalid" name="loginForm" noValidate>
                                                     <img alt="Image" className="block-center img-rounded" src="assets/img/logo.jpg"
                                                         style={{ width: '90%', margin: '0 auto' }} />
                                                     <div className="row text-bottom">
@@ -28,9 +40,16 @@ export const SignIn = () => {
                                                                     <span className="input-group-text"><i className="fa fa-envelope" /></span>
                                                                 </div>
                                                                 <input autoComplete="off" className="form-control ng-untouched ng-pristine ng-invalid"
-                                                                    name="email" placeholder="Email" required type="email"
-                                                                    ng-reflect-required ng-reflect-name="email" />
-                                                                <span className="text-danger ng-star-inserted">*This field is required</span>
+                                                                    name="email"
+                                                                    placeholder="Email" required
+                                                                    type="email"
+                                                                    value={email}
+                                                                    onChange={(ev) => setEmail(ev.target.value)}
+                                                                />
+                                                                {
+                                                                    email === "" ? <span className="text-danger ng-star-inserted">*This field is required</span>
+                                                                        : null
+                                                                }
                                                             </div>
                                                         </div>
                                                         <div className="col-md-12">
@@ -42,34 +61,44 @@ export const SignIn = () => {
                                                                     <input
                                                                         className="form-control login-password-input mat-input-element mat-form-field-autofill-control cdk-text-field-autofill-monitored ng-untouched ng-pristine ng-invalid"
                                                                         placeholder="Password" required
-                                                                        ng-reflect-required ng-reflect-name="password" type="password"
-                                                                        ng-reflect-placeholder="Password" ng-reflect-type="password" id="mat-input-0"
-                                                                        aria-invalid="false" aria-required="true" />
-                                                                    <span className="text-danger ng-star-inserted">*This field is required</span>
-                                                                    <a className="password-visibity-icon" href="javascript:void(0);">
-                                                                        {/* <mat-icon className="mat-icon notranslate material-icons mat-icon-no-color"
-                                                                            role="img" aria-hidden="true">visibility_off</mat-icon> */}
-                                                                    </a>
+                                                                        id="mat-input-0"
+                                                                        type="password"
+                                                                        aria-invalid="false"
+                                                                        aria-required="true"
+                                                                        value={password}
+                                                                        onChange={(ev) => setPassword(ev.target.value)}
+                                                                    />
+                                                                    {
+                                                                        password === "" ? <span className="text-danger ng-star-inserted">*This field is required</span>
+                                                                            : null
+                                                                    }
+                                                                    {/* <a className="password-visibity-icon" href="javascript:void(0);">
+                                                                        <mat-icon className="mat-icon notranslate material-icons mat-icon-no-color"
+                                                                            role="img" aria-hidden="true">visibility_off</mat-icon>
+                                                                    </a> */}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div className="row custom_remember">
                                                             <div className="col -6 checkbox c-checkbox pull-left mt0">
                                                                 <label>
-                                                                    <input name="account_remember" type="checkbox"
-                                                                        ng-reflect-name="remember" className="ng-untouched ng-pristine ng-valid" />
+                                                                    <input
+                                                                        name="account_remember"
+                                                                        type="checkbox"
+                                                                        className="ng-untouched ng-pristine ng-valid"
+                                                                    />
                                                                     <span />Remember Me
                                                                 </label>
                                                             </div>
                                                             <div className="col-6 pull-right password_div">
-                                                                <span><Link className="text-muted" to="/recover"  style={{ fontSize: 14 }}>Forgot your password?</Link></span>
+                                                                <span><Link className="text-muted" to="/recover" style={{ fontSize: 14 }}>Forgot your password?</Link></span>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <div className="row">
                                                             <div className="col-12">
-                                                                <button className="btn btn-block btn-primary pt-3 pb-3">
+                                                                <button className="btn btn-block btn-primary pt-3 pb-3" onClick={handleSubmit}>
                                                                     Login
                                                                 </button>
                                                             </div>
