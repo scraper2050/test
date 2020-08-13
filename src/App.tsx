@@ -1,26 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux';
+import { Route, Switch, BrowserRouter as Router, Redirect } from "react-router-dom";
+import configureStore, { history } from "./store";
+import './App.scss';
+import Admin from './Admin';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import Recover from './pages/Recover';
+
+const store = configureStore({});
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Provider store={store}>
+            <Router>
+                <div className="app">
+                    <Switch>
+                        <Redirect exact path="/" to="/pr" />
+                        {/* <RestrictedRoute path='/dashboard' token={token} component={Dashboard} /> */}
+                        <Route path='/pr' component={Admin} />
+                        <Route path="/login" component={SignIn} />
+                        <Route path="/signup" component={SignUp} />
+                        <Route path="/recover" component={Recover} />
+                    </Switch>
+                </div>
+            </Router>
+        </Provider>
+    );
 }
 
 export default App;

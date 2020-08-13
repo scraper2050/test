@@ -1,0 +1,81 @@
+// Here you can add other styles
+
+.modelHeader {
+  background-color: #0885c5;
+  color: #ffff;
+}
+.valmsg {
+  color: red;
+  font-size: smaller;
+}
+
+.progress-xs {
+  height: 2px !important;
+}
+.curso-pointer{
+  cursor: pointer;
+}
+.badge-danger {
+  background-color: #f86c6b;
+}
+.custom-border-radius{
+  border-bottom-right-radius: 0!important;
+  border-bottom-left-radius: 0!important;
+}
+.light-blue-bg{
+  background-color: #41B2EF!important;
+}
+.custom-light-blue-bg{
+  background-color: #bce8ff !important;
+}
+.dark-blue-bg{
+  background-color: #149CE6!important;
+}
+.blue-gray-bg{
+  background-color: #505560!important;
+}
+.light-grey-bg{
+  background-color: #F4F4F4!important;
+}
+.bright-green-bg{
+  background-color: #64D54C!important;
+}
+.other-yellow-bg{
+  background-color: #F6BD41!important;
+}
+.text-green{
+  color: #40A62A!important;
+}
+.grey-button-bg{
+  background-color: #CCD1D4!important;
+}
+.light-green-button{
+  background-color: #F4FDF5!important;
+}
+.sidebar {
+  background-color: #ffffff !important;
+
+  .nav-link{
+    color: black !important;
+    font-weight: 500;
+  }
+}
+
+.sidebar .nav-link:hover .nav-icon {
+  color: black !important;
+}
+
+.sidebar .nav-link.active{
+  background-color: #C4C4C4 !important;
+  .nav-icon {
+    color: #41B2EF !important;
+  }
+
+}
+
+.sidebar .nav-dropdown.open > .nav-dropdown-items{
+  background-color: #ffffff !important;
+}
+.padding-right-0{
+  padding-right: 0!important;
+}

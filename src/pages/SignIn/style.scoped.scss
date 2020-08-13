@@ -1,0 +1,237 @@
+.wrapper {
+    background: url("../../../src/assets/img/bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+  }
+  .error-text {
+    text-align: right;
+    font-weight: bold;
+    color: red;
+    background-color: transparent;
+  }
+  .btn-success {
+    font-size: 16px;
+    background-color: #23bf29;
+    opacity: 0.8;
+    border-color: white;
+  }
+  .card-group {
+    //margin-top: 20%;
+    margin-top: 0%;
+  }
+  
+  .app-body {
+    background: url("../../../src/assets/img/bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+  }
+  
+  .free-msg {
+    padding-top: 20px;
+  }
+  
+  .custom-height {
+    height: calc(100vh - 22px) !important;
+  }
+  
+  /// access css
+  .job-status {
+    border: 2px solid;
+    padding: 2px;
+    border-radius: 2px;
+  }
+  
+  .line-hover {
+    cursor: pointer;
+  }
+  
+  .line-hover:hover {
+    background: #fdffe0;
+  }
+  
+  .control-caption {
+    padding: 5px;
+    font-size: 14px;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  .fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+  }
+  .fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  
+  .section-header {
+    margin-bottom: 25px;
+    padding-bottom: 0px;
+    height: auto;
+    position: relative;
+  }
+  
+  .mt-xll {
+    padding: 20px 30px;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  .row {
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  
+  .text-bottom {
+    margin-bottom: 10px;
+  }
+  
+  .mt-xl {
+    margin-top: 60px !important;
+  }
+  
+  .mt-xl-1 {
+    margin-top: -40px !important;
+  }
+  
+  .selected {
+    background: rgb(217, 239, 255) !important;
+  }
+  
+  // .Reg {
+  //   //margin-top: 10%;
+  // }
+  .custom_tab {
+    background: transparent;
+    border: none;
+  }
+  
+  .custom-btns {
+    text-align: center;
+  }
+  
+  .custom-btns button {
+    width: 100%;
+  }
+  
+  .custom-btns a {
+    color: #fff;
+  }
+  .custom_card {
+    border: none;
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////
+  .content-heading {
+    height: 80px;
+    div {
+      text-align: center;
+    }
+    .btn {
+      float: right;
+    }
+  }
+  .middle-form {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+  .custom_row {
+    height: 100%;
+    .signin_col {
+      background-color: #5d9cec;
+    }
+  }
+  .signin_card {
+    height: 485px;
+    // width: 75%;
+  }
+  .password_div {
+    margin-top: 10px;
+    text-align: end;
+    .login_btn {
+      margin-top: 20px;
+    }
+    .card_div {
+      transform: translateX(50%);
+      width: 70%;
+    }
+  
+    .custom_remember {
+      margin-top: 10px;
+    }
+  
+    // .custom-toast{
+    //     div#toast-container {
+    //         position: absolute;
+    //     }
+    // }
+    .toast-center {
+      position: absolute !important;
+    }
+  
+    .custom_toast {
+      position: absolute !important;
+    }
+  }
+  
+  // div #toast-container {
+  //     position: absolute !important;
+  //     top: 50% !important;
+  // }
+  .payment-btn {
+    padding: 5px !important;
+  }
+  
+  @media only screen and (max-width: 768px) {
+    .custom-height {
+      height: auto !important;
+  
+      .middle-form {
+        position: relative;
+        top: 0%;
+        transform: none;
+      }
+      .signin_card {
+        height: auto;
+      }
+    }
+  }
+  .payment-btn {
+    padding: 0px;
+  }
+  
+  
+  // vasily defined
+
+.field-icon {
+  float: right;
+  margin-left: -55px;
+  margin-top: -25px;
+  position: relative;
+  z-index: 2;
+}
+
+//Devil
+
+.login-password-input {
+  padding-right: 36px;
+}
