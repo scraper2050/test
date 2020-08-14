@@ -3,6 +3,7 @@ import SubHeader from './SubHeader'
 import { Bar, Line } from 'react-chartjs-2';
 
 import './style.scoped.scss';
+import ToggleSidebar from '../ToggleSidebar';
 
 const Home: () => JSX.Element = () => {
     const data = {
@@ -53,11 +54,9 @@ const Home: () => JSX.Element = () => {
     }
     return (
         <React.Fragment>
-            {/* Main Container */}
             <SubHeader />
-
-            {/* Dashboard Container */}
             <div className="app-body dashboard-container">
+                <ToggleSidebar />
                 {/* <div className="left-navbar sidebar" id="left-navbar">
                 <ul className="nav navbar-nav response-nav">
                     <li  className="nav-item active">
