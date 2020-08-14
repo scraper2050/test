@@ -1,39 +1,47 @@
 import React, { Component } from 'react'
 import SubHeader from '../../shared/SubHeader'
 import Sidebar from '../../shared/Sidebar'
-import {Bar} from 'react-chartjs-2';
+import CoolTabs from 'react-cool-tabs'
 
-class Customers extends Component {
-    render()
-    {
-        const data = {
-            labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thusday','Friday', 'Satusday'],
-            datasets: [
-              {
-                label: 'Jobs',
-                backgroundColor: '#0082C3',
-                borderColor: 'rgba(0,0,0,0)',
-                borderWidth: 1,
-                barThickness:10,
-                barRadius:0.5,
-                pointHoverRadius: 5,
-                pointRadius: 1,
-                pointHitRadius: 10,       
-                barRoundness: 5,
-                cornerRadius: 20,      
-                radius:4,   
-                data: [65, 59, 80, 81, 56, 30, 50]
-              }
-            ]
-          }
+const style1 = {};
+const style2 = {};
 
-        return(
-        <React.Fragment>
-            {/* Main Container */}
-            <SubHeader />
-            <h1>Customer page working now</h1>
-        </React.Fragment>
-        )
-    }
+
+class Content1 extends Component {
+  render() {
+    return <div style={style1}>
+      this is Content1
+    </div>
+  }
 }
-export default Customers;
+class Content2 extends Component {
+  render() {
+    return <div style={style2}>
+      this is Content2
+    </div>
+  }
+}
+ 
+export  default  class  Customers  extends  React.Component {
+render() {
+   return (
+     <div>
+         <CoolTabs
+           tabKey={'1'}
+           style={{ width:  550, height:  500, background:  'white' }}
+           activeTabStyle={{ background:  'red', color:  'white' }}
+           unActiveTabStyle={{ background:  'green', color:  'black' }}
+           activeLeftTabBorderBottomStyle={{ background:  'blue', height:  4 }}
+           activeRightTabBorderBottomStyle={{ background:  'yellow', height:  4 }}
+           tabsBorderBottomStyle={{ background:  'orange', height:  4 }}
+           leftContentStyle={{ background:  'lightgreen' }}
+           rightContentStyle={{ background:  'lightblue' }}
+           leftTabTitle={'Left title'}
+           rightTabTitle={'Right title'}
+           leftContent={<Content1/>}
+           rightContent={<Content2/>}
+           contentTransitionStyle={'transform 0.6s ease-in'}
+           borderTransitionStyle={'all 0.6s ease-in'}/>
+     </div>
+);
+}}
