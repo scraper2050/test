@@ -6,7 +6,6 @@ import axios from '../../util/Api';
 export const SignIn: () => JSX.Element = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [valids, setValids] = useState<boolean[]>([true, true]);
     const handleSubmit: (ev: any) => void = (ev) => {
         ev.preventDefault();
         const payload = {

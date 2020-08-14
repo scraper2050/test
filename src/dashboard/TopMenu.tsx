@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 
-export const Header = () => {
+export const TopMenu = () => {
     return (
         <header className="main-header app-header navbar d-flex" style={{ fontSize: "16px" }}>
             <button type="button" className="navbar-toggler d-lg-none ng-star-inserted">
@@ -96,4 +96,4 @@ export const Header = () => {
     )
 }
 
-export default Header;
+export default TopMenu;

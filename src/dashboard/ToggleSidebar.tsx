@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export const Sidebar = () => {
+export const ToggleSidebar = () => {
     return (
         <div className="left-navbar sidebar" id="left-navbar">
             <ul className="nav navbar-nav response-nav">
@@ -39,4 +39,4 @@ export const Sidebar = () => {
     )
 }
 
-export default Sidebar
+export default ToggleSidebar

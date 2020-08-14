@@ -1,28 +1,54 @@
 import React, { Component } from 'react'
-import SubHeader from '../../shared/SubHeader'
-import Sidebar from '../../shared/Sidebar'
-import './style.scss';
-import {Bar} from 'react-chartjs-2';
+import SubHeader from './SubHeader'
+import {Bar, Line} from 'react-chartjs-2';
+
+import './style.scoped.scss';
 
 class Dashboard extends Component {
     render()
     {
         const data = {
-            labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thusday','Friday', 'Satusday'],
+            labels: ['Sun\n 10', 'Mon\n 11', 'Tue\n 12', 'Wed\n 13', 'Thu\n 13','Fri\n 14', 'Sat\n 15'],
             datasets: [
               {
+                label: 'Line Dataset',
+                fill: false,
+                type: 'line',                
+                pointShape: 'circle',
+                backgroundColor: '#0082C3',
+                borderColor: 'rgba(255,255,255,0)',   
+                radius:5, 
+                pointHoverRadius:8,
+                pointHoverBorderWidth:5,
+                pointHoverBorderColor:'rgba(255,255,255,1)',
+                pointHoverBackgroundColor: '#0082C3',
+                 data: [65, 59, 80, 81, 56, 30, 50],                
+            },
+            {
                 label: 'Jobs',
                 backgroundColor: '#0082C3',
                 borderColor: 'rgba(0,0,0,0)',
                 borderWidth: 1,
-                barThickness:10,
-                barRadius:0.5,
-                pointHoverRadius: 5,
-                pointRadius: 1,
-                pointHitRadius: 10,       
-                barRoundness: 5,
-                cornerRadius: 20,      
-                radius:4,   
+                barThickness:10,        
+                data: [65, 59, 80, 81, 56, 30, 50]
+              }]
+          }
+          const invoice_data = {
+            labels: ['Sun\n 10', 'Mon\n 11', 'Tue\n 12', 'Wed\n 13', 'Thu\n 13','Fri\n 14', 'Sat\n 15'],
+            datasets: [
+              {
+                label: 'Jobs',
+                fill: false,
+                lineTension: 0.3,
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderColor: 'rgba(255,255,255,1)',               
+                borderWidth: 2,
+                pointBorderColor: 'rgba(0,0,0,0)',
+                pointHoverRadius:6,
+                pointHoverBorderWidth:15,
+                pointHoverBorderColor:'rgba(255,255,255,0.4)',
+                pointHoverBackgroundColor: 'rgba(255,255,255,1)',
+                hoverBorderDashOffset:10,
                 data: [65, 59, 80, 81, 56, 30, 50]
               }
             ]
@@ -35,7 +61,7 @@ class Dashboard extends Component {
 
             {/* Dashboard Container */}
             <div className="app-body dashboard-container">
-                <div className="left-navbar sidebar" id="left-navbar">
+                {/* <div className="left-navbar sidebar" id="left-navbar">
                     <ul className="nav navbar-nav response-nav">
                         <li  className="nav-item active">
                             <a className="nav-item">Dashboard</a>
@@ -62,7 +88,7 @@ class Dashboard extends Component {
                             <a className="nav-item">Invoicing</a>
                         </li>
                     </ul>
-                </div>
+                </div> */}
 
                 <main className="main mainfull">
                     <div className="container-fluid">
@@ -139,21 +165,40 @@ class Dashboard extends Component {
                                             <div  style={{display: "block", padding: "20px 10px"}} className="ng-star-inserted">
                                             <Bar
                                                 data={data}
-                                                options={{                                                                                                
+                                                height={330}
+                                                options={{        
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,                                                                                                                      
                                                     title:{
                                                         display:true,
                                                         text:'',
                                                         fontSize:20
                                                     },
                                                     legend:{
-                                                        display:true,
+                                                        display:false,
                                                         position:'right'
                                                     },
+                                                    tooltips: {
+                                                        enabled: true,
+                                                        backgroundColor: "rgba(0,0,0,1)",
+                                                        displayColors: false,
+                                                        position:'average',     
+                                                        xPadding:10,
+                                                        yPadding:10,                   
+                                                        callbacks: {
+                                                            label: (tooltipItem, data) => {
+                                                                return `${tooltipItem.value}`
+                                                            },    
+                                                            title:()=>{
+                                                                return ""
+                                                            }                                                                                                                            
+                                                        }
+                                                    },                                                    
                                                     scales: {
                                                         yAxes: [{
                                                             ticks: {
                                                                 beginAtZero: true
-                                                            }
+                                                            }                                                           
                                                         }]
                                                     },   
                                                 }}
@@ -173,7 +218,77 @@ class Dashboard extends Component {
                                                     <b >0</b>
                                                     <p >Active Jobs</p>
                                                 </div>
-                                                <div  className="ng-star-inserted">
+                                                <div  style={{display: "block", padding: "20px 10px"}} className="ng-star-inserted">
+                                                    <Line
+                                                        height={250}
+                                                        data={invoice_data}
+                                                        options={{  
+                                                            responsive: true,
+                                                            maintainAspectRatio: false,
+                                                            title:{
+                                                                display:true,
+                                                                text:'',
+                                                                fontSize:20
+                                                            },
+                                                            legend:{
+                                                                display:false,
+                                                                position:'right'
+                                                            },
+                                                            tooltips: {
+                                                                displayColors: false,
+                                                                // enabled: true,
+                                                                backgroundColor: "rgba(0,0,0,1)",
+                                                                position:'average',     
+                                                                xPadding:10,
+                                                                yPadding:10,                   
+                                                                callbacks: {
+                                                                    label: (tooltipItem, data) => {
+                                                                        return `${tooltipItem.value}`
+                                                                    },    
+                                                                    title:()=>{
+                                                                        return ""
+                                                                    }                                                                                                                            
+                                                                }
+                                                            },
+                                                            scales: {
+                                                                xAxes: [
+                                                                    {
+                                                                        gridLines: {
+                                                                            display: false,
+                                                                            offsetGridLines: true
+                                                                        },
+                                                                        // scaleLabel: {
+                                                                        //     display: true,
+                                                                        //     labelString: "Happiness",
+                                                                           
+                                                                        //   }
+                                                                        // type: 'time',
+                                                                        // time: {
+                                                                        //     unit: 'week'
+                                                                        // },
+                                                                        ticks: {
+                                                                            // beginAtZero: false,
+                                                                            fontColor:"white"
+                                                                        }
+                                                                    }
+                                                                  ],
+                                                                yAxes: [{
+                                                                    gridLines: {
+                                                                        display: false,
+                                                                        offsetGridLines: true
+                                                                    },
+                                                                    ticks: {
+                                                                        beginAtZero: true,
+                                                                        fontColor:"white"
+                                                                    },
+
+                                                                }]
+                                                            },   
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* <div  className="ng-star-inserted">
                                                     <div className="chartjs-size-monitor">
                                                         <div className="chartjs-size-monitor-expand">
                                                             <div className=""></div>
@@ -183,7 +298,7 @@ class Dashboard extends Component {
                                                         </div>
                                                     </div>
                                                     <canvas height="222px" width="260px" className="chartjs-render-monitor" style={{display: "block", width: "260px", height: "222px"}}></canvas>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                     </div>

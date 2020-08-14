@@ -3,7 +3,7 @@ import './style.scoped.scss';
 import { Link } from 'react-router-dom';
 
 const SignUp: () => JSX.Element = () => {
-    const [a, setA] = React.useState<string>('')
+    const [a, setA] = React.useState<string>('');
     return (
         <div className="ng-star-inserted">
             <div className="app-body">
