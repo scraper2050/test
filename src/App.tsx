@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Route, Switch, BrowserRouter as Router, Redirect } from "react-router-dom";
 import configureStore, { history } from "./store";
 import './App.scss';
-import Admin from './Admin';
+import Dashboard from './dashboard';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Recover from './pages/Recover';
@@ -19,7 +19,7 @@ function App() {
                     <Switch>
                         <Redirect exact path="/" to="/pr" />
                         {/* <RestrictedRoute path='/dashboard' token={token} component={Dashboard} /> */}
-                        <Route path='/pr' component={Admin} />
+                        <Route path='/pr' component={Dashboard} />
                         <Route path="/login" component={SignIn} />
                         <Route path="/signup" component={SignUp} />
                         <Route path="/recover" component={Recover} />

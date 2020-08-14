@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import SubHeader from '../../shared/SubHeader'
-import Sidebar from '../../shared/Sidebar'
 import CoolTabs from 'react-cool-tabs'
+import SubHeader from './SubHeader'
+import {Bar} from 'react-chartjs-2';
 
 const style1 = {};
 const style2 = {};
