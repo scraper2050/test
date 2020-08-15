@@ -17,12 +17,12 @@ function App() {
             <Router>
                 <div className="app">
                     <Switch>
-                        <Redirect exact path="/" to="/pr" />
+                        <Redirect exact path="/" to="/dashboard" />
                         {/* <RestrictedRoute path='/dashboard' token={token} component={Dashboard} /> */}
-                        <Route path='/pr' component={Dashboard} />
                         <Route path="/login" component={SignIn} />
                         <Route path="/signup" component={SignUp} />
                         <Route path="/recover" component={Recover} />
+                        <Route path='/' component={Dashboard} />
                     </Switch>
                 </div>
             </Router>

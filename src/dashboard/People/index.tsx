@@ -11,10 +11,10 @@ class People extends Component {
         <React.Fragment>
             {/* Main Container */}
             <SubHeader />
-
+            
             {/* People Container */}
             <div className="sidebar sidebar-custom ng-star-inserted">
-                <ul style={{fontSize: "16px"}} className="sidebar-nav ps" role="nav">
+                <ul style={{fontSize: "16px", padding: 0}} className="sidebar-nav ps" role="nav">
                     <ul className="nav">
                         <li className="nav-item ng-star-inserted">
                             <Link to="/people/group" className="nav-link ng-star-inserted active">Groups</Link>
