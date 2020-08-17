@@ -1,0 +1,217 @@
+.MuiBox-root{
+  padding: 0px;
+}
+
+.table {
+  th {
+    text-align: center;
+  }
+  td {
+    text-align: center;
+  }
+  span {
+    font-size: 20px;
+    color: brown;
+  }
+}
+
+.customTableHeader {
+  background: #505560;
+  color: #f4f4f4;
+  font-weight: bold;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.float-right {
+  float: right;
+}
+
+.tableRightBack {
+  background: #575b62;
+  color: #d4d3d8;
+  padding: 17px 15px 14px 15px !important;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.customTableHeaderTop {
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.customTableTitleLeft {
+  padding: 14px 16px;
+  font-size: 15px;
+}
+
+.searchMainBox {
+  padding: 5px 15px;
+  margin: 10px 0px !important;
+}
+
+.custom-btn {
+  padding: 10px;
+  width: 100%;
+  font-size: 14px;
+  min-height: 43px;
+  border-radius: 0;
+}
+
+.inactive-btn-custom {
+  background-color: #e5fdf0;
+  border: #e5fdf0;
+  color: #5d9cec;
+}
+
+.search-box-field {
+  border: none;
+  box-shadow: none;
+  background: none;
+  margin-top: 0px !important;
+  font-size: 14px !important;
+  line-height: 1.528571429 !important;
+}
+
+.search-box-div {
+  background: #d2d3cd33;
+  padding: 5px 5px;
+  display: flex;
+  .searchIcon {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.sideText {
+  .customText {
+    padding: 30px;
+    margin-top: 124px;
+    p {
+      font-size: 22px;
+    }
+  }
+}
+
+.row {
+  flex: 1;
+}
+
+.serviceBtnCurrent {
+  background-color: #bce8ff;
+  border-color: #bce8ff;
+}
+
+.custom-btn.active {
+  background-color: #149ce6 !important;
+  border-color: #149ce6 !important;
+  color: #fff !important;
+}
+
+.bright-green-bg {
+  border-color: #64d54c;
+}
+
+.other-yellow-bg {
+  border-color: #f6bd41;
+  color: #fff;
+}
+
+.custom-margin {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.qb-logo {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  margin: 0 2px;
+  transform: translateY(4px);
+  background-image: url("/assets/img/integration-bg/quickbooks.png");
+  background-size: cover;
+}
+.customTabs{
+  width: 100%;
+  padding: 0 15px;
+}
+.grouplist-container{
+  .actionOption{
+    .search-box-div{
+      background-color: #fff;
+    }
+  }
+}
+.actionOption{
+  margin: 10px 0;
+  padding: 0;
+}
+.mt-20{
+  margin-top: 20px;
+}
+.actionBtn{
+  .singleBtn {
+    float: right;
+    margin-left: 10px;
+    // .customBtn{
+    //   text-align: center;
+    //   padding: 4px 10px;
+    //   background: #00AAFF;
+    //   color: #fff;
+    //   min-width: 85px;
+    //   border-radius: 30px;
+    //   min-height: 39px;
+    //   font-weight: 500;
+    //   font-size: 14px;
+    //   border: none;
+    // }
+    // .customBtn:focus{
+    //   outline: none;
+    // }
+  }
+}
+.mat-menu-item{
+  text-align: center;
+}
+.mat-menu-item:focus{
+  outline: none;
+}
+@media (max-width: 567px) {
+  .actionOption{
+    .col-sm-6{
+      float: left;
+    }
+    .actionBtn{
+      margin: 15px 0;
+    }
+  }
+  .sideText .customText{
+    margin-top: 0;
+  }
+  .customTabs{
+    padding: 0;
+  }
+  .table-container{
+    width: 300px;
+    overflow: scroll;
+  }
+  .actionBtn {
+    .singleBtn {
+      margin-bottom: 10px;
+    }
+  } 
+}
+@media (max-width: 320px) {
+  .table-container{
+    width: 290px;
+    overflow: scroll;
+  }
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  height: 35px; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
+  background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+  padding: 6px 16px;
+}
