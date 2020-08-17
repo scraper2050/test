@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './style.scoped.scss';
 import axios from '../../util/Api';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 
 export const SignIn: () => JSX.Element = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [hide, setHide] = useState(false);
     const handleSubmit: (ev: any) => void = (ev) => {
         ev.preventDefault();
         const payload = {
             email, password
         };
-        axios.post("/login", payload).then(({data}) => {
+        axios.post("/login", payload).then(({ data }) => {
             console.log("response -> ", data);
         });
     }
@@ -61,7 +64,7 @@ export const SignIn: () => JSX.Element = () => {
                                                                         className="form-control login-password-input mat-input-element mat-form-field-autofill-control cdk-text-field-autofill-monitored ng-untouched ng-pristine ng-invalid"
                                                                         placeholder="Password" required
                                                                         id="mat-input-0"
-                                                                        type="password"
+                                                                        type={hide ? "text" : "password"}
                                                                         aria-invalid="false"
                                                                         aria-required="true"
                                                                         value={password}
@@ -71,10 +74,16 @@ export const SignIn: () => JSX.Element = () => {
                                                                         password === "" ? <span className="text-danger ng-star-inserted">*This field is required</span>
                                                                             : null
                                                                     }
-                                                                    {/* <a className="password-visibity-icon" href="javascript:void(0);">
-                                                                        <mat-icon className="mat-icon notranslate material-icons mat-icon-no-color"
-                                                                            role="img" aria-hidden="true">visibility_off</mat-icon>
-                                                                    </a> */}
+                                                                    <Link className="password-visibity-icon" to="" onClick={
+                                                                        (ev: any) => {
+                                                                            ev.preventDefault();
+                                                                            setHide(!hide);
+                                                                        }
+                                                                    }>
+                                                                        {
+                                                                            hide ? <VisibilityIcon style={{ fontSize: 24 }} /> : <VisibilityOffIcon style={{ fontSize: 24 }} />
+                                                                        }
+                                                                    </Link>
                                                                 </div>
                                                             </div>
                                                         </div>

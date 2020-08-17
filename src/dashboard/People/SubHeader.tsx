@@ -10,6 +10,9 @@ export const SubHeader = () => {
                     <button className="searchButton" type="submit">
                         <i className="fa fa-search"></i>
                     </button>
+                    <button className="customerBtn ng-star-inserted" type="button">
+                        New Employee
+                    </button>
                 </div>
             </div>
         </div>
