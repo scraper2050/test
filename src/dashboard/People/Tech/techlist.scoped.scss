@@ -2,31 +2,6 @@
   padding: 0px;
 }
 
-.table {
-  th {
-    text-align: center;
-  }
-  td {
-    text-align: center;
-  }
-  span {
-    font-size: 20px;
-    color: brown;
-  }
-}
-
-.customTableHeader {
-  background: #505560;
-  color: #f4f4f4;
-  font-weight: bold;
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-}
-
-.float-right {
-  float: right;
-}
-
 .tableRightBack {
   background: #575b62;
   color: #d4d3d8;
@@ -131,10 +106,16 @@
   background-image: url("/assets/img/integration-bg/quickbooks.png");
   background-size: cover;
 }
-.customTabs{
+
+.customTabs {
   width: 100%;
   padding: 0 15px;
 }
+ 
+.techlist-container {
+  width: 100%;
+}
+
 .techlist-container{
   .actionOption{
     .search-box-div{
@@ -142,13 +123,16 @@
     }
   }
 }
+ 
 .actionOption{
   margin: 10px 0;
   padding: 0;
 }
+ 
 .mt-20{
   margin-top: 20px;
 }
+ 
 .actionBtn{
   .singleBtn {
     float: right;

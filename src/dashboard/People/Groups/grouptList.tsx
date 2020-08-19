@@ -1,26 +1,57 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
+import BCTable from '../../Components/BCTable';
+
 import './grouplist.scoped.scss';
 
 const GrouptList: () => JSX.Element = () => {
     const [modalFlag, setModalFlag] = useState(false);
+    const [headCells, setHeadCells] = useState([
+      {
+        id: "group_name",
+        label: "Group Name",
+        sortable: true,
+        width: '30%',
+      },
+      {
+        id: "Email",
+        label: "Email",
+        sortable: true, 
+        width: '70%',
+      },
+    ])
     const table_data = [
-      {
-        no:1,
-        groupname:"tttt",
-        view:"dddd",
+      {        
+        group_name: "Name asdfasd1",
+        Email: "Email isdfk"
       },
-      {
-        no:2,
-        groupname:"sssssss",
-        view:"jjj",
+      {        
+        group_name: "Name asdfasd1",
+        Email: "Email wefs"
       },
-      {
-        no:3,
-        groupname:"fffffff",
-        view:"dd",
-      }
+      {        
+        group_name: "Name asdfasd2",
+        Email: "Email 463asd"
+      },
+      {        
+        group_name: "Name asdfasd1",
+        Email: "Email isd24fk"
+      },
+      {        
+        group_name: "Name dfasdf",
+        Email: "Email fbhsdfg"
+      },
+      {        
+        group_name: "Name 34fgsfg",
+        Email: "Email dfbxdfg"
+      },
+      {        
+        group_name: "Name asdfw2353",
+        Email: "Email dfasdf"
+      },      
     ]
+
     let member: any;
     let manager: any;
     let group_Id: any;
@@ -71,6 +102,7 @@ const GrouptList: () => JSX.Element = () => {
 
     return(        
         <div className="grouplist-container">
+          <div className="row">
             <div className="actionOption col-md-12 col-sm-12">
               <div className="col-md-6 pl-0 col-sm-6">
                 <div className="search-box-div col-md-12 col-sm-12">
@@ -87,44 +119,12 @@ const GrouptList: () => JSX.Element = () => {
                 <div className="singleBtn"></div>
               </div>
             </div>
-
-            <div className="card customTableHeaderTop col-sm-12 p-0">
-              <div className="table-container card-body p-0">
-                <table className="table table-striped">
-                  <thead>
-                      <tr>
-                          <th className= "col-sm-2">
-                              <div>No.</div>
-                          </th>
-                          <th className= "col-sm-7">
-                              <div>Group Name</div>
-                          </th >
-                          <th className= "col-sm-3">
-                              <div>View</div>
-                          </th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {
-                        table_data.map((data, ind)=>(
-                          <tr className="line-hover" key={ind}>
-                            <td>{ data.no }</td>
-                            <td>{ data.groupname }</td>
-                            <td>{ data.view }</td>
-                          </tr>
-                        ))
-                      }                     
-                  </tbody>
-                  <tfoot>
-                      <tr>
-                          <td >
-                              {/* <mfBootstrapPaginator></mfBootstrapPaginator> */}
-                          </td>
-                      </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
+          </div>
+          <BCTable 
+            tableData={table_data}
+            headCells={headCells}
+            pagination={true}
+          />            
             <Modal isOpen={modalFlag} >
                 <ModalHeader className="modelHeader">
                     <h3 >Add Group</h3>

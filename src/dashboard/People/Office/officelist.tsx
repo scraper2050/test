@@ -1,26 +1,86 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
+
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+
+import BCTable from '../../Components/BCTable';
+
+import AvatarImg1 from '../../../assets/img/avatars/1.jpg';
+import AvatarImg2 from '../../../assets/img/avatars/2.jpg';
+import AvatarImg3 from '../../../assets/img/avatars/3.jpg';
+import AvatarImg4 from '../../../assets/img/avatars/4.jpg';
+import AvatarImg5 from '../../../assets/img/avatars/5.jpg';
+import AvatarImg6 from '../../../assets/img/avatars/6.jpg';
+
 import './officelist.scoped.scss';
 
 const OfficeList: () => JSX.Element = () => {
     const [modalFlag, setModalFlag] = useState(false);
+    const [headCells, setHeadCells] = useState([
+      {
+        id: 'Name',
+        label: 'Name',
+        sortable: true,
+        width: '20%',
+      },
+      {
+        id: 'Email',
+        label: 'Email',
+        sortable: true,
+        width: '20%',
+      },
+      {
+        id: 'Phone_Number',
+        label: 'Phone Number',
+        sortable: true,
+        width: '20%',
+      },
+      {
+        id: 'View',
+        label: 'View',
+        sortable: false,
+        isImage: true
+      },
+    ])
     const table_data = [
       {
-        no:1,
-        groupname:"tttt",
-        view:"dddd",
+        Name:"Andl siels",
+        Email:"ee@gmail.com",
+        Phone_Number:"1984-22032-33",
+        View: AvatarImg1,
       },
-      {
-        no:2,
-        groupname:"sssssss",
-        view:"jjj",
+      {      
+        Name: "ssde sienhd",
+        Email: "ttt@gmail.com",
+        Phone_Number: "1984-22032-35",
+        View: AvatarImg2,
       },
-      {
-        no:3,
-        groupname:"fffffff",
-        view:"dd",
+      {      
+        id: 'phone_number',
+        Name:"swwed sss",
+        Email:"uuu@gmail.com",
+        Phone_Number:"1984-22032-36",
+        View: AvatarImg3,
+      },
+      {      
+        Name:"eetss ddd",
+        Email:"uurd@gmail.com",
+        Phone_Number:"1984-22032-32",
+        View:AvatarImg4,
+      },
+      {      
+        Name:"tteexs sss",
+        Email:"wwaq@gmail.com",
+        Phone_Number:"1984-22032-31",
+        View: AvatarImg5,
+      },
+      {      
+        Name:"asdf sdf",
+        Email:"wwaq@gmail.com",
+        Phone_Number:"1984-2321-31",
+        View: AvatarImg6,
       }
-    ]
+    ];
+
     let member: any;
     let manager: any;
     let group_Id: any;
@@ -71,6 +131,7 @@ const OfficeList: () => JSX.Element = () => {
 
     return(        
         <div className="officelist-container">
+          <div className="row">
             <div className="actionOption col-md-12 col-sm-12">
               <div className="col-md-6 pl-0 col-sm-6">
                 <div className="search-box-div col-md-12 col-sm-12">
@@ -87,44 +148,14 @@ const OfficeList: () => JSX.Element = () => {
                 <div className="singleBtn"></div>
               </div>
             </div>
+          </div>
+          
+          <BCTable 
+            tableData={table_data}
+            headCells={headCells}
+            pagination={true}
+          />
 
-            <div className="card customTableHeaderTop col-sm-12 p-0">
-              <div className="table-container card-body p-0">
-                <table className="table table-striped">
-                  <thead>
-                      <tr>
-                          <th className= "col-sm-2">
-                              <div>No.</div>
-                          </th>
-                          <th className= "col-sm-7">
-                              <div> Name</div>
-                          </th >
-                          <th className= "col-sm-3">
-                              <div>Email</div>
-                          </th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {
-                        table_data.map((data, ind)=>(
-                          <tr className="line-hover" key={ind}>
-                            <td>{ data.no }</td>
-                            <td>{ data.groupname }</td>
-                            <td>{ data.view }</td>
-                          </tr>
-                        ))
-                      }                     
-                  </tbody>
-                  <tfoot>
-                      <tr>
-                          <td >
-                              {/* <mfBootstrapPaginator></mfBootstrapPaginator> */}
-                          </td>
-                      </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
             <Modal isOpen={modalFlag} >
                 <ModalHeader className="modelHeader">
                     <h3 >Add Group</h3>
