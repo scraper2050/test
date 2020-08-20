@@ -63,7 +63,7 @@ const Header = (): JSX.Element => {
         <ul className="header-nav">
           {NAV_DATA.map((item, idx) => {
             return (
-              <li key={idx} className={`nav-item ${pathName === item.link ? 'active' : ''}`} tabIndex={0}>
+              <li key={idx} className={`nav-item ${pathName.indexOf(item.link) === 0 ? 'active' : ''}`} tabIndex={0}>
                 <Link to={item.link}>{item.label}</Link>
               </li>
             );

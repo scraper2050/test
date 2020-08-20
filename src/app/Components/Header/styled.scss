@@ -16,7 +16,7 @@
 
     .logo-brand {
       width: $sidebar-width;
-      flex: 1 0 $sidebar-width;
+      flex: 0 0 $sidebar-width;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -64,7 +64,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex: 1 0 120px;
+      flex: 0 0 120px;
       margin-left: auto;
 
       .header-tools-btn {
