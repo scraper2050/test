@@ -1,33 +1,28 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { Route, Switch, BrowserRouter as Router, Redirect } from "react-router-dom";
-import configureStore, { history } from "./store";
-import './App.scss';
-import Dashboard from './dashboard';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import Recover from './pages/Recover';
+import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
+import Header from './app/Components/Header';
 
-const store = configureStore({});
+import GroupPage from './app/Pages/People/Group';
 
-
-function App() {
-    return (
-        <Provider store={store}>
-            <Router>
-                <div className="app">
-                    <Switch>
-                        <Route exact path="/" component={SignIn} />
-                        <Route path="/signup" component={SignUp} />
-                        <Route path="/recover" component={Recover} />
-
-                        {/* <RestrictedRoute path='/dashboard' token={token} component={Dashboard} /> */}
-                        <Route path='/' component={Dashboard} />
-                    </Switch>
-                </div>
-            </Router>
-        </Provider>
-    );
-}
+const App = () => {
+  return (
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route path="/signup" />
+          <Route path="/recover" />
+          <Route path="/">
+            <Header />
+            <div className="main-container">
+              <Switch>
+                <Route path="/people" component={GroupPage} />
+              </Switch>
+            </div>
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
+};
 
 export default App;
