@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import Header from './app/Components/Header';
 
+import LoginPage from './app/Pages/Login';
 import GroupPage from './app/Pages/People/Group';
 import TechnicianPage from './app/Pages/People/Technician';
 import ManagerPage from './app/Pages/People/Manager';
@@ -12,6 +13,7 @@ const App = () => {
     <Router>
       <div className="App">
         <Switch>
+          <Route path="/login" component={LoginPage} />
           <Route path="/signup" />
           <Route path="/recover" />
           <Route path="/">
