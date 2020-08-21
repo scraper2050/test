@@ -7,6 +7,7 @@ import Dashboard from './dashboard';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Recover from './pages/Recover';
+import TempPage from './dashboard/Customers/tempPage';
 
 const store = configureStore({});
 
@@ -18,6 +19,7 @@ function App() {
                 <div className="app">
                     <Switch>
                         <Route exact path="/" component={SignIn} />
+                        <Route path="/customers/schedule" component={TempPage} />
                         <Route path="/signup" component={SignUp} />
                         <Route path="/recover" component={Recover} />
 

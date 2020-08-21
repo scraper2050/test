@@ -46,6 +46,7 @@
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.2",
+    "react-select": "^1.3.0",
     "react-swipeable-views": "^0.13.9",
     "reactstrap": "^8.5.1",
     "redux": "^4.0.5",
@@ -55,6 +56,7 @@
     "scoped-css-loader": "^1.0.0",
     "simple-line-icons": "^2.4.1",
     "spinkit": "^2.0.1",
+    "styled-components": "^5.1.1",
     "toastr": "^2.1.4",
     "typescript": "^3.9.7"
   },
@@ -78,5 +80,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-select": "^3.0.19",
+    "@types/reactstrap": "^8.5.1",
+    "@types/styled-components": "^5.1.2"
   }
 }

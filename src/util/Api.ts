@@ -1,6 +1,6 @@
 import Axios from 'axios';
 
-console.error("______ process.env.NODE_ENV ____", process.env.NODE_ENV)
+// console.error("______ process.env.NODE_ENV ____", process.env.NODE_ENV)
 let base_url = `https://blueclerk-node-api.deploy.blueclerk.com/api/v1/`;
 
 if (process.env.NODE_ENV !== "development") {
