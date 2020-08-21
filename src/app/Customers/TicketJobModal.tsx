@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {
   Button,
   Modal,
@@ -53,7 +52,14 @@ const customers: OptionType[] = [
   { value: '4', label: 'customer4' }
 ];
 
-const TicketJobModal = ({ modal, cancel, submit, modalMode }) => {
+interface TicketJobModalProps {
+  modal: boolean,
+  modalMode: number,
+  cancel: (event: React.MouseEvent<any, MouseEvent>) => void,
+  submit: (event: React.MouseEvent<any, MouseEvent>) => void,
+}
+
+const TicketJobModal: React.FC<TicketJobModalProps> = ({ modal, cancel, submit, modalMode }: TicketJobModalProps) => {
   const [modeState, setModeState] = useState<number>(modalMode);
 
   const [employeeType, setEmployeeType] = useState<ValueType<OptionType>>();
@@ -194,13 +200,6 @@ const TicketJobModal = ({ modal, cancel, submit, modalMode }) => {
       </Modal>
     </div>
   );
-};
-
-TicketJobModal.propTypes = {
-  modal: PropTypes.bool,
-  mode: PropTypes.number,
-  cancel: PropTypes.func,
-  submit: PropTypes.func
 };
 
 export default TicketJobModal;
