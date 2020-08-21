@@ -52,8 +52,6 @@ const PeopleSidebar = (): JSX.Element => {
 const StyledList = styled(List)``;
 
 const StyledListItem = styled(ListItem)`
-  font-style: normal;
-  font-weight: normal;
   font-size: 16px;
   line-height: 20px;
   height: 40px;
