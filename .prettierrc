@@ -1,6 +1,14 @@
 {
+<<<<<<< HEAD
   "tabWidth": 2,
   "useTabs": false,
   "printWidth": 80,
   "singleQuote": true
+=======
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "printWidth": 120
+>>>>>>> c5649243c69371c1556c10a778b4bf7f49015437
 }

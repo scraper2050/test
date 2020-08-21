@@ -17,9 +17,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+<<<<<<< HEAD
     "jsx": "react",
     "noImplicitAny": false,
     "baseUrl": "."
+=======
+    "jsx": "react"
+>>>>>>> c5649243c69371c1556c10a778b4bf7f49015437
   },
   "include": [
     "src"
