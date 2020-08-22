@@ -3,6 +3,7 @@ import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import Header from './app/Components/Header';
 
 import LoginPage from './app/Pages/Login';
+import SignUpPage from './app/Pages/SignUp';
 import RecoverPage from './app/Pages/Recover';
 import GroupPage from './app/Pages/People/Group';
 import TechnicianPage from './app/Pages/People/Technician';
@@ -15,7 +16,7 @@ const App = () => {
       <div className="App">
         <Switch>
           <Route path="/login" component={LoginPage} />
-          <Route path="/signup" />
+          <Route path="/signup" component={SignUpPage} />
           <Route path="/recover" component={RecoverPage} />
           <Route path="/">
             <Header />

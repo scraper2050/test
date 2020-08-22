@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import validator from 'validator';
-import { createStyles, makeStyles, Theme, styled } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Button } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import EmailValidateInput from '../../Components/EmailValidateInput';
+import PasswordInput from '../../Components/PasswordInput';
+import { FormDataModel } from '../../Models/FormData';
 
 import BackImg from '../../../assets/img/bg.png';
 import LogoSvg from '../../../assets/img/Logo.svg';
@@ -24,9 +22,16 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       fontSize: '14px',
-
-      '& .MuiTextField-root': {
-        width: '100%',
+      backgroundImage: `url(${BackImg})`,
+      '& .MuiButton-containedPrimary': {
+        color: '#fff',
+        paddingLeft: '10px',
+        paddingRight: '10px',
+        '& img': {
+          width: '16px',
+          height: '16px',
+          marginRight: '5px',
+        },
       },
     },
     link: {
@@ -39,6 +44,20 @@ const useStyles = makeStyles((theme: Theme) =>
     logoimg: {
       width: '80%',
       margin: '20px auto 30px',
+    },
+    LoginGrid: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#5d9cec',
+    },
+    LoginPaper: {
+      width: '480px',
+      padding: '20px 30px',
+      alignitems: 'stretch',
+      display: 'flex',
+      flexDirection: 'column',
     },
     showpassowrdbtn: {
       position: 'absolute',
@@ -69,15 +88,19 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: '10px',
       },
     },
+    Footer: {
+      flex: '0 0 30px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingLeft: '24px',
+      paddingRight: '24px',
+      color: '#23282c',
+      background: '#f0f3f5',
+      borderTop: '1px solid #e9edf0',
+    },
   })
 );
-
-interface FormDataModel {
-  value: any;
-  validate: boolean;
-  errorMsg: string;
-  showPassword?: boolean;
-}
 
 const LoginPage = (): JSX.Element => {
   const classes = useStyles();
@@ -98,43 +121,6 @@ const LoginPage = (): JSX.Element => {
 
   const [remember, setRemeber] = useState(false);
 
-  const handleChangeEmail = (e: any) => {
-    let emailData = {
-      value: e.target.value,
-      validate: true,
-      errorMsg: '',
-    };
-
-    if (e.target.value.lenth === 0) {
-      emailData.validate = false;
-      emailData.errorMsg = 'This filed required';
-    }
-
-    if (validator.isEmail(emailData.value)) {
-      emailData.validate = true;
-      emailData.errorMsg = '';
-    } else {
-      emailData.validate = false;
-      emailData.errorMsg = 'This field must be a valid email address';
-    }
-    setFormData({
-      ...formData,
-      email: { ...emailData },
-    });
-  };
-
-  const handleChangePassword = (e: any) => {
-    setFormData({
-      ...formData,
-      password: {
-        value: e.target.value,
-        validate: e.target.value.length > 0 ? true : false,
-        errorMsg: e.target.value.length > 0 ? '' : 'Thie filed is required',
-        showPassword: formData.password.showPassword,
-      },
-    });
-  };
-
   const checkValidate = (): boolean => {
     let formDataTemp = { ...formData };
     let isValidate = true;
@@ -145,6 +131,7 @@ const LoginPage = (): JSX.Element => {
         formDataTemp[item].errorMsg = 'Thif field is required';
         isValidate = false;
       }
+      if (!dataValue.validate) isValidate = false;
     });
 
     if (!isValidate)
@@ -159,56 +146,45 @@ const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <div className={classes.root} style={{ backgroundImage: `url(${BackImg})` }}>
+    <div className={classes.root}>
       <Grid container style={{ flex: '1 1 100%' }}>
         <Grid item md={6}></Grid>
-        <LoginGrid item md={6}>
-          <LoginPaper>
+        <Grid item md={6} className={classes.LoginGrid}>
+          <Paper className={classes.LoginPaper}>
             <img className={classes.logoimg} src={LogoSvg} alt="logo" />
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <TextField
+                <EmailValidateInput
                   id="email"
                   label="Email"
-                  type="email"
                   variant="outlined"
                   size="small"
-                  value={formData.email.value}
-                  onChange={handleChangeEmail}
-                  error={!formData.email.validate}
-                  helperText={formData.email.errorMsg}
-                />
-              </Grid>
-              <Grid item xs={12} style={{ position: 'relative' }}>
-                <TextField
-                  id="password"
-                  label="Password"
-                  type={formData.password.showPassword ? 'text' : 'password'}
-                  variant="outlined"
-                  size="small"
-                  value={formData.password.value}
-                  onChange={handleChangePassword}
-                  error={!formData.password.validate}
-                  helperText={formData.password.errorMsg}
-                />
-                <IconButton
-                  className={classes.showpassowrdbtn}
-                  aria-label="toggle password visibility"
-                  onClick={(e): void => {
+                  inputData={formData.email}
+                  onChange={(emailData: FormDataModel) => {
                     setFormData({
                       ...formData,
-                      password: {
-                        ...formData.password,
-                        showPassword: !formData.password.showPassword,
+                      email: {
+                        ...emailData,
                       },
                     });
                   }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
+                />
+              </Grid>
+              <Grid item xs={12} style={{ position: 'relative' }}>
+                <PasswordInput
+                  id="login-password"
+                  label="Password"
+                  size="small"
+                  inputData={formData.password}
+                  onChange={(passwordValue: FormDataModel) => {
+                    setFormData({
+                      ...formData,
+                      password: {
+                        ...passwordValue,
+                      },
+                    });
                   }}
-                >
-                  {formData.password.showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
+                />
               </Grid>
             </Grid>
             <div className={classes.forgetremember}>
@@ -231,21 +207,28 @@ const LoginPage = (): JSX.Element => {
             </div>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <StyledButton variant="contained" color="primary" size="large" type="button" onClick={handleClickLogin}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  type="button"
+                  onClick={handleClickLogin}
+                >
                   Login
-                </StyledButton>
+                </Button>
               </Grid>
               <Grid item md={6} xs={12}>
-                <StyledButton variant="contained" color="primary" size="large">
+                <Button fullWidth variant="contained" color="primary" size="large">
                   <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="google" />
                   Login with Google
-                </StyledButton>
+                </Button>
               </Grid>
               <Grid item md={6} xs={12}>
-                <StyledButton variant="contained" color="primary" size="large">
+                <Button fullWidth variant="contained" color="primary" size="large">
                   <img src="https://img.icons8.com/color/48/000000/facebook-circled.png" alt="google" />
                   Login with Facebook
-                </StyledButton>
+                </Button>
               </Grid>
               <Grid item xs={12} className={classes.register}>
                 Don't have an account?{' '}
@@ -254,10 +237,10 @@ const LoginPage = (): JSX.Element => {
                 </Link>
               </Grid>
             </Grid>
-          </LoginPaper>
-        </LoginGrid>
+          </Paper>
+        </Grid>
       </Grid>
-      <Footer>
+      <Grid container className={classes.Footer}>
         <span>
           <Link className={classes.link} to="https://www.blueclerk.com">
             BlueClerk
@@ -270,50 +253,9 @@ const LoginPage = (): JSX.Element => {
             BlueClerk Support
           </a>
         </span>
-      </Footer>
+      </Grid>
     </div>
   );
 };
-
-const LoginGrid = styled(Grid)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: '#5d9cec',
-});
-
-const LoginPaper = styled(Paper)({
-  width: '480px',
-  padding: '20px 30px',
-  alignitems: 'stretch',
-  display: 'flex',
-  flexDirection: 'column',
-});
-
-const StyledButton = styled(Button)({
-  color: '#fff',
-  width: '100%',
-  paddingLeft: '10px',
-  paddingRight: '10px',
-  fontSize: '14px',
-  '& img': {
-    width: '18px',
-    height: '18px',
-    marginRight: '5px',
-  },
-});
-
-const Footer = styled(Grid)({
-  flex: '0 0 30px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  paddingLeft: '24px',
-  paddingRight: '24px',
-  color: '#23282c',
-  background: '#f0f3f5',
-  borderTop: '1px solid #e9edf0',
-});
 
 export default LoginPage;
