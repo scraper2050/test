@@ -35,13 +35,23 @@ export default function PhoneNumberInput({
         errorMsg: 'This field is required',
       });
     else {
-      let strValue = parseFloat(e.target.value.match(/\d+/g).join().replace(/,/g, '')).toString();
-      if (strValue.length > 10) strValue = strValue.substring(0, 10);
-      changeData({
-        value: strValue,
-        validate: strValue.length === 10 ? true : false,
-        errorMsg: strValue.length === 10 ? '' : 'This filed must be a valid phone number address',
-      });
+      debugger;
+      const value = e.target.value.match(/\d+/g);
+      if (!value) {
+        changeData({
+          value: '',
+          validate: false,
+          errorMsg: 'This filed must be a valid phone number address',
+        });
+      } else {
+        let strValue = parseFloat(value.join().replace(/,/g, '')).toString();
+        if (strValue.length > 10) strValue = strValue.substring(0, 10);
+        changeData({
+          value: strValue,
+          validate: strValue.length === 10 ? true : false,
+          errorMsg: strValue.length === 10 ? '' : 'This filed must be a valid phone number address',
+        });
+      }
     }
   };
 

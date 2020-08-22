@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+import Api from '../../../util/Api';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -10,7 +12,6 @@ import { Button } from '@material-ui/core';
 import EmailValidateInput from '../../Components/EmailValidateInput';
 import PasswordInput from '../../Components/PasswordInput';
 import { FormDataModel } from '../../Models/FormData';
-
 import BackImg from '../../../assets/img/bg.png';
 import LogoSvg from '../../../assets/img/Logo.svg';
 
@@ -104,6 +105,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const LoginPage = (): JSX.Element => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     email: {
@@ -143,6 +145,14 @@ const LoginPage = (): JSX.Element => {
 
   const handleClickLogin = (): void => {
     if (!checkValidate()) return;
+    Api.post('/login', { email: formData.email.value, password: formData.password.value })
+      .then((res) => {
+        localStorage.setItem('token', res.data.token);
+        history.push('/dashboard');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

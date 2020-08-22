@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import Api from '../../../util/Api';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -21,6 +22,7 @@ import PhoneNumberInput from '../../Components/PhoneNumberInput';
 import TermsContent from './Components/TermsContent';
 
 import { FormDataModel } from '../../Models/FormData';
+import { IndustryModel } from '../../Models/Industry';
 
 import BackImg from '../../../assets/img/bg.png';
 import Typography from '@material-ui/core/Typography';
@@ -34,10 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       fontSize: '14px',
       backgroundImage: `url(${BackImg})`,
-      '& .MuiCheckbox-root': {
-        paddingTop: 0,
-        paddingBottom: 0,
-      },
       '& .MuiButton-containedPrimary': {
         color: '#fff',
         paddingLeft: '10px',
@@ -133,6 +131,14 @@ const SignUpPage = (): JSX.Element => {
   };
   const classes = useStyles();
 
+  const [industries, setIndustries] = useState<IndustryModel[]>([]);
+  useEffect(() => {
+    Api.post('/getIndustries').then(({ data }) => {
+      console.log(' get industries api res => ', data);
+      setIndustries(data.industries);
+    });
+  }, []);
+
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     firstName: initFormData(),
     lastName: initFormData(),
@@ -142,7 +148,11 @@ const SignUpPage = (): JSX.Element => {
     industry: initFormData(),
     company: initFormData(),
   });
-  const [agreeTerm, setAgreeTerm] = useState(false);
+  const [agreeTerm, setAgreeTerm] = useState({
+    value: false,
+    showModal: false,
+    showError: false,
+  });
 
   const handleChangeText = (e: any, keyStr: string): void => {
     const strValue = e.target.value;
@@ -199,11 +209,20 @@ const SignUpPage = (): JSX.Element => {
       setFormData({
         ...formDataTemp,
       });
+    if (!agreeTerm.value) {
+      setAgreeTerm({
+        ...agreeTerm,
+        showError: true,
+      });
+      isValidate = false;
+    }
     return isValidate;
   };
 
   const handleClickSignUp = () => {
     if (!checkValidate()) return;
+
+    // Api.post()
   };
 
   return (
@@ -301,14 +320,12 @@ const SignUpPage = (): JSX.Element => {
                       value={formData.industry.value}
                       onChange={handleChangeIndustyr}
                     >
-                      <MenuItem value={0}>
+                      <MenuItem value={'0'}>
                         <em style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: '14px' }}>Select a industry</em>
                       </MenuItem>
-                      <MenuItem value={10}>HVAC</MenuItem>
-                      <MenuItem value={20}>Roofing</MenuItem>
-                      <MenuItem value={30}>Construction</MenuItem>
-                      <MenuItem value={40}>Commercial Services</MenuItem>
-                      <MenuItem value={50}>Exercise Equipment</MenuItem>
+                      {industries.map((item) => {
+                        return <MenuItem value={item._id}>{item.title}</MenuItem>;
+                      })}
                     </Select>
                     <FormHelperText>{formData.industry.errorMsg}</FormHelperText>
                   </FormControl>
@@ -327,13 +344,17 @@ const SignUpPage = (): JSX.Element => {
                     helperText={formData.company.errorMsg}
                   />
                 </Grid>
-                <Grid item md={6} style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid item md={6} style={{ display: 'flex', flexDirection: 'column' }}>
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={agreeTerm}
+                        checked={agreeTerm.value}
                         onChange={(e) => {
-                          setAgreeTerm(e.target.checked);
+                          setAgreeTerm({
+                            value: !agreeTerm.value,
+                            showError: false,
+                            showModal: !agreeTerm.value,
+                          });
                         }}
                         name="agree-term"
                         color="primary"
@@ -341,6 +362,11 @@ const SignUpPage = (): JSX.Element => {
                     }
                     label="Agree with terms of use and privacy"
                   />
+                  {agreeTerm.showError && (
+                    <FormHelperText error={true} style={{ marginLeft: '30px' }}>
+                      {'Please check terms of use and privacy'}
+                    </FormHelperText>
+                  )}
                 </Grid>
               </Grid>
             </Box>
@@ -396,8 +422,13 @@ const SignUpPage = (): JSX.Element => {
         </span>
       </Grid>
       <Dialog
-        open={agreeTerm}
-        onClose={() => setAgreeTerm(false)}
+        open={agreeTerm.showModal}
+        onClose={() =>
+          setAgreeTerm({
+            ...agreeTerm,
+            showModal: false,
+          })
+        }
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
