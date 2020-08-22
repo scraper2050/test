@@ -28,14 +28,21 @@ export default function PhoneNumberInput({
   };
 
   const handleChangeValue = (e: any): void => {
-    const value = e.target.value;
-
-    changeData({
-      ...inputData,
-      value: e.target.value,
-      validate: value.length > 0 ? true : false,
-      errorMsg: value.length > 0 ? '' : 'This field is required',
-    });
+    if (!e.target.value || e.target.value.length === 0)
+      changeData({
+        value: '',
+        validate: false,
+        errorMsg: 'This field is required',
+      });
+    else {
+      let strValue = parseFloat(e.target.value.match(/\d+/g).join().replace(/,/g, '')).toString();
+      if (strValue.length > 10) strValue = strValue.substring(0, 10);
+      changeData({
+        value: strValue,
+        validate: strValue.length === 10 ? true : false,
+        errorMsg: strValue.length === 10 ? '' : 'This filed must be a valid phone number address',
+      });
+    }
   };
 
   return (
