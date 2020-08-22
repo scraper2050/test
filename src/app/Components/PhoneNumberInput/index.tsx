@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import { FormDataModel } from '../../Models/FormData';
 
 interface PhonNumberInputProps {
+  id?: string;
   label: string;
   size: 'small' | 'medium';
   variant?: 'outlined' | 'filled';
@@ -13,6 +14,7 @@ interface PhonNumberInputProps {
 }
 
 export default function PhoneNumberInput({
+  id = 'phone_number',
   label,
   size,
   variant = 'outlined',
@@ -26,14 +28,19 @@ export default function PhoneNumberInput({
   };
 
   const handleChangeValue = (e: any): void => {
+    const value = e.target.value;
+
     changeData({
       ...inputData,
       value: e.target.value,
+      validate: value.length > 0 ? true : false,
+      errorMsg: value.length > 0 ? '' : 'This field is required',
     });
   };
 
   return (
     <TextField
+      id={id}
       label={label}
       size={size}
       variant={variant}

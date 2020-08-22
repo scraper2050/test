@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import validator from 'validator';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -11,13 +10,14 @@ import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Button } from '@material-ui/core';
-import EmailValidateInput from '../../Components/EmailValidateInput';
-import PassowrdInput from '../../Components/PasswordInput';
-import PhoneNumberInput from '../../Components/PhoneNumberInput';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import EmailValidateInput from '../../Components/EmailValidateInput';
+import PassowrdInput from '../../Components/PasswordInput';
+import PhoneNumberInput from '../../Components/PhoneNumberInput';
 import TermsContent from './Components/TermsContent';
 
 import { FormDataModel } from '../../Models/FormData';
@@ -159,6 +159,29 @@ const SignUpPage = (): JSX.Element => {
     });
   };
 
+  const handleChangeIndustyr = (e: any) => {
+    const selectedValue = e.target.value;
+    if (selectedValue === 0) {
+      setFormData({
+        ...formData,
+        industry: {
+          value: selectedValue,
+          validate: false,
+          errorMsg: 'This field is required',
+        },
+      });
+    } else {
+      setFormData({
+        ...formData,
+        industry: {
+          value: selectedValue,
+          validate: true,
+          errorMsg: '',
+        },
+      });
+    }
+  };
+
   const checkValidate = (): boolean => {
     let formDataTemp = { ...formData };
     let isValidate = true;
@@ -254,6 +277,7 @@ const SignUpPage = (): JSX.Element => {
                 </Grid>
                 <Grid item md={6}>
                   <PhoneNumberInput
+                    id="phone_number"
                     label="Phone Number"
                     size="small"
                     inputData={formData.phone_number}
@@ -266,7 +290,7 @@ const SignUpPage = (): JSX.Element => {
                   />
                 </Grid>
                 <Grid item md={6}>
-                  <FormControl variant="outlined" fullWidth size="small">
+                  <FormControl variant="outlined" fullWidth size="small" error={!formData.industry.validate}>
                     <InputLabel htmlFor="outlined-age-native-simple">Industry</InputLabel>
                     <Select
                       label="Industry"
@@ -274,9 +298,11 @@ const SignUpPage = (): JSX.Element => {
                         name: 'industry',
                         id: 'outlined-age-native-simple',
                       }}
+                      value={formData.industry.value}
+                      onChange={handleChangeIndustyr}
                     >
                       <MenuItem value={0}>
-                        <em>Select a industry</em>
+                        <em style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: '14px' }}>Select a industry</em>
                       </MenuItem>
                       <MenuItem value={10}>HVAC</MenuItem>
                       <MenuItem value={20}>Roofing</MenuItem>
@@ -284,6 +310,7 @@ const SignUpPage = (): JSX.Element => {
                       <MenuItem value={40}>Commercial Services</MenuItem>
                       <MenuItem value={50}>Exercise Equipment</MenuItem>
                     </Select>
+                    <FormHelperText>{formData.industry.errorMsg}</FormHelperText>
                   </FormControl>
                 </Grid>
                 <Grid item md={6}>

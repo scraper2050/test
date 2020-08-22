@@ -29,18 +29,19 @@ const EmailValidateInput = ({
       errorMsg: '',
     };
 
-    if (e.target.value.lenth === 0) {
+    if (e.target.value.length === 0) {
       emailData.validate = false;
       emailData.errorMsg = 'This filed required';
+    } else {
+      if (validator.isEmail(emailData.value)) {
+        emailData.validate = true;
+        emailData.errorMsg = '';
+      } else {
+        emailData.validate = false;
+        emailData.errorMsg = 'This field must be a valid email address';
+      }
     }
 
-    if (validator.isEmail(emailData.value)) {
-      emailData.validate = true;
-      emailData.errorMsg = '';
-    } else {
-      emailData.validate = false;
-      emailData.errorMsg = 'This field must be a valid email address';
-    }
     onChange({
       ...emailData,
     });
