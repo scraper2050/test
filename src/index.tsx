@@ -12,13 +12,6 @@ import * as CONSTANTS from './contants';
 import * as serviceWorker from './serviceWorker';
 
 const THEME = createMuiTheme({
-  typography: {
-    fontFamily: `"Gothic A1", sans-serif`,
-    fontSize: 14,
-    fontWeightLight: 400,
-    fontWeightRegular: 500,
-    fontWeightMedium: 600,
-  },
   palette: {
     primary: {
       main: CONSTANTS.PRIMARY_BLUE,

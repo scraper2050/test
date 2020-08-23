@@ -35,7 +35,6 @@ export default function PhoneNumberInput({
         errorMsg: 'This field is required',
       });
     else {
-      debugger;
       const value = e.target.value.match(/\d+/g);
       if (!value) {
         changeData({

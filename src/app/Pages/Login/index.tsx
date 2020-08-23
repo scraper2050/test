@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-import Api from '../../../util/Api';
+import Api, { setToken } from '../../../util/Api';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -12,8 +11,16 @@ import { Button } from '@material-ui/core';
 import EmailValidateInput from '../../Components/EmailValidateInput';
 import PasswordInput from '../../Components/PasswordInput';
 import { FormDataModel } from '../../Models/FormData';
+import Spinner from '../../Components/Spinner';
+import SocialButton from '../../Components/SocialButton';
+
 import BackImg from '../../../assets/img/bg.png';
 import LogoSvg from '../../../assets/img/Logo.svg';
+
+import Config from '../../../Config';
+
+const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
+const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     link: {
-      color: '#5d9cec',
+      color: '#00aaff',
       textDecoration: 'none',
       '&:hover': {
         textDecoration: 'underline',
@@ -46,19 +53,34 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '80%',
       margin: '20px auto 30px',
     },
+    LeftSection: {
+      ['@media(max-width: 1280px)']: {
+        display: 'none',
+      },
+    },
     LoginGrid: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       background: '#5d9cec',
+      '@media(max-width: 1280px)': {
+        width: '100%',
+        flex: '1 1 100%',
+        maxWidth: '100%',
+      },
     },
     LoginPaper: {
-      width: '480px',
+      maxWidth: '480px',
       padding: '20px 30px',
       alignitems: 'stretch',
       display: 'flex',
       flexDirection: 'column',
+      margin: theme.spacing(4),
+
+      '@media(max-width: 479px)': {
+        margin: theme.spacing(1),
+      },
     },
     showpassowrdbtn: {
       position: 'absolute',
@@ -94,11 +116,15 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingLeft: '24px',
-      paddingRight: '24px',
       color: '#23282c',
       background: '#f0f3f5',
       borderTop: '1px solid #e9edf0',
+      paddingLeft: theme.spacing(4),
+      paddingRight: theme.spacing(4),
+      '@media(max-width: 479px)': {
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1),
+      },
     },
   })
 );
@@ -107,6 +133,7 @@ const LoginPage = (): JSX.Element => {
   const classes = useStyles();
   const history = useHistory();
 
+  const [isLoading, setLoading] = useState(false);
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     email: {
       value: '',
@@ -145,21 +172,31 @@ const LoginPage = (): JSX.Element => {
 
   const handleClickLogin = (): void => {
     if (!checkValidate()) return;
+    setLoading(true);
     Api.post('/login', { email: formData.email.value, password: formData.password.value })
       .then((res) => {
-        localStorage.setItem('token', res.data.token);
+        setToken(res.data.token);
         history.push('/dashboard');
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
+  };
+
+  const handleSocialLogin = (user: any, connectorType: number): void => {};
+
+  const handleSocialLoginFailure = (err: any, connectorType: number): void => {
+    console.log(`${connectorType} login error`);
+    console.log(err);
   };
 
   return (
     <div className={classes.root}>
       <Grid container style={{ flex: '1 1 100%' }}>
-        <Grid item md={6}></Grid>
-        <Grid item md={6} className={classes.LoginGrid}>
+        <Grid className={classes.LeftSection} item md={6}></Grid>
+        <Grid className={classes.LoginGrid} item md={6}>
           <Paper className={classes.LoginPaper}>
             <img className={classes.logoimg} src={LogoSvg} alt="logo" />
             <Grid container spacing={3}>
@@ -229,16 +266,34 @@ const LoginPage = (): JSX.Element => {
                 </Button>
               </Grid>
               <Grid item md={6} xs={12}>
-                <Button fullWidth variant="contained" color="primary" size="large">
+                <SocialButton
+                  provider="google"
+                  appId={Config.GOOGLE_APP_ID}
+                  onLoginSuccess={(user): void => {
+                    handleSocialLogin(user, SOCIAL_GOOGLE_CONNECT_TYPE);
+                  }}
+                  onLoginFailure={(err): void => {
+                    handleSocialLoginFailure(err, SOCIAL_GOOGLE_CONNECT_TYPE);
+                  }}
+                >
                   <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="google" />
                   Login with Google
-                </Button>
+                </SocialButton>
               </Grid>
               <Grid item md={6} xs={12}>
-                <Button fullWidth variant="contained" color="primary" size="large">
+                <SocialButton
+                  provider="facebook"
+                  appId={Config.FACEBOOK_APP_ID}
+                  onLoginSuccess={(user): void => {
+                    handleSocialLogin(user, SOCIAL_FACEBOOK_CONNECT_TYPE);
+                  }}
+                  onLoginFailure={(err): void => {
+                    handleSocialLoginFailure(err, SOCIAL_FACEBOOK_CONNECT_TYPE);
+                  }}
+                >
                   <img src="https://img.icons8.com/color/48/000000/facebook-circled.png" alt="google" />
                   Login with Facebook
-                </Button>
+                </SocialButton>
               </Grid>
               <Grid item xs={12} className={classes.register}>
                 Don't have an account?{' '}
@@ -264,6 +319,7 @@ const LoginPage = (): JSX.Element => {
           </a>
         </span>
       </Grid>
+      {isLoading && <Spinner />}
     </div>
   );
 };

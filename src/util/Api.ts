@@ -8,3 +8,7 @@ export default Axios.create({
     Authorization: localStorage.getItem('token'),
   },
 });
+
+export const setToken = (token: string): void => {
+  localStorage.setItem('token', token);
+};

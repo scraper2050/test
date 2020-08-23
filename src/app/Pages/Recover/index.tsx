@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
     formPaper: {
       width: '350px',
       padding: '40px 25px 25px',
+      margin: theme.spacing(1),
     },
     Logo: {
       width: '60%',

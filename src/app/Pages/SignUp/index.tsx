@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-import Api from '../../../util/Api';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Button } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
@@ -20,12 +18,19 @@ import EmailValidateInput from '../../Components/EmailValidateInput';
 import PassowrdInput from '../../Components/PasswordInput';
 import PhoneNumberInput from '../../Components/PhoneNumberInput';
 import TermsContent from './Components/TermsContent';
-
+import Spinner from '../../Components/Spinner';
+import SocialButton from '../../Components/SocialButton';
+import Api, { setToken } from '../../../util/Api';
 import { FormDataModel } from '../../Models/FormData';
 import { IndustryModel } from '../../Models/Industry';
 
 import BackImg from '../../../assets/img/bg.png';
 import Typography from '@material-ui/core/Typography';
+
+import Config from '../../../Config';
+
+const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
+const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -53,10 +58,29 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       background: '#5d9cec',
+      '@media(max-width: 1280px)': {
+        width: '100%',
+        flex: '1 1 100%',
+        maxWidth: '100%',
+      },
     },
     SignUpPaper: {
-      width: '768px',
+      maxWidth: '768px',
       overflow: 'hidden',
+      margin: theme.spacing(4),
+      '@media(max-width: 479px)': {
+        margin: theme.spacing(1),
+      },
+    },
+    Title: {
+      '@media(max-width: 540px)': {
+        fontSize: '2rem',
+      },
+    },
+    LeftSection: {
+      ['@media(max-width: 1280px)']: {
+        display: 'none',
+      },
     },
     ControlFormBox: {
       padding: '40px 20px 20px 20px',
@@ -73,7 +97,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(4),
     },
     link: {
-      color: '#5d9cec',
+      color: '#00aaff',
       textDecoration: 'none',
       '&:hover': {
         textDecoration: 'underline',
@@ -82,6 +106,18 @@ const useStyles = makeStyles((theme: Theme) =>
     logoimg: {
       width: '80%',
       margin: '20px auto 30px',
+    },
+    AgreeTermDiv: {
+      display: 'flex',
+      alignItems: 'center',
+      height: '100%',
+      '& span': {
+        cursor: 'pointer',
+        color: '#00aaff',
+        '&:hover': {
+          textDecoration: 'underline',
+        },
+      },
     },
     showpassowrdbtn: {
       position: 'absolute',
@@ -116,22 +152,29 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingLeft: '24px',
-      paddingRight: '24px',
       color: '#23282c',
       background: '#f0f3f5',
       borderTop: '1px solid #e9edf0',
+      paddingLeft: theme.spacing(4),
+      paddingRight: theme.spacing(4),
+      '@media(max-width: 479px)': {
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1),
+      },
     },
   })
 );
 
 const SignUpPage = (): JSX.Element => {
+  const history = useHistory();
+
   const initFormData = (): FormDataModel => {
     return { value: '', validate: true, errorMsg: '' };
   };
   const classes = useStyles();
-
+  const [isLoading, setLoading] = useState(false);
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
+
   useEffect(() => {
     Api.post('/getIndustries').then(({ data }) => {
       console.log(' get industries api res => ', data);
@@ -169,7 +212,7 @@ const SignUpPage = (): JSX.Element => {
     });
   };
 
-  const handleChangeIndustyr = (e: any) => {
+  const handleChangeIndustry = (e: any) => {
     const selectedValue = e.target.value;
     if (selectedValue === 0) {
       setFormData({
@@ -222,21 +265,66 @@ const SignUpPage = (): JSX.Element => {
   const handleClickSignUp = () => {
     if (!checkValidate()) return;
 
+    setLoading(true);
+
+    Api.post('/signUp', {
+      email: formData.email.value,
+      password: formData.password.value,
+      firstName: formData.firstName.value,
+      lastName: formData.lastName.value,
+      phone: formData.phone_number.value,
+      companyName: formData.company.value,
+      industryId: formData.industry.value,
+    })
+      .then((res) => {
+        setToken(res.data.token);
+        history.push('/dashboard');
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
     // Api.post()
+  };
+
+  const handleClickSocialSignUp = (connectorType: number) => {
+    let socialId = 'facebook Id';
+    if (connectorType === SOCIAL_GOOGLE_CONNECT_TYPE) socialId = 'google id';
+
+    Api.post('/signUpSocial', {
+      email: formData.email.value,
+      password: formData.password.value,
+      firstName: formData.firstName.value,
+      lastName: formData.lastName.value,
+      phone: formData.phone_number.value,
+      companyName: formData.company.value,
+      industryId: formData.industry.value,
+      socialId: socialId,
+      connectorType: connectorType,
+    });
+  };
+
+  const handleSocialLogin = (user: any, connectorType: number): void => {};
+
+  const handleSocialLoginFailure = (err: any, connectorType: number): void => {
+    console.log(`${connectorType} login error`);
+    console.log(err);
   };
 
   return (
     <div className={classes.root}>
       <Grid container style={{ flex: '1 1 100%' }}>
-        <Grid item md={6}></Grid>
-        <Grid item md={6} className={classes.SignUpGrid}>
+        <Grid className={classes.LeftSection} item md={6}></Grid>
+        <Grid className={classes.SignUpGrid} item md={6}>
           <Paper className={classes.SignUpPaper}>
             <Box className={classes.ControlFormBox}>
-              <Typography variant="h3">Create An Account</Typography>
+              <Typography className={classes.Title} variant="h3">
+                Create An Account
+              </Typography>
               <p className={classes.Description}>Please fill in below form to create an account with us</p>
 
               <Grid container spacing={3}>
-                <Grid item md={6}>
+                <Grid item md={6} xs={6}>
                   <TextField
                     id="firstname"
                     label="First Name"
@@ -250,7 +338,7 @@ const SignUpPage = (): JSX.Element => {
                     helperText={formData.firstName.errorMsg}
                   />
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={6} xs={6}>
                   <TextField
                     id="lastName"
                     label="Last Name"
@@ -264,7 +352,7 @@ const SignUpPage = (): JSX.Element => {
                     helperText={formData.lastName.errorMsg}
                   />
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={6} xs={6}>
                   <EmailValidateInput
                     id="email"
                     label="Email"
@@ -279,7 +367,7 @@ const SignUpPage = (): JSX.Element => {
                     }}
                   />
                 </Grid>
-                <Grid item md={6} style={{ position: 'relative' }}>
+                <Grid item md={6} xs={6} style={{ position: 'relative' }}>
                   <PassowrdInput
                     id="password"
                     label="Password"
@@ -294,7 +382,7 @@ const SignUpPage = (): JSX.Element => {
                     }}
                   />
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={6} xs={6}>
                   <PhoneNumberInput
                     id="phone_number"
                     label="Phone Number"
@@ -308,7 +396,7 @@ const SignUpPage = (): JSX.Element => {
                     }}
                   />
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={6} xs={6}>
                   <FormControl variant="outlined" fullWidth size="small" error={!formData.industry.validate}>
                     <InputLabel htmlFor="outlined-age-native-simple">Industry</InputLabel>
                     <Select
@@ -318,19 +406,23 @@ const SignUpPage = (): JSX.Element => {
                         id: 'outlined-age-native-simple',
                       }}
                       value={formData.industry.value}
-                      onChange={handleChangeIndustyr}
+                      onChange={handleChangeIndustry}
                     >
-                      <MenuItem value={'0'}>
+                      <MenuItem value={'0'} key={'-1'}>
                         <em style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: '14px' }}>Select a industry</em>
                       </MenuItem>
                       {industries.map((item) => {
-                        return <MenuItem value={item._id}>{item.title}</MenuItem>;
+                        return (
+                          <MenuItem value={item._id} key={item._id}>
+                            {item.title}
+                          </MenuItem>
+                        );
                       })}
                     </Select>
                     <FormHelperText>{formData.industry.errorMsg}</FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={6} xs={6}>
                   <TextField
                     id="company"
                     label="Company"
@@ -344,24 +436,32 @@ const SignUpPage = (): JSX.Element => {
                     helperText={formData.company.errorMsg}
                   />
                 </Grid>
-                <Grid item md={6} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={agreeTerm.value}
-                        onChange={(e) => {
-                          setAgreeTerm({
-                            value: !agreeTerm.value,
-                            showError: false,
-                            showModal: !agreeTerm.value,
-                          });
-                        }}
-                        name="agree-term"
-                        color="primary"
-                      />
-                    }
-                    label="Agree with terms of use and privacy"
-                  />
+                <Grid item md={6} xs={6} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div className={classes.AgreeTermDiv}>
+                    <Checkbox
+                      checked={agreeTerm.value}
+                      onChange={(e) => {
+                        setAgreeTerm({
+                          ...agreeTerm,
+                          value: !agreeTerm.value,
+                          showError: false,
+                        });
+                      }}
+                      name="agree-term"
+                      color="primary"
+                    />
+                    <span
+                      onClick={() => {
+                        setAgreeTerm({
+                          ...agreeTerm,
+                          showModal: true,
+                        });
+                      }}
+                      role="button"
+                    >
+                      Agree with terms of use and privacy
+                    </span>
+                  </div>
                   {agreeTerm.showError && (
                     <FormHelperText error={true} style={{ marginLeft: '30px' }}>
                       {'Please check terms of use and privacy'}
@@ -372,7 +472,7 @@ const SignUpPage = (): JSX.Element => {
             </Box>
             <Box className={classes.ButtonFormBox}>
               <Grid container spacing={2}>
-                <Grid item md={12}>
+                <Grid item md={12} xs={12}>
                   <Button
                     fullWidth
                     variant="contained"
@@ -385,18 +485,36 @@ const SignUpPage = (): JSX.Element => {
                   </Button>
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <Button fullWidth variant="contained" color="primary" size="large">
+                  <SocialButton
+                    provider="google"
+                    appId={Config.GOOGLE_APP_ID}
+                    onLoginSuccess={(user): void => {
+                      handleSocialLogin(user, SOCIAL_GOOGLE_CONNECT_TYPE);
+                    }}
+                    onLoginFailure={(err): void => {
+                      handleSocialLoginFailure(err, SOCIAL_GOOGLE_CONNECT_TYPE);
+                    }}
+                  >
                     <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="google" />
                     Sign up with Google
-                  </Button>
+                  </SocialButton>
                 </Grid>
                 <Grid item md={6} xs={12}>
-                  <Button fullWidth variant="contained" color="primary" size="large">
+                  <SocialButton
+                    provider="facebook"
+                    appId={Config.FACEBOOK_APP_ID}
+                    onLoginSuccess={(user): void => {
+                      handleSocialLogin(user, SOCIAL_FACEBOOK_CONNECT_TYPE);
+                    }}
+                    onLoginFailure={(err): void => {
+                      handleSocialLoginFailure(err, SOCIAL_FACEBOOK_CONNECT_TYPE);
+                    }}
+                  >
                     <img src="https://img.icons8.com/color/48/000000/facebook-circled.png" alt="google" />
                     Sign up with Facebook
-                  </Button>
+                  </SocialButton>
                 </Grid>
-                <Grid className={classes.login} item md={12}>
+                <Grid className={classes.login} item md={12} xs={12}>
                   Already have an account?
                   <Link className="" to="/login">
                     Login
@@ -434,6 +552,7 @@ const SignUpPage = (): JSX.Element => {
       >
         <TermsContent />
       </Dialog>
+      {isLoading && <Spinner />}
     </div>
   );
 };
