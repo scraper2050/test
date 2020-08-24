@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
@@ -8,92 +8,30 @@ import SwipeableViews from 'react-swipeable-views';
 import SubHeader from '../../../Components/SubHeader';
 import ToolBarSearchInput from '../../../Components/ToolBarSearchInput';
 import PeopleSidebar from '../Components/PeopleSidebar';
-import SearchInput from '../Components/SearchInput';
 import BCTabs from '../../../Components/BCTabs';
-import BCTable from '../../../Components/BCTable';
+import UserTable from '../Components/UserTable';
+import { UserModel } from '../../../Models/User';
 
-import AvatarImg1 from '../../../../assets/img/avatars/1.jpg';
-import AvatarImg2 from '../../../../assets/img/avatars/2.jpg';
-import AvatarImg3 from '../../../../assets/img/avatars/3.jpg';
-import AvatarImg4 from '../../../../assets/img/avatars/4.jpg';
-import AvatarImg5 from '../../../../assets/img/avatars/5.jpg';
-import AvatarImg6 from '../../../../assets/img/avatars/6.jpg';
+import Api from '../../../../util/Api';
 
 const OfficeAdminPage = (): JSX.Element => {
-  const [searchStr, setSearchStr] = useState('');
-  const [headCells, setHeadCells] = useState([
-    {
-      id: 'Name',
-      label: 'Name',
-      sortable: true,
-      width: '20%',
-    },
-    {
-      id: 'Email',
-      label: 'Email',
-      sortable: true,
-      width: '20%',
-    },
-    {
-      id: 'Phone_Number',
-      label: 'Phone Number',
-      sortable: true,
-      width: '20%',
-    },
-    {
-      id: 'View',
-      label: 'View',
-      sortable: false,
-      isImage: true,
-    },
-  ]);
-  const table_data = [
-    {
-      Name: 'Andl siels',
-      Email: 'ee@gmail.com',
-      Phone_Number: '1984-22032-33',
-      View: AvatarImg1,
-    },
-    {
-      Name: 'ssde sienhd',
-      Email: 'ttt@gmail.com',
-      Phone_Number: '1984-22032-35',
-      View: AvatarImg2,
-    },
-    {
-      id: 'phone_number',
-      Name: 'swwed sss',
-      Email: 'uuu@gmail.com',
-      Phone_Number: '1984-22032-36',
-      View: AvatarImg3,
-    },
-    {
-      Name: 'eetss ddd',
-      Email: 'uurd@gmail.com',
-      Phone_Number: '1984-22032-32',
-      View: AvatarImg4,
-    },
-    {
-      Name: 'tteexs sss',
-      Email: 'wwaq@gmail.com',
-      Phone_Number: '1984-22032-31',
-      View: AvatarImg5,
-    },
-    {
-      Name: 'asdf sdf',
-      Email: 'wwaq@gmail.com',
-      Phone_Number: '1984-2321-31',
-      View: AvatarImg6,
-    },
-  ];
-
   const [curTab, setCurTab] = useState(0);
+  const [officeAdminList, setOfficeAdminList] = useState<UserModel[]>([]);
+
+  useEffect(() => {
+    Api.post('/getOfficeAdmins', null)
+      .then((res) => {
+        if (res.data.status === 1) {
+          setOfficeAdminList([...res.data.users]);
+        }
+      })
+      .catch((err) => {
+        console.log('Get Tech error =>', err);
+      });
+  }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
-  };
-  const searchTable = (str: string): void => {
-    console.log('searchTable');
   };
 
   return (
@@ -116,28 +54,7 @@ const OfficeAdminPage = (): JSX.Element => {
           />
           <SwipeableViews index={curTab}>
             <DataContainer id="0" hidden={curTab !== 0}>
-              <Grid container>
-                <Grid item xs={6}>
-                  <SearchInput
-                    style={{ marginBottom: '11px' }}
-                    searchStr={searchStr}
-                    setSearchStr={setSearchStr}
-                    onSearch={(str: string) => searchTable(str)}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container>
-                <Grid item xs={12}>
-                  <BCTable tableData={table_data} headCells={headCells} pagination={true} />
-                </Grid>
-              </Grid>
-            </DataContainer>
-            <DataContainer id="1" hidden={curTab !== 0}>
-              <Grid container>
-                <Grid item xs={12}>
-                  <BCTable tableData={table_data} headCells={headCells} pagination={true} />
-                </Grid>
-              </Grid>
+              <UserTable userList={officeAdminList} />
             </DataContainer>
           </SwipeableViews>
         </PageContainer>

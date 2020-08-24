@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { SnackbarProvider } from 'notistack';
 
 import './scss/index.scss';
 import App from './App';
@@ -23,7 +24,14 @@ ReactDOM.render(
   <React.StrictMode>
     <MuiThemeProvider theme={THEME}>
       <Provider store={store}>
-        <App />
+        <SnackbarProvider
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <App />
+        </SnackbarProvider>
       </Provider>
     </MuiThemeProvider>
   </React.StrictMode>,

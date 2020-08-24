@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import Api, { setToken } from '../../../util/Api';
+import { useSnackbar } from 'notistack';
+
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -132,6 +134,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const LoginPage = (): JSX.Element => {
   const classes = useStyles();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [isLoading, setLoading] = useState(false);
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
@@ -171,6 +174,10 @@ const LoginPage = (): JSX.Element => {
   };
 
   const handleClickLogin = (): void => {
+    // enqueueSnackbar('Test MEssage', {
+    //   variant: 'success',
+    // });
+
     if (!checkValidate()) return;
     setLoading(true);
     Api.post('/login', { email: formData.email.value, password: formData.password.value })
