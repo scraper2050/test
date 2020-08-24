@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 import styled from 'styled-components';
-import SwipeableViews from 'react-swipeable-views';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import SwipeableViews from 'react-swipeable-views';
 
 import SubHeader from '../../../Components/SubHeader';
 import ToolBarSearchInput from '../../../Components/ToolBarSearchInput';
@@ -12,59 +12,86 @@ import SearchInput from '../Components/SearchInput';
 import BCTabs from '../../../Components/BCTabs';
 import BCTable from '../../../Components/BCTable';
 
-const GroupPage = (): JSX.Element => {
-  const [curTab, setCurTab] = useState(0);
-  const [searchStr, setSearchStr] = useState('');
+import AvatarImg1 from '../../../../assets/img/avatars/1.jpg';
+import AvatarImg2 from '../../../../assets/img/avatars/2.jpg';
+import AvatarImg3 from '../../../../assets/img/avatars/3.jpg';
+import AvatarImg4 from '../../../../assets/img/avatars/4.jpg';
+import AvatarImg5 from '../../../../assets/img/avatars/5.jpg';
+import AvatarImg6 from '../../../../assets/img/avatars/6.jpg';
 
+const TechnicianPage = (): JSX.Element => {
+  const [searchStr, setSearchStr] = useState('');
   const [headCells, setHeadCells] = useState([
     {
-      id: 'group_name',
-      label: 'Group Name',
+      id: 'Name',
+      label: 'Name',
       sortable: true,
-      width: '30%',
+      width: '20%',
     },
     {
       id: 'Email',
       label: 'Email',
       sortable: true,
-      width: '70%',
+      width: '20%',
+    },
+    {
+      id: 'Phone_Number',
+      label: 'Phone Number',
+      sortable: true,
+      width: '20%',
+    },
+    {
+      id: 'View',
+      label: 'View',
+      sortable: false,
+      isImage: true,
     },
   ]);
   const table_data = [
     {
-      group_name: 'Name asdfasd1',
-      Email: 'Email isdfk',
+      Name: 'Andl siels',
+      Email: 'ee@gmail.com',
+      Phone_Number: '1984-22032-33',
+      View: AvatarImg1,
     },
     {
-      group_name: 'Name asdfasd1',
-      Email: 'Email wefs',
+      Name: 'ssde sienhd',
+      Email: 'ttt@gmail.com',
+      Phone_Number: '1984-22032-35',
+      View: AvatarImg2,
     },
     {
-      group_name: 'Name asdfasd2',
-      Email: 'Email 463asd',
+      id: 'phone_number',
+      Name: 'swwed sss',
+      Email: 'uuu@gmail.com',
+      Phone_Number: '1984-22032-36',
+      View: AvatarImg3,
     },
     {
-      group_name: 'Name asdfasd1',
-      Email: 'Email isd24fk',
+      Name: 'eetss ddd',
+      Email: 'uurd@gmail.com',
+      Phone_Number: '1984-22032-32',
+      View: AvatarImg4,
     },
     {
-      group_name: 'Name dfasdf',
-      Email: 'Email fbhsdfg',
+      Name: 'tteexs sss',
+      Email: 'wwaq@gmail.com',
+      Phone_Number: '1984-22032-31',
+      View: AvatarImg5,
     },
     {
-      group_name: 'Name 34fgsfg',
-      Email: 'Email dfbxdfg',
-    },
-    {
-      group_name: 'Name asdfw2353',
-      Email: 'Email dfasdf',
+      Name: 'asdf sdf',
+      Email: 'wwaq@gmail.com',
+      Phone_Number: '1984-2321-31',
+      View: AvatarImg6,
     },
   ];
+
+  const [curTab, setCurTab] = useState(0);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
-
   const searchTable = (str: string): void => {
     console.log('searchTable');
   };
@@ -83,7 +110,7 @@ const GroupPage = (): JSX.Element => {
             onChangeTab={handleTabChange}
             indicatorColor="primary"
             tabsData={[
-              { value: 0, label: 'GROUP LIST' },
+              { value: 0, label: 'TECHNICIANS LIST' },
               { value: 1, label: 'RECENT ACTIVITIES' },
             ]}
           />
@@ -105,7 +132,7 @@ const GroupPage = (): JSX.Element => {
                 </Grid>
               </Grid>
             </DataContainer>
-            <DataContainer id="1" hidden={curTab !== 1}>
+            <DataContainer id="1" hidden={curTab !== 0}>
               <Grid container>
                 <Grid item xs={12}>
                   <BCTable tableData={table_data} headCells={headCells} pagination={true} />
@@ -157,4 +184,4 @@ const DataContainer = styled.div`
   margin-top: 12px;
 `;
 
-export default GroupPage;
+export default TechnicianPage;
