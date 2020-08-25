@@ -32,6 +32,7 @@ const StyledTabs = styled(Tabs)`
     line-height: 20px;
     color: #000;
     width: 190px;
+    text-transform: uppercase;
   }
 
   .MuiTabs-indicator {
