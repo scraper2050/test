@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import * as CONSTANTS from '../../../contants';
+import * as CONSTANTS from '../../../constants';
 
 interface SidebarProps {
   children?: React.ReactNode;

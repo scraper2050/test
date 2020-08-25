@@ -8,7 +8,7 @@ import './scss/index.scss';
 import App from './App';
 import store from './store';
 
-import * as CONSTANTS from './contants';
+import * as CONSTANTS from './constants';
 
 import * as serviceWorker from './serviceWorker';
 

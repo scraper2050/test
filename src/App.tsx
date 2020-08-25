@@ -9,6 +9,7 @@ import GroupPage from './app/Pages/People/Group';
 import TechnicianPage from './app/Pages/People/Technician';
 import ManagerPage from './app/Pages/People/Manager';
 import OfficeAdminPage from './app/Pages/People/OfficeAdmin';
+import CustomersPage from './app/Pages/Customers';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
           <Route path="/recover" component={RecoverPage} />
+          <Route path="/customers" component={CustomersPage} />
           <Route path="/">
             <Header />
             <div className="main-container">

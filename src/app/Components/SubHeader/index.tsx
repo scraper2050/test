@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Toolbar } from '@material-ui/core';
 
-import * as CONSTANTS from '../../../contants';
+import * as CONSTANTS from '../../../constants';
 
 interface SubHeaderProps {
   title: string;
