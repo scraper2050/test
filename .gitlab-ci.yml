@@ -6,6 +6,7 @@ build_production:
   image: node:10.15-alpine
   stage: build
   script:
+    - CI=false
     - yarn install
     - yarn build
   artifacts:
