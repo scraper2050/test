@@ -1,19 +1,14 @@
 import React from "react";
-import {
-  Switch,
-  BrowserRouter as Router,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Header from "./app/Components/Header";
 
 import LoginPage from "./app/Pages/Login";
 import SignUpPage from "./app/Pages/SignUp";
 import RecoverPage from "./app/Pages/Recover";
-import GroupPage from "./app/Pages/People/Group";
-import TechnicianPage from "./app/Pages/People/Technician";
-import ManagerPage from "./app/Pages/People/Manager";
-import OfficeAdminPage from "./app/Pages/People/OfficeAdmin";
+import GroupPage from "./app/Pages/Employees/Group";
+import TechnicianPage from "./app/Pages/Employees/Technician";
+import ManagerPage from "./app/Pages/Employees/Manager";
+import OfficeAdminPage from "./app/Pages/Employees/Office";
 import CustomersPage from "./app/Pages/Customers";
 
 // for dev
@@ -37,16 +32,20 @@ const App = () => {
               <div className="main-container">
                 <Switch>
                   <Route exact path="/employees" component={GroupPage} />
-                  <Route exact path="/employees/group" component={GroupPage} />
+                  <Route exact path="/employees/groups" component={GroupPage} />
                   <Route
                     exact
-                    path="/employees/technician"
+                    path="/employees/technicians"
                     component={TechnicianPage}
                   />
-                  <Route exact path="/people/manager" component={ManagerPage} />
                   <Route
                     exact
-                    path="/employees/officeadmin"
+                    path="/employees/managers"
+                    component={ManagerPage}
+                  />
+                  <Route
+                    exact
+                    path="/employees/office"
                     component={OfficeAdminPage}
                   />
 

@@ -1,44 +1,25 @@
-import React, { useState } from "react";
-import { Link, useLocation, useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
 import styled from "styled-components";
-import { List, ListItem, Grid, Button } from "@material-ui/core";
 import SwipeableViews from "react-swipeable-views";
+import { useLocation, useHistory } from "react-router-dom";
+import { List, ListItem, Grid, Button } from "@material-ui/core";
 
-import * as CONSTANTS from "../../../constants";
+import Api from "../../../../util/Api";
+import BCTabs from "../../../Components/BCTabs";
+import BCTable from "../../../Components/BCTable";
+import Sidebar from "../../../Components/Sidebar";
+import SubHeader from "../../../Components/SubHeader";
+import * as CONSTANTS from "../../../../constants";
+import TableSearchInput from "../../../Components/TableSearchInput";
+import ToolBarSearchInput from "../../../Components/ToolBarSearchInput";
 
-import SubHeader from "../../../app/Components/SubHeader";
-import BCTabs from "../../../app/Components/BCTabs";
-import BCTable from "../../../app/Components/BCTable";
-import Sidebar from "../../../app/Components/Sidebar";
-import TableSearchInput from "../../../app/Components/TableSearchInput";
-import ToolBarSearchInput from "../../../app/Components/ToolBarSearchInput";
-
-const LINK_DATA = [
-  { label: "Customer List", link: "/customers/customer-list" },
-  { label: "New Customer", link: "/customers/new-customer" },
-  { label: "Schedule/Jobs", link: "/customers/schedule" },
-];
+import { GroupModel } from "../../../Models/Group";
 
 const headCells = [
   {
-    id: "name",
-    label: "Name",
-    sortable: true,
-  },
-  {
-    id: "contactName",
-    label: "Contact Name",
-    sortable: true,
-  },
-  {
-    id: "phone",
-    label: "Phone",
-    sortable: true,
-  },
-  {
-    id: "email",
-    label: "Email",
+    id: "groupName",
+    label: "Group Name",
     sortable: true,
   },
 ];
@@ -46,46 +27,63 @@ const headCells = [
 const table_data = [
   {
     id: 0,
-    name: "Shelly Poehler",
-    contactName: "BlueTest",
-    phone: "972816823",
-    email: "Blueclerktest@yopmail.com",
+    groupName: "BlueTest",
   },
 ];
 
-const CustomersPage = () => {
+const LINK_DATA = [
+  { label: "Groups", link: "/employees/groups" },
+  { label: "Technicians", link: "/employees/technicians" },
+  { label: "Managers", link: "/employees/managers" },
+  { label: "Office Admin", link: "/employees/office" },
+];
+
+const GroupPage = (): JSX.Element => {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
   const [searchStr, setSearchStr] = useState("");
-
-  const handleTabChange = (newValue: number) => {
-    setCurTab(newValue);
-  };
+  const [groupList, setGroupList] = useState<GroupModel[]>([]);
 
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
   };
 
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
+  };
+
+  useEffect(() => {
+    Api.post("/getGroups", null)
+      .then((res) => {
+        if (res.data.status === 1) {
+          setGroupList([...res.data.groups]);
+        }
+      })
+      .catch((err) => {
+        console.log(" get industries api res => ", err);
+      });
+  }, []);
+
   return (
     <>
-      <SubHeader title="Customers">
+      <SubHeader title="Employees">
         <ToolBarSearchInput style={{ marginLeft: "auto", width: "321px" }} />
-        <CustomerButton variant="contained">New Customer</CustomerButton>
+        <EmployeeButton variant="contained">New Employee</EmployeeButton>
       </SubHeader>
 
       <MainContainer>
         <Sidebar>
-          <StyledList aria-label="customers sidebar list">
+          <StyledList aria-label="people sidebar list">
             {LINK_DATA.map((item, idx) => {
-              if (item.label === "Customer List")
+              if (item.label === "Groups")
                 return (
                   <StyledListItem
                     key={idx}
                     button
                     selected={
-                      pathName === item.link || pathName === "/customers"
+                      pathName === item.link || pathName === "/employees"
                     }
                     onClick={() => onClickLink(item.link)}
                   >
@@ -113,7 +111,7 @@ const CustomersPage = () => {
             onChangeTab={handleTabChange}
             indicatorColor="primary"
             tabsData={[
-              { value: 0, label: "Customer List" },
+              { value: 0, label: "Group List" },
               { value: 1, label: "Recent Activities" },
             ]}
           />
@@ -151,7 +149,7 @@ const CustomersPage = () => {
   );
 };
 
-const CustomerButton = styled(Button)`
+const EmployeeButton = styled(Button)`
   margin-left: 25px;
   border-radius: 2px;
   width: 192px;
@@ -164,19 +162,6 @@ const CustomerButton = styled(Button)`
   color: ${CONSTANTS.PRIMARY_DARK};
   background-color: ${CONSTANTS.SECONDARY_GREY};
   box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
-`;
-
-const StyledList = styled(List)``;
-
-const StyledListItem = styled(ListItem)`
-  font-size: 16px;
-  line-height: 20px;
-  height: 40px;
-  color: #000;
-  padding-left: 41px;
-  &.Mui-selected {
-    background-color: #c4c4c4;
-  }
 `;
 
 const MainContainer = styled.div`
@@ -204,4 +189,16 @@ const DataContainer = styled.div`
   margin-top: 12px;
 `;
 
-export default CustomersPage;
+const StyledList = styled(List)``;
+
+const StyledListItem = styled(ListItem)`
+  font-size: 16px;
+  line-height: 20px;
+  height: 40px;
+  color: #000;
+  padding-left: 41px;
+  &.Mui-selected {
+    background-color: #c4c4c4;
+  }
+`;
+export default GroupPage;
