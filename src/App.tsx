@@ -1,15 +1,20 @@
-import React from 'react';
-import { Switch, BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import Header from './app/Components/Header';
+import React from "react";
+import {
+  Switch,
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import Header from "./app/Components/Header";
 
-import LoginPage from './app/Pages/Login';
-import SignUpPage from './app/Pages/SignUp';
-import RecoverPage from './app/Pages/Recover';
-import GroupPage from './app/Pages/People/Group';
-import TechnicianPage from './app/Pages/People/Technician';
-import ManagerPage from './app/Pages/People/Manager';
-import OfficeAdminPage from './app/Pages/People/OfficeAdmin';
-import CustomersPage from './app/Pages/Customers';
+import LoginPage from "./app/Pages/Login";
+import SignUpPage from "./app/Pages/SignUp";
+import RecoverPage from "./app/Pages/Recover";
+import GroupPage from "./app/Pages/People/Group";
+import TechnicianPage from "./app/Pages/People/Technician";
+import ManagerPage from "./app/Pages/People/Manager";
+import OfficeAdminPage from "./app/Pages/People/OfficeAdmin";
+import CustomersPage from "./app/Pages/Customers";
 
 // for dev
 import TempPage from "./app/Pages/Customers/ScheduleJobs/tempPage";
@@ -33,14 +38,30 @@ const App = () => {
                 <Switch>
                   <Route exact path="/people" component={GroupPage} />
                   <Route exact path="/people/group" component={GroupPage} />
-                  <Route exact path="/people/technician" component={TechnicianPage} />
+                  <Route
+                    exact
+                    path="/people/technician"
+                    component={TechnicianPage}
+                  />
                   <Route exact path="/people/manager" component={ManagerPage} />
-                  <Route exact path="/people/officeadmin" component={OfficeAdminPage} />
+                  <Route
+                    exact
+                    path="/people/officeadmin"
+                    component={OfficeAdminPage}
+                  />
 
                   <Route exact path="/customers" component={CustomersPage} />
-                  <Route exact path="/customers/customer-list" component={CustomersPage} />
+                  <Route
+                    exact
+                    path="/customers/customer-list"
+                    component={CustomersPage}
+                  />
                   {/* for dev */}
-                  <Route exact path="/customers/schedule" component={TempPage} />
+                  <Route
+                    exact
+                    path="/customers/schedule"
+                    component={TempPage}
+                  />
                 </Switch>
               </div>
             </Route>

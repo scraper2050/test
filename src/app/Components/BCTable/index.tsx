@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import styled from 'styled-components';
-import Paper from '@material-ui/core/Paper';
-import TableContainer from '@material-ui/core/TableContainer';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TablePagination from '@material-ui/core/TablePagination';
+import styled from "styled-components";
+import Paper from "@material-ui/core/Paper";
+import TableContainer from "@material-ui/core/TableContainer";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TablePagination from "@material-ui/core/TablePagination";
 
-import SortableTableHeader from './SortableTableHeader';
+import SortableTableHeader from "./SortableTableHeader";
 
 interface HeadCellModal {
   id: any;
@@ -21,7 +21,7 @@ interface HeadCellModal {
 
 interface OrderByModal {
   id: any;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 interface BCTableProps {
@@ -30,10 +30,14 @@ interface BCTableProps {
   pagination?: boolean;
 }
 
-const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: BCTableProps) => {
+const BCTable: React.FC<BCTableProps> = ({
+  tableData,
+  headCells,
+  pagination,
+}: BCTableProps) => {
   const [orderBy, setOrderBy] = useState({
-    id: '',
-    direction: 'asc',
+    id: "",
+    direction: "asc",
   });
 
   const [page, setPage] = useState(0);
@@ -43,14 +47,14 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
     if (tableData.length > 0) {
       setOrderBy({
         id: Object.keys(tableData[0])[0],
-        direction: 'asc',
+        direction: "asc",
       });
     }
   }, [tableData]);
 
   const updateOrderBy = (orderId: any): void => {
     if (orderId === orderBy.id) {
-      const direction = orderBy.direction === 'asc' ? 'desc' : 'asc';
+      const direction = orderBy.direction === "asc" ? "desc" : "asc";
       setOrderBy({
         ...orderBy,
         direction: direction,
@@ -59,7 +63,7 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
       setOrderBy({
         ...orderBy,
         id: orderId,
-        direction: 'asc',
+        direction: "asc",
       });
     }
   };
@@ -68,10 +72,10 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
     const sortedTable = tableData.sort((a, b) => {
       let firstItem, secondItem;
 
-      if (orderBy.direction === 'asc') {
+      if (orderBy.direction === "asc") {
         firstItem = a[orderBy.id];
         secondItem = b[orderBy.id];
-      } else if (orderBy.direction === 'desc') {
+      } else if (orderBy.direction === "desc") {
         firstItem = b[orderBy.id];
         secondItem = a[orderBy.id];
       }
@@ -85,7 +89,9 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -94,7 +100,12 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
     const sortedTableData = getSortedTableData();
     if (sortedTableData.length > 0) {
       const curPageRows =
-        rowsPerPage > 0 ? sortedTableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : sortedTableData;
+        rowsPerPage > 0
+          ? sortedTableData.slice(
+              page * rowsPerPage,
+              page * rowsPerPage + rowsPerPage
+            )
+          : sortedTableData;
 
       const tableRows: JSX.Element[] = [];
 
@@ -113,11 +124,18 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
     }
   };
 
-  const renderTableCell = (rowData: any, headCell: HeadCellModal): JSX.Element => {
+  const renderTableCell = (
+    rowData: any,
+    headCell: HeadCellModal
+  ): JSX.Element => {
     if (headCell.id in rowData) {
       return (
         <TableCell>
-          {headCell.isImage ? <ProfileImg alt="table-img" src={rowData[headCell.id]} /> : rowData[headCell.id]}
+          {headCell.isImage ? (
+            <ProfileImg alt="table-img" src={rowData[headCell.id]} />
+          ) : (
+            rowData[headCell.id]
+          )}
         </TableCell>
       );
     }
