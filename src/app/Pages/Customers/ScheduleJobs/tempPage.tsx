@@ -50,7 +50,7 @@ const TempPage = ({ loadCustomers }: PropsType) => {
 
   useEffect(() => {
     loadCustomers();
-  });
+  }, []);
 
   return (
     <div
@@ -107,9 +107,7 @@ const TempPage = ({ loadCustomers }: PropsType) => {
   );
 };
 
-interface RootState {}
-
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: {}) => ({
   // blabla: state.blabla,
 });
 

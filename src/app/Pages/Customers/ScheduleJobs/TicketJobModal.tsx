@@ -20,6 +20,9 @@ import {
   intervalToDuration,
 } from "date-fns";
 
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+
 const titles: string[] = ["New Ticket", "New Job", "Job Detail"];
 
 const JOB_DETAIL = 2;
@@ -29,13 +32,13 @@ type OptionType = {
   label: string;
 };
 
-const customers: OptionType[] = [
-  { value: "0", label: "Customer0" },
-  { value: "1", label: "Customer1" },
-  { value: "2", label: "Customer2" },
-  { value: "3", label: "Customer3" },
-  { value: "4", label: "Customer4" },
-];
+// const customers: OptionType[] = [
+//   { value: "0", label: "Customer0" },
+//   { value: "1", label: "Customer1" },
+//   { value: "2", label: "Customer2" },
+//   { value: "3", label: "Customer3" },
+//   { value: "4", label: "Customer4" },
+// ];
 const employeeTypes: OptionType[] = [
   { value: "0", label: "EmployeeType0" },
   { value: "1", label: "EmployeeType1" },
@@ -83,11 +86,20 @@ for (let minutes = 60; minutes < 60 * 6 + 30; minutes += 30) {
   durations.push({ value, label: value });
 }
 
+interface ICustomer {
+  _id: string,
+  profile: {
+    displayName: string,
+  }
+}
+
 interface TicketJobModalProps {
   modal: boolean;
   modalMode: number;
   cancel: (event: React.MouseEvent<any, MouseEvent>) => void;
   submit: (event: React.MouseEvent<any, MouseEvent>) => void;
+
+  customers: Array<ICustomer>;
 }
 
 const TicketJobModal: React.FC<TicketJobModalProps> = ({
@@ -95,6 +107,7 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
   cancel,
   submit,
   modalMode,
+  customers,
 }: TicketJobModalProps) => {
   const [modeState, setModeState] = useState<number>(modalMode);
 
@@ -110,6 +123,7 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
   useEffect(() => {
     modal && setModeState(modalMode);
   }, [modal, modalMode]);
+
   return (
     <div className="modal-wrapper">
       <Dialog open={modal} maxWidth={false}>
@@ -131,8 +145,8 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
                     <em>None</em>
                   </MenuItem>
                   {customers.map((customer) => (
-                    <MenuItem value={customer.value} key={customer.value}>
-                      {customer.label}
+                    <MenuItem value={customer._id} key={customer._id}>
+                      {customer.profile.displayName}
                     </MenuItem>
                   ))}
                 </Select>
@@ -356,4 +370,15 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
   );
 };
 
-export default TicketJobModal;
+const mapStateToProps = (state: {
+  customers: {
+    list: Array<ICustomer>
+  }
+}) => ({
+  customers: state.customers.list,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TicketJobModal);

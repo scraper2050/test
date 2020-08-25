@@ -1,3 +1,3 @@
 export const apiUrls = {
-  getCustomers: "getCustomers"
+  getCustomers: "/getCustomers"
 }

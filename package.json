@@ -21,8 +21,9 @@
     "@types/styled-components": "^5.1.2",
     "@types/validator": "^13.1.0",
     "axios": "^0.20.0",
-    "notistack": "^1.0.0",
     "date-fns": "^2.15.0",
+    "immutable": "^4.0.0-rc.12",
+    "notistack": "^1.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
@@ -63,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "@types/immutable": "^3.8.7",
     "@types/redux-actions": "^2.6.1",
     "@types/redux-saga": "^0.10.5",
     "@types/styled-components": "^5.1.2",
