@@ -1,13 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { SnackbarProvider } from 'notistack';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { SnackbarProvider } from "notistack";
 
 import "./scss/index.scss";
 import App from "./App";
 import store from "./store";
-import * as CONSTANTS from './constants';
+import * as CONSTANTS from "./constants";
 
 import * as serviceWorker from "./serviceWorker";
 
@@ -25,8 +25,8 @@ ReactDOM.render(
       <Provider store={store}>
         <SnackbarProvider
           anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
+            vertical: "top",
+            horizontal: "right",
           }}
         >
           <App />
