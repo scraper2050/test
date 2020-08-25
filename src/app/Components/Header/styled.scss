@@ -7,6 +7,7 @@
   align-items: center;
   height: 77px;
   background-color: #fff;
+
   .bc-top-bar {
     display: flex;
     width: 100%;
@@ -23,8 +24,14 @@
       justify-content: center;
     }
 
+    &__drawer {
+      @media screen and (min-width: 1440px) {
+        display: none;
+      }
+    }
+
     .header-nav {
-      display: flex;
+      display: none;
       flex: 1 1 100%;
       align-items: center;
       justify-content: center;
@@ -32,29 +39,8 @@
       height: 100%;
       padding: 0;
 
-      li.nav-item {
-        flex: 1 1 100%;
-        height: 100%;
+      @media screen and (min-width: 1440px) {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: white;
-        a {
-          display: flex;
-          flex: 1 1 100%;
-          height: 100%;
-          align-items: center;
-          justify-content: center;
-          text-decoration: none;
-          color: $primary-dark;
-          font-size: 16px;
-          line-height: 20px;
-          font-weight: 500;
-        }
-
-        &.active {
-          background-color: $primary-blue;
-        }
       }
     }
 
@@ -89,21 +75,72 @@
       margin-left: 6px;
       padding-left: 40px;
       padding-right: 40px;
+
       .avatar {
         display: flex;
         align-items: center;
+
         img {
           width: 45px;
           height: 45px;
           border-radius: 23px;
           margin-right: 15px;
         }
+
         font-style: normal;
         font-weight: 600;
         font-size: 16px;
         line-height: 20px;
         color: #262a2e;
       }
+    }
+  }
+}
+
+.nav-item {
+  flex: 1 1 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+
+  a {
+    display: flex;
+    flex: 1 1 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: $primary-dark;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+
+  &.active {
+    background-color: $primary-blue;
+  }
+}
+
+.MuiDrawer-paperAnchorLeft {
+  width: $sidebar-width;
+
+  .logo-brand {
+    width: $sidebar-width;
+    height: $sidebar-width / 2;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid $primary-grey;
+  }
+
+  .nav-items {
+    overflow-x: hidden;
+
+    .nav-item {
+      height: 65px;
     }
   }
 }

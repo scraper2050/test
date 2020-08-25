@@ -36,17 +36,17 @@ const App = () => {
               <Header />
               <div className="main-container">
                 <Switch>
-                  <Route exact path="/people" component={GroupPage} />
-                  <Route exact path="/people/group" component={GroupPage} />
+                  <Route exact path="/employees" component={GroupPage} />
+                  <Route exact path="/employees/group" component={GroupPage} />
                   <Route
                     exact
-                    path="/people/technician"
+                    path="/employees/technician"
                     component={TechnicianPage}
                   />
                   <Route exact path="/people/manager" component={ManagerPage} />
                   <Route
                     exact
-                    path="/people/officeadmin"
+                    path="/employees/officeadmin"
                     component={OfficeAdminPage}
                   />
 
