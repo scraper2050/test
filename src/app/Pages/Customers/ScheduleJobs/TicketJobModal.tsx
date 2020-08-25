@@ -92,6 +92,10 @@ interface ICustomer {
     displayName: string,
   }
 }
+interface IJobTypes {
+  _id: string,
+  title: string,
+}
 
 interface TicketJobModalProps {
   modal: boolean;
@@ -100,6 +104,7 @@ interface TicketJobModalProps {
   submit: (event: React.MouseEvent<any, MouseEvent>) => void;
 
   customers: Array<ICustomer>;
+  jobTypes: Array<IJobTypes>;
 }
 
 const TicketJobModal: React.FC<TicketJobModalProps> = ({
@@ -108,6 +113,7 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
   submit,
   modalMode,
   customers,
+  jobTypes,
 }: TicketJobModalProps) => {
   const [modeState, setModeState] = useState<number>(modalMode);
 
@@ -207,8 +213,8 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
                     <em>None</em>
                   </MenuItem>
                   {jobTypes.map((jobType) => (
-                    <MenuItem value={jobType.value} key={jobType.value}>
-                      {jobType.label}
+                    <MenuItem value={jobType._id} key={jobType._id}>
+                      {jobType.title}
                     </MenuItem>
                   ))}
                 </Select>
@@ -373,9 +379,13 @@ const TicketJobModal: React.FC<TicketJobModalProps> = ({
 const mapStateToProps = (state: {
   customers: {
     list: Array<ICustomer>
+  },
+  jobTypes: {
+    list: Array<IJobTypes>
   }
 }) => ({
   customers: state.customers.list,
+  jobTypes: state.jobTypes.list,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
