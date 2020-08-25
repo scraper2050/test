@@ -4,13 +4,12 @@ import { Provider } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { SnackbarProvider } from 'notistack';
 
-import './scss/index.scss';
-import App from './App';
-import store from './store';
-
+import "./scss/index.scss";
+import App from "./App";
+import store from "./store";
 import * as CONSTANTS from './constants';
 
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from "./serviceWorker";
 
 const THEME = createMuiTheme({
   palette: {
@@ -21,7 +20,7 @@ const THEME = createMuiTheme({
 });
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <MuiThemeProvider theme={THEME}>
       <Provider store={store}>
         <SnackbarProvider
@@ -34,8 +33,8 @@ ReactDOM.render(
         </SnackbarProvider>
       </Provider>
     </MuiThemeProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.Fragment>,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change

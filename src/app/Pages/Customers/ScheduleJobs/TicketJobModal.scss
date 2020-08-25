@@ -1,0 +1,121 @@
+.MuiDialog-root {
+  font-family: Gothic A1;
+  .MuiPaper-rounded {
+    border-radius: 10px;
+  }
+  .MuiDialogTitle-root {
+    padding: 14px 23px 0;
+    font-size: 24px;
+    font-family: Gothic A1;
+    color: #00aaff;
+    border: none;
+  }
+  .MuiDialogContent-root::-webkit-scrollbar {
+    width: 6px;
+    height: 8px;
+  }
+  .MuiDialogContent-root::-webkit-scrollbar-track {
+    background: #c4c4c4;
+    border-radius: 3px;
+  }
+  .MuiDialogContent-root::-webkit-scrollbar-thumb {
+    background-color: #434343;
+    border-radius: 3px;
+  }
+  .MuiDialogContent-root {
+    display: flex;
+    padding: 0;
+    max-height: 600px;
+    overflow-y: auto;
+    margin: 0 25px;
+    .modal-col {
+      min-width: 350px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: flex-start;
+    }
+    .required > label:after {
+      margin-left: 3px;
+      content: "*";
+      color: red;
+    }
+    .MuiFormGroup-root {
+      margin-top: 25px;
+      width: 100%;
+      font-size: 16px;
+      .MuiFormLabel-root {
+        font-weight: normal;
+        font-size: 24px;
+        line-height: 30px;
+        color: black;
+        margin-bottom: 6px;
+      }
+      .MuiInputBase-root {
+        width: 233px;
+        &:focus {
+          border: none;
+          outline: none;
+        }
+        .MuiSelect-root:focus {
+          background-color: rgba(0, 0, 0, 0);
+        }
+      }
+      .select {
+        height: 38px;
+      }
+      .calendar-container {
+        width: 300px;
+        overflow: hidden;
+        .MuiPickersCalendarHeader-daysHeader {
+          border-bottom: 2px solid #00AAFF66;
+          padding-bottom: 2px;
+          margin: 0 10px;
+        }
+      }
+      .MuiFormGroup-root {
+        margin-top: 15px;
+        .MuiFormLabel-root {
+          font-size: 16px;
+          line-height: 20px;
+        }
+      }
+    }
+  }
+  .MuiDialogActions-root {
+    padding: 25px 30px;
+    border: none;
+    .MuiButton-root {
+      text-transform: none;
+    }
+    button {
+      font-family: Gothic A1;
+      font-weight: 600;
+      font-size: 16px;
+      border-radius: 30px;
+      margin-left: 12px;
+      color: white;
+      &:focus {
+        outline: none;
+      }
+    }
+    .cancel-button {
+      background-color: #c00707;
+      &:hover {
+        background-color: #a00606;
+      }
+    }
+    .submit-button {
+      background-color: #219653;
+      &:hover {
+        background-color: #1b7a44;
+      }
+    }
+    .generate-job-button {
+      background-color: #00aaff;
+      &:hover {
+        background-color: #0088cc;
+      }
+    }
+  }
+}
