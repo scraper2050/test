@@ -11,7 +11,7 @@ export const getCustomers = async (param:{}) => {
   const response = await fetch(Config.apiBaseURL + apiUrls.getCustomers, {
     method: "POST",
     headers: {
-      "Authorization": <string> localStorage.getItem("token"),
+      "Authorization": localStorage.getItem("token") as string,
       Accept: "application/json",
       "Content-Type": "application/json",
     },
