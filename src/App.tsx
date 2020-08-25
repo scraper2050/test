@@ -27,12 +27,6 @@ const App = () => {
             <Route path="/signup" component={SignUpPage} />
             <Route path="/recover" component={RecoverPage} />
 
-            {/* for dev */}
-            <Route path="/customers/schedule" component={TempPage} />
-
-            <Route exact path="/customers" render={() => <Redirect to="/customers/customer-list" />} />
-            <Route path="/customers/customer-list" component={CustomersPage} />
-
             <Route path="/">
               <Header />
               <div className="main-container">
@@ -42,6 +36,11 @@ const App = () => {
                   <Route exact path="/people/technician" component={TechnicianPage} />
                   <Route exact path="/people/manager" component={ManagerPage} />
                   <Route exact path="/people/officeadmin" component={OfficeAdminPage} />
+
+                  <Route exact path="/customers" component={CustomersPage} />
+                  <Route exact path="/customers/customer-list" component={CustomersPage} />
+                  {/* for dev */}
+                  <Route exact path="/customers/schedule" component={TempPage} />
                 </Switch>
               </div>
             </Route>

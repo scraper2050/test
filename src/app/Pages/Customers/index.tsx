@@ -20,7 +20,7 @@ import ToolBarSearchInput from '../../../app/Components/ToolBarSearchInput';
 const LINK_DATA = [
   { label: 'Customer List', link: '/customers/customer-list' },
   { label: 'New Customer', link: '/customers/new-customer' },
-  { label: 'Schedule/Jobs', link: '/customers/manager' },
+  { label: 'Schedule/Jobs', link: '/customers/schedule' },
 ];
 
 const headCells = [
