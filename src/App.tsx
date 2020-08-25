@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import Header from "./app/Components/Header";
-import TempPage from "./app/Customers/tempPage";
+import TempPage from "./app/Pages/Customers/ScheduleJobs/tempPage";
 
 import LoginPage from "./app/Pages/Login";
 import SignUpPage from "./app/Pages/SignUp";
