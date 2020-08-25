@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
+import { Switch, BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import Header from './app/Components/Header';
 
 import LoginPage from './app/Pages/Login';
@@ -19,7 +19,10 @@ const App = () => {
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
           <Route path="/recover" component={RecoverPage} />
-          <Route path="/customers" component={CustomersPage} />
+
+          <Route exact path="/customers" render={() => <Redirect to="/customers/customer-list" />} />
+          <Route path="/customers/customer-list" component={CustomersPage} />
+
           <Route path="/">
             <Header />
             <div className="main-container">

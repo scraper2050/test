@@ -112,6 +112,7 @@ const BCTable: React.FC<BCTableProps> = ({ tableData, headCells, pagination }: B
       return <TableCell>No Data</TableCell>;
     }
   };
+
   const renderTableCell = (rowData: any, headCell: HeadCellModal): JSX.Element => {
     if (headCell.id in rowData) {
       return (

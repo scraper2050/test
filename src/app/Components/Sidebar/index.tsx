@@ -13,10 +13,10 @@ const Sidebar = ({ children }: SidebarProps): JSX.Element => {
 };
 
 const ComponentContainer = styled.div`
-  flex: 0 0 ${CONSTANTS.SIDEBAR_WIDTH}px;
-  background-color: #fff;
-  transition: all 0.3s ease-in-out;
   margin-left: 0;
+  flex: 0 0 ${CONSTANTS.SIDEBAR_WIDTH}px;
+  background-color: ${CONSTANTS.PRIMARY_WHITE};
+  transition: all 0.3s ease-in-out;
 `;
 
 export default Sidebar;

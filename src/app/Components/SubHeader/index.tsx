@@ -29,8 +29,9 @@ const StyledToolbar = styled(Toolbar)`
   box-sizing: border-box;
 
   .title {
-    color: #fff;
+    color: ${CONSTANTS.PRIMARY_WHITE};
     margin: 0;
+    font-weight: normal;
   }
 `;
 
