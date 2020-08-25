@@ -50,7 +50,7 @@ const TempPage = ({ loadCustomers }: PropsType) => {
 
   useEffect(() => {
     loadCustomers();
-  });
+  }, []);
 
   return (
     <div
