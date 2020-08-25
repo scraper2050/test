@@ -1,0 +1,31 @@
+stages:
+  - build
+  - deploy
+
+build_production:
+  image: node:10.15-alpine
+  stage: build
+  script:
+    - CI=false
+    - yarn install
+    - yarn build
+  artifacts:
+    paths:
+      - build/
+  only:
+    - dev
+    
+deploy_production:
+  image: python:latest
+  stage: deploy
+  script:
+    - pip install awscli
+    - echo "Deploy to Production server"
+    - aws s3 sync build s3://blueclerk-react-app/ --acl=public-read --delete
+    - echo "Invalidate static contents"
+    - aws cloudfront create-invalidation --distribution-id E17AYQHQYHYHNY --paths /*
+  environment:
+    name: staging
+    url: https://blueclerk-frontend-react.deploy.blueclerk.com
+  only:
+    - dev
