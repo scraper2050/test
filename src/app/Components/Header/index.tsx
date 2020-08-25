@@ -94,6 +94,7 @@ const Header = (): JSX.Element => {
                       pathName.indexOf(item.link) === 0 ? "active" : ""
                     }`}
                     tabIndex={0}
+                    onClick={handleDrawerToggle}
                   >
                     <Link to={item.link}>{item.label}</Link>
                     <Divider />

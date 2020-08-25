@@ -140,7 +140,16 @@
     overflow-x: hidden;
 
     .nav-item {
-      height: 65px;
+      height: 40px;
+
+      @media screen and (min-height: 500px) {
+        height: 45px;
+      }
+
+      @media screen and (min-height: 700px) {
+        height: 65px;
+      }
+
     }
   }
 }
