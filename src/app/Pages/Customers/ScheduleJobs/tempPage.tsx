@@ -11,6 +11,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { Action } from "redux-actions";
 import { customersLoad } from "actions/customers";
+import { jobTypesLoad } from "actions/jobTypes";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -41,15 +42,17 @@ const NEW_JOB = 1;
 
 interface PropsType {
   loadCustomers: () => Action<any>;
+  loadJobTypes: () => Action<any>;
 }
 
-const TempPage = ({ loadCustomers }: PropsType) => {
+const TempPage = ({ loadCustomers, loadJobTypes }: PropsType) => {
   const classes = useStyles();
   const [modal, setModal] = useState(false);
   const [modalMode, setModalMode] = useState(NEW_JOB);
 
   useEffect(() => {
     loadCustomers();
+    loadJobTypes();
   }, []);
 
   return (
@@ -113,6 +116,7 @@ const mapStateToProps = (state: {}) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   loadCustomers: () => dispatch(customersLoad.fetch()),
+  loadJobTypes: () => dispatch(jobTypesLoad.fetch()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TempPage);
