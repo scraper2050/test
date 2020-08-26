@@ -58,11 +58,6 @@ const App = () => {
                   />
                   <AuthRoute
                     exact
-                    path="/employees/managers"
-                    Component={ManagerPage}
-                  />
-                  <AuthRoute
-                    exact
                     path="/employees/office"
                     Component={OfficeAdminPage}
                   />

@@ -32,9 +32,9 @@ const table_data = [
 ];
 
 const LINK_DATA = [
-  { label: "Groups", link: "/employees/groups" },
-  { label: "Technicians", link: "/employees/technicians" },
-  { label: "Managers", link: "/employees/managers" },
+  { label: "Groups", link: "/employees/group" },
+  { label: "Technicians", link: "/employees/technician" },
+  { label: "Managers", link: "/employees/manager" },
   { label: "Office Admin", link: "/employees/office" },
 ];
 

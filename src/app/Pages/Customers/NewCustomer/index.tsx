@@ -165,7 +165,7 @@ const NewCustomerPage = () => {
                         <TextField
                           className="TextField"
                           fullWidth
-                          name="company"
+                          name="contact_name"
                           variant="outlined"
                         />
                       </FormGroup>
@@ -197,7 +197,7 @@ const NewCustomerPage = () => {
                         <TextField
                           className="TextField"
                           fullWidth
-                          name="company"
+                          name="street"
                           variant="outlined"
                         />
                       </FormGroup>
@@ -208,7 +208,7 @@ const NewCustomerPage = () => {
                         <TextField
                           className="TextField"
                           fullWidth
-                          name="company"
+                          name="city"
                           variant="outlined"
                         />
                       </FormGroup>
@@ -249,9 +249,8 @@ const NewCustomerPage = () => {
                         <TextField
                           className="TextField"
                           fullWidth
-                          name="company"
+                          name="zip_code"
                           variant="outlined"
-                          type="number"
                         />
                       </FormGroup>
                     </Grid>
