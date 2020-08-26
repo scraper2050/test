@@ -19,20 +19,22 @@ $spinkit-spinner-color: $body-color;
 @import "../scss/vendors/toastr/toastr.scss";
 
 
-body, html {
-  font-family: 'Gothic','A1';
+body,
+html {
+  font-family: 'Gothic', 'A1';
   font-style: normal;
   font-weight: normal;
 }
 
 .app-body {
-    overflow-x: unset;
+  overflow-x: unset;
 }
 
 @media print {
   .breadcrumb {
     display: none !important;
   }
+
   .app-footer {
     display: none !important;
   }
@@ -44,8 +46,8 @@ body, html {
 
 
 
-.sidebar .nav-link  {
-    padding:10px 10px 10px 32px !important;
+.sidebar .nav-link {
+  padding: 10px 10px 10px 32px !important;
 }
 
 body {
@@ -62,15 +64,16 @@ body {
 .button-span-text {
   position: relative;
   margin-left: 16px;
+
   .social-login-logo {
-      width: 16px;
-      height: 16px;
-      left: -18px;
-      background: white;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    left: -18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
@@ -83,6 +86,7 @@ body {
 .admin-element-container {
   display: flex;
   flex-wrap: wrap;
+
   app-admin-card {
     margin-right: 30px;
     margin-bottom: 30px;
@@ -101,31 +105,35 @@ body {
   background: white;
 
   .card-content-custom {
-      position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      .circle-icon-back {
-          border-radius: 50%;
-          width: 48px;
-          height: 48px;
-          margin: auto;
-          text-align: center;
-          position: relative;
-          img {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-          }
-          mat-icon {
-            color: white;
-            font-size: 20px;
-            margin-top: 14px;
-            margin-right: 0px;
-          }
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .circle-icon-back {
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      margin: auto;
+      text-align: center;
+      position: relative;
+
+      img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
+
+      mat-icon {
+        color: white;
+        font-size: 20px;
+        margin-top: 14px;
+        margin-right: 0px;
+      }
+    }
   }
+
   .card-title-text {
     width: 100%;
     text-align: center;
@@ -140,14 +148,17 @@ body {
 
 .admin-card-container:hover {
   background: #ff8c56;
+
   .card-content-custom {
-    .circle-icon-back{
+    .circle-icon-back {
       background: white !important;
+
       mat-icon {
         color: #ff8c56 !important;
       }
     }
   }
+
   .card-title-text {
     color: white !important;
   }
@@ -166,41 +177,50 @@ body {
   z-index: 1050;
 }
 
-.defaultModel .mat-dialog-container{
+.defaultModel .mat-dialog-container {
   overflow: visible;
   border-radius: 10px;
 }
 
-.defaultModel{
-  .cusModel{
-    .mat-placeholder-required{
-      display: none!important;
+.defaultModel {
+  .cusModel {
+    .mat-placeholder-required {
+      display: none !important;
     }
   }
 }
-.sidebar .nav-link .nav-icon{
+
+.sidebar .nav-link .nav-icon {
   font-size: 1.4rem;
   margin: 0 1.5rem 0 0;
 }
-.owl-dt-inline-container, .owl-dt-popup-container{
+
+.owl-dt-inline-container,
+.owl-dt-popup-container {
   width: 26.5em;
   box-shadow: none;
 }
-.owl-dt-calendar-table .owl-dt-calendar-header .owl-dt-calendar-table-divider:after{
+
+.owl-dt-calendar-table .owl-dt-calendar-header .owl-dt-calendar-table-divider:after {
   background: #00AAFF;
 }
+
 .owl-dt-calendar-table .owl-dt-calendar-cell-selected {
-  color: rgba(255,255,255,.85);
+  color: rgba(255, 255, 255, .85);
   background-color: #00AAFF;
 }
-.owl-dt-inline-container .owl-dt-calendar, .owl-dt-popup-container .owl-dt-calendar{
+
+.owl-dt-inline-container .owl-dt-calendar,
+.owl-dt-popup-container .owl-dt-calendar {
   height: 27.25em;
 }
-.owl-dt-calendar-table .owl-dt-calendar-cell-content{
+
+.owl-dt-calendar-table .owl-dt-calendar-cell-content {
   font-size: 1.3em;
   font-weight: 600;
 }
-.owl-dt-control .owl-dt-control-content{
+
+.owl-dt-control .owl-dt-control-content {
   font-size: 1.3em;
 }
 
@@ -213,26 +233,33 @@ body {
   font-size: 13px;
   color: #000000;
 }
+
 .owl-dt-timer-hour12 .owl-dt-timer-hour12-box:hover .owl-dt-control-button-content {
-  background: rgb(20, 156, 230)!important;;
+  background: rgb(20, 156, 230) !important;
+  ;
   color: #fff
 }
-.individualProfile .mat-ink-bar{
-  background-color:  rgb(20, 156, 230)!important;
+
+.individualProfile .mat-ink-bar {
+  background-color: rgb(20, 156, 230) !important;
 }
-.individualProfile .mat-tab-label-active{
-  color:  rgb(20, 156, 230)!important;
-  opacity: 1!important;
+
+.individualProfile .mat-tab-label-active {
+  color: rgb(20, 156, 230) !important;
+  opacity: 1 !important;
 }
 
 .cal-month-view .cal-day-badge {
   background-color: #f86c6b;
 }
-.list-template .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar{
+
+.list-template .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: #00AAFF;
 }
+
 .list-template {
-  .mat-tab-label{
+  .mat-tab-label {
     padding: 0 15px;
     min-width: 145px;
   }
@@ -243,7 +270,7 @@ body {
   margin-left: 10px;
 }
 
-.customBtn{
+.customBtn {
   text-align: center;
   padding: 4px 10px;
   background: #00AAFF;
@@ -254,17 +281,20 @@ body {
   font-weight: 500;
   font-size: 14px;
   border: none;
-  &:active{
+
+  &:active {
     outline: none !important;
     color: #000000de !important;
     border: 1px solid #0af !important;
   }
-  &:focus{
+
+  &:focus {
     outline: none !important;
     background: #00AAFF !important;
     color: #fff !important;
     box-shadow: none;
   }
+
   &:hover {
     color: #fff;
     background-color: #00AAFF;
@@ -289,7 +319,7 @@ body {
     display: flex;
     flex-direction: column;
 
-    a{
+    a {
       color: #515253;
     }
   }
@@ -314,7 +344,7 @@ body {
 
 .ng-star-inserted {
   .list-template.ng-star-inserted {
-    .col-md-7.col-sm-7.ng-star-inserted{
+    .col-md-7.col-sm-7.ng-star-inserted {
       max-width: 100%;
       width: 100%;
     }
@@ -329,76 +359,89 @@ body {
   display: none !important;
 }
 
-@media (max-width: 992px){
-  .app-header .navbar-brand{
+@media (max-width: 992px) {
+  .app-header .navbar-brand {
     left: 8%;
     margin-left: 0;
   }
+
   .app-body {
     margin-top: 0;
-    top: 0!important;
+    top: 0 !important;
   }
-  .aside-menu{
-    position: absolute!important;
+
+  .aside-menu {
+    position: absolute !important;
   }
 }
+
 @media (max-width: 1450px) {
-  .d-lg-none:first-of-type{
-    display: block!important;
+  .d-lg-none:first-of-type {
+    display: block !important;
   }
 }
+
 @media (min-width: 1451px) {
-  .d-lg-none, .left-navbar {
-    display: none!important;
+
+  .d-lg-none,
+  .left-navbar {
+    display: none !important;
   }
 }
+
 @media (max-width: 556px) {
-  .app-header .navbar-brand{
+  .app-header .navbar-brand {
     left: 11%;
   }
-  .admin-element-container{
+
+  .admin-element-container {
     width: 100%;
-    app-admin-card{
+
+    app-admin-card {
       margin: auto;
       margin-bottom: 30px;
     }
   }
-  .sidebar .sidebar-nav{
+
+  .sidebar .sidebar-nav {
     font-size: 16px;
     height: 430px;
     max-height: 430px;
   }
 }
+
 @media (max-width: 400px) {
-  .app-header .navbar-brand{
+  .app-header .navbar-brand {
     width: 105px;
     height: 50px;
     margin-top: 0px;
   }
 }
+
 @media (max-width: 320px) {
-  .sidebar .sidebar-nav{
+  .sidebar .sidebar-nav {
     font-size: 16px;
     height: 360px;
     max-height: 360px;
   }
 }
+
 @media (max-width: 767px) {
-  .response-nav{
+  .response-nav {
     margin-left: 0;
   }
 }
 
 .ng-select .ng-select-container {
-    padding: 6px 16px;
-    background: #FFFFFF;
-    border: 1px solid #777777;
-    box-sizing: border-box;
-    border-radius: 2px;
-    // font-family: 'Gothic','A1';
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 17px;
-    color: #383838;
+  padding: 6px 16px;
+  background: #FFFFFF;
+  border: 1px solid #777777;
+  box-sizing: border-box;
+  border-radius: 2px;
+  // font-family: 'Gothic','A1';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 17px;
+  color: #383838;
 }

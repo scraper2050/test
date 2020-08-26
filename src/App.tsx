@@ -10,6 +10,7 @@ import TechnicianPage from "./app/Pages/Employees/Technician";
 import ManagerPage from "./app/Pages/Employees/Manager";
 import OfficeAdminPage from "./app/Pages/Employees/Office";
 import CustomersPage from "./app/Pages/Customers";
+import NewCustomerPage from "./app/Pages/Customers/NewCustomer";
 
 // for dev
 import TempPage from "./app/Pages/Customers/ScheduleJobs/tempPage";
@@ -48,13 +49,18 @@ const App = () => {
                     path="/employees/office"
                     component={OfficeAdminPage}
                   />
-
                   <Route exact path="/customers" component={CustomersPage} />
                   <Route
                     exact
                     path="/customers/customer-list"
                     component={CustomersPage}
                   />
+                  <Route
+                    exact
+                    path="/customers/new-customer"
+                    component={NewCustomerPage}
+                  />
+
                   {/* for dev */}
                   <Route
                     exact
