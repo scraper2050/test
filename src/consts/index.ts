@@ -1,4 +1,5 @@
 export const apiUrls = {
   getCustomers: "/getCustomers",
-  getJobTypes: "/getJobTypes"
+  getJobTypes: "/getJobTypes",
+  login: "/login",
 }

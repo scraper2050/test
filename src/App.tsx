@@ -5,11 +5,14 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
+import AuthRoute from "AuthRoute";
 import Header from "./app/Components/Header";
 
 import LoginPage from "./app/Pages/Login";
 import SignUpPage from "./app/Pages/SignUp";
 import RecoverPage from "./app/Pages/Recover";
+
+import DashboardPage from "./app/Pages/Dashboard";
 import GroupPage from "./app/Pages/People/Group";
 import TechnicianPage from "./app/Pages/People/Technician";
 import ManagerPage from "./app/Pages/People/Manager";
@@ -28,39 +31,40 @@ const App = () => {
       <Router>
         <div className="App">
           <Switch>
-            <Route path="/login" component={LoginPage} />
+            <Route exact path="/" component={LoginPage} />
             <Route path="/signup" component={SignUpPage} />
             <Route path="/recover" component={RecoverPage} />
 
-            <Route path="/">
+            <Route>
               <Header />
               <div className="main-container">
                 <Switch>
-                  <Route exact path="/employees" component={GroupPage} />
-                  <Route exact path="/employees/group" component={GroupPage} />
-                  <Route
+                  <AuthRoute exact path="/dashboard" Component={DashboardPage} />
+                  <AuthRoute exact path="/employees" Component={GroupPage} />
+                  <AuthRoute exact path="/employees/group" Component={GroupPage} />
+                  <AuthRoute
                     exact
                     path="/employees/technician"
-                    component={TechnicianPage}
+                    Component={TechnicianPage}
                   />
-                  <Route exact path="/people/manager" component={ManagerPage} />
-                  <Route
+                  <AuthRoute exact path="/people/manager" Component={ManagerPage} />
+                  <AuthRoute
                     exact
                     path="/employees/officeadmin"
-                    component={OfficeAdminPage}
+                    Component={OfficeAdminPage}
                   />
 
-                  <Route exact path="/customers" component={CustomersPage} />
-                  <Route
+                  <AuthRoute exact path="/customers" Component={CustomersPage} />
+                  <AuthRoute
                     exact
                     path="/customers/customer-list"
-                    component={CustomersPage}
+                    Component={CustomersPage}
                   />
                   {/* for dev */}
-                  <Route
+                  <AuthRoute
                     exact
                     path="/customers/schedule"
-                    component={TempPage}
+                    Component={TempPage}
                   />
                 </Switch>
               </div>

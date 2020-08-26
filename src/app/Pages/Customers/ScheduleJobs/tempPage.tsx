@@ -53,7 +53,7 @@ const TempPage = ({ loadCustomers, loadJobTypes }: PropsType) => {
   useEffect(() => {
     loadCustomers();
     loadJobTypes();
-  }, []);
+  }, [loadCustomers, loadJobTypes]);
 
   return (
     <div
@@ -110,13 +110,13 @@ const TempPage = ({ loadCustomers, loadJobTypes }: PropsType) => {
   );
 };
 
-const mapStateToProps = (state: {}) => ({
-  // blabla: state.blabla,
-});
+// const mapStateToProps = (state: {}) => ({
+//   // blabla: state.blabla,
+// });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   loadCustomers: () => dispatch(customersLoad.fetch()),
   loadJobTypes: () => dispatch(jobTypesLoad.fetch()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TempPage);
+export default connect(null, mapDispatchToProps)(TempPage);

@@ -46,13 +46,6 @@ const employeeTypes: OptionType[] = [
   { value: "3", label: "EmployeeType3" },
   { value: "4", label: "EmployeeType4" },
 ];
-const jobTypes: OptionType[] = [
-  { value: "0", label: "JobType0" },
-  { value: "1", label: "JobType1" },
-  { value: "2", label: "JobType2" },
-  { value: "3", label: "JobType3" },
-  { value: "4", label: "JobType4" },
-];
 const technicians: OptionType[] = [
   { value: "0", label: "Technician0" },
   { value: "1", label: "Technician1" },
