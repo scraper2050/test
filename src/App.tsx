@@ -1,10 +1,13 @@
 import React from "react";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import AuthRoute from "AuthRoute";
 import Header from "./app/Components/Header";
 
 import LoginPage from "./app/Pages/Login";
 import SignUpPage from "./app/Pages/SignUp";
 import RecoverPage from "./app/Pages/Recover";
+
+import DashboardPage from "./app/Pages/Dashboard";
 import GroupPage from "./app/Pages/Employees/Group";
 import TechnicianPage from "./app/Pages/Employees/Technician";
 import ManagerPage from "./app/Pages/Employees/Manager";
@@ -24,48 +27,67 @@ const App = () => {
       <Router>
         <div className="App">
           <Switch>
-            <Route path="/login" component={LoginPage} />
+            <Route exact path="/" component={LoginPage} />
             <Route path="/signup" component={SignUpPage} />
             <Route path="/recover" component={RecoverPage} />
 
-            <Route path="/">
+            <Route>
               <Header />
               <div className="main-container">
                 <Switch>
-                  <Route exact path="/employees" component={GroupPage} />
-                  <Route exact path="/employees/groups" component={GroupPage} />
-                  <Route
+                  <AuthRoute
                     exact
-                    path="/employees/technicians"
-                    component={TechnicianPage}
+                    path="/dashboard"
+                    Component={DashboardPage}
                   />
-                  <Route
+                  <AuthRoute exact path="/employees" Component={GroupPage} />
+                  <AuthRoute
+                    exact
+                    path="/employees/group"
+                    Component={GroupPage}
+                  />
+                  <AuthRoute
+                    exact
+                    path="/employees/technician"
+                    Component={TechnicianPage}
+                  />
+                  <AuthRoute
+                    exact
+                    path="/people/manager"
+                    Component={ManagerPage}
+                  />
+                  <AuthRoute
                     exact
                     path="/employees/managers"
-                    component={ManagerPage}
+                    Component={ManagerPage}
                   />
-                  <Route
+                  <AuthRoute
                     exact
                     path="/employees/office"
-                    component={OfficeAdminPage}
+                    Component={OfficeAdminPage}
                   />
-                  <Route exact path="/customers" component={CustomersPage} />
-                  <Route
+
+                  <AuthRoute
+                    exact
+                    path="/customers"
+                    Component={CustomersPage}
+                  />
+                  <AuthRoute
                     exact
                     path="/customers/customer-list"
-                    component={CustomersPage}
+                    Component={CustomersPage}
                   />
-                  <Route
+                  <AuthRoute
                     exact
                     path="/customers/new-customer"
-                    component={NewCustomerPage}
+                    Component={NewCustomerPage}
                   />
 
                   {/* for dev */}
-                  <Route
+                  <AuthRoute
                     exact
                     path="/customers/schedule"
-                    component={TempPage}
+                    Component={TempPage}
                   />
                 </Switch>
               </div>
