@@ -3,7 +3,6 @@ import {
   Switch,
   BrowserRouter as Router,
   Route,
-  Redirect,
 } from "react-router-dom";
 import AuthRoute from "AuthRoute";
 import Header from "./app/Components/Header";
@@ -13,10 +12,10 @@ import SignUpPage from "./app/Pages/SignUp";
 import RecoverPage from "./app/Pages/Recover";
 
 import DashboardPage from "./app/Pages/Dashboard";
-import GroupPage from "./app/Pages/People/Group";
-import TechnicianPage from "./app/Pages/People/Technician";
-import ManagerPage from "./app/Pages/People/Manager";
-import OfficeAdminPage from "./app/Pages/People/OfficeAdmin";
+import GroupPage from "./app/Pages/Employees/Group";
+import TechnicianPage from "./app/Pages/Employees/Technician";
+import ManagerPage from "./app/Pages/Employees/Manager";
+import OfficeAdminPage from "./app/Pages/Employees/Office";
 import CustomersPage from "./app/Pages/Customers";
 
 // for dev
@@ -50,7 +49,12 @@ const App = () => {
                   <AuthRoute exact path="/people/manager" Component={ManagerPage} />
                   <AuthRoute
                     exact
-                    path="/employees/officeadmin"
+                    path="/employees/managers"
+                    Component={ManagerPage}
+                  />
+                  <AuthRoute
+                    exact
+                    path="/employees/office"
                     Component={OfficeAdminPage}
                   />
 
