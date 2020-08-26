@@ -72,7 +72,9 @@ const CustomersPage = () => {
     <>
       <SubHeader title="Customers">
         <ToolBarSearchInput style={{ marginLeft: "auto", width: "321px" }} />
-        <CustomerButton variant="contained">New Customer</CustomerButton>
+        <CustomerButton variant="contained">
+          <Link to="/customers/new-customer">New Customer</Link>
+        </CustomerButton>
       </SubHeader>
 
       <MainContainer>
@@ -161,9 +163,13 @@ const CustomerButton = styled(Button)`
   justify-content: center;
   font-size: 16px;
   text-transform: initial;
-  color: ${CONSTANTS.PRIMARY_DARK};
   background-color: ${CONSTANTS.SECONDARY_GREY};
   box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
+
+  a {
+    text-decoration: none;
+    color: ${CONSTANTS.PRIMARY_DARK};
+  }
 `;
 
 const StyledList = styled(List)``;

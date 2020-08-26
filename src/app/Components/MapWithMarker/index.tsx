@@ -1,28 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-const defaultMapOptions = {
-  fullscreenControl: false,
-};
+import Config from "../../../Config";
 
 interface MapWithMarkerProps {
   lat: number;
   lang: number;
 }
 
-const MapWithMarker = ({ lat, lang }: MapWithMarkerProps): JSX.Element => {
+const MapWithMarker = ({ lat, lang }: MapWithMarkerProps) => {
+  const [myMap, setMyMap] = useState(null);
+  const [center, setCenter] = useState({ lat: lat, lng: lang });
+
   return (
     <>
-      <LoadScript googleMapsApiKey="AIzaSyAhohptKzKOOndCrj_6R-gIzYUfMQ3Gs-c">
+      <LoadScript googleMapsApiKey={Config.REACT_APP_GOOGLE_KEY}>
         <GoogleMap
           mapContainerStyle={{
             height: "100%",
             width: "100%",
           }}
-          mapContainerClassName="map-with-marker"
-          zoom={8}
-          center={{ lat: lat, lng: lang }}
-          options={defaultMapOptions}
+          zoom={10}
+          center={center}
+          onLoad={(map) => setMyMap(map)}
         >
           <Marker position={{ lat: lat, lng: lang }} />
         </GoogleMap>

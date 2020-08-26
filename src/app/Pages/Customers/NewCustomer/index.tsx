@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { allStates } from "consts";
@@ -76,7 +76,9 @@ const NewCustomerPage = () => {
     <>
       <SubHeader title="Customers">
         <ToolBarSearchInput style={{ marginLeft: "auto", width: "321px" }} />
-        <CustomerButton variant="contained">New Customer</CustomerButton>
+        <CustomerButton variant="contained">
+          <Link to="/customers/new-customer">New Customer</Link>
+        </CustomerButton>
       </SubHeader>
 
       <MainContainer>
@@ -276,7 +278,7 @@ const NewCustomerPage = () => {
                 </Grid>
 
                 <Grid item md={6} xs={12} className={classes.paper}>
-                  <MapWithMarker lat={132.3} lang={23.3} />
+                  <MapWithMarker lat={29.972065} lang={-90.111533} />
                 </Grid>
               </Grid>
             </DataContainer>
@@ -297,9 +299,13 @@ const CustomerButton = styled(Button)`
   justify-content: center;
   font-size: 16px;
   text-transform: initial;
-  color: ${CONSTANTS.PRIMARY_DARK};
   background-color: ${CONSTANTS.SECONDARY_GREY};
   box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
+
+  a {
+    text-decoration: none;
+    color: ${CONSTANTS.PRIMARY_DARK};
+  }
 `;
 
 const StyledList = styled(List)``;
