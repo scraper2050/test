@@ -10,26 +10,26 @@ import {
 } from "redux-saga/effects";
 // import { Action } from "redux-actions";
 
-import { jobTypesLoad } from "actions/jobTypes";
-import { getJobTypes } from "api/jobTypes";
+import { loadJobTypesActions } from "actions/job-types.action";
+import { getJobTypes } from "api/job-types.api";
 
 export function* handleGetJobTypes(action: { payload: any }) {
-  yield put(jobTypesLoad.fetching());
+  yield put(loadJobTypesActions.fetching());
   try {
     const result = yield call(getJobTypes, action.payload);
-    yield put(jobTypesLoad.success(result));
+    yield put(loadJobTypesActions.success(result));
   } catch (error) {
-    yield put(jobTypesLoad.fault(error.toString()));
+    yield put(loadJobTypesActions.fault(error.toString()));
   } finally {
     if (yield cancelled()) {
-      yield put(jobTypesLoad.cancelled());
+      yield put(loadJobTypesActions.cancelled());
     }
   }
 }
 
 export default function* watchJobTypesLoad() {
   while (true) {
-    const fetchAction = yield take(jobTypesLoad.fetch);
+    const fetchAction = yield take(loadJobTypesActions.fetch);
     // const task = yield fork(handleGetJobTypes, fetchAction);
     yield fork(handleGetJobTypes, fetchAction);
   }

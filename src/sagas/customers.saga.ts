@@ -10,26 +10,26 @@ import {
 } from "redux-saga/effects";
 // import { Action } from "redux-actions";
 
-import { customersLoad } from "actions/customers";
-import { getCustomers } from "api/customers";
+import { loadCustomersActions } from "actions/customers.action";
+import { getCustomers } from "api/customers.api";
 
 export function* handleGetCustomers(action: { payload: any }) {
-  yield put(customersLoad.fetching());
+  yield put(loadCustomersActions.fetching());
   try {
     const result = yield call(getCustomers, action.payload);
-    yield put(customersLoad.success(result));
+    yield put(loadCustomersActions.success(result));
   } catch (error) {
-    yield put(customersLoad.fault(error.toString()));
+    yield put(loadCustomersActions.fault(error.toString()));
   } finally {
     if (yield cancelled()) {
-      yield put(customersLoad.cancelled());
+      yield put(loadCustomersActions.cancelled());
     }
   }
 }
 
 export default function* watchCustomersLoad() {
   while (true) {
-    const fetchAction = yield take(customersLoad.fetch);
+    const fetchAction = yield take(loadCustomersActions.fetch);
     // const task = yield fork(handleGetCustomers, fetchAction);
     yield fork(handleGetCustomers, fetchAction);
   }

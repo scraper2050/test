@@ -1,12 +1,12 @@
 import { combineReducers } from "redux";
-import countReducer from "./countReducer";
-import customers from "./customers";
-import jobTypes from "./jobTypes";
-import auth from "./auth";
+import customers from "./customers.reducer";
+import jobTypes from "./job-types.reducer";
+import auth from "./auth.reducer";
+import employees from "./employees.reducer";
 
 export default combineReducers({
-  countReducer,
   customers,
   jobTypes,
-  auth
+  auth,
+  employees
 });

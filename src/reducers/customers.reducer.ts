@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { List, Record } from "immutable";
-import { customersLoad } from "actions/customers";
+import { loadCustomersActions } from "actions/customers.action";
 // import { Action } from "redux";
 
 const initialState = Record({
@@ -14,17 +14,17 @@ const initialState = Record({
 
 export default handleActions(
   {
-    [customersLoad.success.toString()]: (state, action) =>
+    [loadCustomersActions.success.toString()]: (state, action) =>
       state
         .setIn(["list"], List(action.payload))
         .setIn(["getApi", "isLoading"], false)
         .setIn(["getApi", "hasErrored"], false),
 
-    [customersLoad.fetching.toString()]: (state, action) =>
+    [loadCustomersActions.fetching.toString()]: (state, action) =>
       state
         .setIn(["getApi", "isLoading"], true),
 
-    [customersLoad.fault.toString()]: (state, action) =>
+    [loadCustomersActions.fault.toString()]: (state, action) =>
       state
         .setIn(["getApi", "isLoading"], false)
         .setIn(["getApi", "hasErrored"], true)

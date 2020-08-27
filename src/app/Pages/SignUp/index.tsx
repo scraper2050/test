@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Dialog from '@material-ui/core/Dialog';
-import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
-import Checkbox from '@material-ui/core/Checkbox';
-import { Button } from '@material-ui/core';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import EmailValidateInput from '../../Components/EmailValidateInput';
-import PassowrdInput from '../../Components/PasswordInput';
-import PhoneNumberInput from '../../Components/PhoneNumberInput';
-import TermsContent from './Components/TermsContent';
-import Spinner from '../../Components/Spinner';
-import SocialButton from '../../Components/SocialButton';
-import Api, { setToken } from '../../../util/Api';
-import { FormDataModel } from '../../Models/FormData';
-import { IndustryModel } from '../../Models/Industry';
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import Dialog from "@material-ui/core/Dialog";
+import Box from "@material-ui/core/Box";
+import TextField from "@material-ui/core/TextField";
+import Checkbox from "@material-ui/core/Checkbox";
+import { Button } from "@material-ui/core";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import EmailValidateInput from "../../Components/EmailValidateInput";
+import PassowrdInput from "../../Components/PasswordInput";
+import PhoneNumberInput from "../../Components/PhoneNumberInput";
+import TermsContent from "./Components/TermsContent";
+import Spinner from "../../Components/Spinner";
+import SocialButton from "../../Components/SocialButton";
+import Api, { setToken } from "Utils/Api";
+import { FormDataModel } from "../../Models/FormData";
+import { IndustryModel } from "../../Models/Industry";
 
-import BackImg from '../../../assets/img/bg.png';
-import Typography from '@material-ui/core/Typography';
+import BackImg from "../../../assets/img/bg.png";
+import Typography from "@material-ui/core/Typography";
 
-import Config from '../../../Config';
+import Config from "../../../Config";
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -35,129 +35,129 @@ const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      minHeight: '100vh',
-      backgroundSize: 'cover',
-      display: 'flex',
-      flexDirection: 'column',
-      fontSize: '14px',
+      minHeight: "100vh",
+      backgroundSize: "cover",
+      display: "flex",
+      flexDirection: "column",
+      fontSize: "14px",
       backgroundImage: `url(${BackImg})`,
-      '& .MuiButton-containedPrimary': {
-        color: '#fff',
-        paddingLeft: '10px',
-        paddingRight: '10px',
-        '& img': {
-          width: '16px',
-          height: '16px',
-          marginRight: '5px',
+      "& .MuiButton-containedPrimary": {
+        color: "#fff",
+        paddingLeft: "10px",
+        paddingRight: "10px",
+        "& img": {
+          width: "16px",
+          height: "16px",
+          marginRight: "5px",
         },
       },
     },
     SignUpGrid: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#5d9cec',
-      '@media(max-width: 1280px)': {
-        width: '100%',
-        flex: '1 1 100%',
-        maxWidth: '100%',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#5d9cec",
+      "@media(max-width: 1280px)": {
+        width: "100%",
+        flex: "1 1 100%",
+        maxWidth: "100%",
       },
     },
     SignUpPaper: {
-      maxWidth: '768px',
-      overflow: 'hidden',
+      maxWidth: "768px",
+      overflow: "hidden",
       margin: theme.spacing(4),
-      '@media(max-width: 479px)': {
+      "@media(max-width: 479px)": {
         margin: theme.spacing(1),
       },
     },
     Title: {
-      '@media(max-width: 540px)': {
-        fontSize: '2rem',
+      "@media(max-width: 540px)": {
+        fontSize: "2rem",
       },
     },
     LeftSection: {
-      ['@media(max-width: 1280px)']: {
-        display: 'none',
+      ["@media(max-width: 1280px)"]: {
+        display: "none",
       },
     },
     ControlFormBox: {
-      padding: '40px 20px 20px 20px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
+      padding: "40px 20px 20px 20px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
     },
     ButtonFormBox: {
-      borderTop: '1px solid #c8ced3',
-      background: '#f0f3f5',
-      padding: '20px',
+      borderTop: "1px solid #c8ced3",
+      background: "#f0f3f5",
+      padding: "20px",
     },
     Description: {
       marginBottom: theme.spacing(4),
     },
     link: {
-      color: '#00aaff',
-      textDecoration: 'none',
-      '&:hover': {
-        textDecoration: 'underline',
+      color: "#00aaff",
+      textDecoration: "none",
+      "&:hover": {
+        textDecoration: "underline",
       },
     },
     logoimg: {
-      width: '80%',
-      margin: '20px auto 30px',
+      width: "80%",
+      margin: "20px auto 30px",
     },
     AgreeTermDiv: {
-      display: 'flex',
-      alignItems: 'center',
-      height: '100%',
-      '& span': {
-        cursor: 'pointer',
-        color: '#00aaff',
-        '&:hover': {
-          textDecoration: 'underline',
+      display: "flex",
+      alignItems: "center",
+      height: "100%",
+      "& span": {
+        cursor: "pointer",
+        color: "#00aaff",
+        "&:hover": {
+          textDecoration: "underline",
         },
       },
     },
     showpassowrdbtn: {
-      position: 'absolute',
-      padding: '2px',
-      right: '25px',
-      top: '17px',
-      backgroundColor: '#fff',
+      position: "absolute",
+      padding: "2px",
+      right: "25px",
+      top: "17px",
+      backgroundColor: "#fff",
       zIndex: 999,
     },
     forgetremember: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: '10px',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: "10px",
     },
     login: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '40px',
-      '& a': {
-        marginLeft: '10px',
-        textDecoration: 'none',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "40px",
+      "& a": {
+        marginLeft: "10px",
+        textDecoration: "none",
         color: theme.palette.primary.main,
-        '&:hover': {
-          textDecoration: 'underline',
+        "&:hover": {
+          textDecoration: "underline",
         },
       },
     },
     Footer: {
-      flex: '0 0 30px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      color: '#23282c',
-      background: '#f0f3f5',
-      borderTop: '1px solid #e9edf0',
+      flex: "0 0 30px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      color: "#23282c",
+      background: "#f0f3f5",
+      borderTop: "1px solid #e9edf0",
       paddingLeft: theme.spacing(4),
       paddingRight: theme.spacing(4),
-      '@media(max-width: 479px)': {
+      "@media(max-width: 479px)": {
         paddingLeft: theme.spacing(1),
         paddingRight: theme.spacing(1),
       },
@@ -169,15 +169,15 @@ const SignUpPage = (): JSX.Element => {
   const history = useHistory();
 
   const initFormData = (): FormDataModel => {
-    return { value: '', validate: true, errorMsg: '' };
+    return { value: "", validate: true, errorMsg: "" };
   };
   const classes = useStyles();
   const [isLoading, setLoading] = useState(false);
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
 
   useEffect(() => {
-    Api.post('/getIndustries').then(({ data }) => {
-      console.log(' get industries api res => ', data);
+    Api.post("/getIndustries").then(({ data }) => {
+      console.log(" get industries api res => ", data);
       setIndustries(data.industries);
     });
   }, []);
@@ -204,7 +204,7 @@ const SignUpPage = (): JSX.Element => {
     formDataTemp[keyStr] = {
       value: strValue,
       validate: strValue.length > 0 ? true : false,
-      errorMsg: strValue.length > 0 ? '' : 'This field is required',
+      errorMsg: strValue.length > 0 ? "" : "This field is required",
     };
 
     setFormData({
@@ -220,7 +220,7 @@ const SignUpPage = (): JSX.Element => {
         industry: {
           value: selectedValue,
           validate: false,
-          errorMsg: 'This field is required',
+          errorMsg: "This field is required",
         },
       });
     } else {
@@ -229,7 +229,7 @@ const SignUpPage = (): JSX.Element => {
         industry: {
           value: selectedValue,
           validate: true,
-          errorMsg: '',
+          errorMsg: "",
         },
       });
     }
@@ -242,7 +242,7 @@ const SignUpPage = (): JSX.Element => {
       const dataValue = formDataTemp[item];
       if (dataValue.value.length === 0) {
         formDataTemp[item].validate = false;
-        formDataTemp[item].errorMsg = 'Thif field is required';
+        formDataTemp[item].errorMsg = "Thif field is required";
         isValidate = false;
       }
       if (!dataValue.validate) isValidate = false;
@@ -267,7 +267,7 @@ const SignUpPage = (): JSX.Element => {
 
     setLoading(true);
 
-    Api.post('/signUp', {
+    Api.post("/signUp", {
       email: formData.email.value,
       password: formData.password.value,
       firstName: formData.firstName.value,
@@ -278,7 +278,7 @@ const SignUpPage = (): JSX.Element => {
     })
       .then((res) => {
         setToken(res.data.token);
-        history.push('/dashboard');
+        history.push("/dashboard");
         setLoading(false);
       })
       .catch((err) => {
@@ -288,10 +288,10 @@ const SignUpPage = (): JSX.Element => {
   };
 
   const handleClickSocialSignUp = (connectorType: number) => {
-    let socialId = 'facebook Id';
-    if (connectorType === SOCIAL_GOOGLE_CONNECT_TYPE) socialId = 'google id';
+    let socialId = "facebook Id";
+    if (connectorType === SOCIAL_GOOGLE_CONNECT_TYPE) socialId = "google id";
 
-    Api.post('/signUpSocial', {
+    Api.post("/signUpSocial", {
       email: formData.email.value,
       password: formData.password.value,
       firstName: formData.firstName.value,
@@ -313,7 +313,7 @@ const SignUpPage = (): JSX.Element => {
 
   return (
     <div className={classes.root}>
-      <Grid container style={{ flex: '1 1 100%' }}>
+      <Grid container style={{ flex: "1 1 100%" }}>
         <Grid className={classes.LeftSection} item md={6}></Grid>
         <Grid className={classes.SignUpGrid} item md={6}>
           <Paper className={classes.SignUpPaper}>
@@ -321,7 +321,9 @@ const SignUpPage = (): JSX.Element => {
               <Typography className={classes.Title} variant="h3">
                 Create An Account
               </Typography>
-              <p className={classes.Description}>Please fill in below form to create an account with us</p>
+              <p className={classes.Description}>
+                Please fill in below form to create an account with us
+              </p>
 
               <Grid container spacing={3}>
                 <Grid item md={6} xs={6}>
@@ -333,7 +335,7 @@ const SignUpPage = (): JSX.Element => {
                     size="small"
                     fullWidth
                     value={formData.firstName.value}
-                    onChange={(e: any) => handleChangeText(e, 'firstName')}
+                    onChange={(e: any) => handleChangeText(e, "firstName")}
                     error={!formData.firstName.validate}
                     helperText={formData.firstName.errorMsg}
                   />
@@ -347,7 +349,7 @@ const SignUpPage = (): JSX.Element => {
                     size="small"
                     fullWidth
                     value={formData.lastName.value}
-                    onChange={(e: any) => handleChangeText(e, 'lastName')}
+                    onChange={(e: any) => handleChangeText(e, "lastName")}
                     error={!formData.lastName.validate}
                     helperText={formData.lastName.errorMsg}
                   />
@@ -367,7 +369,7 @@ const SignUpPage = (): JSX.Element => {
                     }}
                   />
                 </Grid>
-                <Grid item md={6} xs={6} style={{ position: 'relative' }}>
+                <Grid item md={6} xs={6} style={{ position: "relative" }}>
                   <PassowrdInput
                     id="password"
                     label="Password"
@@ -397,19 +399,33 @@ const SignUpPage = (): JSX.Element => {
                   />
                 </Grid>
                 <Grid item md={6} xs={6}>
-                  <FormControl variant="outlined" fullWidth size="small" error={!formData.industry.validate}>
-                    <InputLabel htmlFor="outlined-age-native-simple">Industry</InputLabel>
+                  <FormControl
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    error={!formData.industry.validate}
+                  >
+                    <InputLabel htmlFor="outlined-age-native-simple">
+                      Industry
+                    </InputLabel>
                     <Select
                       label="Industry"
                       inputProps={{
-                        name: 'industry',
-                        id: 'outlined-age-native-simple',
+                        name: "industry",
+                        id: "outlined-age-native-simple",
                       }}
                       value={formData.industry.value}
                       onChange={handleChangeIndustry}
                     >
-                      <MenuItem value={'0'} key={'-1'}>
-                        <em style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: '14px' }}>Select a industry</em>
+                      <MenuItem value={"0"} key={"-1"}>
+                        <em
+                          style={{
+                            color: "rgba(0, 0, 0, 0.5)",
+                            fontSize: "14px",
+                          }}
+                        >
+                          Select a industry
+                        </em>
                       </MenuItem>
                       {industries.map((item) => {
                         return (
@@ -419,7 +435,9 @@ const SignUpPage = (): JSX.Element => {
                         );
                       })}
                     </Select>
-                    <FormHelperText>{formData.industry.errorMsg}</FormHelperText>
+                    <FormHelperText>
+                      {formData.industry.errorMsg}
+                    </FormHelperText>
                   </FormControl>
                 </Grid>
                 <Grid item md={6} xs={6}>
@@ -431,12 +449,17 @@ const SignUpPage = (): JSX.Element => {
                     size="small"
                     fullWidth
                     value={formData.company.value}
-                    onChange={(e: any) => handleChangeText(e, 'company')}
+                    onChange={(e: any) => handleChangeText(e, "company")}
                     error={!formData.company.validate}
                     helperText={formData.company.errorMsg}
                   />
                 </Grid>
-                <Grid item md={6} xs={6} style={{ display: 'flex', flexDirection: 'column' }}>
+                <Grid
+                  item
+                  md={6}
+                  xs={6}
+                  style={{ display: "flex", flexDirection: "column" }}
+                >
                   <div className={classes.AgreeTermDiv}>
                     <Checkbox
                       checked={agreeTerm.value}
@@ -463,8 +486,8 @@ const SignUpPage = (): JSX.Element => {
                     </span>
                   </div>
                   {agreeTerm.showError && (
-                    <FormHelperText error={true} style={{ marginLeft: '30px' }}>
-                      {'Please check terms of use and privacy'}
+                    <FormHelperText error={true} style={{ marginLeft: "30px" }}>
+                      {"Please check terms of use and privacy"}
                     </FormHelperText>
                   )}
                 </Grid>
@@ -495,7 +518,10 @@ const SignUpPage = (): JSX.Element => {
                       handleSocialLoginFailure(err, SOCIAL_GOOGLE_CONNECT_TYPE);
                     }}
                   >
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="google" />
+                    <img
+                      src="https://img.icons8.com/color/48/000000/google-logo.png"
+                      alt="google"
+                    />
                     Sign up with Google
                   </SocialButton>
                 </Grid>
@@ -507,10 +533,16 @@ const SignUpPage = (): JSX.Element => {
                       handleSocialLogin(user, SOCIAL_FACEBOOK_CONNECT_TYPE);
                     }}
                     onLoginFailure={(err): void => {
-                      handleSocialLoginFailure(err, SOCIAL_FACEBOOK_CONNECT_TYPE);
+                      handleSocialLoginFailure(
+                        err,
+                        SOCIAL_FACEBOOK_CONNECT_TYPE
+                      );
                     }}
                   >
-                    <img src="https://img.icons8.com/color/48/000000/facebook-circled.png" alt="google" />
+                    <img
+                      src="https://img.icons8.com/color/48/000000/facebook-circled.png"
+                      alt="google"
+                    />
                     Sign up with Facebook
                   </SocialButton>
                 </Grid>
@@ -529,7 +561,7 @@ const SignUpPage = (): JSX.Element => {
         <span>
           <Link className={classes.link} to="https://www.blueclerk.com">
             BlueClerk
-          </Link>{' '}
+          </Link>{" "}
           © 2020
         </span>
         <span>Phone:512-846-6035</span>

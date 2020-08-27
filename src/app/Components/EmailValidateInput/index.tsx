@@ -1,24 +1,24 @@
-import React from 'react';
+import React from "react";
 
-import validator from 'validator';
-import TextField from '@material-ui/core/TextField';
+import validator from "validator";
+import TextField from "@material-ui/core/TextField";
 
-import { FormDataModel } from '../../Models/FormData';
+import { FormDataModel } from "../../Models/FormData";
 
 interface EmailValidateInputProps {
   id?: string;
   label?: string;
-  size: 'small' | 'medium';
-  variant?: 'outlined' | 'filled';
+  size: "small" | "medium";
+  variant?: "outlined" | "filled";
   inputData: FormDataModel;
   onChange: Function;
 }
 
 const EmailValidateInput = ({
-  id = 'email',
-  label = 'Email',
-  variant = 'outlined',
-  size = 'small',
+  id = "email",
+  label = "Email",
+  variant = "outlined",
+  size = "small",
   inputData,
   onChange,
 }: EmailValidateInputProps) => {
@@ -26,19 +26,19 @@ const EmailValidateInput = ({
     let emailData = {
       value: e.target.value,
       validate: true,
-      errorMsg: '',
+      errorMsg: "",
     };
 
     if (e.target.value.length === 0) {
       emailData.validate = false;
-      emailData.errorMsg = 'This filed required';
+      emailData.errorMsg = "This filed required";
     } else {
       if (validator.isEmail(emailData.value)) {
         emailData.validate = true;
-        emailData.errorMsg = '';
+        emailData.errorMsg = "";
       } else {
         emailData.validate = false;
-        emailData.errorMsg = 'This field must be a valid email address';
+        emailData.errorMsg = "This field must be a valid email address";
       }
     }
 

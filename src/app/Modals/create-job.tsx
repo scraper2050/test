@@ -12,7 +12,7 @@ import {
   Select,
 } from "@material-ui/core";
 import { Calendar } from "@material-ui/pickers";
-import "./TicketJobModal.scss";
+import "./create-job.scss";
 import {
   addMinutes,
   format,
@@ -32,19 +32,9 @@ type OptionType = {
   label: string;
 };
 
-// const customers: OptionType[] = [
-//   { value: "0", label: "Customer0" },
-//   { value: "1", label: "Customer1" },
-//   { value: "2", label: "Customer2" },
-//   { value: "3", label: "Customer3" },
-//   { value: "4", label: "Customer4" },
-// ];
 const employeeTypes: OptionType[] = [
-  { value: "0", label: "EmployeeType0" },
-  { value: "1", label: "EmployeeType1" },
-  { value: "2", label: "EmployeeType2" },
-  { value: "3", label: "EmployeeType3" },
-  { value: "4", label: "EmployeeType4" },
+  { value: "0", label: "employee" },
+  { value: "1", label: "vendo" },
 ];
 const technicians: OptionType[] = [
   { value: "0", label: "Technician0" },
@@ -90,7 +80,7 @@ interface IJobTypes {
   title: string,
 }
 
-interface TicketJobModalProps {
+interface CreateJobProps {
   modal: boolean;
   modalMode: number;
   cancel: (event: React.MouseEvent<any, MouseEvent>) => void;
@@ -100,14 +90,14 @@ interface TicketJobModalProps {
   jobTypes: Array<IJobTypes>;
 }
 
-const TicketJobModal: React.FC<TicketJobModalProps> = ({
+const CreateJob: React.FC<CreateJobProps> = ({
   modal,
   cancel,
   submit,
   modalMode,
   customers,
   jobTypes,
-}: TicketJobModalProps) => {
+}: CreateJobProps) => {
   const [modeState, setModeState] = useState<number>(modalMode);
 
   const [employeeType, setEmployeeType] = useState("");
@@ -384,4 +374,4 @@ const mapStateToProps = (state: {
 const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TicketJobModal);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateJob);
