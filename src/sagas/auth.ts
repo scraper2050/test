@@ -1,5 +1,5 @@
 import { put, call, take, fork, cancelled, cancel } from "redux-saga/effects";
-import { loginActions, logoutAction } from "actions/auth";
+import { loginActions, logoutAction } from "actions/auth/auth.action";
 import { login } from "api/auth";
 import { ILoingInfo } from "types/auth";
 
