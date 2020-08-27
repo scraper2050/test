@@ -1,14 +1,14 @@
-import { apiUrls } from "consts";
+import { apiUrls } from "Utils/Constants";
 import Config from 'Config';
 
-export const getCustomers = async (param:{}) => {
+export const getJobTypes = async (param:{}) => {
 
   const body = {
     includeActive: "true",
     includeNonActive: "false"
   };
 
-  const response = await fetch(Config.apiBaseURL + apiUrls.getCustomers, {
+  const response = await fetch(Config.apiBaseURL + apiUrls.getJobTypes, {
     method: "POST",
     headers: {
       "Authorization": localStorage.getItem("token") as string,
@@ -20,11 +20,11 @@ export const getCustomers = async (param:{}) => {
 
   const data = await response.json();
 
-  if (response.status >= 400) {
+  if (response.status >= 400 || data.status === 0) {
     throw new Error(
       data.errors ||
       data.message
     );
   }
-  return data.customers;
+  return data.types;
 };

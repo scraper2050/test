@@ -23,8 +23,8 @@ import Config from "../../../Config";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { Action } from "redux-actions";
-import { loginActions, setAuthAction } from "actions/auth/auth.action";
-import { ILoingInfo, IAuthInfo } from "types/auth";
+import { loginActions, setAuthAction } from "actions/auth.action";
+import { ILoingInfo, IAuthInfo } from "app/Models/Auth";
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;

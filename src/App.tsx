@@ -11,9 +11,9 @@ import NewCustomerPage from './app/Pages/Customers/NewCustomer';
 import OfficeAdminPage from './app/Pages/Employees/Office';
 import React from 'react';
 import RecoverPage from './app/Pages/Recover';
+import ScheduleJobsPage from './app/Pages/Customers/schedule-jobs';
 import SignUpPage from './app/Pages/SignUp';
 import TechnicianPage from './app/Pages/Employees/Technician';
-import TempPage from './app/Pages/Customers/ScheduleJobs/tempPage';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
 function App() {
@@ -89,7 +89,7 @@ function App() {
 
                   {/* For dev */}
                   <AuthRoute
-                    Component={TempPage}
+                    Component={ScheduleJobsPage}
                     exact
                     path={'/customers/schedule'}
                   />

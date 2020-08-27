@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { List, Record } from "immutable";
-import { loadCustomersActions } from "actions/customers.action";
+import { loadJobTypesActions } from "actions/job-types.action";
 // import { Action } from "redux";
 
 const initialState = Record({
@@ -14,17 +14,17 @@ const initialState = Record({
 
 export default handleActions(
   {
-    [loadCustomersActions.success.toString()]: (state, action) =>
+    [loadJobTypesActions.success.toString()]: (state, action) =>
       state
         .setIn(["list"], List(action.payload))
         .setIn(["getApi", "isLoading"], false)
         .setIn(["getApi", "hasErrored"], false),
 
-    [loadCustomersActions.fetching.toString()]: (state, action) =>
+    [loadJobTypesActions.fetching.toString()]: (state, action) =>
       state
         .setIn(["getApi", "isLoading"], true),
 
-    [loadCustomersActions.fault.toString()]: (state, action) =>
+    [loadJobTypesActions.fault.toString()]: (state, action) =>
       state
         .setIn(["getApi", "isLoading"], false)
         .setIn(["getApi", "hasErrored"], true)

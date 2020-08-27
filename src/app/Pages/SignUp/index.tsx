@@ -20,7 +20,7 @@ import PhoneNumberInput from "../../Components/PhoneNumberInput";
 import TermsContent from "./Components/TermsContent";
 import Spinner from "../../Components/Spinner";
 import SocialButton from "../../Components/SocialButton";
-import Api, { setToken } from "../../../util/Api";
+import Api, { setToken } from "Utils/Api";
 import { FormDataModel } from "../../Models/FormData";
 import { IndustryModel } from "../../Models/Industry";
 

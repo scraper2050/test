@@ -5,7 +5,7 @@ import SwipeableViews from "react-swipeable-views";
 import { useLocation, useHistory } from "react-router-dom";
 import { List, ListItem, Grid, Button } from "@material-ui/core";
 
-import Api from "../../../../util/Api";
+import Api from "Utils/Api";
 import BCTabs from "../../../Components/BCTabs";
 import BCTable from "../../../Components/BCTable";
 import Sidebar from "../../../Components/Sidebar";
