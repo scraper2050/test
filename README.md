@@ -1,4 +1,74 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What to Follow
+
+### `Structure`
+
+- Components
+  -- folder
+  -- file-kebab-case.tsx
+- Pages
+  -- folder
+  -- file-kebab-case.tsx
+- Actions
+  -- file-kebab-case.action.ts
+- Reducers
+  -- file-kebab-case.reducer.ts
+- Saga
+  -- file-kebab-case.saga.ts
+- Modals
+  -- folder
+  -- file-kebab-case.tsx
+- Models
+  -- Model.ts
+- Assets
+- Utils || Shared Services
+  -- theme.scss
+  -- Constants.ts
+  -- Api.ts
+
+### `Styling`
+
+- Use axios as a dependency for fetching data for an API
+- Make a method or function in Api.ts file and use that method in the component
+
+### `Styling`
+
+- Use JSS for styling (Material UI by default uses JSS)
+
+### `State Management`
+
+- Redux for State Management
+- Redux-Sage as a Middleware
+
+### `Naming`
+
+- Use of kebab-case for file naming
+- Prefix component with page or component name
+- Reducer Naming (name-kebabcase.reducer.ts)
+- Action Naming (name-kebabcase.action.ts)
+- Style Naming (page-or-component.style.ts)
+
+### `Utils`
+
+- Theming would be in one single file (fonts, colors, general items)
+- App constants
+- Api.ts (General implementation as a service for api call, all methods for api endpoints should be declared here)
+
+### `Modals`
+
+- General implementation for modal container as a React Portal
+- Separate folder for all the application Modals
+
+### `Forms`
+
+- Use Formik for forms [https://formik.org/docs/overview]
+
+### `Don't`
+
+- No use of class based component
+- No use of index.tsx (prefix component with page or component name)
+- No use of class based component
+- Don't just add any dependency
+- Don't use Redux-Thunk
 
 ## Available Scripts
 
