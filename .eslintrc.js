@@ -70,7 +70,9 @@ module.exports = {
       {
         "extensions": [
           ".js",
-          ".jsx"
+          ".jsx",
+          '.ts',
+          '.tsx'
         ]
       }
     ],
@@ -221,6 +223,7 @@ module.exports = {
       }
     ],
     "no-undefined": 0,
-    "no-console": 1
+    "no-console": 1,
+    "new-cap": 0
   }
 };

@@ -1,13 +1,12 @@
-import { all } from "redux-saga/effects";
+import { all } from 'redux-saga/effects';
+import authFlow from './auth.saga';
+import customersSaga from './customers.saga';
+import jobTypesSaga from './job.saga';
 
-import customersSaga from "./customers";
-import jobTypesSaga from "./jobTypes";
-import authFlow from "./auth";
-
-export default function* rootSaga() {
+export default function *rootSaga() {
   yield all([
     customersSaga(),
     jobTypesSaga(),
-    authFlow(),
+    authFlow()
   ]);
 }

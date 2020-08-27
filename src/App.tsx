@@ -1,88 +1,97 @@
-import React from "react";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
-import AuthRoute from "AuthRoute";
-import Header from "./app/Components/Header";
+import AuthRoute from 'AuthRoute';
+import CustomersPage from './app/Pages/Customers';
+import DashboardPage from './app/Pages/Dashboard';
+import DateFnsUtils from '@date-io/date-fns';
+import GroupPage from './app/Pages/Employees/Group';
+import Header from './app/Components/Header';
+import LoginPage from './app/Pages/Login';
+import ManagerPage from './app/Pages/Employees/Manager';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import NewCustomerPage from './app/Pages/Customers/NewCustomer';
+import OfficeAdminPage from './app/Pages/Employees/Office';
+import React from 'react';
+import RecoverPage from './app/Pages/Recover';
+import SignUpPage from './app/Pages/SignUp';
+import TechnicianPage from './app/Pages/Employees/Technician';
+import TempPage from './app/Pages/Customers/ScheduleJobs/tempPage';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
-import LoginPage from "./app/Pages/Login";
-import SignUpPage from "./app/Pages/SignUp";
-import RecoverPage from "./app/Pages/Recover";
-
-import DashboardPage from "./app/Pages/Dashboard";
-import GroupPage from "./app/Pages/Employees/Group";
-import TechnicianPage from "./app/Pages/Employees/Technician";
-import ManagerPage from "./app/Pages/Employees/Manager";
-import OfficeAdminPage from "./app/Pages/Employees/Office";
-import CustomersPage from "./app/Pages/Customers";
-import NewCustomerPage from "./app/Pages/Customers/NewCustomer";
-
-// for dev
-import TempPage from "./app/Pages/Customers/ScheduleJobs/tempPage";
-
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-
-const App = () => {
+function App() {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Router>
-        <div className="App">
+        <div className={'App'}>
           <Switch>
-            <Route exact path="/" component={LoginPage} />
-            <Route path="/signup" component={SignUpPage} />
-            <Route path="/recover" component={RecoverPage} />
+            <Route
+              component={LoginPage}
+              exact
+              path={'/'}
+            />
+            <Route
+              component={SignUpPage}
+              path={'/signup'}
+            />
+            <Route
+              component={RecoverPage}
+              path={'/recover'}
+            />
 
             <Route>
               <Header />
-              <div className="main-container">
+              <div className={'main-container'}>
                 <Switch>
                   <AuthRoute
-                    exact
-                    path="/dashboard"
                     Component={DashboardPage}
-                  />
-                  <AuthRoute exact path="/employees" Component={GroupPage} />
-                  <AuthRoute
                     exact
-                    path="/employees/group"
+                    path={'/dashboard'}
+                  />
+                  <AuthRoute
                     Component={GroupPage}
+                    exact
+                    path={'/employees'}
                   />
                   <AuthRoute
+                    Component={GroupPage}
                     exact
-                    path="/employees/technician"
+                    path={'/employees/group'}
+                  />
+                  <AuthRoute
                     Component={TechnicianPage}
+                    exact
+                    path={'/employees/technician'}
                   />
                   <AuthRoute
-                    exact
-                    path="/employees/manager"
                     Component={ManagerPage}
+                    exact
+                    path={'/employees/manager'}
                   />
                   <AuthRoute
-                    exact
-                    path="/employees/office"
                     Component={OfficeAdminPage}
+                    exact
+                    path={'/employees/office'}
                   />
 
                   <AuthRoute
-                    exact
-                    path="/customers"
                     Component={CustomersPage}
+                    exact
+                    path={'/customers'}
                   />
                   <AuthRoute
-                    exact
-                    path="/customers/customer-list"
                     Component={CustomersPage}
+                    exact
+                    path={'/customers/customer-list'}
                   />
                   <AuthRoute
-                    exact
-                    path="/customers/new-customer"
                     Component={NewCustomerPage}
+                    exact
+                    path={'/customers/new-customer'}
                   />
 
-                  {/* for dev */}
+                  {/* For dev */}
                   <AuthRoute
-                    exact
-                    path="/customers/schedule"
                     Component={TempPage}
+                    exact
+                    path={'/customers/schedule'}
                   />
                 </Switch>
               </div>
@@ -92,5 +101,5 @@ const App = () => {
       </Router>
     </MuiPickersUtilsProvider>
   );
-};
+}
 export default App;
