@@ -1,53 +1,52 @@
 import { handleActions } from 'redux-actions';
-import { jobTypesLoad } from 'actions/job/job.action';
+import { loadAllEmployeesActions } from 'actions/employee/employee.action';
 import { List, Record } from 'immutable';
-// Import { Action } from "redux";
 
 const initialState = Record({
-  'getApi': Record({
+  'allEmployees': List([]),
+  'getAllApi': Record({
     'hasErrored': false,
     'isLoading': false,
     'msg': ''
-  })(),
-  'list': List([])
+  })()
 })();
 
 export default handleActions(
   {
-    [jobTypesLoad.success.toString()]: (state, action) =>
+    [loadAllEmployeesActions.success.toString()]: (state, action) =>
       state
         .setIn(
-          ['list'],
+          ['allEmployees'],
           List(action.payload)
         )
         .setIn(
-          ['getApi', 'isLoading'],
+          ['getAllApi', 'isLoading'],
           false
         )
         .setIn(
-          ['getApi', 'hasErrored'],
+          ['getAllApi', 'hasErrored'],
           false
         ),
 
-    [jobTypesLoad.fetching.toString()]: (state, action) =>
+    [loadAllEmployeesActions.fetching.toString()]: (state, action) =>
       state
         .setIn(
-          ['getApi', 'isLoading'],
+          ['getAllApi', 'isLoading'],
           true
         ),
 
-    [jobTypesLoad.fault.toString()]: (state, action) =>
+    [loadAllEmployeesActions.fault.toString()]: (state, action) =>
       state
         .setIn(
-          ['getApi', 'isLoading'],
+          ['getAllApi', 'isLoading'],
           false
         )
         .setIn(
-          ['getApi', 'hasErrored'],
+          ['getAllApi', 'hasErrored'],
           true
         )
         .setIn(
-          ['getApi', 'msg'],
+          ['getAllApi', 'msg'],
           action.payload
         )
   },

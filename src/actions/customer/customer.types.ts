@@ -1,5 +1,5 @@
 export const types = {
-  'CUSTOMER_ADD': 'customerAdd',
-  'CUSTOMER_LOAD': 'customersLoad',
-  'CUSTOMER_REMOVE': 'customerRemove'
+  'CUSTOMER_LOAD': 'loadCustomersActions',
+  'CUSTOMER_NEW': 'newCustomerAction',
+  'CUSTOMER_REMOVE': 'deleteCustomerActions'
 };

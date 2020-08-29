@@ -2,7 +2,7 @@ import { Action } from 'redux-actions';
 import { Dispatch } from 'redux';
 import { IAuthInfo } from 'app/Models/Auth';
 import { connect } from 'react-redux';
-import { setAuthAction } from 'actions/auth.action';
+import { setAuthAction } from 'actions/auth/auth.action';
 import React, { useEffect } from 'react';
 import { Redirect, Route, RouteComponentProps } from 'react-router-dom';
 
