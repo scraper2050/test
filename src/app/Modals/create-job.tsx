@@ -1,29 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { Calendar } from '@material-ui/pickers';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import {
   Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
+  DialogTitle,
   FormGroup,
-  TextField,
   InputLabel,
   MenuItem,
   Select,
-} from "@material-ui/core";
-import { Calendar } from "@material-ui/pickers";
-import "./create-job.scss";
+  TextField
+} from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import {
   addMinutes,
   format,
   formatDuration,
-  intervalToDuration,
-} from "date-fns";
+  intervalToDuration
+} from 'date-fns';
+import './create-job.scss';
 
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
-
-const titles: string[] = ["New Ticket", "New Job", "Job Detail"];
+const titles: string[] = ['New Ticket', 'New Job', 'Job Detail'];
 
 const JOB_DETAIL = 2;
 
@@ -33,40 +32,104 @@ type OptionType = {
 };
 
 const employeeTypes: OptionType[] = [
-  { value: "0", label: "employee" },
-  { value: "1", label: "vendo" },
+  {
+    'label': 'employee',
+    'value': '0'
+  },
+  {
+    'label': 'vendo',
+    'value': '1'
+  }
 ];
 const technicians: OptionType[] = [
-  { value: "0", label: "Technician0" },
-  { value: "1", label: "Technician1" },
-  { value: "2", label: "Technician2" },
-  { value: "3", label: "Technician3" },
-  { value: "4", label: "Technician4" },
+  {
+    'label': 'Technician0',
+    'value': '0'
+  },
+  {
+    'label': 'Technician1',
+    'value': '1'
+  },
+  {
+    'label': 'Technician2',
+    'value': '2'
+  },
+  {
+    'label': 'Technician3',
+    'value': '3'
+  },
+  {
+    'label': 'Technician4',
+    'value': '4'
+  }
 ];
 const equipments: OptionType[] = [
-  { value: "0", label: "Equipment0" },
-  { value: "1", label: "Equipment1" },
-  { value: "2", label: "Equipment2" },
-  { value: "3", label: "Equipment3" },
-  { value: "4", label: "Equipment4" },
+  {
+    'label': 'Equipment0',
+    'value': '0'
+  },
+  {
+    'label': 'Equipment1',
+    'value': '1'
+  },
+  {
+    'label': 'Equipment2',
+    'value': '2'
+  },
+  {
+    'label': 'Equipment3',
+    'value': '3'
+  },
+  {
+    'label': 'Equipment4',
+    'value': '4'
+  }
 ];
 
 const startTimes: OptionType[] = [];
 for (
-  let startTime = new Date(1982, 12, 20, 0, 0);
-  startTime < new Date(1982, 12, 21, 0, 0);
-  startTime = addMinutes(startTime, 30)
+  let startTime = new Date(
+    1982,
+    12,
+    20,
+    0,
+    0
+  );
+  startTime < new Date(
+    1982,
+    12,
+    21,
+    0,
+    0
+  );
+  startTime = addMinutes(
+    startTime,
+    30
+  )
 ) {
-  let value = format(startTime, "hh:mm a");
-  startTimes.push({ value, label: value });
+  const value = format(
+    startTime,
+    'hh:mm a'
+  );
+  startTimes.push({
+    'label': value,
+    value
+  });
 }
 const now = new Date();
 const durations: OptionType[] = [];
 for (let minutes = 60; minutes < 60 * 6 + 30; minutes += 30) {
-  let value = formatDuration(
-    intervalToDuration({ start: now, end: addMinutes(now, minutes) })
-  );
-  durations.push({ value, label: value });
+  const value = formatDuration(intervalToDuration({
+    'end': addMinutes(
+      now,
+      minutes
+    ),
+    'start': now
+  }));
+  durations.push({
+    'label': value,
+    value
+  });
 }
 
 interface ICustomer {
@@ -90,274 +153,307 @@ interface CreateJobProps {
   jobTypes: Array<IJobTypes>;
 }
 
-const CreateJob: React.FC<CreateJobProps> = ({
+function CreateJob({
   modal,
   cancel,
   submit,
   modalMode,
   customers,
-  jobTypes,
-}: CreateJobProps) => {
+  jobTypes
+}: CreateJobProps) {
   const [modeState, setModeState] = useState<number>(modalMode);
 
-  const [employeeType, setEmployeeType] = useState("");
-  const [jobType, setJobType] = useState("");
-  const [technician, setTechnician] = useState("");
-  const [customer, setCustomer] = useState("");
-  const [equipment, setEquipment] = useState("");
+  const [employeeType, setEmployeeType] = useState('');
+  const [jobType, setJobType] = useState('');
+  const [technician, setTechnician] = useState('');
+  const [customer, setCustomer] = useState('');
+  const [equipment, setEquipment] = useState('');
   const [scheduleDate, setScheduleDate] = useState(new Date());
-  const [startTime, setStartTime] = useState("");
-  const [duration, setDuration] = useState("");
+  const [startTime, setStartTime] = useState('');
+  const [duration, setDuration] = useState('');
 
-  useEffect(() => {
-    modal && setModeState(modalMode);
-  }, [modal, modalMode]);
+  useEffect(
+    () => {
+      modal && setModeState(modalMode);
+    },
+    [modal, modalMode]
+  );
 
   return (
-    <div className="modal-wrapper">
-      <Dialog open={modal} maxWidth={false}>
-        <DialogTitle>{titles[modeState]}</DialogTitle>
+    <div className={'modal-wrapper'}>
+      <Dialog
+        maxWidth={false}
+        open={modal}>
+        <DialogTitle>
+          {titles[modeState]}
+        </DialogTitle>
         <DialogContent>
-          <div className="modal-col">
-            {modeState !== 1 && (
-              <FormGroup className="required">
-                <InputLabel>Select Customer</InputLabel>
+          <div className={'modal-col'}>
+            {modeState !== 1 &&
+              <FormGroup className={'required'}>
+                <InputLabel>
+                  {'Select Customer'}
+                </InputLabel>
                 <Select
-                  className="select"
-                  value={customer}
-                  variant="outlined"
+                  className={'select'}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                     setCustomer(event.target.value as string);
                   }}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
+                  value={customer}
+                  variant={'outlined'}>
+                  <MenuItem value={''}>
+                    <em>
+                      {'None'}
+                    </em>
                   </MenuItem>
-                  {customers.map((customer) => (
-                    <MenuItem value={customer._id} key={customer._id}>
+                  {customers.map(customer =>
+                    <MenuItem
+                      key={customer._id}
+                      value={customer._id}>
                       {customer.profile.displayName}
-                    </MenuItem>
-                  ))}
+                    </MenuItem>)}
                 </Select>
               </FormGroup>
-            )}
-            {modeState !== 1 && (
+            }
+            {modeState !== 1 &&
               <FormGroup>
-                <InputLabel>Notes / Special Instructions</InputLabel>
+                <InputLabel>
+                  {'Notes / Special Instructions'}
+                </InputLabel>
                 <TextField
-                  className="TextField"
+                  className={'TextField'}
                   fullWidth
                   multiline
-                  rows="5"
-                  name="instructions"
-                  placeholder="..."
-                  variant="outlined"
+                  name={'instructions'}
+                  placeholder={'...'}
+                  rows={'5'}
+                  variant={'outlined'}
                 />
               </FormGroup>
-            )}
+            }
 
-            {modeState !== 0 && (
+            {modeState !== 0 &&
               <FormGroup>
-                <InputLabel>Employee Type</InputLabel>
+                <InputLabel>
+                  {'Employee Type'}
+                </InputLabel>
                 <Select
-                  className="select"
-                  value={employeeType}
-                  variant="outlined"
+                  className={'select'}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                     setEmployeeType(event.target.value as string);
                   }}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
+                  value={employeeType}
+                  variant={'outlined'}>
+                  <MenuItem value={''}>
+                    <em>
+                      {'None'}
+                    </em>
                   </MenuItem>
-                  {employeeTypes.map((employeeType) => (
+                  {employeeTypes.map(employeeType =>
                     <MenuItem
-                      value={employeeType.value}
                       key={employeeType.value}
-                    >
+                      value={employeeType.value}>
                       {employeeType.label}
-                    </MenuItem>
-                  ))}
+                    </MenuItem>)}
                 </Select>
               </FormGroup>
-            )}
-            {modeState !== 0 && (
-              <FormGroup className="required">
-                <InputLabel>Job Type</InputLabel>
+            }
+            {modeState !== 0 &&
+              <FormGroup className={'required'}>
+                <InputLabel>
+                  {'Job Type'}
+                </InputLabel>
                 <Select
-                  className="select"
-                  value={jobType}
-                  variant="outlined"
+                  className={'select'}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                     setJobType(event.target.value as string);
                   }}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
+                  value={jobType}
+                  variant={'outlined'}>
+                  <MenuItem value={''}>
+                    <em>
+                      {'None'}
+                    </em>
                   </MenuItem>
-                  {jobTypes.map((jobType) => (
-                    <MenuItem value={jobType._id} key={jobType._id}>
+                  {jobTypes.map(jobType =>
+                    <MenuItem
+                      key={jobType._id}
+                      value={jobType._id}>
                       {jobType.title}
-                    </MenuItem>
-                  ))}
+                    </MenuItem>)}
                 </Select>
               </FormGroup>
-            )}
-            {modeState !== 0 && (
-              <FormGroup className="required">
-                <InputLabel>Select Technician</InputLabel>
+            }
+            {modeState !== 0 &&
+              <FormGroup className={'required'}>
+                <InputLabel>
+                  {'Select Technician'}
+                </InputLabel>
                 <Select
-                  className="select"
-                  value={technician}
-                  variant="outlined"
+                  className={'select'}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                     setTechnician(event.target.value as string);
                   }}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
+                  value={technician}
+                  variant={'outlined'}>
+                  <MenuItem value={''}>
+                    <em>
+                      {'None'}
+                    </em>
                   </MenuItem>
-                  {technicians.map((technician) => (
-                    <MenuItem value={technician.value} key={technician.value}>
+                  {technicians.map(technician =>
+                    <MenuItem
+                      key={technician.value}
+                      value={technician.value}>
                       {technician.label}
-                    </MenuItem>
-                  ))}
+                    </MenuItem>)}
                 </Select>
               </FormGroup>
-            )}
-            {modeState !== 0 && (
+            }
+            {modeState !== 0 &&
               <FormGroup>
-                <InputLabel>Select Equipment</InputLabel>
+                <InputLabel>
+                  {'Select Equipment'}
+                </InputLabel>
                 <Select
-                  className="select"
-                  value={equipment}
-                  variant="outlined"
+                  className={'select'}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                     setEquipment(event.target.value as string);
                   }}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
+                  value={equipment}
+                  variant={'outlined'}>
+                  <MenuItem value={''}>
+                    <em>
+                      {'None'}
+                    </em>
                   </MenuItem>
-                  {equipments.map((equipment) => (
-                    <MenuItem value={equipment.value} key={equipment.value}>
+                  {equipments.map(equipment =>
+                    <MenuItem
+                      key={equipment.value}
+                      value={equipment.value}>
                       {equipment.label}
-                    </MenuItem>
-                  ))}
+                    </MenuItem>)}
                 </Select>
               </FormGroup>
-            )}
+            }
 
-            {modeState === 1 && (
+            {modeState === 1 &&
               <FormGroup>
-                <InputLabel>Description</InputLabel>
+                <InputLabel>
+                  {'Description'}
+                </InputLabel>
                 <TextField
-                  className="TextField"
+                  className={'TextField'}
                   fullWidth
                   multiline
-                  rows="5"
-                  name="instructions"
-                  placeholder="..."
-                  variant="outlined"
+                  name={'instructions'}
+                  placeholder={'...'}
+                  rows={'5'}
+                  variant={'outlined'}
                 />
               </FormGroup>
-            )}
+            }
           </div>
 
-          {modeState !== 0 && (
-            <div className="modal-col">
+          {modeState !== 0 &&
+            <div className={'modal-col'}>
               <FormGroup>
-                <InputLabel>Schedule Date & Time</InputLabel>
-                <FormGroup className="required">
-                  <InputLabel>Choose Date</InputLabel>
-                  <div className="calendar-container">
+                <InputLabel>
+                  {'Schedule Date & Time'}
+                </InputLabel>
+                <FormGroup className={'required'}>
+                  <InputLabel>
+                    {'Choose Date'}
+                  </InputLabel>
+                  <div className={'calendar-container'}>
                     <Calendar
                       date={scheduleDate}
-                      onChange={(date) => {
+                      onChange={date => {
                         date !== null && setScheduleDate(date);
                       }}
                     />
                   </div>
                 </FormGroup>
                 <FormGroup>
-                  <InputLabel>Start Time:</InputLabel>
+                  <InputLabel>
+                    {'Start Time:'}
+                  </InputLabel>
                   <Select
-                    className="select"
-                    value={startTime}
-                    variant="outlined"
-                    onChange={(
-                      event: React.ChangeEvent<{ value: unknown }>
-                    ) => {
+                    className={'select'}
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                       setStartTime(event.target.value as string);
                     }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
+                    value={startTime}
+                    variant={'outlined'}>
+                    <MenuItem value={''}>
+                      <em>
+                        {'None'}
+                      </em>
                     </MenuItem>
-                    {startTimes.map((equipment) => (
-                      <MenuItem value={equipment.value} key={equipment.value}>
+                    {startTimes.map(equipment =>
+                      <MenuItem
+                        key={equipment.value}
+                        value={equipment.value}>
                         {equipment.label}
-                      </MenuItem>
-                    ))}
+                      </MenuItem>)}
                   </Select>
                 </FormGroup>
                 <FormGroup>
-                  <InputLabel>Duration</InputLabel>
+                  <InputLabel>
+                    {'Duration'}
+                  </InputLabel>
                   <Select
-                    className="select"
-                    value={duration}
-                    variant="outlined"
-                    onChange={(
-                      event: React.ChangeEvent<{ value: unknown }>
-                    ) => {
+                    className={'select'}
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                       setDuration(event.target.value as string);
                     }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
+                    value={duration}
+                    variant={'outlined'}>
+                    <MenuItem value={''}>
+                      <em>
+                        {'None'}
+                      </em>
                     </MenuItem>
-                    {durations.map((equipment) => (
-                      <MenuItem value={equipment.value} key={equipment.value}>
+                    {durations.map(equipment =>
+                      <MenuItem
+                        key={equipment.value}
+                        value={equipment.value}>
                         {equipment.label}
-                      </MenuItem>
-                    ))}
+                      </MenuItem>)}
                   </Select>
                 </FormGroup>
               </FormGroup>
             </div>
-          )}
+          }
         </DialogContent>
         <DialogActions>
           <Button
+            className={'cancel-button'}
             onClick={cancel}
-            variant="contained"
-            className={"cancel-button"}
-          >
-            Cancel
+            variant={'contained'}>
+            {'Cancel'}
           </Button>
           <Button
+            className={'submit-button'}
+            color={'primary'}
             onClick={submit}
-            variant="contained"
-            color="primary"
-            className={"submit-button"}
-          >
-            Submit
+            variant={'contained'}>
+            {'Submit'}
           </Button>
-          {modeState === 0 && (
+          {modeState === 0 &&
             <Button
+              className={'generate-job-button'}
+              color={'secondary'}
               onClick={() => setModeState(JOB_DETAIL)}
-              variant="contained"
-              color="secondary"
-              className={"generate-job-button"}
-            >
-              Generate Job
+              variant={'contained'}>
+              {'Generate Job'}
             </Button>
-          )}
+          }
         </DialogActions>
       </Dialog>
     </div>
   );
-};
+}
 
 const mapStateToProps = (state: {
   customers: {
@@ -367,11 +463,14 @@ const mapStateToProps = (state: {
     list: Array<IJobTypes>
   }
 }) => ({
-  customers: state.customers.list,
-  jobTypes: state.jobTypes.list,
+  'customers': state.customers.list,
+  'jobTypes': state.jobTypes.list
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateJob);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CreateJob);

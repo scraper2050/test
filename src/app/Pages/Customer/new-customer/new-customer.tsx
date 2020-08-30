@@ -1,16 +1,16 @@
 import * as CONSTANTS from '../../../../constants';
-import BCTabs from '../../../Components/BCTabs';
-import EmailValidateInput from '../../../Components/EmailValidateInput';
-import { FormDataModel } from '../../../Models/FormData';
-import MapWithMarker from '../../../Components/MapWithMarker';
-import PhoneNumberInput from '../../../Components/PhoneNumberInput';
-import Sidebar from '../../../Components/Sidebar';
-import SubHeader from '../../../Components/SubHeader';
+import BCTabs from '../../../components/BCTabs';
+import EmailValidateInput from '../../../components/EmailValidateInput';
+import { FormDataModel } from '../../../models/form-data';
+import MapWithMarker from '../../../components/MapWithMarker';
+import PhoneNumberInput from '../../../components/PhoneNumberInput';
+import Sidebar from '../../../components/Sidebar';
+import SubHeader from '../../../components/SubHeader';
 import SwipeableViews from 'react-swipeable-views';
-import ToolBarSearchInput from '../../../Components/ToolBarSearchInput';
-import { allStates } from 'Utils/Constants';
+import ToolBarSearchInput from '../../../components/ToolBarSearchInput';
+import { allStates } from 'utils/constants';
 import styled from 'styled-components';
-import styles from './NewCustomer.styles';
+import styles from './new-customer.styles';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Box,

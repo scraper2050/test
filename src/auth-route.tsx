@@ -1,6 +1,6 @@
 import { Action } from 'redux-actions';
 import { Dispatch } from 'redux';
-import { IAuthInfo } from 'app/Models/Auth';
+import { IAuthInfo } from 'app/models/auth';
 import { connect } from 'react-redux';
 import { setAuthAction } from 'actions/auth/auth.action';
 import React, { useEffect } from 'react';

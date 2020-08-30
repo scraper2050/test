@@ -1,5 +1,5 @@
-import Config from 'Config';
-import { apiUrls } from 'Utils/Constants';
+import Config from 'config';
+import { apiUrls } from 'utils/constants';
 // Import Sha256 from "../components/common/sha256";
 
 const login = async (param: { email: string, password: string }) => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-import Config from "../../../Config";
+import Config from "../../../config";
 
 interface MapWithMarkerProps {
   lat: number;

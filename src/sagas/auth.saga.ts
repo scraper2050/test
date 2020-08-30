@@ -1,4 +1,4 @@
-import { ILoingInfo } from 'app/Models/Auth';
+import { ILoingInfo } from 'app/models/auth';
 import { login } from 'api/auth.api';
 import { call, cancel, cancelled, fork, put, take } from 'redux-saga/effects';
 import { loginActions, logoutAction } from 'actions/auth/auth.action';

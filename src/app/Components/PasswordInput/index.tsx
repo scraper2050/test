@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import { FormDataModel } from '../../Models/FormData';
+import { FormDataModel } from '../../models/form-data';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

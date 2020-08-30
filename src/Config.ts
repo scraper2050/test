@@ -1,4 +1,4 @@
-const Config = {
+const config = {
   'FACEBOOK_APP_ID': process.env.REACT_APP_FACEBOOK_APP_ID || '490466604947035',
   'GOOGLE_APP_ID':
     process.env.REACT_APP_GOOGLE_APP_ID ||
@@ -12,4 +12,4 @@ const Config = {
   'appBaseURL': process.env.REACT_APP_BASE_URL || 'http://localhost:3000/'
 };
 
-export default Config;
+export default config;

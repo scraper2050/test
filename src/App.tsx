@@ -1,20 +1,20 @@
-import AuthRoute from 'AuthRoute';
+import AuthRoute from 'auth-route';
 import DateFnsUtils from '@date-io/date-fns';
-import GroupPage from './app/Pages/Employees/Group';
-import Header from './app/Components/Header';
-import ManagerPage from './app/Pages/Employees/Manager';
+import GroupPage from './app/pages/employee/group/group';
+import Header from './app/components/Header';
+import ManagerPage from './app/pages/employee/manager/manager';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import OfficeAdminPage from './app/Pages/Employees/Office';
-import ScheduleJobsPage from './app/Pages/Customer/schedule-jobs';
-import TechnicianPage from './app/Pages/Employees/Technician';
 import React, { Suspense } from 'react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
-const DashboardPage = React.lazy(() => import('./app/Pages/Dashboard/Dashboard'));
-const CustomersPage = React.lazy(() => import('./app/Pages/Customer/Customer'));
-const NewCustomerPage = React.lazy(() => import('./app/Pages/Customer/NewCustomer/NewCustomer'));
-const LoginPage = React.lazy(() => import('./app/Pages/Login/Login'));
-const SignUpPage = React.lazy(() => import('./app/Pages/SignUp/Signup'));
-const RecoverPage = React.lazy(() => import('./app/Pages/Recover/Recover'));
+const DashboardPage = React.lazy(() => import('./app/pages/dashboard/dashboard'));
+const CustomersPage = React.lazy(() => import('./app/pages/customer/customer'));
+const NewCustomerPage = React.lazy(() => import('./app/pages/customer/new-customer/new-customer'));
+const LoginPage = React.lazy(() => import('./app/pages/Login/Login'));
+const SignUpPage = React.lazy(() => import('./app/pages/SignUp/Signup'));
+const RecoverPage = React.lazy(() => import('./app/pages/Recover/Recover'));
+const TechnicianPage = React.lazy(() => import('./app/pages/employee/Technician/Technician'));
+const OfficeAdminPage = React.lazy(() => import('./app/pages/employee/office/office'));
+const ScheduleJobsPage = React.lazy(() => import('./app/pages/customer/schedule-jobs/schedule-jobs'));
 
 function App() {
   return (

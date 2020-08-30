@@ -1,30 +1,17 @@
-import * as CONSTANTS from '../../../constants';
-import BCTable from '../../components/BCTable';
-import BCTabs from '../../components/BCTabs';
-import Sidebar from '../../components/Sidebar';
-import SubHeader from '../../components/SubHeader';
+import * as CONSTANTS from '../../../../constants';
+import Api from 'utils/api';
+import BCTable from '../../../components/BCTable';
+import BCTabs from '../../../components/BCTabs';
+import Sidebar from '../../../components/Sidebar';
+import SubHeader from '../../../components/SubHeader';
 import SwipeableViews from 'react-swipeable-views';
-import TableSearchInput from '../../components/TableSearchInput';
-import ToolBarSearchInput from '../../components/ToolBarSearchInput';
+import TableSearchInput from '../../../components/TableSearchInput';
+import ToolBarSearchInput from '../../../components/ToolBarSearchInput';
+import { UserModel } from '../../../models/user';
 import styled from 'styled-components';
 import { Button, Grid, List, ListItem } from '@material-ui/core';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import React, { useState } from 'react';
-
-const LINK_DATA = [
-  {
-    'label': 'Customer List',
-    'link': '/customers/customer-list'
-  },
-  {
-    'label': 'New Customer',
-    'link': '/customers/new-customer'
-  },
-  {
-    'label': 'Schedule/Jobs',
-    'link': '/customers/schedule'
-  }
-];
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const headCells = [
   {
@@ -35,11 +22,6 @@ const headCells = [
   {
     'id': 'contactName',
     'label': 'Contact Name',
-    'sortable': true
-  },
-  {
-    'id': 'phone',
-    'label': 'Phone',
     'sortable': true
   },
   {
@@ -54,53 +36,80 @@ const tableData = [
     'contactName': 'BlueTest',
     'email': 'Blueclerktest@yopmail.com',
     'id': 0,
-    'name': 'Shelly Poehler',
-    'phone': '972816823'
+    'name': 'Shelly Poehler'
   }
 ];
 
-function CustomersPage() {
+const LINK_DATA = [
+  { 'label': 'Groups',
+    'link': '/employees/group' },
+  { 'label': 'Technicians',
+    'link': '/employees/technician' },
+  { 'label': 'Managers',
+    'link': '/employees/manager' },
+  { 'label': 'Office Admin',
+    'link': '/employees/office' }
+];
+
+function ManagerPage(): JSX.Element {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
   const [searchStr, setSearchStr] = useState('');
-
-  const handleTabChange = (newValue: number) => {
-    setCurTab(newValue);
-  };
+  const [managerList, setManagerList] = useState<UserModel[]>([]); // eslint-disable-line
 
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
   };
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
+  };
+
+  useEffect(
+    () => {
+      Api.post(
+        '/getManagers',
+        null
+      )
+        .then(res => {
+          if (res.data.status === 1) {
+            setManagerList([...res.data.users]);
+          }
+        })
+        .catch(err => {
+          console.log(
+            'Get managers err:',
+            err
+          );
+        });
+    },
+    []
+  );
 
   return (
     <>
-      <SubHeader title={'Customers'}>
-        <ToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
+      <SubHeader title={'Employees'}>
+        <ToolBarSearchInput style={{ 'marginLeft': 'auto',
+          'width': '321px' }}
         />
-        <CustomerButton variant={'contained'}>
-          <Link to={'/customers/new-customer'}>
-            {'New Customer'}
-          </Link>
-        </CustomerButton>
+        <EmployeeButton variant={'contained'}>
+          {'New Employee'}
+        </EmployeeButton>
       </SubHeader>
 
       <MainContainer>
         <Sidebar>
-          <StyledList aria-label={'customers sidebar list'}>
+          <StyledList aria-label={'employees sidebar list'}>
             {LINK_DATA.map((item, idx) => {
-              if (item.label === 'Customer List') {
+              if (item.label === 'Groups') {
                 return (
                   <StyledListItem
                     button
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/customers'
+                      pathName === item.link || pathName === '/employees'
                     }>
                     {item.label}
                   </StyledListItem>
@@ -118,6 +127,7 @@ function CustomersPage() {
             })}
           </StyledList>
         </Sidebar>
+
         <PageContainer>
           <BCTabs
             curTab={curTab}
@@ -125,7 +135,7 @@ function CustomersPage() {
             onChangeTab={handleTabChange}
             tabsData={[
               {
-                'label': 'Customer List',
+                'label': 'Managers List',
                 'value': 0
               },
               {
@@ -163,16 +173,6 @@ function CustomersPage() {
                 </Grid>
               </Grid>
             </DataContainer>
-            <DataContainer
-              hidden={curTab !== 1}
-              id={'1'}>
-              <Grid container>
-                <Grid
-                  item
-                  xs={12}
-                />
-              </Grid>
-            </DataContainer>
           </SwipeableViews>
         </PageContainer>
       </MainContainer>
@@ -180,7 +180,7 @@ function CustomersPage() {
   );
 }
 
-const CustomerButton = styled(Button)`
+const EmployeeButton = styled(Button)`
   margin-left: 25px;
   border-radius: 2px;
   width: 192px;
@@ -190,26 +190,9 @@ const CustomerButton = styled(Button)`
   justify-content: center;
   font-size: 16px;
   text-transform: initial;
+  color: ${CONSTANTS.PRIMARY_DARK};
   background-color: ${CONSTANTS.SECONDARY_GREY};
   box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
-
-  a {
-    text-decoration: none;
-    color: ${CONSTANTS.PRIMARY_DARK};
-  }
-`;
-
-const StyledList = styled(List)``;
-
-const StyledListItem = styled(ListItem)`
-  font-size: 16px;
-  line-height: 20px;
-  height: 40px;
-  color: #000;
-  padding-left: 41px;
-  &.Mui-selected {
-    background-color: #c4c4c4;
-  }
 `;
 
 const MainContainer = styled.div`
@@ -237,4 +220,16 @@ const DataContainer = styled.div`
   margin-top: 12px;
 `;
 
-export default CustomersPage;
+const StyledList = styled(List)``;
+
+const StyledListItem = styled(ListItem)`
+  font-size: 16px;
+  line-height: 20px;
+  height: 40px;
+  color: #000;
+  padding-left: 41px;
+  &.Mui-selected {
+    background-color: #c4c4c4;
+  }
+`;
+export default ManagerPage;

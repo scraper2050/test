@@ -1,22 +1,22 @@
 import { Action } from 'redux-actions';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import Config from '../../../Config';
+import Config from '../../../config';
 import { Dispatch } from 'redux';
-import EmailValidateInput from '../../Components/EmailValidateInput';
+import EmailValidateInput from '../../components/EmailValidateInput';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { FormDataModel } from '../../Models/FormData';
+import { FormDataModel } from '../../models/form-data';
 import Grid from '@material-ui/core/Grid';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import Paper from '@material-ui/core/Paper';
-import PasswordInput from '../../Components/PasswordInput';
-import SocialButton from '../../Components/SocialButton';
-import Spinner from '../../Components/Spinner';
+import PasswordInput from '../../components/PasswordInput';
+import SocialButton from '../../components/SocialButton';
+import Spinner from '../../components/Spinner';
 import { connect } from 'react-redux';
 import styles from './Login.styles';
 import { useSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
-import { IAuthInfo, ILoingInfo } from 'app/Models/Auth';
+import { IAuthInfo, ILoingInfo } from 'app/models/auth';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { loginActions, setAuthAction } from 'actions/auth/auth.action';
@@ -267,13 +267,13 @@ function LoginPage({
                 xs={12}>
                 <SocialButton
                   appId={Config.GOOGLE_APP_ID}
-                  onLoginFailure={(err): void => {
+                  onLoginFailure={(err: any): void => {
                     handleSocialLoginFailure(
                       err,
                       SOCIAL_GOOGLE_CONNECT_TYPE
                     );
                   }}
-                  onLoginSuccess={(user): void => {
+                  onLoginSuccess={(user: any): void => {
                     handleSocialLogin(
                       user,
                       SOCIAL_GOOGLE_CONNECT_TYPE
@@ -293,13 +293,13 @@ function LoginPage({
                 xs={12}>
                 <SocialButton
                   appId={Config.FACEBOOK_APP_ID}
-                  onLoginFailure={(err): void => {
+                  onLoginFailure={(err: any): void => {
                     handleSocialLoginFailure(
                       err,
                       SOCIAL_FACEBOOK_CONNECT_TYPE
                     );
                   }}
-                  onLoginSuccess={(user): void => {
+                  onLoginSuccess={(user: any): void => {
                     handleSocialLogin(
                       user,
                       SOCIAL_FACEBOOK_CONNECT_TYPE

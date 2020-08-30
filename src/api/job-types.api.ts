@@ -1,5 +1,5 @@
-import Config from 'Config';
-import { apiUrls } from 'Utils/Constants';
+import Config from 'config';
+import { apiUrls } from 'utils/constants';
 
 export const getJobTypes = async (param:{}) => {
   const body = {

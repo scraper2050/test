@@ -1,6 +1,6 @@
 import { Action } from 'redux-actions';
 import Button from '@material-ui/core/Button';
-import CreateJob from 'app/Modals/create-job';
+import CreateJob from 'app/modals/create-job';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { loadCustomersActions } from 'actions/customer/customer.action';
