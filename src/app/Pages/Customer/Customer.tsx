@@ -1,11 +1,11 @@
 import * as CONSTANTS from '../../../constants';
-import BCTable from '../../components/BCTable';
-import BCTabs from '../../components/BCTabs';
-import Sidebar from '../../components/sidebar/sidebar';
-import SubHeader from '../../components/sub-header/sub-header';
+import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
+import BCSubHeader from '../../components/bc-sub-header/bc-sub-header';
+import BCTable from '../../components/bc-table/bc-table';
+import BCTableSearchInput from '../../components/bc-table-search-input/bc-table-search-input';
+import BCTabs from '../../components/bc-tab/bc-tab';
+import BCToolBarSearchInput from '../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import SwipeableViews from 'react-swipeable-views';
-import TableSearchInput from '../../components/table-search-input/table-search-input';
-import ToolBarSearchInput from '../../components/toolbar-search-input/toolbar-search-input';
 import styled from 'styled-components';
 import { Button, Grid, List, ListItem } from '@material-ui/core';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -76,8 +76,8 @@ function CustomersPage() {
 
   return (
     <>
-      <SubHeader title={'Customers'}>
-        <ToolBarSearchInput style={{
+      <BCSubHeader title={'Customers'}>
+        <BCToolBarSearchInput style={{
           'marginLeft': 'auto',
           'width': '321px'
         }}
@@ -87,10 +87,10 @@ function CustomersPage() {
             {'New Customer'}
           </Link>
         </CustomerButton>
-      </SubHeader>
+      </BCSubHeader>
 
       <MainContainer>
-        <Sidebar>
+        <BCSidebar>
           <StyledList aria-label={'customers sidebar list'}>
             {LINK_DATA.map((item, idx) => {
               if (item.label === 'Customer List') {
@@ -117,7 +117,7 @@ function CustomersPage() {
               );
             })}
           </StyledList>
-        </Sidebar>
+        </BCSidebar>
         <PageContainer>
           <BCTabs
             curTab={curTab}
@@ -143,7 +143,7 @@ function CustomersPage() {
                   item
                   md={6}
                   xs={12}>
-                  <TableSearchInput
+                  <BCTableSearchInput
                     onSearch={(str: string) => {
                       console.log('On Search');
                     }}

@@ -1,9 +1,13 @@
+import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
+import BCPhoneNumberInputut from '../../components/bc-phone-number-input/bc-phone-number-input';
+import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
+import BCTermsContentnt from '../../components/bc-terms-content/bc-terms-content';
+import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Config from '../../../config';
 import Dialog from '@material-ui/core/Dialog';
-import EmailValidateInput from '../../components/EmailValidateInput';
 import FormControl from '@material-ui/core/FormControl';
 import { FormDataModel } from '../../models/form-data';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -12,12 +16,8 @@ import { IndustryModel } from '../../models/industry';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
-import PassowrdInput from '../../components/password-input/password-input';
-import PhoneNumberInput from '../../components/phone-number-input/phone-number-input';
+import PassowrdInput from '../../components/bc-password-input/bc-password-input';
 import Select from '@material-ui/core/Select';
-import SocialButton from '../../components/social-button/social-button';
-import Spinner from '../../components/spinner/spinner';
-import TermsContent from './components/terms-content/terms-content';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import styles from './signup.styles';
@@ -278,7 +278,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   item
                   md={6}
                   xs={6}>
-                  <EmailValidateInput
+                  <BCEmailValidateInputut
                     id={'email'}
                     inputData={formData.email}
                     label={'Email'}
@@ -315,7 +315,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   item
                   md={6}
                   xs={6}>
-                  <PhoneNumberInput
+                  <BCPhoneNumberInputut
                     changeData={(data: FormDataModel) => {
                       setFormData({
                         ...formData,
@@ -458,7 +458,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   item
                   md={6}
                   xs={12}>
-                  <SocialButton
+                  <BCSocialButtonon
                     appId={Config.GOOGLE_APP_ID}
                     onLoginFailure={(err): void => {
                       handleSocialLoginFailure(
@@ -478,13 +478,13 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       src={'https://img.icons8.com/color/48/000000/google-logo.png'}
                     />
                     {'Sign up with Google'}
-                  </SocialButton>
+                  </BCSocialButtonon>
                 </Grid>
                 <Grid
                   item
                   md={6}
                   xs={12}>
-                  <SocialButton
+                  <BCSocialButtonon
                     appId={Config.FACEBOOK_APP_ID}
                     onLoginFailure={(err): void => {
                       handleSocialLoginFailure(
@@ -504,7 +504,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       src={'https://img.icons8.com/color/48/000000/facebook-circled.png'}
                     />
                     {'Sign up with Facebook'}
-                  </SocialButton>
+                  </BCSocialButtonon>
                 </Grid>
                 <Grid
                   className={classes.login}
@@ -556,9 +556,9 @@ function SignUpPage({ classes }: Props): JSX.Element {
           })
         }
         open={agreeTerm.showModal}>
-        <TermsContent />
+        <BCTermsContentnt />
       </Dialog>
-      {isLoading && <Spinner />}
+      {isLoading && <BCSpinnerer />}
     </div>
   );
 }

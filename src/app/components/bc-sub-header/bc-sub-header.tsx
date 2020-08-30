@@ -4,12 +4,12 @@ import { Toolbar } from '@material-ui/core';
 import styled from 'styled-components';
 
 
-interface SubHeaderProps {
+interface BCSubHeaderProps {
   title: string;
   children?: React.ReactNode;
 }
 
-function SubHeader({ title, children }: SubHeaderProps): JSX.Element {
+function BCSubHeader({ title, children }: BCSubHeaderProps): JSX.Element {
   return (
     <StyledToolbar>
       <h1 className={'h1-typography title'}>
@@ -36,4 +36,4 @@ const StyledToolbar = styled(Toolbar)`
   }
 `;
 
-export default SubHeader;
+export default BCSubHeader;

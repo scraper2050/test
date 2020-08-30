@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-literals */
 import React from 'react';
 
-function TermsContent() { // eslint-disable-line
+function BCTermsContent() { // eslint-disable-line
   return (
     <div
       className={'WordSection1'}
@@ -2367,4 +2367,4 @@ function TermsContent() { // eslint-disable-line
   );
 }
 
-export default TermsContent;
+export default BCTermsContent;

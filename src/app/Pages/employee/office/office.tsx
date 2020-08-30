@@ -1,12 +1,12 @@
 import * as CONSTANTS from '../../../../constants';
 import Api from 'utils/api';
-import BCTable from '../../../components/BCTable';
-import BCTabs from '../../../components/BCTabs';
-import Sidebar from '../../../components/sidebar/sidebar';
-import SubHeader from '../../../components/sub-header/sub-header';
+import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
+import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
+import BCTable from '../../../components/bc-table/bc-table';
+import BCTableSearchInput from '../../../components/bc-table-search-input/bc-table-search-input';
+import BCTabs from '../../../components/bc-tab/bc-tab';
+import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import SwipeableViews from 'react-swipeable-views';
-import TableSearchInput from '../../../components/table-search-input/table-search-input';
-import ToolBarSearchInput from '../../../components/toolbar-search-input/toolbar-search-input';
 
 import { UserModel } from '../../../models/user';
 import styled from 'styled-components';
@@ -90,17 +90,17 @@ function OfficeAdminPage(): JSX.Element {
 
   return (
     <>
-      <SubHeader title={'Employees'}>
-        <ToolBarSearchInput style={{ 'marginLeft': 'auto',
+      <BCSubHeader title={'Employees'}>
+        <BCToolBarSearchInput style={{ 'marginLeft': 'auto',
           'width': '321px' }}
         />
         <EmployeeButton variant={'contained'}>
           {'New Employee'}
         </EmployeeButton>
-      </SubHeader>
+      </BCSubHeader>
 
       <MainContainer>
-        <Sidebar>
+        <BCSidebar>
           <StyledList aria-label={'employees sidebar list'}>
             {LINK_DATA.map((item, idx) => {
               if (item.label === 'Groups') {
@@ -127,7 +127,7 @@ function OfficeAdminPage(): JSX.Element {
               );
             })}
           </StyledList>
-        </Sidebar>
+        </BCSidebar>
 
         <PageContainer>
           <BCTabs
@@ -154,7 +154,7 @@ function OfficeAdminPage(): JSX.Element {
                   item
                   md={6}
                   xs={12}>
-                  <TableSearchInput
+                  <BCTableSearchInput
                     onSearch={(str: string) => {
                       console.log('On Search');
                     }}

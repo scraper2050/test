@@ -1,13 +1,13 @@
 import * as CONSTANTS from '../../../../constants';
-import BCTabs from '../../../components/BCTabs';
-import EmailValidateInput from '../../../components/EmailValidateInput';
+import BCEmailValidateInput from '../../../components/bc-email-validate-input/bc-email-validate-input';
+import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-marker';
+import BCPhoneNumberInput from '../../../components/bc-phone-number-input/bc-phone-number-input';
+import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
+import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
+import BCTabs from '../../../components/bc-tab/bc-tab';
+import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import { FormDataModel } from '../../../models/form-data';
-import MapWithMarker from '../../../components/map-with-marker/map-with-marker';
-import PhoneNumberInput from '../../../components/phone-number-input/phone-number-input';
-import Sidebar from '../../../components/sidebar/sidebar';
-import SubHeader from '../../../components/sub-header/sub-header';
 import SwipeableViews from 'react-swipeable-views';
-import ToolBarSearchInput from '../../../components/toolbar-search-input/toolbar-search-input';
 import { allStates } from 'utils/constants';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
@@ -75,8 +75,8 @@ function NewCustomerPage({ classes }: Props) {
 
   return (
     <>
-      <SubHeader title={'Customers'}>
-        <ToolBarSearchInput style={{
+      <BCSubHeader title={'Customers'}>
+        <BCToolBarSearchInput style={{
           'marginLeft': 'auto',
           'width': '321px'
         }}
@@ -86,10 +86,10 @@ function NewCustomerPage({ classes }: Props) {
             {'New Customer'}
           </Link>
         </CustomerButton>
-      </SubHeader>
+      </BCSubHeader>
 
       <MainContainer>
-        <Sidebar>
+        <BCSidebar>
           <StyledList aria-label={'customers sidebar list'}>
             {LINK_DATA.map((item, idx) => {
               if (item.label === 'Customer List') {
@@ -116,7 +116,7 @@ function NewCustomerPage({ classes }: Props) {
               );
             })}
           </StyledList>
-        </Sidebar>
+        </BCSidebar>
 
         <PageContainer>
           <BCTabs
@@ -165,7 +165,7 @@ function NewCustomerPage({ classes }: Props) {
                       <InputLabel>
                         {'Email'}
                       </InputLabel>
-                      <EmailValidateInput
+                      <BCEmailValidateInput
                         id={'email'}
                         inputData={formData.email}
                         label={''}
@@ -208,7 +208,7 @@ function NewCustomerPage({ classes }: Props) {
                         <InputLabel>
                           {'Phone Number'}
                         </InputLabel>
-                        <PhoneNumberInput
+                        <BCPhoneNumberInput
                           changeData={(data: FormDataModel) => {
                             setFormData({
                               ...formData,
@@ -334,7 +334,7 @@ function NewCustomerPage({ classes }: Props) {
                   item
                   md={6}
                   xs={12}>
-                  <MapWithMarker
+                  <BCMapWithMarker
                     lang={-90.111533}
                     lat={29.972065}
                   />

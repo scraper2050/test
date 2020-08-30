@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   }));
 
-interface PasswordInputProps {
+interface BCPasswordInputProps {
   id?: string;
   label?: string;
   size: 'small' | 'medium';
@@ -27,14 +27,14 @@ interface PasswordInputProps {
   onChange: Function;
 }
 
-function PasswordInput({
+function BCPasswordInput({
   id = 'password',
   label = 'Password',
   variant = 'outlined',
   size = 'small',
   inputData,
   onChange
-}: PasswordInputProps) {
+}: BCPasswordInputProps) {
   const classes = useStyles();
 
   const handleChangePassword = (e: any): void => {
@@ -84,4 +84,4 @@ function PasswordInput({
   );
 }
 
-export default PasswordInput;
+export default BCPasswordInput;

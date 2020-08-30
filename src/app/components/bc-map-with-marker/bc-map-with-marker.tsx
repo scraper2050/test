@@ -2,12 +2,12 @@ import Config from '../../../config';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import React, { useState } from 'react';
 
-interface MapWithMarkerProps {
+interface BCMapWithMarkerProps {
   lat: number;
   lang: number;
 }
 
-function MapWithMarker({ lat, lang }: MapWithMarkerProps) {
+function BCBCMapWithMarker({ lat, lang }: BCMapWithMarkerProps) {
   const [myMap, setMyMap] = useState(null); // eslint-disable-line
   const [center, setCenter] = useState({ 'lat': lat, // eslint-disable-line
     'lng': lang });
@@ -29,4 +29,4 @@ function MapWithMarker({ lat, lang }: MapWithMarkerProps) {
   );
 }
 
-export default MapWithMarker;
+export default BCBCMapWithMarker;

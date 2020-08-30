@@ -1,8 +1,6 @@
 import AuthRoute from 'auth-route';
+import BCHeader from './app/components/bc-header/bc-header';
 import DateFnsUtils from '@date-io/date-fns';
-import GroupPage from './app/pages/employee/group/group';
-import Header from './app/components/header/header';
-import ManagerPage from './app/pages/employee/manager/manager';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { Suspense } from 'react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
@@ -12,9 +10,11 @@ const NewCustomerPage = React.lazy(() => import('./app/pages/customer/new-custom
 const LoginPage = React.lazy(() => import('./app/pages/login/login'));
 const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
-const TechnicianPage = React.lazy(() => import('./app/pages/employee/Technician/Technician'));
+const TechnicianPage = React.lazy(() => import('./app/pages/employee/technician/Technician'));
 const OfficeAdminPage = React.lazy(() => import('./app/pages/employee/office/office'));
 const ScheduleJobsPage = React.lazy(() => import('./app/pages/customer/schedule-jobs/schedule-jobs'));
+const ManagerPage = React.lazy(() => import('./app/pages/employee/manager/manager'));
+const GroupPage = React.lazy(() => import('./app/pages/employee/group/group'));
 
 function App() {
   return (
@@ -38,9 +38,8 @@ function App() {
                 component={RecoverPage}
                 path={'/recover'}
               />
-
               <Route>
-                <Header />
+                <BCHeader />
                 <div className={'main-container'}>
                   <Switch>
                     <AuthRoute

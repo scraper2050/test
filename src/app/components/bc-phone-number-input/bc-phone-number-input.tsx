@@ -2,7 +2,7 @@ import { FormDataModel } from '../../models/form-data';
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 
-interface PhonNumberInputProps {
+interface BCPhonNumberInputProps {
   id?: string;
   label: string;
   size: 'small' | 'medium';
@@ -12,7 +12,7 @@ interface PhonNumberInputProps {
   changeData: Function;
 }
 
-export default function PhoneNumberInput({
+export default function BCPhoneNumberInput({
   id = 'phone_number',
   label,
   size,
@@ -20,7 +20,7 @@ export default function PhoneNumberInput({
   validate,
   inputData,
   changeData
-}: PhonNumberInputProps) {
+}: BCPhonNumberInputProps) {
   const getMaskString = (): string => {
     const x = inputData.value
       .replace(

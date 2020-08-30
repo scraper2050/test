@@ -1,8 +1,7 @@
 import React from 'react';
-
-import styled from 'styled-components';
-import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import styled from 'styled-components';
 
 interface BCTabsProps {
   curTab: any;
@@ -11,19 +10,26 @@ interface BCTabsProps {
   tabsData: any;
 }
 
-const BCTabs = ({ curTab, onChangeTab, indicatorColor, tabsData }: BCTabsProps): JSX.Element => {
+function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData }: BCTabsProps): JSX.Element {
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     onChangeTab(newValue);
   };
 
   return (
-    <StyledTabs value={curTab} onChange={handleTabChange} indicatorColor={indicatorColor}>
+    <StyledTabs
+      indicatorColor={indicatorColor}
+      onChange={handleTabChange}
+      value={curTab}>
       {tabsData.map((item: any, idx: number) => {
-        return <Tab key={idx} value={item.value} label={item.label} />;
+        return <Tab
+          key={idx}
+          label={item.label}
+          value={item.value}
+        />;
       })}
     </StyledTabs>
   );
-};
+}
 
 const StyledTabs = styled(Tabs)`
   border-bottom: 1px solid #000;

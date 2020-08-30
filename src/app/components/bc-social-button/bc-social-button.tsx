@@ -2,7 +2,7 @@ import { Button } from '@material-ui/core';
 import React from 'react';
 import SocialLogin from 'react-social-login';
 
-function SocialButton(props: any) {
+function BCBCSocialButton(props: any) {
   const { children, triggerLogin } = props;
   return (
     <Button
@@ -18,4 +18,4 @@ function SocialButton(props: any) {
   );
 }
 
-export default SocialLogin(SocialButton);
+export default SocialLogin(BCBCSocialButton);

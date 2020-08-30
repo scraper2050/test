@@ -2,11 +2,11 @@ import * as CONSTANTS from '../../../constants';
 import React from 'react';
 import styled from 'styled-components';
 
-interface SidebarProps {
+interface BCSidebarProps {
   children?: React.ReactNode;
 }
 
-function Sidebar({ children }: SidebarProps): JSX.Element {
+function BCSidebar({ children }: BCSidebarProps): JSX.Element {
   return <ComponentContainer>
     {children}
   </ComponentContainer>;
@@ -19,4 +19,4 @@ const ComponentContainer = styled.div`
   transition: all 0.3s ease-in-out;
 `;
 
-export default Sidebar;
+export default BCSidebar;

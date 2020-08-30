@@ -1,17 +1,17 @@
 import { Action } from 'redux-actions';
+import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
+import BCPasswordInputut from '../../components/bc-password-input/bc-password-input';
+import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
+import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Config from '../../../config';
 import { Dispatch } from 'redux';
-import EmailValidateInput from '../../components/EmailValidateInput';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { FormDataModel } from '../../models/form-data';
 import Grid from '@material-ui/core/Grid';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import Paper from '@material-ui/core/Paper';
-import PasswordInput from '../../components/password-input/password-input';
-import SocialButton from '../../components/social-button/social-button';
-import Spinner from '../../components/spinner/spinner';
 import { connect } from 'react-redux';
 import styles from './login.styles';
 import { useSnackbar } from 'notistack';
@@ -189,7 +189,7 @@ function LoginPage({
               <Grid
                 item
                 xs={12}>
-                <EmailValidateInput
+                <BCEmailValidateInputut
                   id={'email'}
                   inputData={formData.email}
                   label={'Email'}
@@ -209,7 +209,7 @@ function LoginPage({
                 item
                 style={{ 'position': 'relative' }}
                 xs={12}>
-                <PasswordInput
+                <BCPasswordInputut
                   id={'login-password'}
                   inputData={formData.password}
                   label={'Password'}
@@ -265,7 +265,7 @@ function LoginPage({
                 item
                 md={6}
                 xs={12}>
-                <SocialButton
+                <BCSocialButtonon
                   appId={Config.GOOGLE_APP_ID}
                   onLoginFailure={(err: any): void => {
                     handleSocialLoginFailure(
@@ -285,13 +285,13 @@ function LoginPage({
                     src={'https://img.icons8.com/color/48/000000/google-logo.png'}
                   />
                   {'Login with Google'}
-                </SocialButton>
+                </BCSocialButtonon>
               </Grid>
               <Grid
                 item
                 md={6}
                 xs={12}>
-                <SocialButton
+                <BCSocialButtonon
                   appId={Config.FACEBOOK_APP_ID}
                   onLoginFailure={(err: any): void => {
                     handleSocialLoginFailure(
@@ -311,7 +311,7 @@ function LoginPage({
                     src={'https://img.icons8.com/color/48/000000/facebook-circled.png'}
                   />
                   {'Login with Facebook'}
-                </SocialButton>
+                </BCSocialButtonon>
               </Grid>
               <Grid
                 className={classes.register}
@@ -352,7 +352,7 @@ function LoginPage({
           </a>
         </span>
       </Grid>
-      {isLoading && <Spinner />}
+      {isLoading && <BCSpinnerer />}
     </div>
   );
 }

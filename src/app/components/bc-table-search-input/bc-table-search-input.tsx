@@ -1,23 +1,35 @@
-import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import Paper from '@material-ui/core/Paper';
 import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import styled from 'styled-components';
+import { IconButton, InputBase, Paper } from '@material-ui/core';
 
-interface ToolBarSearchInputProps {
+interface BCTableSearchInputProps {
   style?: any;
+  searchStr: string;
+  setSearchStr: Function;
+  onSearch: Function;
 }
 
-function ToolBarSearchInput({ style }: ToolBarSearchInputProps): JSX.Element {
+function BCTableSearchInput({
+  style,
+  searchStr,
+  setSearchStr,
+  onSearch
+}: BCTableSearchInputProps): JSX.Element {
   return (
     <StyledPaper style={style}>
       <StyledInputBase
         inputProps={{ 'aria-label': 'search google maps' }}
-        placeholder={'Search...'}
+        onChange={e => setSearchStr(e.target.value)}
+        placeholder={'Search... (Keyword, Date, Tags, etc.)'}
+        value={searchStr}
       />
+
       <StyledSearchButton
         aria-label={'search'}
+        onClick={() => {
+          onSearch(searchStr);
+        }}
         type={'button'}>
         <SearchIcon />
       </StyledSearchButton>
@@ -34,18 +46,18 @@ const StyledPaper = styled(Paper)`
 const StyledInputBase = styled(InputBase)`
   width: 100%;
   height: 100%;
-  padding: 11px 40px 11px 11px;
+  padding: 11px 11px 11px 40px;
   font-size: 16px;
   line-height: 17px;
 `;
 
 const StyledSearchButton = styled(IconButton)`
   position: absolute;
-  right: 10px;
+  left: 10px;
   top: 7px;
   padding: 0;
   width: 24px;
   height: 24px;
 `;
 
-export default ToolBarSearchInput;
+export default BCTableSearchInput;
