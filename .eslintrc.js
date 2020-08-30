@@ -224,6 +224,7 @@ module.exports = {
     ],
     "no-undefined": 0,
     "no-console": 1,
-    "new-cap": 0
+    "new-cap": 0,
+    "function-call-argument-newline": ["error", "consistent"]
   }
 };
