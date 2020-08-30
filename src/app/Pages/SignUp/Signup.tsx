@@ -1,8 +1,8 @@
 import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
 import BCPhoneNumberInputut from '../../components/bc-phone-number-input/bc-phone-number-input';
 import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
-import BCTermsContentnt from '../../components/bc-terms-content/bc-terms-content';
 import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
+import BCTermsContentnt from '../../components/bc-terms-content/bc-terms-content';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
