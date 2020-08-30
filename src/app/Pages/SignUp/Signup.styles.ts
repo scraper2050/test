@@ -1,3 +1,4 @@
+import BackImg from '../../../assets/img/bg.png';
 import { Theme } from '@material-ui/core/styles';
 export default (theme: Theme): any => ({
   'AgreeTermDiv': {
@@ -68,7 +69,7 @@ export default (theme: Theme): any => ({
       'paddingLeft': '10px',
       'paddingRight': '10px'
     },
-    'backgroundImage': `url(../../../assets/img/bg.png)`,
+    'backgroundImage': `url(${BackImg})`,
     'backgroundSize': 'cover',
     'display': 'flex',
     'flexDirection': 'column',

@@ -1,20 +1,20 @@
 import AuthRoute from 'AuthRoute';
-import CustomersPage from './app/Pages/Customers';
-import DashboardPage from './app/Pages/Dashboard';
 import DateFnsUtils from '@date-io/date-fns';
 import GroupPage from './app/Pages/Employees/Group';
 import Header from './app/Components/Header';
 import ManagerPage from './app/Pages/Employees/Manager';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import NewCustomerPage from './app/Pages/Customers/NewCustomer';
 import OfficeAdminPage from './app/Pages/Employees/Office';
-import RecoverPage from './app/Pages/Recover';
-import ScheduleJobsPage from './app/Pages/Customers/schedule-jobs';
+import ScheduleJobsPage from './app/Pages/Customer/schedule-jobs';
 import TechnicianPage from './app/Pages/Employees/Technician';
 import React, { Suspense } from 'react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+const DashboardPage = React.lazy(() => import('./app/Pages/Dashboard/Dashboard'));
+const CustomersPage = React.lazy(() => import('./app/Pages/Customer/Customer'));
+const NewCustomerPage = React.lazy(() => import('./app/Pages/Customer/NewCustomer/NewCustomer'));
 const LoginPage = React.lazy(() => import('./app/Pages/Login/Login'));
 const SignUpPage = React.lazy(() => import('./app/Pages/SignUp/Signup'));
+const RecoverPage = React.lazy(() => import('./app/Pages/Recover/Recover'));
 
 function App() {
   return (
