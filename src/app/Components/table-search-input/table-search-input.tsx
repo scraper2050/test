@@ -1,8 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-
-import { Paper, InputBase, IconButton } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
+import React from 'react';
+import SearchIcon from '@material-ui/icons/Search';
+import styled from 'styled-components';
+import { IconButton, InputBase, Paper } from '@material-ui/core';
 
 interface SearchInputProps {
   style?: any;
@@ -11,33 +10,32 @@ interface SearchInputProps {
   onSearch: Function;
 }
 
-const SearchInput = ({
+function SearchInput({
   style,
   searchStr,
   setSearchStr,
-  onSearch,
-}: SearchInputProps): JSX.Element => {
+  onSearch
+}: SearchInputProps): JSX.Element {
   return (
     <StyledPaper style={style}>
       <StyledInputBase
-        placeholder="Search... (Keyword, Date, Tags, etc.)"
-        inputProps={{ "aria-label": "search google maps" }}
+        inputProps={{ 'aria-label': 'search google maps' }}
+        onChange={e => setSearchStr(e.target.value)}
+        placeholder={'Search... (Keyword, Date, Tags, etc.)'}
         value={searchStr}
-        onChange={(e) => setSearchStr(e.target.value)}
       />
 
       <StyledSearchButton
-        type="button"
-        aria-label="search"
+        aria-label={'search'}
         onClick={() => {
           onSearch(searchStr);
         }}
-      >
+        type={'button'}>
         <SearchIcon />
       </StyledSearchButton>
     </StyledPaper>
   );
-};
+}
 
 const StyledPaper = styled(Paper)`
   position: relative;

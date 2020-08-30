@@ -1,25 +1,22 @@
-import React from 'react';
-
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import { FormDataModel } from '../../models/form-data';
 import IconButton from '@material-ui/core/IconButton';
+import React from 'react';
+import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-
-import { FormDataModel } from '../../models/form-data';
+import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    showpassowrdbtn: {
-      position: 'absolute',
-      padding: '2px',
-      right: '25px',
-      top: '17px',
-      backgroundColor: '#fff',
-      zIndex: 999,
-    },
-  })
-);
+    'showpassowrdbtn': {
+      'backgroundColor': '#fff',
+      'padding': '2px',
+      'position': 'absolute',
+      'right': '25px',
+      'top': '17px',
+      'zIndex': 999
+    }
+  }));
 
 interface PasswordInputProps {
   id?: string;
@@ -30,56 +27,61 @@ interface PasswordInputProps {
   onChange: Function;
 }
 
-const PasswordInput = ({
+function PasswordInput({
   id = 'password',
   label = 'Password',
   variant = 'outlined',
   size = 'small',
   inputData,
-  onChange,
-}: PasswordInputProps) => {
+  onChange
+}: PasswordInputProps) {
   const classes = useStyles();
 
   const handleChangePassword = (e: any): void => {
     const passwordValue = e.target.value;
     onChange({
-      value: passwordValue,
-      validate: passwordValue.length > 0 ? true : false,
-      errorMsg: passwordValue.length > 0 ? '' : 'This field is required',
+      'errorMsg': passwordValue.length > 0
+        ? ''
+        : 'This field is required',
+      'validate': passwordValue.length > 0,
+      'value': passwordValue
     });
   };
 
   return (
     <>
       <TextField
+        error={!inputData.validate}
+        fullWidth
+        helperText={inputData.errorMsg}
         id={id}
         label={label}
-        type={inputData.showPassword ? 'text' : 'password'}
-        variant={variant}
-        size={size}
-        fullWidth
-        value={inputData.value}
         onChange={handleChangePassword}
-        error={!inputData.validate}
-        helperText={inputData.errorMsg}
+        size={size}
+        type={inputData.showPassword
+          ? 'text'
+          : 'password'}
+        value={inputData.value}
+        variant={variant}
       />
       <IconButton
+        aria-label={'toggle password visibility'}
         className={classes.showpassowrdbtn}
-        aria-label="toggle password visibility"
         onClick={(e): void => {
           onChange({
             ...inputData,
-            showPassword: !inputData.showPassword,
+            'showPassword': !inputData.showPassword
           });
         }}
-        onMouseDown={(e) => {
+        onMouseDown={e => {
           e.preventDefault();
-        }}
-      >
-        {inputData.showPassword ? <Visibility /> : <VisibilityOff />}
+        }}>
+        {inputData.showPassword
+          ? <Visibility />
+          : <VisibilityOff />}
       </IconButton>
     </>
   );
-};
+}
 
 export default PasswordInput;

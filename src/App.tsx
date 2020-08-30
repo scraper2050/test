@@ -1,7 +1,7 @@
 import AuthRoute from 'auth-route';
 import DateFnsUtils from '@date-io/date-fns';
 import GroupPage from './app/pages/employee/group/group';
-import Header from './app/components/Header';
+import Header from './app/components/header/header';
 import ManagerPage from './app/pages/employee/manager/manager';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { Suspense } from 'react';

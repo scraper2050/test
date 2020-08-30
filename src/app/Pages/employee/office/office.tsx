@@ -2,11 +2,11 @@ import * as CONSTANTS from '../../../../constants';
 import Api from 'utils/api';
 import BCTable from '../../../components/BCTable';
 import BCTabs from '../../../components/BCTabs';
-import Sidebar from '../../../components/Sidebar';
-import SubHeader from '../../../components/SubHeader';
+import Sidebar from '../../../components/sidebar/sidebar';
+import SubHeader from '../../../components/sub-header/sub-header';
 import SwipeableViews from 'react-swipeable-views';
-import TableSearchInput from '../../../components/TableSearchInput';
-import ToolBarSearchInput from '../../../components/ToolBarSearchInput';
+import TableSearchInput from '../../../components/table-search-input/table-search-input';
+import ToolBarSearchInput from '../../../components/toolbar-search-input/toolbar-search-input';
 
 import { UserModel } from '../../../models/user';
 import styled from 'styled-components';

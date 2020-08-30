@@ -1,25 +1,29 @@
-import React from 'react';
-
-import styled from 'styled-components';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
+import InputBase from '@material-ui/core/InputBase';
+import Paper from '@material-ui/core/Paper';
+import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
+import styled from 'styled-components';
 
 interface ToolBarSearchInputProps {
   style?: any;
 }
 
-const ToolBarSearchInput = ({ style }: ToolBarSearchInputProps): JSX.Element => {
+function ToolBarSearchInput({ style }: ToolBarSearchInputProps): JSX.Element {
   return (
     <StyledPaper style={style}>
-      <StyledInputBase placeholder="Search..." inputProps={{ 'aria-label': 'search google maps' }} />
-      <StyledSearchButton type="button" aria-label="search">
+      <StyledInputBase
+        inputProps={{ 'aria-label': 'search google maps' }}
+        placeholder={'Search...'}
+      />
+      <StyledSearchButton
+        aria-label={'search'}
+        type={'button'}>
         <SearchIcon />
       </StyledSearchButton>
     </StyledPaper>
   );
-};
+}
 
 const StyledPaper = styled(Paper)`
   position: relative;

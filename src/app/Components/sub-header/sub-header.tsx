@@ -1,23 +1,24 @@
-import React from 'react';
-
-import styled from 'styled-components';
-import { Toolbar } from '@material-ui/core';
-
 import * as CONSTANTS from '../../../constants';
+import React from 'react';
+import { Toolbar } from '@material-ui/core';
+import styled from 'styled-components';
+
 
 interface SubHeaderProps {
   title: string;
   children?: React.ReactNode;
 }
 
-const SubHeader = ({ title, children }: SubHeaderProps): JSX.Element => {
+function SubHeader({ title, children }: SubHeaderProps): JSX.Element {
   return (
     <StyledToolbar>
-      <h1 className="h1-typography title">{title}</h1>
+      <h1 className={'h1-typography title'}>
+        {title}
+      </h1>
       {children}
     </StyledToolbar>
   );
-};
+}
 
 const StyledToolbar = styled(Toolbar)`
   width: 100%;

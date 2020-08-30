@@ -1,16 +1,16 @@
-import React from 'react';
-
-import styled from 'styled-components';
-
 import * as CONSTANTS from '../../../constants';
+import React from 'react';
+import styled from 'styled-components';
 
 interface SidebarProps {
   children?: React.ReactNode;
 }
 
-const Sidebar = ({ children }: SidebarProps): JSX.Element => {
-  return <ComponentContainer>{children}</ComponentContainer>;
-};
+function Sidebar({ children }: SidebarProps): JSX.Element {
+  return <ComponentContainer>
+    {children}
+  </ComponentContainer>;
+}
 
 const ComponentContainer = styled.div`
   margin-left: 0;
