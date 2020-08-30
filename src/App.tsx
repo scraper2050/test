@@ -16,7 +16,7 @@ import CustomersPage from "./app/Pages/Customers";
 import NewCustomerPage from "./app/Pages/Customers/NewCustomer";
 
 // for dev
-import TempPage from "./app/Pages/Customers/ScheduleJobs/tempPage";
+import ScheduleJobsPage from "./app/Pages/Customers/schedule-jobs";
 
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
@@ -82,7 +82,7 @@ const App = () => {
                   <AuthRoute
                     exact
                     path="/customers/schedule"
-                    Component={TempPage}
+                    Component={ScheduleJobsPage}
                   />
                 </Switch>
               </div>

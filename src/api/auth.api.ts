@@ -1,4 +1,4 @@
-import { apiUrls } from "consts";
+import { apiUrls } from "Utils/Constants";
 import Config from 'Config';
 // import Sha256 from "../components/common/sha256";
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { allStates } from "consts";
+import { allStates } from "Utils/Constants";
 import styled from "styled-components";
 import {
   Button,

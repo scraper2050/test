@@ -1,7 +1,7 @@
 import { handleActions } from "redux-actions";
 import { Record } from "immutable";
 
-import { loginActions, logoutAction, setAuthAction } from "actions/auth";
+import { loginActions, logoutAction, setAuthAction } from "actions/auth.action";
 
 const initialState = Record({
   loginApi: Record({

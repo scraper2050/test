@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import TicketJobModal from "./TicketJobModal";
+import CreateJob from "app/Modals/create-job";
 import {
   createMuiTheme,
   makeStyles,
@@ -10,8 +10,8 @@ import Button from "@material-ui/core/Button";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { Action } from "redux-actions";
-import { customersLoad } from "actions/customers";
-import { jobTypesLoad } from "actions/jobTypes";
+import { loadCustomersActions } from "actions/customers.action";
+import { loadJobTypesActions } from "actions/job-types.action";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -40,20 +40,20 @@ const theme = createMuiTheme({
 const NEW_TICKET = 0;
 const NEW_JOB = 1;
 
-interface PropsType {
+interface Props {
   loadCustomers: () => Action<any>;
-  loadJobTypes: () => Action<any>;
+  loadJobTypesActions: () => Action<any>;
 }
 
-const TempPage = ({ loadCustomers, loadJobTypes }: PropsType) => {
+const ScheduleJobsPage = ({ loadCustomers, loadJobTypesActions }: Props) => {
   const classes = useStyles();
   const [modal, setModal] = useState(false);
   const [modalMode, setModalMode] = useState(NEW_JOB);
 
   useEffect(() => {
     loadCustomers();
-    loadJobTypes();
-  }, [loadCustomers, loadJobTypes]);
+    loadJobTypesActions();
+  }, [loadCustomers, loadJobTypesActions]);
 
   return (
     <div
@@ -99,7 +99,7 @@ const TempPage = ({ loadCustomers, loadJobTypes }: PropsType) => {
         </ThemeProvider>
       </div>
       {/* component use */}
-      <TicketJobModal
+      <CreateJob
         modal={modal}
         modalMode={modalMode}
         cancel={() => setModal(false)}
@@ -115,8 +115,8 @@ const TempPage = ({ loadCustomers, loadJobTypes }: PropsType) => {
 // });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  loadCustomers: () => dispatch(customersLoad.fetch()),
-  loadJobTypes: () => dispatch(jobTypesLoad.fetch()),
+  loadCustomers: () => dispatch(loadCustomersActions.fetch()),
+  loadJobTypesActions: () => dispatch(loadJobTypesActions.fetch()),
 });
 
-export default connect(null, mapDispatchToProps)(TempPage);
+export default connect(null, mapDispatchToProps)(ScheduleJobsPage);
