@@ -13,7 +13,7 @@ import PasswordInput from '../../components/PasswordInput';
 import SocialButton from '../../components/SocialButton';
 import Spinner from '../../components/Spinner';
 import { connect } from 'react-redux';
-import styles from './Login.styles';
+import styles from './login.styles';
 import { useSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import { IAuthInfo, ILoingInfo } from 'app/models/auth';

@@ -1,50 +1,51 @@
-import React, { useState, useEffect } from "react";
-
-import styled from "styled-components";
-import SwipeableViews from "react-swipeable-views";
-import { useLocation, useHistory } from "react-router-dom";
-import { List, ListItem, Grid, Button } from "@material-ui/core";
-
-import Api from "utils/api";
-import BCTabs from "../../../components/BCTabs";
-import BCTable from "../../../components/BCTable";
-import Sidebar from "../../../components/Sidebar";
-import SubHeader from "../../../components/SubHeader";
-import * as CONSTANTS from "../../../../constants";
-import TableSearchInput from "../../../components/TableSearchInput";
-import ToolBarSearchInput from "../../../components/ToolBarSearchInput";
-
-import { GroupModel } from "../../../models/group";
+import * as CONSTANTS from '../../../../constants';
+import Api from 'utils/api';
+import BCTable from '../../../components/BCTable';
+import BCTabs from '../../../components/BCTabs';
+import { GroupModel } from '../../../models/group';
+import Sidebar from '../../../components/Sidebar';
+import SubHeader from '../../../components/SubHeader';
+import SwipeableViews from 'react-swipeable-views';
+import TableSearchInput from '../../../components/TableSearchInput';
+import ToolBarSearchInput from '../../../components/ToolBarSearchInput';
+import styled from 'styled-components';
+import { Button, Grid, List, ListItem } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const headCells = [
   {
-    id: "groupName",
-    label: "Group Name",
-    sortable: true,
-  },
+    'id': 'groupName',
+    'label': 'Group Name',
+    'sortable': true
+  }
 ];
 
-const table_data = [
+const tableData = [
   {
-    id: 0,
-    groupName: "BlueTest",
-  },
+    'groupName': 'BlueTest',
+    'id': 0
+  }
 ];
 
 const LINK_DATA = [
-  { label: "Groups", link: "/employees/group" },
-  { label: "Technicians", link: "/employees/technician" },
-  { label: "Managers", link: "/employees/manager" },
-  { label: "Office Admin", link: "/employees/office" },
+  { 'label': 'Groups',
+    'link': '/employees/group' },
+  { 'label': 'Technicians',
+    'link': '/employees/technician' },
+  { 'label': 'Managers',
+    'link': '/employees/manager' },
+  { 'label': 'Office Admin',
+    'link': '/employees/office' }
 ];
 
-const GroupPage = (): JSX.Element => {
+function GroupPage(): JSX.Element {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-  const [searchStr, setSearchStr] = useState("");
-  const [groupList, setGroupList] = useState<GroupModel[]>([]);
+  const [searchStr, setSearchStr] = useState('');
+  const [groupList, setGroupList] = useState<GroupModel[]>([]); // eslint-disable-line
 
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
@@ -54,53 +55,64 @@ const GroupPage = (): JSX.Element => {
     setCurTab(newValue);
   };
 
-  useEffect(() => {
-    Api.post("/getGroups", null)
-      .then((res) => {
-        if (res.data.status === 1) {
-          setGroupList([...res.data.groups]);
-        }
-      })
-      .catch((err) => {
-        console.log(" get industries api res => ", err);
-      });
-  }, []);
+  useEffect(
+    () => {
+      Api.post(
+        '/getGroups',
+        null
+      )
+        .then(res => {
+          if (res.data.status === 1) {
+            setGroupList([...res.data.groups]);
+          }
+        })
+        .catch(err => {
+          console.log(
+            ' get industries api res => ',
+            err
+          );
+        });
+    },
+    []
+  );
 
   return (
     <>
-      <SubHeader title="Employees">
-        <ToolBarSearchInput style={{ marginLeft: "auto", width: "321px" }} />
-        <EmployeeButton variant="contained">New Employee</EmployeeButton>
+      <SubHeader title={'Employees'}>
+        <ToolBarSearchInput style={{ 'marginLeft': 'auto',
+          'width': '321px' }}
+        />
+        <EmployeeButton variant={'contained'}>
+          {'New Employee'}
+        </EmployeeButton>
       </SubHeader>
 
       <MainContainer>
         <Sidebar>
-          <StyledList aria-label="people sidebar list">
+          <StyledList aria-label={'people sidebar list'}>
             {LINK_DATA.map((item, idx) => {
-              if (item.label === "Groups")
+              if (item.label === 'Groups') {
                 return (
                   <StyledListItem
-                    key={idx}
                     button
+                    key={idx}
+                    onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === "/employees"
-                    }
-                    onClick={() => onClickLink(item.link)}
-                  >
+                      pathName === item.link || pathName === '/employees'
+                    }>
                     {item.label}
                   </StyledListItem>
                 );
-              else
-                return (
-                  <StyledListItem
-                    key={idx}
-                    button
-                    selected={pathName === item.link}
-                    onClick={() => onClickLink(item.link)}
-                  >
-                    {item.label}
-                  </StyledListItem>
-                );
+              }
+              return (
+                <StyledListItem
+                  button
+                  key={idx}
+                  onClick={() => onClickLink(item.link)}
+                  selected={pathName === item.link}>
+                  {item.label}
+                </StyledListItem>
+              );
             })}
           </StyledList>
         </Sidebar>
@@ -108,38 +120,56 @@ const GroupPage = (): JSX.Element => {
         <PageContainer>
           <BCTabs
             curTab={curTab}
+            indicatorColor={'primary'}
             onChangeTab={handleTabChange}
-            indicatorColor="primary"
             tabsData={[
-              { value: 0, label: "Group List" },
-              { value: 1, label: "Recent Activities" },
+              {
+                'label': 'Group List',
+                'value': 0
+              },
+              {
+                'label': 'Recent Activities',
+                'value': 1
+              }
             ]}
           />
           <SwipeableViews index={curTab}>
-            <DataContainer id="0" hidden={curTab !== 0}>
+            <DataContainer
+              hidden={curTab !== 0}
+              id={'0'}>
               <Grid container>
-                <Grid item md={6} xs={12}>
+                <Grid
+                  item
+                  md={6}
+                  xs={12}>
                   <TableSearchInput
-                    style={{ marginBottom: "11px" }}
+                    onSearch={(str: string) => {
+                      console.log('On Search');
+                    }}
                     searchStr={searchStr}
                     setSearchStr={setSearchStr}
-                    onSearch={(str: string) => {
-                      console.log("On Search");
-                    }}
+                    style={{ 'marginBottom': '11px' }}
                   />
                 </Grid>
-                <Grid item md={12}>
+                <Grid
+                  item
+                  md={12}>
                   <BCTable
-                    tableData={table_data}
                     headCells={headCells}
-                    pagination={true}
+                    pagination
+                    tableData={tableData}
                   />
                 </Grid>
               </Grid>
             </DataContainer>
-            <DataContainer id="1" hidden={curTab !== 1}>
+            <DataContainer
+              hidden={curTab !== 1}
+              id={'1'}>
               <Grid container>
-                <Grid item xs={12}></Grid>
+                <Grid
+                  item
+                  xs={12}
+                />
               </Grid>
             </DataContainer>
           </SwipeableViews>
@@ -147,7 +177,7 @@ const GroupPage = (): JSX.Element => {
       </MainContainer>
     </>
   );
-};
+}
 
 const EmployeeButton = styled(Button)`
   margin-left: 25px;

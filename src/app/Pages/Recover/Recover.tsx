@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import styles from './Recover.styles';
+import styles from './recover.styles';
 import { useHistory } from 'react-router-dom';
 import validator from 'validator';
 import { withStyles } from '@material-ui/core/styles';
