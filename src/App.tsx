@@ -10,7 +10,7 @@ const NewCustomerPage = React.lazy(() => import('./app/pages/customer/new-custom
 const LoginPage = React.lazy(() => import('./app/pages/login/login'));
 const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
-const TechnicianPage = React.lazy(() => import('./app/pages/employee/technician/Technician'));
+const TechnicianPage = React.lazy(() => import('./app/pages/employee/technician/technician'));
 const OfficeAdminPage = React.lazy(() => import('./app/pages/employee/office/office'));
 const ScheduleJobsPage = React.lazy(() => import('./app/pages/customer/schedule-jobs/schedule-jobs'));
 const ManagerPage = React.lazy(() => import('./app/pages/employee/manager/manager'));
