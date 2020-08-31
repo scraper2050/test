@@ -1,5 +1,5 @@
 import config from '../config';
-import { getLocalStorageToken } from './localStorage.service';
+import { getLocalStorageToken } from './local-storage.service';
 import axios, { AxiosRequestConfig, Method } from 'axios';
 
 const api = config.apiBaseURL;
