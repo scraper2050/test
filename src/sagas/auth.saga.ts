@@ -1,29 +1,33 @@
-import { put, call, take, fork, cancelled, cancel } from "redux-saga/effects";
-import { loginActions, logoutAction } from "actions/auth.action";
-import { login } from "api/auth.api";
-import { ILoingInfo } from "app/Models/Auth";
+import { ILoingInfo } from 'app/models/auth';
+import { login } from 'api/auth.api';
+import { call, cancel, cancelled, fork, put, take } from 'redux-saga/effects';
+import { loginActions, logoutAction } from 'actions/auth/auth.action';
 
-export function* handleLogin(action: { payload: ILoingInfo }) {
+export function *handleLogin(action: { payload: ILoingInfo }) {
   yield put(loginActions.fetching());
   try {
-    const result = yield call(login, action.payload);
+    const result = yield call(
+      login,
+      action.payload
+    );
     yield put(loginActions.success(result));
   } catch (error) {
     yield put(loginActions.fault(error.toString()));
-  }
-  finally {
+  } finally {
     if (yield cancelled()) {
       yield put(loginActions.cancelled());
     }
   }
 }
 
-export default function* authFlow() {
+export default function *authFlow() {
   while (true) {
-
     const loginAction = yield take(loginActions.fetch);
 
-    const task = yield fork(handleLogin, loginAction);
+    const task = yield fork(
+      handleLogin,
+      loginAction
+    );
 
     const nextAction = yield take([logoutAction, loginActions.fault]);
     if (nextAction.type === logoutAction.name) {

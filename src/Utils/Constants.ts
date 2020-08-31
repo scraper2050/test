@@ -1,208 +1,208 @@
 export const apiUrls = {
-  getCustomers: "/getCustomers",
-  getJobTypes: "/getJobTypes",
-  login: "/login",
+  'getCustomers': '/getCustomers',
+  'getJobTypes': '/getJobTypes',
+  'login': '/login'
 };
 
 export const allStates = [
   {
-    name: "Alabama",
-    abbreviation: "AL",
+    'abbreviation': 'AL',
+    'name': 'Alabama'
   },
   {
-    name: "Alaska",
-    abbreviation: "AK",
+    'abbreviation': 'AK',
+    'name': 'Alaska'
   },
   {
-    name: "Arizona",
-    abbreviation: "AZ",
+    'abbreviation': 'AZ',
+    'name': 'Arizona'
   },
   {
-    name: "Arkansas",
-    abbreviation: "AR",
+    'abbreviation': 'AR',
+    'name': 'Arkansas'
   },
   {
-    name: "California",
-    abbreviation: "CA",
+    'abbreviation': 'CA',
+    'name': 'California'
   },
   {
-    name: "Colorado",
-    abbreviation: "CO",
+    'abbreviation': 'CO',
+    'name': 'Colorado'
   },
   {
-    name: "Connecticut",
-    abbreviation: "CT",
+    'abbreviation': 'CT',
+    'name': 'Connecticut'
   },
   {
-    name: "Delaware",
-    abbreviation: "DE",
+    'abbreviation': 'DE',
+    'name': 'Delaware'
   },
   {
-    name: "Florida",
-    abbreviation: "FL",
+    'abbreviation': 'FL',
+    'name': 'Florida'
   },
   {
-    name: "Georgia",
-    abbreviation: "GA",
+    'abbreviation': 'GA',
+    'name': 'Georgia'
   },
   {
-    name: "Hawaii",
-    abbreviation: "HI",
+    'abbreviation': 'HI',
+    'name': 'Hawaii'
   },
   {
-    name: "Idaho",
-    abbreviation: "ID",
+    'abbreviation': 'ID',
+    'name': 'Idaho'
   },
   {
-    name: "Illinois",
-    abbreviation: "IL",
+    'abbreviation': 'IL',
+    'name': 'Illinois'
   },
   {
-    name: "Indiana",
-    abbreviation: "IN",
+    'abbreviation': 'IN',
+    'name': 'Indiana'
   },
   {
-    name: "Iowa",
-    abbreviation: "IA",
+    'abbreviation': 'IA',
+    'name': 'Iowa'
   },
   {
-    name: "Kansas",
-    abbreviation: "KS",
+    'abbreviation': 'KS',
+    'name': 'Kansas'
   },
   {
-    name: "Kentucky",
-    abbreviation: "KY",
+    'abbreviation': 'KY',
+    'name': 'Kentucky'
   },
   {
-    name: "Louisiana",
-    abbreviation: "LA",
+    'abbreviation': 'LA',
+    'name': 'Louisiana'
   },
   {
-    name: "Maine",
-    abbreviation: "ME",
+    'abbreviation': 'ME',
+    'name': 'Maine'
   },
   {
-    name: "Maryland",
-    abbreviation: "MD",
+    'abbreviation': 'MD',
+    'name': 'Maryland'
   },
   {
-    name: "Massachusetts",
-    abbreviation: "MA",
+    'abbreviation': 'MA',
+    'name': 'Massachusetts'
   },
   {
-    name: "Michigan",
-    abbreviation: "MI",
+    'abbreviation': 'MI',
+    'name': 'Michigan'
   },
   {
-    name: "Minnesota",
-    abbreviation: "MN",
+    'abbreviation': 'MN',
+    'name': 'Minnesota'
   },
   {
-    name: "Mississippi",
-    abbreviation: "MS",
+    'abbreviation': 'MS',
+    'name': 'Mississippi'
   },
   {
-    name: "Missouri",
-    abbreviation: "MO",
+    'abbreviation': 'MO',
+    'name': 'Missouri'
   },
   {
-    name: "Montana",
-    abbreviation: "MT",
+    'abbreviation': 'MT',
+    'name': 'Montana'
   },
   {
-    name: "Nebraska",
-    abbreviation: "NE",
+    'abbreviation': 'NE',
+    'name': 'Nebraska'
   },
   {
-    name: "Nevada",
-    abbreviation: "NV",
+    'abbreviation': 'NV',
+    'name': 'Nevada'
   },
   {
-    name: "New Hampshire",
-    abbreviation: "NH",
+    'abbreviation': 'NH',
+    'name': 'New Hampshire'
   },
   {
-    name: "New Jersey",
-    abbreviation: "NJ",
+    'abbreviation': 'NJ',
+    'name': 'New Jersey'
   },
   {
-    name: "New Mexico",
-    abbreviation: "NM",
+    'abbreviation': 'NM',
+    'name': 'New Mexico'
   },
   {
-    name: "New York",
-    abbreviation: "NY",
+    'abbreviation': 'NY',
+    'name': 'New York'
   },
   {
-    name: "North Carolina",
-    abbreviation: "NC",
+    'abbreviation': 'NC',
+    'name': 'North Carolina'
   },
   {
-    name: "North Dakota",
-    abbreviation: "ND",
+    'abbreviation': 'ND',
+    'name': 'North Dakota'
   },
   {
-    name: "Ohio",
-    abbreviation: "OH",
+    'abbreviation': 'OH',
+    'name': 'Ohio'
   },
   {
-    name: "Oklahoma",
-    abbreviation: "OK",
+    'abbreviation': 'OK',
+    'name': 'Oklahoma'
   },
   {
-    name: "Oregon",
-    abbreviation: "OR",
+    'abbreviation': 'OR',
+    'name': 'Oregon'
   },
   {
-    name: "Pennsylvania",
-    abbreviation: "PA",
+    'abbreviation': 'PA',
+    'name': 'Pennsylvania'
   },
   {
-    name: "Rhode Island",
-    abbreviation: "RI",
+    'abbreviation': 'RI',
+    'name': 'Rhode Island'
   },
   {
-    name: "South Carolina",
-    abbreviation: "SC",
+    'abbreviation': 'SC',
+    'name': 'South Carolina'
   },
   {
-    name: "South Dakota",
-    abbreviation: "SD",
+    'abbreviation': 'SD',
+    'name': 'South Dakota'
   },
   {
-    name: "Tennessee",
-    abbreviation: "TN",
+    'abbreviation': 'TN',
+    'name': 'Tennessee'
   },
   {
-    name: "Texas",
-    abbreviation: "TX",
+    'abbreviation': 'TX',
+    'name': 'Texas'
   },
   {
-    name: "Utah",
-    abbreviation: "UT",
+    'abbreviation': 'UT',
+    'name': 'Utah'
   },
   {
-    name: "Vermont",
-    abbreviation: "VT",
+    'abbreviation': 'VT',
+    'name': 'Vermont'
   },
   {
-    name: "Virginia",
-    abbreviation: "VA",
+    'abbreviation': 'VA',
+    'name': 'Virginia'
   },
   {
-    name: "Washington",
-    abbreviation: "WA",
+    'abbreviation': 'WA',
+    'name': 'Washington'
   },
   {
-    name: "West Virginia",
-    abbreviation: "WV",
+    'abbreviation': 'WV',
+    'name': 'West Virginia'
   },
   {
-    name: "Wisconsin",
-    abbreviation: "WI",
+    'abbreviation': 'WI',
+    'name': 'Wisconsin'
   },
   {
-    name: "Wyoming",
-    abbreviation: "WY",
+    'abbreviation': 'WY',
+    'name': 'Wyoming'
   }
 ];

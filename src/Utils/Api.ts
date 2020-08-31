@@ -1,14 +1,17 @@
 import Axios from 'axios';
-import Config from '../Config';
+import config from '../config';
 
 export default Axios.create({
-  baseURL: Config.apiBaseURL,
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: localStorage.getItem('token'),
-  },
+  'baseURL': config.apiBaseURL,
+  'headers': {
+    'Authorization': localStorage.getItem('token'),
+    'Content-Type': 'application/json'
+  }
 });
 
 export const setToken = (token: string): void => {
-  localStorage.setItem('token', token);
+  localStorage.setItem(
+    'token',
+    token
+  );
 };
