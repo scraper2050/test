@@ -5,16 +5,16 @@ import SwipeableViews from "react-swipeable-views";
 import { useLocation, useHistory } from "react-router-dom";
 import { List, Grid, ListItem, Button } from "@material-ui/core";
 
-import Api from "Utils/Api";
-import BCTabs from "../../../Components/BCTabs";
-import BCTable from "../../../Components/BCTable";
-import Sidebar from "../../../Components/Sidebar";
-import SubHeader from "../../../Components/SubHeader";
+import Api from "utils/Api";
+import BCTabs from "../../../components/BCTabs";
+import BCTable from "../../../components/BCTable";
+import Sidebar from "../../../components/Sidebar";
+import SubHeader from "../../../components/SubHeader";
 import * as CONSTANTS from "../../../../constants";
-import TableSearchInput from "../../../Components/TableSearchInput";
-import ToolBarSearchInput from "../../../Components/ToolBarSearchInput";
+import TableSearchInput from "../../../components/TableSearchInput";
+import ToolBarSearchInput from "../../../components/ToolBarSearchInput";
 
-import { UserModel } from "../../../Models/User";
+import { UserModel } from "../../../models/User";
 
 const headCells = [
   {

@@ -14,15 +14,15 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import EmailValidateInput from "../../Components/EmailValidateInput";
-import PassowrdInput from "../../Components/PasswordInput";
-import PhoneNumberInput from "../../Components/PhoneNumberInput";
-import TermsContent from "./Components/TermsContent";
-import Spinner from "../../Components/Spinner";
-import SocialButton from "../../Components/SocialButton";
-import Api, { setToken } from "Utils/Api";
-import { FormDataModel } from "../../Models/FormData";
-import { IndustryModel } from "../../Models/Industry";
+import EmailValidateInput from "../../components/EmailValidateInput";
+import PassowrdInput from "../../components/PasswordInput";
+import PhoneNumberInput from "../../components/PhoneNumberInput";
+import TermsContent from "./components/TermsContent";
+import Spinner from "../../components/Spinner";
+import SocialButton from "../../components/SocialButton";
+import Api, { setToken } from "utils/Api";
+import { FormDataModel } from "../../models/FormData";
+import { IndustryModel } from "../../models/Industry";
 
 import BackImg from "../../../assets/img/bg.png";
 import Typography from "@material-ui/core/Typography";
@@ -236,7 +236,7 @@ const SignUpPage = (): JSX.Element => {
   };
 
   const checkValidate = (): boolean => {
-    let formDataTemp = { ...formData };
+    const formDataTemp = { ...formData };
     let isValidate = true;
     Object.keys(formData).forEach((item) => {
       const dataValue = formDataTemp[item];

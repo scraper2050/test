@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { allStates } from "Utils/Constants";
+import { allStates } from "utils/Constants";
 import styled from "styled-components";
 import {
   Button,
@@ -17,16 +17,16 @@ import {
   Box,
 } from "@material-ui/core";
 import SwipeableViews from "react-swipeable-views";
-import { FormDataModel } from "../../../Models/FormData";
+import { FormDataModel } from "../../../models/FormData";
 import * as CONSTANTS from "../../../../constants";
 
-import SubHeader from "../../../../app/Components/SubHeader";
-import BCTabs from "../../../../app/Components/BCTabs";
-import Sidebar from "../../../../app/Components/Sidebar";
-import MapWithMarker from "../../../../app/Components/MapWithMarker";
-import PhoneNumberInput from "../../../../app/Components/PhoneNumberInput";
-import EmailValidateInput from "../../../../app/Components/EmailValidateInput";
-import ToolBarSearchInput from "../../../../app/Components/ToolBarSearchInput";
+import SubHeader from "../../../../app/components/SubHeader";
+import BCTabs from "../../../../app/components/BCTabs";
+import Sidebar from "../../../../app/components/Sidebar";
+import MapWithMarker from "../../../../app/components/MapWithMarker";
+import PhoneNumberInput from "../../../../app/components/PhoneNumberInput";
+import EmailValidateInput from "../../../../app/components/EmailValidateInput";
+import ToolBarSearchInput from "../../../../app/components/ToolBarSearchInput";
 
 const LINK_DATA = [
   { label: "Customer List", link: "/customers/customer-list" },

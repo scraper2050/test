@@ -5,7 +5,7 @@ import { Dispatch } from "redux";
 import { setAuthAction } from "actions/auth.action";
 import { Action } from "redux-actions";
 
-import { IAuthInfo } from "app/Models/Auth";
+import { IAuthInfo } from "app/models/Auth";
 
 interface Props {
   token?: string;
@@ -20,15 +20,18 @@ const AuthRoute = ({
   Component,
   path,
   exact = false,
-  setAuthAction
+  setAuthAction,
 }: Props): JSX.Element | null => {
-
   const storageAuth: IAuthInfo = {
     token: localStorage.getItem("token"),
-    user: JSON.parse(localStorage.getItem("user") || "{}")
+    user: JSON.parse(localStorage.getItem("user") || "{}"),
   };
 
-  const loginFromStorage = (token === null || token === "") && storageAuth.token !== null && storageAuth.token !== '' && storageAuth.user !== null
+  const loginFromStorage =
+    (token === null || token === "") &&
+    storageAuth.token !== null &&
+    storageAuth.token !== "" &&
+    storageAuth.user !== null;
 
   useEffect(() => {
     loginFromStorage && setAuthAction(storageAuth);
@@ -47,16 +50,16 @@ const AuthRoute = ({
         isAuthed ? (
           <Component {...props} />
         ) : (
-            <Redirect
-              to={{
-                pathname: "/",
-                state: {
-                  message,
-                  requestedPath: path,
-                },
-              }}
-            />
-          )
+          <Redirect
+            to={{
+              pathname: "/",
+              state: {
+                message,
+                requestedPath: path,
+              },
+            }}
+          />
+        )
       }
     />
   );
@@ -70,8 +73,7 @@ const mapStateToProps = (state: {
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setAuthAction: (authInfo: IAuthInfo) =>
-    dispatch(setAuthAction(authInfo)),
+  setAuthAction: (authInfo: IAuthInfo) => dispatch(setAuthAction(authInfo)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthRoute);

@@ -1,7 +1,7 @@
 import { put, call, take, fork, cancelled, cancel } from "redux-saga/effects";
 import { loginActions, logoutAction } from "actions/auth.action";
 import { login } from "api/auth.api";
-import { ILoingInfo } from "app/Models/Auth";
+import { ILoingInfo } from "app/models/Auth";
 
 export function* handleLogin(action: { payload: ILoingInfo }) {
   yield put(loginActions.fetching());
@@ -10,8 +10,7 @@ export function* handleLogin(action: { payload: ILoingInfo }) {
     yield put(loginActions.success(result));
   } catch (error) {
     yield put(loginActions.fault(error.toString()));
-  }
-  finally {
+  } finally {
     if (yield cancelled()) {
       yield put(loginActions.cancelled());
     }
@@ -20,7 +19,6 @@ export function* handleLogin(action: { payload: ILoingInfo }) {
 
 export default function* authFlow() {
   while (true) {
-
     const loginAction = yield take(loginActions.fetch);
 
     const task = yield fork(handleLogin, loginAction);

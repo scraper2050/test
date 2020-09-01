@@ -1,22 +1,22 @@
 import React from "react";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import AuthRoute from "AuthRoute";
-import Header from "./app/Components/Header";
+import Header from "./app/components/Header";
 
-import LoginPage from "./app/Pages/Login";
-import SignUpPage from "./app/Pages/SignUp";
-import RecoverPage from "./app/Pages/Recover";
+import LoginPage from "./app/pages/Login";
+import SignUpPage from "./app/pages/SignUp";
+import RecoverPage from "./app/pages/Recover";
 
-import DashboardPage from "./app/Pages/Dashboard";
-import GroupPage from "./app/Pages/Employees/Group";
-import TechnicianPage from "./app/Pages/Employees/Technician";
-import ManagerPage from "./app/Pages/Employees/Manager";
-import OfficeAdminPage from "./app/Pages/Employees/Office";
-import CustomersPage from "./app/Pages/Customers";
-import NewCustomerPage from "./app/Pages/Customers/NewCustomer";
+import DashboardPage from "./app/pages/Dashboard";
+import GroupPage from "./app/pages/Employees/Group";
+import TechnicianPage from "./app/pages/Employees/Technician";
+import ManagerPage from "./app/pages/Employees/Manager";
+import OfficeAdminPage from "./app/pages/Employees/Office";
+import CustomersPage from "./app/pages/Customers";
+import NewCustomerPage from "./app/pages/Customers/NewCustomer";
 
 // for dev
-import ScheduleJobsPage from "./app/Pages/Customers/schedule-jobs";
+import ScheduleJobsPage from "./app/pages/Customers/schedule-jobs";
 
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";

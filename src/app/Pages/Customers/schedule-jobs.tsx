@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import CreateJob from "app/Modals/create-job";
+import CreateJob from "app/modals/create-job";
 import {
   createMuiTheme,
   makeStyles,

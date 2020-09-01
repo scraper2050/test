@@ -1,4 +1,4 @@
-import { apiUrls } from "Utils/Constants";
+import { apiUrls } from "utils/Constants";
 import Config from 'Config';
 
 export const getAllEmployees = async (param:{}) => {

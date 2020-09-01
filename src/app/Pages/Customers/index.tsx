@@ -7,12 +7,12 @@ import SwipeableViews from "react-swipeable-views";
 
 import * as CONSTANTS from "../../../constants";
 
-import SubHeader from "../../../app/Components/SubHeader";
-import BCTabs from "../../../app/Components/BCTabs";
-import BCTable from "../../../app/Components/BCTable";
-import Sidebar from "../../../app/Components/Sidebar";
-import TableSearchInput from "../../../app/Components/TableSearchInput";
-import ToolBarSearchInput from "../../../app/Components/ToolBarSearchInput";
+import SubHeader from "../../../app/components/SubHeader";
+import BCTabs from "../../../app/components/BCTabs";
+import BCTable from "../../../app/components/BCTable";
+import Sidebar from "../../../app/components/Sidebar";
+import TableSearchInput from "../../../app/components/TableSearchInput";
+import ToolBarSearchInput from "../../../app/components/ToolBarSearchInput";
 
 const LINK_DATA = [
   { label: "Customer List", link: "/customers/customer-list" },

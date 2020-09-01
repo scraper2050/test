@@ -1,21 +1,21 @@
-import React from 'react';
+import React from "react";
 
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
-import { FormDataModel } from '../../Models/FormData';
+import { FormDataModel } from "../../models/FormData";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     showpassowrdbtn: {
-      position: 'absolute',
-      padding: '2px',
-      right: '25px',
-      top: '17px',
-      backgroundColor: '#fff',
+      position: "absolute",
+      padding: "2px",
+      right: "25px",
+      top: "17px",
+      backgroundColor: "#fff",
       zIndex: 999,
     },
   })
@@ -24,17 +24,17 @@ const useStyles = makeStyles((theme: Theme) =>
 interface PasswordInputProps {
   id?: string;
   label?: string;
-  size: 'small' | 'medium';
-  variant?: 'outlined' | 'filled';
+  size: "small" | "medium";
+  variant?: "outlined" | "filled";
   inputData: FormDataModel;
   onChange: Function;
 }
 
 const PasswordInput = ({
-  id = 'password',
-  label = 'Password',
-  variant = 'outlined',
-  size = 'small',
+  id = "password",
+  label = "Password",
+  variant = "outlined",
+  size = "small",
   inputData,
   onChange,
 }: PasswordInputProps) => {
@@ -45,7 +45,7 @@ const PasswordInput = ({
     onChange({
       value: passwordValue,
       validate: passwordValue.length > 0 ? true : false,
-      errorMsg: passwordValue.length > 0 ? '' : 'This field is required',
+      errorMsg: passwordValue.length > 0 ? "" : "This field is required",
     });
   };
 
@@ -54,7 +54,7 @@ const PasswordInput = ({
       <TextField
         id={id}
         label={label}
-        type={inputData.showPassword ? 'text' : 'password'}
+        type={inputData.showPassword ? "text" : "password"}
         variant={variant}
         size={size}
         fullWidth

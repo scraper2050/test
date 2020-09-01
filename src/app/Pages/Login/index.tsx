@@ -9,11 +9,11 @@ import Paper from "@material-ui/core/Paper";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { Button } from "@material-ui/core";
-import EmailValidateInput from "../../Components/EmailValidateInput";
-import PasswordInput from "../../Components/PasswordInput";
-import { FormDataModel } from "../../Models/FormData";
-import Spinner from "../../Components/Spinner";
-import SocialButton from "../../Components/SocialButton";
+import EmailValidateInput from "../../components/EmailValidateInput";
+import PasswordInput from "../../components/PasswordInput";
+import { FormDataModel } from "../../models/FormData";
+import Spinner from "../../components/Spinner";
+import SocialButton from "../../components/SocialButton";
 
 import BackImg from "../../../assets/img/bg.png";
 import LogoSvg from "../../../assets/img/Logo.svg";
@@ -24,7 +24,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { Action } from "redux-actions";
 import { loginActions, setAuthAction } from "actions/auth.action";
-import { ILoingInfo, IAuthInfo } from "app/Models/Auth";
+import { ILoingInfo, IAuthInfo } from "app/models/Auth";
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -157,7 +157,6 @@ const LoginPage = ({
   user,
   errMessage,
 }: Props): JSX.Element | null => {
-
   const history = useHistory();
   const location = useLocation<LocationState>();
 
@@ -195,13 +194,16 @@ const LoginPage = ({
 
   const [remember, setRemeber] = useState(false);
 
-
   const storageAuth: IAuthInfo = {
     token: localStorage.getItem("token"),
-    user: JSON.parse(localStorage.getItem("user") || "{}")
+    user: JSON.parse(localStorage.getItem("user") || "{}"),
   };
 
-  const loginFromStorage = (token === null || token === "") && storageAuth.token !== null && storageAuth.token !== '' && storageAuth.user !== null
+  const loginFromStorage =
+    (token === null || token === "") &&
+    storageAuth.token !== null &&
+    storageAuth.token !== "" &&
+    storageAuth.user !== null;
 
   useEffect(() => {
     loginFromStorage && setAuthAction(storageAuth);
@@ -211,12 +213,12 @@ const LoginPage = ({
     if (token !== null && token !== "") {
       history.push(location.state?.requestedPath ?? "/dashboard");
     }
-  }, [token, history, location])
+  }, [token, history, location]);
 
   if (loginFromStorage || token) return null;
 
   const checkValidate = (): boolean => {
-    let formDataTemp = { ...formData };
+    const formDataTemp = { ...formData };
     let isValidate = true;
     Object.keys(formData).forEach((item) => {
       const dataValue = formDataTemp[item];
@@ -243,7 +245,7 @@ const LoginPage = ({
     });
   };
 
-  const handleSocialLogin = (user: any, connectorType: number): void => { };
+  const handleSocialLogin = (user: any, connectorType: number): void => {};
 
   const handleSocialLoginFailure = (err: any, connectorType: number): void => {
     console.log(`${connectorType} login error`);
@@ -407,8 +409,7 @@ const mapStateToProps = (state: {
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   loginAction: (loginInfo: ILoingInfo) =>
     dispatch(loginActions.fetch(loginInfo)),
-  setAuthAction: (authInfo: IAuthInfo) =>
-    dispatch(setAuthAction(authInfo)),
+  setAuthAction: (authInfo: IAuthInfo) => dispatch(setAuthAction(authInfo)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

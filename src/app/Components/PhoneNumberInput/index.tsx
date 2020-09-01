@@ -2,7 +2,7 @@ import React from "react";
 
 import TextField from "@material-ui/core/TextField";
 
-import { FormDataModel } from "../../Models/FormData";
+import { FormDataModel } from "../../models/FormData";
 
 interface PhonNumberInputProps {
   id?: string;

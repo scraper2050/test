@@ -3,7 +3,7 @@ import React from "react";
 import validator from "validator";
 import TextField from "@material-ui/core/TextField";
 
-import { FormDataModel } from "../../Models/FormData";
+import { FormDataModel } from "../../models/FormData";
 
 interface EmailValidateInputProps {
   id?: string;
@@ -23,7 +23,7 @@ const EmailValidateInput = ({
   onChange,
 }: EmailValidateInputProps) => {
   const handleChangeEmail = (e: any) => {
-    let emailData = {
+    const emailData = {
       value: e.target.value,
       validate: true,
       errorMsg: "",
