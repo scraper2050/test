@@ -1,8 +1,3 @@
-import ScheduleJobsPage from "./app/pages/Customers/schedule-jobs";
-
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-
 import AuthRoute from 'auth-route';
 import BCHeader from './app/components/bc-header/bc-header';
 import DateFnsUtils from '@date-io/date-fns';

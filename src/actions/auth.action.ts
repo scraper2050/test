@@ -1,5 +1,5 @@
 
-import { createApiAction } from "./actionUtil";
+import { createApiAction } from "./action.utils";
 import { createAction } from "redux-actions";
 
 export const loginActions = createApiAction("login");

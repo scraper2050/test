@@ -1,6 +1,6 @@
 import { Action } from 'redux-actions';
 import { Dispatch } from 'redux';
-import { IAuthInfo } from 'app/models/auth';
+import { AuthInfo } from 'app/models/user';
 import { connect } from 'react-redux';
 import { setAuthAction } from 'actions/auth/auth.action';
 import React, { useEffect } from 'react';
@@ -11,7 +11,7 @@ interface Props {
   Component: React.FC<RouteComponentProps>;
   path: string;
   exact?: boolean;
-  setAuthAction: (authInfo: IAuthInfo) => Action<any>;
+  setAuthAction: (authInfo: AuthInfo) => Action<any>;
 }
 
 function AuthRoute({
@@ -21,7 +21,7 @@ function AuthRoute({
   exact = false,
   setAuthAction
 }: Props): JSX.Element | null {
-  const storageAuth: IAuthInfo = {
+  const storageAuth: AuthInfo = {
     'token': localStorage.getItem('token'),
     'user': JSON.parse(localStorage.getItem('user') || '{}')
   };
@@ -72,7 +72,7 @@ const mapStateToProps = (state: {
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  'setAuthAction': (authInfo: IAuthInfo) =>
+  'setAuthAction': (authInfo: AuthInfo) =>
     dispatch(setAuthAction(authInfo))
 });
 

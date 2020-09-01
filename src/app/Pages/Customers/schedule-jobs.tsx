@@ -10,8 +10,8 @@ import Button from "@material-ui/core/Button";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { Action } from "redux-actions";
-import { loadCustomersActions } from "actions/customers.action";
-import { loadJobTypesActions } from "actions/job-types.action";
+import { loadCustomersActions } from "actions/customer/customer.action";
+import { loadJobTypesActions } from "actions/job-type/job-type.action";
 
 const useStyles = makeStyles((theme) => ({
   margin: {

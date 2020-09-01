@@ -1,9 +1,9 @@
-import { ILoingInfo } from 'app/models/auth';
+import { Auth } from 'app/models/user';
 import { login } from 'api/auth.api';
 import { call, cancel, cancelled, fork, put, take } from 'redux-saga/effects';
 import { loginActions, logoutAction } from 'actions/auth/auth.action';
 
-export function *handleLogin(action: { payload: ILoingInfo }) {
+export function *handleLogin(action: { payload: Auth }) {
   yield put(loginActions.fetching());
   try {
     const result = yield call(

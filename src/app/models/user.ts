@@ -14,6 +14,11 @@ export interface Auth {
   password: string;
 }
 
+export interface AuthInfo {
+  token: string | null;
+  user: Auth | null;
+}
+
 export interface Profile {
   firstName: string;
   lastName: string;

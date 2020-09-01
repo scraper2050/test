@@ -3,7 +3,7 @@ import React from "react";
 import validator from "validator";
 import TextField from "@material-ui/core/TextField";
 
-import { FormDataModel } from "../../models/FormData";
+import { FormDataModel } from "../../models/form-data";
 
 interface EmailValidateInputProps {
   id?: string;

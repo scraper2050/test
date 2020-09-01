@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import styles from './login.styles';
 import { useSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
-import { IAuthInfo, ILoingInfo } from 'app/models/auth';
+import { AuthInfo, Auth } from 'app/models/user';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { loginActions, setAuthAction } from 'actions/auth/auth.action';
@@ -26,8 +26,8 @@ const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
 
 
 interface Props {
-  loginAction: (loginInfo: ILoingInfo) => Action<any>;
-  setAuthAction: (authInfo: IAuthInfo) => Action<any>;
+  loginAction: (loginInfo: Auth) => Action<any>;
+  setAuthAction: (authInfo: AuthInfo) => Action<any>;
   isLoading: boolean;
   token: string;
   user: object;
@@ -99,7 +99,7 @@ function LoginPage({
   const [remember, setRemeber] = useState(false);
 
 
-  const storageAuth: IAuthInfo = {
+  const storageAuth: AuthInfo = {
     'token': localStorage.getItem('token'),
     'user': JSON.parse(localStorage.getItem('user') || '{}')
   };
@@ -374,9 +374,9 @@ const mapStateToProps = (state: {
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  'loginAction': (loginInfo: ILoingInfo) =>
+  'loginAction': (loginInfo: Auth) =>
     dispatch(loginActions.fetch(loginInfo)),
-  'setAuthAction': (authInfo: IAuthInfo) =>
+  'setAuthAction': (authInfo: AuthInfo) =>
     dispatch(setAuthAction(authInfo))
 });
 
