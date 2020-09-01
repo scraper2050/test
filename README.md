@@ -9,7 +9,9 @@
   -- folder
   -- file-kebab-case.tsx
 - Actions
+  -- folder
   -- file-kebab-case.action.ts
+  -- file-kebab-case.type.ts
 - Reducers
   -- file-kebab-case.reducer.ts
 - Saga
@@ -37,10 +39,12 @@
 ### `State Management`
 
 - Redux for State Management
-- Redux-Sage as a Middleware
+- Redux-Saga as a Middleware
 
 ### `Naming`
 
+- Use of PascalCase for constructor functions naming
+- Use of camelCase for variable naming
 - Use of kebab-case for file naming
 - Prefix component with page or component name
 - Reducer Naming (name-kebabcase.reducer.ts)

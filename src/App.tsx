@@ -1,96 +1,113 @@
-import React from "react";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
-import AuthRoute from "AuthRoute";
-import Header from "./app/components/Header";
-
-import LoginPage from "./app/pages/Login";
-import SignUpPage from "./app/pages/SignUp";
-import RecoverPage from "./app/pages/Recover";
-
-import DashboardPage from "./app/pages/Dashboard";
-import GroupPage from "./app/pages/Employees/Group";
-import TechnicianPage from "./app/pages/Employees/Technician";
-import ManagerPage from "./app/pages/Employees/Manager";
-import OfficeAdminPage from "./app/pages/Employees/Office";
-import CustomersPage from "./app/pages/Customers";
-import NewCustomerPage from "./app/pages/Customers/NewCustomer";
-
-// for dev
 import ScheduleJobsPage from "./app/pages/Customers/schedule-jobs";
 
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
-const App = () => {
+import AuthRoute from 'auth-route';
+import BCHeader from './app/components/bc-header/bc-header';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import React, { Suspense } from 'react';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+const DashboardPage = React.lazy(() => import('./app/pages/dashboard/dashboard'));
+const CustomersPage = React.lazy(() => import('./app/pages/customer/customer'));
+const NewCustomerPage = React.lazy(() => import('./app/pages/customer/new-customer/new-customer'));
+const LoginPage = React.lazy(() => import('./app/pages/login/login'));
+const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
+const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
+const TechnicianPage = React.lazy(() => import('./app/pages/employee/technician/technician'));
+const OfficeAdminPage = React.lazy(() => import('./app/pages/employee/office/office'));
+const ScheduleJobsPage = React.lazy(() => import('./app/pages/customer/schedule-jobs/schedule-jobs'));
+const ManagerPage = React.lazy(() => import('./app/pages/employee/manager/manager'));
+const GroupPage = React.lazy(() => import('./app/pages/employee/group/group'));
+
+function App() {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Router>
-        <div className="App">
+        <div className={'App'}>
           <Switch>
-            <Route exact path="/" component={LoginPage} />
-            <Route path="/signup" component={SignUpPage} />
-            <Route path="/recover" component={RecoverPage} />
+            <Suspense fallback={<div>
+              {'Loading'}
+            </div>}>
+              <Route
+                component={LoginPage}
+                exact
+                path={'/'}
+              />
+              <Route
+                component={SignUpPage}
+                path={'/signup'}
+              />
+              <Route
+                component={RecoverPage}
+                path={'/recover'}
+              />
+              <Route>
+                <BCHeader />
+                <div className={'main-container'}>
+                  <Switch>
+                    <AuthRoute
+                      Component={DashboardPage}
+                      exact
+                      path={'/dashboard'}
+                    />
+                    <AuthRoute
+                      Component={GroupPage}
+                      exact
+                      path={'/employees'}
+                    />
+                    <AuthRoute
+                      Component={GroupPage}
+                      exact
+                      path={'/employees/group'}
+                    />
+                    <AuthRoute
+                      Component={TechnicianPage}
+                      exact
+                      path={'/employees/technician'}
+                    />
+                    <AuthRoute
+                      Component={ManagerPage}
+                      exact
+                      path={'/employees/manager'}
+                    />
+                    <AuthRoute
+                      Component={OfficeAdminPage}
+                      exact
+                      path={'/employees/office'}
+                    />
 
-            <Route>
-              <Header />
-              <div className="main-container">
-                <Switch>
-                  <AuthRoute
-                    exact
-                    path="/dashboard"
-                    Component={DashboardPage}
-                  />
-                  <AuthRoute exact path="/employees" Component={GroupPage} />
-                  <AuthRoute
-                    exact
-                    path="/employees/group"
-                    Component={GroupPage}
-                  />
-                  <AuthRoute
-                    exact
-                    path="/employees/technician"
-                    Component={TechnicianPage}
-                  />
-                  <AuthRoute
-                    exact
-                    path="/employees/manager"
-                    Component={ManagerPage}
-                  />
-                  <AuthRoute
-                    exact
-                    path="/employees/office"
-                    Component={OfficeAdminPage}
-                  />
+                    <AuthRoute
+                      Component={CustomersPage}
+                      exact
+                      path={'/customers'}
+                    />
+                    <AuthRoute
+                      Component={CustomersPage}
+                      exact
+                      path={'/customers/customer-list'}
+                    />
+                    <AuthRoute
+                      Component={NewCustomerPage}
+                      exact
+                      path={'/customers/new-customer'}
+                    />
 
-                  <AuthRoute
-                    exact
-                    path="/customers"
-                    Component={CustomersPage}
-                  />
-                  <AuthRoute
-                    exact
-                    path="/customers/customer-list"
-                    Component={CustomersPage}
-                  />
-                  <AuthRoute
-                    exact
-                    path="/customers/new-customer"
-                    Component={NewCustomerPage}
-                  />
-
-                  {/* for dev */}
-                  <AuthRoute
-                    exact
-                    path="/customers/schedule"
-                    Component={ScheduleJobsPage}
-                  />
-                </Switch>
-              </div>
-            </Route>
+                    {/* For dev */}
+                    <AuthRoute
+                      Component={ScheduleJobsPage}
+                      exact
+                      path={'/customers/schedule'}
+                    />
+                  </Switch>
+                </div>
+              </Route>
+            </Suspense>
           </Switch>
         </div>
       </Router>
     </MuiPickersUtilsProvider>
   );
-};
+}
 export default App;
