@@ -40,15 +40,15 @@ export default (theme: Theme): any => ({
   'dropdownItem': {
     'borderRadius': '2px',
     'clear': 'both',
-    'color': '#333',
+    'color': CONSTANTS.PRIMARY_DARK,
     'display': 'block',
-    'fontSize': '13px',
+    'fontSize': '15px',
     'fontWeight': '400',
     'height': '100%',
     'margin': '0 5px',
     'padding': '10px 20px',
     'position': 'relative',
-    'transition': 'all 150ms linear',
+    'transition': 'all 50ms linear',
     'whiteSpace': 'nowrap'
   },
   'headerNav': {
@@ -171,7 +171,7 @@ export default (theme: Theme): any => ({
   },
   'profileAvatar': {
     'alignItems': 'center',
-    'color': '#262a2e',
+    'color': CONSTANTS.PRIMARY_DARK,
     'display': 'flex',
     'fontSize': '16px',
     'fontStyle': 'normal',
