@@ -1,26 +1,53 @@
-import AvatarImg1 from '../../../assets/img/avatars/1.jpg';
-import BellIconSvg from '../../../assets/img/Bell-Icon.svg';
-import HelpIconSvg from '../../../assets/img/Help-Icon.svg';
-import LogoSvg from '../../../assets/img/Logo.svg';
-import MenuIcon from '@material-ui/icons/Menu';
-import SettingIconSvg from '../../../assets/img/Setting-Icon.svg';
 import {
   AppBar,
   Button,
+  ClickAwayListener,
   Divider,
+  Grow,
   IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
   SwipeableDrawer,
   Toolbar
 } from '@material-ui/core';
+// eslint-disable-next-line sort-imports
+import AvatarImg from '../../../assets/img/user_avatar.png';
+import HelpIconSvg from '../../../assets/img/Help-Icon.svg';
+import LogoSvg from '../../../assets/img/Logo.svg';
+import MenuIcon from '@material-ui/icons/Menu';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import styles from './bc-header.styles';
+import { withStyles } from '@material-ui/core/styles';
 import { Link, useLocation } from 'react-router-dom';
 import React, { useState } from 'react';
 
-import './bc-header.scss';
+interface Props {
+  token: string;
+  user: any;
+  classes: any;
+}
 
-function BCHeader(): JSX.Element {
+function BCHeader({ token, user, classes }: Props): JSX.Element {
   const location = useLocation();
   const pathName = location.pathname;
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const imageUrl = user?.profile?.imageUrl === ''
+    ? AvatarImg
+    : user?.profile?.imageUrl;
+
+  const dropdownItem = classNames(
+    classes.dropdownItem,
+    classes.primaryHover
+  );
+  const popperId = profileOpen
+    ? 'profile-popper'
+    : undefined;
 
   const NAV_DATA = [
     {
@@ -61,124 +88,175 @@ function BCHeader(): JSX.Element {
     setMobileOpen(!mobileOpen);
   };
 
-  return (
-    <AppBar
-      id={'app-bar'}
-      position={'fixed'}>
-      <Toolbar className={'bc-top-bar'}>
-        <div className={'bc-top-bar__drawer'}>
-          <IconButton
-            aria-label={'Open drawer'}
-            color={'inherit'}
-            onClick={handleDrawerToggle}>
-            <MenuIcon />
-          </IconButton>
+  const handleClick = () => {
+    setProfileOpen(!profileOpen);
+  };
+  const handleClose = () => {
+    setProfileOpen(false);
+  };
 
-          <SwipeableDrawer
-            anchor={'left'}
-            onClose={handleDrawerToggle}
-            onOpen={handleDrawerToggle}
-            open={mobileOpen}>
-            <div className={'nav-items'}>
-              <Link
-                className={'logo-brand'}
-                to={'/'}>
-                <img
-                  alt={'logo'}
-                  src={LogoSvg}
-                />
-              </Link>
+  return (
+    <div>
+      {token !== null && token !== '' &&
+        <AppBar
+          className={classes.appBar}
+          id={'app-bar'}
+          position={'fixed'}>
+          <Toolbar className={classes.bcTopBar}>
+            <div className={classes.bcTopBarDrawer}>
+              <IconButton
+                aria-label={'Open drawer'}
+                color={'inherit'}
+                onClick={handleDrawerToggle}>
+                <MenuIcon />
+              </IconButton>
+
+              <SwipeableDrawer
+                anchor={'left'}
+                onClose={handleDrawerToggle}
+                onOpen={handleDrawerToggle}
+                open={mobileOpen}>
+                <div
+                  className={classNames([classes.navItem], [classes.sideBarNavItems])}>
+                  <Link
+                    className={classes.sideBarLogoBrand}
+                    to={'/'}>
+                    <img
+                      alt={'logo'}
+                      src={LogoSvg}
+                    />
+                  </Link>
+                  {NAV_DATA.map((item, idx) => {
+                    return (
+                      <div
+                        className={classNames({
+                          [classes.navItem]: true,
+                          [classes.navItemActive]: pathName.indexOf(item.link) === 0
+                        })}
+                        key={idx}
+                        onClick={handleDrawerToggle}
+                        tabIndex={0}>
+                        <Link to={item.link}>
+                          {item.label}
+                        </Link>
+                        <Divider />
+                      </div>
+                    );
+                  })}
+                </div>
+              </SwipeableDrawer>
+            </div>
+
+            <Link
+              className={classes.logoBrand}
+              to={'/'}>
+              <img
+                alt={'logo'}
+                src={LogoSvg}
+              />
+            </Link>
+
+            <ul className={classes.headerNav}>
               {NAV_DATA.map((item, idx) => {
                 return (
-                  <div
-                    className={`nav-item ${
-                      pathName.indexOf(item.link) === 0
-                        ? 'active'
-                        : ''}`}
+                  <li
+                    className={classNames({
+                      [classes.navItem]: true,
+                      [classes.navItemActive]: pathName.indexOf(item.link) === 0
+                    })}
                     key={idx}
-                    onClick={handleDrawerToggle}
                     tabIndex={0}>
                     <Link to={item.link}>
                       {item.label}
                     </Link>
-                    <Divider />
-                  </div>
+                  </li>
                 );
               })}
+            </ul>
+
+            <div className={classes.headerTools}>
+              <Button
+                className={classes.headerToolsButton}
+                color={'primary'}
+                href={'http://blueclerk.com/support/'}
+                target={'_blank'}
+                variant={'contained'}>
+                <img
+                  alt={'Help'}
+                  src={HelpIconSvg}
+                />
+              </Button>
             </div>
-          </SwipeableDrawer>
-        </div>
 
-        <Link
-          className={'logo-brand'}
-          to={'/'}>
-          <img
-            alt={'logo'}
-            src={LogoSvg}
-          />
-        </Link>
-
-        <ul className={'header-nav'}>
-          {NAV_DATA.map((item, idx) => {
-            return (
-              <li
-                className={`nav-item ${
-                  pathName.indexOf(item.link) === 0
-                    ? 'active'
-                    : ''}`}
-                key={idx}
-                tabIndex={0}>
-                <Link to={item.link}>
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-
-        <ul className={'header-tools'}>
-          <li>
-            <Button
-              className={'header-tools-btn'}
-              color={'primary'}
-              variant={'contained'}>
-              <img
-                alt={'Help'}
-                src={HelpIconSvg}
-              />
-            </Button>
-            <Button
-              className={'header-tools-btn'}
-              color={'primary'}
-              variant={'contained'}>
-              <img
-                alt={'Help'}
-                src={SettingIconSvg}
-              />
-            </Button>
-            <Button
-              className={'header-tools-btn'}
-              color={'primary'}
-              variant={'contained'}>
-              <img
-                alt={'Help'}
-                src={BellIconSvg}
-              />
-            </Button>
-          </li>
-        </ul>
-        <div className={'account'}>
-          <div className={'avatar'}>
-            <img
-              alt={'avatar'}
-              src={AvatarImg1}
-            />
-            {'J.Mactavish'}
-          </div>
-        </div>
-      </Toolbar>
-    </AppBar>
+            <div className={classes.profile}>
+              <Button
+                aria-describedby={popperId}
+                buttonRef={(node: any) => {
+                  setAnchorEl(node);
+                }}
+                className={classes.profileAvatar}
+                onClick={handleClick}>
+                <img
+                  alt={'avatar'}
+                  className={classes.profileAvatarImage}
+                  src={imageUrl}
+                />
+                {user?.profile?.displayName}
+              </Button>
+              <Popper
+                anchorEl={anchorEl}
+                className={classNames({
+                  [classes.popperClose]: !profileOpen,
+                  [classes.popperResponsive]: true,
+                  [classes.popperNav]: true
+                })}
+                disablePortal
+                id={popperId}
+                open={profileOpen}
+                placement={'bottom'}
+                transition>
+                {({ TransitionProps, placement }) =>
+                  <Grow
+                    {...TransitionProps}
+                    style={{ 'transformOrigin': '0 0 0' }}>
+                    <Paper className={classes.dropdown}>
+                      <ClickAwayListener onClickAway={handleClose}>
+                        <MenuList role={'menu'}>
+                          <MenuItem
+                            className={dropdownItem}
+                            onClick={handleClose}>
+                            {'View Profile'}
+                          </MenuItem>
+                          <MenuItem
+                            className={dropdownItem}
+                            onClick={handleClose}>
+                            {'Logout'}
+                          </MenuItem>
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                }
+              </Popper>
+            </div>
+          </Toolbar>
+        </AppBar>
+      }
+    </div>
   );
 }
 
-export default BCHeader;
+const mapStateToProps = (state: {
+  auth: {
+    token: string;
+    user: any;
+  };
+}) => ({
+  'token': state.auth.token,
+  'user': state.auth.user
+});
+
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(connect(mapStateToProps)(BCHeader));

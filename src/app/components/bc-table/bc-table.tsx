@@ -106,7 +106,7 @@ function BCTable({
     setPage(0);
   };
 
-  const renderTableBody = (): JSX.Element[] | JSX.Element => {
+  function renderTableBody(): JSX.Element[] | JSX.Element {
     const sortedTableData = getSortedTableData();
     if (sortedTableData.length > 0) {
       const curPageRows =
@@ -137,12 +137,12 @@ function BCTable({
     return <TableCell>
       {'No Data'}
     </TableCell>;
-  };
+  }
 
-  const renderTableCell = (
+  function renderTableCell(
     rowData: any,
     headCell: HeadCellModal
-  ): JSX.Element => {
+  ): JSX.Element {
     if (headCell.id in rowData) {
       return (
         <TableCell>
@@ -157,7 +157,7 @@ function BCTable({
       );
     }
     return <TableCell />;
-  };
+  }
 
   return (
     <Paper>
