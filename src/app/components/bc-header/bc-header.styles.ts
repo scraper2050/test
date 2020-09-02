@@ -47,8 +47,8 @@ export default (theme: Theme): any => ({
     'height': '100%',
     'margin': '0 5px',
     'padding': '10px 20px',
+    'perspective': 'unset',
     'position': 'relative',
-    'transition': 'all 50ms linear',
     'whiteSpace': 'nowrap'
   },
   'headerNav': {
@@ -177,6 +177,7 @@ export default (theme: Theme): any => ({
     'fontStyle': 'normal',
     'fontWeight': '600',
     'lineHeight': '20px',
+    'perspective': 'unset',
     'textTransform': 'capitalize'
   },
   'profileAvatarImage': {
