@@ -87,7 +87,7 @@ interface Props {
   companyEquipments: Array<CompanyEquipment>;
 
   loadCustomers: () => Action<any>;
-  loadJobTypes: () => Action<any>;
+  loadJobTypes: (paran?: { companyId: string }) => Action<any>;
   loadAllEmployees: () => Action<any>;
   loadCompanyContracts: () => Action<any>;
   loadCompanyEquipments: () => Action<any>;
@@ -125,6 +125,7 @@ function CreateJob({
 
   useEffect(() => {
     loadCustomers();
+    // loadJobTypes({ companyId: "5f360274e63e8251bab08256" });
     loadJobTypes();
     loadCompanyEquipments();
   }, [loadCustomers, loadJobTypes, loadCompanyEquipments]);
@@ -437,7 +438,8 @@ const mapStateToProps = (state: {
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  loadJobTypes: () => dispatch(loadJobTypesActions.fetch()),
+  loadJobTypes: (param?: { companyId: string }) =>
+    dispatch(loadJobTypesActions.fetch(param)),
   loadCustomers: () => dispatch(loadCustomersActions.fetch()),
   loadAllEmployees: () => dispatch(loadAllEmployeesActions.fetch()),
   loadCompanyContracts: () => dispatch(loadCompanyContractsActions.fetch()),
