@@ -7,4 +7,4 @@ export const SECONDARY_GREY = '#c4c4c4';
 export const PRIMARY_DARK_GREY = 'rgba(0, 0, 0, 0.5)';
 export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 
-export const SIDEBAR_WIDTH = '233';
+export const SIDEBAR_WIDTH = '233px';
