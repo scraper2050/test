@@ -89,10 +89,10 @@ export default (theme: Theme): any => ({
   'logoBrand': {
     'alignItems': 'center',
     'display': 'flex',
-    'flex': `0 0 ${CONSTANTS.SIDEBAR_WIDTH}`,
+    'flex': `0 0 ${CONSTANTS.SIDEBAR_WIDTH}px`,
     'justifyContent': 'center',
     'overflow': 'hidden',
-    'width': CONSTANTS.SIDEBAR_WIDTH
+    'width': `${CONSTANTS.SIDEBAR_WIDTH}px`
   },
   'menuList': {
     'padding': '0'
@@ -189,11 +189,10 @@ export default (theme: Theme): any => ({
     'alignItems': 'center',
     'borderBottom': `1px solid ${CONSTANTS.PRIMARY_GRAY}`,
     'display': 'flex',
-    'flex': `0 0 ${CONSTANTS.SIDEBAR_WIDTH}`,
-    'height': `${CONSTANTS.SIDEBAR_WIDTH} / 2`,
+    'flex': `0 0 ${CONSTANTS.SIDEBAR_WIDTH}px`,
     'justifyContent': 'center',
     'overflow': 'hidden',
-    'width': CONSTANTS.SIDEBAR_WIDTH
+    'width': `${CONSTANTS.SIDEBAR_WIDTH}px`
   },
   'sideBarNavItems': {
     'flexDirection': 'column',
