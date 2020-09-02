@@ -1,4 +1,4 @@
-import { getAllEmployees } from 'api/employees.api';
+import { getAllEmployees } from 'api/employee.api';
 import { loadAllEmployeesActions } from 'actions/employee/employee.action';
 import {
   call,
@@ -18,8 +18,7 @@ export function *handleGetCustomers(action: { payload: any }) {
   yield put(loadAllEmployeesActions.fetching());
   try {
     const result = yield call(
-      getAllEmployees,
-      action.payload
+      getAllEmployees
     );
     yield put(loadAllEmployeesActions.success(result));
   } catch (error) {

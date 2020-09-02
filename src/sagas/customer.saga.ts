@@ -1,4 +1,4 @@
-import { getCustomers } from 'api/customers.api';
+import { getCustomers } from 'api/customer.api';
 import { loadCustomersActions } from 'actions/customer/customer.action';
 import {
   call,

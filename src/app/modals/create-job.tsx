@@ -22,6 +22,8 @@ import {
 } from 'date-fns';
 import './create-job.scss';
 
+import { loadCustomersActions } from "actions/customer/customer.action";
+
 const titles: string[] = ['New Ticket', 'New Job', 'Job Detail'];
 
 const JOB_DETAIL = 2;
@@ -179,6 +181,17 @@ function CreateJob({
     [modal, modalMode]
   );
 
+  useEffect(() => {
+    switch (employeeType) {
+      case "0":
+        console.log(employeeType);
+        break;
+      case "1":
+        console.log(employeeType);
+        break;
+    }
+  }, [employeeType])
+
   return (
     <div className={'modal-wrapper'}>
       <Dialog
@@ -290,6 +303,7 @@ function CreateJob({
                   {'Select Technician'}
                 </InputLabel>
                 <Select
+                  disabled={employeeType === ""}
                   className={'select'}
                   onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                     setTechnician(event.target.value as string);
@@ -468,6 +482,7 @@ const mapStateToProps = (state: {
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
+  loadCustomers: () => dispatch(loadCustomersActions.fetch()),
 });
 
 export default connect(

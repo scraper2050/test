@@ -1,4 +1,4 @@
-import { getJobTypes } from 'api/job-types.api';
+import { getJobTypes } from 'api/job-type.api';
 import { loadJobTypesActions } from 'actions/job-type/job-type.action';
 import {
   call,

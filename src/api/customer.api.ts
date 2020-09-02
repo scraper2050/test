@@ -1,16 +1,16 @@
 import request from "utils/http.service";
-import { Auth, AuthInfo } from "app/models/user";
 
-const login = async (param: Auth) => {
-  let loginData: AuthInfo = {
-    token: null,
-    user: null,
+export const getCustomers = async (param: {}) => {
+  const body = {
+    includeActive: "true",
+    includeNonActive: "false",
   };
+  let responseData;
   try {
-    const response: any = await request("/login", "POST", param, false);
-    loginData = response.data;
+    const response: any = await request("/getCustomers", "POST", body, false);
+    responseData = response.data;
   } catch (err) {
-    loginData = err.data;
+    responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
@@ -21,8 +21,5 @@ const login = async (param: Auth) => {
       throw new Error(`Something went wrong`);
     }
   }
-
-  return loginData;
+  return responseData.customers;
 };
-
-export { login };
