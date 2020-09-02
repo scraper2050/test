@@ -49,7 +49,8 @@ export default (theme: Theme): any => ({
     'padding': '10px 20px',
     'perspective': 'unset',
     'position': 'relative',
-    'whiteSpace': 'nowrap'
+    'whiteSpace': 'nowrap',
+    'zIndex': '0'
   },
   'headerNav': {
     '@media(min-width: 1400px)': {
@@ -178,7 +179,8 @@ export default (theme: Theme): any => ({
     'fontWeight': '600',
     'lineHeight': '20px',
     'perspective': 'unset',
-    'textTransform': 'capitalize'
+    'textTransform': 'capitalize',
+    'zIndex': '0'
   },
   'profileAvatarImage': {
     'borderRadius': '23px',
