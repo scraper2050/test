@@ -3,7 +3,7 @@ import { loadAllEmployeesActions } from 'actions/employee/employee.action';
 import { List, Record } from 'immutable';
 
 const initialState = Record({
-  'allEmployees': List([]),
+  list: List([]),
   'getAllApi': Record({
     'hasErrored': false,
     'isLoading': false,
@@ -16,7 +16,7 @@ export default handleActions(
     [loadAllEmployeesActions.success.toString()]: (state, action) =>
       state
         .setIn(
-          ['allEmployees'],
+          ['list'],
           List(action.payload)
         )
         .setIn(

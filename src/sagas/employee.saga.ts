@@ -30,7 +30,7 @@ export function *handleGetCustomers(action: { payload: any }) {
   }
 }
 
-export default function *watchLoad() {
+export default function *watchLoadAll() {
   while (true) {
     const fetchAction = yield take(loadAllEmployeesActions.fetch);
     // Const task = yield fork(handleGetCustomers, fetchAction);
