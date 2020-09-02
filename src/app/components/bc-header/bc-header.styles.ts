@@ -38,8 +38,8 @@ export default (theme: Theme): any => ({
     'zIndex': '1000'
   },
   'dropdownItem': {
+    '-webkit-font-smoothing': 'subpixel-antialiased',
     'borderRadius': '2px',
-    'clear': 'both',
     'color': CONSTANTS.PRIMARY_DARK,
     'display': 'block',
     'fontSize': '15px',
@@ -47,7 +47,7 @@ export default (theme: Theme): any => ({
     'height': '100%',
     'margin': '0 5px',
     'padding': '10px 20px',
-    'perspective': 'unset',
+    'perspective': '1000px',
     'position': 'relative',
     'whiteSpace': 'nowrap',
     'zIndex': '0'
