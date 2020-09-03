@@ -16,6 +16,18 @@ const ScheduleJobsPage = React.lazy(() => import('./app/pages/customer/schedule-
 const ManagerPage = React.lazy(() => import('./app/pages/employee/manager/manager'));
 const GroupPage = React.lazy(() => import('./app/pages/employee/group/group'));
 
+const AdminEmployeesPage = React.lazy(() => import('./app/pages/admin/employees/empolyees'));
+const BillingPage = React.lazy(() => import('./app/pages/admin/billing/billing'));
+const BrandsPage = React.lazy(() => import('./app/pages/admin/brands/brands'));
+const CompanyProfilePage = React.lazy(() => import('./app/pages/admin/company-profile/company-profile'));
+const EquipmentTypePage = React.lazy(() => import('./app/pages/admin/equipment-type/equipment-type'));
+const AdminGroupsPage = React.lazy(() => import('./app/pages/admin/groups/groups'));
+const AdminInvoicingPage = React.lazy(() => import('./app/pages/admin/invoicing/invoicing'));
+const JobTypesPage = React.lazy(() => import('./app/pages/admin/job-types/job-types'));
+const ReportNumberPage = React.lazy(() => import('./app/pages/admin/report-number/report-number'));
+const RolesPage = React.lazy(() => import('./app/pages/admin/roles/roles'));
+const AdminVendorsPage = React.lazy(() => import('./app/pages/admin/vendors/vendors'));
+
 function App() {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -94,6 +106,67 @@ function App() {
                       Component={ScheduleJobsPage}
                       exact
                       path={'/customers/schedule'}
+                    />
+
+                    <AuthRoute
+                      Component={BillingPage}
+                      exact
+                      path={'/admin'}
+                    />
+                    <AuthRoute
+                      Component={BillingPage}
+                      exact
+                      path={'/admin/billing'}
+                    />
+                    <AuthRoute
+                      Component={BrandsPage}
+                      exact
+                      path={'/admin/brands'}
+                    />
+                    <AuthRoute
+                      Component={CompanyProfilePage}
+                      exact
+                      path={'/admin/company-profile'}
+                    />
+                    <AuthRoute
+                      Component={AdminEmployeesPage}
+                      exact
+                      path={'/admin/employees'}
+                    />
+                    <AuthRoute
+                      Component={EquipmentTypePage}
+                      exact
+                      path={'/admin/equipment-type'}
+                    />
+                    <AuthRoute
+                      Component={AdminGroupsPage}
+                      exact
+                      path={'/admin/groups'}
+                    />
+                    <AuthRoute
+                      Component={AdminInvoicingPage}
+                      exact
+                      path={'/admin/invoicing'}
+                    />
+                    <AuthRoute
+                      Component={JobTypesPage}
+                      exact
+                      path={'/admin/job-types'}
+                    />
+                    <AuthRoute
+                      Component={ReportNumberPage}
+                      exact
+                      path={'/admin/report-number'}
+                    />
+                    <AuthRoute
+                      Component={RolesPage}
+                      exact
+                      path={'/admin/roles'}
+                    />
+                    <AuthRoute
+                      Component={AdminVendorsPage}
+                      exact
+                      path={'/admin/vendors'}
                     />
                   </Switch>
                 </div>
