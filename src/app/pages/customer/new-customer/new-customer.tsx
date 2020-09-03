@@ -4,10 +4,8 @@ import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-
 import BCPhoneNumberInput from '../../../components/bc-phone-number-input/bc-phone-number-input';
 import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
 import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
-import BCTabs from '../../../components/bc-tab/bc-tab';
 import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import { FormDataModel } from '../../../models/form-data';
-import SwipeableViews from 'react-swipeable-views';
 import { allStates } from 'utils/constants';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
@@ -50,7 +48,6 @@ function NewCustomerPage({ classes }: Props) {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
-  const [curTab, setCurTab] = useState(0);
   const [usState, setUsState] = useState('');
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     'email': {
@@ -64,10 +61,6 @@ function NewCustomerPage({ classes }: Props) {
       'value': ''
     }
   });
-
-  const handleTabChange = (newValue: number) => {
-    setCurTab(newValue);
-  };
 
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
@@ -119,229 +112,222 @@ function NewCustomerPage({ classes }: Props) {
         </BCSidebar>
 
         <PageContainer>
-          <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'New Customer',
-                'value': 0
-              }
-            ]}
-          />
-
-          <SwipeableViews index={curTab}>
-            <DataContainer
-              hidden={curTab !== 0}
-              id={'0'}>
-              <Grid container>
+          <DataContainer
+            id={'0'}>
+            <Grid container>
+              <Grid
+                item
+                md={6}
+                xs={12}>
                 <Grid
+                  className={classes.paper}
                   item
-                  md={6}
-                  xs={12}>
+                  md={12}>
+                  <p className={classes.subTitle}>
+                    {'New Customer Information'}
+                  </p>
+                </Grid>
+                <Grid
+                  className={classes.paper}
+                  item
+                  md={12}>
+                  <FormGroup>
+                    <InputLabel>
+                      {'Company Name'}
+                    </InputLabel>
+                    <TextField
+                      className={'TextField'}
+                      fullWidth
+                      name={'company'}
+                      variant={'outlined'}
+                    />
+                  </FormGroup>
+                </Grid>
+
+                <Grid
+                  className={classes.paper}
+                  item
+                  md={12}>
+                  <FormGroup className={'required'}>
+                    <InputLabel>
+                      {'Email'}
+                    </InputLabel>
+                    <BCEmailValidateInput
+                      id={'email'}
+                      inputData={formData.email}
+                      label={''}
+                      onChange={(emailData: FormDataModel) => {
+                        setFormData({
+                          ...formData,
+                          'email': {
+                            ...emailData
+                          }
+                        });
+                      }}
+                      size={'small'}
+                      variant={'outlined'}
+                    />
+                  </FormGroup>
+                </Grid>
+
+                <Grid container>
                   <Grid
                     className={classes.paper}
                     item
-                    md={12}>
-                    <FormGroup>
+                    md={6}>
+                    <FormGroup className={'required'}>
                       <InputLabel>
-                        {'Company Name'}
+                        {'Contact Name'}
                       </InputLabel>
                       <TextField
                         className={'TextField'}
                         fullWidth
-                        name={'company'}
+                        name={'contact_name'}
                         variant={'outlined'}
                       />
                     </FormGroup>
                   </Grid>
-
                   <Grid
                     className={classes.paper}
                     item
-                    md={12}>
-                    <FormGroup className={'required'}>
+                    md={6}>
+                    <FormGroup>
                       <InputLabel>
-                        {'Email'}
+                        {'Phone Number'}
                       </InputLabel>
-                      <BCEmailValidateInput
-                        id={'email'}
-                        inputData={formData.email}
-                        label={''}
-                        onChange={(emailData: FormDataModel) => {
+                      <BCPhoneNumberInput
+                        changeData={(data: FormDataModel) => {
                           setFormData({
                             ...formData,
-                            'email': {
-                              ...emailData
-                            }
+                            'phone_number': { ...data }
                           });
                         }}
+                        id={'phone_number'}
+                        inputData={formData.phone_number}
+                        label={''}
                         size={'small'}
+                        validate={false}
+                      />
+                    </FormGroup>
+                  </Grid>
+                </Grid>
+
+                <Grid container>
+                  <Grid
+                    className={classes.paper}
+                    item
+                    md={6}>
+                    <FormGroup>
+                      <InputLabel>
+                        {'Street'}
+                      </InputLabel>
+                      <TextField
+                        className={'TextField'}
+                        fullWidth
+                        name={'street'}
                         variant={'outlined'}
                       />
                     </FormGroup>
                   </Grid>
-
-                  <Grid container>
-                    <Grid
-                      className={classes.paper}
-                      item
-                      md={6}>
-                      <FormGroup className={'required'}>
-                        <InputLabel>
-                          {'Contact Name'}
-                        </InputLabel>
-                        <TextField
-                          className={'TextField'}
-                          fullWidth
-                          name={'contact_name'}
-                          variant={'outlined'}
-                        />
-                      </FormGroup>
-                    </Grid>
-                    <Grid
-                      className={classes.paper}
-                      item
-                      md={6}>
-                      <FormGroup>
-                        <InputLabel>
-                          {'Phone Number'}
-                        </InputLabel>
-                        <BCPhoneNumberInput
-                          changeData={(data: FormDataModel) => {
-                            setFormData({
-                              ...formData,
-                              'phone_number': { ...data }
-                            });
-                          }}
-                          id={'phone_number'}
-                          inputData={formData.phone_number}
-                          label={''}
-                          size={'small'}
-                          validate={false}
-                        />
-                      </FormGroup>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container>
-                    <Grid
-                      className={classes.paper}
-                      item
-                      md={6}>
-                      <FormGroup>
-                        <InputLabel>
-                          {'Street'}
-                        </InputLabel>
-                        <TextField
-                          className={'TextField'}
-                          fullWidth
-                          name={'street'}
-                          variant={'outlined'}
-                        />
-                      </FormGroup>
-                    </Grid>
-                    <Grid
-                      className={classes.paper}
-                      item
-                      md={6}>
-                      <FormGroup>
-                        <InputLabel>
-                          {'City'}
-                        </InputLabel>
-                        <TextField
-                          className={'TextField'}
-                          fullWidth
-                          name={'city'}
-                          variant={'outlined'}
-                        />
-                      </FormGroup>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container>
-                    <Grid
-                      className={classes.paper}
-                      item
-                      md={6}>
-                      <FormGroup>
-                        <InputLabel>
-                          {'State'}
-                        </InputLabel>
-                        <Select
-                          className={'select'}
-                          onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                            setUsState(event.target.value as string);
-                          }}
-                          value={usState}
-                          variant={'outlined'}>
-                          <MenuItem value={''}>
-                            <em>
-                              {'None'}
-                            </em>
-                          </MenuItem>
-                          {allStates.map(state =>
-                            <MenuItem
-                              key={state.abbreviation}
-                              value={state.name}>
-                              {state.name}
-                            </MenuItem>)}
-                        </Select>
-                      </FormGroup>
-                    </Grid>
-                    <Grid
-                      className={classes.paper}
-                      item
-                      md={6}>
-                      <FormGroup>
-                        <InputLabel>
-                          {'Zip Code'}
-                        </InputLabel>
-                        <TextField
-                          className={'TextField'}
-                          fullWidth
-                          name={'zip_code'}
-                          variant={'outlined'}
-                        />
-                      </FormGroup>
-                    </Grid>
-                  </Grid>
-
                   <Grid
                     className={classes.paper}
                     item
-                    md={12}>
-                    <Box mt={2}>
-                      <Button
-                        className={'save-customer-button'}
-                        color={'primary'}
-                        variant={'contained'}>
-                        {'Save'}
-                      </Button>
-                      <Button
-                        className={'cancel-customer-button'}
-                        color={'secondary'}
-                        variant={'contained'}>
-                        {'Cancel'}
-                      </Button>
-                    </Box>
+                    md={6}>
+                    <FormGroup>
+                      <InputLabel>
+                        {'City'}
+                      </InputLabel>
+                      <TextField
+                        className={'TextField'}
+                        fullWidth
+                        name={'city'}
+                        variant={'outlined'}
+                      />
+                    </FormGroup>
+                  </Grid>
+                </Grid>
+
+                <Grid container>
+                  <Grid
+                    className={classes.paper}
+                    item
+                    md={6}>
+                    <FormGroup>
+                      <InputLabel>
+                        {'State'}
+                      </InputLabel>
+                      <Select
+                        className={'select'}
+                        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                          setUsState(event.target.value as string);
+                        }}
+                        value={usState}
+                        variant={'outlined'}>
+                        <MenuItem value={''}>
+                          <em>
+                            {'None'}
+                          </em>
+                        </MenuItem>
+                        {allStates.map(state =>
+                          <MenuItem
+                            key={state.abbreviation}
+                            value={state.name}>
+                            {state.name}
+                          </MenuItem>)}
+                      </Select>
+                    </FormGroup>
+                  </Grid>
+                  <Grid
+                    className={classes.paper}
+                    item
+                    md={6}>
+                    <FormGroup>
+                      <InputLabel>
+                        {'Zip Code'}
+                      </InputLabel>
+                      <TextField
+                        className={'TextField'}
+                        fullWidth
+                        name={'zip_code'}
+                        variant={'outlined'}
+                      />
+                    </FormGroup>
                   </Grid>
                 </Grid>
 
                 <Grid
                   className={classes.paper}
                   item
-                  md={6}
-                  xs={12}>
-                  <BCMapWithMarker
-                    lang={-90.111533}
-                    lat={29.972065}
-                  />
+                  md={12}>
+                  <Box mt={2}>
+                    <Button
+                      className={'save-customer-button'}
+                      color={'primary'}
+                      variant={'contained'}>
+                      {'Save'}
+                    </Button>
+                    <Button
+                      className={'cancel-customer-button'}
+                      color={'secondary'}
+                      variant={'contained'}>
+                      {'Cancel'}
+                    </Button>
+                  </Box>
                 </Grid>
               </Grid>
-            </DataContainer>
-          </SwipeableViews>
+
+              <Grid
+                className={classes.paper}
+                item
+                md={6}
+                xs={12}>
+                <BCMapWithMarker
+                  lang={-90.111533}
+                  lat={29.972065}
+                />
+              </Grid>
+            </Grid>
+          </DataContainer>
         </PageContainer>
       </MainContainer>
     </>
