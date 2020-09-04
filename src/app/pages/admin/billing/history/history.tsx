@@ -83,7 +83,7 @@ function BillingHistoryPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin'
+                      pathName === item.link || pathName === '/admin' || pathName.includes('/admin/billing')
                     }>
                     {item.label}
                   </StyledListItem>
@@ -104,7 +104,8 @@ function BillingHistoryPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4} />
+            spacing={4}
+          />
         </PageContainer>
       </MainContainer>
     </>

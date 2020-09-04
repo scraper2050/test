@@ -83,7 +83,7 @@ function BillingSubscriptionPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin'
+                      pathName === item.link || pathName === '/admin' || pathName.includes('/admin/billing')
                     }>
                     {item.label}
                   </StyledListItem>

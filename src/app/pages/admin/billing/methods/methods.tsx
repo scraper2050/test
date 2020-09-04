@@ -104,7 +104,8 @@ function BillingMethodsPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4} />
+            spacing={4}
+          />
         </PageContainer>
       </MainContainer>
     </>
