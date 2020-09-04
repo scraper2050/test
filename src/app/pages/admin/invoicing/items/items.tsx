@@ -1,10 +1,6 @@
-import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
-import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
-import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
-import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
-import BuildIcon from '@material-ui/icons/Build';
-import GroupIcon from '@material-ui/icons/Group';
-import HowToRegIcon from '@material-ui/icons/HowToReg';
+import BCSidebar from '../../../../components/bc-sidebar/bc-sidebar';
+import BCSubHeader from '../../../../components/bc-sub-header/bc-sub-header';
+import BCToolBarSearchInput from '../../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import React from 'react';
 import styled from 'styled-components';
 import { Grid, List, ListItem } from '@material-ui/core';
@@ -49,7 +45,7 @@ const LINK_DATA = [
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles'
+    'link': '/admin/roles-permissions'
   },
   {
     'label': 'Vendors',
@@ -57,7 +53,7 @@ const LINK_DATA = [
   }
 ];
 
-function RolesPage() {
+function AdminInvoicingItemsPage() {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
@@ -87,7 +83,19 @@ function RolesPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin'
+                      pathName === item.link || pathName === '/admin' || pathName.includes('/admin/billing')
+                    }>
+                    {item.label}
+                  </StyledListItem>
+                );
+              } else if (item.label === 'Invoicing') {
+                return (
+                  <StyledListItem
+                    button
+                    key={idx}
+                    onClick={() => onClickLink(item.link)}
+                    selected={
+                      pathName === item.link || pathName.includes('/admin/invoicing')
                     }>
                     {item.label}
                   </StyledListItem>
@@ -108,40 +116,14 @@ function RolesPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4}>
-            <Grid
-              item>
-              <BCAdminCard
-                cardText={'Manager'}
-                color={'info'}
-                link={''}>
-                <GroupIcon />
-              </BCAdminCard>
-            </Grid>
-            <Grid
-              item>
-              <BCAdminCard
-                cardText={'Technician'}
-                color={'primary'}
-                link={''}>
-                <BuildIcon />
-              </BCAdminCard>
-            </Grid>
-            <Grid
-              item>
-              <BCAdminCard
-                cardText={'Roles'}
-                color={'secondary'}
-                link={''}>
-                <HowToRegIcon />
-              </BCAdminCard>
-            </Grid>
-          </Grid>
+            spacing={4}
+          />
         </PageContainer>
       </MainContainer>
     </>
   );
 }
+
 
 const StyledList = styled(List)``;
 
@@ -174,4 +156,4 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default RolesPage;
+export default AdminInvoicingItemsPage;

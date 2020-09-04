@@ -1,9 +1,9 @@
-import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
-import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
-import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
+import BCSidebar from '../../../../components/bc-sidebar/bc-sidebar';
+import BCSubHeader from '../../../../components/bc-sub-header/bc-sub-header';
+import BCToolBarSearchInput from '../../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import React from 'react';
 import styled from 'styled-components';
-import { List, ListItem } from '@material-ui/core';
+import { Grid, List, ListItem } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
 
 const LINK_DATA = [
@@ -53,7 +53,7 @@ const LINK_DATA = [
   }
 ];
 
-function AdminVendorsPage() {
+function ViewRolePage() {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
@@ -83,7 +83,19 @@ function AdminVendorsPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin'
+                      pathName === item.link || pathName === '/admin' || pathName.includes('/admin/billing')
+                    }>
+                    {item.label}
+                  </StyledListItem>
+                );
+              } else if (item.label === 'Roles/Permissions') {
+                return (
+                  <StyledListItem
+                    button
+                    key={idx}
+                    onClick={() => onClickLink(item.link)}
+                    selected={
+                      pathName === item.link || pathName.includes('/admin/roles-permissions')
                     }>
                     {item.label}
                   </StyledListItem>
@@ -101,11 +113,17 @@ function AdminVendorsPage() {
             })}
           </StyledList>
         </BCSidebar>
-        <PageContainer />
+        <PageContainer>
+          <Grid
+            container
+            spacing={4}
+          />
+        </PageContainer>
       </MainContainer>
     </>
   );
 }
+
 
 const StyledList = styled(List)``;
 
@@ -138,4 +156,4 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default AdminVendorsPage;
+export default ViewRolePage;

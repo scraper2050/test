@@ -1,9 +1,13 @@
+import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
 import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
 import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
+import BuildIcon from '@material-ui/icons/Build';
+import GroupIcon from '@material-ui/icons/Group';
+import HowToRegIcon from '@material-ui/icons/HowToReg';
 import React from 'react';
 import styled from 'styled-components';
-import { List, ListItem } from '@material-ui/core';
+import { Grid, List, ListItem } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
 
 const LINK_DATA = [
@@ -53,7 +57,7 @@ const LINK_DATA = [
   }
 ];
 
-function AdminVendorsPage() {
+function RolesPermissionsPage() {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
@@ -101,7 +105,39 @@ function AdminVendorsPage() {
             })}
           </StyledList>
         </BCSidebar>
-        <PageContainer />
+        <PageContainer>
+          <Grid
+            container
+            spacing={4}>
+            <Grid
+              item>
+              <BCAdminCard
+                cardText={'Manager'}
+                color={'info'}
+                link={'/admin/roles-permissions/manager-list'}>
+                <GroupIcon />
+              </BCAdminCard>
+            </Grid>
+            <Grid
+              item>
+              <BCAdminCard
+                cardText={'Technician'}
+                color={'primary'}
+                link={'/admin/roles-permissions/technician-list'}>
+                <BuildIcon />
+              </BCAdminCard>
+            </Grid>
+            <Grid
+              item>
+              <BCAdminCard
+                cardText={'Roles'}
+                color={'secondary'}
+                link={'/admin/roles-permissions/view-roles'}>
+                <HowToRegIcon />
+              </BCAdminCard>
+            </Grid>
+          </Grid>
+        </PageContainer>
       </MainContainer>
     </>
   );
@@ -138,4 +174,4 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default AdminVendorsPage;
+export default RolesPermissionsPage;

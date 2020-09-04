@@ -45,7 +45,7 @@ const LINK_DATA = [
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles'
+    'link': '/admin/roles-permissions'
   },
   {
     'label': 'Vendors',
@@ -104,7 +104,8 @@ function BillingSubscriptionPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4} />
+            spacing={4}
+          />
         </PageContainer>
       </MainContainer>
     </>

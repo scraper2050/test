@@ -49,7 +49,7 @@ const LINK_DATA = [
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles'
+    'link': '/admin/roles-permissions'
   },
   {
     'label': 'Vendors',
@@ -123,7 +123,7 @@ function AdminInvoicingPage() {
               <BCAdminCard
                 cardText={'Items'}
                 color={'secondary'}
-                link={''}>
+                link={'/admin/invoicing/items'}>
                 <ReceiptIcon />
               </BCAdminCard>
             </Grid>

@@ -48,7 +48,7 @@ const LINK_DATA = [
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles'
+    'link': '/admin/roles-permissions'
   },
   {
     'label': 'Vendors',

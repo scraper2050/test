@@ -26,9 +26,13 @@ const CompanyProfilePage = React.lazy(() => import('./app/pages/admin/company-pr
 const EquipmentTypePage = React.lazy(() => import('./app/pages/admin/equipment-type/equipment-type'));
 const AdminGroupsPage = React.lazy(() => import('./app/pages/admin/groups/groups'));
 const AdminInvoicingPage = React.lazy(() => import('./app/pages/admin/invoicing/invoicing'));
+const AdminInvoicingItemsPage = React.lazy(() => import('./app/pages/admin/invoicing/items/items'));
 const JobTypesPage = React.lazy(() => import('./app/pages/admin/job-types/job-types'));
 const ReportNumberPage = React.lazy(() => import('./app/pages/admin/report-number/report-number'));
-const RolesPage = React.lazy(() => import('./app/pages/admin/roles/roles'));
+const RolesPermissionsPage = React.lazy(() => import('./app/pages/admin/roles-permissions/roles-permissions'));
+const RolesManagerPage = React.lazy(() => import('./app/pages/admin/roles-permissions/manager/manager'));
+const RolesTechnicianPage = React.lazy(() => import('./app/pages/admin/roles-permissions/technician/technician'));
+const ViewRolePage = React.lazy(() => import('./app/pages/admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('./app/pages/admin/vendors/vendors'));
 
 function App() {
@@ -167,6 +171,11 @@ function App() {
                       path={'/admin/invoicing'}
                     />
                     <AuthRoute
+                      Component={AdminInvoicingItemsPage}
+                      exact
+                      path={'/admin/invoicing/items'}
+                    />
+                    <AuthRoute
                       Component={JobTypesPage}
                       exact
                       path={'/admin/job-types'}
@@ -177,9 +186,24 @@ function App() {
                       path={'/admin/report-number'}
                     />
                     <AuthRoute
-                      Component={RolesPage}
+                      Component={RolesPermissionsPage}
                       exact
-                      path={'/admin/roles'}
+                      path={'/admin/roles-permissions'}
+                    />
+                    <AuthRoute
+                      Component={RolesManagerPage}
+                      exact
+                      path={'/admin/roles-permissions/manager-list'}
+                    />
+                    <AuthRoute
+                      Component={RolesTechnicianPage}
+                      exact
+                      path={'/admin/roles-permissions/technician-list'}
+                    />
+                    <AuthRoute
+                      Component={ViewRolePage}
+                      exact
+                      path={'/admin/roles-permissions/view-roles'}
                     />
                     <AuthRoute
                       Component={AdminVendorsPage}
