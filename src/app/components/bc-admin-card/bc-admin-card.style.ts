@@ -39,6 +39,9 @@ export default (theme: Theme): any => ({
   'infoTextColor': {
     'color': CONSTANTS.PRIMARY_CARD_PURPLE
   },
+  'link': {
+    'textDecoration': 'none'
+  },
   'primaryBackground': {
     'backgroundColor': CONSTANTS.PRIMARY_CARD_BLUE
   },

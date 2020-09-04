@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import React from 'react';
 import classNames from 'classnames';
 import styles from './bc-admin-card.style';
@@ -9,9 +10,10 @@ interface Props {
   classes: any;
   color: string;
   children?: React.ReactNode;
+  link: string;
 }
 
-function BCAdminCard({ cardText, classes, color, children } : Props) {
+function BCAdminCard({ cardText, classes, color, link, children } : Props) {
   let circleClass: string = '';
   let textClass: string = '';
 
@@ -26,16 +28,20 @@ function BCAdminCard({ cardText, classes, color, children } : Props) {
     textClass = classNames(classes.cardText, classes.infoTextColor);
   }
   return (
-    <Card className={classes.card}>
-      <CardActionArea className={classes.cardActionArea}>
-        <div className={circleClass}>
-          { children }
-        </div>
-        <p className={textClass}>
-          { cardText }
-        </p>
-      </CardActionArea>
-    </Card>
+    <Link
+      className={classes.link}
+      to={link}>
+      <Card className={classes.card}>
+        <CardActionArea className={classes.cardActionArea}>
+          <div className={circleClass}>
+            { children }
+          </div>
+          <p className={textClass}>
+            { cardText }
+          </p>
+        </CardActionArea>
+      </Card>
+    </Link>
   );
 }
 
