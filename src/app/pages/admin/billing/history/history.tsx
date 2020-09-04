@@ -1,11 +1,7 @@
-import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
-import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
-import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
-import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import MoneyIcon from '@material-ui/icons/Money';
+import BCSidebar from '../../../../components/bc-sidebar/bc-sidebar';
+import BCSubHeader from '../../../../components/bc-sub-header/bc-sub-header';
+import BCToolBarSearchInput from '../../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import React from 'react';
-import ReceiptIcon from '@material-ui/icons/Receipt';
 import styled from 'styled-components';
 import { Grid, List, ListItem } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -57,7 +53,7 @@ const LINK_DATA = [
   }
 ];
 
-function AdminInvoicingPage() {
+function BillingHistoryPage() {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
@@ -108,35 +104,7 @@ function AdminInvoicingPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4}>
-            <Grid
-              item>
-              <BCAdminCard
-                cardText={'Sales Tax'}
-                color={'primary'}
-                link={''}>
-                <MoneyIcon />
-              </BCAdminCard>
-            </Grid>
-            <Grid
-              item>
-              <BCAdminCard
-                cardText={'Items'}
-                color={'secondary'}
-                link={''}>
-                <ReceiptIcon />
-              </BCAdminCard>
-            </Grid>
-            <Grid
-              item>
-              <BCAdminCard
-                cardText={'Invoice Number'}
-                color={'info'}
-                link={''}>
-                <InsertDriveFileIcon />
-              </BCAdminCard>
-            </Grid>
-          </Grid>
+            spacing={4} />
         </PageContainer>
       </MainContainer>
     </>
@@ -175,4 +143,4 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default AdminInvoicingPage;
+export default BillingHistoryPage;

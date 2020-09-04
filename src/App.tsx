@@ -18,6 +18,9 @@ const GroupPage = React.lazy(() => import('./app/pages/employee/group/group'));
 
 const AdminEmployeesPage = React.lazy(() => import('./app/pages/admin/employees/empolyees'));
 const BillingPage = React.lazy(() => import('./app/pages/admin/billing/billing'));
+const BillingMethodsPage = React.lazy(() => import('./app/pages/admin/billing/methods/methods'));
+const BillingHistoryPage = React.lazy(() => import('./app/pages/admin/billing/history/history'));
+const BillingSubscriptionPage = React.lazy(() => import('./app/pages/admin/billing/subscription/subscription'));
 const BrandsPage = React.lazy(() => import('./app/pages/admin/brands/brands'));
 const CompanyProfilePage = React.lazy(() => import('./app/pages/admin/company-profile/company-profile'));
 const EquipmentTypePage = React.lazy(() => import('./app/pages/admin/equipment-type/equipment-type'));
@@ -117,6 +120,21 @@ function App() {
                       Component={BillingPage}
                       exact
                       path={'/admin/billing'}
+                    />
+                    <AuthRoute
+                      Component={BillingMethodsPage}
+                      exact
+                      path={'/admin/billing/billing-methods'}
+                    />
+                    <AuthRoute
+                      Component={BillingHistoryPage}
+                      exact
+                      path={'/admin/billing/billing-history'}
+                    />
+                    <AuthRoute
+                      Component={BillingSubscriptionPage}
+                      exact
+                      path={'/admin/billing/subscription'}
                     />
                     <AuthRoute
                       Component={BrandsPage}

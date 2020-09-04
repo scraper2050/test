@@ -113,7 +113,8 @@ function RolesPage() {
               item>
               <BCAdminCard
                 cardText={'Manager'}
-                color={'info'}>
+                color={'info'}
+                link={''}>
                 <GroupIcon />
               </BCAdminCard>
             </Grid>
@@ -121,7 +122,8 @@ function RolesPage() {
               item>
               <BCAdminCard
                 cardText={'Technician'}
-                color={'primary'}>
+                color={'primary'}
+                link={''}>
                 <BuildIcon />
               </BCAdminCard>
             </Grid>
@@ -129,7 +131,8 @@ function RolesPage() {
               item>
               <BCAdminCard
                 cardText={'Roles'}
-                color={'secondary'}>
+                color={'secondary'}
+                link={''}>
                 <HowToRegIcon />
               </BCAdminCard>
             </Grid>

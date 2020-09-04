@@ -6,8 +6,6 @@ import HistoryIcon from '@material-ui/icons/History';
 import MoneyIcon from '@material-ui/icons/Money';
 import React from 'react';
 import styled from 'styled-components';
-import styles from './billing.style';
-import { withStyles } from '@material-ui/core/styles';
 import { Grid, List, ListItem } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -58,11 +56,7 @@ const LINK_DATA = [
   }
 ];
 
-interface Props {
-  classes: any
-}
-
-function BillingPage({ classes }: Props) {
+function BillingPage() {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
@@ -118,7 +112,8 @@ function BillingPage({ classes }: Props) {
               item>
               <BCAdminCard
                 cardText={'Billing Methods'}
-                color={'primary'}>
+                color={'primary'}
+                link={'/admin/billing/billing-methods'}>
                 <MoneyIcon />
               </BCAdminCard>
             </Grid>
@@ -126,7 +121,8 @@ function BillingPage({ classes }: Props) {
               item>
               <BCAdminCard
                 cardText={'History'}
-                color={'secondary'}>
+                color={'secondary'}
+                link={'/admin/billing/billing-history'}>
                 <HistoryIcon />
               </BCAdminCard>
             </Grid>
@@ -134,7 +130,8 @@ function BillingPage({ classes }: Props) {
               item>
               <BCAdminCard
                 cardText={'Subscriptions'}
-                color={'info'}>
+                color={'info'}
+                link={'/admin/billing/subscription'}>
                 <HistoryIcon />
               </BCAdminCard>
             </Grid>
@@ -177,7 +174,4 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default withStyles(
-  styles,
-  { 'withTheme': true }
-)(BillingPage);
+export default BillingPage;
