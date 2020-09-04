@@ -5,6 +5,7 @@ import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc
 import HistoryIcon from '@material-ui/icons/History';
 import MoneyIcon from '@material-ui/icons/Money';
 import React from 'react';
+import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import styled from 'styled-components';
 import { Grid, List, ListItem } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -132,7 +133,7 @@ function BillingPage() {
                 cardText={'Subscriptions'}
                 color={'info'}
                 link={'/admin/billing/subscription'}>
-                <HistoryIcon />
+                <SubscriptionsIcon />
               </BCAdminCard>
             </Grid>
           </Grid>

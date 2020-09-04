@@ -1,3 +1,4 @@
+import BCBackButton from '../../../../components/bc-back-button/bc-back-button';
 import BCSidebar from '../../../../components/bc-sidebar/bc-sidebar';
 import BCSubHeader from '../../../../components/bc-sub-header/bc-sub-header';
 import BCToolBarSearchInput from '../../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
@@ -116,8 +117,11 @@ function AdminInvoicingItemsPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4}
-          />
+            spacing={4}>
+            <BCBackButton
+              link={'/admin/invoicing'}
+            />
+          </Grid>
         </PageContainer>
       </MainContainer>
     </>

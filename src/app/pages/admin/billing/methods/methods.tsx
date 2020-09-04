@@ -1,8 +1,11 @@
+import BCBackButton from '../../../../components/bc-back-button/bc-back-button';
 import BCSidebar from '../../../../components/bc-sidebar/bc-sidebar';
 import BCSubHeader from '../../../../components/bc-sub-header/bc-sub-header';
 import BCToolBarSearchInput from '../../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import React from 'react';
 import styled from 'styled-components';
+import styles from './methods.style';
+import { withStyles } from '@material-ui/core/styles';
 import { Grid, List, ListItem } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -53,7 +56,11 @@ const LINK_DATA = [
   }
 ];
 
-function BillingMethodsPage() {
+interface Props {
+  classes: any;
+}
+
+function BillingMethodsPage({ classes } : Props) {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
@@ -104,14 +111,16 @@ function BillingMethodsPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4}
-          />
+            spacing={4}>
+            <BCBackButton
+              link={'/admin/billing'}
+            />
+          </Grid>
         </PageContainer>
       </MainContainer>
     </>
   );
 }
-
 
 const StyledList = styled(List)``;
 
@@ -144,4 +153,7 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default BillingMethodsPage;
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(BillingMethodsPage);
