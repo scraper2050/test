@@ -1,5 +1,6 @@
 import AuthRoute from 'auth-route';
 import BCHeader from './app/components/bc-header/bc-header';
+import BCModal from 'app/modals/bc-modal';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { Suspense } from 'react';
@@ -96,6 +97,7 @@ function App() {
                       path={'/customers/schedule'}
                     />
                   </Switch>
+                  <BCModal />
                 </div>
               </Route>
             </Suspense>
