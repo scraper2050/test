@@ -11,3 +11,7 @@ export const PRIMARY_CARD_BLUE = '#66B8F9';
 export const SECONDARY_CARD_BLUE = '#3582BE';
 export const PRIMARY_CARD_PURPLE = '#6846D3';
 export const SIDEBAR_WIDTH = '233';
+export const modalTypes = {
+  'CREATE_JOB_MODAL': 'create-job',
+  'TERMS_AND_CONDITION_MODAL': 'terms-and-condition'
+};

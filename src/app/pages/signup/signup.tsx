@@ -2,12 +2,10 @@ import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-
 import BCPhoneNumberInputut from '../../components/bc-phone-number-input/bc-phone-number-input';
 import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
 import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
-import BCTermsContentnt from '../../components/bc-terms-content/bc-terms-content';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Config from '../../../config';
-import Dialog from '@material-ui/core/Dialog';
 import FormControl from '@material-ui/core/FormControl';
 import { FormDataModel } from '../../models/form-data';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -20,11 +18,14 @@ import PassowrdInput from '../../components/bc-password-input/bc-password-input'
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { modalTypes } from '../../../constants';
 import styles from './signup.styles';
+import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Api, { setToken } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -35,7 +36,19 @@ interface Props {
 
 function SignUpPage({ classes }: Props): JSX.Element {
   const history = useHistory();
-
+  const dispatch = useDispatch();
+  const handleClickOpen = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Terms and conditions',
+        'removeFooter': true
+      },
+      'type': modalTypes.TERMS_AND_CONDITION_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
   const initFormData = (): FormDataModel => {
     return {
       'errorMsg': '',
@@ -418,9 +431,10 @@ function SignUpPage({ classes }: Props): JSX.Element {
                     <span
                       onClick={() => {
                         setAgreeTerm({
-                          ...agreeTerm,
-                          'showModal': true
+                          ...agreeTerm
+                          // 'showModal': true
                         });
+                        handleClickOpen();
                       }}
                       role={'button'}>
                       {'Agree with terms of use and privacy'}
@@ -546,7 +560,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
           </a>
         </span>
       </Grid>
-      <Dialog
+      {/* <Dialog
         aria-describedby={'simple-modal-description'}
         aria-labelledby={'simple-modal-title'}
         onClose={() =>
@@ -557,7 +571,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
         }
         open={agreeTerm.showModal}>
         <BCTermsContentnt />
-      </Dialog>
+      </Dialog> */}
       {isLoading && <BCSpinnerer />}
     </div>
   );
