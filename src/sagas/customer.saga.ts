@@ -1,43 +1,16 @@
-import { getCustomers } from 'api/customers.api';
-import { loadCustomersActions } from 'actions/customer/customer.action';
-import {
-  call,
-  cancelled,
-  fork,
-  put,
-  take
-  /*
-   * TakeEvery,
-   * delay,
-   * takeLatest,
-   */
-} from 'redux-saga/effects';
-// Import { Action } from "redux-actions";
+import { put, takeLatest } from 'redux-saga/effects'
+import {CustomersActionType} from '../reducers/customer.types'
+import {getCustomers} from '../api/customers.api'
 
-export function *handleGetCustomers(action: { payload: any }) {
-  yield put(loadCustomersActions.fetching());
-  try {
-    const result = yield call(
-      getCustomers,
-      action.payload
-    );
-    yield put(loadCustomersActions.success(result));
-  } catch (error) {
-    yield put(loadCustomersActions.fault(error.toString()));
-  } finally {
-    if (yield cancelled()) {
-      yield put(loadCustomersActions.cancelled());
+function* handleGetCustomers() {
+    try {
+        const customers = yield getCustomers({})
+        yield put({type: CustomersActionType.SUCCESS, payload: customers})
+    } catch (error) {
+        yield put({type: CustomersActionType.FAILED, payload: error.message})
     }
-  }
 }
 
-export default function *watchCustomersLoad() {
-  while (true) {
-    const fetchAction = yield take(loadCustomersActions.fetch);
-    // Const task = yield fork(handleGetCustomers, fetchAction);
-    yield fork(
-      handleGetCustomers,
-      fetchAction
-    );
-  }
+export default function* watchGetCustomers() {
+    yield takeLatest(CustomersActionType.GET, handleGetCustomers)
 }

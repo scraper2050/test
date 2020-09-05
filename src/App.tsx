@@ -7,6 +7,7 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 const DashboardPage = React.lazy(() => import('./app/pages/dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('./app/pages/customer/customer'));
 const NewCustomerPage = React.lazy(() => import('./app/pages/customer/new-customer/new-customer'));
+const InvoicingPage = React.lazy(() => import('./app/pages/invoicing/invoicing'));
 const LoginPage = React.lazy(() => import('./app/pages/login/login'));
 const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
@@ -87,6 +88,11 @@ function App() {
                       Component={NewCustomerPage}
                       exact
                       path={'/customers/new-customer'}
+                    />
+
+                    <AuthRoute
+                        Component={InvoicingPage}
+                        path={'/invoicing'}
                     />
 
                     {/* For dev */}

@@ -1,6 +1,8 @@
 export const apiUrls = {
   'getCustomers': '/getCustomers',
   'getJobTypes': '/getJobTypes',
+  'getSalesTax':'/getSalesTax',
+  'getJobs': '/getJobs',
   'login': '/login'
 };
 
