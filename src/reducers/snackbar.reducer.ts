@@ -19,6 +19,6 @@ const SnackbarReducer: Reducer<SnackbarState|null, Action<string>> = (state=null
         default:
             break
     }
-    return state
+    return null
 }
 export default SnackbarReducer
