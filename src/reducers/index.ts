@@ -10,6 +10,7 @@ import { JobsSate} from './invoicing.types'
 import {CustomersState} from './customer.types'
 import {TaxsState} from './tax.type'
 import { SnackbarState} from './snackbar.type'
+import modal from './bc-modal.reducer';
 
 export interface RootState {
     jobState: JobsSate,
@@ -25,5 +26,6 @@ export default combineReducers({
   jobTypes,
   jobState,
   taxsState,
-  snackbarState
+  snackbarState,
+  modal
 });

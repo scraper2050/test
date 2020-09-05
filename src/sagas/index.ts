@@ -1,5 +1,6 @@
 import { all } from 'redux-saga/effects';
 import authFlow from './auth.saga';
+import bcModalSaga from './bc-modal.saga';
 import customersSaga from './customer.saga';
 import jobTypesSaga from './job-type.saga';
 import jobSaga from './job.saga';
@@ -11,6 +12,7 @@ export default function *rootSaga() {
     jobTypesSaga(),
     authFlow(),
     jobSaga(),
-    watchGetTaxs()
+    watchGetTaxs(),
+    bcModalSaga(),
   ]);
 }
