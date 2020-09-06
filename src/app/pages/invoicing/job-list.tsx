@@ -18,7 +18,7 @@ import { useHistory } from "react-router-dom"
 
 import {getJobs} from '../../../actions/invoicing/invoicing.action'
 import {RootState} from '../../../reducers'
-import BCSpinnerer from '../../components/bc-spinner/bc-spinner'
+import BCPaper from '../../components/bc-paper/bc-paper'
 
 export interface JobsProps {
 }
@@ -46,13 +46,10 @@ const Jobs: React.FC<JobsProps> = () => {
                 >
                 Create Invoice
             </Button>
-            <div className={classes.paper}>
+            <BCPaper
+                title={`Completed Jobs(${jobs.jobs?.length || 0})`}
+            >
             <TableContainer>
-                <div className={classes.subtitle}>{`Completed Jobs(${jobs.jobs?.length || 0})`}</div>
-                <Divider variant='fullWidth'/>
-                <Divider variant='fullWidth'/>
-                <Divider variant='fullWidth'/>
-                <Divider variant='fullWidth'/>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -78,7 +75,7 @@ const Jobs: React.FC<JobsProps> = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            </div>
+            </BCPaper>
             <Backdrop className={classes.backdrop} open={jobs.loading}>
                 <CircularProgress color="inherit" />
             </Backdrop>

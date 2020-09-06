@@ -38,7 +38,7 @@ import {InvoiceItem} from '../../../reducers/invoicing.types'
 import MouseoverButton from '../../components/bc-mouseover-button'
 import { TaxsState } from 'reducers/tax.type'
 import {warning, error} from '../../../actions/snackbar/snackbar.action'
-
+import BCPaper from '../../components/bc-paper/bc-paper'
 export interface NewInvoiceProps {
 }
 
@@ -285,49 +285,48 @@ const NewInvoice: React.FC<NewInvoiceProps> = () => {
         }
         return (
             <TableContainer className={classes.invoiceTable}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell variant='head'>#</TableCell>
-                        <TableCell variant='head'>Service/Product</TableCell>
-                        <TableCell variant='head'>Quantity</TableCell>
-                        <TableCell variant='head'>Price $</TableCell>
-                        <TableCell variant='head'>Unit</TableCell>
-                        <TableCell variant='head'>
-                            Tax&nbsp;
-                            <Select
-                                disableUnderline
-                                defaultValue={defualtTaxIndex}
-                                value={defualtTaxIndex}
-                                onChange={handleChangeTax}
-                                >
-                                <option value={-1}>0</option>
-                                {
-                                    taxsState.taxs?.map((tax, index) => {
-                                        return (
-                                            <option key={tax._id} value={index}>{`${tax.tax}`}</option>
-                                        )
-                                    })
-                                }
-                                <option value='1000'>Add a new tax</option>
-                            </Select>
-                            %
-                        </TableCell>
-                        <TableCell variant='head'>Total $</TableCell>
-                        <TableCell variant='head'></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        invoiceItems.map((invoiceItem, index) => {
-                            return (
-                                <InvoiceTableRow key={index} index={index} item={invoiceItem}/>
-                            )
-                        })
-                    }
-                </TableBody>
-    
-            </Table>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell variant='head'>#</TableCell>
+                            <TableCell variant='head'>Service/Product</TableCell>
+                            <TableCell variant='head'>Quantity</TableCell>
+                            <TableCell variant='head'>Price $</TableCell>
+                            <TableCell variant='head'>Unit</TableCell>
+                            <TableCell variant='head'>
+                                Tax&nbsp;
+                                <Select
+                                    disableUnderline
+                                    defaultValue={defualtTaxIndex}
+                                    value={defualtTaxIndex}
+                                    onChange={handleChangeTax}
+                                    >
+                                    <option value={-1}>0</option>
+                                    {
+                                        taxsState.taxs?.map((tax, index) => {
+                                            return (
+                                                <option key={tax._id} value={index}>{`${tax.tax}`}</option>
+                                            )
+                                        })
+                                    }
+                                    <option value='1000'>Add a new tax</option>
+                                </Select>
+                                %
+                            </TableCell>
+                            <TableCell variant='head'>Total $</TableCell>
+                            <TableCell variant='head'></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            invoiceItems.map((invoiceItem, index) => {
+                                return (
+                                    <InvoiceTableRow key={index} index={index} item={invoiceItem}/>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
             </TableContainer>
         )
     }
@@ -370,7 +369,9 @@ const NewInvoice: React.FC<NewInvoiceProps> = () => {
             </Table>
         </TableContainer>
     )
+    const handleInformation = () => {
 
+    }
     return (
         <div className={classes.jobs}>
             <Button
@@ -381,29 +382,28 @@ const NewInvoice: React.FC<NewInvoiceProps> = () => {
             >
                 Back to Jobs
             </Button>
-            <Paper className={classes.paper}>
-                <div className={classes.subtitle}>New Invoice</div>
-                <div className={classes.floatRight}>
-                    <Button color='primary' onClick={handleClickBack}>Cancel</Button>
-                    <Button color='primary' variant='contained' className={classes.button} size='small'
-                        onClick={()=>{
-                            if (selectedCustomer == null) {
-                                dispatch(warning("Please selecte a customer!"))
-                                return
-                            }
-                            if (invoiceID == null) {
-                                dispatch(warning("Please input invoice id!"))
-                                return
-                            }
-                            if (invoiceItems.length == 0) {
-                                dispatch(warning("Please fill the invoice table!"))
-                                return
-                            }
-                            setOpenPrintDialig(true)
-                        }}
-                    >
-                        Preview</Button>
-                </div>
+            <BCPaper
+                title='New Invoice'
+                positiveButtonLabel='Preview'
+                handlePositive={()=>{
+                    if (selectedCustomer == null) {
+                        dispatch(warning("Please selecte a customer!"))
+                        return
+                    }
+                    if (invoiceID == null) {
+                        dispatch(warning("Please input invoice id!"))
+                        return
+                    }
+                    if (invoiceItems.length == 0) {
+                        dispatch(warning("Please fill the invoice table!"))
+                        return
+                    }
+                    setOpenPrintDialig(true)
+                }}
+                handleNagative={handleClickBack}
+                informationByttonLabel='Rates and Taxes Information'
+                handleInformation={handleInformation}
+            >
                 <Paper elevation={3} className={classes.paperContent}>
                     <div className={classes.labelSelect1}>
                         <div className={classes.label}>Customer</div>
@@ -481,14 +481,6 @@ const NewInvoice: React.FC<NewInvoiceProps> = () => {
                             Service/Product
                         </Button>
                         {totalTable}
-                        <Button
-                            color='primary'
-                            className={classes.button}
-                            onClick={handleClickBack}
-                        >
-                            Rates and Taxes Information
-                    </Button>
-
                     {/* <MaterialTable
                         columns={[
                             {title: '#', field: 'index', type: 'numeric'},
@@ -508,7 +500,7 @@ const NewInvoice: React.FC<NewInvoiceProps> = () => {
                         }}
                     /> */}
                 </Paper>
-            </Paper>
+            </BCPaper>
             <Backdrop className={classes.backdrop} open={customersState.loading || taxsState.loading}>
                 <CircularProgress color="inherit" />
             </Backdrop>

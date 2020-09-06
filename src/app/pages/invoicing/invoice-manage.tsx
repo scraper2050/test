@@ -5,6 +5,7 @@ import {
 
 import useStyles from './invoicing.styles'
 import {BCTabs, BCTab} from '../../components/bc-tab2/bc-tab'
+import BCPaper from '../../components/bc-paper/bc-paper'
 
 
 export default function InvoicingManager() {
@@ -12,6 +13,9 @@ export default function InvoicingManager() {
     const classes = useStyles({ back: true })
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setCurTab(newValue)
+    }
+    const handleInformation=()=>{
+
     }
     return (
         <div className={classes.jobs}>
@@ -22,6 +26,26 @@ export default function InvoicingManager() {
                 <BCTab label='Invoices'/>
                 <BCTab label='Estimates'/>
             </BCTabs>
+            {
+                curTab === 0 &&
+                <BCPaper
+                    title='Manage Invoices'
+                    informationByttonLabel='Rates and Taxes Information'
+                    handleInformation={handleInformation}
+                >
+
+                </BCPaper>
+            }
+            {
+                curTab === 1 &&
+                <BCPaper
+                    title='Manage Estimates'
+                    informationByttonLabel='Rates and Taxes Information'
+                    handleInformation={handleInformation}
+                >
+
+                </BCPaper>
+            }
         </div>
     )
 }
