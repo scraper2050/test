@@ -1,7 +1,9 @@
-import { handleActions } from "redux-actions";
-import { loadCustomersActions } from "actions/customer/customer.action";
-import { List, Record } from "immutable";
-// Import { Action } from "redux";
+
+import { handleActions } from 'redux-actions';
+import { loadCustomersActions } from 'actions/customer/customer.action';
+import { List, Record } from 'immutable';
+import { Reducer } from 'redux'
+import {CustomersState, CustomersActionType} from './customer.types'
 
 const initialState = Record({
   getApi: Record({
@@ -31,3 +33,25 @@ export default handleActions(
   },
   initialState
 );
+
+const initialCustomers: CustomersState = {
+    loading: false
+}
+export const CustomersReducer: Reducer<CustomersState> = (state=initialCustomers, action) => {
+    switch (action.type) {
+        case CustomersActionType.GET:
+            return {loading: true}
+        case CustomersActionType.SUCCESS:
+            return {
+                loading: false,
+                customers: action.payload,
+            }
+        case CustomersActionType.FAILED:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            }
+    }
+    return state
+}

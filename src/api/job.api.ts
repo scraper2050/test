@@ -1,3 +1,5 @@
+import Config from 'config';
+import { apiUrls } from 'utils/constants';
 import request from "utils/http.service";
 
 export const getJobTypes = async (param: {companyId: string}) => {
@@ -19,3 +21,18 @@ export const getJobTypes = async (param: {companyId: string}) => {
   }
   return responseData.types;
 };
+
+export const getJobs = async () => {
+  const response = await fetch(
+    Config.apiBaseURL + apiUrls.getJobs,
+    {
+      'headers': {
+        'Accept': 'application/json',
+        'Authorization': localStorage.getItem('token') as string,
+        'Content-Type': 'application/json'
+      },
+      'method': 'POST'
+    }
+  );
+  return await response.json();
+}

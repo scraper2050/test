@@ -5,19 +5,19 @@ import styled from 'styled-components';
 
 
 interface BCSubHeaderProps {
-  title: string;
-  children?: React.ReactNode;
+    title: string;
+    children?: React.ReactNode;
 }
 
 function BCSubHeader({ title, children }: BCSubHeaderProps): JSX.Element {
-  return (
-    <StyledToolbar>
-      <h1 className={'h1-typography title'}>
-        {title}
-      </h1>
-      {children}
-    </StyledToolbar>
-  );
+    return (
+        <StyledToolbar>
+            <h1 className={'h1-typography title'}>
+                {title}
+            </h1>
+            {children}
+        </StyledToolbar>
+    );
 }
 
 const StyledToolbar = styled(Toolbar)`

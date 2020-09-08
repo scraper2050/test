@@ -6,6 +6,10 @@ import { watchCompanyContractsLoad } from "./vendor.saga";
 import watchAllEmployeesLoad from "./employee.saga";
 import watchAllCompanyEquipmentsLoad from "./company-equipment.saga";
 
+import bcModalSaga from './bc-modal.saga';
+import jobSaga from './job.saga';
+import watchGetTaxs from './tax.saga'
+
 export default function* rootSaga() {
   yield all([
     customersSaga(),
@@ -14,5 +18,8 @@ export default function* rootSaga() {
     watchCompanyContractsLoad(),
     watchAllEmployeesLoad(),
     watchAllCompanyEquipmentsLoad(),
+    jobSaga(),
+    watchGetTaxs(),
+    bcModalSaga(),
   ]);
 }

@@ -18,11 +18,13 @@ import HelpIconSvg from '../../../assets/img/Help-Icon.svg';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
+import { logoutAction } from 'actions/auth/auth.action';
+import { removeUserFromLocalStorage } from 'utils/local-storage.service';
 import styles from './bc-header.styles';
 import { withStyles } from '@material-ui/core/styles';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 
 interface Props {
   token: string;
@@ -31,7 +33,9 @@ interface Props {
 }
 
 function BCHeader({ token, user, classes }: Props): JSX.Element {
+  const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
   const pathName = location.pathname;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -93,6 +97,13 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   };
   const handleClose = () => {
     setProfileOpen(false);
+  };
+
+  const handleClickLogout = (): void => {
+    handleClose();
+    dispatch(logoutAction());
+    removeUserFromLocalStorage();
+    history.push('/');
   };
 
   return (
@@ -229,7 +240,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                           </MenuItem>
                           <MenuItem
                             className={dropdownItem}
-                            onClick={handleClose}>
+                            onClick={handleClickLogout}>
                             {'Logout'}
                           </MenuItem>
                         </MenuList>
@@ -255,6 +266,7 @@ const mapStateToProps = (state: {
   'token': state.auth.token,
   'user': state.auth.user
 });
+
 
 export default withStyles(
   styles,

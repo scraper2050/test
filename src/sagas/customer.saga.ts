@@ -6,13 +6,7 @@ import {
   fork,
   put,
   take
-  /*
-   * TakeEvery,
-   * delay,
-   * takeLatest,
-   */
 } from 'redux-saga/effects';
-// Import { Action } from "redux-actions";
 
 export function *handleGetCustomers(action: { payload: any }) {
   yield put(loadCustomersActions.fetching());
