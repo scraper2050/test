@@ -111,6 +111,7 @@ function CreateJob({
   loadCompanyContracts,
   loadCompanyEquipments,
 }: Props) {
+
   const [modeState, setModeState] = useState<number>(modalMode);
 
   const [employeeType, setEmployeeType] = useState("0");
@@ -165,6 +166,13 @@ function CreateJob({
       setTechnicians(_technicians);
     }
   }, [employeeType, employees, companyContracts]);
+
+  const handleSubmit = (e: React.MouseEvent<any, MouseEvent>) => {
+    if (modeState) {
+      
+    }
+    submit(e);
+  };
 
   return (
     <div className={"modal-wrapper"}>
@@ -392,7 +400,7 @@ function CreateJob({
           <Button
             className={"submit-button"}
             color={"primary"}
-            onClick={submit}
+            onClick={handleSubmit}
             variant={"contained"}
           >
             {"Submit"}

@@ -1,4 +1,4 @@
-import { getJobTypes } from 'api/job-type.api';
+import { getJobTypes } from 'api/job.api';
 import { loadJobTypesActions } from 'actions/job-type/job-type.action';
 import {
   call,
@@ -6,13 +6,7 @@ import {
   fork,
   put,
   take
-  /*
-   * TakeEvery,
-   * delay,
-   * takeLatest,
-   */
 } from 'redux-saga/effects';
-// Import { Action } from "redux-actions";
 
 export function *handleGetJobTypes(action: { payload: any }) {
   yield put(loadJobTypesActions.fetching());

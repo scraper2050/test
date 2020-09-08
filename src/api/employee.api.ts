@@ -1,9 +1,9 @@
 import request from "utils/http.service";
 
-export const getAllEmployees = async () => {
+export const getEmployeesForJob = async () => {
   let responseData;
   try {
-    const response: any = await request("/getAllEmployees", "POST", {}, false);
+    const response: any = await request("/getEmployeesForJob", "POST", {}, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
