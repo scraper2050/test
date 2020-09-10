@@ -1,15 +1,16 @@
 import * as CONSTANTS from '../../../constants';
 import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
 import BCSubHeader from '../../components/bc-sub-header/bc-sub-header';
-import BCTable from '../../components/bc-table/bc-table';
-import BCTableSearchInput from '../../components/bc-table-search-input/bc-table-search-input';
+import BCTableContainer from '../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../components/bc-tab/bc-tab';
 import BCToolBarSearchInput from '../../components/bc-toolbar-search-input/bc-toolbar-search-input';
+import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styled from 'styled-components';
-import { Button, Grid, List, ListItem } from '@material-ui/core';
+import styles from './customer.styles';
+import { Button, Grid, List, ListItem, withStyles } from '@material-ui/core';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const LINK_DATA = [
   {
@@ -26,45 +27,68 @@ const LINK_DATA = [
   }
 ];
 
-const headCells = [
-  {
-    'id': 'name',
-    'label': 'Name',
-    'sortable': true
-  },
-  {
-    'id': 'contactName',
-    'label': 'Contact Name',
-    'sortable': true
-  },
-  {
-    'id': 'phone',
-    'label': 'Phone',
-    'sortable': true
-  },
-  {
-    'id': 'email',
-    'label': 'Email',
-    'sortable': true
-  }
-];
-
-const tableData = [
-  {
-    'contactName': 'BlueTest',
-    'email': 'Blueclerktest@yopmail.com',
-    'id': 0,
-    'name': 'Shelly Poehler',
-    'phone': '972816823'
-  }
-];
-
-function CustomersPage() {
+function CustomersPage({ classes }: any) {
   const location = useLocation();
   const pathName = location.pathname;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-  const [searchStr, setSearchStr] = useState('');
+  const [contacts] = useState([
+    {
+      'email': 'test@gmail.com',
+      'name': 'Faraz Sarwar',
+      'phone': '12345678910'
+    },
+    {
+      'email': 'test123@gmail.com',
+      'name': 'Test User',
+      'phone': '22222222222'
+    },
+    {
+      'email': 'admin@gmail.com',
+      'name': 'Admin User',
+      'phone': '12331123212'
+    }
+  ]);
+  const columns: any = [
+    {
+      'Header': 'First Name',
+      'accessor': 'name',
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
+      'Header': 'Phone',
+      'accessor': 'phone',
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
+      'Header': 'Email',
+      'accessor': 'email',
+      'sortable': true
+    },
+    {
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          <Fab
+            aria-label={'delete'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            variant={'extended'}>
+            {'View More'}
+          </Fab>
+        </div>;
+      },
+      'id': 'action',
+      'sortable': false,
+      'width': 60
+    }
+  ];
+
+  useEffect(() => {
+  }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -72,6 +96,10 @@ function CustomersPage() {
 
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
+  };
+
+  const handleRowClick = (event: any, row: any) => {
+    console.log(event, row);
   };
 
   return (
@@ -138,30 +166,12 @@ function CustomersPage() {
             <DataContainer
               hidden={curTab !== 0}
               id={'0'}>
-              <Grid container>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}>
-                  <BCTableSearchInput
-                    onSearch={(str: string) => {
-                      console.log('On Search');
-                    }}
-                    searchStr={searchStr}
-                    setSearchStr={setSearchStr}
-                    style={{ 'marginBottom': '11px' }}
-                  />
-                </Grid>
-                <Grid
-                  item
-                  md={12}>
-                  <BCTable
-                    headCells={headCells}
-                    pagination
-                    tableData={tableData}
-                  />
-                </Grid>
-              </Grid>
+              <BCTableContainer
+                columns={columns}
+                onRowClick={handleRowClick}
+                search
+                tableData={contacts}
+              />
             </DataContainer>
             <DataContainer
               hidden={curTab !== 1}
@@ -237,4 +247,7 @@ const DataContainer = styled.div`
   margin-top: 12px;
 `;
 
-export default CustomersPage;
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(CustomersPage);

@@ -51,12 +51,12 @@ function BCModal() {
   return (
     <div className={'modal-wrapper'}>
       <Dialog
+        TransitionComponent={BCModalTransition}
         aria-labelledby={'responsive-dialog-title'}
         maxWidth={'lg'}
         onClose={handleClose}
         open={open}
-        scroll={'paper'}
-        TransitionComponent={BCModalTransition}>
+        scroll={'paper'}>
         {
           data && data.modalTitle !== ''
             ? <DialogTitle>

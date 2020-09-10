@@ -1,36 +1,35 @@
+import { CustomersState } from './customer.types';
+import { JobsSate } from './invoicing.types';
+import { SnackbarState } from './snackbar.type';
+import { TaxsState } from './tax.type';
 import auth from './auth.reducer';
 import { combineReducers } from 'redux';
-import customers, {CustomersReducer as customersState} from './customer.reducer';
-import employees from './employee.reducer';
-import jobTypes from './job-type.reducer';
-import vendor from './vendor.reducer';
 import companyEquipment from './company-equipment.reducer';
-
+import employees from './employee.reducer';
 import jobState from './jobs.reducer';
-import taxsState from './tax.reduxer';
-import snackbarState from './snackbar.reducer';
-import { JobsSate} from './invoicing.types'
-import {CustomersState} from './customer.types'
-import {TaxsState} from './tax.type'
-import { SnackbarState} from './snackbar.type'
+import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
+import snackbarState from './snackbar.reducer';
+import taxsState from './tax.reduxer';
+import vendor from './vendor.reducer';
+import customers, { CustomersReducer as customersState } from './customer.reducer';
 
 export interface RootState {
-    jobState: JobsSate,
-    snackbarState?: SnackbarState,
-    customersState: CustomersState,
-    taxsState: TaxsState,
+  jobState: JobsSate,
+  snackbarState?: SnackbarState,
+  customersState: CustomersState,
+  taxsState: TaxsState,
 }
 export default combineReducers({
   auth,
+  companyEquipment,
   customers,
   customersState,
   employees,
-  jobTypes,
-  vendor,
-  companyEquipment,
   jobState,
-  taxsState,
+  jobTypes,
+  modal,
   snackbarState,
-  modal
+  taxsState,
+  vendor
 });
