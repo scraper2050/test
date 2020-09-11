@@ -22,9 +22,8 @@ function BCSubHeader({ title, children }: BCSubHeaderProps): JSX.Element {
 
 const StyledToolbar = styled(Toolbar)`
   width: 100%;
-  height: 96px;
   background: ${CONSTANTS.PRIMARY_BLUE};
-  padding: 30px 65px 21px 39px;
+  padding: 20px 65px 20px 39px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
