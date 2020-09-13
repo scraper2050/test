@@ -78,15 +78,6 @@ function GroupPage(): JSX.Element {
 
   return (
     <>
-      <BCSubHeader title={'Employees'}>
-        <BCToolBarSearchInput style={{ 'marginLeft': 'auto',
-          'width': '321px' }}
-        />
-        <EmployeeButton variant={'contained'}>
-          {'New Employee'}
-        </EmployeeButton>
-      </BCSubHeader>
-
       <MainContainer>
         <BCSidebar>
           <StyledList aria-label={'people sidebar list'}>
