@@ -5,6 +5,8 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { Suspense } from 'react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import BcToolBar from './app/components/bc-toolbar-btn/bc-tool-bar';
+
 const DashboardPage = React.lazy(() => import('./app/pages/dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('./app/pages/customer/customer'));
 const NewCustomerPage = React.lazy(() => import('./app/pages/customer/new-customer/new-customer'));
@@ -61,6 +63,7 @@ function App() {
               />
               <Route>
                 <BCHeader />
+                <BcToolBar />
                 <div className={'main-container'}>
                   <Switch>
                     <AuthRoute

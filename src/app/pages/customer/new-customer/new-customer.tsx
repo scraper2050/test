@@ -113,7 +113,7 @@ function NewCustomerPage({ classes }: Props) {
 
   return (
     <>
-      <BCSubHeader title={'Customers'}>
+      {/* <BCSubHeader title={'Customers'}>
         <BCToolBarSearchInput style={{
           'marginLeft': 'auto',
           'width': '321px'
@@ -124,7 +124,7 @@ function NewCustomerPage({ classes }: Props) {
             {'New Customer'}
           </Link>
         </CustomerButton>
-      </BCSubHeader>
+      </BCSubHeader> */}
 
       <MainContainer>
         <BCSidebar>

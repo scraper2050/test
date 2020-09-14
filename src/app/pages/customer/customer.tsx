@@ -104,7 +104,7 @@ function CustomersPage({ classes }: any) {
 
   return (
     <>
-      <BCSubHeader title={'Customers'}>
+      {/* <BCSubHeader title={'Customers'}>
         <BCToolBarSearchInput style={{
           'marginLeft': 'auto',
           'width': '321px'
@@ -115,7 +115,7 @@ function CustomersPage({ classes }: any) {
             {'New Customer'}
           </Link>
         </CustomerButton>
-      </BCSubHeader>
+      </BCSubHeader> */}
 
       <MainContainer>
         <BCSidebar>

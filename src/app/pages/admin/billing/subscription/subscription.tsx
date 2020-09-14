@@ -65,13 +65,13 @@ function BillingSubscriptionPage() {
 
   return (
     <>
-      <BCSubHeader title={'Admin'}>
+      {/* <BCSubHeader title={'Admin'}>
         <BCToolBarSearchInput style={{
           'marginLeft': 'auto',
           'width': '321px'
         }}
         />
-      </BCSubHeader>
+      </BCSubHeader> */}
 
       <MainContainer>
         <BCSidebar>
