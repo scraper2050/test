@@ -90,14 +90,14 @@ function OfficeAdminPage(): JSX.Element {
 
   return (
     <>
-      <BCSubHeader title={'Employees'}>
+      {/* <BCSubHeader title={'Employees'}>
         <BCToolBarSearchInput style={{ 'marginLeft': 'auto',
           'width': '321px' }}
         />
         <EmployeeButton variant={'contained'}>
           {'New Employee'}
         </EmployeeButton>
-      </BCSubHeader>
+      </BCSubHeader> */}
 
       <MainContainer>
         <BCSidebar>

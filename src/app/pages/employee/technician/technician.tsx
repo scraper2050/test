@@ -96,14 +96,14 @@ function TechnicianPage(): JSX.Element {
 
   return (
     <>
-      <BCSubHeaderer title={'Employees'}>
+      {/* <BCSubHeaderer title={'Employees'}>
         <BCToolBarSearchInputut style={{ 'marginLeft': 'auto',
           'width': '321px' }}
         />
         <EmployeeButton variant={'contained'}>
           {'New Employee'}
         </EmployeeButton>
-      </BCSubHeaderer>
+      </BCSubHeaderer> */}
 
       <MainContainer>
         <BCSidebarar>
