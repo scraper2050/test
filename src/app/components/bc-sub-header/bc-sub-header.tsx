@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 
 interface BCSubHeaderProps {
-    title: string;
+    title?: string;
     children?: React.ReactNode;
 }
 

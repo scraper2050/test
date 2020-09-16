@@ -56,35 +56,35 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const NAV_DATA = [
     {
       'label': 'Dashboard',
-      'link': '/dashboard'
+      'link': '/main/dashboard'
     },
     {
       'label': 'Customers',
-      'link': '/customers'
+      'link': '/main/customers'
     },
     {
       'label': 'Invoicing',
-      'link': '/invoicing'
+      'link': '/main/invoicing'
     },
     {
       'label': 'Tags',
-      'link': '/tags'
+      'link': '/main/tags'
     },
     {
       'label': 'Inventory',
-      'link': '/inventory'
+      'link': '/main/inventory'
     },
     {
       'label': 'Employees',
-      'link': '/employees'
+      'link': '/main/employees/group'
     },
     {
       'label': 'Vendors',
-      'link': '/vendors'
+      'link': '/main/vendors'
     },
     {
       'label': 'Admin',
-      'link': '/admin'
+      'link': '/main/admin'
     }
   ];
 

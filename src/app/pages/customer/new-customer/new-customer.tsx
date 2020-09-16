@@ -1,9 +1,6 @@
 import * as CONSTANTS from '../../../../constants';
 import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-marker';
-import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
-import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
-import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import Config from '../../../../config';
 import Geocode from 'react-geocode';
 import { allStates } from 'utils/constants';
@@ -17,31 +14,12 @@ import {
   FormGroup,
   Grid,
   InputLabel,
-  List,
-  ListItem,
   MenuItem,
   Select,
   TextField
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
-import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useState } from 'react';
-
-
-const LINK_DATA = [
-  {
-    'label': 'Customer List',
-    'link': '/customers/customer-list'
-  },
-  {
-    'label': 'New Customer',
-    'link': '/customers/new-customer'
-  },
-  {
-    'label': 'Schedule/Jobs',
-    'link': '/customers/schedule'
-  }
-];
 
 interface Props {
   classes: any
@@ -62,9 +40,6 @@ function NewCustomerPage({ classes }: Props) {
     'street': '',
     'zipCode': ''
   };
-  const location = useLocation();
-  const pathName = location.pathname;
-  const history = useHistory();
   const [positionValue, setPositionValue] = useState({
     'lang': -90.111533,
     'lat': 29.972065
@@ -107,10 +82,6 @@ function NewCustomerPage({ classes }: Props) {
     }
   };
 
-  const onClickLink = (strLink: string): void => {
-    history.push(strLink);
-  };
-
   return (
     <>
       {/* <BCSubHeader title={'Customers'}>
@@ -127,35 +98,6 @@ function NewCustomerPage({ classes }: Props) {
       </BCSubHeader> */}
 
       <MainContainer>
-        <BCSidebar>
-          <StyledList aria-label={'customers sidebar list'}>
-            {LINK_DATA.map((item, idx) => {
-              if (item.label === 'Customer List') {
-                return (
-                  <StyledListItem
-                    button
-                    key={idx}
-                    onClick={() => onClickLink(item.link)}
-                    selected={
-                      pathName === item.link || pathName === '/customers'
-                    }>
-                    {item.label}
-                  </StyledListItem>
-                );
-              }
-              return (
-                <StyledListItem
-                  button
-                  key={idx}
-                  onClick={() => onClickLink(item.link)}
-                  selected={pathName === item.link}>
-                  {item.label}
-                </StyledListItem>
-              );
-            })}
-          </StyledList>
-        </BCSidebar>
-
         <PageContainer>
           <DataContainer
             id={'0'}>
@@ -404,38 +346,6 @@ function NewCustomerPage({ classes }: Props) {
     </>
   );
 }
-
-const CustomerButton = styled(Button)`
-  margin-left: 25px;
-  border-radius: 2px;
-  width: 192px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  text-transform: initial;
-  background-color: ${CONSTANTS.SECONDARY_GREY};
-  box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
-
-  a {
-    text-decoration: none;
-    color: ${CONSTANTS.PRIMARY_DARK};
-  }
-`;
-
-const StyledList = styled(List)``;
-
-const StyledListItem = styled(ListItem)`
-  font-size: 16px;
-  line-height: 20px;
-  height: 40px;
-  color: #000;
-  padding-left: 41px;
-  &.Mui-selected {
-    background-color: #c4c4c4;
-  }
-`;
 
 const MainContainer = styled.div`
   display: flex;

@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import styles from './login.styles';
 import { useSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
-import { AuthInfo, Auth } from 'app/models/user';
+import { Auth, AuthInfo } from 'app/models/user';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { loginActions, setAuthAction } from 'actions/auth/auth.action';
@@ -113,7 +113,7 @@ function LoginPage({
   useEffect(
     () => {
       if (token !== null && token !== '') {
-        history.push(location.state?.requestedPath ?? '/dashboard');
+        history.push(location.state?.requestedPath ?? '/main/dashboard');
       }
     },
     [token, history, location]

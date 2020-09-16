@@ -1,15 +1,152 @@
 import * as CONSTANTS from '../../../constants';
-import React from 'react';
 import styled from 'styled-components';
+import { Grid, List, ListItem } from '@material-ui/core';
+import React, { useEffect } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface BCSidebarProps {
   children?: React.ReactNode;
+  setContentGrid?: Function
 }
 
-function BCSidebar({ children }: BCSidebarProps): JSX.Element {
-  return <ComponentContainer>
-    {children}
-  </ComponentContainer>;
+function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
+  const history = useHistory();
+  const location = useLocation();
+  const pathName = location.pathname;
+  const LINK_DATA = [
+    {
+      'label': 'Customer List',
+      'link': '/main/customers'
+    },
+    {
+      'label': 'New Customer',
+      'link': '/main/customers/new-customer'
+    },
+    {
+      'label': 'Schedule/Jobs',
+      'link': '/main/customers/schedule'
+    },
+    {
+      'label': 'Jobs',
+      'link': '/main/invoicing/jobs'
+    },
+    {
+      'label': 'Manage',
+      'link': '/main/invoicing/manage'
+    },
+    {
+      'label': 'Billing',
+      'link': '/main/admin/billing'
+    },
+    {
+      'label': 'Brands',
+      'link': '/main/admin/brands'
+    },
+    {
+      'label': 'Company Profile',
+      'link': '/main/admin/company-profile'
+    },
+    {
+      'label': 'Employees',
+      'link': '/main/admin/employees'
+    },
+    {
+      'label': 'Equipment Type',
+      'link': '/main/admin/equipment-type'
+    },
+    {
+      'label': 'Groups',
+      'link': '/main/admin/groups'
+    },
+    {
+      'label': 'Invoicing',
+      'link': '/main/admin/invoicing'
+    },
+    {
+      'label': 'Job Types',
+      'link': '/main/admin/job-types'
+    },
+    {
+      'label': 'Report Number',
+      'link': '/main/admin/report-number'
+    },
+    {
+      'label': 'Roles/Permissions',
+      'link': '/main/admin/roles-permissions'
+    },
+    {
+      'label': 'Vendors',
+      'link': '/main/admin/vendors'
+    },
+    {
+      'label': 'Groups',
+      'link': '/main/employees/group'
+    },
+    {
+      'label': 'Technicians',
+      'link': '/main/employees/technician'
+    },
+    {
+      'label': 'Managers',
+      'link': '/main/employees/manager'
+    },
+    {
+      'label': 'Office Admin',
+      'link': '/main/employees/office'
+    }
+  ];
+
+  useEffect(() => {
+    if (pathName !== '/main/dashboard') {
+      setContentGrid && setContentGrid({
+        'lg': 10,
+        'md': 10,
+        'sm': 10
+      });
+    } else {
+      setContentGrid && setContentGrid({
+        'lg': 12,
+        'md': 12,
+        'sm': 12
+      });
+    }
+  }, [location]);
+  const onClickLink = (strLink: string): void => {
+    history.push(strLink);
+  };
+
+  return pathName !== '/main/dashboard'
+    ? <Grid
+      id={'navbar-container'}
+      item
+      lg={2}
+      md={2}
+      sm={2}
+      style={{ 'padding': 0 }}
+      xl={2}>
+      <ComponentContainer>
+        <StyledList aria-label={'customers sidebar list'}>
+          {LINK_DATA.map((item: any, idx: number) => {
+            let mainPath = pathName.split('/main/')[1]; // eslint-disable-line
+            mainPath = mainPath.split('/')[0]; // eslint-disable-line
+            return (
+              item.link.startsWith(`/main/${mainPath}`)
+                ? <StyledListItem
+                  button
+                  key={idx}
+                  onClick={() => onClickLink(item.link)}
+                  selected={
+                    pathName === item.link
+                  }>
+                  {item.label}
+                </StyledListItem>
+                : null
+            );
+          })}
+        </StyledList>
+      </ComponentContainer>
+    </Grid>
+    : null;
 }
 
 const ComponentContainer = styled.div`
@@ -17,6 +154,22 @@ const ComponentContainer = styled.div`
   flex: 0 0 ${CONSTANTS.SIDEBAR_WIDTH}px;
   background-color: ${CONSTANTS.PRIMARY_WHITE};
   transition: all 0.3s ease-in-out;
+  position: fixed;
+  height: 100%;
+  z-index: 1;
+  width: 185px;
+`;
+
+const StyledList = styled(List)``;
+
+const StyledListItem = styled(ListItem)`
+  font-size: 16px;
+  line-height: 20px;
+  height: 40px;
+  color: #000;
+  &.Mui-selected {
+    background-color: #c4c4c4;
+  }
 `;
 
 export default BCSidebar;

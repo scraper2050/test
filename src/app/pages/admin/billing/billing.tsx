@@ -13,47 +13,47 @@ import { useHistory, useLocation } from 'react-router-dom';
 const LINK_DATA = [
   {
     'label': 'Billing',
-    'link': '/admin/billing'
+    'link': '/main/admin/billing'
   },
   {
     'label': 'Brands',
-    'link': '/admin/brands'
+    'link': '/main/admin/brands'
   },
   {
     'label': 'Company Profile',
-    'link': '/admin/company-profile'
+    'link': '/main/admin/company-profile'
   },
   {
     'label': 'Employees',
-    'link': '/admin/employees'
+    'link': '/main/admin/employees'
   },
   {
     'label': 'Equipment Type',
-    'link': '/admin/equipment-type'
+    'link': '/main/admin/equipment-type'
   },
   {
     'label': 'Groups',
-    'link': '/admin/groups'
+    'link': '/main/admin/groups'
   },
   {
     'label': 'Invoicing',
-    'link': '/admin/invoicing'
+    'link': '/main/admin/invoicing'
   },
   {
     'label': 'Job Types',
-    'link': '/admin/job-types'
+    'link': '/main/admin/job-types'
   },
   {
     'label': 'Report Number',
-    'link': '/admin/report-number'
+    'link': '/main/admin/report-number'
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles-permissions'
+    'link': '/main/admin/roles-permissions'
   },
   {
     'label': 'Vendors',
-    'link': '/admin/vendors'
+    'link': '/main/admin/vendors'
   }
 ];
 
@@ -87,7 +87,7 @@ function BillingPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin'
+                      pathName === item.link || pathName === '/main/admin'
                     }>
                     {item.label}
                   </StyledListItem>
@@ -114,7 +114,7 @@ function BillingPage() {
               <BCAdminCard
                 cardText={'Billing Methods'}
                 color={'primary'}
-                link={'/admin/billing/billing-methods'}>
+                link={'/main/admin/billing/billing-methods'}>
                 <MoneyIcon />
               </BCAdminCard>
             </Grid>
@@ -123,7 +123,7 @@ function BillingPage() {
               <BCAdminCard
                 cardText={'History'}
                 color={'secondary'}
-                link={'/admin/billing/billing-history'}>
+                link={'/main/admin/billing/billing-history'}>
                 <HistoryIcon />
               </BCAdminCard>
             </Grid>
@@ -132,7 +132,7 @@ function BillingPage() {
               <BCAdminCard
                 cardText={'Subscriptions'}
                 color={'info'}
-                link={'/admin/billing/subscription'}>
+                link={'/main/admin/billing/subscription'}>
                 <SubscriptionsIcon />
               </BCAdminCard>
             </Grid>
