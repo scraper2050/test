@@ -1,67 +1,7 @@
-import BCSidebar from '../../../components/bc-sidebar/bc-sidebar';
-import BCSubHeader from '../../../components/bc-sub-header/bc-sub-header';
-import BCToolBarSearchInput from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
 import React from 'react';
 import styled from 'styled-components';
-import { List, ListItem } from '@material-ui/core';
-import { useHistory, useLocation } from 'react-router-dom';
-
-const LINK_DATA = [
-  {
-    'label': 'Billing',
-    'link': '/main/admin/billing'
-  },
-  {
-    'label': 'Brands',
-    'link': '/main/admin/brands'
-  },
-  {
-    'label': 'Company Profile',
-    'link': '/main/admin/company-profile'
-  },
-  {
-    'label': 'Employees',
-    'link': '/main/admin/employees'
-  },
-  {
-    'label': 'Equipment Type',
-    'link': '/main/admin/equipment-type'
-  },
-  {
-    'label': 'Groups',
-    'link': '/main/admin/groups'
-  },
-  {
-    'label': 'Invoicing',
-    'link': '/main/admin/invoicing'
-  },
-  {
-    'label': 'Job Types',
-    'link': '/main/admin/job-types'
-  },
-  {
-    'label': 'Report Number',
-    'link': '/main/admin/report-number'
-  },
-  {
-    'label': 'Roles/Permissions',
-    'link': '/main/admin/roles-permissions'
-  },
-  {
-    'label': 'Vendors',
-    'link': '/main/admin/vendors'
-  }
-];
 
 function AdminGroupsPage() {
-  const location = useLocation();
-  const pathName = location.pathname;
-  const history = useHistory();
-
-  const onClickLink = (strLink: string): void => {
-    history.push(strLink);
-  };
-
   return (
     <>
       {/* <BCSubHeader title={'Admin'}>
@@ -73,53 +13,11 @@ function AdminGroupsPage() {
       </BCSubHeader> */}
 
       <MainContainer>
-        <BCSidebar>
-          <StyledList aria-label={'admin sidebar list'}>
-            {LINK_DATA.map((item, idx) => {
-              if (item.label === 'Billing') {
-                return (
-                  <StyledListItem
-                    button
-                    key={idx}
-                    onClick={() => onClickLink(item.link)}
-                    selected={
-                      pathName === item.link || pathName === '/main/admin'
-                    }>
-                    {item.label}
-                  </StyledListItem>
-                );
-              }
-              return (
-                <StyledListItem
-                  button
-                  key={idx}
-                  onClick={() => onClickLink(item.link)}
-                  selected={pathName === item.link}>
-                  {item.label}
-                </StyledListItem>
-              );
-            })}
-          </StyledList>
-        </BCSidebar>
         <PageContainer />
       </MainContainer>
     </>
   );
 }
-
-
-const StyledList = styled(List)``;
-
-const StyledListItem = styled(ListItem)`
-  font-size: 16px;
-  line-height: 20px;
-  height: 40px;
-  color: #000;
-  padding-left: 41px;
-  &.Mui-selected {
-    background-color: #c4c4c4;
-  }
-`;
 
 const MainContainer = styled.div`
   display: flex;

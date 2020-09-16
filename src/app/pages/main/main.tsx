@@ -35,7 +35,7 @@ const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
 
-function Main({ title, location }: any): any {
+function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
     'lg': 12,
     'md': 12,

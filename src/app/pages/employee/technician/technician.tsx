@@ -1,18 +1,13 @@
-import * as CONSTANTS from '../../../../constants';
 import Api from 'utils/api';
-import BCSidebarar from '../../../components/bc-sidebar/bc-sidebar';
-import BCSubHeaderer from '../../../components/bc-sub-header/bc-sub-header';
 import BCTable from '../../../components/bc-table/bc-table';
 import BCTableSearchInput from '../../../components/bc-table-search-input/bc-table-search-input';
 import BCTabs from '../../../components/bc-tab/bc-tab';
-import BCToolBarSearchInputut from '../../../components/bc-toolbar-search-input/bc-toolbar-search-input';
+import { Grid } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
 
 import { UserModel } from '../../../models/user';
 import styled from 'styled-components';
-import { Button, Grid, List, ListItem } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 const headCells = [
   {
@@ -47,28 +42,11 @@ const tableData = [
   }
 ];
 
-const LINK_DATA = [
-  { 'label': 'Groups',
-    'link': '/main/employees/group' },
-  { 'label': 'Technicians',
-    'link': '/main/employees/technician' },
-  { 'label': 'Managers',
-    'link': '/main/employees/manager' },
-  { 'label': 'Office Admin',
-    'link': '/main/employees/office' }
-];
-
 function TechnicianPage(): JSX.Element {
-  const location = useLocation();
-  const pathName = location.pathname;
-  const history = useHistory();
   const [curTab, setCurTab] = useState(0);
   const [searchStr, setSearchStr] = useState('');
   const [techList, setTechlist] = useState<UserModel[]>([]); // eslint-disable-line
 
-  const onClickLink = (strLink: string): void => {
-    history.push(strLink);
-  };
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
@@ -106,35 +84,6 @@ function TechnicianPage(): JSX.Element {
       </BCSubHeaderer> */}
 
       <MainContainer>
-        <BCSidebarar>
-          <StyledList aria-label={'employees sidebar list'}>
-            {LINK_DATA.map((item, idx) => {
-              if (item.label === 'Groups') {
-                return (
-                  <StyledListItem
-                    button
-                    key={idx}
-                    onClick={() => onClickLink(item.link)}
-                    selected={
-                      pathName === item.link || pathName === '/main/employees'
-                    }>
-                    {item.label}
-                  </StyledListItem>
-                );
-              }
-              return (
-                <StyledListItem
-                  button
-                  key={idx}
-                  onClick={() => onClickLink(item.link)}
-                  selected={pathName === item.link}>
-                  {item.label}
-                </StyledListItem>
-              );
-            })}
-          </StyledList>
-        </BCSidebarar>
-
         <PageContainer>
           <BCTabs
             curTab={curTab}
@@ -191,21 +140,6 @@ function TechnicianPage(): JSX.Element {
   );
 }
 
-const EmployeeButton = styled(Button)`
-  margin-left: 25px;
-  border-radius: 2px;
-  width: 192px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  text-transform: initial;
-  color: ${CONSTANTS.PRIMARY_DARK};
-  background-color: ${CONSTANTS.SECONDARY_GREY};
-  box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
-`;
-
 const MainContainer = styled.div`
   display: flex;
   flex: 1 1 100%;
@@ -231,16 +165,4 @@ const DataContainer = styled.div`
   margin-top: 12px;
 `;
 
-const StyledList = styled(List)``;
-
-const StyledListItem = styled(ListItem)`
-  font-size: 16px;
-  line-height: 20px;
-  height: 40px;
-  color: #000;
-  padding-left: 41px;
-  &.Mui-selected {
-    background-color: #c4c4c4;
-  }
-`;
 export default TechnicianPage;
