@@ -1,12 +1,12 @@
 import { CircularProgress } from '@material-ui/core';
 import React from 'react';
 
-function BCPageLoader(): JSX.Element {
+function BCPageLoader({ heightValue = '100vh' }: any): JSX.Element {
   return (
     <div style={{
       'alignItems': 'center',
       'display': 'flex',
-      'height': '100vh',
+      'height': heightValue,
       'justifyContent': 'center'
     }}>
       <CircularProgress size={50} />
