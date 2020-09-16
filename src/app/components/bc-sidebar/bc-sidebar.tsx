@@ -123,7 +123,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       md={2}
       sm={2}
       style={{ 'padding': 0 }}
-      xl={2}>
+      xl={1}>
       <ComponentContainer>
         <StyledList aria-label={'customers sidebar list'}>
           {LINK_DATA.map((item: any, idx: number) => {
