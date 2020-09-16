@@ -42,13 +42,13 @@ const tableData = [
 
 const LINK_DATA = [
   { 'label': 'Groups',
-    'link': '/employees/group' },
+    'link': '/main/employees/group' },
   { 'label': 'Technicians',
-    'link': '/employees/technician' },
+    'link': '/main/employees/technician' },
   { 'label': 'Managers',
-    'link': '/employees/manager' },
+    'link': '/main/employees/manager' },
   { 'label': 'Office Admin',
-    'link': '/employees/office' }
+    'link': '/main/employees/office' }
 ];
 
 function ManagerPage(): JSX.Element {
@@ -109,7 +109,7 @@ function ManagerPage(): JSX.Element {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/employees'
+                      pathName === item.link || pathName === '/main/employees'
                     }>
                     {item.label}
                   </StyledListItem>

@@ -10,47 +10,47 @@ import { useHistory, useLocation } from 'react-router-dom';
 const LINK_DATA = [
   {
     'label': 'Billing',
-    'link': '/admin/billing'
+    'link': '/main/admin/billing'
   },
   {
     'label': 'Brands',
-    'link': '/admin/brands'
+    'link': '/main/admin/brands'
   },
   {
     'label': 'Company Profile',
-    'link': '/admin/company-profile'
+    'link': '/main/admin/company-profile'
   },
   {
     'label': 'Employees',
-    'link': '/admin/employees'
+    'link': '/main/admin/employees'
   },
   {
     'label': 'Equipment Type',
-    'link': '/admin/equipment-type'
+    'link': '/main/admin/equipment-type'
   },
   {
     'label': 'Groups',
-    'link': '/admin/groups'
+    'link': '/main/admin/groups'
   },
   {
     'label': 'Invoicing',
-    'link': '/admin/invoicing'
+    'link': '/main/admin/invoicing'
   },
   {
     'label': 'Job Types',
-    'link': '/admin/job-types'
+    'link': '/main/admin/job-types'
   },
   {
     'label': 'Report Number',
-    'link': '/admin/report-number'
+    'link': '/main/admin/report-number'
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles-permissions'
+    'link': '/main/admin/roles-permissions'
   },
   {
     'label': 'Vendors',
-    'link': '/admin/vendors'
+    'link': '/main/admin/vendors'
   }
 ];
 
@@ -84,7 +84,7 @@ function BillingSubscriptionPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin' || pathName.includes('/admin/billing')
+                      pathName === item.link || pathName === '/main/admin' || pathName.includes('/main/admin/billing')
                     }>
                     {item.label}
                   </StyledListItem>
@@ -107,7 +107,7 @@ function BillingSubscriptionPage() {
             container
             spacing={4}>
             <BCBackButton
-              link={'/admin/billing'}
+              link={'/main/admin/billing'}
             />
           </Grid>
         </PageContainer>

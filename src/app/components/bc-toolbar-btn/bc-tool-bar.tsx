@@ -5,22 +5,38 @@ import BCSubHeader from './../bc-sub-header/bc-sub-header';
 import BCToolBarSearchInput from './../bc-toolbar-search-input/bc-toolbar-search-input';
 import styled from 'styled-components';
 import * as CONSTANTS from '../../../constants';
-
+import { useSelector } from 'react-redux';
+interface RootState {
+  routeData: {
+    title: string,
+    actionData: {
+      link: string,
+      title: string
+    }
+  }
+}
 export default function BcToolBar() {
-    return (
-      <BCSubHeader title={'Customers'}>
-          <BCToolBarSearchInput style={{
-            'marginLeft': 'auto',
-            'width': '321px'
-          }}
-          />
-          <SubToolBarButton variant={'contained'}>
-            <Link to={'/customers/new-customer'}>
-              {'New Customer'}
+  const title = useSelector(({ routeData }: RootState) => routeData.title);
+  const actionData = useSelector(({ routeData }: RootState) => routeData.actionData);
+  return (
+    <BCSubHeader title={title}>
+      <BCToolBarSearchInput style={{
+        'marginLeft': 'auto',
+        'width': '321px'
+      }}
+      />
+      {
+        actionData && actionData.link
+          ? <SubToolBarButton variant={'contained'}>
+            <Link to={actionData.link}>
+              {actionData.title}
             </Link>
           </SubToolBarButton>
-      </BCSubHeader>
-    )
+          : null
+      }
+
+    </BCSubHeader>
+  )
 }
 
 const SubToolBarButton = styled(Button)`

@@ -47,7 +47,8 @@ function BCTableContainer({ tableData, columns, onRowClick, classes, search }: a
       </Grid>
       <Grid
         item
-        md={12}>
+        md={12}
+        xs={12}>
         {filteredData && filteredData.length === 0
           ? <Paper classes={{ 'root': classes.noDataPaper }}>
             <Typography

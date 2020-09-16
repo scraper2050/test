@@ -181,7 +181,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
     )
       .then(res => {
         setToken(res.data.token);
-        history.push('/dashboard');
+        history.push('/main/dashboard');
         setLoading(false);
       })
       .catch(() => {

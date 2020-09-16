@@ -15,11 +15,12 @@ body {
 
 .main-container {
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   flex: 1 1 100%;
   overflow-x: hidden;
   // margin-top: 77px;
   background: #ebebeb;
+  margin: 0 !important;
 }
 
 .min-h-full {

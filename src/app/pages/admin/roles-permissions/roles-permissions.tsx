@@ -13,47 +13,47 @@ import { useHistory, useLocation } from 'react-router-dom';
 const LINK_DATA = [
   {
     'label': 'Billing',
-    'link': '/admin/billing'
+    'link': '/main/admin/billing'
   },
   {
     'label': 'Brands',
-    'link': '/admin/brands'
+    'link': '/main/admin/brands'
   },
   {
     'label': 'Company Profile',
-    'link': '/admin/company-profile'
+    'link': '/main/admin/company-profile'
   },
   {
     'label': 'Employees',
-    'link': '/admin/employees'
+    'link': '/main/admin/employees'
   },
   {
     'label': 'Equipment Type',
-    'link': '/admin/equipment-type'
+    'link': '/main/admin/equipment-type'
   },
   {
     'label': 'Groups',
-    'link': '/admin/groups'
+    'link': '/main/admin/groups'
   },
   {
     'label': 'Invoicing',
-    'link': '/admin/invoicing'
+    'link': '/main/admin/invoicing'
   },
   {
     'label': 'Job Types',
-    'link': '/admin/job-types'
+    'link': '/main/admin/job-types'
   },
   {
     'label': 'Report Number',
-    'link': '/admin/report-number'
+    'link': '/main/admin/report-number'
   },
   {
     'label': 'Roles/Permissions',
-    'link': '/admin/roles-permissions'
+    'link': '/main/admin/roles-permissions'
   },
   {
     'label': 'Vendors',
-    'link': '/admin/vendors'
+    'link': '/main/admin/vendors'
   }
 ];
 
@@ -87,7 +87,7 @@ function RolesPermissionsPage() {
                     key={idx}
                     onClick={() => onClickLink(item.link)}
                     selected={
-                      pathName === item.link || pathName === '/admin'
+                      pathName === item.link || pathName === '/main/admin'
                     }>
                     {item.label}
                   </StyledListItem>
@@ -114,7 +114,7 @@ function RolesPermissionsPage() {
               <BCAdminCard
                 cardText={'Manager'}
                 color={'info'}
-                link={'/admin/roles-permissions/manager-list'}>
+                link={'/main/admin/roles-permissions/manager-list'}>
                 <GroupIcon />
               </BCAdminCard>
             </Grid>
@@ -123,7 +123,7 @@ function RolesPermissionsPage() {
               <BCAdminCard
                 cardText={'Technician'}
                 color={'primary'}
-                link={'/admin/roles-permissions/technician-list'}>
+                link={'/main/admin/roles-permissions/technician-list'}>
                 <BuildIcon />
               </BCAdminCard>
             </Grid>
@@ -132,7 +132,7 @@ function RolesPermissionsPage() {
               <BCAdminCard
                 cardText={'Roles'}
                 color={'secondary'}
-                link={'/admin/roles-permissions/view-roles'}>
+                link={'/main/admin/roles-permissions/view-roles'}>
                 <HowToRegIcon />
               </BCAdminCard>
             </Grid>
