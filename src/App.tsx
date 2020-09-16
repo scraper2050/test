@@ -1,4 +1,4 @@
-import BCPageLoader from 'app/components/bc-page-loader/bc-page-loader';
+import BCPageLoader from './app/components/bc-page-loader/bc-page-loader';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { Suspense, useEffect, useState } from 'react';

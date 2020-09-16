@@ -1,7 +1,8 @@
 import AuthRoute from 'auth-route';
 import BCHeader from '../../components/bc-header/bc-header';
-import BCModal from 'app/modals/bc-modal';
-import BCSidebar from 'app/components/bc-sidebar/bc-sidebar';
+import BCModal from '../../modals/bc-modal';
+import BCPageLoader from '../../components/bc-page-loader/bc-page-loader';
+import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
 import BCToolBar from '../../components/bc-toolbar-btn/bc-tool-bar';
 import { Grid } from '@material-ui/core';
 import React, { Suspense, useState } from 'react';
@@ -44,9 +45,13 @@ function Main(): any {
   return (
     <Router>
       <Switch>
-        <Suspense fallback={<div>
-          {'Loading'}
-        </div>}>
+        <Suspense fallback={
+          <>
+            <BCHeader />
+            <BCToolBar />
+            <BCPageLoader heightValue={'calc(100vh - 155px)'} />
+          </>
+        }>
           <Route>
             <BCHeader />
             <BCToolBar />
