@@ -1,4 +1,4 @@
-import BCPageLoader from './app/components/bc-page-loader/bc-page-loader';
+import BCCircularLoader from './app/components/bc-circular-loader/bc-circular-loader';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React, { Suspense, useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ function App() {
   const AuthenticationCheck =
     isAuthenticated
       ? <Switch>
-        <Suspense fallback={<BCPageLoader />}>
+        <Suspense fallback={<BCCircularLoader />}>
           <Route
             component={MainPage}
             path={'/main'}
@@ -24,7 +24,7 @@ function App() {
       </Switch>
 
       : <Switch>
-        <Suspense fallback={<BCPageLoader />}>
+        <Suspense fallback={<BCCircularLoader />}>
           <Route
             component={LoginPage}
             exact
@@ -54,7 +54,7 @@ function App() {
         <div className={'App'}>
           {
             isLoading
-              ? <BCPageLoader />
+              ? <BCCircularLoader />
               : AuthenticationCheck
           }
         </div>
