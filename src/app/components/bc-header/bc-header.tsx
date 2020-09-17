@@ -131,7 +131,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                   className={classNames([classes.navItem], [classes.sideBarNavItems])}>
                   <Link
                     className={classes.sideBarLogoBrand}
-                    to={'/'}>
+                    to={'/main/dashboard'}>
                     <img
                       alt={'logo'}
                       src={LogoSvg}
@@ -160,7 +160,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
 
             <Link
               className={classes.logoBrand}
-              to={'/'}>
+              to={'/main/dashboard'}>
               <img
                 alt={'logo'}
                 src={LogoSvg}

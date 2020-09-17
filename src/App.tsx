@@ -19,7 +19,15 @@ function App() {
             component={MainPage}
             path={'/main'}
           />
-          <Redirect to={'/main/dashboard'} />
+          <Route
+            exact
+            path={'/'}
+            render={() => {
+              return (
+                <Redirect to={'/main/dashboard'} />
+              );
+            }}
+          />
         </Suspense>
       </Switch>
 

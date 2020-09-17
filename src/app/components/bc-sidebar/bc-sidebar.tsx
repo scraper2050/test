@@ -128,7 +128,11 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
         <StyledList aria-label={'customers sidebar list'}>
           {LINK_DATA.map((item: any, idx: number) => {
             let mainPath = pathName.split('/main/')[1]; // eslint-disable-line
-            mainPath = mainPath.split('/')[0]; // eslint-disable-line
+            if (mainPath) {
+              mainPath = mainPath.split('/')[0]; // eslint-disable-line
+            } else {
+              mainPath = 'dashboard';
+            }
             return (
               item.link.startsWith(`/main/${mainPath}`)
                 ? <StyledListItem
