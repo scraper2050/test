@@ -66,7 +66,7 @@ function Main(): any {
                 lg={contentGrid.lg}
                 md={contentGrid.md}
                 sm={contentGrid.sm}
-                xl>
+                xl={11}>
                 <Switch>
                   <AuthRoute
                     Component={DashboardPage}

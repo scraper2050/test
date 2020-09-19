@@ -32,7 +32,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData }: BCTabsProps):
 }
 
 const StyledTabs = styled(Tabs)`
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid #C4C4C4;
   .MuiTab-root {
     font-size: 16px;
     line-height: 20px;

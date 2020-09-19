@@ -1,103 +1,55 @@
-import Button from '@material-ui/core/Button';
-import CreateJob from 'app/modals/create-job';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import React, { useState } from 'react';
-import {
-  ThemeProvider,
-  createMuiTheme,
-  makeStyles
-} from '@material-ui/core/styles';
+import BCTabs from '../../../components/bc-tab/bc-tab';
+import JobPage from './job-page/job-page';
+import ServiceTicket from './service-ticket/service-ticket';
+import SwipeableViews from 'react-swipeable-views';
+import styles from './schedule-jobs.styles';
+import React, { useEffect, useState } from 'react';
+import { useTheme, withStyles } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
-  'margin': {
-    'alignSelf': 'center',
-    'margin': theme.spacing(1)
-  }
-}));
+function ScheduleJobsPage({ classes }: any) {
+  console.log(classes);
+  const [curTab, setCurTab] = useState(0);
+  const theme = useTheme();
 
-const theme = createMuiTheme({
-  'palette': {
-    'primary': {
-      'contrastText': '#fff',
-      'dark': '#002884',
-      'light': '#757ce8',
-      'main': '#3f50b5'
-    },
-    'secondary': {
-      'contrastText': '#fff',
-      'dark': '#002884',
-      'light': '#757ce8',
-      'main': '#3f50b5'
-    }
-  }
-});
+  useEffect(() => {
+  }, []);
 
-const NEW_TICKET = 0;
-const NEW_JOB = 1;
-
-function ScheduleJobsPage() {
-  const classes = useStyles();
-  const [modal, setModal] = useState(false);
-  const [modalMode, setModalMode] = useState(NEW_JOB);
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
+  };
 
   return (
-    <div
-      style={{
-        'height': '100vh',
-        'width': '100%'
-      }}>
-      <div
-        style={{
-          'alignContent': 'center',
-          'display': 'flex',
-          'height': '100vh',
-          'justifyContent': 'center',
-          'width': '100%'
-        }}>
-        <ThemeProvider theme={theme}>
-          <Button
-            className={classes.margin}
-            color={'primary'}
-            onClick={() => {
-              setModal(true);
-              setModalMode(NEW_TICKET);
-            }}
-            variant={'contained'}>
-            {'New Ticket'}
-          </Button>
-        </ThemeProvider>
-        <ThemeProvider theme={theme}>
-          <Button
-            className={classes.margin}
-            color={'secondary'}
-            onClick={() => {
-              setModal(true);
-              setModalMode(NEW_JOB);
-            }}
-            variant={'contained'}>
-            {'New Job'}
-          </Button>
-        </ThemeProvider>
+    <div className={classes.scheduleMainContainer}>
+      <div className={classes.schedulePageConatiner}>
+        <BCTabs
+          curTab={curTab}
+          indicatorColor={'primary'}
+          onChangeTab={handleTabChange}
+          tabsData={[
+            {
+              'label': 'Jobs',
+              'value': 0
+            },
+            {
+              'label': 'Service Tickets',
+              'value': 1
+            }
+          ]}
+        />
+        <SwipeableViews
+          axis={theme.direction === 'rtl'
+            ? 'x-reverse'
+            : 'x'}
+          index={curTab}>
+          <JobPage hidden={curTab !== 0} />
+          <ServiceTicket hidden={curTab !== 1} />
+        </SwipeableViews>
       </div>
-      {/* Component use */}
-      <CreateJob
-        cancel={() => setModal(false)}
-        modal={modal}
-        modalMode={modalMode}
-        submit={() => setModal(false)}
-      />
-      {/* ************* */}
     </div>
   );
 }
 
-/*
- * Const mapStateToProps = (state: {}) => ({
- *   // blabla: state.blabla,
- * });
- */
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({});
-
-export default connect(null, mapDispatchToProps)(ScheduleJobsPage);
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(ScheduleJobsPage);

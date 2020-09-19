@@ -7,7 +7,7 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 // Import { useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 
-function BCTableContainer({ tableData, columns, onRowClick, classes, search }: any) {
+function BCTableContainer({ tableData, columns, onRowClick, classes, search, searchPlaceholder = 'Search Customers...' }: any) {
   // Const dispatch = useDispatch();
   const [searchText, setSearchText] = useState(''); // eslint-disable-line
 
@@ -41,6 +41,7 @@ function BCTableContainer({ tableData, columns, onRowClick, classes, search }: a
         {search
           ? <BCTableSearchContainer
             handleSearchChange={handleSearchChange}
+            searchPlaceholder={searchPlaceholder}
             searchText={searchText}
           />
           : null}
