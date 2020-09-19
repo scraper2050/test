@@ -7,12 +7,14 @@ interface BCTableSearchInputProps {
   classes: any;
   searchText: string,
   handleSearchChange: any
+  searchPlaceholder: string
 }
 
 function BCTableSearchContainer({
   classes,
   searchText,
-  handleSearchChange
+  handleSearchChange,
+  searchPlaceholder
 }: BCTableSearchInputProps): JSX.Element {
   return (
     <Paper classes={{ 'root': classes.searchContainer }}>
@@ -23,7 +25,7 @@ function BCTableSearchContainer({
         onChange={(event: any) => {
           handleSearchChange(event);
         }}
-        placeholder={'Search Customers...'}
+        placeholder={searchPlaceholder}
         value={searchText}
       />
       <IconButton

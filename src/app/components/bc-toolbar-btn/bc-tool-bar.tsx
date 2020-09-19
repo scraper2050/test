@@ -1,10 +1,10 @@
-import React from 'react'
-import { Button } from '@material-ui/core';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import * as CONSTANTS from '../../../constants';
 import BCSubHeader from './../bc-sub-header/bc-sub-header';
 import BCToolBarSearchInput from './../bc-toolbar-search-input/bc-toolbar-search-input';
+import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import React from 'react';
 import styled from 'styled-components';
-import * as CONSTANTS from '../../../constants';
 import { useSelector } from 'react-redux';
 interface RootState {
   routeData: {
@@ -15,7 +15,7 @@ interface RootState {
     }
   }
 }
-export default function BcToolBar() {
+export default function BCToolBar() {
   const title = useSelector(({ routeData }: RootState) => routeData.title);
   const actionData = useSelector(({ routeData }: RootState) => routeData.actionData);
   return (
@@ -36,7 +36,7 @@ export default function BcToolBar() {
       }
 
     </BCSubHeader>
-  )
+  );
 }
 
 const SubToolBarButton = styled(Button)`
