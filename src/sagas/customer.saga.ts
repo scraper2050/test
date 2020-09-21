@@ -8,7 +8,7 @@ import {
   take
 } from 'redux-saga/effects';
 
-export function *handleGetCustomers(action: { payload: any }) {
+export function* handleGetCustomers(action: { payload: any }) {
   yield put(loadCustomersActions.fetching());
   try {
     const result = yield call(
@@ -25,7 +25,7 @@ export function *handleGetCustomers(action: { payload: any }) {
   }
 }
 
-export default function *watchCustomersLoad() {
+export default function* watchCustomersLoad() {
   while (true) {
     const fetchAction = yield take(loadCustomersActions.fetch);
     // Const task = yield fork(handleGetCustomers, fetchAction);

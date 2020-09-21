@@ -1,33 +1,35 @@
-import { handleActions } from "redux-actions";
-import { loadCompanyContractsActions } from "actions/vendor/vendor.action";
-import { List, Record } from "immutable";
-// Import { Action } from "redux";
+import { VendorActionType, VendorsState } from 'actions/vendor/vendor.types';
+import { Reducer } from 'redux';
 
-const initialState = Record({
-  getCompanyContractsApi: Record({
-    hasErrored: false,
-    isLoading: false,
-    msg: "",
-  })(),
-  companyContracts: List([]),
-})();
+const initialVendors: VendorsState = {
+  loading: false,
+  data: []
+}
 
-export default handleActions(
-  {
-    [loadCompanyContractsActions.success.toString()]: (state, action) =>
-      state
-        .setIn(["companyContracts"], List(action.payload))
-        .setIn(["getCompanyContractsApi", "isLoading"], false)
-        .setIn(["getCompanyContractsApi", "hasErrored"], false),
+export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => {
+  switch (action.type) {
+    case VendorActionType.GET:
+      return {
+        loading: true,
+        data: initialVendors,
+      };
+    case VendorActionType.SUCCESS:
+      return {
+        loading: false,
+        data: [...action.payload],
+      }
+    case VendorActionType.SET:
+      return {
+        loading: false,
+        data: [...action.payload],
+      }
+    case VendorActionType.FAILED:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      }
+  }
+  return state;
+}
 
-    [loadCompanyContractsActions.fetching.toString()]: (state, action) =>
-      state.setIn(["getCompanyContractsApi", "isLoading"], true),
-
-    [loadCompanyContractsActions.fault.toString()]: (state, action) =>
-      state
-        .setIn(["getCompanyContractsApi", "isLoading"], false)
-        .setIn(["getCompanyContractsApi", "hasErrored"], true)
-        .setIn(["getCompanyContractsApi", "msg"], action.payload),
-  },
-  initialState
-);

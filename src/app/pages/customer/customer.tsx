@@ -6,42 +6,47 @@ import styled from 'styled-components';
 import styles from './customer.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Customer } from './../../../actions/customer/customer.types';
+import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
 
 function CustomersPage({ classes }: any) {
+  const dispatch = useDispatch();
+  const customers = useSelector((state: any) => state.customers);
+
+
+  // const initialCustomersState = [
+  //   {
+  //     'email': '',
+  //     'name': '',
+  //     'phone': ''
+  //   }
+  // ];
+  // const [customers, setCustomers] = useState(initialCustomersState);
   const [curTab, setCurTab] = useState(0);
-  const [contacts] = useState([
-    {
-      'email': 'test@gmail.com',
-      'name': 'Faraz Sarwar',
-      'phone': '12345678910'
-    },
-    {
-      'email': 'test123@gmail.com',
-      'name': 'Test User',
-      'phone': '22222222222'
-    },
-    {
-      'email': 'admin@gmail.com',
-      'name': 'Admin User',
-      'phone': '12331123212'
-    }
-  ]);
   const columns: any = [
     {
-      'Header': 'First Name',
-      'accessor': 'name',
+      'Header': 'Id',
+      'accessor': '_id',
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
+      'Header': 'Name',
+      'accessor': 'profile.displayName',
       'className': 'font-bold',
       'sortable': true
     },
     {
       'Header': 'Phone',
-      'accessor': 'phone',
+      'accessor': 'contact.phone',
       'className': 'font-bold',
       'sortable': true
     },
     {
       'Header': 'Email',
-      'accessor': 'email',
+      'accessor': 'info.email',
+      'className': 'font-bold',
       'sortable': true
     },
     {
@@ -65,6 +70,8 @@ function CustomersPage({ classes }: any) {
   ];
 
   useEffect(() => {
+    dispatch(loadingCustomers());
+    dispatch(getCustomers());
   }, []);
 
   const handleTabChange = (newValue: number) => {
@@ -77,19 +84,6 @@ function CustomersPage({ classes }: any) {
 
   return (
     <>
-      {/* <BCSubHeader title={'Customers'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
-        />
-        <CustomerButton variant={'contained'}>
-          <Link to={'/customers/new-customer'}>
-            {'New Customer'}
-          </Link>
-        </CustomerButton>
-      </BCSubHeader> */}
-
       <MainContainer>
         <PageContainer>
           <BCTabs
@@ -108,16 +102,22 @@ function CustomersPage({ classes }: any) {
             ]}
           />
           <SwipeableViews index={curTab}>
-            <DataContainer
-              hidden={curTab !== 0}
-              id={'0'}>
-              <BCTableContainer
-                columns={columns}
-                onRowClick={handleRowClick}
-                search
-                tableData={contacts}
-              />
-            </DataContainer>
+
+            { 
+              (customers.loading && !customers.data.length)
+              ? <div>Is Loading</div>
+              : <DataContainer
+                hidden={curTab !== 0}
+                id={'0'}>
+                <BCTableContainer
+                  columns={columns}
+                  onRowClick={handleRowClick}
+                  search
+                  tableData={customers.data}
+                />
+              </DataContainer>
+            }          
+
             <DataContainer
               hidden={curTab !== 1}
               id={'1'}>

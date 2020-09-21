@@ -1,6 +1,6 @@
 import request from "utils/http.service";
 
-export const getCustomers = async (param: {}) => {
+export const getCustomers = async (param?: {}) => {
   const body = {
     includeActive: "true",
     includeNonActive: "false",
@@ -14,8 +14,8 @@ export const getCustomers = async (param: {}) => {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
-          err.data.message ||
-          `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {
       throw new Error(`Something went wrong`);

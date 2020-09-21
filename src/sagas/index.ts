@@ -6,15 +6,13 @@ import jobSaga from './job.saga';
 import jobTypesSaga from './job-type.saga';
 import watchAllCompanyEquipmentsLoad from './company-equipment.saga';
 import watchAllEmployeesLoad from './employee.saga';
-import { watchCompanyContractsLoad } from './vendor.saga';
 import watchGetTaxs from './tax.saga';
 
-export default function *rootSaga() {
+export default function* rootSaga() {
   yield all([
     customersSaga(),
     jobTypesSaga(),
     authFlow(),
-    watchCompanyContractsLoad(),
     watchAllEmployeesLoad(),
     watchAllCompanyEquipmentsLoad(),
     jobSaga(),
