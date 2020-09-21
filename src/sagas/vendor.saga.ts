@@ -6,15 +6,9 @@ import {
   fork,
   put,
   take
-  /*
-   * TakeEvery,
-   * delay,
-   * takeLatest,
-   */
 } from 'redux-saga/effects';
-// Import { Action } from "redux-actions";
 
-export function *handleCompanyContractsTypes(action: { payload: any }) {
+export function* handleCompanyContractsTypes(action: { payload: any }) {
   yield put(loadCompanyContractsActions.fetching());
   try {
     const result = yield call(
@@ -30,7 +24,7 @@ export function *handleCompanyContractsTypes(action: { payload: any }) {
   }
 }
 
-export function *watchCompanyContractsLoad() {
+export function* watchCompanyContractsLoad() {
   while (true) {
     const fetchAction = yield take(loadCompanyContractsActions.fetch);
     yield fork(

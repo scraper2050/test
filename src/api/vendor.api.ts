@@ -3,6 +3,7 @@ import request from "utils/http.service";
 export const getCompanyContracts = async () => {
   let responseData;
   try {
+    debugger;
     const response: any = await request("/getCompanyContracts", "POST", {}, false);
     responseData = response.data;
   } catch (err) {
@@ -10,12 +11,12 @@ export const getCompanyContracts = async () => {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
-          err.data.message ||
-          `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {
       throw new Error(`Something went wrong`);
     }
   }
-  return responseData.industries;
+  return responseData.contracts;
 };

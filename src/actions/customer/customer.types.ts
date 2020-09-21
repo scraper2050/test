@@ -33,12 +33,12 @@ export interface Customer {
 
 export interface CustomersState {
     readonly loading: boolean
-    readonly customers?: Customer[]
+    readonly data?: Customer[]
     readonly error?: string
 }
 
 export enum CustomersActionType {
     GET = 'getCustomers',
     SUCCESS = 'getCustomersSuccess',
-    FAILED = 'getCustomersFailed'
+    FAILED = 'getCustomersFailed',
 }

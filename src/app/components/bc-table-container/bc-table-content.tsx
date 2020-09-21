@@ -28,7 +28,8 @@ function BCTableContent({ columns, data, onRowClick }: any) {
     {
       // 'autoResetHiddenColumns': true,
       columns,
-      data
+      data,
+      getSubRows: (row: any) => row && row.subRows || []
     },
     useGlobalFilter,
     useSortBy,

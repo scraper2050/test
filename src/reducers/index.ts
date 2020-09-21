@@ -12,8 +12,8 @@ import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
 import snackbarState from './snackbar.reducer';
 import taxsState from './tax.reduxer';
-import vendor from './vendor.reducer';
-import customers, { CustomersReducer as customersState } from './customer.reducer';
+import { VendorsReducer as vendors } from './vendor.reducer';
+import { CustomersReducer as customers } from './customer.reducer';
 
 export interface RootState {
   jobState: JobsSate,
@@ -25,13 +25,12 @@ export default combineReducers({
   auth,
   companyEquipment,
   customers,
-  customersState,
   employees,
   jobState,
   jobTypes,
   modal,
   snackbarState,
   taxsState,
-  vendor,
+  vendors,
   routeData: routeReducer
 });
