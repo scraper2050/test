@@ -1,3 +1,4 @@
+import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 import BCTableContent from './bc-table-content';
 import BCTableSearchContainer from '../bc-table-search-container/bc-table-search-container';
 import TableSearchUtils from 'utils/table-search';
@@ -7,7 +8,7 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 // Import { useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 
-function BCTableContainer({ tableData, columns, onRowClick, classes, search, searchPlaceholder = 'Search Customers...' }: any) {
+function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...' }: any) {
   // Const dispatch = useDispatch();
   const [searchText, setSearchText] = useState(''); // eslint-disable-line
 
@@ -50,23 +51,27 @@ function BCTableContainer({ tableData, columns, onRowClick, classes, search, sea
         item
         md={12}
         xs={12}>
-        {filteredData && filteredData.length === 0
-          ? <Paper classes={{ 'root': classes.noDataPaper }}>
-            <Typography
-              color={'textSecondary'}
-              variant={'h5'}>
-              {'There are no contacts!'}
-            </Typography>
-          </Paper>
-          : <BCTableContent
-            columns={columns}
-            data={filteredData}
-            onRowClick={(ev: any, row: any) => {
-              onRowClick(ev, row);
-            }}
-          />
+        {
+          isLoading
+            ? <Paper classes={{ 'root': classes.noDataPaper }}>
+              <BCCircularLoader heightValue={'200px'} />
+            </Paper>
+            : filteredData && filteredData.length === 0
+              ? <Paper classes={{ 'root': classes.noDataPaper }}>
+                <Typography
+                  color={'textSecondary'}
+                  variant={'h5'}>
+                  {'There are no contacts!'}
+                </Typography>
+              </Paper>
+              : <BCTableContent
+                columns={columns}
+                data={filteredData}
+                onRowClick={(ev: any, row: any) => {
+                  onRowClick(ev, row);
+                }}
+              />
         }
-
       </Grid>
     </Grid>
   );

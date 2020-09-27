@@ -1,19 +1,17 @@
+import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCModalTransition from './bc-modal-transition';
+import BCServiceTicketModal from 'app/modals/bc-service-ticket-modal/bc-service-ticket-modal';
 import CloseIcon from '@material-ui/icons/Close';
-import { Dispatch } from 'redux';
 import { closeModalAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../constants';
 import {
-  Button,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
   IconButton,
   Typography
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal {
@@ -28,6 +26,10 @@ interface RootState {
 }
 function BCModal() {
   const [component, setComponent] = useState<any>(null);
+  const [modalOptions, setModalOptions] = useState<any>({
+    'fullWidth': true,
+    'maxWidth': 'md' // Xs, sm, md, lg, xl
+  });
   const dispatch = useDispatch();
   const open = useSelector(({ modal }: RootState) => modal.open);
   const data = useSelector(({ modal }: RootState) => modal.data);
@@ -37,6 +39,33 @@ function BCModal() {
       switch (type) {
         case modalTypes.TERMS_AND_CONDITION_MODAL:
           setComponent(<BCTermsContent />);
+          break;
+        case modalTypes.CREATE_TICKET_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCServiceTicketModal />);
+          break;
+        case modalTypes.EDIT_TICKET_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCServiceTicketModal ticket={data.ticketData} />);
+          break;
+        case modalTypes.CREATE_JOB_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCJobModal />);
           break;
         default:
           setComponent(null);
@@ -53,7 +82,10 @@ function BCModal() {
       <Dialog
         TransitionComponent={BCModalTransition}
         aria-labelledby={'responsive-dialog-title'}
-        maxWidth={'lg'}
+        disableBackdropClick={modalOptions.disableBackdropClick}
+        disableEscapeKeyDown={modalOptions.disableEscapeKeyDown}
+        fullWidth={modalOptions.fullWidth}
+        maxWidth={modalOptions.maxWidth}
         onClose={handleClose}
         open={open}
         scroll={'paper'}>
@@ -71,51 +103,21 @@ function BCModal() {
                   'position': 'absolute',
                   'right': 1,
                   'top': 1
-                }}
-              >
+                }}>
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
             : null
         }
-        <DialogContent>
-          {
-            component
-              ? component
-              : null
-          }
-        </DialogContent>
         {
-          data && data.removeFooter
-            ? null
-            : <DialogActions>
-              <Button
-                className={'cancel-button'}
-                onClick={handleClose}
-                variant={'contained'}>
-                {'Cancel'}
-              </Button>
-              <Button
-                className={'submit-button'}
-                color={'primary'}
-                // OnClick={submit}
-                variant={'contained'}>
-                {'Submit'}
-              </Button>
-            </DialogActions>
+          component
+            ? component
+            : null
         }
       </Dialog>
     </div>
   );
 }
 
-const mapStateToProps = (state: {}) => ({
-});
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BCModal);
+export default BCModal;

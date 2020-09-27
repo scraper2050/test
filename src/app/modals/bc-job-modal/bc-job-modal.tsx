@@ -1,0 +1,185 @@
+// Import * as Yup from 'yup';
+import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
+import BCInput from 'app/components/bc-input/bc-input';
+import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
+import React from 'react';
+import moment from 'moment';
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import styles from './bc-job-modal.styles';
+import { useFormik } from 'formik';
+import { DialogActions, DialogContent, Fab, withStyles } from '@material-ui/core';
+import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api';
+import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { useDispatch, useSelector } from 'react-redux';
+
+function BCJobModal({
+  classes,
+  job = {
+    'customer': {
+      '_id': ''
+    },
+    'customerId': '',
+    'description': '',
+    'employeeType': '',
+    'jobTypeId': '',
+    'note': '',
+    'scheduleDate': new Date(),
+    'technicianId': '',
+    'ticketId': ''
+  }
+}: any): JSX.Element {
+  const dispatch = useDispatch();
+  const {
+    'values': FormikValues,
+    'handleChange': formikChange,
+    'handleSubmit': FormikSubmit,
+    setFieldValue,
+    isSubmitting
+  } = useFormik({
+    // 'enableReinitialize': true,
+    'initialValues': {
+      'customerId': job.customer._id,
+      'note': job.note,
+      'scheduleDate': job.scheduleDate
+    },
+    'onSubmit': (values, { setSubmitting }) => {
+      setSubmitting(true);
+      const tempData = {
+        ...job,
+        ...values
+      };
+      tempData.scheduleDate = moment(tempData.scheduleDate).format('YYYY-MM-DD');
+      if (job._id) {
+        tempData.jobId = job._id;
+        callEditTicketAPI(tempData).then((response: any) => {
+          dispatch(refreshServiceTickets(true));
+          dispatch(closeModalAction());
+          setTimeout(() => {
+            dispatch(setModalDataAction({
+              'data': {},
+              'type': ''
+            }));
+          }, 200);
+          setSubmitting(false);
+        })
+          .catch((err: any) => {
+            setSubmitting(false);
+            throw err;
+          });
+      } else {
+        callCreateTicketAPI(tempData).then((response: any) => {
+          dispatch(refreshServiceTickets(true));
+          dispatch(closeModalAction());
+          setTimeout(() => {
+            dispatch(setModalDataAction({
+              'data': {},
+              'type': ''
+            }));
+          }, 200);
+          setSubmitting(false);
+        })
+          .catch((err: any) => {
+            setSubmitting(false);
+            throw err;
+          });
+      }
+    }
+    /*
+     * 'validationSchema': Yup.object({
+     *   'customer': Yup.string()
+     *     .required('Customer is required'),
+     *   'notes': Yup.string()
+     *   // 'scheduleDate': Yup.string().required('Schedule date is required')
+     * })
+     */
+  });
+  const customers = useSelector(({ customers }: any) => customers.data);
+
+  const dateChangeHandler = (date: string) => {
+    setFieldValue('scheduleDate', date);
+  };
+
+  return (
+    <form onSubmit={FormikSubmit}>
+      <DialogContent classes={{ 'root': classes.dialogContent }}>
+        <div>
+          <BCSelectOutlined
+            handleChange={formikChange}
+            items={{
+              'data': [
+                ...customers.map((o: any) => {
+                  return {
+                    '_id': o._id,
+                    'displayName': o.profile.displayName
+                  };
+                })
+              ],
+              'displayKey': 'displayName',
+              'valueKey': '_id'
+            }}
+            label={'Select Customer'}
+            name={'customerId'}
+            required
+            value={FormikValues.customerId}
+          />
+          <BCInput
+            handleChange={formikChange}
+            label={'Notes / Special Instructions'}
+            multiline
+            name={'note'}
+            value={FormikValues.note}
+          />
+          <BCDateTimePicker
+            disablePast
+            handleChange={dateChangeHandler}
+            label={'Schedule Date'}
+            name={'scheduleDate'}
+            required
+            value={FormikValues.scheduleDate}
+          />
+        </div>
+      </DialogContent>
+      <DialogActions classes={{
+        'root': classes.dialogActions
+      }}>
+        <Fab
+          aria-label={'create-job'}
+          classes={{
+            'root': classes.fabRoot
+          }}
+          color={'secondary'}
+          disabled={isSubmitting}
+          variant={'extended'}>
+          {'Cancel'}
+        </Fab>
+        <Fab
+          aria-label={'create-job'}
+          classes={{
+            'root': classes.fabRoot
+          }}
+          color={'primary'}
+          disabled={isSubmitting}
+          type={'submit'}
+          variant={'extended'}>
+          {job._id
+            ? 'Edit'
+            : 'Submit'}
+        </Fab>
+        {/* <Fab
+          aria-label={'create-job'}
+          classes={{
+            'root': classes.fabRoot
+          }}
+          color={'primary'}
+          disabled={isSubmitting}
+          variant={'extended'}>
+          {'Generate Job'}
+        </Fab> */}
+      </DialogActions>
+    </form>
+  );
+}
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(BCJobModal);
