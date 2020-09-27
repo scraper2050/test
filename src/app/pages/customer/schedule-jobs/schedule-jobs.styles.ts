@@ -7,6 +7,12 @@ export default (theme: Theme): any => ({
     'padding': '0 12px',
     'textTransform': 'capitalize'
   },
+  'scheduleContent': {
+    '@media(min-width: 1909px)': {
+      'padding-left': '60px'
+    },
+    'padding': '5px 30px 10px 30px'
+  },
   'scheduleMainContainer': {
     'display': 'flex',
     'flex': '1 1 100%',
@@ -18,9 +24,16 @@ export default (theme: Theme): any => ({
     'flex': '1 1 100%',
     'flexDirection': 'column',
     'margin': '0 auto',
-    'padding': '30px',
-    'paddingLeft': '56px',
-    'paddingRight': '65px',
+    /*
+     * 'padding': '30px',
+     * 'paddingLeft': '56px',
+     * 'paddingRight': '65px',
+     */
     'width': '100%'
+  },
+  'topActionBar': {
+    'display': 'flex',
+    'justifyContent': 'flex-end',
+    'padding': '20px 30px 5px 0'
   }
 });

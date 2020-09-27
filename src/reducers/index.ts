@@ -5,15 +5,16 @@ import { TaxsState } from './tax.type';
 import auth from './auth.reducer';
 import { combineReducers } from 'redux';
 import companyEquipment from './company-equipment.reducer';
+import { CustomersReducer as customers } from './customer.reducer';
 import employees from './employee.reducer';
 import jobState from './jobs.reducer';
 import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
+import serviceTicket from './service-ticket.reducer';
 import snackbarState from './snackbar.reducer';
 import taxsState from './tax.reduxer';
 import { VendorsReducer as vendors } from './vendor.reducer';
-import { CustomersReducer as customers } from './customer.reducer';
 import { GroupReducer as groups } from './group.reducer';
 import { TechniciansReducer as technicians } from './technicians.reducer';
 import { ManagersReducer as managers } from './managers.reducer';
@@ -27,6 +28,10 @@ import {
   InvoicingEstimatesReducer as estimates
 } from './invoicing.reducer';
 
+export interface ReducerParamsInterface {
+  payload: any,
+  type: string
+}
 export interface RootState {
   jobState: JobsSate,
   snackbarState?: SnackbarState,
@@ -41,6 +46,8 @@ export default combineReducers({
   jobState,
   jobTypes,
   modal,
+  'routeData': routeReducer,
+  serviceTicket,
   snackbarState,
   taxsState,
   vendors,
@@ -53,6 +60,5 @@ export default combineReducers({
   purchaseOrder,
   estimates,
   inventory,
-  purchasedTags,
-  routeData: routeReducer
+  purchasedTags
 });
