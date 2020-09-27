@@ -6,14 +6,6 @@ import styled from 'styled-components';
 function RolesManagerPage() {
   return (
     <>
-      {/* <BCSubHeader title={'Admin'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
-        />
-      </BCSubHeader> */}
-
       <MainContainer>
         <PageContainer>
           <Grid

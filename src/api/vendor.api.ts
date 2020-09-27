@@ -3,7 +3,6 @@ import request from "utils/http.service";
 export const getCompanyContracts = async () => {
   let responseData;
   try {
-    debugger;
     const response: any = await request("/getCompanyContracts", "POST", {}, false);
     responseData = response.data;
   } catch (err) {

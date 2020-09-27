@@ -27,13 +27,29 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       'link': '/main/customers/schedule'
     },
     {
-      'label': 'Jobs',
-      'link': '/main/invoicing/jobs'
+      'label': "Todo's",
+      'link': '/main/invoicing/todos'
     },
     {
-      'label': 'Manage',
-      'link': '/main/invoicing/manage'
+      'label': 'Invoices List',
+      'link': '/main/invoicing/invoices-list'
     },
+    {
+      'label': 'Purchase Order',
+      'link': '/main/invoicing/purchase-order'
+    },
+    {
+      'label': 'Estimates',
+      'link': '/main/invoicing/estimates'
+    },
+    // {
+    //   'label': 'Jobs',
+    //   'link': '/main/invoicing/jobs'
+    // },
+    // {
+    //   'label': 'Manage',
+    //   'link': '/main/invoicing/manage'
+    // },
     {
       'label': 'Billing',
       'link': '/main/admin/billing'
@@ -88,11 +104,11 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
     },
     {
       'label': 'Managers',
-      'link': '/main/employees/manager'
+      'link': '/main/employees/managers'
     },
     {
       'label': 'Office Admin',
-      'link': '/main/employees/office'
+      'link': '/main/employees/office-admin'
     }
   ];
 
@@ -111,6 +127,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       });
     }
   }, [location]);
+  
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
   };
