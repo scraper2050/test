@@ -42,6 +42,14 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       'label': 'Estimates',
       'link': '/main/invoicing/estimates'
     },
+    {
+      'label': 'Purchase Order',
+      'link': '/main/invoicing/purchase-order'
+    },
+    {
+      'label': 'Estimates',
+      'link': '/main/invoicing/estimates'
+    },
     // {
     //   'label': 'Jobs',
     //   'link': '/main/invoicing/jobs'
@@ -109,6 +117,14 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
     {
       'label': 'Office Admin',
       'link': '/main/employees/office-admin'
+    },
+    {
+      'label': 'Company Inventory',
+      'link': '/main/inventory'
+    },
+    {
+      'label': 'Purchased Tag',
+      'link': '/main/tags/purchasedtag'
     }
   ];
 

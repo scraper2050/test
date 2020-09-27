@@ -38,6 +38,8 @@ const RolesManagerPage = React.lazy(() => import('../admin/roles-permissions/man
 const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/technician/technician'));
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
+const InventoryPage = React.lazy(() => import('../inventory/inventory'));
+const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
 
 function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
@@ -76,6 +78,18 @@ function Main(): any {
                     exact
                     path={'/main/dashboard'}
                     title={'Dashboard'}
+                  />
+                  <AuthRoute
+                    Component={InventoryPage}
+                    exact
+                    path={'/main/inventory'}
+                    title={'Inventory'}
+                  />
+                  <AuthRoute
+                    Component={PurchasedTagsPage}
+                    exact
+                    path={'/main/tags/purchasedtag'}
+                    title={'Tags'}
                   />
                   <AuthRoute
                     Component={GroupPage}
