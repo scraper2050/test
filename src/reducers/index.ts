@@ -18,6 +18,8 @@ import { GroupReducer as groups } from './group.reducer';
 import { TechniciansReducer as technicians } from './technicians.reducer';
 import { ManagersReducer as managers } from './managers.reducer';
 import { OfficeAdminReducer as officeAdmin } from './office-admin.reducer';
+import { InventoryReducer as inventory } from './inventory.reducer';
+import { PurchasedTagsReducer as purchasedTags } from './tags.reducer';
 import {
   InvoicingTodoReducer as invoiceTodos,
   InvoicingListReducer as invoiceList,
@@ -50,5 +52,7 @@ export default combineReducers({
   invoiceList,
   purchaseOrder,
   estimates,
+  inventory,
+  purchasedTags,
   routeData: routeReducer
 });

@@ -68,7 +68,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
     },
     {
       'label': 'Tags',
-      'link': '/main/tags'
+      'link': '/main/tags/purchasedtag'
     },
     {
       'label': 'Inventory',
@@ -77,10 +77,6 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
     {
       'label': 'Employees',
       'link': '/main/employees/group'
-    },
-    {
-      'label': 'Vendors',
-      'link': '/main/vendors'
     },
     {
       'label': 'Admin',
