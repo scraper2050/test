@@ -7,29 +7,20 @@ import styles from './customer.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Customer } from './../../../actions/customer/customer.types';
 import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
-
-
-  // const initialCustomersState = [
-  //   {
-  //     'email': '',
-  //     'name': '',
-  //     'phone': ''
-  //   }
-  // ];
-  // const [customers, setCustomers] = useState(initialCustomersState);
   const [curTab, setCurTab] = useState(0);
   const columns: any = [
     {
-      'Header': 'Id',
-      'accessor': '_id',
-      'className': 'font-bold',
-      'sortable': true
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>{ row.index + 1 }</div>;
+      },
+      'Header': 'No#',
+      'sortable': true,
+      'width': 60
     },
     {
       'Header': 'Name',

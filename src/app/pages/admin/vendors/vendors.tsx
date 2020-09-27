@@ -15,10 +15,12 @@ function AdminVendorsPage({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const columns: any = [
     {
-      'Header': 'Id',
-      'accessor': '_id',
-      'className': 'font-bold',
-      'sortable': true
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>{ row.index + 1 }</div>;
+      },
+      'Header': 'No#',
+      'sortable': true,
+      'width': 60
     },
     {
       'Header': 'Company Name',

@@ -14,6 +14,16 @@ import snackbarState from './snackbar.reducer';
 import taxsState from './tax.reduxer';
 import { VendorsReducer as vendors } from './vendor.reducer';
 import { CustomersReducer as customers } from './customer.reducer';
+import { GroupReducer as groups } from './group.reducer';
+import { TechniciansReducer as technicians } from './technicians.reducer';
+import { ManagersReducer as managers } from './managers.reducer';
+import { OfficeAdminReducer as officeAdmin } from './office-admin.reducer';
+import {
+  InvoicingTodoReducer as invoiceTodos,
+  InvoicingListReducer as invoiceList,
+  InvoicingPurchaseOrderReducer as purchaseOrder,
+  InvoicingEstimatesReducer as estimates
+} from './invoicing.reducer';
 
 export interface RootState {
   jobState: JobsSate,
@@ -32,5 +42,13 @@ export default combineReducers({
   snackbarState,
   taxsState,
   vendors,
+  groups,
+  technicians,
+  managers,
+  officeAdmin,
+  invoiceTodos,
+  invoiceList,
+  purchaseOrder,
+  estimates,
   routeData: routeReducer
 });

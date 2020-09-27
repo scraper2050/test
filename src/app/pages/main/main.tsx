@@ -10,11 +10,14 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
-const InvoicingPage = React.lazy(() => import('../invoicing/invoicing'));
-const TechnicianPage = React.lazy(() => import('../employee/technician/technician'));
-const OfficeAdminPage = React.lazy(() => import('../employee/office/office'));
+const InvoicingTodosPage = React.lazy(() => import('../invoicing/todos/todos'));
+const InvoicingListPage = React.lazy(() => import('../invoicing/invoices-list/invoices-list'));
+const InvoicingPurchaseOrderPage = React.lazy(() => import('../invoicing/purchase-order/purchase-order'));
+const InvoicingEstimatesPage = React.lazy(() => import('../invoicing/estimates/estimates'));
+const TechnicianPage = React.lazy(() => import('../employee/technicians/technicians'));
+const OfficeAdminPage = React.lazy(() => import('../employee/office-admin/office-admin'));
 const ScheduleJobsPage = React.lazy(() => import('../customer/schedule-jobs/schedule-jobs'));
-const ManagerPage = React.lazy(() => import('../employee/manager/manager'));
+const ManagersPage = React.lazy(() => import('../employee/managers/managers'));
 const GroupPage = React.lazy(() => import('../employee/group/group'));
 
 const AdminEmployeesPage = React.lazy(() => import('../admin/employees/empolyees'));
@@ -87,15 +90,15 @@ function Main(): any {
                     title={'Employees'}
                   />
                   <AuthRoute
-                    Component={ManagerPage}
+                    Component={ManagersPage}
                     exact
-                    path={'/main/employees/manager'}
+                    path={'/main/employees/managers'}
                     title={'Employees'}
                   />
                   <AuthRoute
                     Component={OfficeAdminPage}
                     exact
-                    path={'/main/employees/office'}
+                    path={'/main/employees/office-admin'}
                     title={'Employees'}
                   />
 
@@ -103,7 +106,7 @@ function Main(): any {
                     Component={CustomersPage}
                     actionData={{
                       'link': '/main/customers/new-customer',
-                      'title': 'New Customer'
+                      'title': 'Customers'
                     }}
                     exact
                     path={'/main/customers'}
@@ -113,7 +116,7 @@ function Main(): any {
                     Component={NewCustomerPage}
                     exact
                     path={'/main/customers/new-customer'}
-                    title={'New Customer'}
+                    title={'Customers'}
                   />
                   {/* For dev */}
                   <AuthRoute
@@ -122,10 +125,28 @@ function Main(): any {
                     path={'/main/customers/schedule'}
                     title={'Customers'}
                   />
-
+                  
                   <AuthRoute
-                    Component={InvoicingPage}
-                    path={'/main/invoicing'}
+                    Component={InvoicingTodosPage}
+                    path={'/main/invoicing/todos'}
+                    title={'Invoicing'}
+                  />
+                  
+                  <AuthRoute
+                    Component={InvoicingListPage}
+                    path={'/main/invoicing/invoices-list'}
+                    title={'Invoicing'}
+                  />
+                  
+                  <AuthRoute
+                    Component={InvoicingPurchaseOrderPage}
+                    path={'/main/invoicing/purchase-order'}
+                    title={'Invoicing'}
+                  />
+                  
+                  <AuthRoute
+                    Component={InvoicingEstimatesPage}
+                    path={'/main/invoicing/estimates'}
                     title={'Invoicing'}
                   />
 
@@ -133,96 +154,115 @@ function Main(): any {
                     Component={BillingPage}
                     exact
                     path={'/main/admin'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={BillingPage}
                     exact
                     path={'/main/admin/billing'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={BillingMethodsPage}
                     exact
                     path={'/main/admin/billing/billing-methods'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={BillingHistoryPage}
                     exact
                     path={'/main/admin/billing/billing-history'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={BillingSubscriptionPage}
                     exact
                     path={'/main/admin/billing/subscription'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={BrandsPage}
                     exact
                     path={'/main/admin/brands'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={CompanyProfilePage}
                     exact
                     path={'/main/admin/company-profile'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={AdminEmployeesPage}
                     exact
                     path={'/main/admin/employees'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={EquipmentTypePage}
                     exact
                     path={'/main/admin/equipment-type'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={AdminGroupsPage}
                     exact
                     path={'/main/admin/groups'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={AdminInvoicingPage}
                     exact
                     path={'/main/admin/invoicing'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={AdminInvoicingItemsPage}
                     exact
                     path={'/main/admin/invoicing/items'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={JobTypesPage}
                     exact
                     path={'/main/admin/job-types'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={ReportNumberPage}
                     exact
                     path={'/main/admin/report-number'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={RolesPermissionsPage}
                     exact
                     path={'/main/admin/roles-permissions'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={RolesManagerPage}
                     exact
                     path={'/main/admin/roles-permissions/manager-list'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={RolesTechnicianPage}
                     exact
                     path={'/main/admin/roles-permissions/technician-list'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={ViewRolePage}
                     exact
                     path={'/main/admin/roles-permissions/view-roles'}
+                    title={'Admin'}
                   />
                   <AuthRoute
                     Component={AdminVendorsPage}
                     exact
                     path={'/main/admin/vendors'}
+                    title={'Admin'}
                   />
                 </Switch>
               </Grid>
