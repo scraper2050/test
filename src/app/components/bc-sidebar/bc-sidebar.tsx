@@ -43,22 +43,6 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       'link': '/main/invoicing/estimates'
     },
     {
-      'label': 'Purchase Order',
-      'link': '/main/invoicing/purchase-order'
-    },
-    {
-      'label': 'Estimates',
-      'link': '/main/invoicing/estimates'
-    },
-    // {
-    //   'label': 'Jobs',
-    //   'link': '/main/invoicing/jobs'
-    // },
-    // {
-    //   'label': 'Manage',
-    //   'link': '/main/invoicing/manage'
-    // },
-    {
       'label': 'Billing',
       'link': '/main/admin/billing'
     },
