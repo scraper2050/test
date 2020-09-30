@@ -39,7 +39,7 @@
 ### `State Management`
 
 - Redux for State Management
-- Redux-Saga as a Middleware
+- Redux-Thunk as a Middleware
 
 ### `Naming`
 
@@ -72,7 +72,6 @@
 - No use of index.tsx (prefix component with page or component name)
 - No use of class based component
 - Don't just add any dependency
-- Don't use Redux-Thunk
 
 ## Available Scripts
 
