@@ -2,12 +2,11 @@ import BCTableContainer from '../../components/bc-table-container/bc-table-conta
 import BCTabs from '../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
-import styled from 'styled-components';
 import styles from './customer.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
+import { useDispatch, useSelector } from 'react-redux';
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -16,7 +15,9 @@ function CustomersPage({ classes }: any) {
   const columns: any = [
     {
       'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>{ row.index + 1 }</div>;
+        return <div className={'flex items-center'}>
+          {row.index + 1}
+        </div>;
       },
       'Header': 'No#',
       'sortable': true,
@@ -74,9 +75,9 @@ function CustomersPage({ classes }: any) {
   };
 
   return (
-    <>
-      <MainContainer>
-        <PageContainer>
+    <div className={classes.pageMainContainer}>
+      <div className={classes.pageContainer}>
+        <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}
@@ -93,23 +94,19 @@ function CustomersPage({ classes }: any) {
             ]}
           />
           <SwipeableViews index={curTab}>
-
-            { 
-              (customers.loading && !customers.data.length)
-              ? <div>Is Loading</div>
-              : <DataContainer
-                hidden={curTab !== 0}
-                id={'0'}>
-                <BCTableContainer
-                  columns={columns}
-                  onRowClick={handleRowClick}
-                  search
-                  tableData={customers.data}
-                />
-              </DataContainer>
-            }          
-
-            <DataContainer
+            <div
+              className={classes.dataContainer}
+              hidden={curTab !== 0}
+              id={'0'}>
+              <BCTableContainer
+                columns={columns}
+                isLoading={customers.loading}
+                onRowClick={handleRowClick}
+                search
+                tableData={customers.data}
+              />
+            </div>
+            <div
               hidden={curTab !== 1}
               id={'1'}>
               <Grid container>
@@ -118,38 +115,13 @@ function CustomersPage({ classes }: any) {
                   xs={12}
                 />
               </Grid>
-            </DataContainer>
+            </div>
           </SwipeableViews>
-        </PageContainer>
-      </MainContainer>
-    </>
+        </div>
+      </div>
+    </div>
   );
 }
-
-const MainContainer = styled.div`
-  display: flex;
-  flex: 1 1 100%;
-  width: 100%;
-  overflow-x: hidden;
-`;
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 100%;
-  padding: 30px;
-  width: 100%;
-  padding-left: 65px;
-  padding-right: 65px;
-  margin: 0 auto;
-`;
-
-const DataContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  margin-top: 12px;
-`;
 
 export default withStyles(
   styles,
