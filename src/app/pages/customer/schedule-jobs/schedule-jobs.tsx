@@ -34,7 +34,7 @@ function ScheduleJobsPage({ classes }: any) {
     }, 200);
   };
 
-  const openJobModal = () => { // eslint-disable-line
+  const openJobModal = () => {
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Create Job',
@@ -48,8 +48,8 @@ function ScheduleJobsPage({ classes }: any) {
   };
 
   return (
-    <div className={classes.scheduleMainContainer}>
-      <div className={classes.schedulePageConatiner}>
+    <div className={classes.pageMainContainer}>
+      <div className={classes.pageContainer}>
         <div className={classes.topActionBar}>
           {
             curTab === 0
@@ -59,7 +59,7 @@ function ScheduleJobsPage({ classes }: any) {
                   'root': classes.fabRoot
                 }}
                 color={'primary'}
-                // OnClick={() => openJobModal()}
+                onClick={() => openJobModal()}
                 variant={'extended'}>
                 {'Create Job'}
               </Fab>
@@ -80,7 +80,7 @@ function ScheduleJobsPage({ classes }: any) {
               : null
           }
         </div>
-        <div className={classes.scheduleContent}>
+        <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}

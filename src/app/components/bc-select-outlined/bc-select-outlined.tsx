@@ -42,12 +42,20 @@ const BootstrapInput = withStyles(theme => ({
 
 const useStyles = makeStyles(theme => ({
   'fullWidth': {
-    'margin-bottom': '5px',
+    'margin-bottom': '9px',
+    'position': 'relative',
     'width': '100%'
+  },
+  'helpText': {
+    'bottom': '-14px',
+    'color': 'red',
+    'fontSize': '12px',
+    'position': 'absolute',
+    'right': '0'
   }
 }));
 
-function BCSelectOutlined({ handleChange, value, name = '', items = {
+function BCSelectOutlined({ handleChange, error, value, name = '', items = {
   'data': [],
   'displayKey': '',
   'valueKey': ''
@@ -56,7 +64,6 @@ function BCSelectOutlined({ handleChange, value, name = '', items = {
   return (
     <FormControl className={classes.fullWidth}>
       <Typography
-        gutterBottom
         variant={'subtitle1'}>
         {label}
         {required
@@ -73,7 +80,7 @@ function BCSelectOutlined({ handleChange, value, name = '', items = {
         onChange={(e: any) => {
           handleChange(e);
         }}
-        required
+        required={required}
         value={value}>
         <MenuItem value={''}>
           <em>
@@ -89,6 +96,13 @@ function BCSelectOutlined({ handleChange, value, name = '', items = {
             </MenuItem>)
         }
       </Select>
+      {
+        error && error.isError
+          ? <span className={classes.helpText}>
+            {error.message || ''}
+          </span>
+          : null
+      }
     </FormControl>
   );
 }

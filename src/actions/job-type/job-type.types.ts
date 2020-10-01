@@ -1,5 +1,5 @@
 export const types = {
-  'JOB_TYPES_LOAD': 'loadJobTypesActions',
-  'JOB_TYPES_NEW': 'newJobTypeActions',
-  'JOB_TYPES_REMOVE': 'deleteJobTypeActions'
+  'SET_JOB_TYPES': 'SET_JOB_TYPES',
+  'SET_JOB_TYPES_LOADING': 'SET_JOB_TYPES_LOADING',
+  'SET_REFRESH_JOB_TYPES_STATUS': 'SET_REFRESH_JOB_TYPES_STATUS'
 };

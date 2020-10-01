@@ -93,6 +93,16 @@ function BCServiceTicketModal({
     setFieldValue('scheduleDate', date);
   };
 
+  const closeModal = () => {
+    dispatch(closeModalAction());
+    setTimeout(() => {
+      dispatch(setModalDataAction({
+        'data': {},
+        'type': ''
+      }));
+    }, 200);
+  };
+
   return (
     <form onSubmit={FormikSubmit}>
       <DialogContent classes={{ 'root': classes.dialogContent }}>
@@ -143,6 +153,7 @@ function BCServiceTicketModal({
           }}
           color={'secondary'}
           disabled={isSubmitting}
+          onClick={() => closeModal()}
           variant={'extended'}>
           {'Cancel'}
         </Fab>

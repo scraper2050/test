@@ -1,3 +1,4 @@
+import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCModalTransition from './bc-modal-transition';
 import BCServiceTicketModal from 'app/modals/bc-service-ticket-modal/bc-service-ticket-modal';
@@ -63,9 +64,27 @@ function BCModal() {
             'disableBackdropClick': true,
             'disableEscapeKeyDown': true,
             'fullWidth': true,
-            'maxWidth': 'xs'
+            'maxWidth': 'sm'
           });
           setComponent(<BCJobModal />);
+          break;
+        case modalTypes.EDIT_JOB_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BCJobModal job={data.job} />);
+          break;
+        case modalTypes.ADD_VENDOR_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCAddVendorModal />);
           break;
         default:
           setComponent(null);

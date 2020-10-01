@@ -34,6 +34,40 @@ function ServiceTicket({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+  const openCreateJobModal = (ticket: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'job': {
+          'customer': {
+            '_id': ''
+          },
+          'description': '',
+          'employeeType': false,
+          'equipment': {
+            '_id': ''
+          },
+          'scheduleDate': new Date(),
+          'scheduledEndTime': new Date(),
+          'scheduledStartTime': new Date(),
+          'technician': {
+            '_id': ''
+          },
+          'ticket': {
+            '_id': ticket._id
+          },
+          'type': {
+            '_id': ''
+          }
+        },
+        'modalTitle': 'Create Job',
+        'removeFooter': false
+      },
+      'type': modalTypes.EDIT_JOB_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
   const columns: any = [
     {
       'Header': 'Ticket ID',
@@ -58,16 +92,19 @@ function ServiceTicket({ classes }: any) {
         return <div className={'flex items-center'}>
           {
             !row.original.jobCreated
-              ? <Fab
-                aria-label={'create-job'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                variant={'extended'}>
-                {'Create Job'}
-              </Fab>
-              : '-'
+              ? row.original.status !== 2
+                ? <Fab
+                  aria-label={'create-job'}
+                  classes={{
+                    'root': classes.fabRoot
+                  }}
+                  color={'primary'}
+                  onClick={() => openCreateJobModal(row.original)}
+                  variant={'extended'}>
+                  {'Create Job'}
+                </Fab>
+                : null
+              : null
           }
         </div>;
       },
