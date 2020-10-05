@@ -1,18 +1,22 @@
-import Config from 'config';
-import { apiUrls } from 'utils/constants';
+import request from '../utils/http.service';
+import { refreshSalesTax, setSalesTax, setSalesTaxLoading } from 'actions/tax/tax.action';
 
-export default async () => {
-  const response = await fetch(
-    Config.apiBaseURL + apiUrls.getSalesTax,
-    {
-      'headers': {
-        'Accept': 'application/json',
-        'Authorization': localStorage.getItem('token') as string,
-        'Content-Type': 'application/json'
-      },
-      'method': 'POST'
-    }
-  );
-
-  return await response.json();
+export const getAllSalesTaxAPI: any = () => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setSalesTaxLoading(true));
+      request(`/getSalesTax`, 'post', null)
+        .then((res: any) => {
+          dispatch(setSalesTax(res.data.taxes));
+          dispatch(setSalesTaxLoading(false));
+          dispatch(refreshSalesTax(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setSalesTaxLoading(false));
+          return reject(err);
+        });
+    });
+  };
 };
+

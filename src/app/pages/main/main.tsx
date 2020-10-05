@@ -40,6 +40,9 @@ const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/r
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
+const CreateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/create-invoice/create-invoice'));
+const CreatePurchaseOrderPage = React.lazy(() => import('../invoicing/purchase-order/create-purchase-order/create-purchase-order'));
+const CreateEstimatePage = React.lazy(() => import('../invoicing/estimates/create-estimates/create-estimates'));
 
 function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
@@ -139,28 +142,46 @@ function Main(): any {
                     path={'/main/customers/schedule'}
                     title={'Customers'}
                   />
-                  
+
                   <AuthRoute
                     Component={InvoicingTodosPage}
                     path={'/main/invoicing/todos'}
                     title={'Invoicing'}
                   />
-                  
+
                   <AuthRoute
                     Component={InvoicingListPage}
                     path={'/main/invoicing/invoices-list'}
                     title={'Invoicing'}
                   />
-                  
+
+                  <AuthRoute
+                    Component={CreateInvoicePage}
+                    path={'/main/invoicing/create-invoice'}
+                    title={'Invoicing'}
+                  />
+
                   <AuthRoute
                     Component={InvoicingPurchaseOrderPage}
                     path={'/main/invoicing/purchase-order'}
                     title={'Invoicing'}
                   />
-                  
+
+                  <AuthRoute
+                    Component={CreatePurchaseOrderPage}
+                    path={'/main/invoicing/create-purchase-order'}
+                    title={'Invoicing'}
+                  />
+
                   <AuthRoute
                     Component={InvoicingEstimatesPage}
                     path={'/main/invoicing/estimates'}
+                    title={'Invoicing'}
+                  />
+
+                  <AuthRoute
+                    Component={CreateEstimatePage}
+                    path={'/main/invoicing/create-estimates'}
                     title={'Invoicing'}
                   />
 

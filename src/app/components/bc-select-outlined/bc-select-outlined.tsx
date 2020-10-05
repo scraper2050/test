@@ -4,9 +4,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Select from '@material-ui/core/Select';
 import { Typography } from '@material-ui/core';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles, withStyles } from '@material-ui/core/styles';
 
-const BootstrapInput = withStyles(theme => ({
+const commonStyles = (theme: Theme) => ({
   'input': {
     '&:focus': {
       'borderColor': '#80bdff',
@@ -14,7 +14,6 @@ const BootstrapInput = withStyles(theme => ({
       'boxShadow': '0 0 0 0.2rem rgba(0,123,255,.25)'
     },
     'backgroundColor': theme.palette.background.paper,
-    'border': '1px solid #ced4da',
     'borderRadius': 4,
     'fontFamily': [
       '-apple-system',
@@ -38,7 +37,20 @@ const BootstrapInput = withStyles(theme => ({
       // 'marginTop': theme.spacing(3)
     }
   }
-}))(InputBase);
+});
+
+const BootstrapInput = withStyles(theme => {
+  const styles: any = commonStyles(theme);
+  styles.input.border = '1px solid #ced4da';
+  return styles;
+})(InputBase);
+
+const NakedInput = withStyles(theme => {
+  const styles: any = commonStyles(theme);
+  styles.input.border = 'none';
+  styles.input['&:focus'].borderColor = 'transparent';
+  return styles;
+})(InputBase);
 
 const useStyles = makeStyles(theme => ({
   'fullWidth': {
@@ -52,6 +64,16 @@ const useStyles = makeStyles(theme => ({
     'fontSize': '12px',
     'position': 'absolute',
     'right': '0'
+  },
+  'nakedSelectRoot': {
+    '&:focus': {
+      'background': 'transparent',
+      'borderColor': 'transparent',
+      'boxShadow': 'none'
+    }
+  },
+  'selectRoot': {
+
   }
 }));
 
@@ -59,22 +81,45 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
   'data': [],
   'displayKey': '',
   'valueKey': ''
-}, label = '', required = false }: any) {
+}, label = '', required = false, inputWidth = 'auto', formStyles = {}, nakedSelect = false }: any) {
   const classes = useStyles();
+  const formControlStyles = {
+    ...formStyles
+  };
   return (
-    <FormControl className={classes.fullWidth}>
-      <Typography
-        variant={'subtitle1'}>
-        {label}
-        {required
-          ? <sup style={{ 'color': '#C00707' }}>
-            {'*'}
-          </sup>
-          : null}
-      </Typography>
+    <FormControl
+      className={classes.fullWidth}
+      style={formControlStyles}
+    >
+      {!nakedSelect
+        ? <Typography
+          style={{
+            'marginRight': 10
+          }}
+          variant={'subtitle1'}>
+          {label}
+          {required
+            ? <sup style={{ 'color': '#C00707' }}>
+              {'*'}
+            </sup>
+            : null}
+        </Typography>
+        : null}
+
       <Select
+        classes={{
+          'root': nakedSelect
+            ? classes.nakedSelectRoot
+            : classes.selectRoot
+        }}
         id={'bc-select-outlined'}
-        input={<BootstrapInput />}
+        input={nakedSelect
+          ? <NakedInput style={{
+            'width': inputWidth
+          }} />
+          : <BootstrapInput style={{
+            'width': inputWidth
+          }} />}
         labelId={'bc-select-outlined-label'}
         name={name}
         onChange={(e: any) => {
