@@ -83,3 +83,14 @@ body {
   padding-left: 1.2rem;
   padding-right: 1.2rem
 }
+.invoice-paper{
+  border: 1px solid #ccc;
+  border-bottom: none;
+  box-shadow: none !important;
+}
+.cell-border-right{
+  border-right: 1px solid #ccc;
+}
+.cursor-default {
+  cursor: default;
+}

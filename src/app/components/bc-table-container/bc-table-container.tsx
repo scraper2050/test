@@ -8,7 +8,7 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 // Import { useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 
-function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...' }: any) {
+function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...', pagination = true }: any) {
   // Const dispatch = useDispatch();
   const [searchText, setSearchText] = useState(''); // eslint-disable-line
 
@@ -67,9 +67,11 @@ function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, c
               : <BCTableContent
                 columns={columns}
                 data={filteredData}
+                invoiceTable
                 onRowClick={(ev: any, row: any) => {
-                  onRowClick(ev, row);
+                  onRowClick && onRowClick(ev, row);
                 }}
+                pagination={pagination}
               />
         }
       </Grid>

@@ -1,7 +1,6 @@
 import { CustomersState } from './customer.types';
 import { JobsSate } from './invoicing.types';
 import { SnackbarState } from './snackbar.type';
-import { TaxsState } from './tax.type';
 import auth from './auth.reducer';
 import { combineReducers } from 'redux';
 import companyEquipment from './company-equipment.reducer';
@@ -13,7 +12,7 @@ import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
 import serviceTicket from './service-ticket.reducer';
 import snackbarState from './snackbar.reducer';
-import taxsState from './tax.reduxer';
+import tax from './tax.reduxer';
 import { VendorsReducer as vendors } from './vendor.reducer';
 import { GroupReducer as groups } from './group.reducer';
 import { TechniciansReducer as technicians } from './technicians.reducer';
@@ -36,7 +35,6 @@ export interface RootState {
   jobState: JobsSate,
   snackbarState?: SnackbarState,
   customersState: CustomersState,
-  taxsState: TaxsState
 }
 export default combineReducers({
   auth,
@@ -49,7 +47,7 @@ export default combineReducers({
   'routeData': routeReducer,
   serviceTicket,
   snackbarState,
-  taxsState,
+  tax,
   vendors,
   groups,
   technicians,
