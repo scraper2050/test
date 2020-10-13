@@ -3,7 +3,7 @@ import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-pi
 import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import React from 'react';
-import moment from 'moment';
+import { formatDate } from 'helpers/format'
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
@@ -42,7 +42,7 @@ function BCServiceTicketModal({
         ...ticket,
         ...values
       };
-      tempData.scheduleDate = moment(tempData.scheduleDate).format('YYYY-MM-DD');
+      tempData.scheduleDate = formatDate(tempData.scheduleDate);
       if (ticket._id) {
         tempData.ticketId = ticket._id;
         callEditTicketAPI(tempData).then((response: any) => {

@@ -1,14 +1,15 @@
-import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Fab from '@material-ui/core/Fab';
+import { withStyles } from '@material-ui/core';
+import styled from 'styled-components';
+
+import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import { getAllJobAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
-import moment from 'moment';
-import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { withStyles } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import { formatDate, formatTime } from 'helpers/format';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch, useSelector } from 'react-redux';
 
 function JobPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -63,7 +64,7 @@ function JobPage({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        const scheduleDate = moment(row.original.scheduleDate).format('YYYY-MM-DD');
+        const scheduleDate = formatDate(row.original.scheduleDate);
         return <div className={'flex items-center'}>
           <p>
             {scheduleDate}
@@ -76,8 +77,8 @@ function JobPage({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        const startTime = moment(row.original.scheduledStartTime).format('HH:mm:ss');
-        const endTime = moment(row.original.scheduledEndTime).format('HH:mm:ss');
+        const startTime = formatTime(row.original.scheduledStartTime);
+        const endTime = formatTime(row.original.scheduledEndTime);
         return <div className={'flex items-center'}>
           <p>
             {`${startTime} - ${endTime}`}

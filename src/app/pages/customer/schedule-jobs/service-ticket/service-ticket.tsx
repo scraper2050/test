@@ -3,7 +3,7 @@ import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
 import { getAllServiceTicketAPI } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
-import moment from 'moment';
+import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
 import { withStyles } from '@material-ui/core';
@@ -17,7 +17,7 @@ function ServiceTicket({ classes }: any) {
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
     'tickets': serviceTicket.tickets.map((o: any) => {
-      o.createdAt = moment(o.createdAt).format('MMM DD, YYYY');
+      o.createdAt = formatDate(o.createdAt);
       return o;
     })
   }));

@@ -26,7 +26,7 @@ function BCDateTimePicker({
   label = '',
   inputVariant = 'outlined',
   variant = 'inline',
-  dateFormat = 'yyyy-MM-dd',
+  dateFormat = 'MM/dd/yyyy',
   pickerType = 'date',
   required = false }: any) {
   const classes = useStyles();

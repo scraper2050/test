@@ -4,7 +4,7 @@ import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getInventory } from 'actions/inventory/inventory.action';
 import { getTechnicians } from 'actions/technicians/technicians.action';
-import moment from 'moment';
+import { formatDate, formatTime } from 'helpers/format';
 import { refreshJobs } from 'actions/job/job.action';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-job-modal.styles';
@@ -78,9 +78,9 @@ function BCJobModal({
         ...job,
         ...values
       };
-      tempData.scheduleDate = moment(tempData.scheduleDate).format('YYYY-MM-DD');
-      tempData.scheduledEndTime = moment(tempData.scheduledEndTime).format('HH:mm:ss');
-      tempData.scheduledStartTime = moment(tempData.scheduledStartTime).format('HH:mm:ss');
+      tempData.scheduleDate = formatDate(tempData.scheduleDate);
+      tempData.scheduledEndTime = formatTime(tempData.scheduledEndTime);
+      tempData.scheduledStartTime = formatTime(tempData.scheduledStartTime);
       console.log(tempData);
       if (job._id) {
         tempData.jobId = job._id;
@@ -275,9 +275,8 @@ function BCJobModal({
             <BCDateTimePicker
               disablePast={!job._id}
               handleChange={(e: any) => dateChangeHandler(e, 'scheduleDate')}
-              label={'Schedule Date'}
+              label={'Due Date (optional)'}
               name={'scheduleDate'}
-              required
               value={FormikValues.scheduleDate}
             />
             <BCDateTimePicker
@@ -309,16 +308,6 @@ function BCJobModal({
           classes={{
             'root': classes.fabRoot
           }}
-          color={'secondary'}
-          disabled={isSubmitting}
-          variant={'extended'}>
-          {'Cancel'}
-        </Fab>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
           color={'primary'}
           disabled={isSubmitting}
           type={'submit'}
@@ -326,6 +315,16 @@ function BCJobModal({
           {job._id
             ? 'Edit'
             : 'Submit'}
+        </Fab>
+        <Fab
+          aria-label={'create-job'}
+          classes={{
+            'root': classes.fabRoot
+          }}
+          color={'secondary'}
+          disabled={isSubmitting}
+          variant={'extended'}>
+          {'Cancel'}
         </Fab>
       </DialogActions>
     </form>
