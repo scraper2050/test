@@ -12,5 +12,8 @@ export default (theme: Theme): any => ({
     'height': '34px',
     'padding': '0 12px',
     'textTransform': 'capitalize'
+  },
+  'dialogDescription': {
+    'padding': '0 24px'
   }
 });

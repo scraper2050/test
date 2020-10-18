@@ -47,14 +47,12 @@ function ServiceTicket({ classes }: any) {
             '_id': ''
           },
           'scheduleDate': new Date(),
-          'scheduledEndTime': new Date(),
-          'scheduledStartTime': new Date(),
+          'scheduledEndTime': null,
+          'scheduledStartTime': null,
           'technician': {
             '_id': ''
           },
-          'ticket': {
-            '_id': ticket._id
-          },
+          ticket,
           'type': {
             '_id': ''
           }

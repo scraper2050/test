@@ -7,6 +7,7 @@ import styles from './schedule-jobs.styles';
 import { useDispatch } from 'react-redux';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 
 function ScheduleJobsPage({ classes }: any) {
@@ -22,6 +23,7 @@ function ScheduleJobsPage({ classes }: any) {
   };
 
   const openCreateTicketModal = () => {
+    dispatch(getCustomers())
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'New Ticket',
@@ -51,7 +53,7 @@ function ScheduleJobsPage({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.topActionBar}>
-          {
+          {/* {
             curTab === 0
               ? <Fab
                 aria-label={'new-job'}
@@ -64,7 +66,7 @@ function ScheduleJobsPage({ classes }: any) {
                 {'Create Job'}
               </Fab>
               : null
-          }
+          } */}
           {
             curTab === 1
               ? <Fab

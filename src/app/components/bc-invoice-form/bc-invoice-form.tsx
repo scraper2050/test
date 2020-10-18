@@ -60,7 +60,6 @@ function BCInvoiceForm({ classes,
 
   const handleItemChange = (e: any, index: number, fieldName: string) => {
     const tempArray = [...items];
-    console.log(e.target.value);
     tempArray[index][fieldName] = e.target.value;
     tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
     tempArray[index].total = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line

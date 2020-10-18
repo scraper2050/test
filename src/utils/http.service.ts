@@ -3,7 +3,6 @@ import { getLocalStorageToken } from './local-storage.service';
 import axios, { AxiosRequestConfig, Method } from 'axios';
 
 const api = config.apiBaseURL;
-// Const api = `https://api-test.dreamersofday-platform.com/api/`;
 
 const fetchToken = () => {
   let token = '';
