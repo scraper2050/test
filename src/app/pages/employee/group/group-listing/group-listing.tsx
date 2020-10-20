@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGroups, loadingGroups } from 'actions/group/group.action';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
 function GroupListing({ classes }: any) {
   const dispatch = useDispatch();
@@ -40,9 +41,9 @@ function GroupListing({ classes }: any) {
     <DataContainer
       id={'0'}>
       {
-        groups.loading 
-          ? 'Is Loading State'
-          : <BCTableContainer
+        groups.loading ? 
+          <BCCircularLoader heightValue={'200px'} /> : 
+          <BCTableContainer
           columns={columns}
           onRowClick={handleRowClick}
           search

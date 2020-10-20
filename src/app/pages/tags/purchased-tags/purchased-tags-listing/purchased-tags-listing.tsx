@@ -9,6 +9,7 @@ import {
   getPurchasedTags,
   loadingPurchasedTags,
 } from "actions/tags/tags.action";
+import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
 function PurchasedTagsListing({ classes }: any) {
   const dispatch = useDispatch();
@@ -27,21 +28,21 @@ function PurchasedTagsListing({ classes }: any) {
       sortable: true,
     },
     {
-        Cell({ row }: any) {
-          return <div className={"flex items-center"}>{ '$' + row.original.total || 0 }</div>;
-        },
-        Header: "Total",
-        sortable: true,
-        width: 60,
+      Cell({ row }: any) {
+        return <div className={"flex items-center"}>{'$' + row.original.total || 0}</div>;
+      },
+      Header: "Total",
+      sortable: true,
+      width: 60,
     },
     {
-        Cell({ row }: any) {
-          return <div className={"flex items-center"}>{ '$' + row.original.dateTime || '' }</div>;
-        },
-        Header: "Date",
-        sortable: true,
-        width: 60,
+      Cell({ row }: any) {
+        return <div className={"flex items-center"}>{'$' + row.original.dateTime || ''}</div>;
       },
+      Header: "Date",
+      sortable: true,
+      width: 60,
+    },
   ];
 
   useEffect(() => {
@@ -56,16 +57,16 @@ function PurchasedTagsListing({ classes }: any) {
   return (
     <DataContainer id={"0"}>
       {purchasedTags.loading ? (
-        "Is Loading State"
+        <BCCircularLoader heightValue={'200px'} />
       ) : (
-        <BCTableContainer
-          columns={columns}
-          onRowClick={handleRowClick}
-          search
-          searchPlaceholder={"Search Purchases..."}
-          tableData={purchasedTags.data}
-        />
-      )}
+          <BCTableContainer
+            columns={columns}
+            onRowClick={handleRowClick}
+            search
+            searchPlaceholder={"Search Purchases..."}
+            tableData={purchasedTags.data}
+          />
+        )}
     </DataContainer>
   );
 }

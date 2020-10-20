@@ -1,4 +1,3 @@
-// Import { Reducer } from 'redux';
 import { ReducerParamsInterface } from 'reducers';
 import { types } from '../actions/job-type/job-type.types';
 

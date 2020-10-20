@@ -9,6 +9,7 @@ import {
     getInventory,
     loadingInventory,
 } from "actions/inventory/inventory.action";
+import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
 function InventoryListing({ classes }: any) {
     const dispatch = useDispatch();
@@ -70,7 +71,7 @@ function InventoryListing({ classes }: any) {
     return (
         <DataContainer id={"0"}>
             {inventory.loading ? (
-                "Is Loading State"
+                <BCCircularLoader heightValue={'200px'} />
             ) : (
                     <BCTableContainer
                         columns={columns}

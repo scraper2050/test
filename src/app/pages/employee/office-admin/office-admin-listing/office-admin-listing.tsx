@@ -9,6 +9,7 @@ import {
 	getOfficeAdmin,
 	loadingOfficeAdmin,
 } from "actions/office-admin/office-admin.action";
+import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
 function OfficeAdminListing({ classes }: any) {
 	const dispatch = useDispatch();
@@ -54,7 +55,7 @@ function OfficeAdminListing({ classes }: any) {
 	return (
 		<DataContainer id={"0"}>
 			{officeAdmin.loading ? (
-				"Is Loading State"
+				<BCCircularLoader heightValue={'200px'} />
 			) : (
 					<BCTableContainer
 						columns={columns}

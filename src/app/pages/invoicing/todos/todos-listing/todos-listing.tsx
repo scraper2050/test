@@ -8,6 +8,7 @@ import {
   getTodos,
   loadingTodos,
 } from "actions/invoicing/invoicing.action";
+import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
 function TodosListing({ classes }: any) {
   const dispatch = useDispatch();
@@ -63,16 +64,16 @@ function TodosListing({ classes }: any) {
   return (
     <DataContainer id={"0"}>
       {invoiceTodos.loading ? (
-        "Is Loading State"
+        <BCCircularLoader heightValue={'200px'} />
       ) : (
-        <BCTableContainer
-          columns={columns}
-          onRowClick={handleRowClick}
-          search
-          searchPlaceholder={"Search Managers..."}
-          tableData={invoiceTodos.data}
-        />
-      )}
+          <BCTableContainer
+            columns={columns}
+            onRowClick={handleRowClick}
+            search
+            searchPlaceholder={"Search Managers..."}
+            tableData={invoiceTodos.data}
+          />
+        )}
     </DataContainer>
   );
 }

@@ -1,41 +1,43 @@
-import React from 'react';
-import styled from 'styled-components';
+import BCTabs from "../../../components/bc-tab/bc-tab";
+import SwipeableViews from "react-swipeable-views";
+import styles from "./equipment-type.styles";
+import EquipmentTypeListing from "./equipment-type-listing/equipment-type-listing";
+import React, { useEffect, useState } from "react";
+import { useTheme, withStyles } from "@material-ui/core";
 
-function EquipmentTypePage() {
+function EquipmentType({ classes }: any) {
+  const [curTab, setCurTab] = useState(0);
+  const theme = useTheme();
+
+  useEffect(() => {}, []);
+
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
+  };
+
   return (
-    <>
-      {/* <BCSubHeader title={'Admin'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
+    <div className={classes.groupMainContainer}>
+      <div className={classes.groupPageConatiner}>
+        <BCTabs
+          curTab={curTab}
+          indicatorColor={"primary"}
+          onChangeTab={handleTabChange}
+          tabsData={[
+            {
+              label: "Equipment List",
+              value: 0,
+            }
+          ]}
         />
-      </BCSubHeader> */}
-
-      <MainContainer>
-        <PageContainer />
-      </MainContainer>
-    </>
+        <SwipeableViews
+          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+          index={curTab}
+        >
+          <EquipmentTypeListing hidden={curTab !== 0} />
+        </SwipeableViews>
+      </div>
+    </div>
   );
 }
 
-const MainContainer = styled.div`
-  display: flex;
-  flex: 1 1 100%;
-  width: 100%;
-  overflow-x: hidden;
-`;
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 100%;
-  padding: 30px;
-  width: 100%;
-  padding-left: 65px;
-  padding-right: 65px;
-  margin: 0 auto;
-`;
-
-
-export default EquipmentTypePage;
+export default withStyles(styles, { withTheme: true })(EquipmentType);
