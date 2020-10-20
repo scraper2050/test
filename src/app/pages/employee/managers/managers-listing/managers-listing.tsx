@@ -9,6 +9,7 @@ import {
   getManagers,
   loadingManagers,
 } from "actions/managers/managers.action";
+import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
 function ManagersListing({ classes }: any) {
   const dispatch = useDispatch();
@@ -54,7 +55,7 @@ function ManagersListing({ classes }: any) {
   return (
     <DataContainer id={"0"}>
       {managers.loading ? (
-        "Is Loading State"
+        <BCCircularLoader heightValue={'200px'} />
       ) : (
         <BCTableContainer
           columns={columns}

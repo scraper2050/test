@@ -1,18 +1,15 @@
 import BCTableContainer from "../../../../components/bc-table-container/bc-table-container";
 import styled from "styled-components";
-import styles from "./../technicians.styles";
+import styles from "./../job-types.styles";
 import { withStyles } from "@material-ui/core";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getTechnicians,
-  loadingTechnicians,
-} from "actions/technicians/technicians.action";
+import { getAllJobTypesAPI } from "api/job.api";
 import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
-function TechniciansListing({ classes }: any) {
+function JobTypesListing({ classes }: any) {
   const dispatch = useDispatch();
-  const technicians = useSelector((state: any) => state.technicians);
+  const jobTypes = useSelector((state: any) => state.jobTypes);
   const columns: any = [
     {
       Cell({ row }: any) {
@@ -23,28 +20,15 @@ function TechniciansListing({ classes }: any) {
       width: 60,
     },
     {
-      Header: "Name",
-      accessor: "profile.displayName",
+      Header: "Job Types",
+      accessor: "title",
       className: "font-bold",
       sortable: true,
-    },
-    {
-      Header: "Email",
-      accessor: "auth.email",
-      className: "font-bold",
-      sortable: true,
-    },
-    {
-      Header: "Phone Number",
-      accessor: "contact.phone",
-      className: "font-bold",
-      sortable: true,
-    },
+    }
   ];
 
   useEffect(() => {
-    dispatch(getTechnicians());
-    dispatch(loadingTechnicians());
+    dispatch(getAllJobTypesAPI());
   }, []);
 
   const handleRowClick = (event: any, row: any) => {
@@ -53,17 +37,17 @@ function TechniciansListing({ classes }: any) {
 
   return (
     <DataContainer id={"0"}>
-      {technicians.loading ? (
+      {jobTypes && jobTypes.isLoading ? (
         <BCCircularLoader heightValue={'200px'} />
       ) : (
-          <BCTableContainer
-            columns={columns}
-            onRowClick={handleRowClick}
-            search
-            searchPlaceholder={"Search Groups..."}
-            tableData={technicians.data}
-          />
-        )}
+        <BCTableContainer
+          columns={columns}
+          onRowClick={handleRowClick}
+          search
+          searchPlaceholder={"Search Job Types..."}
+          tableData={jobTypes.data}
+        />
+      )}
     </DataContainer>
   );
 }
@@ -74,4 +58,4 @@ const DataContainer = styled.div`
   margin-top: 25px;
 `;
 
-export default withStyles(styles, { withTheme: true })(TechniciansListing);
+export default withStyles(styles, { withTheme: true })(JobTypesListing);

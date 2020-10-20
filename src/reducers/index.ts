@@ -26,6 +26,8 @@ import {
   InvoicingPurchaseOrderReducer as purchaseOrder,
   InvoicingEstimatesReducer as estimates
 } from './invoicing.reducer';
+import { BrandsReducer as brands } from './brands.reducer';
+import { EquipmentTypeReducer as equipmentType } from './equipment-type.reducer';
 
 export interface ReducerParamsInterface {
   payload: any,
@@ -58,5 +60,7 @@ export default combineReducers({
   purchaseOrder,
   estimates,
   inventory,
-  purchasedTags
+  purchasedTags,
+  brands,
+  equipmentType
 });
