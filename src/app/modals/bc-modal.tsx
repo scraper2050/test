@@ -3,7 +3,7 @@ import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCModalTransition from './bc-modal-transition';
 import BCServiceTicketModal from 'app/modals/bc-service-ticket-modal/bc-service-ticket-modal';
 import CloseIcon from '@material-ui/icons/Close';
-import { closeModalAction } from 'actions/bc-modal/bc-modal.action';
+import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../constants';
 import {
   Dialog,
@@ -94,6 +94,12 @@ function BCModal() {
   );
   const handleClose = () => {
     dispatch(closeModalAction());
+    setTimeout(() => {
+      dispatch(setModalDataAction({
+        'data': {},
+        'type': ''
+      }));
+    }, 200);
   };
 
   return (
