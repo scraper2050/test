@@ -1,0 +1,37 @@
+# This is a sample build configuration for JavaScript.
+# Check our guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: node:10.15.3
+
+pipelines:
+  default:
+    - step:
+        name: Build and test
+        caches:
+          - node
+        script:
+          - unset CI
+          - yarn install
+          - yarn build
+        artifacts:
+          - build/**
+    - step:
+        name: pushing to s3
+        deployment: production
+        script:
+          - pipe: atlassian/aws-s3-deploy:0.4.5
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: 'us-east-1'
+              S3_BUCKET: 'blueclerk-react-app'
+              LOCAL_PATH: 'build'
+
+          - pipe: atlassian/aws-cloudfront-invalidate:0.1.1
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: 'us-east-1'
+              DISTRIBUTION_ID: 'E17AYQHQYHYHNY'
