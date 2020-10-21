@@ -19,7 +19,6 @@ export const EquipmentTypeReducer: Reducer<any> = (state = initialEquipmentType,
             data: [...action.payload],
          }
       case EquipmentTypeActionType.SET:
-         debugger;
          return {
             loading: false,
             data: [...action.payload],

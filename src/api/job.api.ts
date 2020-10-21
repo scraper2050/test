@@ -52,6 +52,7 @@ export const callCreateJobAPI = (data: any) => {
       });
   });
 };
+
 export const callEditJobAPI = (data: any) => {
   return new Promise((resolve, reject) => {
     request(`/editJob`, 'post', data)
@@ -62,4 +63,24 @@ export const callEditJobAPI = (data: any) => {
         return reject(err);
       });
   });
+};
+
+export const saveJobType = async (body: { title: string }) => {
+  let responseData;
+  try {
+    const response: any = await request("/createJobType", "POST", body, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = err.data;
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(
+        err.data.errors ||
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+      );
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+  return responseData;
 };
