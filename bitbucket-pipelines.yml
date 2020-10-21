@@ -28,6 +28,7 @@ pipelines:
               AWS_DEFAULT_REGION: 'us-east-1'
               S3_BUCKET: 'blueclerk-react-app'
               LOCAL_PATH: 'build'
+              ACL: 'public-read'
 
           - pipe: atlassian/aws-cloudfront-invalidate:0.1.1
             variables:
