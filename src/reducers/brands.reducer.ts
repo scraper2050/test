@@ -19,7 +19,6 @@ export const BrandsReducer: Reducer<any> = (state = initialBrands, action) => {
 				data: [...action.payload],
 			}
 		case BrandsActionType.SET:
-			debugger;
 			return {
 				loading: false,
 				data: [...action.payload],

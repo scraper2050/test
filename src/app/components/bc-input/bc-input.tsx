@@ -43,6 +43,7 @@ function BCInput({ handleChange,
         rows={rows}
         value={value}
         variant={variant}
+        autoComplete='off'
       />
     </FormControl>
   );

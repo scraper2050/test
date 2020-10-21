@@ -1,7 +1,10 @@
 import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCModalTransition from './bc-modal-transition';
-import BCServiceTicketModal from 'app/modals/bc-service-ticket-modal/bc-service-ticket-modal';
+import BCServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-modal';
+import BCAddBrandsModal from './bc-add-brands-modal/bc-add-brands-modal';
+import BCAddJobTypeModal from './bc-add-job-type-modal/bc-add-job-type-modal';
+import BCAddEquipmentTypeModal from './bc-add-equipment-type-modal/bc-add-equipment-type-modal';
 import CloseIcon from '@material-ui/icons/Close';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../constants';
@@ -35,6 +38,7 @@ function BCModal() {
   const open = useSelector(({ modal }: RootState) => modal.open);
   const data = useSelector(({ modal }: RootState) => modal.data);
   const type = useSelector(({ modal }: RootState) => modal.type);
+
   useEffect(
     () => {
       switch (type) {
@@ -86,6 +90,33 @@ function BCModal() {
           });
           setComponent(<BCAddVendorModal />);
           break;
+        case modalTypes.ADD_BRAND:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCAddBrandsModal />);
+          break;
+        case modalTypes.ADD_JOB_TYPE:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCAddJobTypeModal />);
+          break;
+        case modalTypes.ADD_EQIPMENT_TYPE:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+          setComponent(<BCAddEquipmentTypeModal />);
+          break;
         default:
           setComponent(null);
       }
@@ -116,7 +147,7 @@ function BCModal() {
         scroll={'paper'}>
         {
           data && data.modalTitle !== ''
-            ? <DialogTitle>
+            ? <DialogTitle disableTypography>
               <Typography
                 variant={'h6'}>
                 {data.modalTitle}
