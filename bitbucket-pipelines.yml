@@ -8,7 +8,7 @@ image: node:10.15.3
 pipelines:
   default:
     - step:
-        name: Build and test
+        name: Build
         caches:
           - node
         script:
