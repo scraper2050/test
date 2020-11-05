@@ -20,5 +20,6 @@ export const modalTypes = {
   'TERMS_AND_CONDITION_MODAL': 'terms-and-condition',
   'ADD_BRAND': 'add-brand',
   'ADD_JOB_TYPE': 'add-job-type',
-  'ADD_EQIPMENT_TYPE': 'add-equipment-type'
+  'ADD_EQIPMENT_TYPE': 'add-equipment-type',
+  'ADD_JOB_SITE' : 'add-job-site'
 };

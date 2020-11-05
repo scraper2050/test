@@ -18,10 +18,9 @@ $spinkit-spinner-color: $body-color;
 // @import "../shared/styles/bootstrap.scss";
 @import "../scss/vendors/toastr/toastr.scss";
 
-
 body,
 html {
-  font-family: 'Gothic', 'A1';
+  font-family: "Gothic", "A1";
   font-style: normal;
   font-weight: normal;
 }
@@ -43,8 +42,6 @@ html {
 .zEWidget-launcher {
   margin: 0px 20px !important;
 }
-
-
 
 .sidebar .nav-link {
   padding: 10px 10px 10px 32px !important;
@@ -76,7 +73,6 @@ body {
     transform: translateY(-50%);
   }
 }
-
 
 .admin-element-card {
   width: 222px;
@@ -201,13 +197,15 @@ body {
   box-shadow: none;
 }
 
-.owl-dt-calendar-table .owl-dt-calendar-header .owl-dt-calendar-table-divider:after {
-  background: #00AAFF;
+.owl-dt-calendar-table
+  .owl-dt-calendar-header
+  .owl-dt-calendar-table-divider:after {
+  background: #00aaff;
 }
 
 .owl-dt-calendar-table .owl-dt-calendar-cell-selected {
-  color: rgba(255, 255, 255, .85);
-  background-color: #00AAFF;
+  color: rgba(255, 255, 255, 0.85);
+  background-color: #00aaff;
 }
 
 .owl-dt-inline-container .owl-dt-calendar,
@@ -234,10 +232,11 @@ body {
   color: #000000;
 }
 
-.owl-dt-timer-hour12 .owl-dt-timer-hour12-box:hover .owl-dt-control-button-content {
+.owl-dt-timer-hour12
+  .owl-dt-timer-hour12-box:hover
+  .owl-dt-control-button-content {
   background: rgb(20, 156, 230) !important;
-  ;
-  color: #fff
+  color: #fff;
 }
 
 .individualProfile .mat-ink-bar {
@@ -255,7 +254,7 @@ body {
 
 .list-template .mat-tab-group.mat-primary .mat-ink-bar,
 .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-  background-color: #00AAFF;
+  background-color: #00aaff;
 }
 
 .list-template {
@@ -273,7 +272,7 @@ body {
 .customBtn {
   text-align: center;
   padding: 4px 10px;
-  background: #00AAFF;
+  background: #00aaff;
   color: #fff;
   min-width: 85px;
   border-radius: 30px;
@@ -290,14 +289,14 @@ body {
 
   &:focus {
     outline: none !important;
-    background: #00AAFF !important;
+    background: #00aaff !important;
     color: #fff !important;
     box-shadow: none;
   }
 
   &:hover {
     color: #fff;
-    background-color: #00AAFF;
+    background-color: #00aaff;
   }
 }
 
@@ -382,7 +381,6 @@ body {
 }
 
 @media (min-width: 1451px) {
-
   .d-lg-none,
   .left-navbar {
     display: none !important;
@@ -434,7 +432,7 @@ body {
 
 .ng-select .ng-select-container {
   padding: 6px 16px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid #777777;
   box-sizing: border-box;
   border-radius: 2px;

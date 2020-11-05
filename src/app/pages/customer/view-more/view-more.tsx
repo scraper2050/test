@@ -1,19 +1,26 @@
-import BCTableContainer from '../../components/bc-table-container/bc-table-container';
-import BCTabs from '../../components/bc-tab/bc-tab';
+import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
+import BCTabs from '../../../components/bc-tab/bc-tab';
+import BCBackButton from '../../../components/bc-back-button/bc-back-button';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
-import styles from './customer.styles';
+import styles from './view-more.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import CustomerInfoPage from './customer-info';
+import { useLocation } from "react-router-dom";
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../constants';
+import { loadingJobSites, getJobSites } from 'actions/job-site/job-site.action';
 
-function CustomersPage({ classes }: any) {
+function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
-  const customers = useSelector((state: any) => state.customers);
+  const jobSites = useSelector((state: any) => state.jobSites);
   const [curTab, setCurTab] = useState(0);
-  const history = useHistory();
+  const location = useLocation();
+  const customerObj = location.state;
+
   const columns: any = [
     {
       'Cell'({ row }: any) {
@@ -26,20 +33,20 @@ function CustomersPage({ classes }: any) {
       'width': 60
     },
     {
+      'Header': 'Job Site',
+      'accessor': 'name',
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
       'Header': 'Name',
-      'accessor': 'profile.displayName',
+      'accessor': 'contact.name',
       'className': 'font-bold',
       'sortable': true
     },
     {
-      'Header': 'Phone',
-      'accessor': 'contact.phone',
-      'className': 'font-bold',
-      'sortable': true
-    },
-    {
-      'Header': 'Email',
-      'accessor': 'info.email',
+      'Header': 'Address',
+      'accessor': 'address.city',
       'className': 'font-bold',
       'sortable': true
     },
@@ -52,10 +59,10 @@ function CustomersPage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-             onClick={() => renderViewMore(row)}
             variant={'extended'}>
             {'View More'}
           </Fab>
+          
         </div>;
       },
       'id': 'action',
@@ -65,8 +72,10 @@ function CustomersPage({ classes }: any) {
   ];
 
   useEffect(() => {
-    dispatch(loadingCustomers());
-    dispatch(getCustomers());
+   const obj: any = location.state;
+   const customerId = obj.customerId;
+   dispatch(loadingJobSites());
+   dispatch(getJobSites(customerId));
   }, []);
 
   const handleTabChange = (newValue: number) => {
@@ -77,57 +86,70 @@ function CustomersPage({ classes }: any) {
     console.log(event, row);
   };
 
-  const renderViewMore = (row: any) => {
-      console.log(row);
-      let customerName = row['original']['profile']['displayName'];
-      let address = row['original']['address'];
-      let customerId =  row['original']['_id'];
-      let customerObj = {
-        name: customerName,
-        address: `${address['street']} ${address['city']} ${address['state']} ${address['zipCode']}`, 
-        contactName: customerName,
-        customerId
-      }
-      customerName = customerName !== undefined ? customerName.replace(/ /g,'') : 'customername';
-      history.push({
-        pathname: `customers/${customerName}`, 
-        state: customerObj
-      });
-  }
-
-  
-
+  const openJobSiteModal = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'customerObj': customerObj,
+        'modalTitle': 'New Job Site',
+        'removeFooter': false
+      },
+      'type': modalTypes.ADD_JOB_SITE
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          <BCTabs
+        <BCBackButton
+              link={'/main/customers'}
+            />
+            <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}
             onChangeTab={handleTabChange}
             tabsData={[
               {
-                'label': 'Customer List',
+                'label': 'CUSTOMER INFO',
                 'value': 0
               },
               {
-                'label': 'Recent Activities',
+                'label': 'JOB/EQUIPMENT INFO',
                 'value': 1
               }
             ]}
           />
+           
           <SwipeableViews index={curTab}>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 0}
               id={'0'}>
+              <PageContainer>
+                < CustomerInfoPage customerObj={customerObj}/>
+                <Fab
+                    aria-label={'delete'}
+                    classes={{
+                    'root': classes.fabRoot
+                    }}
+                    onClick={() => openJobSiteModal()}
+                    color={'primary'}
+                    variant={'extended'}>
+                    {'Add Job Site'}
+                </Fab>
+            </PageContainer>
+            
               <BCTableContainer
                 columns={columns}
-                isLoading={customers.loading}
+                isLoading={jobSites.loading}
                 onRowClick={handleRowClick}
                 search
-                tableData={customers.data}
+                searchPlaceholder={"Search Job Sites..."}
+                tableData={jobSites.data}
+                initialMsg="There are no job sites!"
               />
             </div>
             <div
@@ -147,7 +169,16 @@ function CustomersPage({ classes }: any) {
   );
 }
 
+const PageContainer = styled.div`
+  display: flex;
+  flex: 1 1 100%;
+  padding: 30px;
+  width: 100%;
+  padding-left: 0px;
+  padding-right: 65px;
+  margin: 0 auto;
+`;
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(CustomersPage);
+)(ViewMorePage);

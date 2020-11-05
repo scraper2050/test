@@ -8,7 +8,7 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 // Import { useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 
-function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...', pagination = true }: any) {
+function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...', pagination = true, initialMsg = 'There are no contacts!' }: any) {
   // Const dispatch = useDispatch();
   const [searchText, setSearchText] = useState(''); // eslint-disable-line
 
@@ -61,7 +61,7 @@ function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, c
                 <Typography
                   color={'textSecondary'}
                   variant={'h5'}>
-                  {'There are no contacts!'}
+                  {initialMsg}
                 </Typography>
               </Paper>
               : <BCTableContent
