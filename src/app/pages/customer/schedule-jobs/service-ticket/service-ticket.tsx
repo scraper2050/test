@@ -9,7 +9,9 @@ import styles from '../../customer.styles';
 import { withStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -22,6 +24,8 @@ function ServiceTicket({ classes }: any) {
     })
   }));
   const openEditTicketModal = (ticket: any) => {
+    dispatch(loadingJobSites());
+    dispatch(getJobSites(ticket.customer._id));
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Edit Ticket',
@@ -148,6 +152,7 @@ function ServiceTicket({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
+      dispatch(getCustomers());
       dispatch(getAllServiceTicketAPI());
     }
   }, [refresh]);

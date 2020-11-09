@@ -1,0 +1,35 @@
+import { JobSiteActionType, JobSiteState } from 'actions/job-site/job-site.types';
+import { Reducer } from 'redux';
+
+const initialJobSites: JobSiteState = {
+  loading: false,
+  data: []
+}
+
+export const JobSiteReducer: Reducer<any> = (state = initialJobSites, action) => {
+  switch (action.type) {
+    case JobSiteActionType.GET:
+      return {
+        loading: true,
+        data: state.data,
+      };
+    case JobSiteActionType.SUCCESS:
+      return {
+        loading: false,
+        data: [...action.payload],
+      }
+    case JobSiteActionType.SET:
+      return {
+        ...state,
+        loading: false,
+        data: [...action.payload],
+      }
+    case JobSiteActionType.FAILED:
+      return {
+        ...state,
+        loading: false,
+        errorMsg: action.payload,
+      }
+  }
+  return state;
+}
