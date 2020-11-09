@@ -51,3 +51,9 @@ export const dataContainer = {
     'margin-top': '25px'
   }
 };
+
+export const swipe_wrapper = {
+  'swipe_wrapper': {
+    'overflow': 'inherit'
+  }
+}

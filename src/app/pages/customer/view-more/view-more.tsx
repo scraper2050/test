@@ -14,6 +14,8 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { modalTypes } from '../../../../constants';
 import { loadingJobSites, getJobSites } from 'actions/job-site/job-site.action';
 
+import '../../../../scss/index.scss';
+
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
   const jobSites = useSelector((state: any) => state.jobSites);
@@ -129,9 +131,9 @@ function ViewMorePage({ classes }: any) {
             ]}
           />
            
-          <SwipeableViews index={curTab}>
+          <SwipeableViews index={curTab} className={'swipe_wrapper'}>
             <div
-              className={classes.dataContainer}
+              className={`${classes.dataContainer} `}
               hidden={curTab !== 0}
               id={'0'}>
               <PageContainer>

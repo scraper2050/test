@@ -94,3 +94,56 @@ body {
 .cursor-default {
   cursor: default;
 }
+
+// swipe_wrapper
+
+.swipe_wrapper .react-swipeable-view-container > div {
+  overflow: inherit !important;
+}
+
+.customer_info_wrapper {
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 700px;
+  padding: 24px 30px;
+}
+
+.name_wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.name_wrapper {
+  .MuiFab-primary {
+    box-shadow: none;
+    border-radius: 0;
+    background: #E5E5E5;
+    border: 1px solid #C4C4C4;
+    box-sizing: border-box;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    min-width: none;
+    max-width: auto;
+    min-height: none;
+    max-height: auto;
+    color: #DADADA;
+  }
+}
+
+.customer_details {
+  padding-bottom: 30px;
+}
+
+[class *= "ViewMorePage-dataContainer"] > div {
+  justify-content: space-between;
+
+  > .MuiFab-primary {
+    box-shadow: none;
+  }
+}
