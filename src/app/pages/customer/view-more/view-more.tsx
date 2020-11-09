@@ -21,17 +21,22 @@ function ViewMorePage({ classes }: any) {
   const location = useLocation();
   const customerObj = location.state;
 
-  const columns: any = [
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {row.index + 1}
-        </div>;
+  const openEditJobSiteModal = (jobSite: any) => {
+    let updateJobSiteObj = { ...jobSite, location: { lat: jobSite.location.coordinates[1], lon: jobSite.location.coordinates[0] }, update: true }
+    dispatch(setModalDataAction({
+      'data': {
+        'customerObj': updateJobSiteObj,
+        'modalTitle': 'Edit Job Site',
+        'removeFooter': false
       },
-      'Header': 'No#',
-      'sortable': true,
-      'width': 60
-    },
+      'type': modalTypes.ADD_JOB_SITE
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const columns: any = [
     {
       'Header': 'Job Site',
       'accessor': 'name',
@@ -59,6 +64,7 @@ function ViewMorePage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
+            onClick={() => { openEditJobSiteModal(row.original) }}
             variant={'extended'}>
             {'View More'}
           </Fab>

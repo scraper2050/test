@@ -17,6 +17,8 @@ export enum JobSiteActionType {
   SET = 'setJobSite',
   ADD_NEW_JOB_SITE = 'addNewJobSite',
   ADD_NEW_JOB_FAILED = 'addNewJobSiteFailed',
+  UPDATE_JOB_SITE_FAILED = 'updateJobSiteFailed',
+  UPDATE_JOB_SITE = 'updateJobSite',
   SUCCESS = 'getJobSiteSuccess',
   FAILED = 'getJobSiteFailed',
 }

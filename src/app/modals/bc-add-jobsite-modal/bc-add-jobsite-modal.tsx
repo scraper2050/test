@@ -22,7 +22,7 @@ import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
-import { createJobSiteAction } from 'actions/job-site/job-site.action';
+import { createJobSiteAction, updateJobSiteAction } from 'actions/job-site/job-site.action';
 
 
 interface Props {
@@ -32,32 +32,33 @@ interface Props {
 function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const dispatch = useDispatch();
   const [positionValue, setPositionValue] = useState({
-    'long': -86.902298,
-    'lat': 32.3182314
+    'long': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.long ? jobSiteInfo.location.long : -86.902298,
+    'lat': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.lat ? jobSiteInfo.location.lat : 32.3182314
   });
   const [nameLabelState, setNameLabelState] = useState(false);
   const [latLabelState, setLatLabelState] = useState(false);
   const [longLabelState, setLongLabelState] = useState(false);
   const initialValues = {
-    "name": "",
+    "name": jobSiteInfo && jobSiteInfo.name ? jobSiteInfo.name : '',
     "contact": {
-      "name": "",
-      "phone": "",
-      "email": ""
+      "name": jobSiteInfo && jobSiteInfo.contact && jobSiteInfo.contact.name ? jobSiteInfo.contact.name : '',
+      "phone": jobSiteInfo && jobSiteInfo.contact && jobSiteInfo.contact.phone ? jobSiteInfo.contact.phone : '',
+      "email": jobSiteInfo && jobSiteInfo.contact && jobSiteInfo.contact.email ? jobSiteInfo.contact.email : ''
     },
     "location": {
-    "lat": 0,
-    "long":0
+      "lat": 0,
+      "long": 0
     },
     "address": {
-    "city": "",
-    'state': {
-      'id': 0
+      "city": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.city ? jobSiteInfo.address.city : '',
+      'state': {
+        'id': jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.state ? allStates.findIndex(x => x.name === jobSiteInfo.address.state) : 0
+      },
+      "street": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.street ? jobSiteInfo.address.street : '',
+      "zipcode": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.zipcode ? jobSiteInfo.address.zipcode : ''
     },
-    "street": "",
-    "zipcode": ""
-    },
-    "customerId": jobSiteInfo.customerId
+    "customerId": jobSiteInfo && jobSiteInfo.customerId ? jobSiteInfo.customerId : '',
+    "jobSiteId": jobSiteInfo && jobSiteInfo._id ? jobSiteInfo._id : ''
   }
  
 
@@ -158,11 +159,17 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                      requestObj.address.state = allStates[state].name;
                      requestObj.address.street = values.address.street;
                      requestObj.address.zipcode = values.address.zipcode;
-                     if(isValidate(requestObj)){
-                      dispatch(createJobSiteAction(requestObj, () => {
-                        closeModal();
-                      })) 
-                     }
+                     if (isValidate(requestObj)) {
+                      if (jobSiteInfo.update) {
+                        dispatch(updateJobSiteAction(requestObj, () => {
+                          closeModal();
+                        }))
+                      } else {
+                        dispatch(createJobSiteAction(requestObj, () => {
+                          closeModal();
+                        }))
+                      }
+                    }
                        
                     setTimeout(() => {
                       setSubmitting(false);
@@ -334,7 +341,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                             color={'primary'}
                             type={'submit'}
                             variant={'contained'}>
-                            {'Save'}
+                            {jobSiteInfo && jobSiteInfo.update ? 'Update' : 'Save'}
                           </Button>
                           <Button
                             className={'cancel-customer-button'}

@@ -1,5 +1,5 @@
 import { createApiAction } from '../action.utils';
-import { getJobSites as fetchJobSites, createJobSite } from 'api/job-site.api';
+import { getJobSites as fetchJobSites, createJobSite, updateJobSite } from 'api/job-site.api';
 import { JobSiteActionType, types } from './job-site.types';
 
 
@@ -50,4 +50,21 @@ export const setJobSiteNew = (jobSite: any) => {
         payload: jobSite
     }
 }
+
+export const updateJobSiteAction = (data: any, callback?: any) => {
+    return async (dispatch: any) => {
+        const jobSite: any = await updateJobSite(data);
+        if (jobSite.hasOwnProperty('msg')) {
+            dispatch({ type: JobSiteActionType.UPDATE_JOB_SITE_FAILED, payload: jobSite.msg });
+            if (callback)
+                callback();
+        } else {
+            dispatch({ type: JobSiteActionType.UPDATE_JOB_SITE, payload: jobSite });
+            if (callback)
+                callback();
+        }
+    };
+}
+
+
 

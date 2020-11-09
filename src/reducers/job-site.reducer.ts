@@ -20,9 +20,8 @@ export const JobSiteReducer: Reducer<any> = (state = initialJobSites, action) =>
       }
     case JobSiteActionType.SET:
       return {
-        ...state,
         loading: false,
-        data:[...state.data, ...action.payload],
+        data:[...action.payload],
       }
     case JobSiteActionType.ADD_NEW_JOB_SITE:
       return {

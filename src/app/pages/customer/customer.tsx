@@ -14,6 +14,7 @@ function CustomersPage({ classes }: any) {
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
+
   const columns: any = [
     {
       'Cell'({ row }: any) {
@@ -78,13 +79,19 @@ function CustomersPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
-      console.log(row);
-      let customerName = row['original']['profile']['displayName'];
-      let address = row['original']['address'];
+      let baseObj = row['original'];
+      let customerName = baseObj['profile'] && baseObj['profile'] !== undefined ? baseObj['profile']['displayName'] : 'N/A';
+      let customerAddress = baseObj['address'];
       let customerId =  row['original']['_id'];
+      let address:any;
+      if(customerAddress && customerAddress !== undefined){
+        address = `${customerAddress['street']} ${customerAddress['city']} ${customerAddress['state']} ${customerAddress['zipCode']}`
+      }else{
+        address = 'N/A';
+      }
       let customerObj = {
-        name: customerName,
-        address: `${address['street']} ${address['city']} ${address['state']} ${address['zipCode']}`, 
+        customerName: customerName,
+        address, 
         contactName: customerName,
         customerId
       }
