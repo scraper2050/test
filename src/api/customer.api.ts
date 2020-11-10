@@ -23,3 +23,25 @@ export const getCustomers = async (param?: {}) => {
   }
   return responseData.customers;
 };
+
+export const updateCustomers = async (param?: {}) => {
+  const body = {
+    includeActive: "true",
+    includeNonActive: "false",
+  };
+  let responseData;
+  try {
+    const response: any = await request("/updateCustomer", "POST", body, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = { msg: '' };
+    if (err.response.status >= 400 || err.response.status === 0) {
+
+      responseData.msg = 'We are facing some issues, please try again.'
+
+    } else {
+      responseData.msg = 'Something went wrong'
+    }
+  }
+  return responseData;
+};

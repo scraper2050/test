@@ -21,5 +21,6 @@ export const modalTypes = {
   'ADD_BRAND': 'add-brand',
   'ADD_JOB_TYPE': 'add-job-type',
   'ADD_EQIPMENT_TYPE': 'add-equipment-type',
-  'ADD_JOB_SITE' : 'add-job-site'
+  'ADD_JOB_SITE' : 'add-job-site',
+  'EDIT_CUSTOMER_INFO': 'edit-customer-info',
 };

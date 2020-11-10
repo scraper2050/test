@@ -93,7 +93,8 @@ function CustomersPage({ classes }: any) {
         customerName: customerName,
         address, 
         contactName: customerName,
-        customerId
+        customerId,
+        customerAddress
       }
       customerName = customerName !== undefined ? customerName.replace(/ /g,'') : 'customername';
       history.push({
