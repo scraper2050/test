@@ -21,6 +21,7 @@ function BCServiceTicketModal({
       '_id': ''
     },
     'jobSite': '',
+    'jobType': '',
     'note': '',
     'scheduleDate': new Date()
   }
@@ -44,6 +45,7 @@ function BCServiceTicketModal({
     'initialValues': {
       'customerId': ticket.customer._id,
       'jobSiteId': ticket.jobSite,
+      'jobTypeId': ticket.jobType,
       'note': ticket.note,
       'scheduleDate': ticket.scheduleDate
     },
@@ -101,6 +103,7 @@ function BCServiceTicketModal({
   const customers = useSelector(({ customers }: any) => customers.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const isLoading = useSelector((state: any) => state.jobSites.loading);
+  const jobTypes = useSelector((state: any) => state.jobTypes.data);
   
   const dateChangeHandler = (date: string) => {
     setFieldValue('scheduleDate', date);
@@ -131,10 +134,11 @@ function BCServiceTicketModal({
                 })
               ],
               'displayKey': 'displayName',
-              'valueKey': '_id'
+              'valueKey': '_id',
+              'className': 'serviceTicketLabel'
 
             }}
-            label={'Select Customer'}
+            label={'Customer'}
             name={'customerId'}
             required
             value={FormikValues.customerId}
@@ -153,25 +157,46 @@ function BCServiceTicketModal({
                   })
                 ],
                 'displayKey': 'name',
-                'valueKey': '_id'
+                'valueKey': '_id',
+                'className': 'serviceTicketLabel'
               }}
-              label={'Select Jobsite'}
+              label={'Job Site'}
               name={'jobSiteId'}
               value={FormikValues.jobSiteId}
             />}
+            <BCSelectOutlined
+            handleChange={formikChange}
+            items={{
+              'data': [
+                ...jobTypes.map((o: any) => {
+                  return {
+                    '_id': o._id,
+                    'title': o.title,
+                  };
+                })
+              ],
+              'displayKey': 'title',
+              'valueKey': '_id',
+              'className': 'serviceTicketLabel'
+            }}
+            label={'Job Type'}
+            name={'jobTypeId'}
+            value={FormikValues.jobTypeId}
+          />
           <BCInput
             handleChange={formikChange}
             label={'Notes / Special Instructions'}
             multiline
             name={'note'}
             value={FormikValues.note}
+            className='serviceTicketLabel'
           />
           <BCDateTimePicker
             disablePast
             handleChange={dateChangeHandler}
-            label={'Schedule Date'}
+            className='serviceTicketLabel'
+            label={'Due Date'}
             name={'scheduleDate'}
-            required
             value={FormikValues.scheduleDate}
           />
         </div>
@@ -184,7 +209,7 @@ function BCServiceTicketModal({
           classes={{
             'root': classes.fabRoot
           }}
-          color={'secondary'}
+          className={'serviceTicketBtn'}
           disabled={isSubmitting}
           onClick={() => closeModal()}
           variant={'extended'}>
@@ -200,8 +225,8 @@ function BCServiceTicketModal({
           type={'submit'}
           variant={'extended'}>
           {ticket._id
-            ? 'Edit'
-            : 'Submit'}
+            ? 'Save Job'
+            : 'Generate Job'}
         </Fab>
         {/* <Fab
           aria-label={'create-job'}

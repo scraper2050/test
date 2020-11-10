@@ -17,7 +17,8 @@ function BCInput({ handleChange,
   label = '',
   rows = 4,
   placeholder = '',
-  variant = 'outlined'
+  variant = 'outlined',
+  className = ''
 }: any) {
   const classes = useStyles();
   const additionalProps: any = {
@@ -30,6 +31,7 @@ function BCInput({ handleChange,
     <FormControl className={classes.fullWidth}>
       <Typography
         gutterBottom
+        className={className}
         variant={'subtitle1'}>
         {label}
       </Typography>

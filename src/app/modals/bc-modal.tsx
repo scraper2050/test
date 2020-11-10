@@ -149,6 +149,7 @@ function BCModal() {
           data && data.modalTitle !== ''
             ? <DialogTitle disableTypography>
               <Typography
+                className={data.className ? data.className : ''}
                 variant={'h6'}>
                 {data.modalTitle}
               </Typography>
