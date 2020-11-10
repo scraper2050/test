@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getJobSites } from 'actions/job-site/job-site.action';
 import "../../../scss/index.scss";
 
+import "../../../scss/index.scss";
+
 
 function BCServiceTicketModal({
   classes,
