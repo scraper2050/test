@@ -115,6 +115,7 @@ function ViewMorePage({ classes }: any) {
         <BCBackButton
               link={'/main/customers'}
             />
+            <div className="tab_wrapper">
             <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}
@@ -130,13 +131,14 @@ function ViewMorePage({ classes }: any) {
               }
             ]}
           />
+          </div>
            
           <SwipeableViews index={curTab} className={'swipe_wrapper'}>
             <div
               className={`${classes.dataContainer} `}
               hidden={curTab !== 0}
               id={'0'}>
-              <PageContainer>
+              <PageContainer className="info_wrapper">
                 < CustomerInfoPage customerObj={customerObj}/>
                 <Fab
                     aria-label={'delete'}

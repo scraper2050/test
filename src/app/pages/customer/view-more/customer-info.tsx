@@ -21,6 +21,7 @@ function CustomerInfoPage({ classes, customerObj }: any) {
                 }}
                 color={'primary'}
                 variant={'extended'}>
+                  {/* <i class="material-icons">add</i> */}
                 {'Edit'}
               </Fab>
               </div>

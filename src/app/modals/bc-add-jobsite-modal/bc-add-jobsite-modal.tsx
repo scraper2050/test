@@ -25,6 +25,8 @@ import { useDispatch } from 'react-redux';
 import { createJobSiteAction, updateJobSiteAction } from 'actions/job-site/job-site.action';
 
 
+import '../../../scss/index.scss';
+
 interface Props {
   classes: any
 }
@@ -139,13 +141,14 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   return (
     <>
       <MainContainer>
-        <PageContainer>
+        <PageContainer className="map_modal__wrapper">
           <DataContainer
             id={'0'}>
             <Grid container>
               <Grid
                 item
-                sm={6}>
+                sm={12}
+                lg={6}>
                 <Formik
                   initialValues={initialValues}
                   onSubmit={(values, { setSubmitting }) => {
@@ -332,7 +335,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                       </Grid>
 
                       <Grid
-                        className={classes.paper}
+                        className={classNames(classes.paper, 'form_button_wrapper-desktop')} 
                         item
                         md={12}>
                         <Box mt={2}>
@@ -361,7 +364,8 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
               <Grid
                 className={classNames(classes.paper, classes.mapLocation)}
                 item
-                sm={6}>
+                sm={12}
+                lg={6}>
                 <Grid container>
                   <Grid
                     className={classes.paper}
@@ -407,12 +411,38 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                   </Grid>
                 </Grid>
 
-                <div className={classNames(classes.paper, classes.mapWrapper)}>
-                  <BCMapWithMarker
-                    lang={positionValue.long}
-                    lat={positionValue.lat}
-                  />
+                <div className="modal_map__wrapper">
+                  <div className={classNames(classes.paper, classes.mapWrapper)}>
+                    <BCMapWithMarker
+                      lang={positionValue.long}
+                      lat={positionValue.lat}
+                    />
+                  </div>
                 </div>
+
+
+                <Grid
+                        className={classNames(classes.paper, 'form_button_wrapper-mobile')} 
+                        item
+                        md={12}>
+                        <Box mt={2}>
+                          <Button
+                            className={'save-customer-button'}
+                            color={'primary'}
+                            type={'submit'}
+                            variant={'contained'}>
+                            {jobSiteInfo && jobSiteInfo.update ? 'Update' : 'Save'}
+                          </Button>
+                          <Button
+                            className={'cancel-customer-button'}
+                            onClick={() => closeModal()}
+                            color={'secondary'}
+                            variant={'contained'}>
+                            {'Cancel'}
+                          </Button>
+                        </Box>
+                      </Grid>
+
               </Grid>
             </Grid>
           </DataContainer>

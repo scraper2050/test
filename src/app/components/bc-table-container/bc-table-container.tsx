@@ -8,6 +8,8 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 // Import { useDispatch } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 
+import '../../../scss/index.scss';
+
 function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...', pagination = true, initialMsg = 'There are no contacts!' }: any) {
   // Const dispatch = useDispatch();
   const [searchText, setSearchText] = useState(''); // eslint-disable-line
@@ -38,7 +40,7 @@ function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, c
       <Grid
         item
         md={6}
-        xs={12}>
+        xs={12} className="search_wrapper">
         {search
           ? <BCTableSearchContainer
             handleSearchChange={handleSearchChange}

@@ -98,7 +98,23 @@ body {
 // swipe_wrapper
 
 .swipe_wrapper .react-swipeable-view-container > div {
-  overflow: inherit !important;
+  overflow: hidden !important;
+}
+
+.swipe_wrapper {
+  .MuiTable-root {
+    .MuiTableBody-root {
+      tr {
+        td {
+          padding-top: 16px !important;
+          padding-bottom: 16px !important;
+          .MuiFab-primary {
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
+  }
 }
 
 .customer_info_wrapper {
@@ -140,10 +156,97 @@ body {
   padding-bottom: 30px;
 }
 
-[class *= "ViewMorePage-dataContainer"] > div {
+[class *= "ViewMorePage-dataContainer"] {
+  padding-bottom: 57px !important;
+  > div {
+
   justify-content: space-between;
 
   > .MuiFab-primary {
     box-shadow: none;
+  }
+}
+}
+
+
+.search_wrapper {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.tab_wrapper {
+  .MuiTab-root, 
+  .MuiTabs-indicator {
+    width: 200px !important;
+  }
+  .MuiTab-wrapper {
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 16px !important;
+    line-height: 20px !important;
+    text-align: center !important;
+    color: #000000 !important;
+  }
+}
+
+.form_button_wrapper-desktop {
+  display: block !important;
+}
+
+.form_button_wrapper-mobile {
+  display: none !important;
+}
+
+@media (max-width: 1280px) {
+   .form_button_wrapper-desktop {
+      display: none !important;
+    }
+
+  .form_button_wrapper-mobile {
+    display: block !important;
+  }
+  .modal_map__wrapper {
+    position: relative;
+    padding-top: 52.6%;
+    > div {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .map_modal__wrapper {
+    .MuiGrid-container > div:nth-child(2) {
+      padding: 0 !important;
+      .MuiGrid-container {
+        padding-bottom: 15px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1050px) {
+  .info_wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .customer_info_wrapper {
+    max-width: 100%;
+  }
+
+  .MuiFab-primary {
+    margin-bottom: 30px !important;
+  }
+
+
+
+  #navbar-container {
+    width: auto !important;
+    > div {
+      width: auto !important;
+      margin-top: 5px;
+    }
   }
 }
