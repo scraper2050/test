@@ -111,3 +111,26 @@ body {
     background: none !important;
   }
 }
+
+.MuiDialog-paperWidthXs {
+  max-width: 481px !important;
+}
+
+.MuiDialog-scrollPaper {
+  .MuiDialogTitle-root h6 {
+    font-size: 30px;
+  }
+}
+
+.ticket_form__wrapper {
+  .MuiFab-primary {
+    height: 37px;
+    width: 187px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .MuiFab-label {
+      font-size: 16px;
+    }
+  }
+}
