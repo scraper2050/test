@@ -12,6 +12,7 @@ import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api'
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { getJobSites } from 'actions/job-site/job-site.action';
+import "../../../scss/index.scss";
 
 
 function BCServiceTicketModal({
@@ -131,7 +132,7 @@ function BCServiceTicketModal({
   };
 
   return (
-    <form onSubmit={FormikSubmit}>
+    <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <div>
           <BCSelectOutlined
