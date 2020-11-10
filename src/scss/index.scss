@@ -197,6 +197,10 @@ body {
   display: none !important;
 }
 
+.modal_map__wrapper {
+  height: 100%;
+}
+
 @media (max-width: 1280px) {
    .form_button_wrapper-desktop {
       display: none !important;
