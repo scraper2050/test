@@ -148,7 +148,19 @@ body {
     max-width: auto;
     min-height: none;
     max-height: auto;
-    color: #DADADA;
+    color: #707070;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    i {
+      font-size: 18px;
+    }
+    &:hover {
+      i {
+        color: #FFFFFF;
+      }
+    }
   }
 }
 

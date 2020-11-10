@@ -14,16 +14,8 @@ function CustomerInfoPage({ classes, customerObj }: any) {
         <div className="customer_info_wrapper">
             <div className="name_wrapper customer_details">
               <strong>Name:</strong> {customerObj.name}
-                <Fab
-                aria-label={'delete'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                variant={'extended'}>
-                  {/* <i class="material-icons">add</i> */}
-                {'Edit'}
-              </Fab>
+              <button className="MuiFab-primary"><i className="material-icons">edit</i></button>
+              
               </div>
             <div className="customer_details"><strong>Address:</strong> {customerObj.address}</div>
            <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
