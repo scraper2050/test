@@ -33,6 +33,15 @@ function BCServiceTicketModal({
     setFieldValue('jobSiteId', '');
     dispatch(getJobSites(customerId));
   }
+
+  const formatRequestObj = (rawReqObj: any) => {
+    for ( let key in rawReqObj ) {
+        if(rawReqObj[key] === ''){
+          delete rawReqObj[key];
+        }
+    }
+    return rawReqObj;
+  }
  
   const {
     'values': FormikValues,
@@ -58,7 +67,8 @@ function BCServiceTicketModal({
       tempData.scheduleDate = formatDate(tempData.scheduleDate);
       if (ticket._id) {
         tempData.ticketId = ticket._id;
-        callEditTicketAPI(tempData).then((response: any) => {
+        let formatedRequest = formatRequestObj(tempData);
+        callEditTicketAPI(formatedRequest).then((response: any) => {
           dispatch(refreshServiceTickets(true));
           dispatch(closeModalAction());
           setTimeout(() => {
@@ -74,7 +84,8 @@ function BCServiceTicketModal({
             throw err;
           });
       } else {
-        callCreateTicketAPI(tempData).then((response: any) => {
+        let formatedRequest = formatRequestObj(tempData);
+        callCreateTicketAPI(formatedRequest).then((response: any) => {
           dispatch(refreshServiceTickets(true));
           dispatch(closeModalAction());
           setTimeout(() => {
