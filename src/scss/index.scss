@@ -1,7 +1,7 @@
-@import './variable.scss';
+@import "./variable.scss";
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .App {
@@ -24,71 +24,71 @@ body {
 }
 
 .min-h-full {
-  min-height: 100%
+  min-height: 100%;
 }
 .whitespace-no-wrap {
-  white-space: nowrap
+  white-space: nowrap;
 }
 .p-12 {
-  padding: 1.2rem
+  padding: 1.2rem;
 }
 .sm\:p-12 {
-  padding: 1.2rem
+  padding: 1.2rem;
 }
 .border-1 {
-  border-width: 1px
+  border-width: 1px;
 }
 .sm\:border-1 {
-  border-width: 1px
+  border-width: 1px;
 }
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap
+  white-space: nowrap;
 }
 .cursor-pointer {
-  cursor: pointer
+  cursor: pointer;
 }
 .overflow-hidden {
-  overflow: hidden
+  overflow: hidden;
 }
 .md\:overflow-hidden {
-  overflow: hidden
+  overflow: hidden;
 }
 .w-0 {
-  width: 0
+  width: 0;
 }
 .max-w-0 {
-  max-width: 0
+  max-width: 0;
 }
 .flex-shrink-0 {
-  flex-shrink: 0
+  flex-shrink: 0;
 }
 .md\:flex-shrink-0 {
-  flex-shrink: 0
+  flex-shrink: 0;
 }
 .px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
 .sm\:px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
 .md\:px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
 .lg\:px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
-.invoice-paper{
+.invoice-paper {
   border: 1px solid #ccc;
   border-bottom: none;
   box-shadow: none !important;
 }
-.cell-border-right{
+.cell-border-right {
   border-right: 1px solid #ccc;
 }
 .cursor-default {
@@ -118,8 +118,8 @@ body {
 }
 
 .customer_info_wrapper {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
   box-sizing: border-box;
   border-radius: 10px;
   width: 100%;
@@ -153,8 +153,8 @@ body {
   .MuiFab-primary {
     box-shadow: none;
     border-radius: 0;
-    background: #E5E5E5;
-    border: 1px solid #C4C4C4;
+    background: #e5e5e5;
+    border: 1px solid #c4c4c4;
     box-sizing: border-box;
     border-radius: 4px;
     width: 30px;
@@ -175,32 +175,29 @@ body {
     }
     &:hover {
       i {
-        color: #FFFFFF;
+        color: #ffffff;
       }
     }
   }
 }
 
 .name_wrapper {
-  
 }
 
 .customer_details {
   padding-bottom: 30px;
 }
 
-[class *= "ViewMorePage-dataContainer"] {
+[class*="ViewMorePage-dataContainer"] {
   padding-bottom: 57px !important;
   > div {
+    justify-content: space-between;
 
-  justify-content: space-between;
-
-  > .MuiFab-primary {
-    box-shadow: none;
+    > .MuiFab-primary {
+      box-shadow: none;
+    }
   }
 }
-}
-
 
 .search_wrapper {
   margin-left: auto !important;
@@ -208,7 +205,7 @@ body {
 }
 
 .tab_wrapper {
-  .MuiTab-root, 
+  .MuiTab-root,
   .MuiTabs-indicator {
     width: 200px !important;
   }
@@ -239,9 +236,9 @@ body {
     flex-direction: column;
     flex: 2;
   }
-   .form_button_wrapper-desktop {
-      display: none !important;
-    }
+  .form_button_wrapper-desktop {
+    display: none !important;
+  }
 
   .form_button_wrapper-mobile {
     display: block !important;
@@ -281,8 +278,6 @@ body {
     margin-bottom: 30px !important;
   }
 
-
-
   #navbar-container {
     width: auto !important;
     > div {
@@ -290,4 +285,11 @@ body {
       margin-top: 5px;
     }
   }
+}
+
+.editCustomerForm {
+  width: 400px;
+}
+.editCustomerContainer {
+  margin-top: -41px !important;
 }

@@ -24,14 +24,15 @@ export const getCustomers = async (param?: {}) => {
   return responseData.customers;
 };
 
-export const updateCustomers = async (param?: {}) => {
+export const updateCustomers = async (data:any) => {
   const body = {
     includeActive: "true",
     includeNonActive: "false",
+
   };
   let responseData;
   try {
-    const response: any = await request("/updateCustomer", "POST", body, false);
+    const response: any = await request("/updateCustomer", "POST", data, false);
     responseData = response.data;
   } catch (err) {
     responseData = { msg: '' };

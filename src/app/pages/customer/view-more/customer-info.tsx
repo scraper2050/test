@@ -7,21 +7,20 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { useDispatch } from 'react-redux';
 import '../../../../scss/index.scss';
 import { modalTypes } from '../../../../constants';
-import customer from '../customer';
-
 
 function CustomerInfoPage({ classes, customerObj }: any) {
 
   const dispatch = useDispatch();
 
   const handleEditClick = (customer:any) => {
+    debugger
       dispatch(setModalDataAction({
         'data': {
           'customerObj': customer,
-          'modalTitle': 'Edit Job Site',
+          'modalTitle': 'Edit Customer Information',
           'removeFooter': false
         },
-        'type': modalTypes.ADD_JOB_SITE
+        'type': modalTypes.EDIT_CUSTOMER_INFO
       }));
       setTimeout(() => {
         dispatch(openModalAction());
@@ -33,14 +32,15 @@ function CustomerInfoPage({ classes, customerObj }: any) {
         <div className="customer_info_wrapper">
             <div className="customer_container">
               <div className="name_wrapper customer_details">
-                <strong>Name:</strong> Jamal
+                <strong>Name: </strong> {customerObj.customerName}
               </div>
-              <div className="customer_details"><strong>Address:</strong> {customerObj.address}</div>
-              <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
-              <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
-              <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
+              <div className="customer_details"><strong>Contact Name: </strong> {customerObj.contactName}</div>
+              <div className="customer_details"><strong>Address: </strong> {customerObj.address}</div>
+              <div className="customer_details"><strong>E-mail: </strong> {customerObj.email}</div>
+              <div className="customer_details"></div>
+              <div className="customer_details"><strong>Phone: </strong> {customerObj.phone}</div>
             </div>
-            <div className="edit_button">
+            <div className="edit_button" onClick={()=>handleEditClick(customerObj)}>
               <button className="MuiFab-primary"><i className="material-icons">edit</i></button>
             </div>
         </div>

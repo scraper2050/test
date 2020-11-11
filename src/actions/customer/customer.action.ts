@@ -27,14 +27,15 @@ export const setCustomers = (customers: any) => {
     }
 }
 
-export const updateCustomerAction = (customers: any) => {
+export const updateCustomerAction = (customers: any, callback?:any) => {
     return async (dispatch: any) => {
-        const customer: any = await updateCustomers();
+        const customer: any = await updateCustomers(customers);
         if (customer.hasOwnProperty('msg')) {
             dispatch({ type: CustomersActionType.UPDATE_CUSTOMER_FAILED, payload: customer.msg });
+            callback();
         } else {
             dispatch({ type: CustomersActionType.UPDATE_CUSTOMER, payload: customer });
-            
+            callback();
         }
     };
 }

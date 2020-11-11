@@ -79,22 +79,28 @@ function CustomersPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
+     
       let baseObj = row['original'];
       let customerName = baseObj['profile'] && baseObj['profile'] !== undefined ? baseObj['profile']['displayName'] : 'N/A';
       let customerAddress = baseObj['address'];
       let customerId =  row['original']['_id'];
+      let contactName = baseObj['contactName'] && baseObj['contactName'] !== undefined ? baseObj['contactName'] : '';
       let address:any;
       if(customerAddress && customerAddress !== undefined){
-        address = `${customerAddress['street']} ${customerAddress['city']} ${customerAddress['state']} ${customerAddress['zipCode']}`
+        address = `${customerAddress['street'] !== undefined ? customerAddress['street']:''} ${customerAddress['city'] !== undefined ? customerAddress['city']:'' } ${customerAddress['state'] !== undefined? customerAddress['state'] : ''} ${customerAddress['zipCode'] !==undefined ? customerAddress['zipCode'] : ''}`
       }else{
         address = 'N/A';
       }
+      let email = baseObj['info'] && baseObj['info'] !== undefined ? baseObj['info']['email'] : 'N/A';
+      let phone = baseObj['contact'] && baseObj['contact'] !== undefined ? baseObj['contact']['phone'] : 'N/A';
       let customerObj = {
         customerName: customerName,
         address, 
-        contactName: customerName,
+        contactName: contactName,
         customerId,
-        customerAddress
+        customerAddress,
+        email,
+        phone
       }
       customerName = customerName !== undefined ? customerName.replace(/ /g,'') : 'customername';
       history.push({
