@@ -23,6 +23,7 @@ import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import { createJobSiteAction, updateJobSiteAction } from 'actions/job-site/job-site.action';
+import { useHistory } from 'react-router-dom';
 
 
 import '../../../scss/index.scss';
@@ -33,6 +34,7 @@ interface Props {
 
 function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [positionValue, setPositionValue] = useState({
     'long': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.long ? jobSiteInfo.location.long : -86.902298,
     'lat': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.lat ? jobSiteInfo.location.lat : 32.3182314
@@ -166,6 +168,9 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                       if (jobSiteInfo.update) {
                         dispatch(updateJobSiteAction(requestObj, () => {
                           closeModal();
+                          history.push({
+                            pathname: `/main/customers`
+                          });
                         }))
                       } else {
                         dispatch(createJobSiteAction(requestObj, () => {

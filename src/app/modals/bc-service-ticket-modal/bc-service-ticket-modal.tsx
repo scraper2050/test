@@ -11,6 +11,11 @@ import { DialogActions, DialogContent, Fab, withStyles } from '@material-ui/core
 import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { getJobSites } from 'actions/job-site/job-site.action';
+import "../../../scss/index.scss";
+
+import "../../../scss/index.scss";
+
 
 function BCServiceTicketModal({
   classes,
@@ -18,11 +23,29 @@ function BCServiceTicketModal({
     'customer': {
       '_id': ''
     },
+    'jobSite': '',
+    'jobType': '',
     'note': '',
     'scheduleDate': new Date()
   }
 }: any): JSX.Element {
   const dispatch = useDispatch();
+  const handleCustomerChange = (event: any, fieldName: any, setFieldValue: any) => {
+    const customerId = event.target.value;
+    setFieldValue(fieldName, customerId);
+    setFieldValue('jobSiteId', '');
+    dispatch(getJobSites(customerId));
+  }
+
+  const formatRequestObj = (rawReqObj: any) => {
+    for ( let key in rawReqObj ) {
+        if(rawReqObj[key] === ''){
+          delete rawReqObj[key];
+        }
+    }
+    return rawReqObj;
+  }
+ 
   const {
     'values': FormikValues,
     'handleChange': formikChange,
@@ -33,6 +56,8 @@ function BCServiceTicketModal({
     // 'enableReinitialize': true,
     'initialValues': {
       'customerId': ticket.customer._id,
+      'jobSiteId': ticket.jobSite,
+      'jobTypeId': ticket.jobType,
       'note': ticket.note,
       'scheduleDate': ticket.scheduleDate
     },
@@ -45,7 +70,8 @@ function BCServiceTicketModal({
       tempData.scheduleDate = formatDate(tempData.scheduleDate);
       if (ticket._id) {
         tempData.ticketId = ticket._id;
-        callEditTicketAPI(tempData).then((response: any) => {
+        let formatedRequest = formatRequestObj(tempData);
+        callEditTicketAPI(formatedRequest).then((response: any) => {
           dispatch(refreshServiceTickets(true));
           dispatch(closeModalAction());
           setTimeout(() => {
@@ -61,7 +87,8 @@ function BCServiceTicketModal({
             throw err;
           });
       } else {
-        callCreateTicketAPI(tempData).then((response: any) => {
+        let formatedRequest = formatRequestObj(tempData);
+        callCreateTicketAPI(formatedRequest).then((response: any) => {
           dispatch(refreshServiceTickets(true));
           dispatch(closeModalAction());
           setTimeout(() => {
@@ -88,7 +115,10 @@ function BCServiceTicketModal({
      */
   });
   const customers = useSelector(({ customers }: any) => customers.data);
-
+  const jobSites = useSelector((state: any) => state.jobSites.data);
+  const isLoading = useSelector((state: any) => state.jobSites.loading);
+  const jobTypes = useSelector((state: any) => state.jobTypes.data);
+  
   const dateChangeHandler = (date: string) => {
     setFieldValue('scheduleDate', date);
   };
@@ -104,11 +134,10 @@ function BCServiceTicketModal({
   };
 
   return (
-    <form onSubmit={FormikSubmit}>
+    <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <div>
           <BCSelectOutlined
-            handleChange={formikChange}
             items={{
               'data': [
                 ...customers.map((o: any) => {
@@ -119,12 +148,54 @@ function BCServiceTicketModal({
                 })
               ],
               'displayKey': 'displayName',
-              'valueKey': '_id'
+              'valueKey': '_id',
+              'className': 'serviceTicketLabel'
+
             }}
-            label={'Select Customer'}
+            label={'Customer'}
             name={'customerId'}
             required
             value={FormikValues.customerId}
+            handleChange={(event: any) => handleCustomerChange(event, 'customerId', setFieldValue)}
+          />
+          {isLoading ? 'Loading Job Sites...' :
+            <BCSelectOutlined
+              handleChange={formikChange}
+              items={{
+                'data': [
+                  ...jobSites.map((o: any) => {
+                    return {
+                      '_id': o._id,
+                      'name': o.name,
+                    };
+                  })
+                ],
+                'displayKey': 'name',
+                'valueKey': '_id',
+                'className': 'serviceTicketLabel'
+              }}
+              label={'Job Site'}
+              name={'jobSiteId'}
+              value={FormikValues.jobSiteId}
+            />}
+            <BCSelectOutlined
+            handleChange={formikChange}
+            items={{
+              'data': [
+                ...jobTypes.map((o: any) => {
+                  return {
+                    '_id': o._id,
+                    'title': o.title,
+                  };
+                })
+              ],
+              'displayKey': 'title',
+              'valueKey': '_id',
+              'className': 'serviceTicketLabel'
+            }}
+            label={'Job Type'}
+            name={'jobTypeId'}
+            value={FormikValues.jobTypeId}
           />
           <BCInput
             handleChange={formikChange}
@@ -132,13 +203,14 @@ function BCServiceTicketModal({
             multiline
             name={'note'}
             value={FormikValues.note}
+            className='serviceTicketLabel'
           />
           <BCDateTimePicker
             disablePast
             handleChange={dateChangeHandler}
-            label={'Schedule Date'}
+            className='serviceTicketLabel'
+            label={'Due Date'}
             name={'scheduleDate'}
-            required
             value={FormikValues.scheduleDate}
           />
         </div>
@@ -151,7 +223,7 @@ function BCServiceTicketModal({
           classes={{
             'root': classes.fabRoot
           }}
-          color={'secondary'}
+          className={'serviceTicketBtn'}
           disabled={isSubmitting}
           onClick={() => closeModal()}
           variant={'extended'}>
@@ -167,8 +239,8 @@ function BCServiceTicketModal({
           type={'submit'}
           variant={'extended'}>
           {ticket._id
-            ? 'Edit'
-            : 'Submit'}
+            ? 'Save Job'
+            : 'Generate Job'}
         </Fab>
         {/* <Fab
           aria-label={'create-job'}

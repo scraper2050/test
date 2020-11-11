@@ -199,6 +199,43 @@ body {
   }
 }
 
+.serviceTicketTitle {
+  color: $primary-blue !important;
+  text-align: center;
+}
+
+.serviceTicketLabel {
+  font-weight: bold !important;
+}
+.serviceTicketBtn {
+  color: black !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+.MuiDialog-paperWidthXs {
+  max-width: 481px !important;
+}
+
+.MuiDialog-scrollPaper {
+  .MuiDialogTitle-root h6 {
+    font-size: 30px;
+  }
+}
+
+.ticket_form__wrapper {
+  .MuiFab-primary {
+    height: 37px;
+    width: 187px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .MuiFab-label {
+      font-size: 16px;
+    }
+  }
+}
+
 .search_wrapper {
   margin-left: auto !important;
   margin-right: 0 !important;
@@ -292,4 +329,27 @@ body {
 }
 .editCustomerContainer {
   margin-top: -41px !important;
+}
+
+.MuiDialog-paperWidthXs {
+  max-width: 481px !important;
+}
+
+.MuiDialog-scrollPaper {
+  .MuiDialogTitle-root h6 {
+    font-size: 30px;
+  }
+}
+
+.ticket_form__wrapper {
+  .MuiFab-primary {
+    height: 37px;
+    width: 187px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .MuiFab-label {
+      font-size: 16px;
+    }
+  }
 }
