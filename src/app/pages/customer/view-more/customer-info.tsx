@@ -31,16 +31,18 @@ function CustomerInfoPage({ classes, customerObj }: any) {
   return (
 
         <div className="customer_info_wrapper">
-            <div className="name_wrapper customer_details">
-              <strong>Name:</strong> {customerObj.contactName}
-              <strong>Contact Name:</strong> {customerObj.contactName}
-              <button onClick={() => handleEditClick(customerObj)} className="MuiFab-primary"><i className="material-icons">edit</i></button>
+            <div className="customer_container">
+              <div className="name_wrapper customer_details">
+                <strong>Name:</strong> Jamal
               </div>
-            <div className="customer_details">
-                <strong>Address:</strong> {customerObj.address}
-                <strong>Email:</strong> test@test.com
+              <div className="customer_details"><strong>Address:</strong> {customerObj.address}</div>
+              <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
+              <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
+              <div className="customer_details"><strong>Contact Name:</strong> {customerObj.contactName}</div>
             </div>
-           <div className="customer_details"><strong>Phone:</strong> {customerObj.contactName}</div>
+            <div className="edit_button">
+              <button className="MuiFab-primary"><i className="material-icons">edit</i></button>
+            </div>
         </div>
      
   );
