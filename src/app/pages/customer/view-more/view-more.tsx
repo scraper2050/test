@@ -138,7 +138,7 @@ function ViewMorePage({ classes }: any) {
               className={`${classes.dataContainer} `}
               hidden={curTab !== 0}
               id={'0'}>
-              <PageContainer className="info_wrapper">
+              <PageContainer className="info_wrapper alignAddJobSite">
                 < CustomerInfoPage customerObj={customerObj}/>
                 <Fab
                     aria-label={'delete'}
