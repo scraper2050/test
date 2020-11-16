@@ -82,7 +82,7 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
   'displayKey': '',
   'valueKey': '',
   'className': ''
-}, label = '', required = false, inputWidth = 'auto', formStyles = {}, nakedSelect = false }: any) {
+}, label = '', required = false, inputWidth = 'auto', formStyles = {}, nakedSelect = false, disabled = false }: any) {
   const classes = useStyles();
   const formControlStyles = {
     ...formStyles
@@ -109,6 +109,7 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
         : null}
 
       <Select
+        disabled={disabled}
         classes={{
           'root': nakedSelect
             ? classes.nakedSelectRoot

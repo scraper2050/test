@@ -28,12 +28,13 @@ function ServiceTicket({ classes }: any) {
     dispatch(loadingJobSites());
     dispatch(getJobSites(ticket.customer._id));
     dispatch(getAllJobTypesAPI());
+    ticket.updateFlag = true;
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Edit Ticket',
         'removeFooter': false,
         'ticketData': ticket,
-        'className': 'serviceTicketTitle'
+        'className': 'serviceTicketTitle',
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));

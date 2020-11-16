@@ -85,10 +85,10 @@ function CustomersPage({ classes }: any) {
       let customerAddress = baseObj['address'];
       let customerId =  row['original']['_id'];
       let contactName = baseObj['contactName'] && baseObj['contactName'] !== undefined ? baseObj['contactName'] : '';
-      let address:any;
-      if(customerAddress && customerAddress !== undefined){
-        address = `${customerAddress['street'] !== undefined ? customerAddress['street']:''} ${customerAddress['city'] !== undefined ? customerAddress['city']:'' } ${customerAddress['state'] !== undefined? customerAddress['state'] : ''} ${customerAddress['zipCode'] !==undefined ? customerAddress['zipCode'] : ''}`
-      }else{
+      let address: any = '';
+      if (customerAddress && customerAddress !== undefined) {
+        address = `${customerAddress['street'] !== undefined && customerAddress['street'] !== null ? customerAddress['street'] : ''} ${customerAddress['city'] !== undefined && customerAddress['city'] !== null ? customerAddress['city'] : ''} ${customerAddress['state'] !== undefined && customerAddress['state'] !== null ? customerAddress['state'] : ''} ${customerAddress['zipCode'] !== undefined && customerAddress['zipCode'] !== null ? customerAddress['zipCode'] : ''}`
+      } else {
         address = 'N/A';
       }
       let email = baseObj['info'] && baseObj['info'] !== undefined ? baseObj['info']['email'] : 'N/A';

@@ -59,7 +59,8 @@ function BCServiceTicketModal({
       'jobSiteId': ticket.jobSite,
       'jobTypeId': ticket.jobType,
       'note': ticket.note,
-      'scheduleDate': ticket.scheduleDate
+      'scheduleDate': ticket.scheduleDate,
+      'updateFlag': ticket.updateFlag
     },
     'onSubmit': (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -149,11 +150,11 @@ function BCServiceTicketModal({
               ],
               'displayKey': 'displayName',
               'valueKey': '_id',
-              'className': 'serviceTicketLabel'
-
+              'className': 'serviceTicketLabel',
             }}
             label={'Customer'}
             name={'customerId'}
+            disabled={FormikValues.updateFlag === true}
             required
             value={FormikValues.customerId}
             handleChange={(event: any) => handleCustomerChange(event, 'customerId', setFieldValue)}
