@@ -1,7 +1,7 @@
 
 import { createApiAction } from '../action.utils';
 import { CustomersActionType, types } from '../../reducers/customer.types'
-import { getCustomers as fetchCustomers } from 'api/customer.api';
+import { getCustomers as fetchCustomers, updateCustomers } from 'api/customer.api';
 
 export const loadCustomersActions = createApiAction(types.CUSTOMER_LOAD);
 export const newCustomerAction = createApiAction(types.CUSTOMER_NEW);
@@ -25,6 +25,19 @@ export const setCustomers = (customers: any) => {
         type: types.SET_CUSTOMERS,
         payload: customers
     }
+}
+
+export const updateCustomerAction = (customers: any, callback?:any) => {
+    return async (dispatch: any) => {
+        const customer: any = await updateCustomers(customers);
+        if (customer.hasOwnProperty('msg')) {
+            dispatch({ type: CustomersActionType.UPDATE_CUSTOMER_FAILED, payload: customer.msg });
+            callback();
+        } else {
+            dispatch({ type: CustomersActionType.UPDATE_CUSTOMER, payload: customer });
+            callback();
+        }
+    };
 }
 
 

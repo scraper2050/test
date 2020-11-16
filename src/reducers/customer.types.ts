@@ -40,5 +40,7 @@ export interface CustomersState {
 export enum CustomersActionType {
     GET = 'getCustomers',
     SUCCESS = 'getCustomersSuccess',
-    FAILED = 'getCustomersFailed'
+    FAILED = 'getCustomersFailed',
+    UPDATE_CUSTOMER_FAILED = 'updateCustomerFailed',
+    UPDATE_CUSTOMER = 'updateCustomer'
 }

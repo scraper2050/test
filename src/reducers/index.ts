@@ -13,6 +13,7 @@ import routeReducer from './route.reducer';
 import serviceTicket from './service-ticket.reducer';
 import snackbarState from './snackbar.reducer';
 import tax from './tax.reduxer';
+import { JobSiteReducer as jobSites } from './job-site.reducer';
 import { VendorsReducer as vendors } from './vendor.reducer';
 import { GroupReducer as groups } from './group.reducer';
 import { TechniciansReducer as technicians } from './technicians.reducer';
@@ -62,5 +63,6 @@ export default combineReducers({
   inventory,
   purchasedTags,
   brands,
-  equipmentType
+  equipmentType,
+  jobSites
 });

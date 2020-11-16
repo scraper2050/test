@@ -80,8 +80,9 @@ const useStyles = makeStyles(theme => ({
 function BCSelectOutlined({ handleChange, error, value, name = '', items = {
   'data': [],
   'displayKey': '',
-  'valueKey': ''
-}, label = '', required = false, inputWidth = 'auto', formStyles = {}, nakedSelect = false }: any) {
+  'valueKey': '',
+  'className': ''
+}, label = '', required = false, inputWidth = 'auto', formStyles = {}, nakedSelect = false, disabled = false }: any) {
   const classes = useStyles();
   const formControlStyles = {
     ...formStyles
@@ -96,6 +97,7 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
           style={{
             'marginRight': 10
           }}
+          className={items.className ? items.className : ''}
           variant={'subtitle1'}>
           {label}
           {required
@@ -107,6 +109,7 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
         : null}
 
       <Select
+        disabled={disabled}
         classes={{
           'root': nakedSelect
             ? classes.nakedSelectRoot

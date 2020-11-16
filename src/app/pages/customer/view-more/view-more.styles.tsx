@@ -1,5 +1,5 @@
 import { Theme } from '@material-ui/core/styles';
-import { dataContainer, fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
+import { swipe_wrapper, dataContainer, fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
 export default (theme: Theme): any => ({
   ...fabRoot,
   ...pageContent,
@@ -7,4 +7,5 @@ export default (theme: Theme): any => ({
   ...pageContainer,
   ...topActionBar,
   ...dataContainer,
+  ...swipe_wrapper
 });

@@ -9,6 +9,7 @@ import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { getAllJobTypesAPI } from 'api/job.api';
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -23,11 +24,13 @@ function ScheduleJobsPage({ classes }: any) {
   };
 
   const openCreateTicketModal = () => {
-    dispatch(getCustomers())
+    dispatch(getCustomers());
+    dispatch(getAllJobTypesAPI());
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'New Ticket',
-        'removeFooter': false
+        'removeFooter': false,
+        'className': 'serviceTicketTitle'
       },
       'type': modalTypes.CREATE_TICKET_MODAL
     }));

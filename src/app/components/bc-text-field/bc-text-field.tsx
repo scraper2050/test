@@ -2,11 +2,12 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 import { FieldAttributes, useField } from 'formik';
 
-type BCTextFieldProps = { placeholder: string, variant?: any } & FieldAttributes<{}>;
+type BCTextFieldProps = { placeholder: string, variant?: any, type?:any} & FieldAttributes<{}>;
 
 export default function BCTextField({
   placeholder,
   variant,
+  type,
   ...props
 }: BCTextFieldProps) {
   const [field, meta] = useField<{}>(props);
@@ -17,9 +18,11 @@ export default function BCTextField({
     <TextField
       error={Boolean(errorText)}
       helperText={errorText}
+      type={type}
       placeholder={placeholder}
       variant={variant || 'outlined'}
       {...field}
+      
     />
   );
 }

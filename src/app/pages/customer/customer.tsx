@@ -7,11 +7,14 @@ import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
+  const history = useHistory();
+
   const columns: any = [
     {
       'Cell'({ row }: any) {
@@ -50,6 +53,7 @@ function CustomersPage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
+             onClick={() => renderViewMore(row)}
             variant={'extended'}>
             {'View More'}
           </Fab>
@@ -73,6 +77,40 @@ function CustomersPage({ classes }: any) {
   const handleRowClick = (event: any, row: any) => {
     console.log(event, row);
   };
+
+  const renderViewMore = (row: any) => {
+     
+      let baseObj = row['original'];
+      let customerName = baseObj['profile'] && baseObj['profile'] !== undefined ? baseObj['profile']['displayName'] : 'N/A';
+      let customerAddress = baseObj['address'];
+      let customerId =  row['original']['_id'];
+      let contactName = baseObj['contactName'] && baseObj['contactName'] !== undefined ? baseObj['contactName'] : '';
+      let address: any = '';
+      if (customerAddress && customerAddress !== undefined) {
+        address = `${customerAddress['street'] !== undefined && customerAddress['street'] !== null ? customerAddress['street'] : ''} ${customerAddress['city'] !== undefined && customerAddress['city'] !== null ? customerAddress['city'] : ''} ${customerAddress['state'] !== undefined && customerAddress['state'] !== null ? customerAddress['state'] : ''} ${customerAddress['zipCode'] !== undefined && customerAddress['zipCode'] !== null ? customerAddress['zipCode'] : ''}`
+      } else {
+        address = 'N/A';
+      }
+      let email = baseObj['info'] && baseObj['info'] !== undefined ? baseObj['info']['email'] : 'N/A';
+      let phone = baseObj['contact'] && baseObj['contact'] !== undefined ? baseObj['contact']['phone'] : 'N/A';
+      let customerObj = {
+        customerName: customerName,
+        address, 
+        contactName: contactName,
+        customerId,
+        customerAddress,
+        email,
+        phone
+      }
+      customerName = customerName !== undefined ? customerName.replace(/ /g,'') : 'customername';
+      history.push({
+        pathname: `customers/${customerName}`, 
+        state: customerObj
+      });
+  }
+
+  
+
 
   return (
     <div className={classes.pageMainContainer}>

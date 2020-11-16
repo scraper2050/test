@@ -3,7 +3,7 @@ import FormControl from '@material-ui/core/FormControl';
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, TimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles(theme => ({
   'datePicker': {
@@ -28,12 +28,14 @@ function BCDateTimePicker({
   variant = 'inline',
   dateFormat = 'MM/dd/yyyy',
   pickerType = 'date',
+  className = '',
   required = false }: any) {
   const classes = useStyles();
   return (
     <FormControl className={classes.fullWidth}>
       <Typography
         gutterBottom
+        className={className}
         variant={'subtitle1'}>
         {`${label}`}
         {required
@@ -45,7 +47,7 @@ function BCDateTimePicker({
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         {
           pickerType === 'date'
-            ? <DatePicker
+            ? <KeyboardDatePicker
               autoOk
               className={classes.datePicker}
               disablePast={disablePast}

@@ -9,7 +9,10 @@ import styles from '../../customer.styles';
 import { withStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
+import { getAllJobTypesAPI } from 'api/job.api';
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -22,11 +25,16 @@ function ServiceTicket({ classes }: any) {
     })
   }));
   const openEditTicketModal = (ticket: any) => {
+    dispatch(loadingJobSites());
+    dispatch(getJobSites(ticket.customer._id));
+    dispatch(getAllJobTypesAPI());
+    ticket.updateFlag = true;
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Edit Ticket',
         'removeFooter': false,
-        'ticketData': ticket
+        'ticketData': ticket,
+        'className': 'serviceTicketTitle',
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -148,6 +156,8 @@ function ServiceTicket({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
+      dispatch(getCustomers());
+      dispatch(getAllJobTypesAPI());
       dispatch(getAllServiceTicketAPI());
     }
   }, [refresh]);

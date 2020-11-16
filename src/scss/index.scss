@@ -1,7 +1,7 @@
-@import './variable.scss';
+@import "./variable.scss";
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .App {
@@ -24,73 +24,332 @@ body {
 }
 
 .min-h-full {
-  min-height: 100%
+  min-height: 100%;
 }
 .whitespace-no-wrap {
-  white-space: nowrap
+  white-space: nowrap;
 }
 .p-12 {
-  padding: 1.2rem
+  padding: 1.2rem;
 }
 .sm\:p-12 {
-  padding: 1.2rem
+  padding: 1.2rem;
 }
 .border-1 {
-  border-width: 1px
+  border-width: 1px;
 }
 .sm\:border-1 {
-  border-width: 1px
+  border-width: 1px;
 }
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap
+  white-space: nowrap;
 }
 .cursor-pointer {
-  cursor: pointer
+  cursor: pointer;
 }
 .overflow-hidden {
-  overflow: hidden
+  overflow: hidden;
 }
 .md\:overflow-hidden {
-  overflow: hidden
+  overflow: hidden;
 }
 .w-0 {
-  width: 0
+  width: 0;
 }
 .max-w-0 {
-  max-width: 0
+  max-width: 0;
 }
 .flex-shrink-0 {
-  flex-shrink: 0
+  flex-shrink: 0;
 }
 .md\:flex-shrink-0 {
-  flex-shrink: 0
+  flex-shrink: 0;
 }
 .px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
 .sm\:px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
 .md\:px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
 .lg\:px-12 {
   padding-left: 1.2rem;
-  padding-right: 1.2rem
+  padding-right: 1.2rem;
 }
-.invoice-paper{
+.invoice-paper {
   border: 1px solid #ccc;
   border-bottom: none;
   box-shadow: none !important;
 }
-.cell-border-right{
+.cell-border-right {
   border-right: 1px solid #ccc;
 }
 .cursor-default {
   cursor: default;
+}
+
+// swipe_wrapper
+
+.swipe_wrapper .react-swipeable-view-container > div {
+  overflow: hidden !important;
+}
+
+.swipe_wrapper {
+  .MuiTable-root {
+    .MuiTableBody-root {
+      tr {
+        td {
+          padding-top: 16px !important;
+          padding-bottom: 16px !important;
+          .MuiFab-primary {
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.customer_info_wrapper {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  box-sizing: border-box;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 700px;
+  padding: 24px 30px;
+}
+
+.name_wrapper {
+  display: flex;
+}
+
+.customer_info_wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.customer_container {
+  display: flex;
+  flex-wrap: wrap;
+  .customer_details {
+    width: 50%;
+    padding-bottom: 10px;
+    &:nth-child(2n) {
+      padding-right: 0;
+    }
+  }
+}
+
+.edit_button {
+  float: right;
+  .MuiFab-primary {
+    box-shadow: none;
+    border-radius: 0;
+    background: #e5e5e5;
+    border: 1px solid #c4c4c4;
+    box-sizing: border-box;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    min-width: none;
+    max-width: auto;
+    min-height: none;
+    max-height: auto;
+    color: #707070;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    i {
+      font-size: 18px;
+    }
+    &:hover {
+      i {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.name_wrapper {
+}
+
+.customer_details {
+  padding-bottom: 30px;
+}
+
+[class*="ViewMorePage-dataContainer"] {
+  padding-bottom: 57px !important;
+  > div {
+    justify-content: space-between;
+
+    > .MuiFab-primary {
+      box-shadow: none;
+    }
+  }
+}
+
+.serviceTicketTitle {
+  color: $primary-blue !important;
+  text-align: center;
+}
+
+.serviceTicketLabel {
+  font-weight: bold !important;
+}
+.serviceTicketBtn {
+  color: black !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+.MuiDialog-paperWidthXs {
+  max-width: 481px !important;
+}
+
+.MuiDialog-scrollPaper {
+  .MuiDialogTitle-root h6 {
+    font-size: 30px;
+  }
+}
+
+.ticket_form__wrapper {
+  .MuiFab-primary {
+    height: 37px;
+    width: 187px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .MuiFab-label {
+      font-size: 16px;
+    }
+  }
+}
+
+.search_wrapper {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.tab_wrapper {
+  .MuiTab-root,
+  .MuiTabs-indicator {
+    width: 200px !important;
+  }
+  .MuiTab-wrapper {
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 16px !important;
+    line-height: 20px !important;
+    text-align: center !important;
+    color: #000000 !important;
+  }
+}
+
+.form_button_wrapper-desktop {
+  display: block !important;
+}
+
+.form_button_wrapper-mobile {
+  display: none !important;
+}
+
+.modal_map__wrapper {
+  height: 100%;
+}
+
+@media (max-width: 1280px) {
+  .customer_container {
+    flex-direction: column;
+    flex: 2;
+  }
+  .form_button_wrapper-desktop {
+    display: none !important;
+  }
+
+  .form_button_wrapper-mobile {
+    display: block !important;
+  }
+  .modal_map__wrapper {
+    position: relative;
+    padding-top: 52.6%;
+    > div {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .map_modal__wrapper {
+    .MuiGrid-container > div:nth-child(2) {
+      padding: 0 !important;
+      .MuiGrid-container {
+        padding-bottom: 15px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1050px) {
+  .info_wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .customer_info_wrapper {
+    max-width: 100%;
+  }
+
+  .MuiFab-primary {
+    margin-bottom: 30px !important;
+  }
+
+  #navbar-container {
+    width: auto !important;
+    > div {
+      width: auto !important;
+      margin-top: 5px;
+    }
+  }
+}
+
+.editCustomerForm {
+  width: 400px;
+}
+.editCustomerContainer {
+  margin-top: -41px !important;
+}
+
+.MuiDialog-paperWidthXs {
+  max-width: 481px !important;
+}
+
+.MuiDialog-scrollPaper {
+  .MuiDialogTitle-root h6 {
+    font-size: 30px;
+  }
+}
+
+.ticket_form__wrapper {
+  .MuiFab-primary {
+    height: 37px;
+    width: 187px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .MuiFab-label {
+      font-size: 16px;
+    }
+  }
 }

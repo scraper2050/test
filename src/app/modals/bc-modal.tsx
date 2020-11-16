@@ -5,6 +5,8 @@ import BCServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-mo
 import BCAddBrandsModal from './bc-add-brands-modal/bc-add-brands-modal';
 import BCAddJobTypeModal from './bc-add-job-type-modal/bc-add-job-type-modal';
 import BCAddEquipmentTypeModal from './bc-add-equipment-type-modal/bc-add-equipment-type-modal';
+import BCAddJobSiteModal from './bc-add-jobsite-modal/bc-add-jobsite-modal';
+import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-modal';
 import CloseIcon from '@material-ui/icons/Close';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../constants';
@@ -116,6 +118,23 @@ function BCModal() {
             'maxWidth': 'xs'
           });
           setComponent(<BCAddEquipmentTypeModal />);
+        case modalTypes.ADD_JOB_SITE:
+          setModalOptions({
+              'disableBackdropClick': true,
+              'disableEscapeKeyDown': true,
+              'fullWidth': true,
+              'maxWidth': 'md'
+            });
+            setComponent(<BCAddJobSiteModal jobSiteInfo={data.customerObj}/>);
+          break;
+        case modalTypes.EDIT_CUSTOMER_INFO:
+          setModalOptions({
+              'disableBackdropClick': true,
+              'disableEscapeKeyDown': true,
+              'fullWidth': true,
+              'maxWidth': 'sm'
+            });
+            setComponent(<BCEditCutomerInfoModal customerInfo={data.customerObj}/>);
           break;
         default:
           setComponent(null);
@@ -149,6 +168,7 @@ function BCModal() {
           data && data.modalTitle !== ''
             ? <DialogTitle disableTypography>
               <Typography
+                className={data.className ? data.className : ''}
                 variant={'h6'}>
                 {data.modalTitle}
               </Typography>

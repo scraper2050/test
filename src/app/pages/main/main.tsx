@@ -10,6 +10,7 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
+const ViewMoreCustomerPage = React.lazy(() => import('../customer/view-more/view-more'));
 const InvoicingTodosPage = React.lazy(() => import('../invoicing/todos/todos'));
 const InvoicingListPage = React.lazy(() => import('../invoicing/invoices-list/invoices-list'));
 const InvoicingPurchaseOrderPage = React.lazy(() => import('../invoicing/purchase-order/purchase-order'));
@@ -118,7 +119,6 @@ function Main(): any {
                     path={'/main/employees/office-admin'}
                     title={'Employees'}
                   />
-
                   <AuthRoute
                     Component={CustomersPage}
                     actionData={{
@@ -140,6 +140,16 @@ function Main(): any {
                     Component={ScheduleJobsPage}
                     exact
                     path={'/main/customers/schedule'}
+                    title={'Customers'}
+                  />
+                  <AuthRoute
+                    Component={ViewMoreCustomerPage}
+                    actionData={{
+                      'link': '/main/customers/:customername',
+                      'title': 'Customers'
+                    }}
+                    exact
+                    path={'/main/customers/:customername'}
                     title={'Customers'}
                   />
 
