@@ -190,9 +190,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         className={classes.paper}
                         item
                         sm={12}>
-                        <p className={classes.subTitle}>
-                          {'New Job Site Information'}
-                        </p>
+                  
                       </Grid>
 
                       <Grid
