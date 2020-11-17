@@ -46,7 +46,7 @@ function ViewMorePage({ classes }: any) {
       'sortable': true
     },
     {
-      'Header': 'Name',
+      'Header': 'Contact Name',
       'accessor': 'contact.name',
       'className': 'font-bold',
       'sortable': true
@@ -84,6 +84,10 @@ function ViewMorePage({ classes }: any) {
    const customerId = obj.customerId;
    dispatch(loadingJobSites());
    dispatch(getJobSites(customerId));
+
+   return () => {
+     localStorage.setItem('nestedRouteKey', '');
+   }
   }, []);
 
   const handleTabChange = (newValue: number) => {

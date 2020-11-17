@@ -103,6 +103,7 @@ function CustomersPage({ classes }: any) {
         phone
       }
       customerName = customerName !== undefined ? customerName.replace(/ /g,'') : 'customername';
+      localStorage.setItem('nestedRouteKey', `${customerName}`);
       history.push({
         pathname: `customers/${customerName}`, 
         state: customerObj

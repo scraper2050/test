@@ -13,6 +13,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
   const history = useHistory();
   const location = useLocation();
   const pathName = location.pathname;
+  let nestedRouteKey = localStorage.getItem('nestedRouteKey');
   const LINK_DATA = [
     {
       'label': 'Customer List',
@@ -157,7 +158,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
                   key={idx}
                   onClick={() => onClickLink(item.link)}
                   selected={
-                    pathName === item.link
+                    pathName === item.link || pathName === `${item.link}/${nestedRouteKey}`
                   }>
                   {item.label}
                 </StyledListItem>
