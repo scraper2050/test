@@ -2,7 +2,7 @@
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDate } from 'helpers/format'
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
@@ -12,8 +12,6 @@ import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api'
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { getJobSites } from 'actions/job-site/job-site.action';
-import "../../../scss/index.scss";
-
 import "../../../scss/index.scss";
 
 
@@ -38,14 +36,15 @@ function BCServiceTicketModal({
   }
 
   const formatRequestObj = (rawReqObj: any) => {
+    debugger
     for ( let key in rawReqObj ) {
-        if(rawReqObj[key] === ''){
+        if(rawReqObj[key] === '' || rawReqObj[key] === null){
           delete rawReqObj[key];
         }
     }
     return rawReqObj;
   }
- 
+
   const {
     'values': FormikValues,
     'handleChange': formikChange,
@@ -68,42 +67,48 @@ function BCServiceTicketModal({
         ...ticket,
         ...values
       };
+      let editTicketObj = {...values, ticketId: ''};
       tempData.scheduleDate = formatDate(tempData.scheduleDate);
       if (ticket._id) {
-        tempData.ticketId = ticket._id;
-        let formatedRequest = formatRequestObj(tempData);
-        callEditTicketAPI(formatedRequest).then((response: any) => {
-          dispatch(refreshServiceTickets(true));
-          dispatch(closeModalAction());
-          setTimeout(() => {
-            dispatch(setModalDataAction({
-              'data': {},
-              'type': ''
-            }));
-          }, 200);
-          setSubmitting(false);
-        })
-          .catch((err: any) => {
+        editTicketObj.ticketId = ticket._id;
+        delete editTicketObj.customerId;
+        let formatedRequest = formatRequestObj(editTicketObj);
+        if(formatedRequest.scheduleDate){
+          formatedRequest.scheduleDate = formatDate(formatedRequest.scheduleDate);
+        }
+          callEditTicketAPI(formatedRequest).then((response: any) => {
+            dispatch(refreshServiceTickets(true));
+            dispatch(closeModalAction());
+            setTimeout(() => {
+              dispatch(setModalDataAction({
+                'data': {},
+                'type': ''
+              }));
+            }, 200);
             setSubmitting(false);
-            throw err;
-          });
+          })
+            .catch((err: any) => {
+              setSubmitting(false);
+              throw err;
+            });
       } else {
         let formatedRequest = formatRequestObj(tempData);
-        callCreateTicketAPI(formatedRequest).then((response: any) => {
-          dispatch(refreshServiceTickets(true));
-          dispatch(closeModalAction());
-          setTimeout(() => {
-            dispatch(setModalDataAction({
-              'data': {},
-              'type': ''
-            }));
-          }, 200);
-          setSubmitting(false);
-        })
-          .catch((err: any) => {
+          callCreateTicketAPI(formatedRequest).then((response: any) => {
+            dispatch(refreshServiceTickets(true));
+            dispatch(closeModalAction());
+            setTimeout(() => {
+              dispatch(setModalDataAction({
+                'data': {},
+                'type': ''
+              }));
+            }, 200);
             setSubmitting(false);
-            throw err;
-          });
+          })
+            .catch((err: any) => {
+              setSubmitting(false);
+              throw err;
+            });
+        
       }
     }
     /*
@@ -240,8 +245,8 @@ function BCServiceTicketModal({
           type={'submit'}
           variant={'extended'}>
           {ticket._id
-            ? 'Save Job'
-            : 'Generate Job'}
+            ? 'Save Ticket'
+            : 'Generate Ticket'}
         </Fab>
         {/* <Fab
           aria-label={'create-job'}
@@ -257,6 +262,7 @@ function BCServiceTicketModal({
     </form>
   );
 }
+
 export default withStyles(
   styles,
   { 'withTheme': true }

@@ -28,7 +28,7 @@ function ScheduleJobsPage({ classes }: any) {
     dispatch(getAllJobTypesAPI());
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'New Ticket',
+        'modalTitle': 'New Service Ticket',
         'removeFooter': false,
         'className': 'serviceTicketTitle'
       },
