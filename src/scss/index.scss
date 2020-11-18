@@ -357,3 +357,6 @@ body {
 .alignAddJobSite {
   justify-content: space-between !important;
 }
+.MuiDialog-paperScrollPaper {
+  max-height: calc(100vh - 64px) !important;
+}
