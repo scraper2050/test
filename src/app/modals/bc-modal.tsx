@@ -16,6 +16,7 @@ import {
   IconButton,
   Typography
 } from '@material-ui/core';
+import "../../scss/index.scss";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
