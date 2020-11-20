@@ -35,6 +35,8 @@ function ServiceTicket({ classes }: any) {
         'removeFooter': false,
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
+        'maxHeight': '670px',
+        'height': '100%'
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -66,7 +68,8 @@ function ServiceTicket({ classes }: any) {
           }
         },
         'modalTitle': 'Create Job',
-        'removeFooter': false
+        'removeFooter': false,
+        
       },
       'type': modalTypes.EDIT_JOB_MODAL
     }));

@@ -156,6 +156,13 @@ function BCModal() {
   return (
     <div className={'modal-wrapper'}>
       <Dialog
+     
+      PaperProps={{
+          style: {
+            'maxHeight': `${data && data.maxHeight ? data.maxHeight : ''}`, 
+            'height': `${data && data.height ? data.height : ''}`
+          }  
+      }}
         TransitionComponent={BCModalTransition}
         aria-labelledby={'responsive-dialog-title'}
         disableBackdropClick={modalOptions.disableBackdropClick}

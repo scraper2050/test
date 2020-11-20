@@ -30,7 +30,9 @@ function ScheduleJobsPage({ classes }: any) {
       'data': {
         'modalTitle': 'New Service Ticket',
         'removeFooter': false,
-        'className': 'serviceTicketTitle'
+        'className': 'serviceTicketTitle',
+        'maxHeight': '666px',
+        'height': '100%'
       },
       'type': modalTypes.CREATE_TICKET_MODAL
     }));

@@ -386,7 +386,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         type={'number'}
                         value={positionValue.lat}
                       />
-                      {latLabelState ? <label>Required</label>: ''}
+                      {latLabelState ? <label>Required</label>: null}
                     </FormGroup>
                   </Grid>
                   <Grid
@@ -408,7 +408,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         variant={'outlined'}
                         value={positionValue.long}
                       />
-                      {longLabelState ? <label>Required</label>: ''}
+                      {longLabelState ? <label>Required</label>: null}
                     </FormGroup>
                     
                   </Grid>
