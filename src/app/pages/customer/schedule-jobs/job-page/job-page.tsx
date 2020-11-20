@@ -8,7 +8,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { getAllJobAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
-import { formatDate, formatTime } from 'helpers/format';
+import { formatDate, convertMilitaryTime } from 'helpers/format';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 
 function JobPage({ classes }: any) {
@@ -31,6 +31,16 @@ function JobPage({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  const formatSchedulingTime = (time: string) => {
+    let timeAr = time.split('T');
+    let timeWithSeconds  = timeAr[1].substr(0,5);
+    let hours = timeWithSeconds.substr(0, 2);
+    let minutes = timeWithSeconds.substr(3, 5);
+
+    return { hours, minutes };
+  }
+  
   const columns: any = [
     {
       'Header': 'Job ID',
@@ -77,8 +87,16 @@ function JobPage({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        const startTime = formatTime(row.original.scheduledStartTime);
-        const endTime = formatTime(row.original.scheduledEndTime);
+        let startTime = 'N/A';
+        let endTime = 'N/A';
+        if(row.original.scheduledStartTime !== undefined){
+          let formatScheduledObj = formatSchedulingTime(row.original.scheduledStartTime);
+          startTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
+        }
+        if(row.original.scheduledEndTime !== undefined){
+          let formatScheduledObj = formatSchedulingTime(row.original.scheduledEndTime);
+          endTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
+        }
         return <div className={'flex items-center'}>
           <p>
             {`${startTime} - ${endTime}`}
