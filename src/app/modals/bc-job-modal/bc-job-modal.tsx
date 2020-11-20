@@ -13,6 +13,7 @@ import React, { useEffect } from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { formatToMilitaryTime } from 'helpers/format';
 
 const initialJobState = {
   'customer': {
@@ -97,6 +98,13 @@ function BCJobModal({
       request = editJob;
     } else {
       request = createJob;
+    }
+
+    if(tempData.scheduledStartTime !== null){
+      tempData.scheduledStartTime = formatToMilitaryTime(tempData.scheduledStartTime);
+    }
+    if(tempData.scheduledEndTime !== null){
+      tempData.scheduledEndTime = formatToMilitaryTime(tempData.scheduledEndTime);
     }
 
     request(tempData)
