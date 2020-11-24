@@ -22,7 +22,7 @@ import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
-import { createJobSiteAction, updateJobSiteAction } from 'actions/job-site/job-site.action';
+import { createJobSiteAction, getJobSites, updateJobSiteAction } from 'actions/job-site/job-site.action';
 import { useHistory } from 'react-router-dom';
 
 
@@ -62,7 +62,8 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
       "zipcode": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.zipcode ? jobSiteInfo.address.zipcode : ''
     },
     "customerId": jobSiteInfo && jobSiteInfo.customerId ? jobSiteInfo.customerId : '',
-    "jobSiteId": jobSiteInfo && jobSiteInfo._id ? jobSiteInfo._id : ''
+    "jobSiteId": jobSiteInfo && jobSiteInfo._id ? jobSiteInfo._id : '',
+    "locationId": jobSiteInfo && jobSiteInfo.locationId ? jobSiteInfo.locationId : ''
   }
  
 
@@ -168,9 +169,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                       if (jobSiteInfo.update) {
                         dispatch(updateJobSiteAction(requestObj, () => {
                           closeModal();
-                          history.push({
-                            pathname: `/main/customers`
-                          });
+                          dispatch(getJobSites(requestObj))
                         }))
                       } else {
                         dispatch(createJobSiteAction(requestObj, () => {
@@ -209,55 +208,6 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                           />
                           {nameLabelState ? <label>Required</label>: ''}
                         </FormGroup>
-                      </Grid>
-
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={12}>
-                        <FormGroup >
-                          <InputLabel className={classes.label}>
-                            {'Email'}
-                          </InputLabel>
-                          <BCTextField
-                            name={'contact.email'}
-                            placeholder={'Email'}
-                            type={'email'}
-                           
-                          />
-                        </FormGroup>
-                      </Grid>
-
-                      <Grid container>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Contact Name'}
-                            </InputLabel>
-                            <BCTextField
-                              name={'contact.name'}
-                              placeholder={'Contact Name'}
-                            />
-                          </FormGroup>
-                        </Grid>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Phone Number'}
-                            </InputLabel>
-                            <BCTextField
-                              name={'contact.phone'}
-                              placeholder={'Phone Number'}
-                              type={'number'}
-                            />
-                          </FormGroup>
-                        </Grid>
                       </Grid>
 
                       <Grid container>

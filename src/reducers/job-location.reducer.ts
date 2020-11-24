@@ -1,0 +1,46 @@
+import { JobLocationActionType, JobLocationState } from 'actions/job-location/job-location.types';
+import { Reducer } from 'redux';
+
+const initialJobLocations: JobLocationState = {
+  loading: false,
+  data: []
+}
+
+export const JobLocationReducer: Reducer<any> = (state = initialJobLocations, action) => {
+  switch (action.type) {
+    case JobLocationActionType.GET:
+      return {
+        loading: true,
+        data: state.data,
+      };
+    case JobLocationActionType.SUCCESS:
+      return {
+        loading: false,
+        data: [...action.payload],
+      }
+    case JobLocationActionType.SET:
+      return {
+        loading: false,
+        data:[...action.payload],
+      }
+    case JobLocationActionType.ADD_NEW_JOB_LOCATION:
+      return {
+        ...state,
+        loading: false,
+        data:[...state.data, action.payload],
+      }
+    case JobLocationActionType.ADD_NEW_JOB_LOCATION:
+      return {
+        ...state,
+        loading: false,
+        errorMsg: action.payload
+      }
+    case JobLocationActionType.FAILED:
+      return {
+        ...state,
+        loading: false,
+        errorMsg: action.payload,
+      }
+  }
+  return state;
+}

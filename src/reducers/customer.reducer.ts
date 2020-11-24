@@ -3,7 +3,32 @@ import { CustomersState, CustomersActionType, types } from './../actions/custome
 
 const initialCustomers: CustomersState = {
 	loading: false,
-	data: []
+	data: [],
+	customerObj: {
+		_id: '',
+    info: {
+        name: '',
+        email: ''
+    },
+    address: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: ''
+    },
+    contact: {
+        name: '',
+        phone: ''
+    },
+    isActive: false,
+    company: '',
+    contactname: '',
+    profile: {
+        firstName: '',
+        lastName: '',
+        displayName: ''
+    }
+	}
 }
 
 export const CustomersReducer: Reducer<any> = (state = initialCustomers, action) => {
@@ -28,6 +53,23 @@ export const CustomersReducer: Reducer<any> = (state = initialCustomers, action)
 				...state,
 				loading: false,
 				error: action.payload,
+			}
+		case types.SET_SINGLE_CUSTOMER:
+			return {
+				...state,
+				loading: false,
+				customerObj: action.payload,
+			}
+		case types.GET_SINGLE_CUSTOMER:
+			return {
+			...state,
+			loading: true,
+			}
+		case types.UPDATE_CUSTOMER_FAILED:
+			return {
+			...state,
+			loading: false,
+			customerObj: state.customerObj
 			}
 	}
 	return state;

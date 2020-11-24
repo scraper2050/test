@@ -354,8 +354,11 @@ body {
     }
   }
 }
-.alignAddJobSite {
+.alignAddJobLocation {
   justify-content: space-between !important;
+}
+.alignAddJobSite {
+  justify-content: flex-end;
 }
 
 @media (min-width: 1000px) and (min-height: 680px) {

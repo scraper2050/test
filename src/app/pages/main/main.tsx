@@ -11,6 +11,7 @@ const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
 const ViewMoreCustomerPage = React.lazy(() => import('../customer/view-more/view-more'));
+const ViewMoreLocationPage = React.lazy(() => import('../customer/view-more/view-more-location'));
 const InvoicingTodosPage = React.lazy(() => import('../invoicing/todos/todos'));
 const InvoicingListPage = React.lazy(() => import('../invoicing/invoices-list/invoices-list'));
 const InvoicingPurchaseOrderPage = React.lazy(() => import('../invoicing/purchase-order/purchase-order'));
@@ -150,6 +151,17 @@ function Main(): any {
                     }}
                     exact
                     path={'/main/customers/:customername'}
+                    title={'Customers'}
+                  />
+
+                  <AuthRoute
+                    Component={ViewMoreLocationPage}
+                    actionData={{
+                      'link': '/main/customers/location/:joblocation',
+                      'title': 'Customers'
+                    }}
+                    exact
+                    path={'/main/customers/location/:joblocation'}
                     title={'Customers'}
                   />
 
