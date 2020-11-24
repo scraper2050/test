@@ -6,7 +6,7 @@ interface Props {
   avatar: Avatar;
   cancel: () => void;
   apply: () => void;
-  fields: Array<object>;
+  fields: object[];
   classes: any;
   children?: React.ReactNode;
 }
@@ -14,10 +14,10 @@ interface Props {
 interface Avatar {
   isEmpty: string;
   url?: string;
-  onChange: (f: any) => void
+  onChange: (f: File) => void
 }
 
-interface columnField {
+interface ColumnField {
   label: string;
   id: string;
   placehold: string;
@@ -27,8 +27,8 @@ interface columnField {
 }
 
 interface RowField {
-  left?: columnField;
-  right?: columnField;
+  left?: ColumnField;
+  right?: ColumnField;
 }
 
 function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Props) {

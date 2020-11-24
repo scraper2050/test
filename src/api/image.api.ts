@@ -1,6 +1,7 @@
+import { ImageState } from "actions/image/image.types";
 import request from "utils/http.service";
 
-export const upload = async (data: any) => {
+export const upload = async (data: FormData) => {
   let responseData;
   try {
     const response: any = await request("/uploadImage", "POST", data, false);

@@ -93,7 +93,7 @@ function CompanyProfilePage() {
 
   }
 
-  let imageSelected = (f: any) => {
+  let imageSelected = (f: File) => {
     if (!f) return;
     let formData = new FormData();
     formData.append('image', f);
