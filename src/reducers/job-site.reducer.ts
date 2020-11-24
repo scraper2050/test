@@ -41,6 +41,12 @@ export const JobSiteReducer: Reducer<any> = (state = initialJobSites, action) =>
         loading: false,
         errorMsg: action.payload,
       }
+    case JobSiteActionType.CLEAR_JOB_SITE_STORE:
+      return {
+        ...state,
+        loading: false,
+        data:[]
+      }
   }
   return state;
 }

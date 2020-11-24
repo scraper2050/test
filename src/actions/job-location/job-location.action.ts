@@ -47,6 +47,12 @@ export const setJobLocationNew = (jobLocation: any) => {
     }
 }
 
+export const clearJobLocationStore = () => {
+    return {
+        type: JobLocationActionType.CLEAR_JOB_LOCATION_STORE
+    }
+}
+
 
 
 

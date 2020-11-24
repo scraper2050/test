@@ -18,4 +18,5 @@ export const types = {
     UPDATE_JOB_LOCATION = 'updateJobLocation',
     SUCCESS = 'getJobLocationSuccess',
     FAILED = 'getJobLocationFailed',
+    CLEAR_JOB_LOCATION_STORE = 'clearJobLocationStore'
   }

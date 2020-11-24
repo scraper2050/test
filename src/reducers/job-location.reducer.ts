@@ -41,6 +41,12 @@ export const JobLocationReducer: Reducer<any> = (state = initialJobLocations, ac
         loading: false,
         errorMsg: action.payload,
       }
+    case JobLocationActionType.CLEAR_JOB_LOCATION_STORE:
+      return {
+        ...state,
+        loading: false,
+        data:[]
+      }
   }
   return state;
 }

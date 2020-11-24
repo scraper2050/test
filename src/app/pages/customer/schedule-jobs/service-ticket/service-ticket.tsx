@@ -13,6 +13,7 @@ import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
+import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -25,8 +26,16 @@ function ServiceTicket({ classes }: any) {
     })
   }));
   const openEditTicketModal = (ticket: any) => {
-    dispatch(loadingJobSites());
-    dispatch(getJobSites(ticket.customer._id));
+    const reqObj = {
+      customerId: ticket.customer._id,
+      locationId: ticket.jobLocation
+    }
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(reqObj.customerId));
+    if(reqObj.locationId !== undefined && reqObj.locationId !== null){
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    }
     dispatch(getAllJobTypesAPI());
     ticket.updateFlag = true;
     dispatch(setModalDataAction({
