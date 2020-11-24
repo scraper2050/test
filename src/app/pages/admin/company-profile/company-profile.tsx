@@ -74,16 +74,16 @@ function CompanyProfilePage() {
       return;
     }
 
-    let data: CompanyProfile = {
-      companyName: companyName,
-      companyEmail: companyEmail,
+    const data: CompanyProfile = {
+      companyName,
+      companyEmail,
       logoUrl: !image.data ? '' : image.data.imageUrl,
-      street: street,
-      city: city,
-      state: state,
-      zipCode: zipCode,
-      phone: phone,
-      fax: fax,
+      street,
+      city,
+      state,
+      zipCode,
+      phone,
+      fax,
     }
 
     dispatch(updateCompanyProfileAction(data));
