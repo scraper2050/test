@@ -11,6 +11,7 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
       return {
         data: action.payload,
       }
+    default:
   }
   return state;
 }

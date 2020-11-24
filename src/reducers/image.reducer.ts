@@ -11,6 +11,7 @@ export const ImageReducer: Reducer<any> = (state = initialImage, action) => {
       return {
         data: action.payload,
       }
+    default:
   }
   return state;
 }

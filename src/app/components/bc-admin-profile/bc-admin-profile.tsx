@@ -32,7 +32,7 @@ interface RowField {
 }
 
 function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Props) {
-  let openFileDialog = () => {
+  const openFileDialog = () => {
     const input = document.getElementById('file-input');
 
     if (input) {

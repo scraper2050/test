@@ -27,42 +27,42 @@ function CompanyProfilePage() {
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
 
-  let companyNameChanged = (newValue: string) => {
+  const companyNameChanged = (newValue: string) => {
     setCompanyName(newValue);
   }
 
-  let companyEmailChanged = (newValue: string) => {
+  const companyEmailChanged = (newValue: string) => {
     setCompanyEmail(newValue);
     setCompanyEmailValid(validator.isEmail(newValue));
   }
 
-  let phoneChanged = (newValue: string) => {
+  const phoneChanged = (newValue: string) => {
     setPhone(newValue);
     setPhoneValid(validator.isMobilePhone(newValue));
   }
 
-  let faxChanged = (newValue: string) => {
+  const faxChanged = (newValue: string) => {
     setFax(newValue);
   }
 
-  let streetChanged = (newValue: string) => {
+  const streetChanged = (newValue: string) => {
     setStreet(newValue);
   }
 
-  let cityChanged = (newValue: string) => {
+  const cityChanged = (newValue: string) => {
     setCity(newValue);
   }
 
-  let stateChanged = (newValue: string) => {
+  const stateChanged = (newValue: string) => {
     setState(newValue);
   }
 
-  let zipCodeChanged = (newValue: string) => {
+  const zipCodeChanged = (newValue: string) => {
     setZipCode(newValue);
     setZipCodeValid(validator.isNumeric(newValue));
   }
 
-  let apply = () => {
+  const apply = () => {
     if (companyNameValid === false
       || companyEmailValid === false
       || phoneValid === false
@@ -89,13 +89,13 @@ function CompanyProfilePage() {
     dispatch(updateCompanyProfileAction(data));
   }
 
-  let cancel = () => {
+  const cancel = () => {
 
   }
 
-  let imageSelected = (f: File) => {
+  const imageSelected = (f: File) => {
     if (!f) return;
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('image', f);
     dispatch(uploadImage(formData));
   }
