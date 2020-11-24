@@ -3,12 +3,24 @@ export const types = {
 }
 
 export interface CompanyProfile {
-  "status": number,
-  "message": string,
+  companyName: string,
+  companyEmail: string,
+  logoUrl?: string,
+  street?: string,
+  city?: string,
+  state?: string,
+  zipCode?: string,
+  phone: string,
+  fax?: string,
+}
+
+export interface CompanyProfileRes {
+  "status"?: number,
+  "message"?: string,
 }
 
 export interface CompanyProfileState {
-  readonly data?: CompanyProfile
+  readonly data?: CompanyProfileRes
 }
 
 export enum CompanyProfileActonType {

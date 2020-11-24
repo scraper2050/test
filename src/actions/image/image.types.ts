@@ -3,9 +3,9 @@ export const types = {
 }
 
 export interface Image {
-  "status": number,
-  "message": string,
-  "imageUrl": string
+  "status"?: number,
+  "message"?: string,
+  "imageUrl"?: string
 }
 
 export interface ImageState {

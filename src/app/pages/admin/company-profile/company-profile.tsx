@@ -5,6 +5,7 @@ import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
+import { CompanyProfile } from 'actions/user/user.types'
 
 function CompanyProfilePage() {
   const dispatch = useDispatch();
@@ -26,37 +27,37 @@ function CompanyProfilePage() {
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
 
-  let companyNameChanged = (newValue: any) => {
+  let companyNameChanged = (newValue: string) => {
     setCompanyName(newValue);
   }
 
-  let companyEmailChanged = (newValue: any) => {
+  let companyEmailChanged = (newValue: string) => {
     setCompanyEmail(newValue);
     setCompanyEmailValid(validator.isEmail(newValue));
   }
 
-  let phoneChanged = (newValue: any) => {
+  let phoneChanged = (newValue: string) => {
     setPhone(newValue);
     setPhoneValid(validator.isMobilePhone(newValue));
   }
 
-  let faxChanged = (newValue: any) => {
+  let faxChanged = (newValue: string) => {
     setFax(newValue);
   }
 
-  let streetChanged = (newValue: any) => {
+  let streetChanged = (newValue: string) => {
     setStreet(newValue);
   }
 
-  let cityChanged = (newValue: any) => {
+  let cityChanged = (newValue: string) => {
     setCity(newValue);
   }
 
-  let stateChanged = (newValue: any) => {
+  let stateChanged = (newValue: string) => {
     setState(newValue);
   }
 
-  let zipCodeChanged = (newValue: any) => {
+  let zipCodeChanged = (newValue: string) => {
     setZipCode(newValue);
     setZipCodeValid(validator.isNumeric(newValue));
   }
@@ -73,7 +74,7 @@ function CompanyProfilePage() {
       return;
     }
 
-    let data = {
+    let data: CompanyProfile = {
       companyName: companyName,
       companyEmail: companyEmail,
       logoUrl: !image.data ? '' : image.data.imageUrl,

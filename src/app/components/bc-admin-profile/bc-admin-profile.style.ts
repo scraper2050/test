@@ -2,32 +2,32 @@ import { fabRoot } from 'app/pages/main/main.styles';
 export default (): any => ({
   ...fabRoot,
   
-  'profile_pane': {
+  'profilePane': {
     'borderRadius': '14px',
     'height': '100%',
     'textAlign': 'center',
     'width': '100%',
     'background': 'white'
   },
-  'info_pane': {
+  'infoPane': {
     'display': 'flex',
     'flex-direction': 'horizontal',
     'padding': '20px'
   },
-  'button_pane': {
+  'buttonPane': {
     'display': 'flex',
     'padding': '20px',
     'justify-content': 'flex-end'
   },
-  'avatar_area': {
+  'avatarArea': {
     'flex': '20%',
     'padding': '10px',
     'flex-shrink': '0'
   },
-  'info_area': {
+  'infoArea': {
     'flex': '80%',
   },
-  'info_area_fullwidth': {
+  'infoAreaFullwidth': {
     'flex': '100%',
   },
   'field': {
@@ -35,19 +35,19 @@ export default (): any => ({
     'flex-direction': 'horizontal',
     'justify-content': 'space-between'
   },
-  'left_field': {
+  'leftField': {
     'width': '45%',
     'max-width': '50%',
     'padding': '5px',
     'display': 'flex',
   },
-  'right_field': {
+  'rightField': {
     'width': '45%',
     'max-width': '50%',
     'padding': '5px',
     'display': 'flex',
   },
-  'img_area': {
+  'imgArea': {
     'margin': 'auto',
     'height': '150px',
     'width': '150px',

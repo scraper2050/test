@@ -1,11 +1,11 @@
 import { updateCompanyProfile } from 'api/user.api';
-import { CompanyProfileActonType } from '../../actions/user/user.types'
+import { CompanyProfile, CompanyProfileRes, CompanyProfileActonType } from '../../actions/user/user.types'
 
-export const updateCompanyProfileAction = (formData: any) => {
+export const updateCompanyProfileAction = (formData: CompanyProfile) => {
   return async (dispatch: any) => {
-    const response: any = await updateCompanyProfile(formData);
-    if (response.hasOwnProperty('ErrMsg')) {
-      dispatch({ type: CompanyProfileActonType.FAILED, payload: response.ErrMsg });
+    const response: CompanyProfileRes = await updateCompanyProfile(formData);
+    if (response.hasOwnProperty('message')) {
+      dispatch({ type: CompanyProfileActonType.FAILED, payload: response.message });
     } else {
       dispatch({ type: CompanyProfileActonType.SUCCESS, payload: response });
     }

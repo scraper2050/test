@@ -17,7 +17,7 @@ interface Avatar {
   onChange: (f: any) => void
 }
 
-interface Column_Field {
+interface columnField {
   label: string;
   id: string;
   placehold: string;
@@ -26,9 +26,9 @@ interface Column_Field {
   onChange: (newValue: any) => void
 }
 
-interface Row_Field {
-  left?: Column_Field;
-  right?: Column_Field;
+interface RowField {
+  left?: columnField;
+  right?: columnField;
 }
 
 function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Props) {
@@ -41,12 +41,12 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
   }
 
   return (
-    <div className={classes.profile_pane}>
-      <div className={classes.info_pane}>
+    <div className={classes.profilePane}>
+      <div className={classes.infoPane}>
         {
           avatar.isEmpty === 'NO' &&
-          <div className={classes.avatar_area}>
-            <div onClick={() => openFileDialog()} className={classes.img_area} style={{ 'backgroundImage': `url(${avatar.url})` }}>
+          <div className={classes.avatarArea}>
+            <div onClick={() => openFileDialog()} className={classes.imgArea} style={{ 'backgroundImage': `url(${avatar.url})` }}>
               {
                 avatar.url === '' &&
                 <Fab
@@ -65,12 +65,12 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
             </div>
           </div>
         }
-        <div className={avatar.isEmpty === 'YES' ? classes.info_area : classes.info_area_fullwidth}>
+        <div className={avatar.isEmpty === 'YES' ? classes.infoArea : classes.infoAreaFullwidth}>
           {
             fields &&
-            fields.map((element: Row_Field, index: number) => {
+            fields.map((element: RowField, index: number) => {
               return <div key={index} className={classes.field}>
-                <div className={classes.left_field}>
+                <div className={classes.leftField}>
                   {
                     element.left &&
                     <div className={classes.label}>{element.left.label}</div>
@@ -91,7 +91,7 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
                     />
                   }
                 </div>
-                <div className={classes.right_field}>
+                <div className={classes.rightField}>
                   {
                     element.right &&
                     <div className={classes.label}>{element.right.label}</div>
@@ -117,7 +117,7 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
           }
         </div>
       </div>
-      <div className={classes.button_pane}>
+      <div className={classes.buttonPane}>
         <Fab
           aria-label={'new-ticket'}
           classes={{
