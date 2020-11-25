@@ -11,7 +11,7 @@ import React, { useEffect } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
+import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 
@@ -35,6 +35,8 @@ function ServiceTicket({ classes }: any) {
     if(reqObj.locationId !== undefined && reqObj.locationId !== null){
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
+    }else {
+      dispatch(clearJobSiteStore());
     }
     dispatch(getAllJobTypesAPI());
     ticket.updateFlag = true;

@@ -43,7 +43,12 @@ function BCServiceTicketModal({
     let customerId = getFieldMeta('customerId').value;
     setFieldValue(fieldName, locationId);
     setFieldValue('jobSiteId', '');
-    dispatch(getJobSites({customerId, locationId}));
+    if(locationId !== ''){
+      dispatch(getJobSites({customerId, locationId}));
+    }else {
+      dispatch(clearJobSiteStore());
+    }
+    
   }
 
   const formatRequestObj = (rawReqObj: any) => {
