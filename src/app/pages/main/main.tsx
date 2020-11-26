@@ -22,7 +22,7 @@ const ScheduleJobsPage = React.lazy(() => import('../customer/schedule-jobs/sche
 const ManagersPage = React.lazy(() => import('../employee/managers/managers'));
 const GroupPage = React.lazy(() => import('../employee/group/group'));
 
-const AdminEmployeesPage = React.lazy(() => import('../admin/employees/empolyees'));
+const AdminEmployeesPage = React.lazy(() => import('../admin/employees/employees'));
 const BillingPage = React.lazy(() => import('../admin/billing/billing'));
 const BillingMethodsPage = React.lazy(() => import('../admin/billing/methods/methods'));
 const BillingHistoryPage = React.lazy(() => import('../admin/billing/history/history'));
