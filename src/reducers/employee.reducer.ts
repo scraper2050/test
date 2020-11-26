@@ -1,54 +1,34 @@
-import { handleActions } from 'redux-actions';
-import { loadAllEmployeesActions } from 'actions/employee/employee.action';
-import { List, Record } from 'immutable';
+import { Reducer } from 'redux';
+import { UsersState, UsersActionType, types } from './../actions/employee/employee.types';
 
-const initialState = Record({
-  list: List([]),
-  'getAllApi': Record({
-    'hasErrored': false,
-    'isLoading': false,
-    'msg': ''
-  })()
-})();
+const initialEmployees: UsersState = {
+	loading: false,
+  data: []
+}
 
-export default handleActions(
-  {
-    [loadAllEmployeesActions.success.toString()]: (state, action) =>
-      state
-        .setIn(
-          ['list'],
-          List(action.payload)
-        )
-        .setIn(
-          ['getAllApi', 'isLoading'],
-          false
-        )
-        .setIn(
-          ['getAllApi', 'hasErrored'],
-          false
-        ),
-
-    [loadAllEmployeesActions.fetching.toString()]: (state, action) =>
-      state
-        .setIn(
-          ['getAllApi', 'isLoading'],
-          true
-        ),
-
-    [loadAllEmployeesActions.fault.toString()]: (state, action) =>
-      state
-        .setIn(
-          ['getAllApi', 'isLoading'],
-          false
-        )
-        .setIn(
-          ['getAllApi', 'hasErrored'],
-          true
-        )
-        .setIn(
-          ['getAllApi', 'msg'],
-          action.payload
-        )
-  },
-  initialState
-);
+export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action) => {
+	switch (action.type) {
+		case UsersActionType.GET:
+			return {
+				loading: true,
+				data: initialEmployees,
+			};
+		case UsersActionType.SUCCESS:
+			return {
+				loading: false,
+				data: [...action.payload],
+			}
+		case types.SET_EMPLOYEES:
+			return {
+				loading: false,
+				data: [...action.payload],
+			}
+		case UsersActionType.FAILED:
+			return {
+				...state,
+				loading: false,
+				error: action.payload,
+			}
+	}
+	return state;
+}
