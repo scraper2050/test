@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
+import "../../../../../scss/popup.scss";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ function ServiceTicket({ classes }: any) {
         'removeFooter': false,
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
-        'maxHeight': '670px',
+        'maxHeight': '754px',
         'height': '100%'
       },
       'type': modalTypes.EDIT_TICKET_MODAL
