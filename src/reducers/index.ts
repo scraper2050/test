@@ -5,6 +5,7 @@ import auth from './auth.reducer';
 import { combineReducers } from 'redux';
 import companyEquipment from './company-equipment.reducer';
 import { CustomersReducer as customers } from './customer.reducer';
+import { ImageReducer as image} from './image.reducer';
 import employees from './employee.reducer';
 import jobState from './jobs.reducer';
 import jobTypes from './job-type.reducer';
@@ -44,6 +45,7 @@ export default combineReducers({
   auth,
   companyEquipment,
   customers,
+  image,
   employees,
   jobState,
   jobTypes,
