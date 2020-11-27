@@ -3,6 +3,7 @@ import styles from './employees.style';
 import {Fab, withStyles } from "@material-ui/core";
 import AdminAddNewEmployeePage from './add-new-employee';
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
+import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmployees, loadingEmployees } from 'actions/employee/employee.action';
@@ -15,6 +16,7 @@ interface Props {
 function AdminEmployeesPage({ classes, children }: Props) {
   const dispatch = useDispatch();
   const employees = useSelector((state: any) => state.employees);
+  const [stage, setStage] = useState(0);
   const columns: any = [
     {
       'Cell'({ row }: any) {
@@ -53,6 +55,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
               'root': classes.fabRoot
             }}
             color={'primary'}
+            onClick={() => renderViewMore(row)}
             variant={'extended'}>
             {'View More'}
           </Fab>
@@ -68,6 +71,22 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(loadingEmployees());
     dispatch(getEmployees());
   }, []);
+
+  const add = () => {
+
+  }
+
+  const cancel = () => {
+    setStage(0);
+  }
+
+  const update = () => {
+
+  }
+
+  const renderViewMore = (row: any) => {
+    setStage(2);
+  }
   
   return (
     <>
@@ -81,13 +100,14 @@ function AdminEmployeesPage({ classes, children }: Props) {
 
       <MainContainer>
         <PageContainer>
-          <div className={classes.addButtonArea}>
+          {stage === 0 && <div className={classes.addButtonArea}>
             <Fab
               aria-label={'new-ticket'}
               classes={{
                 'root': classes.fabRoot
               }}
               color={'primary'}
+              onClick={() => {setStage(1)}}
               style={{
                 width: '15%',
                 float: 'right'
@@ -96,12 +116,23 @@ function AdminEmployeesPage({ classes, children }: Props) {
               {'Add New'}
             </Fab>
           </div>
+         }
+         {stage === 0 && 
           <BCTableContainer
             columns={columns}
             isLoading={employees.loading}
             search
             tableData={employees.data}
           />
+          }
+
+          {stage === 1 && 
+          <AdminAddNewEmployeePage submit={add} cancel={cancel}/>
+          }
+
+          {stage === 2 && 
+          <EmployeeProfile back={cancel}/>
+          }
         </PageContainer>
       </MainContainer>
     </>

@@ -6,11 +6,13 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import validator from 'validator';
 
 interface Props {
+  submit: () => void;
+  cancel: () => void;
   classes: any;
   children?: React.ReactNode;
 }
 
-function AdminAddNewEmployeePage({ classes, children }: Props) {
+function AdminAddNewEmployeePage({submit, cancel, classes, children }: Props) {
   const [step, setStep] = useState(1);
 
   const [firstName, setFirstName] = useState('');
@@ -64,14 +66,6 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
   const prev = () => {
     if(step === 2) setStep(1);
     else cancel();
-  }
-
-  const submit = () => {
-
-  }
-  
-  const cancel = () => {
-
   }
 
   const technicianSelected = () => {
