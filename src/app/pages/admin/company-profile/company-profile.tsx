@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
 import { CompanyProfile } from 'actions/user/user.types'
+import { SettingsInputAntennaTwoTone } from '@material-ui/icons';
 
 interface User {
   _id?: string,
@@ -32,6 +33,12 @@ interface User {
   },
   info?: {
     companyName?: string,
+    companyEmail?: string,
+    fax?: string,
+    phone?: string,
+    city?: string,
+    state?: string,
+    zipCode?: string,
     logoUrl?: string,
     industry?: string
   },
@@ -40,8 +47,15 @@ interface User {
 
 interface Company {
   companyName?: string,
+  companyEmail?: string,
+  fax?: string,
+  phone?: string,
+  city?: string,
+  state?: string,
+  zipCode?: string,
   logoUrl?: string,
-  industry?: string
+  industry?: string,
+  street?: string
 }
 
 function CompanyProfilePage() {
@@ -69,26 +83,48 @@ function CompanyProfilePage() {
     user = JSON.parse(localStorage.getItem('user') || "");
     let company: Company = {};
     company = JSON.parse(localStorage.getItem('company') || "");
-    if(user.info && user.info.companyName) {
-      setCompanyName(user.info.companyName);
-    }
-    else if(!user.info && company && company.companyName) {
+    
+    if(company && company.companyName) {
       setCompanyName(company.companyName);
     }
-    if(user.auth && user.auth.email) {
+    else if(user.info && user.info.companyName) {
+      setCompanyName(user.info.companyName);
+    }
+    if(company && company.companyEmail) {
+      setCompanyEmail(company.companyEmail);
+    }
+    else if(user.auth && user.auth.email) {
       setCompanyEmail(user.auth.email);
     }
-    if(user.contact && user.contact.phone) {
+    if(company && company.phone) {
+      setPhone(company.phone);
+    }
+    else if(user.contact && user.contact.phone) {
       setPhone(user.contact.phone);
     }
-    if(user.address && user.address.city) {
+    if(company && company.city) {
+      setCity(company.city);
+    }
+    else if(user.address && user.address.city) {
       setCity(user.address.city);
     }
-    if(user.address && user.address.state) {
+    if(company && company.state) {
+      setState(company.state);
+    }
+    else if(user.address && user.address.state) {
       setState(user.address.state);
     }
-    if(user.address && user.address.zipCode) {
+    if(company && company.zipCode) {
+      setZipCode(company.zipCode);
+    }
+    else if(user.address && user.address.zipCode) {
       setZipCode(user.address.zipCode);
+    }
+    if(company && company.street) {
+      setStreet(company.street);
+    }
+    else if(user.address && user.address.street) {
+      setStreet(user.address.street);
     }
   });
 
@@ -157,7 +193,14 @@ function CompanyProfilePage() {
       'company',
       JSON.stringify({
         companyName,
-        logoUrl: !image.data ? '' : image.data.imageUrl
+        companyEmail,
+        phone,
+        logoUrl: !image.data ? '' : image.data.imageUrl,
+        fax,
+        city,
+        state,
+        zipCode,
+        street
       })
     );
   }

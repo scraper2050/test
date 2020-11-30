@@ -111,6 +111,7 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
                   {
                     element.right &&
                     <TextField
+                      disabled={!editable}
                       id={element.right.id}
                       placeholder={element.right.placehold}
                       variant={'outlined'}
