@@ -9,11 +9,12 @@ import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.act
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import { DialogActions, DialogContent, Fab, Grid, withStyles } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatToMilitaryTime } from 'helpers/format';
+import styled from 'styled-components';
 
 const initialJobState = {
   'customer': {
@@ -49,6 +50,9 @@ function BCJobModal({
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   const technicians = useSelector(({ technicians }: any) => technicians.data);
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
+  const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
+  const [startTimeLabelState, setStartTimeLabelState] = useState(false);
+  const [endTimeLabelState, setEndTimeLabelState] = useState(false);
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
   const { profile: {
@@ -71,6 +75,29 @@ function BCJobModal({
     dispatch(getTechnicians());
     dispatch(getAllJobTypesAPI());
   }, []);
+
+  const isValidate = (requestObj: any) => {
+    let validateFlag = true;
+    if(requestObj.scheduledStartTime === null && requestObj.scheduledEndTime !==null){
+      setScheduledEndTimeMsg('');
+      setStartTimeLabelState(true);
+      validateFlag = false;
+    }else if(requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime ===null){
+      setScheduledEndTimeMsg('End time is required.');
+      setEndTimeLabelState(true);
+      validateFlag = false;
+    }else if(requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
+      setScheduledEndTimeMsg('End time should be greater than start time.');
+      setEndTimeLabelState(true);
+      validateFlag = false;
+    }else {
+      setScheduledEndTimeMsg('');
+      setStartTimeLabelState(false);
+      setEndTimeLabelState(false);
+      validateFlag = true;
+    }
+    return validateFlag;
+  }
   
   const onSubmit = (values: any, { setSubmitting }: any) => {
     setSubmitting(true);
@@ -99,30 +126,33 @@ function BCJobModal({
     } else {
       request = createJob;
     }
+     
+    const tempFlag = tempData.scheduledStartTime < tempData.scheduledEndTime;
+    
 
-    if(tempData.scheduledStartTime !== null){
-      tempData.scheduledStartTime = formatToMilitaryTime(tempData.scheduledStartTime);
+    if(isValidate(tempData)) {
+        tempData.scheduledStartTime = formatToMilitaryTime(tempData.scheduledStartTime);
+        tempData.scheduledEndTime = formatToMilitaryTime(tempData.scheduledEndTime);
+        
+        request(tempData)
+          .then((response: any) => {
+            dispatch(refreshServiceTickets(true));
+            dispatch(refreshJobs(true));
+            dispatch(closeModalAction());
+            setTimeout(() => {
+              dispatch(setModalDataAction({
+                'data': {},
+                'type': ''
+              }));
+            }, 200);
+          })
+          .catch((err: any) => {
+            throw err;
+          })
+          .finally(() => { setSubmitting(false) });
+    } else {
+        setSubmitting(false);
     }
-    if(tempData.scheduledEndTime !== null){
-      tempData.scheduledEndTime = formatToMilitaryTime(tempData.scheduledEndTime);
-    }
-
-    request(tempData)
-      .then((response: any) => {
-        dispatch(refreshServiceTickets(true));
-        dispatch(refreshJobs(true));
-        dispatch(closeModalAction());
-        setTimeout(() => {
-          dispatch(setModalDataAction({
-            'data': {},
-            'type': ''
-          }));
-        }, 200);
-      })
-      .catch((err: any) => {
-        throw err;
-      })
-      .finally(() => { setSubmitting(false) });
   }
 
   const form = useFormik({
@@ -297,6 +327,7 @@ function BCJobModal({
               pickerType={'time'}
               value={FormikValues.scheduledStartTime}
             />
+              {startTimeLabelState ? <Label>Start time is required.</Label>: ''}
             <BCDateTimePicker
               dateFormat={'HH:mm:ss'}
               disablePast={!job._id}
@@ -306,6 +337,7 @@ function BCJobModal({
               pickerType={'time'}
               value={FormikValues.scheduledEndTime}
             />
+              {endTimeLabelState ? <Label>{scheduledEndTimeMsg}</Label>: ''}
           </Grid>
         </Grid>
       </DialogContent>
@@ -340,6 +372,11 @@ function BCJobModal({
     </form>
   );
 }
+
+const Label = styled.div`
+  color: red;
+  font-size: 15px;
+`;
 export default withStyles(
   styles,
   { 'withTheme': true }
