@@ -156,7 +156,7 @@ function CompanyProfilePage() {
     localStorage.setItem(
       'company',
       JSON.stringify({
-        companyName: companyName,
+        companyName,
         logoUrl: !image.data ? '' : image.data.imageUrl
       })
     );
