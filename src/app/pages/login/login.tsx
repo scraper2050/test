@@ -62,6 +62,13 @@ function LoginPage({
           'user',
           JSON.stringify(user)
         );
+        localStorage.setItem(
+          'company',
+          JSON.stringify({
+            companyName: 'BlueClerk',
+            logoUrl: 'assets/img/user_avatar.png'
+          })
+        );
       }
     },
     [token, user]
