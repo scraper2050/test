@@ -1,7 +1,7 @@
 
 import { createApiAction } from '../action.utils';
 import { CustomersActionType, types } from '../../reducers/customer.types'
-import { getCustomers as fetchCustomers, updateCustomers } from 'api/customer.api';
+import { getCustomers as fetchCustomers, updateCustomers, getCustomerDetail } from 'api/customer.api';
 
 export const loadCustomersActions = createApiAction(types.CUSTOMER_LOAD);
 export const newCustomerAction = createApiAction(types.CUSTOMER_NEW);
@@ -10,6 +10,11 @@ export const deleteCustomerActions = createApiAction(types.CUSTOMER_REMOVE);
 export const loadingCustomers = () => {
     return {
         type: CustomersActionType.GET
+    }
+}
+export const loadingSingleCustomers = () => {
+    return {
+        type: types.GET_SINGLE_CUSTOMER
     }
 }
 
@@ -25,6 +30,14 @@ export const setCustomers = (customers: any) => {
         type: types.SET_CUSTOMERS,
         payload: customers
     }
+}
+
+export const getCustomerDetailAction = (data: any) => {
+    return async (dispatch: any) => {
+        const customer: any = await getCustomerDetail(data);
+        console.log(customer);
+        dispatch({ type: types.SET_SINGLE_CUSTOMER, payload: customer });
+    };
 }
 
 export const updateCustomerAction = (customers: any, callback?:any) => {

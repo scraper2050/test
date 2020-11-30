@@ -2,7 +2,9 @@ export const types = {
     'CUSTOMER_LOAD': 'loadCustomersActions',
     'CUSTOMER_NEW': 'newCustomerAction',
     'CUSTOMER_REMOVE': 'deleteCustomerActions',
-    'SET_CUSTOMERS': 'setCustomer'
+    'SET_CUSTOMERS': 'setCustomer',
+    'SET_SINGLE_CUSTOMER': 'setSingleCustomer',
+    'GET_SINGLE_CUSTOMER': 'getSingleCustomer'
 };
 
 export interface Customer {

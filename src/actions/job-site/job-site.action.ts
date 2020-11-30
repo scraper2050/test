@@ -66,5 +66,11 @@ export const updateJobSiteAction = (data: any, callback?: any) => {
     };
 }
 
+export const clearJobSiteStore = () => {
+    return {
+        type: JobSiteActionType.CLEAR_JOB_SITE_STORE
+    }
+}
+
 
 

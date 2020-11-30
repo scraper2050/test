@@ -23,4 +23,5 @@ export const modalTypes = {
   'ADD_EQIPMENT_TYPE': 'add-equipment-type',
   'ADD_JOB_SITE' : 'add-job-site',
   'EDIT_CUSTOMER_INFO': 'edit-customer-info',
+  'ADD_JOB_LOCATION' : 'add-job-location',
 };

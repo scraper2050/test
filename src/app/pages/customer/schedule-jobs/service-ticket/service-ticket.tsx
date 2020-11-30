@@ -11,8 +11,10 @@ import React, { useEffect } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
+import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
+import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
+import "../../../../../scss/popup.scss";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -25,8 +27,18 @@ function ServiceTicket({ classes }: any) {
     })
   }));
   const openEditTicketModal = (ticket: any) => {
-    dispatch(loadingJobSites());
-    dispatch(getJobSites(ticket.customer._id));
+    const reqObj = {
+      customerId: ticket.customer._id,
+      locationId: ticket.jobLocation
+    }
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(reqObj.customerId));
+    if(reqObj.locationId !== undefined && reqObj.locationId !== null){
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    }else {
+      dispatch(clearJobSiteStore());
+    }
     dispatch(getAllJobTypesAPI());
     ticket.updateFlag = true;
     dispatch(setModalDataAction({
@@ -35,6 +47,8 @@ function ServiceTicket({ classes }: any) {
         'removeFooter': false,
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+        'height': '100%'
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -66,7 +80,8 @@ function ServiceTicket({ classes }: any) {
           }
         },
         'modalTitle': 'Create Job',
-        'removeFooter': false
+        'removeFooter': false,
+        
       },
       'type': modalTypes.EDIT_JOB_MODAL
     }));

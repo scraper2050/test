@@ -2,8 +2,8 @@
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
-import React, { useState } from 'react';
-import { formatDate } from 'helpers/format'
+import React, { useState, useEffect } from 'react';
+import { formatDate } from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
@@ -11,8 +11,9 @@ import { DialogActions, DialogContent, Fab, withStyles } from '@material-ui/core
 import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { getJobSites } from 'actions/job-site/job-site.action';
+import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
 import "../../../scss/index.scss";
+import { clearJobLocationStore, getJobLocationsAction } from 'actions/job-location/job-location.action';
 
 
 function BCServiceTicketModal({
@@ -22,8 +23,10 @@ function BCServiceTicketModal({
       '_id': ''
     },
     'jobSite': '',
+    'jobLocation': '',
     'jobType': '',
     'note': '',
+    'updateFlag': '',
     'scheduleDate': new Date()
   }
 }: any): JSX.Element {
@@ -31,12 +34,24 @@ function BCServiceTicketModal({
   const handleCustomerChange = (event: any, fieldName: any, setFieldValue: any) => {
     const customerId = event.target.value;
     setFieldValue(fieldName, customerId);
+    setFieldValue('jobLocationId', '');
+    dispatch(getJobLocationsAction(customerId));
+  }
+
+  const handleLocationChange = (event: any, fieldName: any, setFieldValue: any, getFieldMeta:any) => {
+    const locationId = event.target.value;
+    let customerId = getFieldMeta('customerId').value;
+    setFieldValue(fieldName, locationId);
     setFieldValue('jobSiteId', '');
-    dispatch(getJobSites(customerId));
+    if(locationId !== ''){
+      dispatch(getJobSites({customerId, locationId}));
+    }else {
+      dispatch(clearJobSiteStore());
+    }
+    
   }
 
   const formatRequestObj = (rawReqObj: any) => {
-    debugger
     for ( let key in rawReqObj ) {
         if(rawReqObj[key] === '' || rawReqObj[key] === null){
           delete rawReqObj[key];
@@ -45,17 +60,26 @@ function BCServiceTicketModal({
     return rawReqObj;
   }
 
+  useEffect(() => {
+    if(!ticket.updateFlag){
+      dispatch(clearJobLocationStore());
+      dispatch(clearJobSiteStore());
+    }
+  }, [])
+
   const {
     'values': FormikValues,
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
     setFieldValue,
+    getFieldMeta,
     isSubmitting
   } = useFormik({
     // 'enableReinitialize': true,
     'initialValues': {
       'customerId': ticket.customer._id,
       'jobSiteId': ticket.jobSite,
+      'jobLocationId': ticket.jobLocation,
       'jobTypeId': ticket.jobType,
       'note': ticket.note,
       'scheduleDate': ticket.scheduleDate,
@@ -121,9 +145,11 @@ function BCServiceTicketModal({
      */
   });
   const customers = useSelector(({ customers }: any) => customers.data);
+  const jobLocations = useSelector((state : any) => state.jobLocations.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const isLoading = useSelector((state: any) => state.jobSites.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
+  
   
   const dateChangeHandler = (date: string) => {
     setFieldValue('scheduleDate', date);
@@ -138,7 +164,7 @@ function BCServiceTicketModal({
       }));
     }, 200);
   };
-
+  
   return (
     <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
       <DialogContent classes={{ 'root': classes.dialogContent }}>
@@ -164,7 +190,26 @@ function BCServiceTicketModal({
             value={FormikValues.customerId}
             handleChange={(event: any) => handleCustomerChange(event, 'customerId', setFieldValue)}
           />
-          {isLoading ? 'Loading Job Sites...' :
+            <BCSelectOutlined
+              items={{
+                'data': [
+                  ...jobLocations.map((o: any) => {
+                    return {
+                      '_id': o._id,
+                      'name': o.name,
+                    };
+                  })
+                ],
+                'displayKey': 'name',
+                'valueKey': '_id',
+                'className': 'serviceTicketLabel'
+              }}
+              label={'Job Location'}
+              name={'jobLocationId'}
+              value={FormikValues.jobLocationId}
+              handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue, getFieldMeta)}
+            />
+            {isLoading ? 'Loading Job Sites...' :
             <BCSelectOutlined
               handleChange={formikChange}
               items={{
@@ -203,6 +248,7 @@ function BCServiceTicketModal({
             name={'jobTypeId'}
             value={FormikValues.jobTypeId}
           />
+          
           <BCInput
             handleChange={formikChange}
             label={'Notes / Special Instructions'}

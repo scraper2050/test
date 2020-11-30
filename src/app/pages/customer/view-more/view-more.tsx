@@ -12,35 +12,35 @@ import CustomerInfoPage from './customer-info';
 import { useLocation } from "react-router-dom";
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../constants';
-import { loadingJobSites, getJobSites } from 'actions/job-site/job-site.action';
-
+import { loadingJobLocations, getJobLocationsAction } from 'actions/job-location/job-location.action';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import '../../../../scss/index.scss';
+import { useHistory } from 'react-router-dom';
 
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
-  const jobSites = useSelector((state: any) => state.jobSites);
+  const jobLocations = useSelector((state: any) => state.jobLocations);
+  const customerState = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
   const location = useLocation();
   const customerObj = location.state;
+  const history = useHistory();
 
-  const openEditJobSiteModal = (jobSite: any) => {
-    let updateJobSiteObj = { ...jobSite, location: { lat: jobSite.location.coordinates[1], lon: jobSite.location.coordinates[0] }, update: true }
-    dispatch(setModalDataAction({
-      'data': {
-        'customerObj': updateJobSiteObj,
-        'modalTitle': 'Edit Job Site',
-        'removeFooter': false
-      },
-      'type': modalTypes.ADD_JOB_SITE
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+  const renderJobSiteComponent = (jobLocation: any) => {
+    let locationName = jobLocation.name;
+    let locationNameLink = locationName !== undefined ? locationName.replace(/ /g,'') : 'locationName';
+    let linkKey:any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `location/${locationNameLink}`);
+    history.push({
+      pathname: `/main/customers/location/${locationNameLink}`,
+      state: jobLocation
+    });
   };
 
   const columns: any = [
     {
-      'Header': 'Job Site',
+      'Header': 'Job Location',
       'accessor': 'name',
       'className': 'font-bold',
       'sortable': true
@@ -66,7 +66,7 @@ function ViewMorePage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-            onClick={() => { openEditJobSiteModal(row.original) }}
+            onClick={() => { renderJobSiteComponent(row.original) }}
             variant={'extended'}>
             {'View More'}
           </Fab>
@@ -82,30 +82,22 @@ function ViewMorePage({ classes }: any) {
   useEffect(() => {
    const obj: any = location.state;
    const customerId = obj.customerId;
-   dispatch(loadingJobSites());
-   dispatch(getJobSites(customerId));
-
-   return () => {
-     localStorage.setItem('nestedRouteKey', '');
-   }
+   dispatch(loadingJobLocations());
+   dispatch(getJobLocationsAction(customerId));
   }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
 
-  const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
-  };
-
-  const openJobSiteModal = () => {
+  const openJobLocationModal = () => {
     dispatch(setModalDataAction({
       'data': {
-        'customerObj': customerObj,
-        'modalTitle': 'New Job Site',
+        'locationObj': customerObj,
+        'modalTitle': 'New Job Location',
         'removeFooter': false
       },
-      'type': modalTypes.ADD_JOB_SITE
+      'type': modalTypes.ADD_JOB_LOCATION
     }));
     setTimeout(() => {
       dispatch(openModalAction());
@@ -137,46 +129,48 @@ function ViewMorePage({ classes }: any) {
           />
           </div>
            
-          <SwipeableViews index={curTab} className={'swipe_wrapper'}>
-            <div
-              className={`${classes.dataContainer} `}
-              hidden={curTab !== 0}
-              id={'0'}>
-              <PageContainer className="info_wrapper alignAddJobSite">
-                < CustomerInfoPage customerObj={customerObj}/>
-                <Fab
-                    aria-label={'delete'}
-                    classes={{
-                    'root': classes.fabRoot
-                    }}
-                    onClick={() => openJobSiteModal()}
-                    color={'primary'}
-                    variant={'extended'}>
-                    {'Add Job Site'}
-                </Fab>
-            </PageContainer>
-            
-              <BCTableContainer
-                columns={columns}
-                isLoading={jobSites.loading}
-                onRowClick={handleRowClick}
-                search
-                searchPlaceholder={"Search Job Sites..."}
-                tableData={jobSites.data}
-                initialMsg="There are no job sites!"
-              />
-            </div>
-            <div
-              hidden={curTab !== 1}
-              id={'1'}>
-              <Grid container>
-                <Grid
-                  item
-                  xs={12}
-                />
-              </Grid>
-            </div>
-          </SwipeableViews>
+         {
+           customerState.loading ? <BCCircularLoader heightValue={'200px'}/> : 
+           <SwipeableViews index={curTab} className={'swipe_wrapper'}>
+           <div
+             className={`${classes.dataContainer} `}
+             hidden={curTab !== 0}
+             id={'0'}>
+             <PageContainer className="info_wrapper alignAddJobLocation">
+              < CustomerInfoPage customerObj={customerObj}/> 
+               <Fab
+                   aria-label={'delete'}
+                   classes={{
+                   'root': classes.fabRoot
+                   }}
+                   onClick={() => openJobLocationModal()}
+                   color={'primary'}
+                   variant={'extended'}>
+                   {'Add Job Location'}
+               </Fab>
+           </PageContainer>
+           
+             <BCTableContainer
+               columns={columns}
+               isLoading={jobLocations.loading}
+               search
+               searchPlaceholder={"Search Job Locations..."}
+               tableData={jobLocations.data}
+               initialMsg="There are no job locations!"
+             />
+           </div>
+           <div
+             hidden={curTab !== 1}
+             id={'1'}>
+             <Grid container>
+               <Grid
+                 item
+                 xs={12}
+               />
+             </Grid>
+           </div>
+         </SwipeableViews>
+         }
         </div>
       </div>
     </div>

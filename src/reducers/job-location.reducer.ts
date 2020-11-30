@@ -1,47 +1,47 @@
-import { JobSiteActionType, JobSiteState } from 'actions/job-site/job-site.types';
+import { JobLocationActionType, JobLocationState } from 'actions/job-location/job-location.types';
 import { Reducer } from 'redux';
 
-const initialJobSites: JobSiteState = {
+const initialJobLocations: JobLocationState = {
   loading: false,
   data: []
 }
 
-export const JobSiteReducer: Reducer<any> = (state = initialJobSites, action) => {
+export const JobLocationReducer: Reducer<any> = (state = initialJobLocations, action) => {
   switch (action.type) {
-    case JobSiteActionType.GET:
+    case JobLocationActionType.GET:
       return {
         loading: true,
         data: state.data,
       };
-    case JobSiteActionType.SUCCESS:
+    case JobLocationActionType.SUCCESS:
       return {
         loading: false,
         data: [...action.payload],
       }
-    case JobSiteActionType.SET:
+    case JobLocationActionType.SET:
       return {
         loading: false,
         data:[...action.payload],
       }
-    case JobSiteActionType.ADD_NEW_JOB_SITE:
+    case JobLocationActionType.ADD_NEW_JOB_LOCATION:
       return {
         ...state,
         loading: false,
         data:[...state.data, action.payload],
       }
-    case JobSiteActionType.ADD_NEW_JOB_FAILED:
+    case JobLocationActionType.ADD_NEW_JOB_LOCATION:
       return {
         ...state,
         loading: false,
         errorMsg: action.payload
       }
-    case JobSiteActionType.FAILED:
+    case JobLocationActionType.FAILED:
       return {
         ...state,
         loading: false,
         errorMsg: action.payload,
       }
-    case JobSiteActionType.CLEAR_JOB_SITE_STORE:
+    case JobLocationActionType.CLEAR_JOB_LOCATION_STORE:
       return {
         ...state,
         loading: false,

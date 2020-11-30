@@ -5,6 +5,7 @@ import auth from './auth.reducer';
 import { combineReducers } from 'redux';
 import companyEquipment from './company-equipment.reducer';
 import { CustomersReducer as customers } from './customer.reducer';
+import { ImageReducer as image} from './image.reducer';
 import employees from './employee.reducer';
 import jobState from './jobs.reducer';
 import jobTypes from './job-type.reducer';
@@ -14,6 +15,7 @@ import serviceTicket from './service-ticket.reducer';
 import snackbarState from './snackbar.reducer';
 import tax from './tax.reduxer';
 import { JobSiteReducer as jobSites } from './job-site.reducer';
+import { JobLocationReducer as jobLocations } from './job-location.reducer';
 import { VendorsReducer as vendors } from './vendor.reducer';
 import { GroupReducer as groups } from './group.reducer';
 import { TechniciansReducer as technicians } from './technicians.reducer';
@@ -43,6 +45,7 @@ export default combineReducers({
   auth,
   companyEquipment,
   customers,
+  image,
   employees,
   jobState,
   jobTypes,
@@ -64,5 +67,6 @@ export default combineReducers({
   purchasedTags,
   brands,
   equipmentType,
-  jobSites
+  jobSites,
+  jobLocations
 });

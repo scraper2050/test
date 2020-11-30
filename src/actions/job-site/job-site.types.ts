@@ -21,4 +21,5 @@ export enum JobSiteActionType {
   UPDATE_JOB_SITE = 'updateJobSite',
   SUCCESS = 'getJobSiteSuccess',
   FAILED = 'getJobSiteFailed',
+  CLEAR_JOB_SITE_STORE = 'clearJobSiteStore'
 }

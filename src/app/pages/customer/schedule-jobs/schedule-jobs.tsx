@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getAllJobTypesAPI } from 'api/job.api';
+import "../../../../scss/popup.scss";
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -30,7 +31,9 @@ function ScheduleJobsPage({ classes }: any) {
       'data': {
         'modalTitle': 'New Service Ticket',
         'removeFooter': false,
-        'className': 'serviceTicketTitle'
+        'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+        'height': '100%'
       },
       'type': modalTypes.CREATE_TICKET_MODAL
     }));

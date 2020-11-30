@@ -1,0 +1,6 @@
+@media (max-width: 1000px) and (max-height: 771px) {
+  .MuiDialog-paperScrollPaper {
+    max-height: initial !important;
+    height: calc(100% - 70px);
+  }
+}

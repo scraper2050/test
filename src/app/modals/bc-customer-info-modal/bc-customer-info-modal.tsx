@@ -18,8 +18,7 @@ import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
-import { updateCustomerAction } from 'actions/customer/customer.action';
-import { DialogActions, DialogContent, Fab } from '@material-ui/core';
+import { getCustomerDetailAction, updateCustomerAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import '../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
 
@@ -32,10 +31,10 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const [nameLabelState, setNameLabelState] = useState(false);
   const history = useHistory();
   const initialValues = {
-    "name": customerInfo && customerInfo.customerName ? customerInfo.customerName : '',
-    "contactName": customerInfo && customerInfo.contactName && customerInfo.contactName ? customerInfo.contactName : '',
+    "name": customerInfo && customerInfo.customerName && customerInfo.customerName !== 'N/A' ? customerInfo.customerName : '',
+    "contactName": customerInfo && customerInfo.contactName && customerInfo.contactName !== 'N/A' ? customerInfo.contactName : '',
     "phone": customerInfo && customerInfo.phone && customerInfo.phone ? customerInfo.phone : '',
-    "email": customerInfo && customerInfo.email && customerInfo.email ? customerInfo.email : '',
+    "email": customerInfo && customerInfo.email && customerInfo.email && customerInfo.email !== 'N/A'? customerInfo.email : '',
     "city": customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.city ? customerInfo.customerAddress.city : '',
     'state': {
         'id': customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.state ? allStates.findIndex(x => x.name === customerInfo.customerAddress.state) : 0
@@ -44,7 +43,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     "zipCode": customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.zipCode ? customerInfo.customerAddress.zipCode : '',
     "customerId": customerInfo && customerInfo.customerId ? customerInfo.customerId : '',
   }
-   console.log(initialValues);
+
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -90,9 +89,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       if(isValidate(updateCustomerrequest)){
                         dispatch(updateCustomerAction(updateCustomerrequest, () => {
                             closeModal();
-                            history.push({
-                                pathname: `/main/customers`
-                              });
+                            dispatch(loadingSingleCustomers())
+                            dispatch(getCustomerDetailAction(updateCustomerrequest));
                           }));
                       }
                       
