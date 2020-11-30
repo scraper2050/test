@@ -104,6 +104,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
       case RoleEnums.OfficeAdmin:
         dispatch(createOfficeAdmin(data));
         break;
+      default:
     }
     setStage(0);
   }
@@ -118,7 +119,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
 
   const renderViewMore = (row: any) => {
     setStage(2);
-    let baseObj = row['original'];
+    const baseObj = row['original'];
     setProfile({
       email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
       firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
