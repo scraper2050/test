@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile'
 import validator from 'validator'
@@ -6,6 +6,57 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
 import { CompanyProfile } from 'actions/user/user.types'
+import { SettingsInputAntennaTwoTone } from '@material-ui/icons';
+
+interface User {
+  _id?: string,
+  auth?: {
+    email?: string,
+    password?: string
+  },
+  profile?: {
+    firstName?: string,
+    lastName?: string,
+    displayName?: string
+  },
+  address?: {
+    street?: string,
+    city?: string,
+    state?: string,
+    zipCode?: string
+  },
+  contact?: {
+    phone?: string
+  },
+  permissions?: {
+    role?: 0
+  },
+  info?: {
+    companyName?: string,
+    companyEmail?: string,
+    fax?: string,
+    phone?: string,
+    city?: string,
+    state?: string,
+    zipCode?: string,
+    logoUrl?: string,
+    industry?: string
+  },
+  company?: string
+}
+
+interface Company {
+  companyName?: string,
+  companyEmail?: string,
+  fax?: string,
+  phone?: string,
+  city?: string,
+  state?: string,
+  zipCode?: string,
+  logoUrl?: string,
+  industry?: string,
+  street?: string
+}
 
 function CompanyProfilePage() {
   const dispatch = useDispatch();
@@ -26,6 +77,56 @@ function CompanyProfilePage() {
   const [stateValid] = useState(true);
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
+
+  useEffect(() => {
+    let user: User = {};
+    user = JSON.parse(localStorage.getItem('user') || "");
+    let company: Company = {};
+    company = JSON.parse(localStorage.getItem('company') || "");
+    
+    if(company && company.companyName) {
+      setCompanyName(company.companyName);
+    }
+    else if(user.info && user.info.companyName) {
+      setCompanyName(user.info.companyName);
+    }
+    if(company && company.companyEmail) {
+      setCompanyEmail(company.companyEmail);
+    }
+    else if(user.auth && user.auth.email) {
+      setCompanyEmail(user.auth.email);
+    }
+    if(company && company.phone) {
+      setPhone(company.phone);
+    }
+    else if(user.contact && user.contact.phone) {
+      setPhone(user.contact.phone);
+    }
+    if(company && company.city) {
+      setCity(company.city);
+    }
+    else if(user.address && user.address.city) {
+      setCity(user.address.city);
+    }
+    if(company && company.state) {
+      setState(company.state);
+    }
+    else if(user.address && user.address.state) {
+      setState(user.address.state);
+    }
+    if(company && company.zipCode) {
+      setZipCode(company.zipCode);
+    }
+    else if(user.address && user.address.zipCode) {
+      setZipCode(user.address.zipCode);
+    }
+    if(company && company.street) {
+      setStreet(company.street);
+    }
+    else if(user.address && user.address.street) {
+      setStreet(user.address.street);
+    }
+  });
 
   const companyNameChanged = (newValue: string) => {
     setCompanyName(newValue);
@@ -87,6 +188,21 @@ function CompanyProfilePage() {
     }
 
     dispatch(updateCompanyProfileAction(data));
+
+    localStorage.setItem(
+      'company',
+      JSON.stringify({
+        companyName,
+        companyEmail,
+        phone,
+        logoUrl: !image.data ? '' : image.data.imageUrl,
+        fax,
+        city,
+        state,
+        zipCode,
+        street
+      })
+    );
   }
 
   const cancel = () => {
@@ -125,7 +241,7 @@ function CompanyProfilePage() {
                 left: {
                   id: 'companyName',
                   label: 'Company Name:',
-                  placehold: 'BlueClerk',
+                  placehold: 'Input Company Name',
                   value: companyName,
                   valid: companyNameValid,
                   onChange: companyNameChanged
@@ -133,7 +249,7 @@ function CompanyProfilePage() {
                 right: {
                   id: 'companyEmail',
                   label: 'Company Email:',
-                  placehold: 'john.doe@gmail.com',
+                  placehold: 'Input Company Emaill',
                   value: companyEmail,
                   valid: companyEmailValid,
                   onChange: companyEmailChanged
@@ -143,7 +259,7 @@ function CompanyProfilePage() {
                 left: {
                   id: 'phone',
                   label: 'Phone:',
-                  placehold: '1234567890',
+                  placehold: 'Input Phone Number',
                   value: phone,
                   valid: phoneValid,
                   onChange: phoneChanged
@@ -151,7 +267,7 @@ function CompanyProfilePage() {
                 right: {
                   id: 'fax',
                   label: 'Fax:',
-                  placehold: 'fax',
+                  placehold: 'Input Fax',
                   value: fax,
                   valid: faxValid,
                   onChange: faxChanged
@@ -161,7 +277,7 @@ function CompanyProfilePage() {
                 left: {
                   id: 'street',
                   label: 'Street:',
-                  placehold: 'Test test test',
+                  placehold: 'Input Street',
                   value: street,
                   valid: streetValid,
                   onChange: streetChanged
@@ -169,7 +285,7 @@ function CompanyProfilePage() {
                 right: {
                   id: 'city',
                   label: 'City:',
-                  placehold: 'Austin',
+                  placehold: 'Input City',
                   value: city,
                   valid: cityValid,
                   onChange: cityChanged
@@ -179,7 +295,7 @@ function CompanyProfilePage() {
                 left: {
                   id: 'state',
                   label: 'State:',
-                  placehold: 'TX',
+                  placehold: 'Input State',
                   value: state,
                   valid: stateValid,
                   onChange: stateChanged
@@ -187,7 +303,7 @@ function CompanyProfilePage() {
                 right: {
                   id: 'zipCode',
                   label: 'Zip Code:',
-                  placehold: '78757',
+                  placehold: 'Input Zip Code',
                   value: zipCode,
                   valid: zipCodeValid,
                   onChange: zipCodeChanged

@@ -40,7 +40,7 @@ function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, c
       <Grid
         item
         md={6}
-        xs={12} className="search_wrapper">
+        xs={12}>
         {search
           ? <BCTableSearchContainer
             handleSearchChange={handleSearchChange}

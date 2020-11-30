@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './bc-admin-profile.style';
 import { Fab, TextField, withStyles } from "@material-ui/core";
 
@@ -32,11 +32,22 @@ interface RowField {
 }
 
 function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Props) {
+  const [editable, setEditable] = useState(false);
   const openFileDialog = () => {
     const input = document.getElementById('file-input');
 
     if (input) {
       input.click();
+    }
+  }
+
+  const apply_edit = () => {
+    if(!editable) {
+      setEditable(true);
+    }
+    else {
+      setEditable(false);
+      apply();
     }
   }
 
@@ -78,6 +89,7 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
                   {
                     element.left &&
                     <TextField
+                      disabled={!editable}
                       id={element.left.id}
                       placeholder={element.left.placehold}
                       variant={'outlined'}
@@ -99,6 +111,7 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
                   {
                     element.right &&
                     <TextField
+                      disabled={!editable}
                       id={element.right.id}
                       placeholder={element.right.placehold}
                       variant={'outlined'}
@@ -143,9 +156,9 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
             width: '100px',
             background: '#219653',
           }}
-          onClick={apply}
+          onClick={apply_edit}
           variant={'extended'}>
-          {'Apply'}
+          {editable ? 'Apply' : 'Edit'}
         </Fab>
       </div>
     </div>
