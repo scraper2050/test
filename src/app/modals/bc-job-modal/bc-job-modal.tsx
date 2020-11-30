@@ -89,6 +89,7 @@ function BCJobModal({
     }else if(requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
       setScheduledEndTimeMsg('End time should be greater than start time.');
       setEndTimeLabelState(true);
+      setStartTimeLabelState(false);
       validateFlag = false;
     }else {
       setScheduledEndTimeMsg('');
