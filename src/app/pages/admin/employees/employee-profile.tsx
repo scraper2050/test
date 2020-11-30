@@ -6,20 +6,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 
 interface Props {
+  profile: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+  }
   back: () => void;
 }
 
-function EmployeeProfile({back} : Props) {
+function EmployeeProfile({profile, back} : Props) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
-  const [firstName, setFirstName] = useState('');
+  const [firstName, setFirstName] = useState(profile.firstName);
   const [firstNameValid] = useState(true);
-  const [lastName, setLastname] = useState('');
+  const [lastName, setLastname] = useState(profile.lastName);
   const [lastNameValid] = useState(true);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(profile.email);
   const [emailValid, setEmailVaild] = useState(true);
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(profile.phone);
   const [phoneValid, setPhoneValid] = useState(true);
+
+  console.log(profile);
   
   const firstNameChanged = (newValue: string) => {
     setFirstName(newValue);
@@ -100,8 +108,8 @@ function EmployeeProfile({back} : Props) {
               },
               {
                 left: {
-                  id: 'companyEmail',
-                  label: 'Company Email:',
+                  id: 'email',
+                  label: 'Email:',
                   placehold: 'john.doe@gmail.com',
                   value: email,
                   valid: emailValid,

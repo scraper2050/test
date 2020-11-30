@@ -5,8 +5,15 @@ import { Card, CardActionArea, Fab, IconButton, TextField, withStyles } from "@m
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import validator from 'validator';
 
+export enum Roles {
+  Technician = 'Technician',
+  Administrator = 'Administrator',
+  Manager = 'Manager',
+  OfficeAdmin = 'OfficeAdmin'
+}
+
 interface Props {
-  submit: () => void;
+  submit: (firstName:string, lastName:string, email:string, phoneNumber:string, role:string) => void;
   cancel: () => void;
   classes: any;
   children?: React.ReactNode;
@@ -51,15 +58,15 @@ function AdminAddNewEmployeePage({submit, cancel, classes, children }: Props) {
     else setPhoneNumberValid(true);
   }
 
-  const [role, setRole] = useState(-1);
+  const [role, setRole] = useState('');
 
   const next = () => {
     if(!firstNameValid || !lastNameValid || !emailValid || !phoneNumberValid) return;
     if(!firstName || !lastName || !email || !phoneNumber) return;
     if (step === 1) setStep(2);
     else {
-      if(role === -1) return;
-      submit();
+      if(role === '') return;
+      submit(firstName, lastName, email, phoneNumber, role);
     }
   }
 
@@ -69,19 +76,19 @@ function AdminAddNewEmployeePage({submit, cancel, classes, children }: Props) {
   }
 
   const technicianSelected = () => {
-    setRole(1);
+    setRole(Roles.Technician);
   }
 
   const administratorSelected = () => {
-    setRole(2);
+    setRole(Roles.Administrator);
   }
 
   const managerSelected = () => {
-    setRole(3);
+    setRole(Roles.Manager);
   }
 
   const officeSelected = () => {
-    setRole(4);
+    setRole(Roles.OfficeAdmin);
   }
 
   return (
@@ -165,24 +172,24 @@ function AdminAddNewEmployeePage({submit, cancel, classes, children }: Props) {
             <h2>Roles</h2>
             <h4 className={classes.required}>Choose level of role for new user to view schedule and mark work complete</h4>
             <div className={classes.rolesRow}>
-              <Card className={classes.card} style={{ backgroundColor: role !== 1 ? 'white' : '#00aaff' }}>
+              <Card className={classes.card} style={{ backgroundColor: role !== Roles.Technician ? 'white' : '#00aaff' }}>
                 <CardActionArea className={classes.cardActionArea} onClick={() => technicianSelected()}>
                   Technician
                 </CardActionArea>
               </Card>
-              <Card className={classes.card} style={{ backgroundColor: role !== 2 ? 'white' : '#00aaff' }}>
+              <Card className={classes.card} style={{ backgroundColor: role !== Roles.Administrator ? 'white' : '#00aaff' }}>
                 <CardActionArea className={classes.cardActionArea} onClick={() => administratorSelected()}>
                   Administrator
                 </CardActionArea>
               </Card>
             </div>
             <div className={classes.rolesRow}>
-              <Card className={classes.card} style={{ backgroundColor: role !== 3 ? 'white' : '#00aaff' }}>
+              <Card className={classes.card} style={{ backgroundColor: role !== Roles.Manager ? 'white' : '#00aaff' }}>
                 <CardActionArea className={classes.cardActionArea} onClick={() => managerSelected()}>
                   Manager
                 </CardActionArea>
               </Card>
-              <Card className={classes.card} style={{ backgroundColor: role !== 4 ? 'white' : '#00aaff' }}>
+              <Card className={classes.card} style={{ backgroundColor: role !== Roles.OfficeAdmin ? 'white' : '#00aaff' }}>
                 <CardActionArea className={classes.cardActionArea} onClick={() => officeSelected()}>
                   Office/Dispatch
                 </CardActionArea>

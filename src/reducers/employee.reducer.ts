@@ -3,10 +3,12 @@ import { UsersState, UsersActionType, types } from './../actions/employee/employ
 
 const initialEmployees: UsersState = {
   loading: false,
-  data: []
+  data: [],
+  added: false
 }
 
 export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action) => {
+  console.log(action.type);
   switch (action.type) {
     case UsersActionType.GET:
       return {
@@ -24,6 +26,10 @@ export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action)
         ...state,
         loading: false,
         error: action.payload,
+      }
+    case UsersActionType.ADDED:
+      return {
+        added: true
       }
     default:
   }

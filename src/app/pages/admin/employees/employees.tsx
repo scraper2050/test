@@ -2,11 +2,13 @@ import styled from 'styled-components';
 import styles from './employees.style';
 import {Fab, withStyles } from "@material-ui/core";
 import AdminAddNewEmployeePage from './add-new-employee';
+import { Roles as RoleEnums} from './add-new-employee'
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getEmployees, loadingEmployees } from 'actions/employee/employee.action';
+import { createTechnician, createAdministrator, createManager, createOfficeAdmin, getEmployees, loadingEmployees } from 'actions/employee/employee.action';
+import { UserProfile } from 'actions/employee/employee.types';
 
 interface Props {
   classes: any;
@@ -17,6 +19,15 @@ function AdminEmployeesPage({ classes, children }: Props) {
   const dispatch = useDispatch();
   const employees = useSelector((state: any) => state.employees);
   const [stage, setStage] = useState(0);
+  const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
+  });
+
+  console.log(employees);
+
   const columns: any = [
     {
       'Cell'({ row }: any) {
@@ -42,7 +53,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
     },
     {
       'Header': 'Email',
-      'accessor': 'info.email',
+      'accessor': 'auth.email',
       'className': 'font-bold',
       'sortable': true
     },
@@ -72,8 +83,29 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(getEmployees());
   }, []);
 
-  const add = () => {
+  const add = (firstName:string, lastName:string, email:string, phoneNumber:string, role:string) => {
+    const data: UserProfile = {
+      firstName,
+      lastName,
+      email,
+      phone: phoneNumber
+    };
 
+    switch(role) {
+      case RoleEnums.Technician:
+        dispatch(createTechnician(data));
+        break;
+      case RoleEnums.Administrator:
+        dispatch(createAdministrator(data));
+        break;
+      case RoleEnums.Manager:
+        dispatch(createManager(data));
+        break;
+      case RoleEnums.OfficeAdmin:
+        dispatch(createOfficeAdmin(data));
+        break;
+    }
+    setStage(0);
   }
 
   const cancel = () => {
@@ -86,6 +118,13 @@ function AdminEmployeesPage({ classes, children }: Props) {
 
   const renderViewMore = (row: any) => {
     setStage(2);
+    let baseObj = row['original'];
+    setProfile({
+      email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
+      firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
+      lastName: baseObj['profile'] && baseObj['profile']['lastName'] ? baseObj['profile']['lastName'] : '',
+      phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
+    });
   }
   
   return (
@@ -131,7 +170,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
           }
 
           {stage === 2 && 
-          <EmployeeProfile back={cancel}/>
+          <EmployeeProfile profile={profile} back={cancel}/>
           }
         </PageContainer>
       </MainContainer>

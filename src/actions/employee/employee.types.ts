@@ -5,6 +5,13 @@ export const types = {
   'SET_EMPLOYEES': 'setEmployee'
 };
 
+export interface UserProfile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
 export interface User {
   _id: string,
   auth?: {
@@ -40,10 +47,12 @@ export interface UsersState {
   readonly loading: boolean
   readonly data?: User[]
   readonly error?: string
+  readonly added?: boolean
 }
 
 export enum UsersActionType {
   GET = 'getUsers',
   SUCCESS = 'getUsersSuccess',
   FAILED = 'getUsersFailed',
+  ADDED = 'addedUser'
 }
