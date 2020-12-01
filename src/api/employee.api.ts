@@ -18,7 +18,7 @@ export const getEmployeesForJob = async () => {
       throw new Error(`Something went wrong`);
     }
   }
-  return responseData.employees;
+  return responseData;
 };
 
 export const getEmployees = async () => {

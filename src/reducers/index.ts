@@ -16,6 +16,7 @@ import snackbarState from './snackbar.reducer';
 import tax from './tax.reduxer';
 import { JobSiteReducer as jobSites } from './job-site.reducer';
 import { JobLocationReducer as jobLocations } from './job-location.reducer';
+import { EmployeesForJobReducer as employeesForJob } from './employees-for-job.reducer';
 import { VendorsReducer as vendors } from './vendor.reducer';
 import { GroupReducer as groups } from './group.reducer';
 import { TechniciansReducer as technicians } from './technicians.reducer';
@@ -68,5 +69,6 @@ export default combineReducers({
   brands,
   equipmentType,
   jobSites,
-  jobLocations
+  jobLocations,
+  employeesForJob
 });

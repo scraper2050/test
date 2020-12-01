@@ -15,6 +15,7 @@ import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.
 import { useDispatch, useSelector } from 'react-redux';
 import { formatToMilitaryTime } from 'helpers/format';
 import styled from 'styled-components';
+import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 
 const initialJobState = {
   'customer': {
@@ -48,6 +49,7 @@ function BCJobModal({
   const dispatch = useDispatch();
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
+  const employeesForJob = useSelector(({ employeesForJob} : any) => employeesForJob.data);
   const technicians = useSelector(({ technicians }: any) => technicians.data);
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
@@ -72,6 +74,7 @@ function BCJobModal({
 
   useEffect(() => {
     dispatch(getInventory());
+    dispatch(getEmployeesForJobAction());
     dispatch(getTechnicians());
     dispatch(getAllJobTypesAPI());
   }, []);
@@ -247,7 +250,7 @@ function BCJobModal({
               handleChange={formikChange}
               items={{
                 'data': [
-                  ...technicians.map((o: any) => {
+                  ...employeesForJob.map((o: any) => {
                     return {
                       '_id': o._id,
                       'displayName': o.profile.displayName
