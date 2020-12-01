@@ -27,7 +27,7 @@ function BCServiceTicketModal({
     'jobType': '',
     'note': '',
     'updateFlag': '',
-    'scheduleDate': new Date()
+    'dueDate': new Date()
   }
 }: any): JSX.Element {
   const dispatch = useDispatch();
@@ -82,7 +82,7 @@ function BCServiceTicketModal({
       'jobLocationId': ticket.jobLocation,
       'jobTypeId': ticket.jobType,
       'note': ticket.note,
-      'scheduleDate': ticket.scheduleDate,
+      'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag
     },
     'onSubmit': (values, { setSubmitting }) => {
@@ -92,13 +92,13 @@ function BCServiceTicketModal({
         ...values
       };
       let editTicketObj = {...values, ticketId: ''};
-      tempData.scheduleDate = formatDate(tempData.scheduleDate);
+      //tempData.dueDate = formatDate(tempData.dueDate);
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         delete editTicketObj.customerId;
         let formatedRequest = formatRequestObj(editTicketObj);
-        if(formatedRequest.scheduleDate){
-          formatedRequest.scheduleDate = formatDate(formatedRequest.scheduleDate);
+        if(formatedRequest.dueDate){
+          formatedRequest.dueDate = formatDate(formatedRequest.dueDate);
         }
           callEditTicketAPI(formatedRequest).then((response: any) => {
             dispatch(refreshServiceTickets(true));
@@ -140,7 +140,7 @@ function BCServiceTicketModal({
      *   'customer': Yup.string()
      *     .required('Customer is required'),
      *   'notes': Yup.string()
-     *   // 'scheduleDate': Yup.string().required('Schedule date is required')
+     *   // 'dueDate': Yup.string().required('Schedule date is required')
      * })
      */
   });
@@ -152,7 +152,7 @@ function BCServiceTicketModal({
   
   
   const dateChangeHandler = (date: string) => {
-    setFieldValue('scheduleDate', date);
+    setFieldValue('dueDate', date);
   };
 
   const closeModal = () => {
@@ -262,8 +262,8 @@ function BCServiceTicketModal({
             handleChange={dateChangeHandler}
             className='serviceTicketLabel'
             label={'Due Date'}
-            name={'scheduleDate'}
-            value={FormikValues.scheduleDate}
+            name={'dueDate'}
+            value={FormikValues.dueDate}
           />
         </div>
       </DialogContent>
