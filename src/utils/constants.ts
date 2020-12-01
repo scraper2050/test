@@ -7,6 +7,10 @@ export const apiUrls = {
 };
 export const allStates = [
   {
+    abbreviation: "none",
+    name: "none",
+  },
+  {
     abbreviation: "AL",
     name: "Alabama",
   },

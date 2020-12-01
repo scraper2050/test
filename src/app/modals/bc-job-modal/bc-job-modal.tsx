@@ -127,13 +127,12 @@ function BCJobModal({
     } else {
       request = createJob;
     }
-     
-    const tempFlag = tempData.scheduledStartTime < tempData.scheduledEndTime;
     
-
     if(isValidate(tempData)) {
-        tempData.scheduledStartTime = formatToMilitaryTime(tempData.scheduledStartTime);
-        tempData.scheduledEndTime = formatToMilitaryTime(tempData.scheduledEndTime);
+       if(tempData.scheduledStartTime && tempData.scheduledStartTime !== null)
+           tempData.scheduledStartTime = formatToMilitaryTime(tempData.scheduledStartTime);
+       if(tempData.scheduledEndTime && tempData.scheduledEndTime !== null)
+           tempData.scheduledEndTime = formatToMilitaryTime(tempData.scheduledEndTime);
         
         request(tempData)
           .then((response: any) => {

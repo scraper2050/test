@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
 import "../../../scss/index.scss";
 import { clearJobLocationStore, getJobLocationsAction } from 'actions/job-location/job-location.action';
+import styled from 'styled-components';
 
 
 function BCServiceTicketModal({
@@ -31,6 +32,7 @@ function BCServiceTicketModal({
   }
 }: any): JSX.Element {
   const dispatch = useDispatch();
+  const [notesLabelState, setNotesLabelState] = useState(false);
   const handleCustomerChange = (event: any, fieldName: any, setFieldValue: any) => {
     const customerId = event.target.value;
     setFieldValue(fieldName, customerId);
@@ -49,6 +51,17 @@ function BCServiceTicketModal({
       dispatch(clearJobSiteStore());
     }
     
+  }
+
+  const isValidate = (requestObj: any) => {
+    let validateFlag = true;
+    if(requestObj.note === undefined || requestObj.note === ''){
+      setNotesLabelState(true);
+      validateFlag = false;
+    }else{
+      setNotesLabelState(false);
+    }
+    return validateFlag;
   }
 
   const formatRequestObj = (rawReqObj: any) => {
@@ -94,27 +107,31 @@ function BCServiceTicketModal({
       let editTicketObj = {...values, ticketId: ''};
       //tempData.dueDate = formatDate(tempData.dueDate);
       if (ticket._id) {
-        editTicketObj.ticketId = ticket._id;
-        delete editTicketObj.customerId;
-        let formatedRequest = formatRequestObj(editTicketObj);
-        if(formatedRequest.dueDate){
-          formatedRequest.dueDate = formatDate(formatedRequest.dueDate);
-        }
-          callEditTicketAPI(formatedRequest).then((response: any) => {
-            dispatch(refreshServiceTickets(true));
-            dispatch(closeModalAction());
-            setTimeout(() => {
-              dispatch(setModalDataAction({
-                'data': {},
-                'type': ''
-              }));
-            }, 200);
-            setSubmitting(false);
-          })
-            .catch((err: any) => {
+                editTicketObj.ticketId = ticket._id;
+                delete editTicketObj.customerId;
+                if(isValidate(editTicketObj)){
+                  let formatedRequest = formatRequestObj(editTicketObj);
+                  if(formatedRequest.dueDate){
+                    formatedRequest.dueDate = formatDate(formatedRequest.dueDate);
+                  }
+                  callEditTicketAPI(formatedRequest).then((response: any) => {
+                    dispatch(refreshServiceTickets(true));
+                    dispatch(closeModalAction());
+                    setTimeout(() => {
+                      dispatch(setModalDataAction({
+                        'data': {},
+                        'type': ''
+                      }));
+                    }, 200);
+                    setSubmitting(false);
+                  })
+                    .catch((err: any) => {
+                      setSubmitting(false);
+                      throw err;
+                    });
+            } else {
               setSubmitting(false);
-              throw err;
-            });
+            }
       } else {
         let formatedRequest = formatRequestObj(tempData);
           callCreateTicketAPI(formatedRequest).then((response: any) => {
@@ -257,6 +274,7 @@ function BCServiceTicketModal({
             value={FormikValues.note}
             className='serviceTicketLabel'
           />
+           {notesLabelState ? <Label>Notes are required while updating the ticket.</Label>: null}
           <BCDateTimePicker
             disablePast
             handleChange={dateChangeHandler}
@@ -308,7 +326,10 @@ function BCServiceTicketModal({
     </form>
   );
 }
-
+const Label = styled.div`
+  color: red;
+  font-size: 15px;
+`;
 export default withStyles(
   styles,
   { 'withTheme': true }
