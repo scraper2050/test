@@ -3,7 +3,6 @@ import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-pi
 import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getInventory } from 'actions/inventory/inventory.action';
-import { getTechnicians } from 'actions/technicians/technicians.action';
 import { refreshJobs } from 'actions/job/job.action';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-job-modal.styles';
@@ -16,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { formatToMilitaryTime } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
+import { getVendors } from 'actions/vendor/vendor.action';
 
 const initialJobState = {
   'customer': {
@@ -30,6 +30,9 @@ const initialJobState = {
   'scheduledEndTime': null,
   'scheduledStartTime': null,
   'technician': {
+    '_id': ''
+  },
+  'contractor': {
     '_id': ''
   },
   'ticket': {
@@ -50,11 +53,12 @@ function BCJobModal({
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   const employeesForJob = useSelector(({ employeesForJob} : any) => employeesForJob.data);
-  const technicians = useSelector(({ technicians }: any) => technicians.data);
+  const vendorsList = useSelector(({ vendors } : any) => vendors.data);
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
+  const [showVendorFlag, setShowVendorFlag] = useState(false);
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
   const { profile: {
@@ -70,12 +74,31 @@ function BCJobModal({
       'name': 'Vendor'
     }
   ];
+  const handleEmployeeTypeChange = (fieldName: string, data: string) => {
+    if(data === '0'){
+      setFieldValue(fieldName, 0);
+      setShowVendorFlag(false);
+    } else if(data === '1'){
+      setFieldValue(fieldName, 1);
+      setShowVendorFlag(true);
+    }
+  }
+  
   const dateChangeHandler = (date: string, fieldName: string) => setFieldValue(fieldName, date);
+
+  const formatRequestObj = (rawReqObj: any) => {
+    for ( let key in rawReqObj ) {
+        if(rawReqObj[key] === '' || rawReqObj[key] === null){
+          delete rawReqObj[key];
+        }
+    }
+    return rawReqObj;
+  }
 
   useEffect(() => {
     dispatch(getInventory());
     dispatch(getEmployeesForJobAction());
-    dispatch(getTechnicians());
+    dispatch(getVendors());
     dispatch(getAllJobTypesAPI());
   }, []);
 
@@ -131,14 +154,15 @@ function BCJobModal({
       request = createJob;
     }
      
-    const tempFlag = tempData.scheduledStartTime < tempData.scheduledEndTime;
-    
-
-    if(isValidate(tempData)) {
-        tempData.scheduledStartTime = formatToMilitaryTime(tempData.scheduledStartTime);
-        tempData.scheduledEndTime = formatToMilitaryTime(tempData.scheduledEndTime);
-        
-        request(tempData)
+    const requestObj = formatRequestObj(tempData);
+    if(isValidate(requestObj)) {
+      if(requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
+        requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
+      if(requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
+        requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
+      if(requestObj.companyId)
+        delete requestObj.companyId;
+        request(requestObj)
           .then((response: any) => {
             dispatch(refreshServiceTickets(true));
             dispatch(refreshJobs(true));
@@ -174,6 +198,7 @@ function BCJobModal({
       scheduledEndTime: job.scheduledEndTime,
       scheduledStartTime: job.scheduledStartTime,
       technicianId: job.technician._id,
+      contractorId: job.contractor ? job.contractor._id : '',
       ticketId: job.ticket._id
     },
     onSubmit
@@ -216,7 +241,7 @@ function BCJobModal({
                 'isError': true,
                 'message': FormikErrors.employeeType
               }}
-              handleChange={formikChange}
+              handleChange={(event: any) => handleEmployeeTypeChange('employeeType', event.target.value)}
               items={{
                 'data': employeeTypes,
                 'displayKey': 'name',
@@ -246,7 +271,7 @@ function BCJobModal({
               required
               value={FormikValues.ticketId}
             /> */}
-            <BCSelectOutlined
+            { !showVendorFlag ? <BCSelectOutlined
               handleChange={formikChange}
               items={{
                 'data': [
@@ -265,6 +290,31 @@ function BCJobModal({
               required
               value={FormikValues.technicianId}
             />
+              : null
+            }
+            {
+              showVendorFlag ? 
+              <BCSelectOutlined
+              handleChange={formikChange}
+              items={{
+                'data': [
+                  ...vendorsList.map((o: any) => {
+                    return {
+                      '_id': o.contractor._id,
+                      'displayName': o.contractor.info.companyName
+                    };
+                  })
+                ],
+                'displayKey': 'displayName',
+                'valueKey': '_id'
+              }}
+              label={'Select Vendor'}
+              name={'contractorId'}
+              required
+              value={FormikValues.contractorId}
+            /> :
+            null
+            }
             <BCSelectOutlined
               handleChange={formikChange}
               items={{
