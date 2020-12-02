@@ -203,7 +203,8 @@ function BCJobModal({
     },
     onSubmit
   });
-
+ 
+  
   const {
     errors: FormikErrors,
     values: FormikValues,
@@ -222,7 +223,6 @@ function BCJobModal({
       }));
     }, 200);
   };
-
   return (
     <form onSubmit={FormikSubmit}>
       <DialogContent classes={{ 'root': classes.dialogContent }}>

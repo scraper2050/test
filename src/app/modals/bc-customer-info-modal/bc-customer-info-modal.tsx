@@ -117,6 +117,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'name'}
                             placeholder={'Name'}
                             required={true}
+                            onChange={handleChange}
                           />
                           {nameLabelState ? <label>Required</label>: ''}
                         </FormGroup>
@@ -134,7 +135,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'email'}
                             placeholder={'Email'}
                             type={'email'}
-                           
+                            onChange={handleChange}
                           />
                         </FormGroup>
                       </Grid>
@@ -151,6 +152,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             <BCTextField
                               name={'contactName'}
                               placeholder={'Contact Name'}
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Grid>
@@ -166,6 +168,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               name={'phone'}
                               placeholder={'Phone Number'}
                               type={'number'}
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Grid>
@@ -183,6 +186,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             <BCTextField
                               name={'street'}
                               placeholder={'Street'}
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Grid>
@@ -197,6 +201,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             <BCTextField
                               name={'city'}
                               placeholder={'City'}
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Grid>
@@ -240,6 +245,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               name={'zipCode'}
                               placeholder={'Zip Code'}
                               type={'number'}
+                              onChange={handleChange}
                             />
                           </FormGroup>
                         </Grid>
