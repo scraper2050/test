@@ -7,7 +7,6 @@ const initialEmployeesForJob: EmployeesForJobState = {
 }
 
 export const EmployeesForJobReducer: Reducer<any> = (state = initialEmployeesForJob, action) => {
-    debugger
   switch (action.type) {
     case EmployeesForJobActionType.GET:
       return {
@@ -16,7 +15,6 @@ export const EmployeesForJobReducer: Reducer<any> = (state = initialEmployeesFor
       };
     case EmployeesForJobActionType.SUCCESS:
       let newEmployeesForJobData = [...action.payload.employees, action.payload.superAdmin];
-      console.log(newEmployeesForJobData);
       return {
         loading: false,
         data: newEmployeesForJobData,
