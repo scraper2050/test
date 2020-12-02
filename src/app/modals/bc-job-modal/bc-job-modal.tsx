@@ -153,9 +153,9 @@ function BCJobModal({
     } else {
       request = createJob;
     }
-     
-    const requestObj = formatRequestObj(tempData);
-    if(isValidate(requestObj)) {
+    
+    if(isValidate(tempData)) {
+      const requestObj = formatRequestObj(tempData);
       if(requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
         requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
       if(requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
