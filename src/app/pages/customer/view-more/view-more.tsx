@@ -53,7 +53,17 @@ function ViewMorePage({ classes }: any) {
     },
     {
       'Header': 'Address',
-      'accessor': 'address.city',
+      'accessor': 'address',
+      Cell: (row:any) => {
+        return (
+            <div>
+                <span>{`${row.value && row.value.street ? row.value.street : ''}` + ' '}</span>
+                <span>{`${row.value && row.value.city ? row.value.city : ''}` + ' '}</span>
+                <span>{`${row.value && row.value.state !== 'none' ? row.value.state : ''}` + ' '}</span>
+                <span>{`${row.value && row.value.zipcode ? row.value.zipcode : ''}` + ' '}</span>
+            </div>
+        )
+    },
       'className': 'font-bold',
       'sortable': true
     },

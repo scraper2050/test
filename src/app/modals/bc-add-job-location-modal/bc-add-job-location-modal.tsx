@@ -54,7 +54,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
     "address": {
       "city": '',
       'state': {
-        'id': -1
+        'id': 0
       },
       "street":  '',
       "zipcode":  ''

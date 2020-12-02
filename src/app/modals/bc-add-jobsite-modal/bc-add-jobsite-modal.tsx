@@ -56,7 +56,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     "address": {
       "city": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.city ? jobSiteInfo.address.city : '',
       'state': {
-        'id': jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.state ? allStates.findIndex(x => x.name === jobSiteInfo.address.state) : -1
+        'id': jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.state ? allStates.findIndex(x => x.name === jobSiteInfo.address.state) : 0
       },
       "street": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.street ? jobSiteInfo.address.street : '',
       "zipcode": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.zipcode ? jobSiteInfo.address.zipcode : ''

@@ -53,7 +53,7 @@ function ViewMoreLocationPage({ classes }: any) {
                     <div>
                         <span>{`${row.value.street}` + ' '}</span>
                         <span>{`${row.value.city}` + ' '}</span>
-                        <span>{`${row.value.state}` + ' '}</span>
+                        <span>{`${row.value.state !== 'none' ? row.value.state : ''}` + ' '}</span>
                         <span>{`${row.value.zipcode}` + ' '}</span>
                     </div>
                 )
