@@ -12,7 +12,7 @@ const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
 const ViewMoreCustomerPage = React.lazy(() => import('../customer/view-more/view-more'));
 const ViewMoreLocationPage = React.lazy(() => import('../customer/view-more/view-more-location'));
-
+const TicketsMapViewPage = React.lazy(() => import('../customer/tickets-map-view/tickets-map-view'));
 const InvoicingTodosPage = React.lazy(() => import('../invoicing/todos/todos'));
 const InvoicingListPage = React.lazy(() => import('../invoicing/invoices-list/invoices-list'));
 const InvoicingPurchaseOrderPage = React.lazy(() => import('../invoicing/purchase-order/purchase-order'));
