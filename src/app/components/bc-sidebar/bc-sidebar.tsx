@@ -24,6 +24,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       'link': '/main/customers/new-customer'
     },
     {
+      'label': 'Map With Toggle',
+      'link': '/main/customers/ticket-map-view'
+    },
+    {
       'label': 'Schedule/Jobs',
       'link': '/main/customers/schedule'
     },
