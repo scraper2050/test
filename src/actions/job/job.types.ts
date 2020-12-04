@@ -1,0 +1,5 @@
+export const types = {
+  'SET_JOB': 'SET_JOB',
+  'SET_JOB_LOADING': 'SET_JOB_LOADING',
+  'SET_REFRESH_JOB_STATUS': 'SET_REFRESH_JOB_STATUS'
+};

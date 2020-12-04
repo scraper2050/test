@@ -1,37 +1,81 @@
-## Blueclerk React Admin UI
+## What to Follow
 
-It's built with create-react-app boilerplate using Redux Saga and Typescirpt.
+### `Structure`
 
-Production link [https://app.blueclerk.com](https://app.blueclerk.com)
+- Components
+  -- folder
+  -- file-kebab-case.tsx
+- Pages
+  -- folder
+  -- file-kebab-case.tsx
+- Actions
+  -- folder
+  -- file-kebab-case.action.ts
+  -- file-kebab-case.type.ts
+- Reducers
+  -- file-kebab-case.reducer.ts
+- Saga
+  -- file-kebab-case.saga.ts
+- Modals
+  -- folder
+  -- file-kebab-case.tsx
+- Models
+  -- Model.ts
+- Assets
+- Utils || Shared Services
+  -- theme.scss
+  -- Constants.ts
+  -- Api.ts
 
-## Installation
+### `Styling`
 
-### Clone repo
+- Use axios as a dependency for fetching data for an API
+- Make a method or function in Api.ts file and use that method in the component
 
-```bash
-# clone the repo
-$ git clone https://lab.blueclerk.com/blueclerkwebdev/blueclerk_react_web.git
+### `Styling`
 
-# go into app's directory
-$ cd blueclerk_react_web
+- Use JSS for styling (Material UI by default uses JSS)
 
-# install app's dependencies
-$ yarn install
-```
+### `State Management`
 
-### Download zip
+- Redux for State Management
+- Redux-Thunk as a Middleware
 
-Extract all your files to your project folder and then,
+### `Naming`
 
-```bash
-# go into app's directory
-$ cd blueclerk_react_web
+- Use of PascalCase for constructor functions naming
+- Use of camelCase for variable naming
+- Use of kebab-case for file naming
+- Prefix component with page or component name
+- Reducer Naming (name-kebabcase.reducer.ts)
+- Action Naming (name-kebabcase.action.ts)
+- Style Naming (page-or-component.style.ts)
 
-# install app's dependencies
-$ yarn install
-```
+### `Utils`
+
+- Theming would be in one single file (fonts, colors, general items)
+- App constants
+- Api.ts (General implementation as a service for api call, all methods for api endpoints should be declared here)
+
+### `Modals`
+
+- General implementation for modal container as a React Portal
+- Separate folder for all the application Modals
+
+### `Forms`
+
+- Use Formik for forms [https://formik.org/docs/overview]
+
+### `Don't`
+
+- No use of class based component
+- No use of index.tsx (prefix component with page or component name)
+- No use of class based component
+- Don't just add any dependency
 
 ## Available Scripts
+
+In the project directory, you can run:
 
 ### `yarn start`
 
@@ -65,3 +109,9 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).

@@ -1,0 +1,445 @@
+// If you want to override variables do it here
+@import "variables";
+
+// Import styles with default layout.
+// If you are going to use dark layout please comment next line
+@import "~@coreui/coreui-pro/scss/coreui";
+
+// Import styles with dark layout
+// If you want to use dark layout uncomment next line
+//@import "~@coreui/coreui-pro/scss/themes/dark/coreui-dark";
+
+// If you want to add something do it here
+@import "custom";
+
+// Spinkit
+$spinkit-spinner-color: $body-color;
+// @import "~spinkit/scss/spinkit.scss";
+// @import "../shared/styles/bootstrap.scss";
+@import "../scss/vendors/toastr/toastr.scss";
+
+body,
+html {
+  font-family: "Gothic", "A1";
+  font-style: normal;
+  font-weight: normal;
+}
+
+.app-body {
+  overflow-x: unset;
+}
+
+@media print {
+  .breadcrumb {
+    display: none !important;
+  }
+
+  .app-footer {
+    display: none !important;
+  }
+}
+
+.zEWidget-launcher {
+  margin: 0px 20px !important;
+}
+
+.sidebar .nav-link {
+  padding: 10px 10px 10px 32px !important;
+}
+
+body {
+  font-family: Roboto;
+}
+
+.password-visibity-icon {
+  position: absolute;
+  right: 4px;
+  z-index: 10000;
+  padding-top: 5px;
+}
+
+.button-span-text {
+  position: relative;
+  margin-left: 16px;
+
+  .social-login-logo {
+    width: 16px;
+    height: 16px;
+    left: -18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.admin-element-card {
+  width: 222px;
+  height: 222px;
+}
+
+.admin-element-container {
+  display: flex;
+  flex-wrap: wrap;
+
+  app-admin-card {
+    margin-right: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+.admin-card-container {
+  cursor: pointer;
+  text-align: center;
+  width: 192px;
+  height: 178px;
+  margin: auto;
+  border-radius: 15px;
+  border: 1px solid #e6e8ee;
+  box-shadow: none;
+  background: white;
+
+  .card-content-custom {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .circle-icon-back {
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      margin: auto;
+      text-align: center;
+      position: relative;
+
+      img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      mat-icon {
+        color: white;
+        font-size: 20px;
+        margin-top: 14px;
+        margin-right: 0px;
+      }
+    }
+  }
+
+  .card-title-text {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 0px;
+  }
+}
+
+.admin-card-container:hover {
+  background: #ff8c56;
+
+  .card-content-custom {
+    .circle-icon-back {
+      background: white !important;
+
+      mat-icon {
+        color: #ff8c56 !important;
+      }
+    }
+  }
+
+  .card-title-text {
+    color: white !important;
+  }
+}
+
+.circle-icon-back:hover {
+  background: white;
+}
+
+.back-fab-custom-button {
+  position: absolute;
+  right: 20px;
+}
+
+.cdk-overlay-container {
+  z-index: 1050;
+}
+
+.defaultModel .mat-dialog-container {
+  overflow: visible;
+  border-radius: 10px;
+}
+
+.defaultModel {
+  .cusModel {
+    .mat-placeholder-required {
+      display: none !important;
+    }
+  }
+}
+
+.sidebar .nav-link .nav-icon {
+  font-size: 1.4rem;
+  margin: 0 1.5rem 0 0;
+}
+
+.owl-dt-inline-container,
+.owl-dt-popup-container {
+  width: 26.5em;
+  box-shadow: none;
+}
+
+.owl-dt-calendar-table
+  .owl-dt-calendar-header
+  .owl-dt-calendar-table-divider:after {
+  background: #00aaff;
+}
+
+.owl-dt-calendar-table .owl-dt-calendar-cell-selected {
+  color: rgba(255, 255, 255, 0.85);
+  background-color: #00aaff;
+}
+
+.owl-dt-inline-container .owl-dt-calendar,
+.owl-dt-popup-container .owl-dt-calendar {
+  height: 27.25em;
+}
+
+.owl-dt-calendar-table .owl-dt-calendar-cell-content {
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.owl-dt-control .owl-dt-control-content {
+  font-size: 1.3em;
+}
+
+.owl-dt-calendar-table .owl-dt-calendar-header .owl-dt-weekdays th {
+  text-align: center;
+  padding-bottom: 4px;
+  /* font-family: Gothic A1; */
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  color: #000000;
+}
+
+.owl-dt-timer-hour12
+  .owl-dt-timer-hour12-box:hover
+  .owl-dt-control-button-content {
+  background: rgb(20, 156, 230) !important;
+  color: #fff;
+}
+
+.individualProfile .mat-ink-bar {
+  background-color: rgb(20, 156, 230) !important;
+}
+
+.individualProfile .mat-tab-label-active {
+  color: rgb(20, 156, 230) !important;
+  opacity: 1 !important;
+}
+
+.cal-month-view .cal-day-badge {
+  background-color: #f86c6b;
+}
+
+.list-template .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #00aaff;
+}
+
+.list-template {
+  .mat-tab-label {
+    padding: 0 15px;
+    min-width: 145px;
+  }
+}
+
+.singleRndBtn {
+  float: right;
+  margin-left: 10px;
+}
+
+.customBtn {
+  text-align: center;
+  padding: 4px 10px;
+  background: #00aaff;
+  color: #fff;
+  min-width: 85px;
+  border-radius: 30px;
+  min-height: 39px;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+
+  &:active {
+    outline: none !important;
+    color: #000000de !important;
+    border: 1px solid #0af !important;
+  }
+
+  &:focus {
+    outline: none !important;
+    background: #00aaff !important;
+    color: #fff !important;
+    box-shadow: none;
+  }
+
+  &:hover {
+    color: #fff;
+    background-color: #00aaff;
+  }
+}
+
+.customBtn.activeCustomBtn {
+  outline: none !important;
+  color: #000000de !important;
+  border: 1px solid #0af !important;
+  background: transparent !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.aside-menu {
+  width: 200px;
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      color: #515253;
+    }
+  }
+}
+
+.customer-detail-list {
+  .customLists {
+    .col-md-7.col-sm-7 {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+
+  .singleBtn {
+    display: none;
+  }
+}
+
+.customer-viewer-header {
+  display: flex;
+}
+
+.ng-star-inserted {
+  .list-template.ng-star-inserted {
+    .col-md-7.col-sm-7.ng-star-inserted {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    // .singleBtn {
+    //   display: none;
+    // }
+  }
+}
+
+.d-lg-none:nth-of-type(2) {
+  display: none !important;
+}
+
+@media (max-width: 992px) {
+  .app-header .navbar-brand {
+    left: 8%;
+    margin-left: 0;
+  }
+
+  .app-body {
+    margin-top: 0;
+    top: 0 !important;
+  }
+
+  .aside-menu {
+    position: absolute !important;
+  }
+}
+
+@media (max-width: 1450px) {
+  .d-lg-none:first-of-type {
+    display: block !important;
+  }
+}
+
+@media (min-width: 1451px) {
+  .d-lg-none,
+  .left-navbar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 556px) {
+  .app-header .navbar-brand {
+    left: 11%;
+  }
+
+  .admin-element-container {
+    width: 100%;
+
+    app-admin-card {
+      margin: auto;
+      margin-bottom: 30px;
+    }
+  }
+
+  .sidebar .sidebar-nav {
+    font-size: 16px;
+    height: 430px;
+    max-height: 430px;
+  }
+}
+
+@media (max-width: 400px) {
+  .app-header .navbar-brand {
+    width: 105px;
+    height: 50px;
+    margin-top: 0px;
+  }
+}
+
+@media (max-width: 320px) {
+  .sidebar .sidebar-nav {
+    font-size: 16px;
+    height: 360px;
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 767px) {
+  .response-nav {
+    margin-left: 0;
+  }
+}
+
+.ng-select .ng-select-container {
+  padding: 6px 16px;
+  background: #ffffff;
+  border: 1px solid #777777;
+  box-sizing: border-box;
+  border-radius: 2px;
+  // font-family: 'Gothic','A1';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 17px;
+  color: #383838;
+}
