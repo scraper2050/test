@@ -59,7 +59,7 @@ function EquipmentTypeListing({ classes }: any) {
 const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 25px;
+  margin-top: 10px;
 `;
 
 export default withStyles(styles, { withTheme: true })(EquipmentTypeListing);

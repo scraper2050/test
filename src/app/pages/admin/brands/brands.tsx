@@ -35,18 +35,6 @@ function Brands({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
-          <Fab
-            aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            onClick={() => openAddBrandTypeModal()}
-            variant={'extended'}>
-            {'New Brand Type'}
-          </Fab>
-        </div>
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
@@ -59,6 +47,18 @@ function Brands({ classes }: any) {
               }
             ]}
           />
+          <div className={classes.addButtonArea}>
+            <Fab
+              aria-label={'new-ticket'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              onClick={() => openAddBrandTypeModal()}
+              variant={'extended'}>
+              {'New Brand Type'}
+            </Fab>
+          </div>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={curTab}

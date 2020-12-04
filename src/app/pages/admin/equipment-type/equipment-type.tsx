@@ -35,18 +35,6 @@ function EquipmentType({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
-          <Fab
-            aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            onClick={() => openAddEquipmentTypeModal()}
-            variant={'extended'}>
-            {'New Equipment Type'}
-          </Fab>
-        </div>
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
@@ -58,7 +46,19 @@ function EquipmentType({ classes }: any) {
                 value: 0,
               }
             ]}
-          />
+          />          
+          <div className={classes.addButtonArea}>
+            <Fab
+              aria-label={'new-ticket'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              onClick={() => openAddEquipmentTypeModal()}
+              variant={'extended'}>
+              {'New Equipment Type'}
+            </Fab>
+          </div>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={curTab}
