@@ -50,6 +50,7 @@ export const dataContainer = {
     'flex-direction': 'column',
     'margin-top': '10px',
     'overflow' : 'hidden'
+    'margin-top': '10px'
   }
 };
 
