@@ -48,7 +48,8 @@ export const dataContainer = {
   'dataContainer': {
     'display': 'flex',
     'flex-direction': 'column',
-    'margin-top': '10px'
+    'margin-top': '10px',
+    'overflow' : 'hidden'
   }
 };
 
