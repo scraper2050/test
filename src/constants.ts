@@ -24,4 +24,5 @@ export const modalTypes = {
   'ADD_JOB_SITE' : 'add-job-site',
   'EDIT_CUSTOMER_INFO': 'edit-customer-info',
   'ADD_JOB_LOCATION' : 'add-job-location',
+  'SHOW_MAP_FILTER_POPUP': 'show-map-filter-popup',
 };

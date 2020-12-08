@@ -360,3 +360,36 @@ body {
 .alignAddJobSite {
   justify-content: flex-end;
 }
+/*Styles for Ticket View More*/
+.ticketsFilterContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+.ticketsCardViewContainer {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  //max-height: 250px;
+}
+
+.ticketItemDiv {
+  width: 40%;
+  margin: 10px;
+}
+.ticketsMapContainer {
+  width: 100%;
+  min-height: 300px;
+  margin-right: 0px;
+}
+.ticketItemDiv {
+  padding: 10px;
+  background: white;
+  min-height: 100px;
+}
+
+.ticketItemDiv > div {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+}
