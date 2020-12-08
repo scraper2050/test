@@ -149,7 +149,6 @@ function AdminEmployeesPage({ classes, children }: Props) {
               color={'primary'}
               onClick={() => {setStage(1)}}
               style={{
-                width: '15%',
                 float: 'right'
               }}
               variant={'extended'}>
@@ -190,7 +189,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
-  padding: 30px;
+  padding-bottom: 30px;
   width: 100%;
   padding-left: 65px;
   padding-right: 65px;

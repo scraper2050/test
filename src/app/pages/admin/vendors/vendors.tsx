@@ -86,22 +86,6 @@ function AdminVendorsPage({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
-          {
-            curTab === 0
-              ? <Fab
-                aria-label={'new-job'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                onClick={() => openVendorModal()}
-                variant={'extended'}>
-                {'Invite Vendor'}
-              </Fab>
-              : null
-          }
-        </div>
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
@@ -118,6 +102,22 @@ function AdminVendorsPage({ classes }: any) {
               }
             ]}
           />
+          <div className={classes.addButtonArea}>
+            {
+              curTab === 0
+                ? <Fab
+                  aria-label={'new-job'}
+                  classes={{
+                    'root': classes.fabRoot
+                  }}
+                  color={'primary'}
+                  onClick={() => openVendorModal()}
+                  variant={'extended'}>
+                  {'Invite Vendor'}
+                </Fab>
+                : null
+            }
+          </div>
           <SwipeableViews index={curTab}>
             <div
               className={classes.dataContainer}

@@ -1,10 +1,10 @@
-import BCTabs from "../../../components/bc-tab/bc-tab";
-import SwipeableViews from "react-swipeable-views";
-import styles from "./job-types.styles";
-import JobTypesListing from "./job-types-listing/job-types-listing";
-import React, { useEffect, useState } from "react";
+import BCTabs from '../../../components/bc-tab/bc-tab';
+import SwipeableViews from 'react-swipeable-views';
+import styles from './job-types.styles';
+import JobTypesListing from './job-types-listing/job-types-listing';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Fab, useTheme, withStyles } from "@material-ui/core";
+import { Fab, useTheme, withStyles } from '@material-ui/core';
 import { modalTypes } from '../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 
@@ -35,34 +35,34 @@ function JobTypesPage({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
-          <Fab
-            aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            onClick={() => openAddJobTypeModal()}
-            variant={'extended'}>
-            {'New Job Type'}
-          </Fab>
-        </div>
+
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
-            indicatorColor={"primary"}
+            indicatorColor={'primary'}
             onChangeTab={handleTabChange}
             tabsData={[
               {
-                label: "Job Types List",
-                value: 0,
+                'label': 'Job Types List',
+                'value': 0
               }
             ]}
           />
+          <div className={classes.addButtonArea} >
+            <Fab
+              aria-label={'new-ticket'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              onClick={() => openAddJobTypeModal()}
+              variant={'extended'}>
+              {'New Job Type'}
+            </Fab>
+          </div>
           <SwipeableViews
-            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-            index={curTab}
-          >
+            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+            index={curTab}>
             <JobTypesListing hidden={curTab !== 0} />
           </SwipeableViews>
         </div>
@@ -71,4 +71,4 @@ function JobTypesPage({ classes }: any) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(JobTypesPage);
+export default withStyles(styles, { 'withTheme': true })(JobTypesPage);

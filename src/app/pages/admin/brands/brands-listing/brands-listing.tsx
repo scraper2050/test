@@ -59,7 +59,8 @@ function BrandsListing({ classes }: any) {
 const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 25px;
+  margin-top: 10px;
+  overflow: hidden;
 `;
 
 export default withStyles(styles, { withTheme: true })(BrandsListing);
