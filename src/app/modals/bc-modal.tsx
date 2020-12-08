@@ -7,6 +7,7 @@ import BCAddJobTypeModal from './bc-add-job-type-modal/bc-add-job-type-modal';
 import BCAddEquipmentTypeModal from './bc-add-equipment-type-modal/bc-add-equipment-type-modal';
 import BCAddJobSiteModal from './bc-add-jobsite-modal/bc-add-jobsite-modal';
 import BCAddJobLocationModal from './bc-add-job-location-modal/bc-add-job-location-modal';
+import BCMapFilterModal from './bc-map-filter/bc-map-filter-popup';
 import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-modal';
 import CloseIcon from '@material-ui/icons/Close';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -146,6 +147,15 @@ function BCModal() {
               'maxWidth': 'md'
             });
             setComponent(<BCAddJobLocationModal jobLocationInfo={data.locationObj}/>);
+          break;
+          case modalTypes.SHOW_MAP_FILTER_POPUP:
+          setModalOptions({
+              'disableBackdropClick': true,
+              'disableEscapeKeyDown': true,
+              'fullWidth': true,
+              'maxWidth': 'xs'
+            });
+            setComponent(<BCMapFilterModal />);
           break;
         default:
           setComponent(null);
