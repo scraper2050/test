@@ -140,7 +140,7 @@ function JobPage({ classes }: any) {
   }, [refresh]);
 
   const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
+
   };
 
   return (

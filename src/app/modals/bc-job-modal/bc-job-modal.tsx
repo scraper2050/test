@@ -16,6 +16,8 @@ import { formatToMilitaryTime } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import { getVendors } from 'actions/vendor/vendor.action';
+import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
+import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 
 const initialJobState = {
   'customer': {
@@ -40,6 +42,12 @@ const initialJobState = {
   },
   'type': {
     '_id': ''
+  },
+  'jobLocation': {
+    '_id': ''
+  },
+  'jobSite': {
+    '_id': ''
   }
 }
 
@@ -48,13 +56,15 @@ function BCJobModal({
   classes,
   job = initialJobState
 }: any): JSX.Element {
-
+  
   const dispatch = useDispatch();
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   const employeesForJob = useSelector(({ employeesForJob} : any) => employeesForJob.data);
   const vendorsList = useSelector(({ vendors } : any) => vendors.data);
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
+  const jobLocations = useSelector((state : any) => state.jobLocations.data);
+  const jobSites = useSelector((state: any) => state.jobSites.data);
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
@@ -83,6 +93,18 @@ function BCJobModal({
       setShowVendorFlag(true);
     }
   }
+  const handleLocationChange = (event: any, fieldName: any, setFieldValue: any) => {
+    const locationId = event.target.value;
+    const customerId = job.ticket.customer._id;
+    setFieldValue(fieldName, locationId);
+    setFieldValue('jobSiteId', '');
+    if(locationId !== ''){
+      dispatch(getJobSites({customerId, locationId}));
+    }else {
+      dispatch(clearJobSiteStore());
+    }
+    
+  }
   
   const dateChangeHandler = (date: string, fieldName: string) => setFieldValue(fieldName, date);
 
@@ -96,10 +118,12 @@ function BCJobModal({
   }
 
   useEffect(() => {
+    const customerId = job.ticket.customer._id;
     dispatch(getInventory());
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
     dispatch(getAllJobTypesAPI());
+    dispatch(getJobLocationsAction(customerId));
   }, []);
 
   const isValidate = (requestObj: any) => {
@@ -199,7 +223,9 @@ function BCJobModal({
       scheduledStartTime: job.scheduledStartTime,
       technicianId: job.technician._id,
       contractorId: job.contractor ? job.contractor._id : '',
-      ticketId: job.ticket._id
+      ticketId: job.ticket._id,
+      jobLocationId: job.ticket.jobLocation,
+      jobSiteId: job.ticket.jobSite
     },
     onSubmit
   });
@@ -211,6 +237,7 @@ function BCJobModal({
     handleChange: formikChange,
     handleSubmit: FormikSubmit,
     setFieldValue,
+    getFieldMeta,
     isSubmitting
   } = form;
 
@@ -333,6 +360,45 @@ function BCJobModal({
               name={'jobTypeId'}
               required
               value={FormikValues.jobTypeId}
+            />
+            <BCSelectOutlined
+              items={{
+                'data': [
+                  ...jobLocations.map((o: any) => {
+                    return {
+                      '_id': o._id,
+                      'name': o.name
+                    };
+                  })
+                ],
+                'displayKey': 'name',
+                'valueKey': '_id'
+              }}
+              label={'Select Job Location'}
+              name={'jobLocationId'}
+              disabled={job.ticket.jobLocation ? true : false}
+              value={FormikValues.jobLocationId}
+              handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue)}
+            />
+
+            <BCSelectOutlined
+              handleChange={formikChange}
+              items={{
+                'data': [
+                  ...jobSites.map((o: any) => {
+                    return {
+                      '_id': o._id,
+                      'name': o.name
+                    };
+                  })
+                ],
+                'displayKey': 'name',
+                'valueKey': '_id',
+              }}
+              label={'Select Job Site'}
+              name={'jobSiteId'}
+              disabled={job.ticket.jobSite ? true : false}
+              value={FormikValues.jobSiteId}
             />
             <BCSelectOutlined
               handleChange={formikChange}
