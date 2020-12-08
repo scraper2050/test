@@ -4,6 +4,7 @@ import { Fab, TextField, withStyles } from "@material-ui/core";
 
 interface Props {
   avatar: Avatar;
+  noEdit?:any;
   cancel: () => void;
   apply: () => void;
   fields: object[];
@@ -31,7 +32,7 @@ interface RowField {
   right?: ColumnField;
 }
 
-function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Props) {
+function BCAdminProfile({ avatar, noEdit, cancel, apply, fields, classes, children }: Props) {
   const [editable, setEditable] = useState(false);
   const openFileDialog = () => {
     const input = document.getElementById('file-input');
@@ -146,20 +147,22 @@ function BCAdminProfile({ avatar, cancel, apply, fields, classes, children }: Pr
           variant={'extended'}>
           {'Cancel'}
         </Fab>
-        <Fab
-          aria-label={'new-ticket'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          color={'secondary'}
-          style={{
-            width: '100px',
-            background: '#219653',
-          }}
-          onClick={apply_edit}
-          variant={'extended'}>
-          {editable ? 'Apply' : 'Edit'}
-        </Fab>
+        {!noEdit && 
+          <Fab
+            aria-label={'new-ticket'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'secondary'}
+            style={{
+              width: '100px',
+              background: '#219653',
+            }}
+            onClick={apply_edit}
+            variant={'extended'}>
+            {editable ? 'Apply' : 'Edit'}
+          </Fab>
+        }
       </div>
     </div>
   );
