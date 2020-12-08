@@ -44,5 +44,7 @@ export enum CustomersActionType {
     SUCCESS = 'getCustomersSuccess',
     FAILED = 'getCustomersFailed',
     UPDATE_CUSTOMER_FAILED = 'updateCustomerFailed',
-    UPDATE_CUSTOMER = 'updateCustomer'
+    UPDATE_CUSTOMER = 'updateCustomer',
+    CREATE_CUSTOMER = 'createCustomer',
+    CREATE_CUSTOMER_FAILED = 'createCustomerFailed'
 }
