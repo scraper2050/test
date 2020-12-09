@@ -246,7 +246,6 @@ function NewCustomerPage({ classes }: Props) {
                               {'State'}
                             </InputLabel>
                             <Field
-                              value={values.state.id === 0 ? '' : values.state.id}
                               as={Select}
                               enableReinitialize
                               name={'state.id'}
