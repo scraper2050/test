@@ -26,7 +26,8 @@ function TicketsWithMapView({ classes }: any) {
   const openServiceTicketFIlter = useSelector((state:any) => state.serviceTicket.filterTicketState);
   const [page, setPage] = useState(1);
   const [curTab, setCurTab] = useState(0);
-  const [dateValue, setDateValue] = useState<any>(null)
+  const [dateValue, setDateValue] = useState<any>(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   useEffect(() => {
     const requestObj = { ...openServiceTicketFIlter,  pageNo: 1, pageSize: 6};
@@ -86,16 +87,17 @@ function TicketsWithMapView({ classes }: any) {
   };
 
   const openTicketFilerModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': '',
-        'removeFooter': false
-      },
-      'type': modalTypes.SHOW_MAP_FILTER_POPUP
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    setShowFilterModal(!showFilterModal);
+    // dispatch(setModalDataAction({
+    //   'data': {
+    //     'modalTitle': '',
+    //     'removeFooter': false
+    //   },
+    //   'type': modalTypes.SHOW_MAP_FILTER_POPUP
+    // }));
+    // setTimeout(() => {
+    //   dispatch(openModalAction());
+    // }, 200);
   }
 
   const resetDateFilter = () => {
@@ -187,9 +189,9 @@ function TicketsWithMapView({ classes }: any) {
                   <div className='ticketsFilterContainer'>
 
                     <button onClick={() => openTicketFilerModal()}>  <i className="material-icons">filter_list</i> <span>Filter</span>
-                    
-                    <BCMapFilterModal />
-                    
+                    {
+                       showFilterModal ? <BCMapFilterModal /> : null
+                    }
                     </button>
                     <span className="datepicker_wrapper">
                       {/* <BCDateTimePicker
