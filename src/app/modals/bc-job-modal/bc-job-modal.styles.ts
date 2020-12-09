@@ -15,5 +15,6 @@ export default (theme: Theme): any => ({
   },
   'dialogDescription': {
     'padding': '0 24px'
-  }
+  },
+  
 });
