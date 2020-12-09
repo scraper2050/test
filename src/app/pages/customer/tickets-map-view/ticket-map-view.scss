@@ -1,5 +1,6 @@
 .ticketsFilterContainer {
   justify-content: center;
+  align-items: flex-start;
   padding-bottom: 22px;
   @media (max-width: 1280px) {
     margin-top: 22px;
@@ -22,13 +23,23 @@
 }
 
 .ticketsCardViewContainer {
+  height: 625px;
   .MuiPagination-root {
     width: 100%;
+    align-self: flex-end;
+    .MuiPagination-ul {
+      justify-content: center;
+    }
   }
 }
 
 .datepicker_wrapper {
   padding: 0 20px;
+  display: flex;
+  .MuiOutlinedInput-root {
+    border-radius: 0;
+    border-color: #c4c4c4;
+  }
   input {
     background: #fff;
     height: 34px;
@@ -41,15 +52,40 @@
     text-align: center;
     border-radius: 4px;
   }
+  button {
+    background-color: #fff;
+    border: 1px solid #c4c4c4;
+    width: 30px;
+    text-align: center;
+    i {
+      padding: 0;
+    }
+    &.prev_btn {
+      border-right: 0;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+
+    &.next_btn {
+      border-left: 0;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    i {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  }
 }
 
 .ticketsCardViewContainer {
+  padding-left: 20px;
   .ticketItemDiv {
     background: #ffffff;
     border: 1px solid #ffffff;
     box-sizing: border-box;
     backdrop-filter: blur(4px);
     border-radius: 5px;
+    width: calc(50% - 20px);
   }
   .ticket_title {
     font-style: normal;
@@ -104,5 +140,169 @@
       display: flex;
       align-items: center;
     }
+  }
+}
+
+.dropdown_wrapper {
+  background: #ffffff;
+  border: 1px solid #c4c4c4;
+  box-sizing: border-box;
+  border-radius: 5px;
+  width: 283px;
+  .MuiGrid-root {
+    width: 100%;
+    margin: 0;
+    padding: 5px 0;
+  }
+  form {
+    .MuiDialogContent-root {
+      padding: 0 !important;
+      .MuiInputBase-root {
+        fieldset {
+          border: 0;
+        }
+        &:hover {
+          border: 0;
+        }
+        input {
+          border: 0;
+          border-bottom: 1px solid #c4c4c4;
+          padding: 20px;
+          box-sizing: border-box;
+          box-shadow: none;
+        }
+      }
+      .MuiFormGroup-root {
+        & + .MuiFormControl-root {
+          width: 89%;
+          padding-top: 15px;
+        }
+      }
+
+      .MuiFormGroup-root {
+        & ~ .MuiFormGroup-root,
+        & + .MuiFormControl-root {
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
+          }
+          margin: 0 15px;
+          padding-top: 13px;
+          .MuiAutocomplete-endAdornment {
+            top: -25px;
+          }
+          .MuiAutocomplete-endAdornment {
+            display: none;
+          }
+          .MuiFormLabel-root {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 16px;
+
+            color: #000000;
+          }
+          .MuiChip-deleteIcon {
+            color: #fff;
+          }
+          .MuiChip-deletable {
+            background: #4387c5;
+            border-radius: 30px;
+            .MuiChip-label {
+              font-style: normal;
+              font-weight: 500;
+              font-size: 14px;
+              line-height: 16px;
+              text-align: center;
+              color: #ffffff;
+            }
+          }
+          .MuiInputBase-root {
+            input {
+              border: 0 !important;
+              padding: 20px;
+            }
+          }
+        }
+      }
+    }
+    .MuiDialogActions-spacing {
+      padding: 0 15px 15px 14px !important;
+      .MuiGrid-root {
+        justify-content: flex-end;
+      }
+    }
+    .MuiGrid-root {
+      .MuiButtonBase-root {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 16px;
+        box-shadow: none;
+        &.MuiFab-secondary {
+          color: #000000;
+          &:hover {
+            background-color: transparent !important;
+          }
+        }
+        &.MuiFab-primary {
+          font-family: Roboto;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 19px;
+          text-align: center;
+          background: #00aaff;
+          border-radius: 30px;
+        }
+      }
+    }
+  }
+}
+
+.filter_wrapper {
+  position: relative;
+  .dropdown_wrapper {
+    position: absolute;
+    z-index: 99;
+    top: 50px;
+    &::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 14px;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 12px solid #c4c4c4;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      top: -11px;
+      left: 16px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 11px solid #ffffff;
+      z-index: 1;
+    }
+  }
+}
+
+.ticketsMapContainer {
+  min-height: 480px;
+}
+
+.search_form_wrapper {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  > div {
+    width: 100%;
+  }
+  i {
+    color: #c4c4c4;
+    position: relative;
+    top: 25px;
   }
 }

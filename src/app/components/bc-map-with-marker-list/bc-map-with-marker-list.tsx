@@ -10,6 +10,8 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 
+import "./bc-map-with-marker.scss"
+
 interface BCMapWithMarkerListProps {
     ticketList: any,
     classes: any,
@@ -78,20 +80,22 @@ function MakerPin({ ...props }) {
         return(
           <>
             <RoomIcon className={props.classes.marker} />;
-            <div className={props.classes.markerPopup}>
-              <div>
-                <span>{props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
+            <div className={`${props.classes.markerPopup} marker_dropdown`}>
+              <div className="due_date">
+                <span> <i className="material-icons">access_time</i> {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
               </div>
-              <div>
-                <span>Job Type</span><br></br>
+              <div className="job-type">
+                <h3>Job Type</h3>
                 <span>{props.ticket.jobType ? props.ticket.jobType.title : ''}</span>
               </div>
-              <div>
-                <span>Notes</span><br></br>
+              <div className="job-type">
+                <h3>Notes</h3>
                 <span>{props.ticket.note ? props.ticket.note : ''}</span>
               </div>
-              {props.ticket.ticketId}
-              <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
+              {/* {props.ticket.ticketId} */}
+              <div className="button_wrapper">
+                <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
+              </div>
             </div>
         </>
         )

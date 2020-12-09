@@ -241,11 +241,10 @@ function TicketsWithMapView({ classes }: any) {
                 <Grid container item lg={6} >
                   <div className='ticketsFilterContainer'>
 
-                    <button onClick={() => openTicketFilerModal()}>  <i className="material-icons">filter_list</i> <span>Filter</span>
-                    {
-                       showFilterModal ? <BCMapFilterModal /> : null
-                    }
-                    </button>
+                    <div className="filter_wrapper">
+                      <button onClick={() => openTicketFilerModal()}>  <i className="material-icons">filter_list</i> <span>Filter</span></button>
+                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal /></div> : null }
+                    </div>
                     <span className="datepicker_wrapper">
                       {/* <BCDateTimePicker
                         disablePast
@@ -253,6 +252,7 @@ function TicketsWithMapView({ classes }: any) {
                         value={dateValue}
                         className='serviceTicketLabel'
                         name={'scheduleDate'}></BCDateTimePicker> */}
+                        <button className="prev_btn"><i className="material-icons">keyboard_arrow_left</i></button>
                          <DatePicker
                           autoOk
                           className={classes.picker}
@@ -270,8 +270,7 @@ function TicketsWithMapView({ classes }: any) {
                           value={dateValue}
                           variant={'inline'}
                        />
-                       <button onClick={() => handleButtonClick()}>next</button>
-                       <button onClick={() => handleButtonClickMinus()}>prev</button>
+                       <button className="next_btn"><i className="material-icons">keyboard_arrow_right</i></button>
                     </span>
                     <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Rest</span></button>
                   </div>

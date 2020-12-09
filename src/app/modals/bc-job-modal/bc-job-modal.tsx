@@ -71,7 +71,7 @@ function BCJobModal({
     },
     {
       '_id': '1',
-      'name': 'Vendor'
+      'name': 'Contractor'
     }
   ];
   const handleEmployeeTypeChange = (fieldName: string, data: string) => {
@@ -308,7 +308,7 @@ function BCJobModal({
                 'displayKey': 'displayName',
                 'valueKey': '_id'
               }}
-              label={'Select Vendor'}
+              label={'Select Contractor'}
               name={'contractorId'}
               required
               value={FormikValues.contractorId}
