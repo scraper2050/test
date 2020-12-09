@@ -2,7 +2,7 @@ import BCTabs from '../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './ticket-map-view.style';
 import { Grid, withStyles } from '@material-ui/core';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import '../../../../scss/index.css';
 import BCMapWithMarkerList from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
@@ -22,9 +22,7 @@ function TicketsWithMapView({ classes }: any) {
   const openServiceTicketFIlter = useSelector((state:any) => state.serviceTicket.filterTicketState);
   const [page, setPage] = useState(1);
   const [curTab, setCurTab] = useState(0);
-  const [dateValue, setDateValue] = useState<any>(null);
-  const [glowTicket, setGlowTicket] = useState(false);
-  const inputEl = useRef<any>('openTicket');
+  const [dateValue, setDateValue] = useState<any>(null)
 
   useEffect(() => {
     const requestObj = { ...openServiceTicketFIlter,  pageNo: 1, pageSize: 6};
@@ -78,7 +76,7 @@ function TicketsWithMapView({ classes }: any) {
       'customerNames': '',
       'ticketId': ''
     }));
-    const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 5, dueDate: formattedDate };
+    const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
     getOpenTickets(requestObj);
 
   };
@@ -106,33 +104,42 @@ function TicketsWithMapView({ classes }: any) {
       'customerNames':'',
       'ticketId':''
     }));
-    getOpenTickets({pageNo: 1, pageSize: 5})
+    getOpenTickets({pageNo: 1, pageSize: 6})
   }
 
   const handleChange = (event: any, value: any) => {
     setPage(value);
-    const requestObj = { ...openServiceTicketFIlter,  pageNo: value, pageSize: 5};
+    const requestObj = { ...openServiceTicketFIlter,  pageNo: value, pageSize: 6};
     getOpenTickets(requestObj);
   }
 
+  useEffect(()=> {
+    let prevItemKey = localStorage.getItem('prevItemKey');
+    if(prevItemKey){
+      let prevItem = document.getElementById(prevItemKey);
+      if(prevItem)
+        prevItem.style.border = 'none';
+    }
+    localStorage.setItem('prevItemKey', '');
+  })
+
   const handleOpenTicketCardClick = (openTicketObj: any, index:any) => {
-    debugger
-    // let prevItemKey = localStorage.getItem('prevItemKey');
-    // let currentItem = document.getElementById(`openTicket${index}`);
-    // if(prevItemKey){
-    //   let prevItem = document.getElementById(prevItemKey);
-    //   if(prevItem)
-    //     prevItem.style.border = 'none';
-    //   if(currentItem){
-    //     currentItem.style.border = '1px solid blue';
-    //     localStorage.setItem('prevItemKey',`openTicket${index}` )
-    //   }
-    // } else{
-    //   if(currentItem){
-    //     currentItem.style.border = '1px solid blue';
-    //     localStorage.setItem('prevItemKey',`openTicket${index}` )
-    //   }
-    // }
+    let prevItemKey = localStorage.getItem('prevItemKey');
+    let currentItem = document.getElementById(`openTicket${index}`);
+    if(prevItemKey){
+      let prevItem = document.getElementById(prevItemKey);
+      if(prevItem)
+        prevItem.style.border = 'none';
+      if(currentItem){
+        currentItem.style.border = '1px solid blue';
+        localStorage.setItem('prevItemKey',`openTicket${index}` )
+      }
+    } else{
+      if(currentItem){
+        currentItem.style.border = '1px solid blue';
+        localStorage.setItem('prevItemKey',`openTicket${index}` )
+      }
+    }
     
    
     dispatch(setClearOpenServiceTicketObject());
@@ -208,7 +215,7 @@ function TicketsWithMapView({ classes }: any) {
 
                     {
                       openTickets.map((x: any, i: any) => (
-                        <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
+                        <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`} >
                           <div>
                             <span>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</span>
                           </div>
@@ -225,7 +232,7 @@ function TicketsWithMapView({ classes }: any) {
                         </div>
                       ))
                     }
-                    <Pagination count={Math.ceil(totalOpenTickets/5)} color="primary" onChange={handleChange} showFirstButton  page={page}
+                    <Pagination count={Math.ceil(totalOpenTickets/6)} color="primary" onChange={handleChange} showFirstButton  page={page}
                       showLastButton />
                   </div>
                 </Grid>

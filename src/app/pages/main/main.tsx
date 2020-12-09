@@ -148,7 +148,7 @@ function Main(): any {
                     Component={TicketsMapViewPage}
                     exact
                     path={'/main/customers/ticket-map-view'}
-                    title={'Map With Toggle'}
+                    title={'Map View'}
                   />
                   <AuthRoute
                     Component={ViewMoreCustomerPage}

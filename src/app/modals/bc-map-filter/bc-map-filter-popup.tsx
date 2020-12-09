@@ -44,7 +44,7 @@ function BCMapFilterModal({
     setSubmitting(true);
     const rawData = {
         pageNo: 1,
-        pageSize: 5,
+        pageSize: 6,
         jobTypeTitle: values.jobType, 
         dueDate: '',
         customerNames: values.customer,
