@@ -19,6 +19,8 @@ import { getVendors } from 'actions/vendor/vendor.action';
 import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 
+import "../../../scss/job-poup.scss";
+
 const initialJobState = {
   'customer': {
     '_id': ''
@@ -253,7 +255,7 @@ function BCJobModal({
   return (
     <form onSubmit={FormikSubmit}>
       <DialogContent classes={{ 'root': classes.dialogContent }}>
-        <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Customer : ${displayName}`}</h4>
+        <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading">{`Customer : ${displayName}`}</h4>
         {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
         <Grid
           container
