@@ -125,7 +125,8 @@ function BCMapFilterModal({
                 />
             </FormGroup>
             <FormGroup className={'required'}>
-                <Autocomplete
+             <div className="search_form_wrapper">
+                  <Autocomplete
                     multiple
                     id="tags-standard"
                     options={customers}
@@ -139,6 +140,8 @@ function BCMapFilterModal({
                     />
                     )}
                 />
+                 <i className="material-icons">search</i>
+             </div>
             </FormGroup>
             <BCSelectOutlined
                 handleChange={formikChange}
