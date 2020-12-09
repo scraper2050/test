@@ -95,7 +95,7 @@ function TicketsWithMapView({ classes }: any) {
   };
 
 
-  const handleButtonClick = () => {
+  const handleButtonClickPlusDay = () => {
     //debugger
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
@@ -113,7 +113,7 @@ function TicketsWithMapView({ classes }: any) {
     const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
     getOpenTickets(requestObj);
   }
-  const handleButtonClickMinus = () => {
+  const handleButtonClickMinusDay = () => {
     //debugger
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
@@ -242,8 +242,8 @@ function TicketsWithMapView({ classes }: any) {
                   <div className='ticketsFilterContainer'>
 
                     <div className="filter_wrapper">
-                      <button onClick={() => openTicketFilerModal()}>  <i className="material-icons">filter_list</i> <span>Filter</span></button>
-                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal /></div> : null }
+                      <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
+                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal}/></div> : null }
                     </div>
                     <span className="datepicker_wrapper">
                       {/* <BCDateTimePicker
@@ -252,7 +252,7 @@ function TicketsWithMapView({ classes }: any) {
                         value={dateValue}
                         className='serviceTicketLabel'
                         name={'scheduleDate'}></BCDateTimePicker> */}
-                        <button className="prev_btn"><i className="material-icons">keyboard_arrow_left</i></button>
+                        <button className="prev_btn"><i className="material-icons" onClick={()=>handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
                          <DatePicker
                           autoOk
                           className={classes.picker}
@@ -270,9 +270,9 @@ function TicketsWithMapView({ classes }: any) {
                           value={dateValue}
                           variant={'inline'}
                        />
-                       <button className="next_btn"><i className="material-icons">keyboard_arrow_right</i></button>
+                       <button className="next_btn"><i className="material-icons" onClick={()=>handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
                     </span>
-                    <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Rest</span></button>
+                    <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
                   </div>
                   <div className='ticketsCardViewContainer'>
 

@@ -18,8 +18,8 @@ import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState }
 
 
 function BCMapFilterModal({
-  classes
-}: any): JSX.Element {
+  classes,
+}: any, openTicketFilerModal?: any): JSX.Element {
     
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
@@ -181,7 +181,7 @@ function BCMapFilterModal({
             }}
             color={'secondary'}
             disabled={isSubmitting}
-            onClick={() => closeModal()}
+            onClick={() => openTicketFilerModal}
             variant={'extended'}>
             {'Cancel'}
             </Fab>
