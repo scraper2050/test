@@ -254,7 +254,7 @@ function BCJobModal({
     <form onSubmit={FormikSubmit}>
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Customer : ${displayName}`}</h4>
-        <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4>
+        {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
         <Grid
           container
           spacing={2}>
