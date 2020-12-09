@@ -2,7 +2,7 @@ import BCTabs from '../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './ticket-map-view.style';
 import { Grid, withStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import '../../../../scss/index.css';
 import BCMapWithMarkerList from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
@@ -13,6 +13,7 @@ import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketObject
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../constants';
 import Pagination from '@material-ui/lab/Pagination';
+import { DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
@@ -21,10 +22,12 @@ function TicketsWithMapView({ classes }: any) {
   const openServiceTicketFIlter = useSelector((state:any) => state.serviceTicket.filterTicketState);
   const [page, setPage] = useState(1);
   const [curTab, setCurTab] = useState(0);
-  const [dateValue, setDateValue] = useState(new Date());
+  const [dateValue, setDateValue] = useState<any>(null);
+  const [glowTicket, setGlowTicket] = useState(false);
+  const inputEl = useRef<any>('openTicket');
 
   useEffect(() => {
-    const requestObj = { ...openServiceTicketFIlter,  pageNo: 1, pageSize: 5};
+    const requestObj = { ...openServiceTicketFIlter,  pageNo: 1, pageSize: 6};
     getOpenTickets(requestObj);
   }, []);
 
@@ -95,6 +98,8 @@ function TicketsWithMapView({ classes }: any) {
 
   const resetDateFilter = () => {
     setPage(1);
+    setDateValue(null);
+    dispatch(setClearOpenServiceTicketObject());
     dispatch(setClearOpenTicketFilterState({
       'jobTypeTitle': '',
       'dueDate':'',
@@ -110,7 +115,26 @@ function TicketsWithMapView({ classes }: any) {
     getOpenTickets(requestObj);
   }
 
-  const handleOpenTicketCardClick = (openTicketObj: any) => {
+  const handleOpenTicketCardClick = (openTicketObj: any, index:any) => {
+    debugger
+    // let prevItemKey = localStorage.getItem('prevItemKey');
+    // let currentItem = document.getElementById(`openTicket${index}`);
+    // if(prevItemKey){
+    //   let prevItem = document.getElementById(prevItemKey);
+    //   if(prevItem)
+    //     prevItem.style.border = 'none';
+    //   if(currentItem){
+    //     currentItem.style.border = '1px solid blue';
+    //     localStorage.setItem('prevItemKey',`openTicket${index}` )
+    //   }
+    // } else{
+    //   if(currentItem){
+    //     currentItem.style.border = '1px solid blue';
+    //     localStorage.setItem('prevItemKey',`openTicket${index}` )
+    //   }
+    // }
+    
+   
     dispatch(setClearOpenServiceTicketObject());
     dispatch(setOpenServiceTicketObject(openTicketObj));
   }
@@ -153,12 +177,29 @@ function TicketsWithMapView({ classes }: any) {
 
                     <span onClick={() => openTicketFilerModal()}>Filter</span>
                     <span>
-                      <BCDateTimePicker
+                      {/* <BCDateTimePicker
                         disablePast
                         handleChange={dateChangeHandler}
                         value={dateValue}
                         className='serviceTicketLabel'
-                        name={'scheduleDate'}></BCDateTimePicker>
+                        name={'scheduleDate'}></BCDateTimePicker> */}
+                         <DatePicker
+                          autoOk
+                          className={classes.picker}
+                          disablePast={true}
+                          format={'d MMM yyyy'}
+                          id={`datepicker-${'scheduleDate'}`}
+                          inputProps={{
+                            'name': 'scheduleDate',
+                            'placeholder': 'Due Date',
+                          }}
+                          inputVariant={'outlined'}
+                          name={'scheduleDate'}
+                          onChange={(e:any) => dateChangeHandler(e)}
+                          required={false}
+                          value={dateValue}
+                          variant={'inline'}
+                       />
                     </span>
                     <span onClick={() => resetDateFilter()}>Rest</span>
                   </div>
@@ -167,7 +208,7 @@ function TicketsWithMapView({ classes }: any) {
 
                     {
                       openTickets.map((x: any, i: any) => (
-                        <div className='ticketItemDiv' key={i} onClick={() => handleOpenTicketCardClick(x)}>
+                        <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
                           <div>
                             <span>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</span>
                           </div>
@@ -179,7 +220,7 @@ function TicketsWithMapView({ classes }: any) {
                             <span>{x.jobType ? x.jobType.title : ''}</span>
                           </div>
                           <div>
-                            <span>{x.duedate ? x.dueDate : ''}</span>
+                            <span>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : '' }</span>
                           </div>
                         </div>
                       ))

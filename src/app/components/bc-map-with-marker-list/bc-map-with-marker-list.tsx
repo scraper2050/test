@@ -38,7 +38,7 @@ function MakerPin({ ...props }) {
         dispatch(clearJobSiteStore());
       }
        const ticket = {...ticketObj, 
-        jobLocation: ticketObj.jobLocation._id,
+        jobLocation: reqObj.locationId,
         jobSite: ticketObj.jobSite ? ticketObj.jobSite._id : ''
       }
       
@@ -76,16 +76,27 @@ function MakerPin({ ...props }) {
       };
     if(props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id){
         return(
-            <>
-                <RoomIcon className={props.classes.marker}  />;
-                 <div style={{position:'absolute', zIndex:10, top:'15px', width:'100px', height:'100px', backgroundColor:'#DFDFE5'}}>
-                     {props.ticket.ticketId}
-                     <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
-                </div>
-            </>
+          <>
+            <RoomIcon className={props.classes.marker} />;
+            <div className={props.classes.markerPopup}>
+              <div>
+                <span>{props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
+              </div>
+              <div>
+                <span>Job Type</span><br></br>
+                <span>{props.ticket.jobType ? props.ticket.jobType.title : ''}</span>
+              </div>
+              <div>
+                <span>Notes</span><br></br>
+                <span>{props.ticket.note ? props.ticket.note : ''}</span>
+              </div>
+              {props.ticket.ticketId}
+              <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
+            </div>
+        </>
         )
     } else
-    return <RoomIcon className={props.classes.marker} onClick={() => alert(props.lat)} />;
+    return <RoomIcon className={props.classes.marker} />;
 }
 
 function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMarkerListProps) {
