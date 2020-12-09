@@ -151,7 +151,7 @@ function RecoverPage({ classes }: Props): JSX.Element {
             <Button
               color={'primary'}
               onClick={() => {
-                history.push('/login');
+                history.push('/');
               }}
               size={'large'}
               variant={'contained'}>

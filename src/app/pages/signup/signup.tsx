@@ -198,7 +198,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
         .post('/agreeTermAndCondition', params)
         .then(() => {
           setLoading(false);
-          history.push('/main/dashboard')
+          history.push('/')
         });
       })
       .catch(() => {
@@ -538,7 +538,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   {'Already have an account?'}
                   <Link
                     className={''}
-                    to={'/login'}>
+                    to={'/'}>
                     {'Login'}
                   </Link>
                 </Grid>

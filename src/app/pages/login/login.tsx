@@ -8,6 +8,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Config from "../../../config";
 import { Dispatch } from "redux";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormHelperText from '@material-ui/core/FormHelperText';
 import { FormDataModel } from "../../models/form-data";
 import Grid from "@material-ui/core/Grid";
 import LogoSvg from "../../../assets/img/Logo.svg";
@@ -20,6 +21,13 @@ import { Auth, AuthInfo } from "app/models/user";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { loginActions, setAuthAction } from "actions/auth/auth.action";
+import { modalTypes } from "../../../constants";
+import { useDispatch } from "react-redux";
+import {
+  openModalAction,
+  setModalDataAction,
+} from "actions/bc-modal/bc-modal.action";
+import BCModal from "../../modals/bc-modal";
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -49,6 +57,7 @@ function LoginPage({
 }: Props): JSX.Element | null {
   const history = useHistory();
   const location = useLocation<LocationState>();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (token !== null && token !== "") {
@@ -88,6 +97,11 @@ function LoginPage({
   });
 
   const [remember, setRemember] = useState<any>(false);
+  const [agreeTerm, setAgreeTerm] = useState({
+    'showError': false,
+    'showModal': false,
+    'value': false
+  });
 
   const storageAuth: AuthInfo = {
     token: localStorage.getItem("token"),
@@ -99,6 +113,21 @@ function LoginPage({
     storageAuth.token !== null &&
     storageAuth.token !== "" &&
     storageAuth.user !== null;
+
+  const handleClickOpen = () => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          modalTitle: "Terms and conditions",
+          removeFooter: true,
+        },
+        type: modalTypes.TERMS_AND_CONDITION_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   useEffect(() => {
     loginFromStorage && setAuthAction(storageAuth);
@@ -112,6 +141,7 @@ function LoginPage({
       const rememberMeData: any = JSON.parse(data);
 
       setRemember(rememberMeData.rememberMe);
+      setAgreeTerm({ ...agreeTerm, value: rememberMeData.agreed });
       setFormData({
         email: {
           errorMsg: "",
@@ -152,6 +182,15 @@ function LoginPage({
         ...formDataTemp,
       });
     }
+
+    if (!agreeTerm.value) {
+      setAgreeTerm({
+        ...agreeTerm,
+        'showError': true
+      });
+      isValidate = false;
+    }
+
     return isValidate;
   };
 
@@ -162,6 +201,11 @@ function LoginPage({
       return;
     }
 
+    loginAction({
+      email: formData.email.value,
+      password: formData.password.value,
+    });
+
     if (remember) {
       localStorage.setItem(
         "rememberMe",
@@ -169,14 +213,10 @@ function LoginPage({
           email: formData.email.value,
           password: formData.password.value,
           rememberMe: true,
+          agreed: agreeTerm.value,
         })
       );
     }
-
-    loginAction({
-      email: formData.email.value,
-      password: formData.password.value,
-    });
   };
 
   const handleKeyDown = (event: any) => {
@@ -250,9 +290,31 @@ function LoginPage({
                   }
                   label={"Remember Me"}
                 />
-                <Link className={classes.forgetpassword} to={"/recover"}>
-                  {"Forgot password?"}
-                </Link>
+
+                <div className={classes.AgreeTermDiv}>
+                  <Checkbox
+                    checked={agreeTerm.value}
+                    color={"primary"}
+                    name={"agree-term"}
+                    onChange={() => {
+                      setAgreeTerm({
+                        ...agreeTerm,
+                        'showError': false,
+                        'value': !agreeTerm.value
+                      });
+                    }}
+                  />
+                  <span onClick={handleClickOpen} role={"button"}>
+                    {"I agree with the terms of use and privacy"}
+                  </span>
+                </div>
+              </div>
+              <div className={classes.agreementHelperText}>
+              {agreeTerm.showError &&
+                    <FormHelperText error>
+                      {'Please agree to the terms of use and privacy'}
+                    </FormHelperText>
+                  }
               </div>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -310,9 +372,14 @@ function LoginPage({
                   </BCSocialButtonon>
                 </Grid>
                 <Grid className={classes.register} item xs={12}>
-                  {"Don't have an account?"}{" "}
-                  <Link className={classes.link} to={"/signup"}>
-                    {"Register"}
+                  <div>
+                    {"Don't have an account?"}{" "}
+                    <Link className={classes.link} to={"/signup"}>
+                      {"Register"}
+                    </Link>
+                  </div>
+                  <Link className={classes.forgetpassword} to={"/recover"}>
+                    {"Forgot password?"}
                   </Link>
                 </Grid>
               </Grid>
@@ -337,6 +404,7 @@ function LoginPage({
           </a>
         </span>
       </Grid>
+      <BCModal />
       {isLoading && <BCSpinnerer />}
     </div>
   );
