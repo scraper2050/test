@@ -1,0 +1,108 @@
+.ticketsFilterContainer {
+  justify-content: center;
+  padding-bottom: 22px;
+  @media (max-width: 1280px) {
+    margin-top: 22px;
+  }
+  button {
+    border: 0;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    i {
+      padding-right: 6px;
+    }
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.ticketsCardViewContainer {
+  .MuiPagination-root {
+    width: 100%;
+  }
+}
+
+.datepicker_wrapper {
+  padding: 0 20px;
+  input {
+    background: #fff;
+    height: 34px;
+    padding: 0 15px;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 17px;
+    color: #00aaff;
+    text-align: center;
+    border-radius: 4px;
+  }
+}
+
+.ticketsCardViewContainer {
+  .ticketItemDiv {
+    background: #ffffff;
+    border: 1px solid #ffffff;
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);
+    border-radius: 5px;
+  }
+  .ticket_title {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+    text-decoration-line: underline;
+    color: #00aaff;
+    text-transform: capitalize;
+    h3 {
+      margin: 0;
+    }
+  }
+  .card_location {
+    h4 {
+      margin: 0;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 19px;
+      color: #000000;
+    }
+  }
+  .card_desc {
+    padding-bottom: 15px;
+    p {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #979797;
+      margin: 0;
+      padding-left: 30px;
+    }
+  }
+  hr {
+    background-color: #979797;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+  }
+
+  .card-footer {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #979797;
+    i {
+      padding-right: 6px;
+    }
+    span {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

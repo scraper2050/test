@@ -14,6 +14,10 @@ import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../constants';
 import Pagination from '@material-ui/lab/Pagination';
 import { DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
+import BCMapFilterModal from '../../../modals/bc-map-filter/bc-map-filter-popup';
+
+
+import "./ticket-map-view.scss"
 
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
@@ -182,8 +186,12 @@ function TicketsWithMapView({ classes }: any) {
                 <Grid container item lg={6} >
                   <div className='ticketsFilterContainer'>
 
-                    <span onClick={() => openTicketFilerModal()}>Filter</span>
-                    <span>
+                    <button onClick={() => openTicketFilerModal()}>  <i className="material-icons">filter_list</i> <span>Filter</span>
+                    
+                    <BCMapFilterModal />
+                    
+                    </button>
+                    <span className="datepicker_wrapper">
                       {/* <BCDateTimePicker
                         disablePast
                         handleChange={dateChangeHandler}
@@ -208,26 +216,27 @@ function TicketsWithMapView({ classes }: any) {
                           variant={'inline'}
                        />
                     </span>
-                    <span onClick={() => resetDateFilter()}>Rest</span>
+                    <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Rest</span></button>
                   </div>
                   <div className='ticketsCardViewContainer'>
 
 
                     {
                       openTickets.map((x: any, i: any) => (
-                        <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`} >
-                          <div>
-                            <span>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</span>
+                        <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
+                          <div className="ticket_title">
+                            <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
                           </div>
-                          <div>
-                            <span>{ x.company &&  x.company.info  ? x.company.info.companyName : ''}</span>
+                          <div className="card_location">
+                            <h4>{ x.company &&  x.company.info  ? x.company.info.companyName : ''}</h4>
                           </div>
-                          <hr></hr>
-                          <div>
-                            <span>{x.jobType ? x.jobType.title : ''}</span>
+                        
+                          <div className="card_desc">
+                            <p>{x.jobType ? x.jobType.title : ''}</p>
                           </div>
-                          <div>
-                            <span>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : '' }</span>
+                            <hr></hr>
+                          <div className="card-footer">
+                            <span>  <i className="material-icons">access_time</i>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : '' }</span>
                           </div>
                         </div>
                       ))
