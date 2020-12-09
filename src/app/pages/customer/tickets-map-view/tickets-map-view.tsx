@@ -9,12 +9,13 @@ import BCMapWithMarkerList from 'app/components/bc-map-with-marker-list/bc-map-w
 import { formatDateYMD } from 'helpers/format';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import { openModalAction, closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketObject, setClearOpenServiceTicketObject, setClearOpenTicketFilterState } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketObject, setClearOpenServiceTicketObject, setClearOpenTicketFilterState, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../constants';
 import Pagination from '@material-ui/lab/Pagination';
 import { DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 import BCMapFilterModal from '../../../modals/bc-map-filter/bc-map-filter-popup';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
 
 import "./ticket-map-view.scss"
@@ -24,14 +25,17 @@ function TicketsWithMapView({ classes }: any) {
   const openTickets = useSelector((state: any) => state.serviceTicket.openTickets);
   const totalOpenTickets = useSelector((state:any) => state.serviceTicket.totalOpenTickets);
   const openServiceTicketFIlter = useSelector((state:any) => state.serviceTicket.filterTicketState);
+  const isLoading = useSelector((state:any) => state.serviceTicket.isLoading);
   const [page, setPage] = useState(1);
   const [curTab, setCurTab] = useState(0);
   const [dateValue, setDateValue] = useState<any>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [tempDate, setTempDate] = useState<any>(new Date());
 
   useEffect(() => {
     const requestObj = { ...openServiceTicketFIlter,  pageNo: 1, pageSize: 6};
     getOpenTickets(requestObj);
+    dispatch(setClearOpenServiceTicketObject());
   }, []);
 
   const formatRequestObj = (rawReqObj: any) => {
@@ -52,7 +56,9 @@ function TicketsWithMapView({ classes }: any) {
     ticketId?: string,
     companyId?: string
   }) => {
+    dispatch(setOpenServiceTicketLoading(true));
     getOpenServiceTickets(requestObj).then((response: any) => {
+      dispatch(setOpenServiceTicketLoading(false));
       dispatch(setOpenServiceTicket(response));
       dispatch(refreshServiceTickets(true));
       dispatch(closeModalAction());
@@ -72,9 +78,11 @@ function TicketsWithMapView({ classes }: any) {
     setCurTab(newValue);
   };
   const dateChangeHandler = (date: string) => {
+    debugger
     const dateObj = new Date(date);
     const formattedDate = formatDateYMD(dateObj);
     setDateValue(dateObj);
+    setTempDate(date);
     dispatch(setClearOpenTicketFilterState({
       'jobTypeTitle': '',
       'dueDate': '',
@@ -85,6 +93,51 @@ function TicketsWithMapView({ classes }: any) {
     getOpenTickets(requestObj);
 
   };
+
+
+  const handleButtonClick = () => {
+    //debugger
+    dispatch(setClearOpenServiceTicketObject());
+    const dateObj = new Date(tempDate);
+    var tomorrow = new Date(dateObj.getTime() + (24 * 60 * 60 * 1000));
+    //let nextDateObj = dateObj.setDate(new Date().getDate()+1);
+    const formattedDate = formatDateYMD(tomorrow);
+    setDateValue(formattedDate);
+    setTempDate(tomorrow);
+    dispatch(setClearOpenTicketFilterState({
+      'jobTypeTitle': '',
+      'dueDate': '',
+      'customerNames': '',
+      'ticketId': ''
+    }));
+    const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
+    getOpenTickets(requestObj);
+  }
+  const handleButtonClickMinus = () => {
+    //debugger
+    dispatch(setClearOpenServiceTicketObject());
+    const dateObj = new Date(tempDate);
+    var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
+    //let nextDateObj = dateObj.setDate(new Date().getDate()+1);
+    const formattedDate = formatDateYMD(yesterday);
+    setDateValue(formattedDate);
+    setTempDate(yesterday);
+    dispatch(setClearOpenTicketFilterState({
+      'jobTypeTitle': '',
+      'dueDate': '',
+      'customerNames': '',
+      'ticketId': ''
+    }));
+    const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
+    getOpenTickets(requestObj);
+  }
+
+  const handleChange = (event: any, value: any) => {
+    setPage(value);
+    dispatch(setClearOpenServiceTicketObject());
+    const requestObj = { ...openServiceTicketFIlter,  pageNo: value, pageSize: 6};
+    getOpenTickets(requestObj);
+  }
 
   const openTicketFilerModal = () => {
     setShowFilterModal(!showFilterModal);
@@ -113,11 +166,7 @@ function TicketsWithMapView({ classes }: any) {
     getOpenTickets({pageNo: 1, pageSize: 6})
   }
 
-  const handleChange = (event: any, value: any) => {
-    setPage(value);
-    const requestObj = { ...openServiceTicketFIlter,  pageNo: value, pageSize: 6};
-    getOpenTickets(requestObj);
-  }
+ 
 
   useEffect(()=> {
     let prevItemKey = localStorage.getItem('prevItemKey');
@@ -137,12 +186,12 @@ function TicketsWithMapView({ classes }: any) {
       if(prevItem)
         prevItem.style.border = 'none';
       if(currentItem){
-        currentItem.style.border = '1px solid blue';
+        currentItem.style.border = `1px solid #00aaff`;
         localStorage.setItem('prevItemKey',`openTicket${index}` )
       }
     } else{
       if(currentItem){
-        currentItem.style.border = '1px solid blue';
+        currentItem.style.border = `1px solid #00aaff`;
         localStorage.setItem('prevItemKey',`openTicket${index}` )
       }
     }
@@ -151,6 +200,10 @@ function TicketsWithMapView({ classes }: any) {
     dispatch(setClearOpenServiceTicketObject());
     dispatch(setOpenServiceTicketObject(openTicketObj));
   }
+
+    if(isLoading){
+      return <BCCircularLoader heightValue={'200px'}/>
+    }
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -217,6 +270,8 @@ function TicketsWithMapView({ classes }: any) {
                           value={dateValue}
                           variant={'inline'}
                        />
+                       <button onClick={() => handleButtonClick()}>next</button>
+                       <button onClick={() => handleButtonClickMinus()}>prev</button>
                     </span>
                     <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Rest</span></button>
                   </div>

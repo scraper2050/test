@@ -106,7 +106,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMar
             bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
             center={{ lat: 32.3182314, lng: -86.902298 }}
             onClick={(event) => console.log(event)}
-            defaultZoom={4}>
+            defaultZoom={3}>
             {
                 ticketList.map((ticket: any, index: number) => {
                     let lat;
