@@ -134,7 +134,7 @@ function BCModal() {
               'disableBackdropClick': true,
               'disableEscapeKeyDown': true,
               'fullWidth': true,
-              'maxWidth': 'sm'
+              'maxWidth': 'md'
             });
             setComponent(<BCEditCutomerInfoModal customerInfo={data.customerObj}/>);
           break;

@@ -36,7 +36,7 @@ function NewCustomerPage({ classes }: Props) {
     'email': '',
     'latitude': 0.0,
     'longitude': 0.0,
-    'phoneNumber': '',
+    'phone': '',
     'state': {
       'id': 0
     },
@@ -68,7 +68,6 @@ function NewCustomerPage({ classes }: Props) {
           'lang': lng,
           'lat': lat
         });
-        console.log(lat, lng);
       },
       (error: any) => {
         console.error(error);
@@ -78,7 +77,6 @@ function NewCustomerPage({ classes }: Props) {
 
   const updateMapFromLatLng = (name: string, value: any): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    console.log(positionValue);
     if (name === 'lat') {
       setPositionValue({
         'lang': positionValue.lang,
@@ -189,7 +187,8 @@ function NewCustomerPage({ classes }: Props) {
                               {'Phone Number'}
                             </InputLabel>
                             <BCTextField
-                              name={'phoneNumber'}
+                              type={'number'}
+                              name={'phone'}
                               placeholder={'Phone Number'}
                               onChange={handleChange}
                             />
@@ -202,12 +201,11 @@ function NewCustomerPage({ classes }: Props) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup>
                             <InputLabel className={classes.label}>
                               {'Street'}
                             </InputLabel>
                             <BCTextField
-                              required
                               name={'street'}
                               placeholder={'Street'}
                               onChange={(e:any)=> { 
@@ -221,12 +219,11 @@ function NewCustomerPage({ classes }: Props) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup>
                             <InputLabel className={classes.label}>
                               {'City'}
                             </InputLabel>
                             <BCTextField
-                              required
                               name={'city'}
                               placeholder={'City'}
                               onChange={(e:any)=> { 
@@ -244,13 +241,12 @@ function NewCustomerPage({ classes }: Props) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup>
                             <InputLabel className={classes.label}>
                               {'State'}
                             </InputLabel>
                             <Field
                               value={values.state.id === 0 ? '' : values.state.id}
-                              required
                               as={Select}
                               enableReinitialize
                               name={'state.id'}
@@ -274,12 +270,12 @@ function NewCustomerPage({ classes }: Props) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup >
                             <InputLabel className={classes.label}>
                               {'Zip Code'}
                             </InputLabel>
                             <BCTextField
-                              required
+                              type={'number'}
                               name={'zipCode'}
                               placeholder={'Zip Code'}
                               onChange={(e:any)=> { 
@@ -332,11 +328,12 @@ function NewCustomerPage({ classes }: Props) {
                     className={classes.paper}
                     item
                     sm={6}>
-                    <FormGroup className={'required'}>
+                    <FormGroup>
                       <InputLabel className={classes.label}>
                         {'Latitude'}
                       </InputLabel>
                       <TextField
+                        type={'number'}
                         onChange={(e: any) => updateMapFromLatLng('lat', e.target.value)}
                         placeholder={'Longitude'}
                         variant={'outlined'}
@@ -348,11 +345,12 @@ function NewCustomerPage({ classes }: Props) {
                     className={classes.paper}
                     item
                     sm={6}>
-                    <FormGroup className={'required'}>
+                    <FormGroup>
                       <InputLabel className={classes.label}>
                         {'Longitude'}
                       </InputLabel>
                       <TextField
+                        type={'number'}
                         onChange={(e: any) => updateMapFromLatLng('lng', e.target.value)}
                         placeholder={'Longitude'}
                         variant={'outlined'}

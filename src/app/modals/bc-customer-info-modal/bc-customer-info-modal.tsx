@@ -31,12 +31,11 @@ interface Props {
 }
 
 function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
-  debugger
   const dispatch = useDispatch();
   const [nameLabelState, setNameLabelState] = useState(false);
   const [positionValue, setPositionValue] = useState({
-    'lang': 0.0,
-    'lat': 0.0
+    'lang': customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[0]  : 0,
+    'lat':customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[1]  : 0
   });
   const history = useHistory();
   const initialValues = {
@@ -84,7 +83,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
           'lang': lng,
           'lat': lat
         });
-        console.log(lat, lng);
       },
       (error: any) => {
         console.error(error);
@@ -94,7 +92,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
 
   const updateMapFromLatLng = (name: string, value: any): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    console.log(positionValue);
     if (name === 'lat') {
       setPositionValue({
         'lang': positionValue.lang,
@@ -139,6 +136,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                   onSubmit={(values, { setSubmitting }) => {
                      let updateCustomerrequest = {...values, state: ''};
                       updateCustomerrequest.state = allStates[values.state.id].name;
+                      updateCustomerrequest.latitude = positionValue.lat;
+                      updateCustomerrequest.longitude = positionValue.lang;
                       if(isValidate(updateCustomerrequest)){
                         dispatch(updateCustomerAction(updateCustomerrequest, () => {
                             closeModal();
@@ -214,12 +213,11 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup >
                             <InputLabel className={classes.label}>
                               {'Phone Number'}
                             </InputLabel>
                             <BCTextField
-                              required
                               name={'phone'}
                               placeholder={'Phone Number'}
                               type={'number'}
@@ -234,12 +232,11 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup>
                             <InputLabel className={classes.label}>
                               {'Street'}
                             </InputLabel>
                             <BCTextField
-                              required
                               name={'street'}
                               placeholder={'Street'}
                               onChange={(e:any)=> { 
@@ -253,12 +250,11 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup>
                             <InputLabel className={classes.label}>
                               {'City'}
                             </InputLabel>
                             <BCTextField
-                              required
                               name={'city'}
                               placeholder={'City'}
                               onChange={(e:any)=> { 
@@ -280,8 +276,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               {'State'}
                             </InputLabel>
                             <Field
-                              value={values.state.id === 0 ? '' : values.state.id}
-                              required
                               as={Select}
                               enableReinitialize
                               name={'state.id'}
@@ -305,12 +299,11 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup className={'required'}>
+                          <FormGroup>
                             <InputLabel className={classes.label}>
                               {'Zip Code'}
                             </InputLabel>
                             <BCTextField
-                              required
                               name={'zipCode'}
                               placeholder={'Zip Code'}
                               type={'number'}
@@ -359,12 +352,12 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={6}>
-                        <FormGroup className={'required'}>
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Latitude'}
                           </InputLabel>
                           <TextField
-                            required
+                            type={'number'}
                             onChange={(e: any) => updateMapFromLatLng('lat', e.target.value)}
                             placeholder={'Longitude'}
                             variant={'outlined'}
@@ -376,12 +369,12 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={6}>
-                        <FormGroup className={'required'}>
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Longitude'}
                           </InputLabel>
                           <TextField
-                            required
+                            type={'number'}
                             onChange={(e: any) => updateMapFromLatLng('lng', e.target.value)}
                             placeholder={'Longitude'}
                             variant={'outlined'}
