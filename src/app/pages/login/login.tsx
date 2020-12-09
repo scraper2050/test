@@ -1,29 +1,28 @@
-import { Action } from 'redux-actions';
-import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
-import BCPasswordInputut from '../../components/bc-password-input/bc-password-input';
-import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
-import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
-import { Button } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
-import Config from '../../../config';
-import { Dispatch } from 'redux';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { FormDataModel } from '../../models/form-data';
-import Grid from '@material-ui/core/Grid';
-import LogoSvg from '../../../assets/img/Logo.svg';
-import Paper from '@material-ui/core/Paper';
-import { connect } from 'react-redux';
-import styles from './login.styles';
-import { useSnackbar } from 'notistack';
-import { withStyles } from '@material-ui/core/styles';
-import { Auth, AuthInfo } from 'app/models/user';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
-import { loginActions, setAuthAction } from 'actions/auth/auth.action';
+import { Action } from "redux-actions";
+import BCEmailValidateInputut from "../../components/bc-email-validate-input/bc-email-validate-input";
+import BCPasswordInputut from "../../components/bc-password-input/bc-password-input";
+import BCSocialButtonon from "../../components/bc-social-button/bc-social-button";
+import BCSpinnerer from "../../components/bc-spinner/bc-spinner";
+import { Button } from "@material-ui/core";
+import Checkbox from "@material-ui/core/Checkbox";
+import Config from "../../../config";
+import { Dispatch } from "redux";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { FormDataModel } from "../../models/form-data";
+import Grid from "@material-ui/core/Grid";
+import LogoSvg from "../../../assets/img/Logo.svg";
+import Paper from "@material-ui/core/Paper";
+import { connect } from "react-redux";
+import styles from "./login.styles";
+import { useSnackbar } from "notistack";
+import { withStyles } from "@material-ui/core/styles";
+import { Auth, AuthInfo } from "app/models/user";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { loginActions, setAuthAction } from "actions/auth/auth.action";
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
-
 
 interface Props {
   loginAction: (loginInfo: Auth) => Action<any>;
@@ -32,7 +31,7 @@ interface Props {
   token: string;
   user: object;
   errMessage: string;
-  classes: any
+  classes: any;
 }
 
 interface LocationState {
@@ -46,85 +45,88 @@ function LoginPage({
   token,
   user,
   errMessage,
-  classes
+  classes,
 }: Props): JSX.Element | null {
   const history = useHistory();
   const location = useLocation<LocationState>();
 
-  useEffect(
-    () => {
-      if (token !== null && token !== '') {
-        localStorage.setItem(
-          'token',
-          token || ''
-        );
-        localStorage.setItem(
-          'user',
-          JSON.stringify(user)
-        );
-        localStorage.setItem(
-          'company',
-          JSON.stringify({
-            companyName: 'BlueClerk',
-            logoUrl: 'assets/img/user_avatar.png'
-          })
-        );
-      }
-    },
-    [token, user]
-  );
+  useEffect(() => {
+    if (token !== null && token !== "") {
+      localStorage.setItem("token", token || "");
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(
+        "company",
+        JSON.stringify({
+          companyName: "BlueClerk",
+          logoUrl: "assets/img/user_avatar.png",
+        })
+      );
+    }
+  }, [token, user]);
 
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(
-    () => {
-      errMessage !== '' &&
-        enqueueSnackbar(
-          errMessage,
-          {
-            'variant': 'error'
-          }
-        );
-    },
-    [enqueueSnackbar, errMessage]
-  );
+  useEffect(() => {
+    errMessage !== "" &&
+      enqueueSnackbar(errMessage, {
+        variant: "error",
+      });
+  }, [enqueueSnackbar, errMessage]);
 
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
-    'email': {
-      'errorMsg': '',
-      'validate': true,
-      'value': ''
+    email: {
+      errorMsg: "",
+      validate: true,
+      value: "",
     },
-    'password': {
-      'errorMsg': '',
-      'showPassword': false,
-      'validate': true,
-      'value': ''
-    }
+    password: {
+      errorMsg: "",
+      showPassword: false,
+      validate: true,
+      value: "",
+    },
   });
 
-  const [remember, setRemeber] = useState(false);
-
+  const [remember, setRemember] = useState<any>(false);
 
   const storageAuth: AuthInfo = {
-    'token': localStorage.getItem('token'),
-    'user': JSON.parse(localStorage.getItem('user') || '{}')
+    token: localStorage.getItem("token"),
+    user: JSON.parse(localStorage.getItem("user") || "{}"),
   };
 
-  const loginFromStorage = (token === null || token === '') && storageAuth.token !== null && storageAuth.token !== '' && storageAuth.user !== null;
+  const loginFromStorage =
+    (token === null || token === "") &&
+    storageAuth.token !== null &&
+    storageAuth.token !== "" &&
+    storageAuth.user !== null;
 
   useEffect(() => {
     loginFromStorage && setAuthAction(storageAuth);
-  });
+  }, []);
 
-  useEffect(
-    () => {
-      if (token !== null && token !== '') {
-        history.push(location.state?.requestedPath ?? '/main/dashboard');
-      }
-    },
-    [token, history, location]
-  );
+  useEffect(() => {
+    if (token !== null && token !== "") {
+      history.push(location.state?.requestedPath ?? "/main/dashboard");
+    } else if (localStorage.getItem("rememberMe")) {
+      const data: any = localStorage.getItem("rememberMe");
+      const rememberMeData: any = JSON.parse(data);
+
+      setRemember(rememberMeData.rememberMe);
+      setFormData({
+        email: {
+          errorMsg: "",
+          validate: true,
+          value: rememberMeData.email,
+        },
+        password: {
+          errorMsg: "",
+          showPassword: false,
+          validate: true,
+          value: rememberMeData.password,
+        },
+      });
+    }
+  }, [token, history, location]);
 
   if (loginFromStorage || token) {
     return null;
@@ -133,11 +135,11 @@ function LoginPage({
   const checkValidate = (): boolean => {
     const formDataTemp = { ...formData };
     let isValidate = true;
-    Object.keys(formData).forEach(item => {
+    Object.keys(formData).forEach((item) => {
       const dataValue = formDataTemp[item];
       if (dataValue.value.length === 0) {
         formDataTemp[item].validate = false;
-        formDataTemp[item].errorMsg = 'Thif field is required';
+        formDataTemp[item].errorMsg = "This field is required";
         isValidate = false;
       }
       if (!dataValue.validate) {
@@ -147,23 +149,44 @@ function LoginPage({
 
     if (!isValidate) {
       setFormData({
-        ...formDataTemp
+        ...formDataTemp,
       });
     }
     return isValidate;
   };
 
-  const handleClickLogin = (): void => {
+  const handleClickLogin = (event: any): void => {
+    event.preventDefault();
+
     if (!checkValidate()) {
       return;
     }
+
+    if (remember) {
+      localStorage.setItem(
+        "rememberMe",
+        JSON.stringify({
+          email: formData.email.value,
+          password: formData.password.value,
+          rememberMe: true,
+        })
+      );
+    }
+
     loginAction({
-      'email': formData.email.value,
-      'password': formData.password.value
+      email: formData.email.value,
+      password: formData.password.value,
     });
   };
 
-  const handleSocialLogin = (user: any, connectorType: number): void => { };
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleClickLogin(event);
+    }
+  };
+
+  const handleSocialLogin = (user: any, connectorType: number): void => {};
 
   const handleSocialLoginFailure = (err: any, connectorType: number): void => {
     console.log(`${connectorType} login error`);
@@ -172,190 +195,145 @@ function LoginPage({
 
   return (
     <div className={classes.root}>
-      <Grid
-        container
-        style={{ 'flex': '1 1 100%' }}>
-        <Grid
-          className={classes.LeftSection}
-          item
-          md={6}
-        />
-        <Grid
-          className={classes.LoginGrid}
-          item
-          md={6}>
-          <Paper className={classes.LoginPaper}>
-            <img
-              alt={'logo'}
-              className={classes.logoimg}
-              src={LogoSvg}
-            />
-            <Grid
-              container
-              spacing={3}>
-              <Grid
-                item
-                xs={12}>
-                <BCEmailValidateInputut
-                  id={'email'}
-                  inputData={formData.email}
-                  label={'Email'}
-                  onChange={(emailData: FormDataModel) => {
-                    setFormData({
-                      ...formData,
-                      'email': {
-                        ...emailData
-                      }
-                    });
-                  }}
-                  size={'small'}
-                  variant={'outlined'}
-                />
-              </Grid>
-              <Grid
-                item
-                style={{ 'position': 'relative' }}
-                xs={12}>
-                <BCPasswordInputut
-                  id={'login-password'}
-                  inputData={formData.password}
-                  label={'Password'}
-                  onChange={(passwordValue: FormDataModel) => {
-                    setFormData({
-                      ...formData,
-                      'password': {
-                        ...passwordValue
-                      }
-                    });
-                  }}
-                  size={'small'}
-                />
-              </Grid>
-            </Grid>
-            <div className={classes.forgetremember}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={remember}
-                    color={'primary'}
-                    name={'remember'}
-                    onChange={e => {
-                      setRemeber(e.target.checked);
+      <Grid container style={{ flex: "1 1 100%" }}>
+        <Grid className={classes.LeftSection} item md={6} />
+        <Grid className={classes.LoginGrid} item md={6}>
+          <form onSubmit={handleClickLogin} onKeyDown={handleKeyDown}>
+            <Paper className={classes.LoginPaper} onKeyPress={handleKeyDown}>
+              <img alt={"logo"} className={classes.logoimg} src={LogoSvg} />
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <BCEmailValidateInputut
+                    id={"email"}
+                    inputData={formData.email}
+                    label={"Email"}
+                    onChange={(emailData: FormDataModel) => {
+                      setFormData({
+                        ...formData,
+                        email: {
+                          ...emailData,
+                        },
+                      });
                     }}
+                    size={"small"}
+                    variant={"outlined"}
                   />
-                }
-                label={'Remeber Me'}
-              />
-              <Link
-                className={classes.forgetpassword}
-                to={'/recover'}>
-                {'Forget your password?'}
-              </Link>
-            </div>
-            <Grid
-              container
-              spacing={2}>
-              <Grid
-                item
-                xs={12}>
-                <Button
-                  color={'primary'}
-                  fullWidth
-                  onClick={handleClickLogin}
-                  size={'large'}
-                  type={'button'}
-                  variant={'contained'}>
-                  {'Login'}
-                </Button>
-              </Grid>
-              <Grid
-                item
-                md={6}
-                xs={12}>
-                <BCSocialButtonon
-                  appId={Config.GOOGLE_APP_ID}
-                  onLoginFailure={(err: any): void => {
-                    handleSocialLoginFailure(
-                      err,
-                      SOCIAL_GOOGLE_CONNECT_TYPE
-                    );
-                  }}
-                  onLoginSuccess={(user: any): void => {
-                    handleSocialLogin(
-                      user,
-                      SOCIAL_GOOGLE_CONNECT_TYPE
-                    );
-                  }}
-                  provider={'google'}>
-                  <img
-                    alt={'google'}
-                    src={'https://img.icons8.com/color/48/000000/google-logo.png'}
+                </Grid>
+                <Grid item style={{ position: "relative" }} xs={12}>
+                  <BCPasswordInputut
+                    id={"login-password"}
+                    inputData={formData.password}
+                    label={"Password"}
+                    onChange={(passwordValue: FormDataModel) => {
+                      setFormData({
+                        ...formData,
+                        password: {
+                          ...passwordValue,
+                        },
+                      });
+                    }}
+                    size={"small"}
                   />
-                  {'Login with Google'}
-                </BCSocialButtonon>
+                </Grid>
               </Grid>
-              <Grid
-                item
-                md={6}
-                xs={12}>
-                <BCSocialButtonon
-                  appId={Config.FACEBOOK_APP_ID}
-                  onLoginFailure={(err: any): void => {
-                    handleSocialLoginFailure(
-                      err,
-                      SOCIAL_FACEBOOK_CONNECT_TYPE
-                    );
-                  }}
-                  onLoginSuccess={(user: any): void => {
-                    handleSocialLogin(
-                      user,
-                      SOCIAL_FACEBOOK_CONNECT_TYPE
-                    );
-                  }}
-                  provider={'facebook'}>
-                  <img
-                    alt={'google'}
-                    src={'https://img.icons8.com/color/48/000000/facebook-circled.png'}
-                  />
-                  {'Login with Facebook'}
-                </BCSocialButtonon>
-              </Grid>
-              <Grid
-                className={classes.register}
-                item
-                xs={12}>
-                {"Don't have an account?"}
-                {' '}
-                <Link
-                  className={classes.link}
-                  to={'/signup'}>
-                  {'Register'}
+              <div className={classes.forgetremember}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={remember}
+                      color={"primary"}
+                      name={"remember"}
+                      onChange={(e) => {
+                        setRemember(e.target.checked);
+                      }}
+                    />
+                  }
+                  label={"Remember Me"}
+                />
+                <Link className={classes.forgetpassword} to={"/recover"}>
+                  {"Forgot password?"}
                 </Link>
+              </div>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Button
+                    color={"primary"}
+                    fullWidth
+                    size={"large"}
+                    type="submit"
+                    variant={"contained"}
+                  >
+                    {"Login"}
+                  </Button>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <BCSocialButtonon
+                    appId={Config.GOOGLE_APP_ID}
+                    onLoginFailure={(err: any): void => {
+                      handleSocialLoginFailure(err, SOCIAL_GOOGLE_CONNECT_TYPE);
+                    }}
+                    onLoginSuccess={(user: any): void => {
+                      handleSocialLogin(user, SOCIAL_GOOGLE_CONNECT_TYPE);
+                    }}
+                    provider={"google"}
+                  >
+                    <img
+                      alt={"google"}
+                      src={
+                        "https://img.icons8.com/color/48/000000/google-logo.png"
+                      }
+                    />
+                    {"Login with Google"}
+                  </BCSocialButtonon>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <BCSocialButtonon
+                    appId={Config.FACEBOOK_APP_ID}
+                    onLoginFailure={(err: any): void => {
+                      handleSocialLoginFailure(
+                        err,
+                        SOCIAL_FACEBOOK_CONNECT_TYPE
+                      );
+                    }}
+                    onLoginSuccess={(user: any): void => {
+                      handleSocialLogin(user, SOCIAL_FACEBOOK_CONNECT_TYPE);
+                    }}
+                    provider={"facebook"}
+                  >
+                    <img
+                      alt={"google"}
+                      src={
+                        "https://img.icons8.com/color/48/000000/facebook-circled.png"
+                      }
+                    />
+                    {"Login with Facebook"}
+                  </BCSocialButtonon>
+                </Grid>
+                <Grid className={classes.register} item xs={12}>
+                  {"Don't have an account?"}{" "}
+                  <Link className={classes.link} to={"/signup"}>
+                    {"Register"}
+                  </Link>
+                </Grid>
               </Grid>
-            </Grid>
-          </Paper>
+            </Paper>
+          </form>
         </Grid>
       </Grid>
-      <Grid
-        className={classes.Footer}
-        container>
+      <Grid className={classes.Footer} container>
         <span>
-          <Link
-            className={classes.link}
-            to={'https://www.blueclerk.com'}>
-            {'BlueClerk'}
-          </Link>
-          {' '}
-          {'© 2020'}
+          <Link className={classes.link} to={"https://www.blueclerk.com"}>
+            {"BlueClerk"}
+          </Link>{" "}
+          {"© 2020"}
         </span>
-        <span>
-          {'Phone:512-846-6035'}
-        </span>
+        <span>{"Phone:512-846-6035"}</span>
         <span>
           <a
             className={classes.link}
-            href={'mailto:chris.norton1@blueclerk.com'}>
-            {'BlueClerk Support'}
+            href={"mailto:chris.norton1@blueclerk.com"}
+          >
+            {"BlueClerk Support"}
           </a>
         </span>
       </Grid>
@@ -374,23 +352,17 @@ const mapStateToProps = (state: {
     user: object;
   };
 }) => ({
-  'errMessage': state.auth.loginApi.msg,
-  'isLoading': state.auth.loginApi.isLoading,
-  'token': state.auth.token,
-  'user': state.auth.user
+  errMessage: state.auth.loginApi.msg,
+  isLoading: state.auth.loginApi.isLoading,
+  token: state.auth.token,
+  user: state.auth.user,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  'loginAction': (loginInfo: Auth) =>
-    dispatch(loginActions.fetch(loginInfo)),
-  'setAuthAction': (authInfo: AuthInfo) =>
-    dispatch(setAuthAction(authInfo))
+  loginAction: (loginInfo: Auth) => dispatch(loginActions.fetch(loginInfo)),
+  setAuthAction: (authInfo: AuthInfo) => dispatch(setAuthAction(authInfo)),
 });
 
-export default withStyles(
-  styles,
-  { 'withTheme': true }
-)(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginPage));
+export default withStyles(styles, { withTheme: true })(
+  connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+);

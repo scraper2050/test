@@ -211,6 +211,7 @@ function BCJobModal({
         setSubmitting(false);
     }
   }
+}
 
   const form = useFormik({
     initialValues: {

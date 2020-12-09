@@ -26,6 +26,9 @@ import Api, { setToken } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import BCModal from '../../modals/bc-modal';
+import axios from 'axios';
+import config from '../../../config';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -49,6 +52,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
       dispatch(openModalAction());
     }, 200);
   };
+
   const initFormData = (): FormDataModel => {
     return {
       'errorMsg': '',
@@ -84,6 +88,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
     },
     'phone_number': initFormData()
   });
+
   const [agreeTerm, setAgreeTerm] = useState({
     'showError': false,
     'showModal': false,
@@ -137,7 +142,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
       const dataValue = formDataTemp[item];
       if (dataValue.value.length === 0) {
         formDataTemp[item].validate = false;
-        formDataTemp[item].errorMsg = 'Thif field is required';
+        formDataTemp[item].errorMsg = 'This field is required';
         isValidate = false;
       }
       if (!dataValue.validate) {
@@ -160,12 +165,14 @@ function SignUpPage({ classes }: Props): JSX.Element {
     return isValidate;
   };
 
-  const handleClickSignUp = () => {
+  const handleClickSignUp = async () => {
     if (!checkValidate()) {
       return;
     }
 
     setLoading(true);
+    const params = new URLSearchParams();
+    params.append('agreedStatus', 'true');
 
     Api.post(
       '/signUp',
@@ -179,15 +186,24 @@ function SignUpPage({ classes }: Props): JSX.Element {
         'phone': formData.phone_number.value
       }
     )
-      .then(res => {
+      .then((res) => {
         setToken(res.data.token);
-        history.push('/main/dashboard');
-        setLoading(false);
+        axios.create({
+          'baseURL': config.apiBaseURL,
+          'headers': {
+            'Authorization': res.data.token,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .post('/agreeTermAndCondition', params)
+        .then(() => {
+          setLoading(false);
+          history.push('/main/dashboard')
+        });
       })
       .catch(() => {
         setLoading(false);
       });
-    // Api.post()
   };
 
   const handleClickSocialSignUp = (connectorType: number) => { // eslint-disable-line
@@ -420,7 +436,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       checked={agreeTerm.value}
                       color={'primary'}
                       name={'agree-term'}
-                      onChange={e => {
+                      onChange={() => {
                         setAgreeTerm({
                           ...agreeTerm,
                           'showError': false,
@@ -429,22 +445,16 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       }}
                     />
                     <span
-                      onClick={() => {
-                        setAgreeTerm({
-                          ...agreeTerm
-                          // 'showModal': true
-                        });
-                        handleClickOpen();
-                      }}
+                      onClick={handleClickOpen}
                       role={'button'}>
-                      {'Agree with terms of use and privacy'}
+                      {'I agree with the terms of use and privacy'}
                     </span>
                   </div>
                   {agreeTerm.showError &&
                     <FormHelperText
                       error
                       style={{ 'marginLeft': '30px' }}>
-                      {'Please check terms of use and privacy'}
+                      {'Please agree to the terms of use and privacy'}
                     </FormHelperText>
                   }
                 </Grid>
@@ -560,18 +570,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
           </a>
         </span>
       </Grid>
-      {/* <Dialog
-        aria-describedby={'simple-modal-description'}
-        aria-labelledby={'simple-modal-title'}
-        onClose={() =>
-          setAgreeTerm({
-            ...agreeTerm,
-            'showModal': false
-          })
-        }
-        open={agreeTerm.showModal}>
-        <BCTermsContentnt />
-      </Dialog> */}
+      <BCModal />
       {isLoading && <BCSpinnerer />}
     </div>
   );
