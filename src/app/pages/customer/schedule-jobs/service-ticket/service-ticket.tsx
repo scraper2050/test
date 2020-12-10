@@ -57,6 +57,18 @@ function ServiceTicket({ classes }: any) {
     }, 200);
   };
   const openCreateJobModal = (ticket: any) => {
+    const reqObj = {
+      customerId: ticket.customer._id,
+      locationId: ticket.jobLocation
+    }
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(reqObj.customerId));
+    if(reqObj.locationId !== undefined && reqObj.locationId !== null){
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    }else {
+      dispatch(clearJobSiteStore());
+    }
     dispatch(setModalDataAction({
       'data': {
         'job': {
@@ -178,7 +190,6 @@ function ServiceTicket({ classes }: any) {
   }, [refresh]);
 
   const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
   };
 
   return (
