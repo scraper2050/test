@@ -100,7 +100,7 @@ function TicketsWithMapView({ classes }: any) {
     const dateObj = new Date(tempDate);
     const selectDate = dateObj.setHours(0,0,0,0);
     const todayDate = new Date().setHours(0,0,0,0);
-    if(selectDate == todayDate) {
+    if(!(selectDate <= todayDate)) {
       var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
       const formattedDate = formatDateYMD(yesterday);
       setDateValue(formattedDate);
@@ -173,6 +173,7 @@ function TicketsWithMapView({ classes }: any) {
     if(isLoading){
       return <BCCircularLoader heightValue={'200px'}/>
     }
+    console.log(dateValue);
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -210,11 +211,11 @@ function TicketsWithMapView({ classes }: any) {
                 <Grid container item lg={6} >
                   <div className='ticketsFilterContainer'>
 
-                    <div className="filter_wrapper">
+                    <div className='filter_wrapper'>
                       <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
                       { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal  openTicketFilerModal={openTicketFilerModal}/></div> : null }
                     </div>
-                    <span className="datepicker_wrapper">
+                    <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
 
                         <button className="prev_btn"><i className="material-icons" onClick={()=>handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
                          <DatePicker
