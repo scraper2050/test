@@ -7,17 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import '../../../../scss/index.css';
 import BCMapWithMarkerList from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import { formatDateYMD } from 'helpers/format';
-import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
-import { openModalAction, closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketObject, setClearOpenServiceTicketObject, setClearOpenTicketFilterState, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
-import { modalTypes } from '../../../../constants';
 import Pagination from '@material-ui/lab/Pagination';
-import { DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
+import { DatePicker } from "@material-ui/pickers";
 import BCMapFilterModal from '../../../modals/bc-map-filter/bc-map-filter-popup';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-
-
 import "./ticket-map-view.scss"
 
 function TicketsWithMapView({ classes }: any) {
@@ -37,15 +33,6 @@ function TicketsWithMapView({ classes }: any) {
     getOpenTickets(requestObj);
     dispatch(setClearOpenServiceTicketObject());
   }, []);
-
-  const formatRequestObj = (rawReqObj: any) => {
-    for (let key in rawReqObj) {
-      if (rawReqObj[key] === '' || rawReqObj[key] === null || rawReqObj[key].length === 0) {
-        delete rawReqObj[key];
-      }
-    }
-    return rawReqObj;
-  }
 
   const getOpenTickets = (requestObj: {
     pageNo?: number,
@@ -78,7 +65,6 @@ function TicketsWithMapView({ classes }: any) {
     setCurTab(newValue);
   };
   const dateChangeHandler = (date: string) => {
-    debugger
     const dateObj = new Date(date);
     const formattedDate = formatDateYMD(dateObj);
     setDateValue(dateObj);
@@ -93,14 +79,10 @@ function TicketsWithMapView({ classes }: any) {
     getOpenTickets(requestObj);
 
   };
-
-
   const handleButtonClickPlusDay = () => {
-    //debugger
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
     var tomorrow = new Date(dateObj.getTime() + (24 * 60 * 60 * 1000));
-    //let nextDateObj = dateObj.setDate(new Date().getDate()+1);
     const formattedDate = formatDateYMD(tomorrow);
     setDateValue(formattedDate);
     setTempDate(tomorrow);
@@ -114,24 +96,25 @@ function TicketsWithMapView({ classes }: any) {
     getOpenTickets(requestObj);
   }
   const handleButtonClickMinusDay = () => {
-    //debugger
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
-    var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
-    //let nextDateObj = dateObj.setDate(new Date().getDate()+1);
-    const formattedDate = formatDateYMD(yesterday);
-    setDateValue(formattedDate);
-    setTempDate(yesterday);
-    dispatch(setClearOpenTicketFilterState({
-      'jobTypeTitle': '',
-      'dueDate': '',
-      'customerNames': '',
-      'ticketId': ''
-    }));
-    const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
-    getOpenTickets(requestObj);
+    const selectDate = dateObj.setHours(0,0,0,0);
+    const todayDate = new Date().setHours(0,0,0,0);
+    if(selectDate == todayDate) {
+      var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
+      const formattedDate = formatDateYMD(yesterday);
+      setDateValue(formattedDate);
+      setTempDate(yesterday);
+      dispatch(setClearOpenTicketFilterState({
+        'jobTypeTitle': '',
+        'dueDate': '',
+        'customerNames': '',
+        'ticketId': ''
+      }));
+      const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
+      getOpenTickets(requestObj);
+    } 
   }
-
   const handleChange = (event: any, value: any) => {
     setPage(value);
     dispatch(setClearOpenServiceTicketObject());
@@ -141,16 +124,6 @@ function TicketsWithMapView({ classes }: any) {
 
   const openTicketFilerModal = () => {
     setShowFilterModal(!showFilterModal);
-    // dispatch(setModalDataAction({
-    //   'data': {
-    //     'modalTitle': '',
-    //     'removeFooter': false
-    //   },
-    //   'type': modalTypes.SHOW_MAP_FILTER_POPUP
-    // }));
-    // setTimeout(() => {
-    //   dispatch(openModalAction());
-    // }, 200);
   }
 
   const resetDateFilter = () => {
@@ -165,8 +138,6 @@ function TicketsWithMapView({ classes }: any) {
     }));
     getOpenTickets({pageNo: 1, pageSize: 6})
   }
-
- 
 
   useEffect(()=> {
     let prevItemKey = localStorage.getItem('prevItemKey');
@@ -195,8 +166,6 @@ function TicketsWithMapView({ classes }: any) {
         localStorage.setItem('prevItemKey',`openTicket${index}` )
       }
     }
-    
-   
     dispatch(setClearOpenServiceTicketObject());
     dispatch(setOpenServiceTicketObject(openTicketObj));
   }
@@ -243,15 +212,10 @@ function TicketsWithMapView({ classes }: any) {
 
                     <div className="filter_wrapper">
                       <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
-                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal}/></div> : null }
+                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal  openTicketFilerModal={openTicketFilerModal}/></div> : null }
                     </div>
                     <span className="datepicker_wrapper">
-                      {/* <BCDateTimePicker
-                        disablePast
-                        handleChange={dateChangeHandler}
-                        value={dateValue}
-                        className='serviceTicketLabel'
-                        name={'scheduleDate'}></BCDateTimePicker> */}
+
                         <button className="prev_btn"><i className="material-icons" onClick={()=>handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
                          <DatePicker
                           autoOk

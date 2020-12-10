@@ -14,13 +14,13 @@ import {
     TextField
   } from '@material-ui/core';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
-import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 
 
 function BCMapFilterModal({
   classes,
-}: any, openTicketFilerModal?: any): JSX.Element {
-    
+  openTicketFilerModal
+}: any): JSX.Element {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
@@ -51,14 +51,14 @@ function BCMapFilterModal({
         ticketId: values.searchQuery,
         companyId: ''
     }
-
-    let request = null; 
     dispatch(setOpenTicketFilterState(rawData));
     const requestObj = formatRequestObj(rawData);
+    dispatch(setOpenServiceTicketLoading(true));
     getOpenServiceTickets(requestObj).then((response: any) => {
         dispatch(setOpenServiceTicket(response));
         dispatch(refreshServiceTickets(true));
-        dispatch(closeModalAction());
+        dispatch(setOpenServiceTicketLoading(false));
+        openTicketFilerModal();
         setTimeout(() => {
           dispatch(setModalDataAction({ 
             'data': {},
@@ -181,7 +181,7 @@ function BCMapFilterModal({
             }}
             color={'secondary'}
             disabled={isSubmitting}
-            onClick={() => openTicketFilerModal}
+            onClick={()=>openTicketFilerModal()}
             variant={'extended'}>
             {'Cancel'}
             </Fab>
@@ -221,5 +221,5 @@ const Label = styled.div`
 `;
 export default withStyles(
   styles,
-  { 'withTheme': true }
+  { 'withTheme': true },
 )(BCMapFilterModal);

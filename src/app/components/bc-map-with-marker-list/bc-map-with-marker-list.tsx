@@ -3,7 +3,7 @@ import GoogleMapReact from 'google-map-react';
 import RoomIcon from '@material-ui/icons/Room';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -23,7 +23,7 @@ interface BCMapWithMarkerListProps {
 function MakerPin({ ...props }) {
     
     const dispatch = useDispatch();
-    let p = props.lat;
+
     const openCreateJobModal = (ticketObj: any) => {
       const reqObj = {
         customerId: ticketObj.customer._id,
@@ -92,24 +92,36 @@ function MakerPin({ ...props }) {
                 <h3>Notes</h3>
                 <span>{props.ticket.note ? props.ticket.note : ''}</span>
               </div>
-              {/* {props.ticket.ticketId} */}
               <div className="button_wrapper">
                 <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
               </div>
             </div>
         </>
         )
-    } else
-    return <RoomIcon className={props.classes.marker} />;
+    } else{
+      return <RoomIcon className={props.classes.marker} />;
+    }
+    
 }
 
 function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMarkerListProps) {
     const openTicketObj = useSelector((state: any) => state.serviceTicket.openTicketObj);
+    let centerLat = 32.3182314,centerLng =  -86.902298;
+    if (openTicketObj.jobSite) {
+      centerLat = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[1] ? openTicketObj.jobSite.location.coordinates[1] : 32.3182314;
+        centerLng = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[0] ? openTicketObj.jobSite.location.coordinates[0] : -86.902298;
+    } else if (openTicketObj.jobLocation) {
+      centerLat = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[1] ? openTicketObj.jobLocation.location.coordinates[1] : 32.3182314;
+      centerLng = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[0] ? openTicketObj.jobLocation.location.coordinates[0] : -86.902298;
+    } else if (openTicketObj.customer) {
+      centerLat = openTicketObj.customer.location && openTicketObj.customer.location.coordinates && openTicketObj.customer.location.coordinates[1] ? openTicketObj.customer.location.coordinates[1] : 32.3182314;
+      centerLng = openTicketObj.customer.location && openTicketObj.customer.location.coordinates && openTicketObj.customer.location.coordinates[0] ? openTicketObj.customer.location.coordinates[0] : -86.902298;
+    }
     return (
         <GoogleMapReact
             bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
-            center={{ lat: 32.3182314, lng: -86.902298 }}
             onClick={(event) => console.log(event)}
+            center={{ lat: centerLat, lng: centerLng}}
             defaultZoom={3}>
             {
                 ticketList.map((ticket: any, index: number) => {
