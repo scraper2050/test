@@ -98,8 +98,8 @@ function TicketsWithMapView({ classes }: any) {
   const handleButtonClickMinusDay = () => {
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
-    const selectDate = dateObj.setHours(0,0,0,0);
-    const todayDate = new Date().setHours(0,0,0,0);
+    // const selectDate = dateObj.setHours(0,0,0,0);
+    // const todayDate = new Date().setHours(0,0,0,0);
       var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
       const formattedDate = formatDateYMD(yesterday);
       setDateValue(formattedDate);
