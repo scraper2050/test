@@ -24,6 +24,7 @@
 
 .ticketsCardViewContainer {
   height: 625px;
+  align-items: flex-start;
   .MuiPagination-root {
     width: 100%;
     align-self: flex-end;
@@ -80,6 +81,7 @@
 .ticketsCardViewContainer {
   padding-left: 20px;
   .ticketItemDiv {
+    min-height: 175px;
     background: #ffffff;
     border: 1px solid #ffffff;
     box-sizing: border-box;

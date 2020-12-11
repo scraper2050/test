@@ -100,7 +100,6 @@ function TicketsWithMapView({ classes }: any) {
     const dateObj = new Date(tempDate);
     const selectDate = dateObj.setHours(0,0,0,0);
     const todayDate = new Date().setHours(0,0,0,0);
-    if(!(selectDate <= todayDate)) {
       var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
       const formattedDate = formatDateYMD(yesterday);
       setDateValue(formattedDate);
@@ -113,7 +112,6 @@ function TicketsWithMapView({ classes }: any) {
       }));
       const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
       getOpenTickets(requestObj);
-    } 
   }
   const handleChange = (event: any, value: any) => {
     setPage(value);
@@ -173,7 +171,6 @@ function TicketsWithMapView({ classes }: any) {
     if(isLoading){
       return <BCCircularLoader heightValue={'200px'}/>
     }
-    console.log(dateValue);
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -221,7 +218,7 @@ function TicketsWithMapView({ classes }: any) {
                          <DatePicker
                           autoOk
                           className={classes.picker}
-                          disablePast={true}
+                          disablePast={false}
                           format={'d MMM yyyy'}
                           id={`datepicker-${'scheduleDate'}`}
                           inputProps={{

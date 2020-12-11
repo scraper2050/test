@@ -90,9 +90,11 @@ function BCJobModal({
     if(data === '0'){
       setFieldValue(fieldName, 0);
       setShowVendorFlag(false);
+      setFieldValue('technicianId', '');
     } else if(data === '1'){
       setFieldValue(fieldName, 1);
       setShowVendorFlag(true);
+      setFieldValue('contractorId', '');
     }
   }
   const handleLocationChange = (event: any, fieldName: any, setFieldValue: any) => {
