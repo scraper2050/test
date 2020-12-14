@@ -33,6 +33,7 @@ interface RootState {
     type: string
   }
 }
+
 function BCModal() {
   const [component, setComponent] = useState<any>(null);
   const [modalOptions, setModalOptions] = useState<any>({
