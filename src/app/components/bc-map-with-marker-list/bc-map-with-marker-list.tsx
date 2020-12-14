@@ -41,7 +41,10 @@ function MakerPin({ ...props }) {
       }
        const ticket = {...ticketObj, 
         jobLocation: reqObj.locationId,
-        jobSite: ticketObj.jobSite ? ticketObj.jobSite._id : ''
+        jobSite: ticketObj.jobSite ? ticketObj.jobSite._id : '',
+        jobType: ticketObj.jobType ? ticketObj.jobType._id : '',
+        scheduleDate: ticketObj.dueDate ? ticketObj.dueDate: '',
+        description: ticketObj.note ? ticketObj.note: ''
       }
       
         dispatch(setModalDataAction({
@@ -122,7 +125,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMar
             bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
             onClick={(event) => console.log(event)}
             center={{ lat: centerLat, lng: centerLng}}
-            defaultZoom={3}>
+            defaultZoom={15}>
             {
                 ticketList.map((ticket: any, index: number) => {
                     let lat;

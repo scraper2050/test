@@ -23,7 +23,10 @@
 }
 
 .ticketsCardViewContainer {
-  height: 625px;
+  @media (min-width: 1280px) {
+    height: calc(100vh - 350px);
+    overflow-y: scroll;
+  }
   align-items: flex-start;
   .MuiPagination-root {
     width: 100%;
@@ -31,6 +34,13 @@
     .MuiPagination-ul {
       justify-content: center;
     }
+  }
+}
+
+.MuiPagination-root {
+  width: 100%;
+  .MuiPagination-ul {
+    justify-content: center;
   }
 }
 

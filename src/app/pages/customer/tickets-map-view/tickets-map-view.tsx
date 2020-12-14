@@ -259,9 +259,9 @@ function TicketsWithMapView({ classes }: any) {
                         </div>
                       ))
                     }
-                    <Pagination count={Math.ceil(totalOpenTickets/6)} color="primary" onChange={handleChange} showFirstButton  page={page}
-                      showLastButton />
                   </div>
+                  <Pagination count={Math.ceil(totalOpenTickets/6)} color="primary" onChange={handleChange} showFirstButton  page={page}
+                      showLastButton />
                 </Grid>
               </Grid>
             </div>

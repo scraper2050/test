@@ -18,6 +18,7 @@ import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-fo
 import { getVendors } from 'actions/vendor/vendor.action';
 import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
 import "../../../scss/job-poup.scss";
 
@@ -58,7 +59,6 @@ function BCJobModal({
   classes,
   job = initialJobState
 }: any): JSX.Element {
-  
   const dispatch = useDispatch();
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
@@ -66,6 +66,7 @@ function BCJobModal({
   const vendorsList = useSelector(({ vendors } : any) => vendors.data);
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
   const jobLocations = useSelector((state : any) => state.jobLocations.data);
+  const isLoading = useSelector((state : any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
@@ -214,15 +215,15 @@ function BCJobModal({
   const form = useFormik({
     initialValues: {
       customerId: job.customer._id,
-      description: job.description,
+      description: job.ticket.note,
       employeeType: !job.employeeType
         ? 0
         : 1,
       equipmentId: job.equipment && job.equipment._id
         ? job.equipment._id
         : '',
-      jobTypeId: job.type._id,
-      scheduleDate: (job.scheduleDate),
+      jobTypeId: job.ticket.jobType,
+      scheduleDate: job.ticket.dueDate,
       scheduledEndTime: job.scheduledEndTime,
       scheduledStartTime: job.scheduledStartTime,
       technicianId: job.technician._id,
@@ -254,247 +255,252 @@ function BCJobModal({
       }));
     }, 200);
   };
-  return (
-    <form onSubmit={FormikSubmit}>
-      <DialogContent classes={{ 'root': classes.dialogContent }}>
-        <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading">{`Customer : ${displayName}`}</h4>
-        {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
-        <Grid
-          container
-          spacing={2}>
+  if(isLoading){
+    return  <BCCircularLoader />
+  }else{
+ 
+    return (
+      <form onSubmit={FormikSubmit}>
+        <DialogContent classes={{ 'root': classes.dialogContent }}>
+          <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading">{`Customer : ${displayName}`}</h4>
+          {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
           <Grid
-            item
-            sm={6}
-            xs={12}
-          >
-            <BCSelectOutlined
-              error={{
-                'isError': true,
-                'message': FormikErrors.employeeType
-              }}
-              handleChange={(event: any) => handleEmployeeTypeChange('employeeType', event.target.value)}
-              items={{
-                'data': employeeTypes,
-                'displayKey': 'name',
-                'valueKey': '_id'
-              }}
-              label={'Employee Type'}
-              name={'employeeType'}
-              required
-              value={FormikValues.employeeType}
-            />
-            {/* <BCSelectOutlined
-              handleChange={formikChange}
-              items={{
-                'data': [
-                  ...ticketData.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'ticketId': o.ticketId
-                    };
-                  })
-                ],
-                'displayKey': 'ticketId',
-                'valueKey': '_id'
-              }}
-              label={'Ticket No'}
-              name={'ticketId'}
-              required
-              value={FormikValues.ticketId}
-            /> */}
-            { !showVendorFlag ? <BCSelectOutlined
-              handleChange={formikChange}
-              items={{
-                'data': [
-                  ...employeesForJob.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'displayName': o.profile.displayName
-                    };
-                  })
-                ],
-                'displayKey': 'displayName',
-                'valueKey': '_id'
-              }}
-              label={'Select Technician'}
-              name={'technicianId'}
-              required
-              value={FormikValues.technicianId}
-            />
-              : null
-            }
-            {
-              showVendorFlag ? 
+            container
+            spacing={2}>
+            <Grid
+              item
+              sm={6}
+              xs={12}
+            >
               <BCSelectOutlined
-              handleChange={formikChange}
-              items={{
-                'data': [
-                  ...vendorsList.map((o: any) => {
-                    return {
-                      '_id': o.contractor._id,
-                      'displayName': o.contractor.info.companyName
-                    };
-                  })
-                ],
-                'displayKey': 'displayName',
-                'valueKey': '_id'
-              }}
-              label={'Select Contractor'}
-              name={'contractorId'}
-              required
-              value={FormikValues.contractorId}
-            /> :
-            null
-            }
-            <BCSelectOutlined
-              handleChange={formikChange}
-              items={{
-                'data': [
-                  ...jobTypes.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'title': o.title
-                    };
-                  })
-                ],
-                'displayKey': 'title',
-                'valueKey': '_id'
-              }}
-              label={'Select Job Type'}
-              name={'jobTypeId'}
-              required
-              value={FormikValues.jobTypeId}
-            />
-            <BCSelectOutlined
-              items={{
-                'data': [
-                  ...jobLocations.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'name': o.name
-                    };
-                  })
-                ],
-                'displayKey': 'name',
-                'valueKey': '_id'
-              }}
-              label={'Select Job Location'}
-              name={'jobLocationId'}
-              disabled={job.ticket.jobLocation ? true : false}
-              value={FormikValues.jobLocationId}
-              handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue)}
-            />
+                error={{
+                  'isError': true,
+                  'message': FormikErrors.employeeType
+                }}
+                handleChange={(event: any) => handleEmployeeTypeChange('employeeType', event.target.value)}
+                items={{
+                  'data': employeeTypes,
+                  'displayKey': 'name',
+                  'valueKey': '_id'
+                }}
+                label={'Employee Type'}
+                name={'employeeType'}
+                required
+                value={FormikValues.employeeType}
+              />
+              {/* <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...ticketData.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'ticketId': o.ticketId
+                      };
+                    })
+                  ],
+                  'displayKey': 'ticketId',
+                  'valueKey': '_id'
+                }}
+                label={'Ticket No'}
+                name={'ticketId'}
+                required
+                value={FormikValues.ticketId}
+              /> */}
+              { !showVendorFlag ? <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...employeesForJob.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'displayName': o.profile.displayName
+                      };
+                    })
+                  ],
+                  'displayKey': 'displayName',
+                  'valueKey': '_id'
+                }}
+                label={'Select Technician'}
+                name={'technicianId'}
+                required
+                value={FormikValues.technicianId}
+              />
+                : null
+              }
+              {
+                showVendorFlag ? 
+                <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...vendorsList.map((o: any) => {
+                      return {
+                        '_id': o.contractor._id,
+                        'displayName': o.contractor.info.companyName
+                      };
+                    })
+                  ],
+                  'displayKey': 'displayName',
+                  'valueKey': '_id'
+                }}
+                label={'Select Contractor'}
+                name={'contractorId'}
+                required
+                value={FormikValues.contractorId}
+              /> :
+              null
+              }
+              <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...jobTypes.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'title': o.title
+                      };
+                    })
+                  ],
+                  'displayKey': 'title',
+                  'valueKey': '_id'
+                }}
+                label={'Select Job Type'}
+                name={'jobTypeId'}
+                required
+                value={FormikValues.jobTypeId}
+              />
+              <BCSelectOutlined
+                items={{
+                  'data': [
+                    ...jobLocations.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'name': o.name
+                      };
+                    })
+                  ],
+                  'displayKey': 'name',
+                  'valueKey': '_id'
+                }}
+                label={'Select Job Location'}
+                name={'jobLocationId'}
+                disabled={job.ticket.jobLocation ? true : false}
+                value={FormikValues.jobLocationId}
+                handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue)}
+              />
 
-            <BCSelectOutlined
-              handleChange={formikChange}
-              items={{
-                'data': [
-                  ...jobSites.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'name': o.name
-                    };
-                  })
-                ],
-                'displayKey': 'name',
-                'valueKey': '_id',
-              }}
-              label={'Select Job Site'}
-              name={'jobSiteId'}
-              disabled={job.ticket.jobSite ? true : false}
-              value={FormikValues.jobSiteId}
-            />
-            <BCSelectOutlined
-              handleChange={formikChange}
-              items={{
-                'data': [
-                  ...equipments.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'displayName': o.company
-                    };
-                  })
-                ],
-                'displayKey': 'displayName',
-                'valueKey': '_id'
-              }}
-              label={'Select Equipment'}
-              name={'equipmentId'}
-              value={FormikValues.equipmentId}
-            />
-            <BCInput
-              handleChange={formikChange}
-              label={'Description'}
-              multiline
-              name={'description'}
-              value={FormikValues.description}
-            />
+              <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...jobSites.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'name': o.name
+                      };
+                    })
+                  ],
+                  'displayKey': 'name',
+                  'valueKey': '_id',
+                }}
+                label={'Select Job Site'}
+                name={'jobSiteId'}
+                disabled={job.ticket.jobSite ? true : false}
+                value={FormikValues.jobSiteId}
+              />
+              <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...equipments.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'displayName': o.company
+                      };
+                    })
+                  ],
+                  'displayKey': 'displayName',
+                  'valueKey': '_id'
+                }}
+                label={'Select Equipment'}
+                name={'equipmentId'}
+                value={FormikValues.equipmentId}
+              />
+              <BCInput
+                handleChange={formikChange}
+                label={'Description'}
+                multiline
+                name={'description'}
+                value={FormikValues.description}
+              />
+            </Grid>
+            <Grid
+              item
+              sm={6}
+              xs={12}>
+              <BCDateTimePicker
+                disablePast={!job._id}
+                handleChange={(e: any) => dateChangeHandler(e, 'scheduleDate')}
+                label={'Due Date'}
+                name={'scheduleDate'}
+                required
+                value={FormikValues.scheduleDate}
+              />
+              <BCDateTimePicker
+                dateFormat={'HH:mm:ss'}
+                disablePast={!job._id}
+                handleChange={(e: any) => dateChangeHandler(e, 'scheduledStartTime')}
+                label={'Start Time'}
+                name={'scheduledStartTime'}
+                pickerType={'time'}
+                value={FormikValues.scheduledStartTime}
+              />
+                {startTimeLabelState ? <Label>Start time is required.</Label>: ''}
+              <BCDateTimePicker
+                dateFormat={'HH:mm:ss'}
+                disablePast={!job._id}
+                handleChange={(e: any) => dateChangeHandler(e, 'scheduledEndTime')}
+                label={'End Time'}
+                name={'scheduledEndTime'}
+                pickerType={'time'}
+                value={FormikValues.scheduledEndTime}
+              />
+                {endTimeLabelState ? <Label>{scheduledEndTimeMsg}</Label>: ''}
+            </Grid>
           </Grid>
-          <Grid
-            item
-            sm={6}
-            xs={12}>
-            <BCDateTimePicker
-              disablePast={!job._id}
-              handleChange={(e: any) => dateChangeHandler(e, 'scheduleDate')}
-              label={'Due Date'}
-              name={'scheduleDate'}
-              required
-              value={FormikValues.scheduleDate}
-            />
-            <BCDateTimePicker
-              dateFormat={'HH:mm:ss'}
-              disablePast={!job._id}
-              handleChange={(e: any) => dateChangeHandler(e, 'scheduledStartTime')}
-              label={'Start Time'}
-              name={'scheduledStartTime'}
-              pickerType={'time'}
-              value={FormikValues.scheduledStartTime}
-            />
-              {startTimeLabelState ? <Label>Start time is required.</Label>: ''}
-            <BCDateTimePicker
-              dateFormat={'HH:mm:ss'}
-              disablePast={!job._id}
-              handleChange={(e: any) => dateChangeHandler(e, 'scheduledEndTime')}
-              label={'End Time'}
-              name={'scheduledEndTime'}
-              pickerType={'time'}
-              value={FormikValues.scheduledEndTime}
-            />
-              {endTimeLabelState ? <Label>{scheduledEndTimeMsg}</Label>: ''}
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions classes={{
-        'root': classes.dialogActions
-      }}>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          color={'secondary'}
-          disabled={isSubmitting}
-          onClick={() => closeModal()}
-          variant={'extended'}>
-          {'Cancel'}
-        </Fab>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          color={'primary'}
-          disabled={isSubmitting}
-          type={'submit'}
-          variant={'extended'}>
-          {job._id
-            ? 'Edit'
-            : 'Submit'}
-        </Fab>
-      </DialogActions>
-    </form>
-  );
+        </DialogContent>
+        <DialogActions classes={{
+          'root': classes.dialogActions
+        }}>
+          <Fab
+            aria-label={'create-job'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'secondary'}
+            disabled={isSubmitting}
+            onClick={() => closeModal()}
+            variant={'extended'}>
+            {'Cancel'}
+          </Fab>
+          <Fab
+            aria-label={'create-job'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            disabled={isSubmitting}
+            type={'submit'}
+            variant={'extended'}>
+            {job._id
+              ? 'Edit'
+              : 'Submit'}
+          </Fab>
+        </DialogActions>
+      </form>
+    );
+  }
 }
 
 const Label = styled.div`
