@@ -97,6 +97,7 @@ function LoginPage({
   });
 
   const [remember, setRemember] = useState<any>(false);
+  const [showAgreeTerms] = useState(localStorage.getItem("agreed"))
   const [agreeTerm, setAgreeTerm] = useState({
     'showError': false,
     'showModal': false,
@@ -136,25 +137,34 @@ function LoginPage({
   useEffect(() => {
     if (token !== null && token !== "") {
       history.push(location.state?.requestedPath ?? "/main/dashboard");
-    } else if (localStorage.getItem("rememberMe")) {
-      const data: any = localStorage.getItem("rememberMe");
-      const rememberMeData: any = JSON.parse(data);
+    } else {
+      if (localStorage.getItem("rememberMe")) {
+        const data: any = localStorage.getItem("rememberMe");
+        const rememberMeData: any = JSON.parse(data);
+  
+        setRemember(rememberMeData.rememberMe);
+        setAgreeTerm({ ...agreeTerm, value: rememberMeData.agreed });
+        setFormData({
+          email: {
+            errorMsg: "",
+            validate: true,
+            value: rememberMeData.email,
+          },
+          password: {
+            errorMsg: "",
+            showPassword: false,
+            validate: true,
+            value: rememberMeData.password,
+          },
+        });
+      }
+  
+      if (showAgreeTerms) {
+        const data: any = localStorage.getItem("agreed");
+        const agreed: any = JSON.parse(data);
 
-      setRemember(rememberMeData.rememberMe);
-      setAgreeTerm({ ...agreeTerm, value: rememberMeData.agreed });
-      setFormData({
-        email: {
-          errorMsg: "",
-          validate: true,
-          value: rememberMeData.email,
-        },
-        password: {
-          errorMsg: "",
-          showPassword: false,
-          validate: true,
-          value: rememberMeData.password,
-        },
-      });
+        setAgreeTerm({ ...agreeTerm, value: agreed });
+      }
     }
   }, [token, history, location]);
 
@@ -206,14 +216,17 @@ function LoginPage({
       password: formData.password.value,
     });
 
+    if (agreeTerm.value) {
+      localStorage.setItem("agreed", "true");
+    }
+
     if (remember) {
       localStorage.setItem(
         "rememberMe",
         JSON.stringify({
           email: formData.email.value,
           password: formData.password.value,
-          rememberMe: true,
-          agreed: agreeTerm.value,
+          rememberMe: true
         })
       );
     }
@@ -292,21 +305,26 @@ function LoginPage({
                 />
 
                 <div className={classes.AgreeTermDiv}>
-                  <Checkbox
-                    checked={agreeTerm.value}
-                    color={"primary"}
-                    name={"agree-term"}
-                    onChange={() => {
-                      setAgreeTerm({
-                        ...agreeTerm,
-                        'showError': false,
-                        'value': !agreeTerm.value
-                      });
-                    }}
-                  />
-                  <span onClick={handleClickOpen} role={"button"}>
-                    {"I agree with the terms of use and privacy"}
-                  </span>
+                  {
+                    !showAgreeTerms && (
+                      <>
+                      <Checkbox
+                        checked={agreeTerm.value}
+                        color="primary"
+                        name="agree-term"
+                        onChange={() => {
+                          setAgreeTerm({
+                            ...agreeTerm,
+                            'showError': false,
+                            'value': !agreeTerm.value
+                          });
+                        } } />
+                        <span onClick={handleClickOpen} role={"button"}>
+                          {"I agree with the terms of use and privacy"}
+                        </span>
+                        </>
+                    )
+                  }
                 </div>
               </div>
               <div className={classes.agreementHelperText}>
