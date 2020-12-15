@@ -4,6 +4,8 @@ import { allStates } from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './bc-customer-info-modal.style';
+import Geocode from 'react-geocode';
+import Config from '../../../config';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
@@ -13,6 +15,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  TextField
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
@@ -21,6 +24,7 @@ import { useDispatch } from 'react-redux';
 import { getCustomerDetailAction, updateCustomerAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import '../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
+import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-marker';
 
 interface Props {
   classes: any
@@ -29,6 +33,10 @@ interface Props {
 function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const dispatch = useDispatch();
   const [nameLabelState, setNameLabelState] = useState(false);
+  const [positionValue, setPositionValue] = useState({
+    'lang': customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[0]  : 0,
+    'lat':customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[1]  : 0
+  });
   const history = useHistory();
   const initialValues = {
     "name": customerInfo && customerInfo.customerName && customerInfo.customerName !== 'N/A' ? customerInfo.customerName : '',
@@ -41,6 +49,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     },
     "street": customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.street ? customerInfo.customerAddress.street : '',
     "zipCode": customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.zipCode ? customerInfo.customerAddress.zipCode : '',
+    "latitude": customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[1]  : 0,
+    "longitude": customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[0]  : 0,
     "customerId": customerInfo && customerInfo.customerId ? customerInfo.customerId : '',
   }
 
@@ -53,6 +63,46 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         'type': ''
       }));
     }, 200);
+  };
+
+  const updateMap = (values: any, zipCode?: number, state?: number): void => {
+    Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
+    let stateVal:any =undefined ;
+    Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
+    if(state){
+      stateVal = allStates[state].name;
+    }
+
+    let fullAddr = '';
+    fullAddr = fullAddr.concat(values.street, ' ', values.city, ' ', stateVal, ' ', zipCode ? zipCode : values.zipCode, ' ', 'USA');
+
+    Geocode.fromAddress(fullAddr).then(
+      (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        setPositionValue({
+          'lang': lng,
+          'lat': lat
+        });
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  };
+
+  const updateMapFromLatLng = (name: string, value: any): void => {
+    Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
+    if (name === 'lat') {
+      setPositionValue({
+        'lang': positionValue.lang,
+        'lat': parseFloat(value)
+      });
+    } else {
+      setPositionValue({
+        'lang': parseFloat(value),
+        'lat': positionValue.lat
+      });
+    }
   };
 
 
@@ -86,6 +136,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                   onSubmit={(values, { setSubmitting }) => {
                      let updateCustomerrequest = {...values, state: ''};
                       updateCustomerrequest.state = allStates[values.state.id].name;
+                      updateCustomerrequest.latitude = positionValue.lat;
+                      updateCustomerrequest.longitude = positionValue.lang;
                       if(isValidate(updateCustomerrequest)){
                         dispatch(updateCustomerAction(updateCustomerrequest, () => {
                             closeModal();
@@ -96,7 +148,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       
                   }}
                   validateOnChange>
-                  {({ handleChange, values, errors, isSubmitting }) =>
+                  {({ handleChange, values, errors, isSubmitting, setFieldValue }) =>
                     <Form className='editCustomerForm'>
                       <Grid
                         className={classes.paper}
@@ -114,9 +166,9 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           </InputLabel>
 
                           <BCTextField
+                            required
                             name={'name'}
                             placeholder={'Name'}
-                            required={true}
                             onChange={handleChange}
                           />
                           {nameLabelState ? <label>Required</label>: ''}
@@ -127,11 +179,12 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={12}>
-                        <FormGroup >
+                        <FormGroup className={'required'}>
                           <InputLabel className={classes.label}>
                             {'Email'}
                           </InputLabel>
                           <BCTextField
+                            required
                             name={'email'}
                             placeholder={'Email'}
                             type={'email'}
@@ -160,7 +213,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           className={classes.paper}
                           item
                           sm={6}>
-                          <FormGroup>
+                          <FormGroup >
                             <InputLabel className={classes.label}>
                               {'Phone Number'}
                             </InputLabel>
@@ -186,7 +239,10 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             <BCTextField
                               name={'street'}
                               placeholder={'Street'}
-                              onChange={handleChange}
+                              onChange={(e:any)=> { 
+                                setFieldValue('street', e.target.value)
+                                updateMap(values)
+                                }}
                             />
                           </FormGroup>
                         </Grid>
@@ -201,7 +257,10 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             <BCTextField
                               name={'city'}
                               placeholder={'City'}
-                              onChange={handleChange}
+                              onChange={(e:any)=> { 
+                                setFieldValue('city', e.target.value)
+                                updateMap(values)
+                                }}
                             />
                           </FormGroup>
                         </Grid>
@@ -220,7 +279,10 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               as={Select}
                               enableReinitialize
                               name={'state.id'}
-                             
+                              onChange={(e: any) => {
+                                updateMap(values, undefined, e.target.value);
+                                handleChange(e);
+                              }}
                               type={'select'}
                               variant={'outlined'}>
                               { allStates.map((state, id) =>
@@ -245,13 +307,16 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               name={'zipCode'}
                               placeholder={'Zip Code'}
                               type={'number'}
-                              onChange={handleChange}
+                              onChange={(e:any)=> { 
+                                setFieldValue('zipCode', e.target.value)
+                                updateMap(values, e.target.value)
+                                }}
                             />
                           </FormGroup>
                         </Grid>
                       </Grid>
 
-                      <Grid
+                    <Grid
                         className={classNames(classes.paper, 'form_button_wrapper-desktop')} 
                         item
                         md={12}>
@@ -273,40 +338,59 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           </Button>
                         </Box>
                       </Grid>
-                      
-                   
-
-                <Grid
-                    className={classNames(classes.paper)}
-                    item
-                    sm={12}
-                    lg={6}>
-                        <Grid container>
-                            <Grid
-                                className={classes.paper}
-                                item
-                                sm={6}>
-                                <FormGroup className={'required'}>
-                                
-                                </FormGroup>
-                            </Grid>
-                            <Grid
-                                className={classes.paper}
-                                item
-                                sm={6}>
-                                <FormGroup className={'required'}>
-                                
-                                </FormGroup>
-                                
-                            </Grid>
-                        </Grid>
-                        
-                </Grid>
-            
                 </Form>
                   }
                 </Formik>
               </Grid> 
+
+              <Grid
+                    className={classNames(classes.paper, classes.mapLocation)}
+                    item
+                    sm={6}>
+                    <Grid container>
+                      <Grid
+                        className={classes.paper}
+                        item
+                        sm={6}>
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Latitude'}
+                          </InputLabel>
+                          <TextField
+                            type={'number'}
+                            onChange={(e: any) => updateMapFromLatLng('lat', e.target.value)}
+                            placeholder={'Longitude'}
+                            variant={'outlined'}
+                            value={positionValue.lat}
+                          />
+                        </FormGroup>
+                      </Grid>
+                      <Grid
+                        className={classes.paper}
+                        item
+                        sm={6}>
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Longitude'}
+                          </InputLabel>
+                          <TextField
+                            type={'number'}
+                            onChange={(e: any) => updateMapFromLatLng('lng', e.target.value)}
+                            placeholder={'Longitude'}
+                            variant={'outlined'}
+                            value={positionValue.lang}
+                          />
+                        </FormGroup>
+                      </Grid>
+                    </Grid>
+
+                    <div className={classNames(classes.paper, classes.mapWrapper)}>
+                      <BCMapWithMarker
+                        lang={positionValue.lang}
+                        lat={positionValue.lat}
+                      />
+                    </div>
+              </Grid>
 
             </Grid>{/*Main Grid*/}
           </DataContainer>

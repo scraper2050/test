@@ -2,13 +2,14 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 import { FieldAttributes, useField } from 'formik';
 
-type BCTextFieldProps = { placeholder: string, variant?: any, type?:any, onChange?:any} & FieldAttributes<{}>;
+type BCTextFieldProps = { placeholder: string, variant?: any, type?:any, onChange?:any, required?: boolean} & FieldAttributes<{}>;
 
 export default function BCTextField({
   placeholder,
   variant,
   type,
   onChange,
+  required = false,
   ...props
 }: BCTextFieldProps) {
   const [field, meta] = useField<{}>(props);
@@ -23,8 +24,8 @@ export default function BCTextField({
       placeholder={placeholder}
       variant={variant || 'outlined'}
       {...field}
-       onChange={onChange}
-      
+      onChange={onChange}
+      required={required}
     />
   );
 }

@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .App {
@@ -10,8 +10,8 @@ body {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   width: 100%;
   min-height: 100vh;
   background: #ebebeb;
@@ -22,8 +22,8 @@ body {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 100%;
-          flex: 1 1 100%;
+  -ms-flex: 1 1 100%;
+  flex: 1 1 100%;
   overflow-x: hidden;
   background: #ebebeb;
   margin: 155px 0 0 0 !important;
@@ -81,12 +81,12 @@ body {
 
 .flex-shrink-0 {
   -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .md\:flex-shrink-0 {
   -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .px-12 {
@@ -113,7 +113,7 @@ body {
   border: 1px solid #ccc;
   border-bottom: none;
   -webkit-box-shadow: none !important;
-          box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 .cell-border-right {
@@ -135,14 +135,14 @@ body {
 
 .swipe_wrapper .MuiTable-root .MuiTableBody-root tr td .MuiFab-primary {
   -webkit-box-shadow: none !important;
-          box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 .customer_info_wrapper {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   border-radius: 10px;
   width: 100%;
   max-width: 700px;
@@ -154,18 +154,18 @@ body {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  /* justify-content: space-between; */
 }
 
 .name_wrapper .MuiFab-primary {
   -webkit-box-shadow: none;
-          box-shadow: none;
+  box-shadow: none;
   border-radius: 0;
-  background: #E5E5E5;
-  border: 1px solid #C4C4C4;
+  background: #e5e5e5;
+  border: 1px solid #c4c4c4;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   border-radius: 4px;
   width: 30px;
   height: 30px;
@@ -180,11 +180,11 @@ body {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   cursor: pointer;
 }
 
@@ -193,7 +193,7 @@ body {
 }
 
 .name_wrapper .MuiFab-primary:hover i {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .customer_details {
@@ -206,13 +206,13 @@ body {
 
 [class*="ViewMorePage-dataContainer"] > div {
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
 }
 
 [class*="ViewMorePage-dataContainer"] > div > .MuiFab-primary {
   -webkit-box-shadow: none;
-          box-shadow: none;
+  box-shadow: none;
 }
 
 .search_wrapper {
@@ -279,8 +279,8 @@ body {
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
-        -ms-flex-direction: column-reverse;
-            flex-direction: column-reverse;
+    -ms-flex-direction: column-reverse;
+    flex-direction: column-reverse;
   }
   .customer_info_wrapper {
     max-width: 100%;

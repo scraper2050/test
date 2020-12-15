@@ -118,10 +118,12 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
         id={'bc-select-outlined'}
         input={nakedSelect
           ? <NakedInput style={{
-            'width': inputWidth
+            'width': inputWidth,
+            'color': 'black'
           }} />
           : <BootstrapInput style={{
-            'width': inputWidth
+            'width': inputWidth,
+            'color': 'black'
           }} />}
         labelId={'bc-select-outlined-label'}
         name={name}
