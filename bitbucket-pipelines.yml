@@ -7,7 +7,7 @@ image: node:10.15.3
 
 pipelines:
   branches:
-    testing:
+    dev:
     - step:
         name: Build
         caches:
@@ -27,7 +27,7 @@ pipelines:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
-              S3_BUCKET: 'blueclerk-testing'
+              S3_BUCKET: 'blueclerk-react-app'
               LOCAL_PATH: 'build'
               ACL: 'public-read'
 
@@ -36,4 +36,4 @@ pipelines:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
-              DISTRIBUTION_ID: 'E2WUPD9FPCPR34'
+              DISTRIBUTION_ID: 'E17AYQHQYHYHNY'
