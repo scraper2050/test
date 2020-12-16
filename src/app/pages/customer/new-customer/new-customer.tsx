@@ -50,16 +50,16 @@ function NewCustomerPage({ classes }: Props) {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const updateMap = (values: any, zipCode?: number, state?: number): void => {
+  const updateMap = (values: any, street?:any, city?:any, zipCode?: number, state?: number): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    let stateVal:any =undefined ;
+    let stateVal:any = '' ;
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     if(state){
       stateVal = allStates[state].name;
-    }
+    } 
 
     let fullAddr = '';
-    fullAddr = fullAddr.concat(values.street, ' ', values.city, ' ', stateVal, ' ', zipCode ? zipCode : values.zipCode, ' ', 'USA');
+    fullAddr = fullAddr.concat(street ? street : values.street, ' ', city ? city : values.city, ' ', stateVal, ' ', zipCode ? zipCode : values.zipCode, ' ', 'USA');
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {

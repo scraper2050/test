@@ -34,8 +34,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const dispatch = useDispatch();
   const [nameLabelState, setNameLabelState] = useState(false);
   const [positionValue, setPositionValue] = useState({
-    'lang': customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[0]  : 0,
-    'lat':customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[1]  : 0
+    'lang': customerInfo && customerInfo.location && customerInfo.location.coordinates.length > 1 ? customerInfo.location.coordinates[0]  : 0,
+    'lat':customerInfo && customerInfo.location && customerInfo.location.coordinates.length > 1 ? customerInfo.location.coordinates[1]  : 0
   });
   const history = useHistory();
   const initialValues = {
@@ -49,8 +49,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     },
     "street": customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.street ? customerInfo.customerAddress.street : '',
     "zipCode": customerInfo && customerInfo.customerAddress && customerInfo.customerAddress.zipCode ? customerInfo.customerAddress.zipCode : '',
-    "latitude": customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[1]  : 0,
-    "longitude": customerInfo && customerInfo.location && customerInfo.location.coordinates ? customerInfo.location.coordinates[0]  : 0,
+    "latitude": customerInfo && customerInfo.location && customerInfo.location.coordinates.length > 1 ? customerInfo.location.coordinates[1]  : 0,
+    "longitude": customerInfo && customerInfo.location && customerInfo.location.coordinates.length > 1 ? customerInfo.location.coordinates[0]  : 0,
     "customerId": customerInfo && customerInfo.customerId ? customerInfo.customerId : '',
   }
 
@@ -65,16 +65,17 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     }, 200);
   };
 
-  const updateMap = (values: any, zipCode?: number, state?: number): void => {
+  const updateMap = (values: any, street?:any, city?:any, zipCode?: number, state?: number): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    let stateVal:any =undefined ;
+    let stateVal:any = '' ;
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     if(state){
       stateVal = allStates[state].name;
-    }
+    } 
 
     let fullAddr = '';
-    fullAddr = fullAddr.concat(values.street, ' ', values.city, ' ', stateVal, ' ', zipCode ? zipCode : values.zipCode, ' ', 'USA');
+    fullAddr = fullAddr.concat(street ? street : values.street, ' ', city ? city : values.city, ' ', stateVal, ' ', zipCode ? zipCode : values.zipCode, ' ', 'USA');
+    
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
@@ -241,7 +242,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               placeholder={'Street'}
                               onChange={(e:any)=> { 
                                 setFieldValue('street', e.target.value)
-                                updateMap(values)
+                                updateMap(values, e.target.value)
                                 }}
                             />
                           </FormGroup>
@@ -259,7 +260,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               placeholder={'City'}
                               onChange={(e:any)=> { 
                                 setFieldValue('city', e.target.value)
-                                updateMap(values)
+                                updateMap(values, undefined, e.target.value)
                                 }}
                             />
                           </FormGroup>
@@ -280,7 +281,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               enableReinitialize
                               name={'state.id'}
                               onChange={(e: any) => {
-                                updateMap(values, undefined, e.target.value);
+                                updateMap(values, undefined, undefined, undefined, e.target.value);
                                 handleChange(e);
                               }}
                               type={'select'}
@@ -309,7 +310,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               type={'number'}
                               onChange={(e:any)=> { 
                                 setFieldValue('zipCode', e.target.value)
-                                updateMap(values, e.target.value)
+                                updateMap(values, '', '', e.target.value)
                                 }}
                             />
                           </FormGroup>
