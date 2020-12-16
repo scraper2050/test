@@ -88,7 +88,7 @@ function CustomersPage({ classes }: any) {
       }
       customerName = customerName !== undefined ? customerName.replace(/ /g,'') : 'customername';
       localStorage.setItem('nestedRouteKey', `${customerName}`);
-      dispatch(loadingSingleCustomers())
+      dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerObj));
       history.push({
         pathname: `customers/${customerName}`,
