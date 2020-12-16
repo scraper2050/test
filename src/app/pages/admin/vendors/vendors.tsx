@@ -6,19 +6,16 @@ import { modalTypes } from '../../../../constants';
 import styles from './vendors.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { getVendors, loadingVendors } from 'actions/vendor/vendor.action';
+import { getVendors, loadingVendors, getVendorDetailAction } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import VendorProfile from './vendor-profile';
+import { useHistory } from 'react-router-dom';
 
 function AdminVendorsPage({ classes }: any) {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
-  const [stage, setStage] = useState(0);
   const [curTab, setCurTab] = useState(0);
-  const [profile, setProfile] = useState({
-    'companyName': '',
-  });
+  const history = useHistory();
   const columns: any = [
     {
       'Cell'({ row }: any) {
@@ -70,18 +67,11 @@ function AdminVendorsPage({ classes }: any) {
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
-    setStage(0);
   };
 
-  /*
-   * Const handleRowClick = (event: any, row: any) => {
-   *   console.log(event, row);
-   * };
-   */
-
-  const cancel = () => {
-    setStage(0);
-  }
+  const handleRowClick = (event: any, row: any) => {
+    console.log(event, row);
+  };
 
   const openVendorModal = () => {
     dispatch(setModalDataAction({
@@ -97,18 +87,18 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
-    console.log(row)
-    setStage(2);
-    const baseObj = row.original;
-    setProfile({
-      'companyName': baseObj.contractor && baseObj.contractor.info && baseObj.contractor.info.companyName ? baseObj.contractor.info.companyName : ''
+    let customerId =  row['original']['contractor']['_id'];
+    // dispatch(loadingSingleCustomers())
+    dispatch(getVendorDetailAction(customerId));
+    history.push({
+      pathname: `vendors/${customerId}`,
+      state: customerId
     });
-  };
+  }
 
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        {stage === 0 &&
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
@@ -149,7 +139,7 @@ function AdminVendorsPage({ classes }: any) {
               <BCTableContainer
                 columns={columns}
                 isLoading={vendors.loading}
-                // OnRowClick={handleRowClick}
+                onRowClick={handleRowClick}
                 search
                 tableData={vendors.data}
               />
@@ -168,13 +158,6 @@ function AdminVendorsPage({ classes }: any) {
             </div>
           </SwipeableViews>
         </div>
-        }
-        {stage === 2 &&
-        <VendorProfile
-          back={cancel}
-          profile={profile}
-        />
-        }
       </div>
     </div>
   );
