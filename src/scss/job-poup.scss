@@ -5,6 +5,12 @@
   line-height: 21px;
   color: #979797;
   padding-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal_heading > * {
+  flex: 1;
 }
 
 .modal_heading + div {
@@ -16,7 +22,7 @@
     color: #000000;
     padding-bottom: 10px;
     margin-bottom: 0;
-    height: 34px;
+    height: 25px;
   }
   .MuiInputBase-root {
     height: 38px !important;
@@ -69,4 +75,7 @@
       width: 195px;
     }
   }
+}
+#dueDate {
+  text-align: right;
 }
