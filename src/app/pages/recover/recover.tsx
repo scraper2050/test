@@ -7,7 +7,9 @@ import styles from './recover.styles';
 import { useHistory } from 'react-router-dom';
 import validator from 'validator';
 import { withStyles } from '@material-ui/core/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Api from 'utils/api'
+import { useSnackbar } from 'notistack';
 
 interface EmailDataModel {
   value: string;
@@ -27,6 +29,17 @@ function RecoverPage({ classes }: Props): JSX.Element {
     'validate': true,
     'value': ''
   });
+
+  const [errMessage, setErrMessage] = useState<string>('');
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    errMessage !== "" &&
+      enqueueSnackbar(errMessage, {
+        variant: "error",
+      });
+  }, [enqueueSnackbar, errMessage]);
 
   const handleChangeEmail = (e: any): void => {
     const emailStr = e.target.value;
@@ -50,6 +63,23 @@ function RecoverPage({ classes }: Props): JSX.Element {
       });
     }
   };
+
+  const handlePasswordReset = () => {
+    Api.post(
+      '/forgotPassword',
+      { email: emailData.value }
+    )
+      .then((res) => {
+        if (res.data.status === 0) {
+          history.push('/');
+        } else {
+          setErrMessage(res.data.message);
+        }
+      })
+      .catch((err) => {
+        setErrMessage(err.response.data.message);
+      });
+  }
 
   return (
     <div className={classes.root}>
@@ -109,8 +139,10 @@ function RecoverPage({ classes }: Props): JSX.Element {
             <Button
               color={'secondary'}
               size={'large'}
-              variant={'contained'}>
-              {'Reset'}
+              variant={'contained'}
+              onClick={handlePasswordReset}
+            >
+              Reset
             </Button>
           </Grid>
           <Grid
@@ -119,11 +151,11 @@ function RecoverPage({ classes }: Props): JSX.Element {
             <Button
               color={'primary'}
               onClick={() => {
-                history.push('/login');
+                history.push('/');
               }}
               size={'large'}
               variant={'contained'}>
-              {'Login'}
+              Login
             </Button>
           </Grid>
         </Grid>

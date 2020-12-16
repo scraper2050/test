@@ -37,11 +37,11 @@ export default (theme: Theme): any => ({
     '@media(max-width: 479px)': {
       'margin': theme.spacing(1)
     },
-    'alignitems': 'stretch',
+    'alignitems': 'center',
     'display': 'flex',
     'flexDirection': 'column',
     'margin': theme.spacing(4),
-    'maxWidth': '480px',
+    // 'maxWidth': '480px',
     'padding': '20px 30px'
   },
   'forgetpassword': {
@@ -49,32 +49,32 @@ export default (theme: Theme): any => ({
       'textDecoration': 'underline'
     },
     'color': 'rgba(0, 0, 0, 0.87)',
-    'textDecoration': 'none'
+    'textDecoration': 'none',
+    'font-size': 16
   },
   'forgetremember': {
     'alignItems': 'center',
     'display': 'flex',
     'justifyContent': 'space-between',
-    'marginBottom': '10px'
+    'margin': 5
   },
   'link': {
     '&:hover': {
       'textDecoration': 'underline'
     },
     'color': '#00aaff',
-    'textDecoration': 'none'
+    'textDecoration': 'none',
+    'fontSize': 16
   },
   'logoimg': {
     'margin': '20px auto 30px',
     'width': '80%'
   },
   'register': {
-    '& a': {
-      'marginLeft': '10px'
-    },
     'alignItems': 'center',
     'display': 'flex',
-    'justifyContent': 'center'
+    'justifyContent': 'space-between',
+    'fontSize': 16
   },
   'root': {
     '& .MuiButton-containedPrimary': {
@@ -101,5 +101,21 @@ export default (theme: Theme): any => ({
     'right': '25px',
     'top': '17px',
     'zIndex': 999
+  },
+  'AgreeTermDiv': {
+    '& span': {
+      '&:hover': {
+        'textDecoration': 'underline',
+        'color': '#00aaff',
+      },
+      'cursor': 'pointer'
+    },
+    'fontSize': 16
+  },
+  agreementHelperText: {
+    'display': 'flex',
+    'justifyContent': 'flex-end',
+    'width': '100%',
+    'marginBottom': 10 
   }
 });
