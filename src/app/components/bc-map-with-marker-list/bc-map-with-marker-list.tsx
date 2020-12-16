@@ -10,18 +10,20 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 
-import "./bc-map-with-marker.scss"
+import "./bc-map-with-marker.scss";
+const DEFAULT_LAT = 51.477222;
+const DEFAULT_LNG = 0;
 
 interface BCMapWithMarkerListProps {
     ticketList: any,
     classes: any,
-    lat: any,
-    lng: any,
+    lat ?: any,
+    lng ?: any,
 }
 
 
 function MakerPin({ ...props }) {
-    
+
     const dispatch = useDispatch();
 
     const openCreateJobModal = (ticketObj: any) => {
@@ -43,7 +45,7 @@ function MakerPin({ ...props }) {
         jobLocation: reqObj.locationId,
         jobSite: ticketObj.jobSite ? ticketObj.jobSite._id : '',
         jobType: ticketObj.jobType ? ticketObj.jobType._id : '',
-        scheduleDate: ticketObj.dueDate ? ticketObj.dueDate: '',
+        dueDate: ticketObj.dueDate ? ticketObj.dueDate: '',
         description: ticketObj.note ? ticketObj.note: ''
       }
       
@@ -58,7 +60,7 @@ function MakerPin({ ...props }) {
               'equipment': {
                 '_id': ''
               },
-              'scheduleDate': new Date(),
+              'scheduleDate': null,
               'scheduledEndTime': null,
               'scheduledStartTime': null,
               'technician': {
@@ -80,45 +82,56 @@ function MakerPin({ ...props }) {
         }, 200);
       };
     if(props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id){
-        return(
-          <>
-            <RoomIcon className={props.classes.marker} />;
-            <div className={`${props.classes.markerPopup} marker_dropdown`}>
-              <div className="due_date">
-                <span> <i className="material-icons">access_time</i> {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
-              </div>
-              <div className="job-type">
-                <h3>Job Type</h3>
-                <span>{props.ticket.jobType ? props.ticket.jobType.title : ''}</span>
-              </div>
-              <div className="job-type">
-                <h3>Notes</h3>
-                <span>{props.ticket.note ? props.ticket.note : ''}</span>
-              </div>
-              <div className="button_wrapper">
-                <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
-              </div>
+       if(props.lat === 0 && props.lng === 0){
+          return(
+              <></>
+          )
+        } else {
+          return (
+            <>
+              <RoomIcon className={props.classes.marker} />;
+              <div className={`${props.classes.markerPopup} marker_dropdown`}>
+                <div className="due_date">
+                  <span> <i className="material-icons">access_time</i> {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
+                </div>
+                <div className="job-type">
+                  <h3>Job Type</h3>
+                  <span>{props.ticket.jobType ? props.ticket.jobType.title : ''}</span>
+                </div>
+                <div className="job-type">
+                  <h3>Notes</h3>
+                  <span>{props.ticket.note ? props.ticket.note : ''}</span>
+                </div>
+                <div className="button_wrapper">
+                  <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
+                </div>
             </div>
-        </>
-        )
+            </>
+          )
+        }
     } else{
-      return <RoomIcon className={props.classes.marker} />;
+      if(props.lat === 0 && props.lng === 0){
+        return <></>
+      } else {
+        return <RoomIcon className={props.classes.marker} />;
+      }
+        
     }
     
 }
 
 function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMarkerListProps) {
     const openTicketObj = useSelector((state: any) => state.serviceTicket.openTicketObj);
-    let centerLat = 32.3182314,centerLng =  -86.902298;
+    let centerLat = DEFAULT_LAT ,centerLng = DEFAULT_LNG;
     if (openTicketObj.jobSite) {
-      centerLat = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[1] ? openTicketObj.jobSite.location.coordinates[1] : 32.3182314;
-        centerLng = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[0] ? openTicketObj.jobSite.location.coordinates[0] : -86.902298;
+      centerLat = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[1] ? openTicketObj.jobSite.location.coordinates[1] : DEFAULT_LAT;
+      centerLng = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[0] ? openTicketObj.jobSite.location.coordinates[0] : DEFAULT_LNG;
     } else if (openTicketObj.jobLocation) {
-      centerLat = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[1] ? openTicketObj.jobLocation.location.coordinates[1] : 32.3182314;
-      centerLng = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[0] ? openTicketObj.jobLocation.location.coordinates[0] : -86.902298;
+      centerLat = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[1] ? openTicketObj.jobLocation.location.coordinates[1] : DEFAULT_LAT;
+      centerLng = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[0] ? openTicketObj.jobLocation.location.coordinates[0] : DEFAULT_LNG;
     } else if (openTicketObj.customer) {
-      centerLat = openTicketObj.customer.location && openTicketObj.customer.location.coordinates && openTicketObj.customer.location.coordinates[1] ? openTicketObj.customer.location.coordinates[1] : 32.3182314;
-      centerLng = openTicketObj.customer.location && openTicketObj.customer.location.coordinates && openTicketObj.customer.location.coordinates[0] ? openTicketObj.customer.location.coordinates[0] : -86.902298;
+      centerLat = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[1] ? openTicketObj.customer.location.coordinates[1] : DEFAULT_LAT;
+      centerLng = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[0] ? openTicketObj.customer.location.coordinates[0] :  DEFAULT_LNG;
     }
     return (
         <GoogleMapReact
@@ -128,8 +141,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMar
             defaultZoom={15}>
             {
                 ticketList.map((ticket: any, index: number) => {
-                    let lat;
-                    let lng;
+                    let lat = 0, lng = 0;
                     if (ticket.jobSite) {
                         lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : 0;
                         lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : 0;
