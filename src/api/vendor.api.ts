@@ -14,8 +14,32 @@ export const getCompanyContracts = async () => {
     } else {
       throw new Error(`Something went wrong`);
     }
+  };
+  responseData = responseData.status === 0 ? [] : responseData.contracts;
+  return responseData;
+};
+
+export const getContractorDetail = async (data: any) => {
+  const body = {
+    contractorId: data
+  };
+  let responseData;
+  try {
+    const response: any = await request("/getContractorDetail", "POST", body, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = err.data;
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(
+        err.data.errors ||
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+      );
+    } else {
+      throw new Error(`Something went wrong`);
+    }
   }
-  return responseData.contracts;
+  return responseData.details;
 };
 
 export const callSearchVendorAPI = (data: any) => {

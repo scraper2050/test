@@ -13,4 +13,5 @@ export enum VendorActionType {
   SET = 'setVendors',
   SUCCESS = 'getVendorsSuccess',
   FAILED = 'getVendorsFailed',
+  SET_SINGLE_CONTRACTOR = 'setsinglecontractor',
 }

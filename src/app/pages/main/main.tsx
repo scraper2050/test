@@ -41,6 +41,7 @@ const RolesManagerPage = React.lazy(() => import('../admin/roles-permissions/man
 const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/technician/technician'));
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
+const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
 const CreateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/create-invoice/create-invoice'));
@@ -326,6 +327,16 @@ function Main(): any {
                     Component={AdminVendorsPage}
                     exact
                     path={'/main/admin/vendors'}
+                    title={'Admin'}
+                  />
+                  <AuthRoute
+                    Component={ViewMoreVendorPage}
+                    actionData={{
+                      'link': '/main/admin/vendors/:contractorId',
+                      'title': 'Admin'
+                    }}
+                    exact
+                    path={'/main/admin/vendors/:contractorId'}
                     title={'Admin'}
                   />
                 </Switch>

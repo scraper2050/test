@@ -18,6 +18,12 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
         loading: false,
         data: [...action.payload],
       }
+    case VendorActionType.SET_SINGLE_CONTRACTOR:
+      return {
+        ...state,
+        loading: false,
+        detail: action.payload,
+      }
     case VendorActionType.SET:
       return {
         loading: false,
