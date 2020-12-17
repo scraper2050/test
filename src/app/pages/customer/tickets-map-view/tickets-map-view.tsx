@@ -89,22 +89,30 @@ function TicketsWithMapView({ classes }: any) {
 
   };
   const handleButtonClickPlusDay = () => {
+    let rawData = {
+      jobTypeTitle: '', 
+      dueDate: '',
+      customerNames: '',
+      ticketId: ''
+    }
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
     var tomorrow = new Date(dateObj.getTime() + (24 * 60 * 60 * 1000));
     const formattedDate = formatDateYMD(tomorrow);
     setDateValue(formattedDate);
     setTempDate(tomorrow);
-    dispatch(setClearOpenTicketFilterState({
-      'jobTypeTitle': '',
-      'dueDate': '',
-      'customerNames': '',
-      'ticketId': ''
-    }));
+    dispatch(setClearOpenTicketFilterState(rawData));
     const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
+    dispatch(setOpenTicketFilterState( { ...rawData, dueDate: formattedDate}));
     getOpenTickets(requestObj);
   }
   const handleButtonClickMinusDay = () => {
+    let rawData = {
+      jobTypeTitle: '', 
+      dueDate: '',
+      customerNames: '',
+      ticketId: ''
+    }
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
     // const selectDate = dateObj.setHours(0,0,0,0);
@@ -120,6 +128,7 @@ function TicketsWithMapView({ classes }: any) {
         'ticketId': ''
       }));
       const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
+      dispatch(setOpenTicketFilterState( { ...rawData, dueDate: formattedDate}));
       getOpenTickets(requestObj);
   }
   const handleChange = (event: any, value: any) => {
@@ -131,6 +140,11 @@ function TicketsWithMapView({ classes }: any) {
 
   const openTicketFilerModal = () => {
     setShowFilterModal(!showFilterModal);
+  }
+
+  const resetDate = () => {
+    setDateValue(null);
+    setTempDate(new Date());
   }
 
   const resetDateFilter = () => {
@@ -209,6 +223,7 @@ function TicketsWithMapView({ classes }: any) {
                   {
                     <BCMapWithMarkerList
                       ticketList={openTickets}
+                      resetDateFilter={resetDateFilter}
                     />
                   }
                 </Grid>
@@ -217,7 +232,7 @@ function TicketsWithMapView({ classes }: any) {
 
                     <div className='filter_wrapper'>
                       <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
-                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal  openTicketFilerModal={openTicketFilerModal}/></div> : null }
+                      { showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal  openTicketFilerModal={openTicketFilerModal} resetDate={resetDate}/></div> : null }
                     </div>
                     <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
 

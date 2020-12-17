@@ -4,7 +4,7 @@ import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
-import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import { DialogActions, DialogContent, Fab, Grid, withStyles } from '@material-ui/core';
@@ -19,8 +19,8 @@ import { getVendors } from 'actions/vendor/vendor.action';
 import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-
 import "../../../scss/job-poup.scss";
+
 
 const initialJobState = {
   'customer': {
@@ -73,6 +73,7 @@ function BCJobModal({
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
   const [showVendorFlag, setShowVendorFlag] = useState(false);
+  
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
   const { profile: {
@@ -160,6 +161,8 @@ function BCJobModal({
     setSubmitting(true);
   
     const customerId = customer._id;
+    let jobFromMapFilter = job.jobFromMap;
+    let resetDateFilter = job.resetDateFilter;
 
     const tempData = {
       ...job,
@@ -183,7 +186,6 @@ function BCJobModal({
     } else {
       request = createJob;
     }
-    
     if(isValidate(tempData)) {
       const requestObj = formatRequestObj(tempData);
       if(requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
@@ -193,11 +195,18 @@ function BCJobModal({
       if(requestObj.companyId)
         delete requestObj.companyId;
         delete requestObj.dueDate;
+        
         request(requestObj)
           .then((response: any) => {
             dispatch(refreshServiceTickets(true));
             dispatch(refreshJobs(true));
             dispatch(closeModalAction());
+            dispatch(setOpenServiceTicketLoading(false));
+            //Executed only when job is created from Map View.
+            if(jobFromMapFilter){
+             if(resetDateFilter)
+                  resetDateFilter();
+            } 
             setTimeout(() => {
               dispatch(setModalDataAction({
                 'data': {},

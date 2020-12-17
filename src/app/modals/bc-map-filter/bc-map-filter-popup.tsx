@@ -19,7 +19,8 @@ import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState, 
 
 function BCMapFilterModal({
   classes,
-  openTicketFilerModal
+  openTicketFilerModal,
+  resetDate
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
@@ -42,6 +43,7 @@ function BCMapFilterModal({
   
   const onSubmit = (values: any, { setSubmitting }: any) => {
     setSubmitting(true);
+    resetDate();
     const rawData = {
         pageNo: 1,
         pageSize: 6,
