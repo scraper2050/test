@@ -8,12 +8,22 @@ export const updateCompanyProfile = async (data: CompanyProfile) => {
     responseData = response.data;
   } catch (err) {
     responseData = { message: '' };
-    if (err.response.status >= 400 || err.response.status === 0) {
-      responseData.message = 'We are facing some issues, please try again.'
-    } else {
-      responseData.message = 'Something went wrong'
-    }
+    responseData.message = 'We are facing some issues, please try again.'
   }
-  console.log(responseData);
+
   return responseData;
 }
+
+export const getCompanyProfile = async (companyId: string) => {
+  let responseData;
+  try {
+    const response: any = await request(`/getCompanyProfile/${companyId}`, "GET", false);
+    responseData = response.data;
+    
+  } catch (err) {
+    responseData = { message: '' };
+    responseData.message = 'Sorry, we were un able to load your profile, please try again'
+  }
+  return responseData;
+}
+

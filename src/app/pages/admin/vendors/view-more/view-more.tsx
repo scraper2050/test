@@ -74,6 +74,7 @@ function CompanyProfilePage() {
             }}
             apply={apply}
             cancel={cancel}
+            inputError={{}}
             fields={[
               {
                 left: {
