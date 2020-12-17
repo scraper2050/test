@@ -87,6 +87,7 @@ function EmployeeProfile({profile, back} : Props) {
             }}
             apply={apply}
             cancel={cancel}
+            inputError={{}}
             fields={[
               {
                 left: {

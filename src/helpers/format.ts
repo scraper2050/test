@@ -20,3 +20,14 @@ export const convertMilitaryTime = (time: string) => {
     }
     return timeAr.join(''); 
 }
+
+export const phoneNumberFormatter = (phoneNumber: string) => {
+    const re = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+
+    return phoneNumber.replace(re, '$1-$2-$3');
+}
+
+export const phoneNumberValidator = (phoneNumber: string) => {
+    const re = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    return re.test(phoneNumber);
+}
