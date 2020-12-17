@@ -90,6 +90,21 @@ function NewCustomerPage({ classes }: Props) {
     }
   };
 
+  const handleCancelForm = (setFieldValue: any) => {
+    setFieldValue('name','')
+    setFieldValue('email', '')
+    setFieldValue('contactName', '')
+    setFieldValue('street', '')
+    setFieldValue('city', '')
+    setFieldValue('phone', '')
+    setFieldValue('state', 0)
+    setFieldValue('zipCode', '')
+    setPositionValue({
+      'lang': 0,
+      'lat': 0
+    })
+  }
+
   return (
     <>
       
@@ -210,7 +225,7 @@ function NewCustomerPage({ classes }: Props) {
                               placeholder={'Street'}
                               onChange={(e:any)=> { 
                                 setFieldValue('street', e.target.value)
-                                updateMap(values)
+                                updateMap(values, e.target.value)
                                 }}
                             />
                           </FormGroup>
@@ -228,7 +243,7 @@ function NewCustomerPage({ classes }: Props) {
                               placeholder={'City'}
                               onChange={(e:any)=> { 
                                 setFieldValue('city', e.target.value)
-                                updateMap(values)
+                                updateMap(values, undefined, e.target.value)
                                 }}
 
                             />
@@ -250,7 +265,7 @@ function NewCustomerPage({ classes }: Props) {
                               enableReinitialize
                               name={'state.id'}
                               onChange={(e: any) => {
-                                updateMap(values, undefined, e.target.value);
+                                updateMap(values, undefined, undefined, undefined, e.target.value);
                                 handleChange(e);
                               }}
                               type={'select'}
@@ -279,7 +294,7 @@ function NewCustomerPage({ classes }: Props) {
                               placeholder={'Zip Code'}
                               onChange={(e:any)=> { 
                                 setFieldValue('zipCode', e.target.value)
-                                updateMap(values, e.target.value)
+                                updateMap(values, '', '', e.target.value)
                                 }}
                             />
                           </FormGroup>
@@ -301,7 +316,9 @@ function NewCustomerPage({ classes }: Props) {
                           <Button
                             className={'cancel-customer-button'}
                             color={'secondary'}
+                            onClick = {() => handleCancelForm(setFieldValue)}
                             variant={'contained'}>
+                            
                             {'Cancel'}
                           </Button>
                         </Box>

@@ -19,6 +19,12 @@ interface BCMapWithMarkerListProps {
     classes: any,
     lat ?: any,
     lng ?: any,
+    resetDateFilter ?: () => void;
+}
+function createMapOptions() {
+  return {
+    gestureHandling: 'greedy'
+  };
 }
 
 
@@ -69,7 +75,9 @@ function MakerPin({ ...props }) {
               ticket,
               'type': {
                 '_id': ''
-              }
+              },
+              'jobFromMap': true,
+              'resetDateFilter':props.resetDateFilter
             },
             'modalTitle': 'Create Job',
             'removeFooter': false,
@@ -120,7 +128,7 @@ function MakerPin({ ...props }) {
     
 }
 
-function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMarkerListProps) {
+function BCMapWithMarkerWithList({ classes, ticketList, lat, lng, resetDateFilter }: BCMapWithMarkerListProps) {
     const openTicketObj = useSelector((state: any) => state.serviceTicket.openTicketObj);
     let centerLat = DEFAULT_LAT ,centerLng = DEFAULT_LNG;
     if (openTicketObj.jobSite) {
@@ -138,6 +146,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMar
             bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
             onClick={(event) => console.log(event)}
             center={{ lat: centerLat, lng: centerLng}}
+            options={createMapOptions}
             defaultZoom={15}>
             {
                 ticketList.map((ticket: any, index: number) => {
@@ -160,6 +169,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMar
                         lng={lng}
                         ticket={ticket}
                         openTicketObj={openTicketObj}
+                        resetDateFilter={resetDateFilter}
                     />
 
                 })
