@@ -1,7 +1,13 @@
 import { fabRoot } from 'app/pages/main/main.styles';
+
 export default (): any => ({
   ...fabRoot,
-  
+  'root': {
+    "& .MuiInputBase-root.Mui-disabled": {
+      color: "rgba(0, 0, 0, 0.6)"
+    },
+    width: '80%'
+  },
   'profilePane': {
     'borderRadius': '14px',
     'height': '100%',
@@ -22,7 +28,8 @@ export default (): any => ({
   'avatarArea': {
     'flex': '20%',
     'padding': '10px',
-    'flex-shrink': '0'
+    'flex-shrink': '0',
+    'cursor': 'pointer'
   },
   'infoArea': {
     'flex': '80%',

@@ -51,6 +51,7 @@ function VendorProfile({ profile, back } : Props) {
             }}
             cancel={cancel}
             noEdit={true}
+            inputError={{}}
             fields={[
               {
                 'left': {

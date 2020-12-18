@@ -4,10 +4,12 @@ import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profil
 import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
-import { updateCompanyProfileAction } from 'actions/user/user.action';
-import { CompanyProfile } from 'actions/user/user.types'
+import { updateCompanyProfileAction, getCompanyProfileAction } from 'actions/user/user.action';
+import { CompanyProfile, CompanyProfileActonType, CompanyProfileStateType } from 'actions/user/user.types'
 import { SettingsInputAntennaTwoTone } from '@material-ui/icons';
-
+import { phoneNumberFormatter, phoneNumberValidator } from 'helpers/format';
+import { useHistory } from 'react-router-dom';
+import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
 interface User {
   _id?: string,
   auth?: {
@@ -45,168 +47,68 @@ interface User {
   company?: string
 }
 
-interface Company {
-  companyName?: string,
-  companyEmail?: string,
-  fax?: string,
-  phone?: string,
-  city?: string,
-  state?: string,
-  zipCode?: string,
-  logoUrl?: string,
-  industry?: string,
-  street?: string
-}
-
 function CompanyProfilePage() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const image = useSelector((state: any) => state.image);
-  const [companyName, setCompanyName] = useState('');
-  const [companyNameValid] = useState(true);
-  const [companyEmail, setCompanyEmail] = useState('');
-  const [companyEmailValid, setCompanyEmailValid] = useState(true);
-  const [phone, setPhone] = useState('');
-  const [phoneValid, setPhoneValid] = useState(true);
-  const [fax, setFax] = useState('');
-  const [faxValid] = useState(true);
-  const [street, setStreet] = useState('');
-  const [streetValid] = useState(true);
-  const [city, setCity] = useState('');
-  const [cityValid] = useState(true);
-  const [state, setState] = useState('');
-  const [stateValid] = useState(true);
-  const [zipCode, setZipCode] = useState('');
-  const [zipCodeValid, setZipCodeValid] = useState(true);
+  const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
 
   useEffect(() => {
     let user: User = {};
     user = JSON.parse(localStorage.getItem('user') || "");
-    let company: Company = {};
-    company = JSON.parse(localStorage.getItem('company') || "");
-    
-    if(company && company.companyName) {
-      setCompanyName(company.companyName);
-    }
-    else if(user.info && user.info.companyName) {
-      setCompanyName(user.info.companyName);
-    }
-    if(company && company.companyEmail) {
-      setCompanyEmail(company.companyEmail);
-    }
-    else if(user.auth && user.auth.email) {
-      setCompanyEmail(user.auth.email);
-    }
-    if(company && company.phone) {
-      setPhone(company.phone);
-    }
-    else if(user.contact && user.contact.phone) {
-      setPhone(user.contact.phone);
-    }
-    if(company && company.city) {
-      setCity(company.city);
-    }
-    else if(user.address && user.address.city) {
-      setCity(user.address.city);
-    }
-    if(company && company.state) {
-      setState(company.state);
-    }
-    else if(user.address && user.address.state) {
-      setState(user.address.state);
-    }
-    if(company && company.zipCode) {
-      setZipCode(company.zipCode);
-    }
-    else if(user.address && user.address.zipCode) {
-      setZipCode(user.address.zipCode);
-    }
-    if(company && company.street) {
-      setStreet(company.street);
-    }
-    else if(user.address && user.address.street) {
-      setStreet(user.address.street);
-    }
-  });
+    dispatch(getCompanyProfileAction(user?.company as string));
+  }, []);
 
-  const companyNameChanged = (newValue: string) => {
-    setCompanyName(newValue);
+  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { id, value } } = event;
+    const inputError:{[s: string]: boolean} = {};
+
+    switch (id) {
+      case 'companyEmail':
+        inputError.companyEmail = validator.isEmail(value);
+        break;
+      case 'phone':
+        inputError.phone = phoneNumberValidator(value);
+        break;
+      case 'zipCode':
+        inputError.zipCode = validator.isNumeric(value);
+        break;
+      default:
+        break;
+    }
+
+    dispatch({ type: CompanyProfileActonType.ONCHANGE, payload: { id, value, inputError } });
   }
 
-  const companyEmailChanged = (newValue: string) => {
-    setCompanyEmail(newValue);
-    setCompanyEmailValid(validator.isEmail(newValue));
-  }
-
-  const phoneChanged = (newValue: string) => {
-    setPhone(newValue);
-    setPhoneValid(validator.isMobilePhone(newValue));
-  }
-
-  const faxChanged = (newValue: string) => {
-    setFax(newValue);
-  }
-
-  const streetChanged = (newValue: string) => {
-    setStreet(newValue);
-  }
-
-  const cityChanged = (newValue: string) => {
-    setCity(newValue);
-  }
-
-  const stateChanged = (newValue: string) => {
-    setState(newValue);
-  }
-
-  const zipCodeChanged = (newValue: string) => {
-    setZipCode(newValue);
-    setZipCodeValid(validator.isNumeric(newValue));
-  }
-
-  const apply = () => {
-    if (companyNameValid === false
-      || companyEmailValid === false
-      || phoneValid === false
-      || faxValid === false
-      || streetValid === false
-      || cityValid === false
-      || stateValid === false
-      || zipCodeValid === false) {
-      return;
-    }
-
-    const data: CompanyProfile = {
+  const handleUpdateCompanyProfile = () => {
+    const {
       companyName,
       companyEmail,
-      logoUrl: !image.data ? '' : image.data.imageUrl,
-      street,
+      phone,
+      logoUrl,
+      fax,
       city,
       state,
       zipCode,
+      street
+    } = profileState
+    const data: CompanyProfile = {
+      companyName,
+      companyEmail,
       phone,
+      logoUrl: (image?.data && image.data.imageUrl) ? image.data?.imageUrl : logoUrl,
       fax,
+      city,
+      state,
+      zipCode,
+      street
     }
 
     dispatch(updateCompanyProfileAction(data));
-
-    localStorage.setItem(
-      'company',
-      JSON.stringify({
-        companyName,
-        companyEmail,
-        phone,
-        logoUrl: !image.data ? '' : image.data.imageUrl,
-        fax,
-        city,
-        state,
-        zipCode,
-        street
-      })
-    );
   }
 
   const cancel = () => {
-
+    history.push('/main/admin/billing')
   }
 
   const imageSelected = (f: File) => {
@@ -217,103 +119,100 @@ function CompanyProfilePage() {
   }
 
   return (
-    <>
-      {/* <BCSubHeader title={'Admin'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
-        />
-      </BCSubHeader> */}
-
-      <MainContainer>
+        <MainContainer>
         <PageContainer>
-          <BCAdminProfile
-            avatar={{
-              isEmpty: 'NO',
-              url: !image.data ? '' : image.data.imageUrl,
-              onChange: imageSelected
-            }}
-            apply={apply}
-            cancel={cancel}
-            fields={[
-              {
-                left: {
-                  id: 'companyName',
-                  label: 'Company Name:',
-                  placehold: 'Input Company Name',
-                  value: companyName,
-                  valid: companyNameValid,
-                  onChange: companyNameChanged
+          {
+            profileState.isLoading ? (
+              <BCCircularLoader />
+            ) : (
+              <BCAdminProfile
+              avatar={{
+                isEmpty: 'NO',
+                url: !image.data ? profileState.logoUrl : image.data.imageUrl,
+                onChange: imageSelected
+              }}
+              apply={handleUpdateCompanyProfile}
+              cancel={cancel}
+              inputError={profileState.inputError}
+              fields={[
+                {
+                  left: {
+                    id: 'companyName',
+                    label: 'Company Name:',
+                    placehold: 'Input Company Name',
+                    value: profileState.companyName,
+                    text: '',
+                    onChange: handleOnChange
+                  },
+                  right: {
+                    id: 'companyEmail',
+                    label: 'Company Email:',
+                    placehold: 'Input Company Email',
+                    value: profileState.companyEmail,
+                    text: 'please provide a valid email address',
+                    onChange: handleOnChange
+                  },
                 },
-                right: {
-                  id: 'companyEmail',
-                  label: 'Company Email:',
-                  placehold: 'Input Company Emaill',
-                  value: companyEmail,
-                  valid: companyEmailValid,
-                  onChange: companyEmailChanged
+                {
+                  left: {
+                    id: 'phone',
+                    label: 'Phone:',
+                    placehold: 'Input Phone Number',
+                    value: phoneNumberFormatter(profileState.phone),
+                    text: 'please provide a valid 10 digit phone number',
+                    onChange: handleOnChange
+                  },
+                  right: {
+                    id: 'fax',
+                    label: 'Fax:',
+                    placehold: 'Input Fax',
+                    value: profileState.fax,
+                    text: '',
+                    onChange: handleOnChange
+                  }
                 },
-              },
-              {
-                left: {
-                  id: 'phone',
-                  label: 'Phone:',
-                  placehold: 'Input Phone Number',
-                  value: phone,
-                  valid: phoneValid,
-                  onChange: phoneChanged
+                {
+                  left: {
+                    id: 'street',
+                    label: 'Street:',
+                    placehold: 'Input Street',
+                    value: profileState.street,
+                    text: '',
+                    onChange: handleOnChange
+                  },
+                  right: {
+                    id: 'city',
+                    label: 'City:',
+                    placehold: 'Input City',
+                    value: profileState.city,
+                    text: '',
+                    onChange: handleOnChange
+                  }
                 },
-                right: {
-                  id: 'fax',
-                  label: 'Fax:',
-                  placehold: 'Input Fax',
-                  value: fax,
-                  valid: faxValid,
-                  onChange: faxChanged
-                }
-              },
-              {
-                left: {
-                  id: 'street',
-                  label: 'Street:',
-                  placehold: 'Input Street',
-                  value: street,
-                  valid: streetValid,
-                  onChange: streetChanged
+                {
+                  left: {
+                    id: 'state',
+                    label: 'State:',
+                    placehold: 'Input State',
+                    value: profileState.state,
+                    text: '',
+                    onChange: handleOnChange
+                  },
+                  right: {
+                    id: 'zipCode',
+                    label: 'Zip Code:',
+                    placehold: 'Input Zip Code',
+                    value: profileState.zipCode,
+                    text: 'please enter a valid zip code',
+                    onChange: handleOnChange
+                  }
                 },
-                right: {
-                  id: 'city',
-                  label: 'City:',
-                  placehold: 'Input City',
-                  value: city,
-                  valid: cityValid,
-                  onChange: cityChanged
-                }
-              },
-              {
-                left: {
-                  id: 'state',
-                  label: 'State:',
-                  placehold: 'Input State',
-                  value: state,
-                  valid: stateValid,
-                  onChange: stateChanged
-                },
-                right: {
-                  id: 'zipCode',
-                  label: 'Zip Code:',
-                  placehold: 'Input Zip Code',
-                  value: zipCode,
-                  valid: zipCodeValid,
-                  onChange: zipCodeChanged
-                }
-              },
-            ]} />
+              ]} />
+            )
+          }
         </PageContainer>
       </MainContainer>
-    </>
-  );
+    )
 }
 
 const MainContainer = styled.div`

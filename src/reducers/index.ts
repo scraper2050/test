@@ -32,6 +32,7 @@ import {
 } from './invoicing.reducer';
 import { BrandsReducer as brands } from './brands.reducer';
 import { EquipmentTypeReducer as equipmentType } from './equipment-type.reducer';
+import { CompanyProfileReducer as profile } from './user.reducer';
 
 export interface ReducerParamsInterface {
   payload: any,
@@ -44,6 +45,7 @@ export interface RootState {
 }
 export default combineReducers({
   auth,
+  profile,
   companyEquipment,
   customers,
   image,
