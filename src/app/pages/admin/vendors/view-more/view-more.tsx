@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BCAdminProfile from '../../../../components/bc-admin-profile/bc-admin-profile';
+import BCBackButton from '../../../../components/bc-back-button/bc-back-button';
 import validator from 'validator';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
@@ -65,7 +66,10 @@ function CompanyProfilePage() {
   return (
     <>
       <MainContainer>
-        <PageContainer>
+        <BCBackButton
+          link={'/main/admin/vendors'}
+        />
+        <PageContainer>        
           <BCAdminProfile
             avatar={{
               isEmpty: 'NO',
@@ -152,6 +156,7 @@ const MainContainer = styled.div`
   flex: 1 1 100%;
   width: 100%;
   overflow-x: hidden;
+  margin-top: 10px;
 `;
 
 const PageContainer = styled.div`
@@ -163,6 +168,12 @@ const PageContainer = styled.div`
   padding-left: 65px;
   padding-right: 65px;
   margin: 0 auto;
+  button {
+    display: none;
+  }
+  input {
+    color: black;
+  }
 `;
 
 
