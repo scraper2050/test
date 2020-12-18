@@ -4,7 +4,7 @@ import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
-import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import { DialogActions, DialogContent, Fab, Grid, withStyles } from '@material-ui/core';
@@ -12,15 +12,15 @@ import React, { useEffect, useState } from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatToMilitaryTime } from 'helpers/format';
+import { formatToMilitaryTime, formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import { getVendors } from 'actions/vendor/vendor.action';
 import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-
 import "../../../scss/job-poup.scss";
+
 
 const initialJobState = {
   'customer': {
@@ -31,7 +31,8 @@ const initialJobState = {
   'equipment': {
     '_id': ''
   },
-  'scheduleDate': new Date(),
+  'dueDate':'',
+  'scheduleDate': null,
   'scheduledEndTime': null,
   'scheduledStartTime': null,
   'technician': {
@@ -72,6 +73,7 @@ function BCJobModal({
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
   const [showVendorFlag, setShowVendorFlag] = useState(false);
+  
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
   const { profile: {
@@ -159,6 +161,8 @@ function BCJobModal({
     setSubmitting(true);
   
     const customerId = customer._id;
+    let jobFromMapFilter = job.jobFromMap;
+    let resetDateFilter = job.resetDateFilter;
 
     const tempData = {
       ...job,
@@ -182,7 +186,6 @@ function BCJobModal({
     } else {
       request = createJob;
     }
-    
     if(isValidate(tempData)) {
       const requestObj = formatRequestObj(tempData);
       if(requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
@@ -191,11 +194,19 @@ function BCJobModal({
         requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
       if(requestObj.companyId)
         delete requestObj.companyId;
+        delete requestObj.dueDate;
+        
         request(requestObj)
           .then((response: any) => {
             dispatch(refreshServiceTickets(true));
             dispatch(refreshJobs(true));
             dispatch(closeModalAction());
+            dispatch(setOpenServiceTicketLoading(false));
+            //Executed only when job is created from Map View.
+            if(jobFromMapFilter){
+             if(resetDateFilter)
+                  resetDateFilter();
+            } 
             setTimeout(() => {
               dispatch(setModalDataAction({
                 'data': {},
@@ -211,7 +222,6 @@ function BCJobModal({
         setSubmitting(false);
     }
   }
-
   const form = useFormik({
     initialValues: {
       customerId: job.customer._id,
@@ -223,7 +233,8 @@ function BCJobModal({
         ? job.equipment._id
         : '',
       jobTypeId: job.ticket.jobType,
-      scheduleDate: job.ticket.dueDate,
+      dueDate: job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
+      scheduleDate: job.scheduleDate,
       scheduledEndTime: job.scheduledEndTime,
       scheduledStartTime: job.scheduledStartTime,
       technicianId: job.technician._id,
@@ -235,7 +246,6 @@ function BCJobModal({
     onSubmit
   });
  
-  
   const {
     errors: FormikErrors,
     values: FormikValues,
@@ -262,7 +272,9 @@ function BCJobModal({
     return (
       <form onSubmit={FormikSubmit}>
         <DialogContent classes={{ 'root': classes.dialogContent }}>
-          <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading">{`Customer : ${displayName}`}</h4>
+          <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading"><span>{`Customer : ${displayName}`}</span>
+          <span id='dueDate'>{`Due Date : ${FormikValues.dueDate}`}</span>
+          </h4>
           {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
           <Grid
             container
@@ -368,6 +380,7 @@ function BCJobModal({
                 label={'Select Job Type'}
                 name={'jobTypeId'}
                 required
+                disabled={job.ticket.jobType ? true : false}
                 value={FormikValues.jobTypeId}
               />
               <BCSelectOutlined
@@ -442,13 +455,14 @@ function BCJobModal({
               <BCDateTimePicker
                 disablePast={!job._id}
                 handleChange={(e: any) => dateChangeHandler(e, 'scheduleDate')}
-                label={'Due Date'}
+                label={'Scheduled Date'}
                 name={'scheduleDate'}
                 required
                 value={FormikValues.scheduleDate}
               />
               <BCDateTimePicker
                 dateFormat={'HH:mm:ss'}
+                placeholder='Start Time'
                 disablePast={!job._id}
                 handleChange={(e: any) => dateChangeHandler(e, 'scheduledStartTime')}
                 label={'Start Time'}
@@ -459,6 +473,7 @@ function BCJobModal({
                 {startTimeLabelState ? <Label>Start time is required.</Label>: ''}
               <BCDateTimePicker
                 dateFormat={'HH:mm:ss'}
+                placeholder='End Time'
                 disablePast={!job._id}
                 handleChange={(e: any) => dateChangeHandler(e, 'scheduledEndTime')}
                 label={'End Time'}

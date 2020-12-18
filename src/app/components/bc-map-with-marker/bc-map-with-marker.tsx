@@ -15,6 +15,12 @@ function MakerPin({ classes }: any) {
   return <RoomIcon className={classes.marker} />;
 }
 
+function createMapOptions() {
+  return {
+    gestureHandling: 'greedy'
+  };
+}
+
 function BCMapWithMarker({ classes, lat, lang }: BCMapWithMarkerProps) {
   const [center, setCenter] = useState({ 'lat': lat,
     'lng': lang });
@@ -24,11 +30,14 @@ function BCMapWithMarker({ classes, lat, lang }: BCMapWithMarkerProps) {
       'lng': lang });
   }, [lat, lang]);
 
+ 
+
   return (
     <GoogleMapReact
       bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
       center={center}
-      defaultZoom={8}>
+      options={createMapOptions}
+      defaultZoom={10}>
       <MakerPin
         classes={classes}
         lat={lat}

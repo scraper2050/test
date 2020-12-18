@@ -15,14 +15,17 @@ import {
   } from '@material-ui/core';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
 
 function BCMapFilterModal({
   classes,
-  openTicketFilerModal
+  openTicketFilerModal,
+  resetDate
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
+  const loading = useSelector(({ customers }: any) => customers.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
 
   useEffect(() => {
@@ -42,6 +45,7 @@ function BCMapFilterModal({
   
   const onSubmit = (values: any, { setSubmitting }: any) => {
     setSubmitting(true);
+    resetDate();
     const rawData = {
         pageNo: 1,
         pageSize: 6,
@@ -105,101 +109,106 @@ function BCMapFilterModal({
       }));
     }, 200);
   };
-  return (
-    <form onSubmit={FormikSubmit}>
-      <DialogContent classes={{ 'root': classes.dialogContent }}>
-        <Grid
-          container
-          spacing={2}>
-          <Grid
-            item
-            sm={12}
-            xs={12}
-          > <FormGroup className={'required'}>
-              <TextField
-                name={'searchQuery'}
-                placeholder={'TicketId'}
-                variant={'outlined'}
-                onChange={form.handleChange}
-                type={'search'}
-                />
-            </FormGroup>
-            <FormGroup className={'required'}>
-             <div className="search_form_wrapper">
-                  <Autocomplete
-                    multiple
-                    id="tags-standard"
-                    options={customers}
-                    getOptionLabel={(option) => option.profile.displayName}
-                    onChange={(event: any, newValue: any) => handleCustomerChange('customer', setFieldValue, newValue)}
-                    renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        variant="standard"
-                        label="Customers"
-                    />
-                    )}
-                />
-                 <i className="material-icons">search</i>
-             </div>
-            </FormGroup>
-            <BCSelectOutlined
-                handleChange={formikChange}
-                error={{
-                    'isError': true,
-                }}
+  if(loading) {
+    return <BCCircularLoader heightValue={'280px'}/>
+  }else {
 
-              items={{
-                'data': [
-                    ...jobTypes.map((jobType: any) => {
-                        return {
-                          'title': jobType.title
-                        };
-                      })
-                ],
-                'displayKey': 'title',
-                'valueKey': 'title'
-              }}
-              label={'Job Type'}
-              name={'jobType'}   
-              value={FormikValues.jobType}           
-            />
-            
+  return (
+      <form onSubmit={FormikSubmit}>
+        <DialogContent classes={{ 'root': classes.dialogContent }}>
+          <Grid
+            container
+            spacing={2}>
+            <Grid
+              item
+              sm={12}
+              xs={12}
+            > <FormGroup className={'required'}>
+                <TextField
+                  name={'searchQuery'}
+                  placeholder={'TicketId'}
+                  variant={'outlined'}
+                  onChange={form.handleChange}
+                  type={'search'}
+                  />
+              </FormGroup>
+              <FormGroup className={'required'}>
+              <div className="search_form_wrapper">
+                    <Autocomplete
+                      multiple
+                      id="tags-standard"
+                      options={customers}
+                      getOptionLabel={(option) => option.profile.displayName}
+                      onChange={(event: any, newValue: any) => handleCustomerChange('customer', setFieldValue, newValue)}
+                      renderInput={(params) => (
+                      <TextField
+                          {...params}
+                          variant="standard"
+                          label="Customers"
+                      />
+                      )}
+                  />
+                  <i className="material-icons">search</i>
+              </div>
+              </FormGroup>
+              <BCSelectOutlined
+                  handleChange={formikChange}
+                  error={{
+                      'isError': true,
+                  }}
+
+                items={{
+                  'data': [
+                      ...jobTypes.map((jobType: any) => {
+                          return {
+                            'title': jobType.title
+                          };
+                        })
+                  ],
+                  'displayKey': 'title',
+                  'valueKey': 'title'
+                }}
+                label={'Job Type'}
+                name={'jobType'}   
+                value={FormikValues.jobType}           
+              />
+              
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions classes={{
-        'root': classes.dialogActions
-      }}>
-           <Grid
-          container
-          spacing={2}>
-            <Fab
-            aria-label={'create-job'}
-            classes={{
-                'root': classes.fabRoot
-            }}
-            color={'secondary'}
-            disabled={isSubmitting}
-            onClick={()=>openTicketFilerModal()}
-            variant={'extended'}>
-            {'Cancel'}
-            </Fab>
-            <Fab
-            aria-label={'create-job'}
-            classes={{
-                'root': classes.fabRoot
-            }}
-            color={'primary'}
-            disabled={isSubmitting}
-            type={'submit'}
-            variant={'extended'}>
-                Apply
-            </Fab>
-        </Grid>
-      </DialogActions>
-    </form>
-  );
+        </DialogContent>
+        <DialogActions classes={{
+          'root': classes.dialogActions
+        }}>
+            <Grid
+            container
+            spacing={2}>
+              <Fab
+              aria-label={'create-job'}
+              classes={{
+                  'root': classes.fabRoot
+              }}
+              color={'secondary'}
+              disabled={isSubmitting}
+              onClick={()=>openTicketFilerModal()}
+              variant={'extended'}>
+              {'Cancel'}
+              </Fab>
+              <Fab
+              aria-label={'create-job'}
+              classes={{
+                  'root': classes.fabRoot
+              }}
+              color={'primary'}
+              disabled={isSubmitting}
+              type={'submit'}
+              variant={'extended'}>
+                  Apply
+              </Fab>
+          </Grid>
+        </DialogActions>
+      </form>
+    );
+  }
 }
 
 const Modal = styled.div`

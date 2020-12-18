@@ -50,7 +50,7 @@ export const getOpenServiceTickets = (data: {
   pageSize?: number, 
   jobTypeTitle?: string, 
   dueDate?: string,
-  customerNames?: [],
+  customerNames?: any,
   ticketId?: string,
   companyId?: string
 }) => {

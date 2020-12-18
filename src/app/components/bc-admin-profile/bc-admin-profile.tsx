@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styles from './bc-admin-profile.style';
-import { Fab, TextField, withStyles } from "@material-ui/core";
+import { Fab, TextField, withStyles, Typography } from "@material-ui/core";
 
 interface Props {
   avatar: Avatar;
   noEdit?:any;
+  inputError: {[k: string]: boolean};
   cancel: () => void;
   apply: () => void;
   fields: object[];
@@ -22,7 +23,7 @@ interface ColumnField {
   label: string;
   id: string;
   placehold: string;
-  valid: boolean;
+  text: string;
   value: any;
   onChange: (newValue: any) => void
 }
@@ -32,13 +33,14 @@ interface RowField {
   right?: ColumnField;
 }
 
-function BCAdminProfile({ avatar, noEdit, cancel, apply, fields, classes, children }: Props) {
+function BCAdminProfile({ avatar, noEdit, inputError, cancel, apply, fields, classes, children }: Props) {
   const [editable, setEditable] = useState(false);
   const openFileDialog = () => {
     const input = document.getElementById('file-input');
 
     if (input) {
       input.click();
+      setEditable(true);
     }
   }
 
@@ -47,6 +49,16 @@ function BCAdminProfile({ avatar, noEdit, cancel, apply, fields, classes, childr
       setEditable(true);
     }
     else {
+      if (typeof inputError['phone'] !== 'undefined' && !inputError['phone']) {
+        return
+      }
+      if (typeof inputError['companyEmail'] !== 'undefined' && !inputError['companyEmail']) {
+        return
+      }
+      if (typeof inputError['zipCode'] !== 'undefined' && !inputError['zipCode']) {
+        return
+      }
+    
       setEditable(false);
       apply();
     }
@@ -90,17 +102,21 @@ function BCAdminProfile({ avatar, noEdit, cancel, apply, fields, classes, childr
                   {
                     element.left &&
                     <TextField
+                      className={classes.root}
                       disabled={!editable}
                       id={element.left.id}
                       placeholder={element.left.placehold}
                       variant={'outlined'}
-                      error={!element.left.valid}
+                      error={typeof inputError[element?.left.id] !== 'undefined' && !inputError[element?.left.id]}
                       value={element.left.value}
-                      onChange={(e) => { element.left && element.left.onChange(e.target.value) }}
+                      onChange={(e) => { element.left && element.left.onChange(e) }}
                       autoComplete='off'
-                      style={{
-                        width: '80%'
-                      }}
+                      helperText={
+                        typeof inputError[element?.left.id] !== 'undefined' && !inputError[element?.left.id]
+                        && (
+                        <ErrorText text={element?.left.text} />
+                        )
+                      }
                     />
                   }
                 </div>
@@ -112,17 +128,24 @@ function BCAdminProfile({ avatar, noEdit, cancel, apply, fields, classes, childr
                   {
                     element.right &&
                     <TextField
+                      className={classes.root}
                       disabled={!editable}
                       id={element.right.id}
                       placeholder={element.right.placehold}
                       variant={'outlined'}
-                      error={!element.right.valid}
+                      error={typeof inputError[element?.right.id] !== 'undefined' && !inputError[element?.right.id]}
                       value={element.right.value}
-                      onChange={(e) => { element.right && element.right.onChange(e.target.value) }}
+                      onChange={(e) => { element?.right && element.right.onChange(e) }}
                       autoComplete='off'
                       style={{
                         width: '80%'
                       }}
+                      helperText={
+                        typeof inputError[element?.right.id] !== 'undefined' && !inputError[element?.right.id]
+                        && (
+                        <ErrorText text={element.right.text} />
+                        )
+                      }
                     />
                   }
                 </div>
@@ -172,3 +195,11 @@ export default withStyles(
   styles,
   { 'withTheme': true }
 )(BCAdminProfile);
+
+function ErrorText({ text }: { text: string }) {
+  return (
+    <Typography align="left" variant="caption" color="error">
+      {text}
+    </Typography>
+  );
+}

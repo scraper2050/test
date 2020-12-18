@@ -6,11 +6,11 @@ export default (theme: Theme): any => ({
     'fontSize': '36px'
   },
   'markerPopup': {
-    'position': 'absolute',
+    'position': 'relative',
     'zIndex': '10',
     'top': '15px',
-    'width': '100px',
-    'height': '100px',
-    'backgroundColor': '#DFDFE5'
+    'width': '200px',
+    'height': 'auto',
+    'backgroundColor': '#fff',
   }
 });

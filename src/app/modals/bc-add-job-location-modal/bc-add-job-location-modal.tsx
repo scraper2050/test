@@ -63,15 +63,15 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
   }
  
 
-  const updateMap = (values: any, zipCode?: number, state?: number): void => {
-    let stateVal:any =undefined ;
+  const updateMap = (values: any, street?:any, city?:any, zipCode?: number, state?: number): void => {
+    let stateVal:any = '' ;
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     if(state){
       stateVal = allStates[state].name;
     }
 
     let fullAddr = '';
-    fullAddr = fullAddr.concat(values.address.street, ' ', values.address.city, ' ', stateVal, ' ', zipCode ? zipCode : values.address.zipcode, ' ', 'USA');
+    fullAddr = fullAddr.concat(street ? street : values.address.street, ' ', city ? city : values.address.city, ' ', stateVal, ' ', zipCode ? zipCode : values.address.zipcode, ' ', 'USA');
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
@@ -279,7 +279,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                             <BCTextField
                               onChange={(e:any)=> { 
                                 setFieldValue('address.street', e.target.value)
-                                updateMap(values)
+                                updateMap(values, e.target.value);
                                 }}
                               name={'address.street'}
                               placeholder={'Street'}
@@ -297,7 +297,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                             <BCTextField
                             onChange={(e:any)=> { 
                               setFieldValue('address.city', e.target.value)
-                              updateMap(values)
+                              updateMap(values, undefined, e.target.value)
                               }}
                               name={'address.city'}
                               placeholder={'City'}
@@ -320,7 +320,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                               enableReinitialize
                               name={'address.state.id'}
                               onChange={(e: any) => {
-                                updateMap(values, undefined, e.target.value);
+                                updateMap(values, undefined, undefined, undefined, e.target.value);
                                 handleChange(e);
                               }}
                               type={'select'}
@@ -346,7 +346,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                             <BCTextField
                               onChange={(e:any)=> { 
                                 setFieldValue('address.zipcode', e.target.value)
-                                updateMap(values, e.target.value)
+                                updateMap(values, '', '', e.target.value)
                                 }}
                               name={'address.zipcode'}
                               placeholder={'Zip Code'}

@@ -80,7 +80,7 @@ function ServiceTicket({ classes }: any) {
           'equipment': {
             '_id': ''
           },
-          'scheduleDate': new Date(),
+          'scheduleDate': null,
           'scheduledEndTime': null,
           'scheduledStartTime': null,
           'technician': {
