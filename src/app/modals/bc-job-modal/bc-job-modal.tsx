@@ -164,7 +164,6 @@ function BCJobModal({
   
     const customerId = customer._id;
     let jobFromMapFilter = job.jobFromMap;
-    let resetDateFilter = job.resetDateFilter;
 
     const tempData = {
       ...job,
