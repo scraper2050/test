@@ -27,6 +27,8 @@ function BCMapFilterModal({
   const customers = useSelector(({ customers }: any) => customers.data);
   const loading = useSelector(({ customers }: any) => customers.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
+  const loadingTypes = useSelector((state: any)=> state.jobTypes.isLoading);
+  
 
   useEffect(() => {
     dispatch(loadingCustomers());
@@ -109,7 +111,7 @@ function BCMapFilterModal({
       }));
     }, 200);
   };
-  if(loading) {
+  if(loading && loadingTypes) {
     return <BCCircularLoader heightValue={'280px'}/>
   }else {
 

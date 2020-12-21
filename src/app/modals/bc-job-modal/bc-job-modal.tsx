@@ -20,6 +20,7 @@ import { getJobSites, clearJobSiteStore } from 'actions/job-site/job-site.action
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import "../../../scss/job-poup.scss";
+import { getOpenServiceTickets } from 'api/service-tickets.api';
 
 
 const initialJobState = {
@@ -73,6 +74,7 @@ function BCJobModal({
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
   const [showVendorFlag, setShowVendorFlag] = useState(false);
+  const openServiceTicketFilter = useSelector((state:any) => state.serviceTicket.filterTicketState);
   
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -204,8 +206,22 @@ function BCJobModal({
             dispatch(setOpenServiceTicketLoading(false));
             //Executed only when job is created from Map View.
             if(jobFromMapFilter){
-             if(resetDateFilter)
-                  resetDateFilter();
+                dispatch(setOpenServiceTicketLoading(true));
+                getOpenServiceTickets({...openServiceTicketFilter, pageNo: 1, pageSize: 6}).then((response: any) => {
+                  dispatch(setOpenServiceTicketLoading(false));
+                  dispatch(setOpenServiceTicket(response));
+                  dispatch(refreshServiceTickets(true));
+                  dispatch(closeModalAction());
+                  setTimeout(() => {
+                    dispatch(setModalDataAction({
+                      'data': {},
+                      'type': ''
+                    }));
+                  }, 200);
+                })
+                  .catch((err: any) => {
+                    throw err;
+                  });
             } 
             setTimeout(() => {
               dispatch(setModalDataAction({
