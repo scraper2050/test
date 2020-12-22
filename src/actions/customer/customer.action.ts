@@ -56,8 +56,8 @@ export const updateCustomerAction = (customers: any, callback?:any) => {
 export const createCustomerAction = (customerObj: any, callback?:any) => {
     return async (dispatch: any) => {
         const customer: any = await createCustomer(customerObj);
-        if (customer.hasOwnProperty('msg')) {
-            dispatch({ type: CustomersActionType.CREATE_CUSTOMER, payload: customer.msg });
+        if (customer.hasOwnProperty('message')) {
+            dispatch({ type: CustomersActionType.CREATE_CUSTOMER, payload: customer.message });
             callback();
         } else {
             dispatch({ type: CustomersActionType.CREATE_CUSTOMER_FAILED, payload: customer });

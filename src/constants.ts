@@ -13,6 +13,7 @@ export const PRIMARY_CARD_PURPLE = '#6846D3';
 export const SIDEBAR_WIDTH = '233';
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',
+  'NEW_CUSTOMER_RESULT': 'new_customer_result',
   'CREATE_JOB_MODAL': 'create-job',
   'CREATE_TICKET_MODAL': 'create-ticket-modal',
   'EDIT_JOB_MODAL': 'edit-job-modal',
