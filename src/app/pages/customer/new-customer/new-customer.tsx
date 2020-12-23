@@ -2,11 +2,13 @@ import * as CONSTANTS from '../../../../constants';
 import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-marker';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
 import Config from '../../../../config';
+import { modalTypes } from '../../../../constants';
 import Geocode from 'react-geocode';
 import { allStates } from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
+import { openModalAction, setModalDataAction } from '../../../../actions/bc-modal/bc-modal.action';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
@@ -104,6 +106,19 @@ function NewCustomerPage({ classes }: Props) {
       'lat': 0
     })
   }
+
+  const openVendorModal = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Information',
+        'removeFooter': false
+      },
+      'type': modalTypes.NEW_CUSTOMER_RESULT
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   return (
     <>
@@ -309,6 +324,7 @@ function NewCustomerPage({ classes }: Props) {
                           <Button
                             className={'save-customer-button'}
                             color={'primary'}
+                            onClick={() => openVendorModal()}
                             type={'submit'}
                             variant={'contained'}>
                             {'Save'}
