@@ -6,5 +6,13 @@ export default (theme: Theme): any => ({
   ...pageMainContainer,
   ...pageContainer,
   ...topActionBar,
-  ...dataContainer
+  ...dataContainer,
+  'addButtonArea': {
+    'display': 'flex',
+    'justifyContent': 'flex-end',
+    'padding': '12px 30px 5px 0',
+    'position': 'absolute',
+    'right': '0',
+    'zIndex': '1000'
+  }
 });
