@@ -12,7 +12,7 @@ import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
 import serviceTicket from './service-ticket.reducer';
-import snackbarState from './snackbar.reducer';
+import { SnackbarReducer as snackbar } from './snackbar.reducer';
 import tax from './tax.reduxer';
 import { JobSiteReducer as jobSites } from './job-site.reducer';
 import { JobLocationReducer as jobLocations } from './job-location.reducer';
@@ -55,7 +55,7 @@ export default combineReducers({
   modal,
   'routeData': routeReducer,
   serviceTicket,
-  snackbarState,
+  snackbar,
   tax,
   vendors,
   groups,

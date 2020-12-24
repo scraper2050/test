@@ -1,5 +1,4 @@
 import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
-import BCNewCustomerModal from './bc-new-customer-modal/bc-new-customer-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCModalTransition from './bc-modal-transition';
 import BCServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-modal';
@@ -96,15 +95,6 @@ function BCModal() {
             'maxWidth': 'xs'
           });
           setComponent(<BCAddVendorModal />);
-          break;
-        case modalTypes.NEW_CUSTOMER_RESULT:
-          setModalOptions({
-            'disableBackdropClick': true,
-            'disableEscapeKeyDown': true,
-            'fullWidth': true,
-            'maxWidth': 'xs'
-          });
-          setComponent(<BCNewCustomerModal />);
           break;
         case modalTypes.ADD_BRAND:
           setModalOptions({

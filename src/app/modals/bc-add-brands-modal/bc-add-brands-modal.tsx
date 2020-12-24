@@ -3,30 +3,18 @@ import BCInput from 'app/components/bc-input/bc-input';
 import styles from './bc-add-brands-modal.styles';
 import { useFormik } from 'formik';
 import { DialogActions, DialogContent, Fab, Grid, withStyles } from '@material-ui/core';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { info, error } from 'actions/snackbar/snackbar.action';
 import { useDispatch } from 'react-redux';
 import { saveBrandType } from 'api/brands.api';
 import { getBrands, loadingBrands } from 'actions/brands/brands.action';
-
-function Alert(props: AlertProps) {
-   return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 function BCAddBrandsModal({
    classes
 }: any): JSX.Element {
    const dispatch = useDispatch();
-   const [open, setOpen] = useState(false);
-   const [resultMsg, setResultMsg] = useState('');
-   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      setOpen(false);
-    };
+   
    const onSubmit = (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
       const brandType = new Promise(async (resolve, reject) => {
@@ -34,9 +22,10 @@ function BCAddBrandsModal({
          const savingBrandType = await saveBrandType({ title });
          savingBrandType.status === 1 ? resolve(savingBrandType) : reject(savingBrandType);
          if (savingBrandType.status === 0) {
-            setOpen(true)
-            setResultMsg(savingBrandType.message)
-         } 
+            dispatch(error(savingBrandType.message));
+          } else {
+            dispatch(info(savingBrandType.message));
+          } 
       });
 
       brandType
@@ -96,11 +85,6 @@ function BCAddBrandsModal({
                </Grid>
             </Grid>
          </DialogContent>
-         <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
-               {resultMsg}
-            </Alert>
-         </Snackbar>
          <DialogActions classes={{
             'root': classes.dialogActions
          }}>
