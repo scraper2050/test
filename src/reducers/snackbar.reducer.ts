@@ -4,21 +4,33 @@ import { Action } from 'redux-actions'
 import {SnackbarState, SnackbarType, SnackbarActionType} from './snackbar.type'
 import {JobActionType} from './invoicing.types'
 
-const SnackbarReducer: Reducer<SnackbarState|null, Action<string>> = (state=null, action) => {
+const initialSnackbar: SnackbarState = {
+    type: SnackbarType.INFO,
+    message: ''
+  }
+
+export const SnackbarReducer: Reducer<any> = (state = initialSnackbar, action) => {
     switch (action.type) {
         case SnackbarActionType.WARNING:
             return {
+                ...state,
                 type: SnackbarType.WARNING,
                 message: action.payload
             }
-        case JobActionType.FAILED:
+        case SnackbarActionType.ERROR:
             return {
+                ...state,
                 type: SnackbarType.ERROR,
+                message: action.payload
+            }
+        case SnackbarActionType.INFO:
+            return {
+                ...state,
+                type: SnackbarType.INFO,
                 message: action.payload
             }
         default:
             break
     }
-    return null
-}
-export default SnackbarReducer
+    return state;
+  }

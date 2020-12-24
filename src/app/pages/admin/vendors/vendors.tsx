@@ -1,5 +1,6 @@
 import BCTableContainer from './../../../components/bc-table-container/bc-table-container';
 import BCTabs from './../../../components/bc-tab/bc-tab';
+import BCSnackbar from './../../../components/bc-snackbar/bc-snackbar';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
@@ -157,6 +158,7 @@ function AdminVendorsPage({ classes }: any) {
               </Grid>
             </div>
           </SwipeableViews>
+          <BCSnackbar></BCSnackbar>
         </div>
       </div>
     </div>

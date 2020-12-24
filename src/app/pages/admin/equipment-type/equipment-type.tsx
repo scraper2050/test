@@ -1,4 +1,5 @@
 import BCTabs from "../../../components/bc-tab/bc-tab";
+import BCSnackbar from '../../../components/bc-snackbar/bc-snackbar';
 import SwipeableViews from "react-swipeable-views";
 import styles from "./equipment-type.styles";
 import EquipmentTypeListing from "./equipment-type-listing/equipment-type-listing";
@@ -65,6 +66,7 @@ function EquipmentType({ classes }: any) {
           >
             <EquipmentTypeListing hidden={curTab !== 0} />
           </SwipeableViews>
+          <BCSnackbar></BCSnackbar>
         </div>
       </div>
     </div>

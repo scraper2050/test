@@ -38,7 +38,6 @@ export interface CustomersState {
     readonly loading: boolean
     readonly data?: Customer[]
     readonly error?: string
-    readonly newMsg?: string
     readonly customerObj?: Customer
 }
 
@@ -46,5 +45,4 @@ export enum CustomersActionType {
     GET = 'getCustomers',
     SUCCESS = 'getCustomersSuccess',
     FAILED = 'getCustomersFailed',
-    CREATE_CUSTOMER = 'createCustomer',
 }

@@ -4,7 +4,6 @@ import { CustomersState, CustomersActionType, types } from './../actions/custome
 const initialCustomers: CustomersState = {
 	loading: false,
 	data: [],
-	newMsg: '',
 	customerObj: {
 		_id: '',
     info: {
@@ -74,12 +73,6 @@ export const CustomersReducer: Reducer<any> = (state = initialCustomers, action)
 			...state,
 			loading: false,
 			customerObj: state.customerObj
-			}
-		case CustomersActionType.CREATE_CUSTOMER:
-			return {
-			...state,
-			loading: false,
-			newMsg: action.payload
 			}
 	}
 	return state;

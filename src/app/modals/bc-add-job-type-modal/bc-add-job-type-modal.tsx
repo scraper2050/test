@@ -3,29 +3,17 @@ import BCInput from 'app/components/bc-input/bc-input';
 import styles from './bc-add-job-type-modal.styles';
 import { useFormik } from 'formik';
 import { DialogActions, DialogContent, Fab, Grid, withStyles } from '@material-ui/core';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { info, error } from 'actions/snackbar/snackbar.action';
 import { useDispatch } from 'react-redux';
 import { getAllJobTypesAPI, saveJobType } from 'api/job.api';
-
-function Alert(props: AlertProps) {
-   return <MuiAlert elevation={6} variant="filled" {...props} />;
- }
 
 function BCAddJobTypeModal({
    classes
 }: any): JSX.Element {
    const dispatch = useDispatch();
-   const [open, setOpen] = useState(false);
-   const [resultMsg, setResultMsg] = useState('');
-   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      setOpen(false);
-    };
+  
    const onSubmit = (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
       const jobType = new Promise(async (resolve, reject) => {
@@ -33,9 +21,10 @@ function BCAddJobTypeModal({
          const savingJobType = await saveJobType({ title });
          savingJobType.status === 1 ? resolve(savingJobType) : reject(savingJobType);
          if (savingJobType.status === 0) {
-            setOpen(true)
-            setResultMsg(savingJobType.message)
-         } 
+            dispatch(error(savingJobType.message));
+          } else {
+            dispatch(info(savingJobType.message));
+          }
       });
 
       jobType
@@ -94,11 +83,6 @@ function BCAddJobTypeModal({
                </Grid>
             </Grid>
          </DialogContent>
-         <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
-               {resultMsg}
-            </Alert>
-         </Snackbar>
          <DialogActions classes={{
             'root': classes.dialogActions
          }}>
