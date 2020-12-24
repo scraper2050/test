@@ -132,6 +132,7 @@ function BCModal() {
             'maxWidth': 'xs'
           });
           setComponent(<BCAddEquipmentTypeModal />);
+          break;
         case modalTypes.ADD_JOB_SITE:
           setModalOptions({
               'disableBackdropClick': true,
