@@ -11,7 +11,6 @@ const BCSnackbar: React.FC = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false)
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false)
-        dispatch(info(''))
     }
     const snackbar = useSelector((state: any) => state.snackbar)
     useEffect(()=>{

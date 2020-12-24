@@ -1,5 +1,4 @@
 import BCTabs from "../../../components/bc-tab/bc-tab";
-import BCSnackbar from '../../../components/bc-snackbar/bc-snackbar';
 import SwipeableViews from "react-swipeable-views";
 import styles from "./brands.styles";
 import BrandsListing from "./brands-listing/brands-listing";
@@ -66,7 +65,6 @@ function Brands({ classes }: any) {
           >
             <BrandsListing hidden={curTab !== 0} />
           </SwipeableViews>
-          <BCSnackbar></BCSnackbar>
         </div>
       </div>
     </div>

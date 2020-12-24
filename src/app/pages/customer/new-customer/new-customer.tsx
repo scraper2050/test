@@ -1,7 +1,6 @@
 import * as CONSTANTS from '../../../../constants';
 import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-marker';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
-import BCSnackbar from '../../../components/bc-snackbar/bc-snackbar';
 import Config from '../../../../config';
 import { modalTypes } from '../../../../constants';
 import { createCustomer } from '../../../../api/customer.api';
@@ -401,7 +400,6 @@ function NewCustomerPage({ classes }: Props) {
           </DataContainer>
         </PageContainer>
       </MainContainer>
-      <BCSnackbar></BCSnackbar>
     </>
   );
 }
