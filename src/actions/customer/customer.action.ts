@@ -22,7 +22,12 @@ export const loadingSingleCustomers = () => {
 export const getCustomers = () => {
     return async (dispatch: any) => {
         const customers: any = await fetchCustomers();
-        dispatch(setCustomers(customers));
+        if (customers.status === 0) {
+            dispatch(error(customers.message))
+            dispatch(setCustomers([]));
+        } else {
+            dispatch(setCustomers(customers.customers));
+        }       
     };
 }
 
