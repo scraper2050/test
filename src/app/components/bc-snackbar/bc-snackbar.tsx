@@ -10,6 +10,7 @@ const BCSnackbar: React.FC = () => {
     const dispatch = useDispatch();
     const [openSnackbar, setOpenSnackbar] = useState(false)
     const handleCloseSnackbar = () => {
+        dispatch(info(''))
         setOpenSnackbar(false)
     }
     const snackbar = useSelector((state: any) => state.snackbar)
@@ -18,7 +19,7 @@ const BCSnackbar: React.FC = () => {
             setOpenSnackbar(true)
         }
     }, [snackbar])
-    if (snackbar) {
+    if (snackbar.message) {
         return (
             <Snackbar open={openSnackbar} autoHideDuration={4000} onClose={handleCloseSnackbar}>
                 <Alert elevation={6} variant="filled" onClose={handleCloseSnackbar} severity={snackbar.type}>
