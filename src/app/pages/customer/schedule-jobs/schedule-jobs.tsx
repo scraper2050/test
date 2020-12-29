@@ -4,11 +4,12 @@ import ServiceTicket from './service-ticket/service-ticket';
 import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './schedule-jobs.styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { info, error } from 'actions/snackbar/snackbar.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
 
@@ -18,28 +19,35 @@ function ScheduleJobsPage({ classes }: any) {
   const theme = useTheme();
 
   useEffect(() => {
+    dispatch(getCustomers());
+    dispatch(getAllJobTypesAPI());
   }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
 
+  const customers = useSelector(({ customers }: any) => customers.data);
+  const jobTypes = useSelector((state: any) => state.jobTypes.data);
+
   const openCreateTicketModal = () => {
-    dispatch(getCustomers());
-    dispatch(getAllJobTypesAPI());
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'New Service Ticket',
-        'removeFooter': false,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%'
-      },
-      'type': modalTypes.CREATE_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    if (customers.length !==0 && jobTypes.length !==0){
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'New Service Ticket',
+          'removeFooter': false,
+          'className': 'serviceTicketTitle',
+          'maxHeight': '754px',
+          'height': '100%'
+        },
+        'type': modalTypes.CREATE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      dispatch(error('You must add customers or jobTypes to create service ticket'));
+    }
   };
 
   const openJobModal = () => {
