@@ -31,14 +31,18 @@ function ScheduleJobsPage({ classes }: any) {
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
 
   const openCreateTicketModal = () => {
-    if (customers.length !==0 && jobTypes.length !==0){
+    if (customers.length !== 0){
       dispatch(setModalDataAction({
         'data': {
           'modalTitle': 'New Service Ticket',
           'removeFooter': false,
           'className': 'serviceTicketTitle',
           'maxHeight': '754px',
-          'height': '100%'
+          'height': '100%',
+          'error': {
+            'status': false,
+            'message': ''
+          }
         },
         'type': modalTypes.CREATE_TICKET_MODAL
       }));
@@ -46,7 +50,20 @@ function ScheduleJobsPage({ classes }: any) {
         dispatch(openModalAction());
       }, 200);
     } else {
-      dispatch(error('You must add customers or jobTypes to create service ticket'));
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'Warning',
+          'removeFooter': false,
+          'error': {
+            'status': true,
+            'message': 'You must add customers to create new service ticket'
+          }
+        },
+        'type': modalTypes.CREATE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
     }
   };
 

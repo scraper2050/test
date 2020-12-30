@@ -29,6 +29,10 @@ function BCServiceTicketModal({
     'note': '',
     'updateFlag': '',
     'dueDate': new Date()
+  },
+  error = {
+    'status': false,
+    'message': ''
   }
 }: any): JSX.Element {
   const dispatch = useDispatch();
@@ -182,153 +186,166 @@ function BCServiceTicketModal({
     }, 200);
   };
   
-  return (
-    <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
-      <DialogContent classes={{ 'root': classes.dialogContent }}>
-        <div>
-          <BCSelectOutlined
-            items={{
-              'data': [
-                ...customers.map((o: any) => {
-                  return {
-                    '_id': o._id,
-                    'displayName': o.profile.displayName
-                  };
-                })
-              ],
-              'displayKey': 'displayName',
-              'valueKey': '_id',
-              'className': 'serviceTicketLabel',
-            }}
-            label={'Customer'}
-            name={'customerId'}
-            disabled={FormikValues.updateFlag === true}
-            required
-            value={FormikValues.customerId}
-            handleChange={(event: any) => handleCustomerChange(event, 'customerId', setFieldValue)}
-          />
+  if (error.status) {
+    return (
+      <ErrorMessage>{error.message}</ErrorMessage>
+    );
+  } else {
+    return (
+      <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
+        <DialogContent classes={{ 'root': classes.dialogContent }}>
+          <div>
             <BCSelectOutlined
               items={{
                 'data': [
-                  ...jobLocations.map((o: any) => {
+                  ...customers.map((o: any) => {
                     return {
                       '_id': o._id,
-                      'name': o.name,
+                      'displayName': o.profile.displayName
                     };
                   })
                 ],
-                'displayKey': 'name',
+                'displayKey': 'displayName',
                 'valueKey': '_id',
-                'className': 'serviceTicketLabel'
+                'className': 'serviceTicketLabel',
               }}
-              label={'Job Location'}
-              name={'jobLocationId'}
-              value={FormikValues.jobLocationId}
-              handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue, getFieldMeta)}
+              label={'Customer'}
+              name={'customerId'}
+              disabled={FormikValues.updateFlag === true}
+              required
+              value={FormikValues.customerId}
+              handleChange={(event: any) => handleCustomerChange(event, 'customerId', setFieldValue)}
             />
-            {isLoading ? 'Loading Job Sites...' :
-            <BCSelectOutlined
+              <BCSelectOutlined
+                items={{
+                  'data': [
+                    ...jobLocations.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'name': o.name,
+                      };
+                    })
+                  ],
+                  'displayKey': 'name',
+                  'valueKey': '_id',
+                  'className': 'serviceTicketLabel'
+                }}
+                label={'Job Location'}
+                name={'jobLocationId'}
+                value={FormikValues.jobLocationId}
+                handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue, getFieldMeta)}
+              />
+              {isLoading ? 'Loading Job Sites...' :
+              <BCSelectOutlined
+                handleChange={formikChange}
+                items={{
+                  'data': [
+                    ...jobSites.map((o: any) => {
+                      return {
+                        '_id': o._id,
+                        'name': o.name,
+                      };
+                    })
+                  ],
+                  'displayKey': 'name',
+                  'valueKey': '_id',
+                  'className': 'serviceTicketLabel'
+                }}
+                label={'Job Site'}
+                name={'jobSiteId'}
+                value={FormikValues.jobSiteId}
+              />}
+              <BCSelectOutlined
               handleChange={formikChange}
               items={{
                 'data': [
-                  ...jobSites.map((o: any) => {
+                  ...jobTypes.map((o: any) => {
                     return {
                       '_id': o._id,
-                      'name': o.name,
+                      'title': o.title,
                     };
                   })
                 ],
-                'displayKey': 'name',
+                'displayKey': 'title',
                 'valueKey': '_id',
                 'className': 'serviceTicketLabel'
               }}
-              label={'Job Site'}
-              name={'jobSiteId'}
-              value={FormikValues.jobSiteId}
-            />}
-            <BCSelectOutlined
-            handleChange={formikChange}
-            items={{
-              'data': [
-                ...jobTypes.map((o: any) => {
-                  return {
-                    '_id': o._id,
-                    'title': o.title,
-                  };
-                })
-              ],
-              'displayKey': 'title',
-              'valueKey': '_id',
-              'className': 'serviceTicketLabel'
+              label={'Job Type'}
+              name={'jobTypeId'}
+              value={FormikValues.jobTypeId}
+            />
+            
+            <BCInput
+              handleChange={formikChange}
+              label={'Notes / Special Instructions'}
+              multiline
+              name={'note'}
+              value={FormikValues.note}
+              className='serviceTicketLabel'
+            />
+            {notesLabelState ? <Label>Notes are required while updating the ticket.</Label>: null}
+            <BCDateTimePicker
+              disablePast
+              handleChange={dateChangeHandler}
+              className='serviceTicketLabel'
+              label={'Due Date'}
+              name={'dueDate'}
+              value={FormikValues.dueDate}
+            />
+          </div>
+        </DialogContent>
+        <DialogActions classes={{
+          'root': classes.dialogActions
+        }}>
+          <Fab
+            aria-label={'create-job'}
+            classes={{
+              'root': classes.fabRoot
             }}
-            label={'Job Type'}
-            name={'jobTypeId'}
-            value={FormikValues.jobTypeId}
-          />
-          
-          <BCInput
-            handleChange={formikChange}
-            label={'Notes / Special Instructions'}
-            multiline
-            name={'note'}
-            value={FormikValues.note}
-            className='serviceTicketLabel'
-          />
-           {notesLabelState ? <Label>Notes are required while updating the ticket.</Label>: null}
-          <BCDateTimePicker
-            disablePast
-            handleChange={dateChangeHandler}
-            className='serviceTicketLabel'
-            label={'Due Date'}
-            name={'dueDate'}
-            value={FormikValues.dueDate}
-          />
-        </div>
-      </DialogContent>
-      <DialogActions classes={{
-        'root': classes.dialogActions
-      }}>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          className={'serviceTicketBtn'}
-          disabled={isSubmitting}
-          onClick={() => closeModal()}
-          variant={'extended'}>
-          {'Cancel'}
-        </Fab>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          color={'primary'}
-          disabled={isSubmitting}
-          type={'submit'}
-          variant={'extended'}>
-          {ticket._id
-            ? 'Save Ticket'
-            : 'Generate Ticket'}
-        </Fab>
-        {/* <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          color={'primary'}
-          disabled={isSubmitting}
-          variant={'extended'}>
-          {'Generate Job'}
-        </Fab> */}
-      </DialogActions>
-    </form>
-  );
+            className={'serviceTicketBtn'}
+            disabled={isSubmitting}
+            onClick={() => closeModal()}
+            variant={'extended'}>
+            {'Cancel'}
+          </Fab>
+          <Fab
+            aria-label={'create-job'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            disabled={isSubmitting}
+            type={'submit'}
+            variant={'extended'}>
+            {ticket._id
+              ? 'Save Ticket'
+              : 'Generate Ticket'}
+          </Fab>
+          {/* <Fab
+            aria-label={'create-job'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            disabled={isSubmitting}
+            variant={'extended'}>
+            {'Generate Job'}
+          </Fab> */}
+        </DialogActions>
+      </form>
+    );
+  }
 }
 const Label = styled.div`
   color: red;
   font-size: 15px;
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 18px;
+  padding: 5px;
+  text-align: center;
 `;
 export default withStyles(
   styles,
