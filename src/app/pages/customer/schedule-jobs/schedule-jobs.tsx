@@ -52,11 +52,10 @@ function ScheduleJobsPage({ classes }: any) {
     } else {
       dispatch(setModalDataAction({
         'data': {
-          'modalTitle': 'Warning',
           'removeFooter': false,
           'error': {
             'status': true,
-            'message': 'You must add customers to create new service ticket'
+            'message': 'You must add customers to create a service ticket'
           }
         },
         'type': modalTypes.CREATE_TICKET_MODAL
