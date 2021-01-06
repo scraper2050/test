@@ -7,6 +7,8 @@ import { Avatar, Card, CardHeader, DialogActions, DialogContent, Divider, Fab, I
 import React, { useState } from 'react';
 import { callAddVendorAPI, callInviteVendarAPI, callSearchVendorAPI } from 'api/vendor.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { info, error } from 'actions/snackbar/snackbar.action';
+import { getVendors, loadingVendors } from 'actions/vendor/vendor.action';
 
 function BCAddVendorModal({
   classes
@@ -14,6 +16,8 @@ function BCAddVendorModal({
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState<boolean>(false);
   const [contractors, setContractors] = useState<any>(null);
+  const [resStatus, setResStatus] = useState<any>(null);
+  
   const {
     'values': FormikValues,
     'handleChange': formikChange,
@@ -32,35 +36,44 @@ function BCAddVendorModal({
       };
       if (contractors && contractors.length > 0) {
         tempData.contractorId = contractors[0]._id;
-        console.log(tempData);
         callAddVendorAPI(tempData).then((response: any) => {
-          // Dispatch(refreshVendor(true));
-          console.log(response);
-          dispatch(closeModalAction());
-          setTimeout(() => {
-            dispatch(setModalDataAction({
-              'data': {},
-              'type': ''
-            }));
-          }, 200);
-          setSubmitting(false);
+          if (response.status === 0) {
+            dispatch(error(response.message));
+          } else {
+            dispatch(info(response.message));
+            dispatch(closeModalAction());
+            dispatch(loadingVendors());
+            dispatch(getVendors());
+            setTimeout(() => {
+              dispatch(setModalDataAction({
+                'data': {},
+                'type': ''
+              }));
+            }, 200);
+          }
+            setSubmitting(false);
+          
+          // Dispatch(refreshVendor(true));          
         })
           .catch((err: any) => {
             setSubmitting(false);
             throw err;
           });
       } else {
-        console.log(tempData);
         callInviteVendarAPI(tempData).then((response: any) => {
-          console.log(response);
           // Dispatch(refreshServiceTickets(true));
-          dispatch(closeModalAction());
-          setTimeout(() => {
-            dispatch(setModalDataAction({
-              'data': {},
-              'type': ''
-            }));
-          }, 200);
+          if (response.status === 0) {
+            dispatch(error(response.message));
+          } else {
+            dispatch(info(response.message));
+            dispatch(closeModalAction());
+            setTimeout(() => {
+              dispatch(setModalDataAction({
+                'data': {},
+                'type': ''
+              }));
+            }, 200);
+          }
           setSubmitting(false);
         })
           .catch((err: any) => {
@@ -69,25 +82,16 @@ function BCAddVendorModal({
           });
       }
     }
-    /*
-     * 'validationSchema': Yup.object({
-     *   'customer': Yup.string()
-     *     .required('Customer is required'),
-     *   'notes': Yup.string()
-     *   // 'scheduleDate': Yup.string().required('Schedule date is required')
-     * })
-     */
   });
 
   const searchVendor = () => {
     setLoading(true);
     callSearchVendorAPI({ 'email': FormikValues.email }).then((response: any) => {
-      console.log(response);
       setContractors(response.contractors);
+      setResStatus(response.status)
       setLoading(false);
     })
       .catch(err => {
-        console.log(err);
         setLoading(false);
         throw err;
       });
@@ -164,6 +168,12 @@ function BCAddVendorModal({
                       {'This account is not found. Click on Invite to invite this user to BlueClerk'}
                     </Typography>
                   : null}
+                {resStatus === 0 && 
+                <Typography
+                  gutterBottom
+                  variant={'subtitle1'}>
+                  {'Please input valid email address'}
+                </Typography>}
               </div>
           }
         </div>

@@ -45,5 +45,4 @@ export enum CustomersActionType {
     GET = 'getCustomers',
     SUCCESS = 'getCustomersSuccess',
     FAILED = 'getCustomersFailed',
-    
 }

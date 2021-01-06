@@ -3,23 +3,29 @@ import BCInput from 'app/components/bc-input/bc-input';
 import styles from './bc-add-equipment-type-modal.styles';
 import { useFormik } from 'formik';
 import { DialogActions, DialogContent, Fab, Grid, withStyles } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import { saveEquipmentType } from 'api/equipment-type.api';
 import { loadingEquipmentType, getEquipmentType } from 'actions/equipment-type/equipment-type.action';
+import { info, error } from 'actions/snackbar/snackbar.action';
 
 function BCAddEquipmentTypeModal({
    classes
 }: any): JSX.Element {
    const dispatch = useDispatch();
-
+   
    const onSubmit = (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
       const brandType = new Promise(async (resolve, reject) => {
          const title = values.title;
          const savingBrandType = await saveEquipmentType({ title });
          savingBrandType.status === 1 ? resolve(savingBrandType) : reject(savingBrandType);
+         if (savingBrandType.status === 0) {
+            dispatch(error(savingBrandType.message));
+          } else {
+            dispatch(info(savingBrandType.message));
+          }
       });
 
       brandType

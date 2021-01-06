@@ -4,11 +4,12 @@ import ServiceTicket from './service-ticket/service-ticket';
 import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './schedule-jobs.styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { info, error } from 'actions/snackbar/snackbar.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
 
@@ -18,28 +19,51 @@ function ScheduleJobsPage({ classes }: any) {
   const theme = useTheme();
 
   useEffect(() => {
+    dispatch(getCustomers());
+    dispatch(getAllJobTypesAPI());
   }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
 
+  const customers = useSelector(({ customers }: any) => customers.data);
+  const jobTypes = useSelector((state: any) => state.jobTypes.data);
+
   const openCreateTicketModal = () => {
-    dispatch(getCustomers());
-    dispatch(getAllJobTypesAPI());
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'New Service Ticket',
-        'removeFooter': false,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%'
-      },
-      'type': modalTypes.CREATE_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    if (customers.length !== 0){
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'New Service Ticket',
+          'removeFooter': false,
+          'className': 'serviceTicketTitle',
+          'maxHeight': '754px',
+          'height': '100%',
+          'error': {
+            'status': false,
+            'message': ''
+          }
+        },
+        'type': modalTypes.CREATE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      dispatch(setModalDataAction({
+        'data': {
+          'removeFooter': false,
+          'error': {
+            'status': true,
+            'message': 'You must add customers to create a service ticket'
+          }
+        },
+        'type': modalTypes.CREATE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    }
   };
 
   const openJobModal = () => {
@@ -58,7 +82,24 @@ function ScheduleJobsPage({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
+        
+        <div className={classes.pageContent}>
+          <BCTabs
+            curTab={curTab}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Jobs',
+                'value': 0
+              },
+              {
+                'label': 'Service Tickets',
+                'value': 1
+              }
+            ]}
+          />
+          <div className={classes.addButtonArea}>
           {/* {
             curTab === 0
               ? <Fab
@@ -88,22 +129,6 @@ function ScheduleJobsPage({ classes }: any) {
               : null
           }
         </div>
-        <div className={classes.pageContent}>
-          <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'Jobs',
-                'value': 0
-              },
-              {
-                'label': 'Service Tickets',
-                'value': 1
-              }
-            ]}
-          />
           <SwipeableViews
             axis={theme.direction === 'rtl'
               ? 'x-reverse'

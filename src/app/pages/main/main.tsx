@@ -4,6 +4,7 @@ import BCHeader from '../../components/bc-header/bc-header';
 import BCModal from '../../modals/bc-modal';
 import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
 import BCToolBar from '../../components/bc-toolbar-btn/bc-tool-bar';
+import BCSnackbar from '../../components/bc-snackbar/bc-snackbar';
 import { Grid } from '@material-ui/core';
 import React, { Suspense, useState } from 'react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
@@ -67,6 +68,7 @@ function Main(): any {
           <Route>
             <BCHeader />
             <BCToolBar />
+            <BCSnackbar></BCSnackbar>
             <Grid
               className={'main-container'}
               container

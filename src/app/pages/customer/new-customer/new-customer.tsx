@@ -2,11 +2,15 @@ import * as CONSTANTS from '../../../../constants';
 import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-marker';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
 import Config from '../../../../config';
+import { modalTypes } from '../../../../constants';
+import { createCustomer } from '../../../../api/customer.api';
 import Geocode from 'react-geocode';
 import { allStates } from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
+import { openModalAction, setModalDataAction } from '../../../../actions/bc-modal/bc-modal.action';
+import { info, error } from '../../../../actions/snackbar/snackbar.action';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
@@ -21,7 +25,6 @@ import {
 import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createCustomerAction } from 'actions/customer/customer.action';
 import { useHistory } from 'react-router-dom';
 
 interface Props {
@@ -118,15 +121,25 @@ function NewCustomerPage({ classes }: Props) {
                 sm={6}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={(values, { setSubmitting }) => {
+                  onSubmit={async (values, { setSubmitting }) => {
                      let state = values.state.id;
                      values.latitude = positionValue.lat;
                      values.longitude = positionValue.lang;
                      const reqObj = { ...values, state: allStates[state].name }
                      reqObj.state = allStates[state].name === 'none' ? '' : allStates[state].name;
-                     dispatch(createCustomerAction(reqObj, () => {
-                      history.push('/main/customers');
-                    }))
+
+                     const customer: any = await createCustomer(reqObj);
+                     if (customer.hasOwnProperty('msg')) {
+                        dispatch(error(customer.msg));
+                      } else {
+                        if (customer.status === 0) {
+                            dispatch(error(customer.message));
+                          } else {
+                            dispatch(info(customer.message));
+                            history.push('/main/customers');
+                          }
+                      }
+                      
                     }
                   }
                   validateOnChange>

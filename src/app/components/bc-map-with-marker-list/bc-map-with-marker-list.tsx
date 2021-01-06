@@ -18,8 +18,7 @@ interface BCMapWithMarkerListProps {
     ticketList: any,
     classes: any,
     lat ?: any,
-    lng ?: any,
-    resetDateFilter ?: () => void;
+    lng ?: any
 }
 function createMapOptions() {
   return {
@@ -77,7 +76,6 @@ function MakerPin({ ...props }) {
                 '_id': ''
               },
               'jobFromMap': true,
-              'resetDateFilter':props.resetDateFilter
             },
             'modalTitle': 'Create Job',
             'removeFooter': false,
@@ -128,7 +126,7 @@ function MakerPin({ ...props }) {
     
 }
 
-function BCMapWithMarkerWithList({ classes, ticketList, lat, lng, resetDateFilter }: BCMapWithMarkerListProps) {
+function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMarkerListProps) {
     const openTicketObj = useSelector((state: any) => state.serviceTicket.openTicketObj);
     let centerLat = DEFAULT_LAT ,centerLng = DEFAULT_LNG;
     if (openTicketObj.jobSite) {
@@ -169,7 +167,6 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng, resetDateFilte
                         lng={lng}
                         ticket={ticket}
                         openTicketObj={openTicketObj}
-                        resetDateFilter={resetDateFilter}
                     />
 
                 })

@@ -13,3 +13,10 @@ export const error: SnackbarAction = message => {
         payload: message
     }
 }
+
+export const info: SnackbarAction = message => {
+    return {
+        type: SnackbarType.INFO,
+        payload: message
+    }
+}

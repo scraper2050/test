@@ -35,16 +35,19 @@ export const CustomersReducer: Reducer<any> = (state = initialCustomers, action)
 	switch (action.type) {
 		case CustomersActionType.GET:
 			return {
+				...state,
 				loading: true,
 				data: initialCustomers,
 			};
 		case CustomersActionType.SUCCESS:
 			return {
+				...state,
 				loading: false,
 				data: [...action.payload],
 			}
 		case types.SET_CUSTOMERS:
 			return {
+				...state,
 				loading: false,
 				data: [...action.payload],
 			}

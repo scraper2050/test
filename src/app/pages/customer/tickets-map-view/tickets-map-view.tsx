@@ -223,7 +223,6 @@ function TicketsWithMapView({ classes }: any) {
                   {
                     <BCMapWithMarkerList
                       ticketList={openTickets}
-                      resetDateFilter={resetDateFilter}
                     />
                   }
                 </Grid>

@@ -21,7 +21,7 @@ export const getCustomers = async (param?: {}) => {
       throw new Error(`Something went wrong`);
     }
   }
-  return responseData.customers;
+  return responseData;
 };
 
 export const getCustomerDetail = async (data: any) => {

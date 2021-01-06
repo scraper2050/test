@@ -58,7 +58,7 @@ function BCModal() {
             'fullWidth': true,
             'maxWidth': 'xs'
           });
-          setComponent(<BCServiceTicketModal />);
+          setComponent(<BCServiceTicketModal error={data.error} />);
           break;
         case modalTypes.EDIT_TICKET_MODAL:
           setModalOptions({
@@ -122,6 +122,7 @@ function BCModal() {
             'maxWidth': 'xs'
           });
           setComponent(<BCAddEquipmentTypeModal />);
+          break;
         case modalTypes.ADD_JOB_SITE:
           setModalOptions({
               'disableBackdropClick': true,

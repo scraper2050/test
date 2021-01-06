@@ -2,6 +2,7 @@
 import { createApiAction } from '../action.utils';
 import { CustomersActionType, types } from '../../reducers/customer.types'
 import { getCustomers as fetchCustomers, updateCustomers, getCustomerDetail, createCustomer } from 'api/customer.api';
+import { info, error } from 'actions/snackbar/snackbar.action';
 
 export const loadCustomersActions = createApiAction(types.CUSTOMER_LOAD);
 export const newCustomerAction = createApiAction(types.CUSTOMER_NEW);
@@ -21,7 +22,12 @@ export const loadingSingleCustomers = () => {
 export const getCustomers = () => {
     return async (dispatch: any) => {
         const customers: any = await fetchCustomers();
-        dispatch(setCustomers(customers));
+        if (customers.status === 0) {
+            dispatch(error(customers.message))
+            dispatch(setCustomers([]));
+        } else {
+            dispatch(setCustomers(customers.customers));
+        }       
     };
 }
 
@@ -48,19 +54,6 @@ export const updateCustomerAction = (customers: any, callback?:any) => {
             callback();
         } else {
             dispatch({ type: CustomersActionType.UPDATE_CUSTOMER, payload: customer });
-            callback();
-        }
-    };
-}
-
-export const createCustomerAction = (customerObj: any, callback?:any) => {
-    return async (dispatch: any) => {
-        const customer: any = await createCustomer(customerObj);
-        if (customer.hasOwnProperty('msg')) {
-            dispatch({ type: CustomersActionType.CREATE_CUSTOMER, payload: customer.msg });
-            callback();
-        } else {
-            dispatch({ type: CustomersActionType.CREATE_CUSTOMER_FAILED, payload: customer });
             callback();
         }
     };
