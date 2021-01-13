@@ -5,6 +5,7 @@ import styles, {
   DataContainer,
 } from "./job-reports.styles";
 import React from "react";
+import WallpaperIcon from "@material-ui/icons/Wallpaper";
 
 function BCJobReport({ classes, jobReportData }: any) {
   return (
@@ -29,9 +30,12 @@ function BCJobReport({ classes, jobReportData }: any) {
                         {jobReportData.customerName}
                       </p>
                     </div>
-                    <p className={classes.largeIcon}>
-                      {jobReportData.workPerformedImage}
-                    </p>
+
+                    {jobReportData.workPerformedImage === "N/A" ? (
+                      <WallpaperIcon className={classes.largeIcon} />
+                    ) : (
+                      jobReportData.workPerformedImage
+                    )}
                   </Grid>
 
                   <Grid item xs={7}>
@@ -152,8 +156,12 @@ function BCJobReport({ classes, jobReportData }: any) {
 
                 <Grid item xs={2}>
                   <strong>Image</strong>
-                  <p className={classes.smallIcon}>
-                    {jobReportData.workPerformedImage}
+                  <p>
+                    {jobReportData.workPerformedImage === "N/A" ? (
+                      <WallpaperIcon className={classes.smallIcon} />
+                    ) : (
+                      jobReportData.workPerformedImage
+                    )}
                   </p>
                 </Grid>
 

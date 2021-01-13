@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+
 import {
   getJobReportAction,
   loadJobReport,
-  loadSingleJobReport,
 } from "actions/customer/job-report/job-report.action";
 import { useDispatch, useSelector } from "react-redux";
 import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
@@ -13,10 +12,11 @@ import BCJobReport from "../../../components/bc-job-report/bc-job-report";
 function JobReportsPage() {
   const dispatch = useDispatch();
   const { jobReportObj, loading } = useSelector((state: any) => state);
-  const history = useHistory();
 
   useEffect(() => {
+    const jobId = renderJobReport(jobReportObj);
     dispatch(loadJobReport());
+    dispatch(getJobReportAction(jobId.workReport));
   }, []);
 
   const renderJobReport = (row: any) => {
@@ -141,16 +141,6 @@ function JobReportsPage() {
       workPerformedImage,
       workPerformedNote,
     };
-
-    workReport =
-      workReport !== undefined ? workReport.replace(/ /g, "") : "jobid";
-    localStorage.setItem("nestedRouteKey", `${workReport}`);
-    dispatch(loadSingleJobReport());
-    dispatch(getJobReportAction(workReport));
-    history.push({
-      pathname: `/main/customers/job-report/${workReport}`,
-      state: jobReportObj,
-    });
 
     return jobReportObj;
   };
