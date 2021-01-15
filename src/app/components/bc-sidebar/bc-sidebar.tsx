@@ -33,7 +33,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
     },
     {
       label: "Job Reports",
-      link: "/main/customers/job-reports/reports-list",
+      link: "/main/customers/job-reports",
     },
     {
       label: "Todo's",

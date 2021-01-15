@@ -20,9 +20,9 @@ export const loadSingleJobReport = () => {
   };
 };
 
-export const getJobReports = () => {
+export const getJobReports = (data: any) => {
   return async (dispatch: any) => {
-    const jobReports: any = await fetchJobReports();
+    const jobReports: any = await fetchJobReports(data);
     if (jobReports.status === 0) {
       dispatch(error(jobReports.description));
       dispatch(setJobReports([]));

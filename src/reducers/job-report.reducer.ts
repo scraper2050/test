@@ -12,12 +12,12 @@ const initialJobReport: JobReportState = {
 
   JobReportObj: {
     _id: "",
-    jobId: "23451",
+    jobId: "",
     status: 0,
     employeeType: false,
     dateTime: "",
     description: "",
-    createdAt: "12-3-2012",
+    createdAt: "",
     ticket: {
       scheduleDateTime: "",
       note: "",
@@ -28,7 +28,7 @@ const initialJobReport: JobReportState = {
         email: "",
       },
       profile: {
-        displayName: "Sam Cork",
+        displayName: "",
       },
       contact: {
         phone: "",
@@ -45,7 +45,7 @@ const initialJobReport: JobReportState = {
         email: "",
       },
       profile: {
-        displayName: "Micheal Doe",
+        displayName: "",
       },
       contact: {
         phone: "",
