@@ -1,4 +1,4 @@
-import { Grid, withStyles } from "@material-ui/core";
+import { Button, Grid, withStyles } from "@material-ui/core";
 import styles, {
   MainContainer,
   PageContainer,
@@ -172,6 +172,10 @@ function BCJobReport({ classes, jobReportData }: any) {
               </Grid>
             </Grid>
           </DataContainer>
+          <Grid container className={classes.btn} item xs={12}>
+            <Button className={classes.cancelBtn}>Cancel</Button>
+            <Button className={classes.invoiceBtn}>Generate Invoice</Button>
+          </Grid>
         </PageContainer>
       </MainContainer>
     </>

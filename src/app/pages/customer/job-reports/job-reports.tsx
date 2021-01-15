@@ -1,157 +1,178 @@
-import React, { useEffect } from "react";
-
+import BCTableContainer from "../../../components/bc-table-container/bc-table-container";
+import BCTabs from "../../../components/bc-tab/bc-tab";
+import Fab from "@material-ui/core/Fab";
+import SwipeableViews from "react-swipeable-views";
+import styles from "../customer.styles";
+import { Grid, withStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import {
-  getJobReportAction,
-  loadJobReport,
+  getJobReportDetailAction,
+  loadSingleJobReport,
+  getJobReports,
+  loadingJobReport,
 } from "actions/customer/job-report/job-report.action";
+import {
+  setModalDataAction,
+  openModalAction,
+} from "actions/bc-modal/bc-modal.action";
+import { modalTypes } from "../../../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
+import { useHistory } from "react-router-dom";
+import { JobData } from "../../../../testData";
 
-import BCJobReport from "../../../components/bc-job-report/bc-job-report";
-
-function JobReportsPage() {
+function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
-  const { jobReportObj, loading } = useSelector((state: any) => state);
+  const jobReports = useSelector((state: any) => state.jobReports);
+  const [curTab, setCurTab] = useState(0);
+  const history = useHistory();
+
+  const columns: any = [
+    {
+      Cell({ row }: any) {
+        return <div className={"flex items-center"}>{row.index + 1}</div>;
+      },
+      Header: "Job ID",
+      accessor: "jobId",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Customer",
+      accessor: "customer.profile.displayName",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Date",
+      accessor: "createdAt",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Technician",
+      accessor: "technician.profile.displayName",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          <div className={"flex items-center"}>
+            <Fab
+              aria-label={"delete"}
+              classes={{
+                root: classes.fabRoot,
+              }}
+              color={"primary"}
+              onClick={() => renderViewMore(row)}
+              variant={"extended"}
+            >
+              {"View More"}
+            </Fab>
+          </div>
+        );
+      },
+      id: "action",
+      sortable: false,
+      width: 60,
+    },
+  ];
 
   useEffect(() => {
-    const jobId = renderJobReport(jobReportObj);
-    dispatch(loadJobReport());
-    dispatch(getJobReportAction(jobId.workReport));
+    dispatch(loadingJobReport());
+    dispatch(getJobReports());
   }, []);
 
-  const renderJobReport = (row: any) => {
-    let baseObj = row;
-    let workReport =
-      baseObj && baseObj["jobId"] !== undefined ? baseObj["jobId"] : "N/A";
-
-    let customerName =
-      baseObj && baseObj["customer"]["profile"] !== undefined
-        ? baseObj["customer"]["profile"]["displayName"]
-        : "N/A";
-    let customerPhoneNumber =
-      baseObj && baseObj["customer"]["contact"] !== undefined
-        ? baseObj["customer"]["contact"]["phone"]
-        : "N/A";
-    let customerEmail =
-      baseObj && baseObj["customer"]["info"] !== undefined
-        ? baseObj["customer"]["info"]["email"]
-        : "N/A";
-    let customerAddress = baseObj && baseObj["customer"]["address"];
-    let address: any = "";
-    if (customerAddress && customerAddress !== undefined) {
-      address = `${
-        customerAddress["street"] !== undefined &&
-        customerAddress["street"] !== null
-          ? customerAddress["street"]
-          : ""
-      } 
-      ${
-        customerAddress["city"] !== undefined &&
-        customerAddress["city"] !== null
-          ? customerAddress["city"]
-          : ""
-      } ${
-        customerAddress["state"] !== undefined &&
-        customerAddress["state"] !== null &&
-        customerAddress["state"] !== "none"
-          ? customerAddress["state"]
-          : ""
-      } ${
-        customerAddress["zipCode"] !== undefined &&
-        customerAddress["zipCode"] !== null
-          ? customerAddress["zipCode"]
-          : ""
-      }`;
-    } else {
-      address = "N/A";
-    }
-    let jobType =
-      baseObj && baseObj["type"] !== undefined
-        ? baseObj["type"]["title"]
-        : "N/A";
-    let jobDate =
-      baseObj && baseObj["createdAt"] !== undefined
-        ? baseObj["createdAt"]
-        : "N/A";
-    let jobTime =
-      baseObj && baseObj["dateTime"] !== undefined
-        ? baseObj["dateTime"]
-        : "N/A";
-    let technicianName =
-      baseObj && baseObj["technician"]["profile"] !== undefined
-        ? baseObj["technician"]["profile"]["displayName"]
-        : "N/A";
-    let recordNote =
-      baseObj && baseObj["note"] !== undefined ? baseObj["dateTime"] : "N/A";
-    let purchaseOrderCreated =
-      baseObj && baseObj["createdAt"] !== undefined
-        ? baseObj["dateTime"]
-        : "N/A";
-    let companyName =
-      baseObj && baseObj["createdBy"]["info"] !== undefined
-        ? baseObj["createdBy"]["info"]["companyName"]
-        : "N/A";
-    let companyEmail =
-      baseObj && baseObj["createdBy"]["auth"] !== undefined
-        ? baseObj["createdBy"]["auth"]["email"]
-        : "N/A";
-    let companyPhone =
-      baseObj && baseObj["createdBy"]["contact"] !== undefined
-        ? baseObj["createdBy"]["contact"]["phone"]
-        : "N/A";
-    let workPerformedLocation =
-      baseObj && baseObj["scans"]["equipment"]["info"] !== undefined
-        ? baseObj["scans"]["equipment"]["info"]["location"]
-        : "N/A";
-    let workPerformedDate =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["scheduleDateTime"]
-        : "N/A";
-    let workPerformedTimeScan =
-      baseObj && baseObj["scans"] !== undefined
-        ? baseObj["scans"]["timeOfScan"]
-        : "N/A";
-    let workPerformedImage =
-      baseObj && baseObj["scans"]["equipment"] !== undefined
-        ? baseObj["scans"]["equipment"]["images"]
-        : "N/A";
-    let workPerformedNote =
-      baseObj && baseObj["scans"] !== undefined
-        ? baseObj["scans"]["comment"]
-        : "N/A";
-
-    let jobReportObj = {
-      workReport,
-      customerName,
-      customerPhoneNumber,
-      customerEmail,
-      address,
-      jobType,
-      jobDate,
-      jobTime,
-      technicianName,
-      recordNote,
-      purchaseOrderCreated,
-      companyName,
-      companyEmail,
-      companyPhone,
-      workPerformedLocation,
-      workPerformedDate,
-      workPerformedTimeScan,
-      workPerformedImage,
-      workPerformedNote,
-    };
-
-    return jobReportObj;
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
   };
 
-  if (loading) {
-    return <BCCircularLoader heightValue={"200px"} />;
-  } else {
-    const jobReportData = renderJobReport(jobReportObj);
+  const handleRowClick = (event: any, row: any) => {
+    //console.log(event, row);
+  };
 
-    return <BCJobReport jobReportData={jobReportData} />;
-  }
+  // const handleReportClick = () => {
+  //   dispatch(
+  //     setModalDataAction({
+  //       data: {
+  //         //jobReportObj: renderViewMore(row),
+  //         modalTitle: "Work Report",
+  //         removeFooter: false,
+  //       },
+  //       type: modalTypes.JOB_REPORTS_MODAL,
+  //     })
+  //   );
+  //   setTimeout(() => {
+  //     dispatch(openModalAction());
+  //   }, 200);
+  // };
+
+  const renderViewMore = (row: any) => {
+    let baseObj = row["original"];
+    let customerName =
+      baseObj["customer"] && baseObj["customer"]["profile"] !== undefined
+        ? baseObj["customer"]["profile"]["displayName"]
+        : "N/A";
+    let jobId = row["original"]["jobId"];
+    let jobReportObj = {
+      customerName: customerName,
+      jobId,
+    };
+    jobId = jobId !== undefined ? jobId.replace(/ /g, "") : "jobid";
+    localStorage.setItem("nestedRouteKey", `${jobId}`);
+    dispatch(loadSingleJobReport());
+    dispatch(getJobReportDetailAction(jobReportObj));
+    history.push({
+      pathname: `reports-list/${jobId}`,
+      state: jobReportObj,
+    });
+  };
+
+  return (
+    <div className={classes.pageMainContainer}>
+      <div className={classes.pageContainer}>
+        <div className={classes.pageContent}>
+          <BCTabs
+            curTab={curTab}
+            indicatorColor={"primary"}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                label: "Job Report List",
+                value: 0,
+              },
+              {
+                label: "Recent Activities",
+                value: 1,
+              },
+            ]}
+          />
+          <SwipeableViews index={curTab}>
+            <div
+              className={classes.dataContainer}
+              hidden={curTab !== 0}
+              id={"0"}
+            >
+              <BCTableContainer
+                columns={columns}
+                isLoading={jobReports.loading}
+                onRowClick={handleRowClick}
+                search
+                tableData={JobData.jobId}
+                searchPlaceholder={"Search Job Reports..."}
+                initialMsg={"There are no Job Report List"}
+              />
+            </div>
+            <div hidden={curTab !== 1} id={"1"}>
+              <Grid container>
+                <Grid item xs={12} />
+              </Grid>
+            </div>
+          </SwipeableViews>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default JobReportsPage;
+export default withStyles(styles, { withTheme: true })(CustomersPage);
