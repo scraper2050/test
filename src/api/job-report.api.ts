@@ -1,7 +1,7 @@
 import request from "utils/http.service";
 
-export const getJobReports = async (param?: {}) => {
-  const body = { body: "body" };
+export const getJobReports = async (data: any) => {
+  const body = { jobId: data.jobId };
   let responseData;
   try {
     const response: any = await request("/getJobReport", "POST", body, false);

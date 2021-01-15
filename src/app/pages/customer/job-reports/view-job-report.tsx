@@ -17,14 +17,12 @@ import {
 
 function ViewJobReportsPage() {
   const dispatch = useDispatch();
-  const location = useLocation();
-  const { jobReportObj, loading } = useSelector(
-    (state: any) => state.jobReports
-  );
+  const jobReportObj = useSelector((state: any) => state.jobReports);
+
+  console.log(jobReportObj);
 
   useEffect(() => {
-    const obj: any = location.state;
-    const jobId = obj.jobId;
+    const jobId = jobReportObj.jobId;
     dispatch(loadSingleJobReport());
     dispatch(getJobReportDetailAction({ jobId }));
   }, []);
@@ -35,18 +33,18 @@ function ViewJobReportsPage() {
       baseObj && baseObj["jobId"] !== undefined ? baseObj["jobId"] : "N/A";
 
     let customerName =
-      baseObj && baseObj["customer"]["profile"] !== undefined
+      baseObj && baseObj["customer"] !== undefined
         ? baseObj["customer"]["profile"]["displayName"]
         : "N/A";
     let customerPhoneNumber =
-      baseObj && baseObj["customer"]["contact"] !== undefined
+      baseObj && baseObj["customer"] !== undefined
         ? baseObj["customer"]["contact"]["phone"]
         : "N/A";
     let customerEmail =
-      baseObj && baseObj["customer"]["info"] !== undefined
+      baseObj && baseObj["customer"] !== undefined
         ? baseObj["customer"]["info"]["email"]
         : "N/A";
-    let customerAddress = baseObj && baseObj["customer"]["address"];
+    let customerAddress = baseObj && baseObj["customer"];
     let address: any = "";
     if (customerAddress && customerAddress !== undefined) {
       address = `${
@@ -88,7 +86,7 @@ function ViewJobReportsPage() {
         ? baseObj["dateTime"]
         : "N/A";
     let technicianName =
-      baseObj && baseObj["technician"]["profile"] !== undefined
+      baseObj && baseObj["technician"] !== undefined
         ? baseObj["technician"]["profile"]["displayName"]
         : "N/A";
     let recordNote =
@@ -98,19 +96,19 @@ function ViewJobReportsPage() {
         ? baseObj["dateTime"]
         : "N/A";
     let companyName =
-      baseObj && baseObj["createdBy"]["info"] !== undefined
+      baseObj && baseObj["createdBy"] !== undefined
         ? baseObj["createdBy"]["info"]["companyName"]
         : "N/A";
     let companyEmail =
-      baseObj && baseObj["createdBy"]["auth"] !== undefined
+      baseObj && baseObj["createdBy"] !== undefined
         ? baseObj["createdBy"]["auth"]["email"]
         : "N/A";
     let companyPhone =
-      baseObj && baseObj["createdBy"]["contact"] !== undefined
+      baseObj && baseObj["createdBy"] !== undefined
         ? baseObj["createdBy"]["contact"]["phone"]
         : "N/A";
     let workPerformedLocation =
-      baseObj && baseObj["scans"]["equipment"]["info"] !== undefined
+      baseObj && baseObj["scans"] !== undefined
         ? baseObj["scans"]["equipment"]["info"]["location"]
         : "N/A";
     let workPerformedDate =
@@ -122,7 +120,7 @@ function ViewJobReportsPage() {
         ? baseObj["scans"]["timeOfScan"]
         : "N/A";
     let workPerformedImage =
-      baseObj && baseObj["scans"]["equipment"] !== undefined
+      baseObj && baseObj["scans"] !== undefined
         ? baseObj["scans"]["equipment"]["images"]
         : "N/A";
     let workPerformedNote =
@@ -155,19 +153,7 @@ function ViewJobReportsPage() {
     return jobReportObj;
   };
 
-  //   const closeModal = () => {
-  //     dispatch(closeModalAction());
-  //     setTimeout(() => {
-  //       dispatch(
-  //         setModalDataAction({
-  //           data: {},
-  //           type: "",
-  //         })
-  //       );
-  //     }, 200);
-  //   };
-
-  if (loading) {
+  if (jobReportObj.loading) {
     return <BCCircularLoader heightValue={"200px"} />;
   } else {
     const jobReportData = renderJobReport(jobReportObj);

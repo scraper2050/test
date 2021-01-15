@@ -220,6 +220,13 @@ function Main(): any {
                     title={"Map View"}
                   />
                   <AuthRoute
+                    Component={JobReportsPage}
+                    exact
+                    path={"/main/customers/job-reports"}
+                    title={"Job Reports"}
+                  />
+
+                  <AuthRoute
                     Component={ViewMoreCustomerPage}
                     actionData={{
                       link: "/main/customers/:customername",
@@ -242,16 +249,9 @@ function Main(): any {
                   />
 
                   <AuthRoute
-                    Component={JobReportsPage}
-                    exact
-                    path={"/main/customers/job-reports/reports-list"}
-                    title={"Job Reports"}
-                  />
-
-                  <AuthRoute
                     Component={ViewJobReportsPage}
                     exact
-                    path={"/main/customers/job-reports/reports-list/:jobId"}
+                    path={"/main/customers/job-reports/:jobId"}
                     title={"Job Reports"}
                   />
 

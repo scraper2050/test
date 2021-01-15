@@ -11,16 +11,11 @@ import {
   getJobReports,
   loadingJobReport,
 } from "actions/customer/job-report/job-report.action";
-import {
-  setModalDataAction,
-  openModalAction,
-} from "actions/bc-modal/bc-modal.action";
-import { modalTypes } from "../../../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { JobData } from "../../../../testData";
 
-function CustomersPage({ classes }: any) {
+function JobReportsPage({ classes }: any) {
   const dispatch = useDispatch();
   const jobReports = useSelector((state: any) => state.jobReports);
   const [curTab, setCurTab] = useState(0);
@@ -80,7 +75,7 @@ function CustomersPage({ classes }: any) {
 
   useEffect(() => {
     dispatch(loadingJobReport());
-    dispatch(getJobReports());
+    dispatch(getJobReports(jobReports));
   }, []);
 
   const handleTabChange = (newValue: number) => {
@@ -90,22 +85,6 @@ function CustomersPage({ classes }: any) {
   const handleRowClick = (event: any, row: any) => {
     //console.log(event, row);
   };
-
-  // const handleReportClick = () => {
-  //   dispatch(
-  //     setModalDataAction({
-  //       data: {
-  //         //jobReportObj: renderViewMore(row),
-  //         modalTitle: "Work Report",
-  //         removeFooter: false,
-  //       },
-  //       type: modalTypes.JOB_REPORTS_MODAL,
-  //     })
-  //   );
-  //   setTimeout(() => {
-  //     dispatch(openModalAction());
-  //   }, 200);
-  // };
 
   const renderViewMore = (row: any) => {
     let baseObj = row["original"];
@@ -123,7 +102,7 @@ function CustomersPage({ classes }: any) {
     dispatch(loadSingleJobReport());
     dispatch(getJobReportDetailAction(jobReportObj));
     history.push({
-      pathname: `reports-list/${jobId}`,
+      pathname: `job-reports/${jobId}`,
       state: jobReportObj,
     });
   };
@@ -158,7 +137,7 @@ function CustomersPage({ classes }: any) {
                 isLoading={jobReports.loading}
                 onRowClick={handleRowClick}
                 search
-                tableData={JobData.jobId}
+                tableData={jobReports.data}
                 searchPlaceholder={"Search Job Reports..."}
                 initialMsg={"There are no Job Report List"}
               />
@@ -175,4 +154,4 @@ function CustomersPage({ classes }: any) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(CustomersPage);
+export default withStyles(styles, { withTheme: true })(JobReportsPage);
