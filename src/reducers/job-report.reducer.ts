@@ -9,16 +9,15 @@ import {
 const initialJobReport: JobReportState = {
   loading: false,
   data: [],
-  error: "",
 
   JobReportObj: {
     _id: "",
-    jobId: "",
+    jobId: "23451",
     status: 0,
     employeeType: false,
     dateTime: "",
     description: "",
-    createdAt: "",
+    createdAt: "12-3-2012",
     ticket: {
       scheduleDateTime: "",
       note: "",
@@ -29,7 +28,7 @@ const initialJobReport: JobReportState = {
         email: "",
       },
       profile: {
-        displayName: "",
+        displayName: "Sam Cork",
       },
       contact: {
         phone: "",
@@ -46,7 +45,7 @@ const initialJobReport: JobReportState = {
         email: "",
       },
       profile: {
-        displayName: "",
+        displayName: "Micheal Doe",
       },
       contact: {
         phone: "",
@@ -156,13 +155,13 @@ export const JobReportReducer: Reducer<any> = (
         loading: false,
         error: action.payload,
       };
-    case types.SET_JOBREPORT:
+    case types.SET_SINGLE_JOBREPORT:
       return {
         ...state,
         loading: false,
         JobReportObj: action.payload,
       };
-    case types.GET_JOBREPORT:
+    case types.GET_SINGLE_JOBREPORT:
       return {
         ...state,
         loading: true,

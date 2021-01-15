@@ -25,6 +25,10 @@ const TicketsMapViewPage = React.lazy(
 const JobReportsPage = React.lazy(
   () => import("../customer/job-reports/job-reports")
 );
+const ViewJobReportsPage = React.lazy(
+  () => import("../customer/job-reports/view-job-report")
+);
+
 const InvoicingTodosPage = React.lazy(() => import("../invoicing/todos/todos"));
 const InvoicingListPage = React.lazy(
   () => import("../invoicing/invoices-list/invoices-list")
@@ -236,10 +240,18 @@ function Main(): any {
                     path={"/main/customers/location/:joblocation"}
                     title={"Customers"}
                   />
+
                   <AuthRoute
                     Component={JobReportsPage}
                     exact
-                    path={"/main/customers/job-report/:jobId"}
+                    path={"/main/customers/job-reports/reports-list"}
+                    title={"Job Reports"}
+                  />
+
+                  <AuthRoute
+                    Component={ViewJobReportsPage}
+                    exact
+                    path={"/main/customers/job-reports/reports-list/:jobId"}
                     title={"Job Reports"}
                   />
 
