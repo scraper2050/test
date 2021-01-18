@@ -105,6 +105,8 @@ function JobReportsPage({ classes }: any) {
   const renderViewMore = (row: any) => {
     let baseObj = row["original"];
     let jobId = row["original"]["_id"];
+    let status =
+      baseObj && baseObj["status"] === undefined ? baseObj["status"] : "N/A";
     let customerName =
       baseObj && baseObj["customer"]["profile"] !== undefined
         ? baseObj["customer"]["profile"]["displayName"]
@@ -179,7 +181,7 @@ function JobReportsPage({ classes }: any) {
         ? baseObj["ticket"]["jobCreated"]
         : "N/A";
 
-    let purchaseOrder = purchaseOrderCreated === true ? "Yes" : "No";
+    let purchaseOrder = purchaseOrderCreated ? "Yes" : "No";
 
     let companyName =
       baseObj && baseObj["company"]["info"] !== undefined
@@ -243,7 +245,9 @@ function JobReportsPage({ classes }: any) {
       formatworkPerformedDate,
       formatworkPerformedTimeScan,
       workPerformedNote,
+      status,
     };
+
     jobId = jobId !== undefined ? jobId.replace(/ /g, "") : "jobid";
     localStorage.setItem("nestedRouteKey", `${jobId}`);
     dispatch(loadSingleJob());
@@ -253,6 +257,13 @@ function JobReportsPage({ classes }: any) {
       state: jobReportObj,
     });
   };
+
+  //Display only complete jobs
+  let newJobState = jobState.data;
+
+  newJobState
+    .filter((x: any) => x.status !== 2)
+    .forEach((x: any) => newJobState.splice(newJobState.indexOf(x), 1));
 
   return (
     <div className={classes.pageMainContainer}>
@@ -284,7 +295,7 @@ function JobReportsPage({ classes }: any) {
                 isLoading={jobState.isLoading}
                 onRowClick={handleRowClick}
                 search
-                tableData={jobState.data}
+                tableData={newJobState}
                 searchPlaceholder={"Search Job Reports..."}
                 initialMsg={"There are no Job Report List"}
               />
