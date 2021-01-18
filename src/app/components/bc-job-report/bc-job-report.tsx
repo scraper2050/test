@@ -42,7 +42,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong>Phone Number</strong>
                       <p className={classes.noMargin}>
-                        {jobReportData.customerPhoneNumber}
+                        {jobReportData.phoneFormat}
                       </p>
                     </div>
 
@@ -79,7 +79,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong>Date</strong>
                       <p className={classes.noMargin}>
-                        {jobReportData.jobDate}
+                        {jobReportData.formatJobDate}
                       </p>
                     </div>
                   </Grid>
@@ -88,7 +88,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong>Time</strong>
                       <p className={classes.noMargin}>
-                        {jobReportData.jobTime}
+                        {jobReportData.formatJobTime}
                       </p>
                     </div>
                   </Grid>
@@ -111,7 +111,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   <div className={classes.addMargin}>
                     <strong>Purchase Order Created</strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.purchaseOrderCreated}
+                      {jobReportData.purchaseOrder}
                     </p>
                   </div>
                 </Grid>
@@ -141,17 +141,17 @@ function BCJobReport({ classes, jobReportData }: any) {
               <Grid container className={classes.addMargin}>
                 <Grid item xs={3}>
                   <strong>Unit Number/Location</strong>
-                  <p>{jobReportData.workPerformedLocation}</p>
+                  <p>{jobReportData.location}</p>
                 </Grid>
 
                 <Grid item xs={2}>
                   <strong>Date</strong>
-                  <p>{jobReportData.workPerformedDate}</p>
+                  <p>{jobReportData.formatworkPerformedDate}</p>
                 </Grid>
 
                 <Grid item xs={2}>
                   <strong>Time of Scan</strong>
-                  <p>{jobReportData.workPerformedTimeScan}</p>
+                  <p>{jobReportData.formatworkPerformedTimeScan}</p>
                 </Grid>
 
                 <Grid item xs={2}>

@@ -1,151 +1,124 @@
 import React, { useEffect } from "react";
-
-import {
-  getJobReportDetailAction,
-  loadSingleJobReport,
-} from "actions/customer/job-report/job-report.action";
 import { useDispatch, useSelector } from "react-redux";
-import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 
+import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 import BCJobReport from "../../../components/bc-job-report/bc-job-report";
 import { useLocation } from "react-router-dom";
-import {
-  closeModalAction,
-  setModalDataAction,
-} from "../../../../actions/bc-modal/bc-modal.action";
-//import { JobData } from "../../../../testData";
+import { loadSingleJob, getJobDetailAction } from "actions/job/job.action";
 
-function ViewJobReportsPage() {
+function ViewJobReportsPage({ classes }: any) {
   const dispatch = useDispatch();
-  const jobReportObj = useSelector((state: any) => state.jobReports);
-
-  console.log(jobReportObj);
+  const location = useLocation();
+  const { jobState, isLoading } = useSelector((state: any) => state.jobState);
+  const jobObj = location.state;
 
   useEffect(() => {
-    const jobId = jobReportObj.jobId;
-    dispatch(loadSingleJobReport());
-    dispatch(getJobReportDetailAction({ jobId }));
+    const obj: any = location.state;
+    const jobId = obj.jobId;
+    dispatch(loadSingleJob());
+    dispatch(getJobDetailAction({ jobId }));
   }, []);
 
   const renderJobReport = (row: any) => {
     let baseObj = row;
-    let workReport =
+    let jobId =
       baseObj && baseObj["jobId"] !== undefined ? baseObj["jobId"] : "N/A";
 
     let customerName =
-      baseObj && baseObj["customer"] !== undefined
-        ? baseObj["customer"]["profile"]["displayName"]
+      baseObj && baseObj["customerName"] !== undefined
+        ? baseObj["customerName"]
         : "N/A";
-    let customerPhoneNumber =
-      baseObj && baseObj["customer"] !== undefined
-        ? baseObj["customer"]["contact"]["phone"]
+    let phoneFormat =
+      baseObj && baseObj["phoneFormat"] !== undefined
+        ? baseObj["phoneFormat"]
         : "N/A";
     let customerEmail =
-      baseObj && baseObj["customer"] !== undefined
-        ? baseObj["customer"]["info"]["email"]
+      baseObj && baseObj["customerEmail"] !== undefined
+        ? baseObj["customerEmail"]
         : "N/A";
-    let customerAddress = baseObj && baseObj["customer"];
-    let address: any = "";
-    if (customerAddress && customerAddress !== undefined) {
-      address = `${
-        customerAddress["street"] !== undefined &&
-        customerAddress["street"] !== null
-          ? customerAddress["street"]
-          : ""
-      } 
-      ${
-        customerAddress["city"] !== undefined &&
-        customerAddress["city"] !== null
-          ? customerAddress["city"]
-          : ""
-      } ${
-        customerAddress["state"] !== undefined &&
-        customerAddress["state"] !== null &&
-        customerAddress["state"] !== "none"
-          ? customerAddress["state"]
-          : ""
-      } ${
-        customerAddress["zipCode"] !== undefined &&
-        customerAddress["zipCode"] !== null
-          ? customerAddress["zipCode"]
-          : ""
-      }`;
-    } else {
-      address = "N/A";
-    }
+
+    let workReport =
+      baseObj && baseObj["workReport"] !== undefined
+        ? baseObj["workReport"]
+        : "N/A";
+
+    let address =
+      baseObj && baseObj["address"] !== undefined ? baseObj["address"] : "N/A";
+
     let jobType =
-      baseObj && baseObj["type"] !== undefined
-        ? baseObj["type"]["title"]
+      baseObj && baseObj["jobType"] !== undefined ? baseObj["jobType"] : "N/A";
+    let formatJobDate =
+      baseObj && baseObj["formatJobDate"] !== undefined
+        ? baseObj["formatJobDate"]
         : "N/A";
-    let jobDate =
-      baseObj && baseObj["createdAt"] !== undefined
-        ? baseObj["createdAt"]
-        : "N/A";
-    let jobTime =
-      baseObj && baseObj["dateTime"] !== undefined
-        ? baseObj["dateTime"]
+    let formatJobTime =
+      baseObj && baseObj["formatJobTime"] !== undefined
+        ? baseObj["formatJobTime"]
         : "N/A";
     let technicianName =
-      baseObj && baseObj["technician"] !== undefined
-        ? baseObj["technician"]["profile"]["displayName"]
+      baseObj && baseObj["technicianName"] !== undefined
+        ? baseObj["technicianName"]
         : "N/A";
     let recordNote =
-      baseObj && baseObj["note"] !== undefined ? baseObj["dateTime"] : "N/A";
-    let purchaseOrderCreated =
-      baseObj && baseObj["createdAt"] !== undefined
-        ? baseObj["dateTime"]
+      baseObj && baseObj["recordNote"] !== undefined
+        ? baseObj["recordNote"]
+        : "N/A";
+    let purchaseOrder =
+      baseObj && baseObj["purchaseOrder"] !== undefined
+        ? baseObj["purchaseOrder"]
         : "N/A";
     let companyName =
-      baseObj && baseObj["createdBy"] !== undefined
-        ? baseObj["createdBy"]["info"]["companyName"]
+      baseObj && baseObj["companyName"] !== undefined
+        ? baseObj["companyName"]
         : "N/A";
     let companyEmail =
-      baseObj && baseObj["createdBy"] !== undefined
-        ? baseObj["createdBy"]["auth"]["email"]
+      baseObj && baseObj["companyEmail"] !== undefined
+        ? baseObj["companyEmail"]
         : "N/A";
     let companyPhone =
-      baseObj && baseObj["createdBy"] !== undefined
-        ? baseObj["createdBy"]["contact"]["phone"]
+      baseObj && baseObj["companyPhone"] !== undefined
+        ? baseObj["companyPhone"]
         : "N/A";
-    let workPerformedLocation =
-      baseObj && baseObj["scans"] !== undefined
-        ? baseObj["scans"]["equipment"]["info"]["location"]
+    let location =
+      baseObj && baseObj["location"] !== undefined
+        ? baseObj["location"]
         : "N/A";
-    let workPerformedDate =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["scheduleDateTime"]
+    let formatworkPerformedDate =
+      baseObj && baseObj["formatworkPerformedDate"] !== undefined
+        ? baseObj["formatworkPerformedDate"]
         : "N/A";
-    let workPerformedTimeScan =
-      baseObj && baseObj["scans"] !== undefined
-        ? baseObj["scans"]["timeOfScan"]
+    let formatworkPerformedTimeScan =
+      baseObj && baseObj["formatworkPerformedTimeScan"] !== undefined
+        ? baseObj["formatworkPerformedTimeScan"]
         : "N/A";
     let workPerformedImage =
       baseObj && baseObj["scans"] !== undefined
         ? baseObj["scans"]["equipment"]["images"]
         : "N/A";
     let workPerformedNote =
-      baseObj && baseObj["scans"] !== undefined
-        ? baseObj["scans"]["comment"]
+      baseObj && baseObj["workPerformedNote"] !== undefined
+        ? baseObj["workPerformedNote"]
         : "N/A";
 
     let jobReportObj = {
       workReport,
-      customerName,
-      customerPhoneNumber,
-      customerEmail,
+      customerName: customerName,
+      phoneFormat: phoneFormat,
+      customerEmail: customerEmail,
+      jobId: jobId,
       address,
       jobType,
-      jobDate,
-      jobTime,
+      formatJobDate,
+      formatJobTime,
       technicianName,
       recordNote,
-      purchaseOrderCreated,
+      purchaseOrder,
       companyName,
       companyEmail,
       companyPhone,
-      workPerformedLocation,
-      workPerformedDate,
-      workPerformedTimeScan,
+      location,
+      formatworkPerformedDate,
+      formatworkPerformedTimeScan,
       workPerformedImage,
       workPerformedNote,
     };
@@ -153,10 +126,10 @@ function ViewJobReportsPage() {
     return jobReportObj;
   };
 
-  if (jobReportObj.loading) {
+  if (isLoading) {
     return <BCCircularLoader heightValue={"200px"} />;
   } else {
-    const jobReportData = renderJobReport(jobReportObj);
+    const jobReportData = renderJobReport(jobObj);
 
     return <BCJobReport jobReportData={jobReportData} />;
   }

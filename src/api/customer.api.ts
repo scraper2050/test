@@ -9,6 +9,7 @@ export const getCustomers = async (param?: {}) => {
   try {
     const response: any = await request("/getCustomers", "POST", body, false);
     responseData = response.data;
+    console.log(response.data);
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
@@ -38,6 +39,7 @@ export const getCustomerDetail = async (data: any) => {
       false
     );
     responseData = response.data;
+    console.log(response.data.customer);
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {

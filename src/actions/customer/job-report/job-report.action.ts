@@ -1,10 +1,7 @@
 import { createApiAction } from "../../action.utils";
 import { JobReportActionType, types } from "../../../reducers/job-report.types";
-import {
-  getJobReports as fetchJobReports,
-  getJobReportDetail,
-} from "api/job-report.api";
-import { error } from "actions/snackbar/snackbar.action";
+import { getJobReportDetail } from "api/job-report.api";
+//import { error } from "actions/snackbar/snackbar.action";
 
 export const loadJobReportActions = createApiAction(types.LOAD_JOBREPORT);
 
@@ -20,17 +17,17 @@ export const loadSingleJobReport = () => {
   };
 };
 
-export const getJobReports = (data: any) => {
-  return async (dispatch: any) => {
-    const jobReports: any = await fetchJobReports(data);
-    if (jobReports.status === 0) {
-      dispatch(error(jobReports.description));
-      dispatch(setJobReports([]));
-    } else {
-      dispatch(setJobReports(jobReports.jobReports));
-    }
-  };
-};
+// export const getJobReports = (data: any) => {
+//   return async (dispatch: any) => {
+//     const jobReports: any = await fetchJobReports(data);
+//     if (jobReports.status === 0) {
+//       dispatch(error(jobReports.description));
+//       dispatch(setJobReports([]));
+//     } else {
+//       dispatch(setJobReports(jobReports.jobReports));
+//     }
+//   };
+// };
 
 export const setJobReports = (jobReports: any) => {
   return {

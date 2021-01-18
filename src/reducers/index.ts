@@ -7,7 +7,7 @@ import companyEquipment from "./company-equipment.reducer";
 import { CustomersReducer as customers } from "./customer.reducer";
 import { ImageReducer as image } from "./image.reducer";
 import { EmployeesReducer as employees } from "./employee.reducer";
-import jobState from "./jobs.reducer";
+import { jobReducer as jobState } from "./jobs.reducer";
 import jobTypes from "./job-type.reducer";
 import modal from "./bc-modal.reducer";
 import routeReducer from "./route.reducer";
