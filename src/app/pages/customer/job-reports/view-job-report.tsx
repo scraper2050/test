@@ -100,6 +100,8 @@ function ViewJobReportsPage({ classes }: any) {
         ? baseObj["workPerformedNote"]
         : "N/A";
 
+    let status = baseObj && baseObj["status"] === 2 ? baseObj["status"] : "N/A";
+
     let jobReportObj = {
       workReport,
       customerName: customerName,
@@ -121,6 +123,7 @@ function ViewJobReportsPage({ classes }: any) {
       formatworkPerformedTimeScan,
       workPerformedImage,
       workPerformedNote,
+      status,
     };
 
     return jobReportObj;
