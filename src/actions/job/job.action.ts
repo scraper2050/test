@@ -17,6 +17,12 @@ export const setJobs = (jobs: any) => {
     type: types.SET_JOBS,
   };
 };
+export const setJobLoading = (isLoading: any) => {
+  return {
+    payload: isLoading,
+    type: types.SET_JOB_LOADING,
+  };
+};
 
 export const loadSingleJob = () => {
   return {

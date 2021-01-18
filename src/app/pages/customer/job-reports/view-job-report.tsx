@@ -5,21 +5,12 @@ import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-load
 import BCJobReport from "../../../components/bc-job-report/bc-job-report";
 import { useLocation } from "react-router-dom";
 import { loadSingleJob, getJobDetailAction } from "actions/job/job.action";
-import { Grid, Button, withStyles } from "@material-ui/core";
-import WallpaperIcon from "@material-ui/icons/Wallpaper";
-import styles, {
-  MainContainer,
-  PageContainer,
-  DataContainer,
-} from "../../../components/bc-job-report/job-reports.styles";
 
 function ViewJobReportsPage({ classes }: any) {
   const dispatch = useDispatch();
   const location = useLocation();
   const { jobState, isLoading } = useSelector((state: any) => state.jobState);
   const jobObj = location.state;
-
-  //console.log(jobReportObj);
 
   useEffect(() => {
     const obj: any = location.state;

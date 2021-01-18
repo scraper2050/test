@@ -5,7 +5,7 @@ import { withStyles } from "@material-ui/core";
 import styled from "styled-components";
 
 import BCTableContainer from "../../../../components/bc-table-container/bc-table-container";
-//import { getAllJobAPI } from 'api/job.api';
+import { getAllJobsAPI } from "api/job.api";
 import { modalTypes } from "../../../../../constants";
 import styles from "../../customer.styles";
 import { formatDate, convertMilitaryTime } from "helpers/format";
@@ -152,8 +152,7 @@ function JobPage({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(loadingJobs());
-      dispatch(getJobs());
+      getAllJobsAPI();
     }
   }, [refresh]);
 

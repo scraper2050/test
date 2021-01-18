@@ -4,6 +4,7 @@ export const types = {
   SET_REFRESH_JOB_STATUS: "SET_REFRESH_JOB_STATUS",
   SET_SINGLE_JOB: "SET_SINGLE_JOB",
   GET_SINGLE_JOB: "GET_SINGLE_JOB",
+  SET_JOB_LOADING: "SET_JOB_LOADING",
 };
 
 export interface Job {

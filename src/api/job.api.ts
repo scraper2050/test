@@ -4,7 +4,7 @@ import {
   setJobTypes,
   setJobTypesLoading,
 } from "actions/job-type/job-type.action";
-import { refreshJobs, setJobs } from "actions/job/job.action";
+import { refreshJobs, setJobLoading, setJobs } from "actions/job/job.action";
 
 export const getAllJobTypesAPI = () => {
   return (dispatch: any) => {
@@ -25,25 +25,25 @@ export const getAllJobTypesAPI = () => {
   };
 };
 
-// export const getAllJobAPI = () => {
-//   return (dispatch: any) => {
-//     return new Promise((resolve, reject) => {
-//       dispatch(setJobLoading(true));
-//       request(`/getJobs`, "post", null)
-//         .then((res: any) => {
-//           console.log(res.data.jobs);
-//           dispatch(setJobs(res.data.jobs));
-//           dispatch(setJobLoading(false));
-//           dispatch(refreshJobs(false));
-//           return resolve(res.data);
-//         })
-//         .catch((err) => {
-//           dispatch(setJobTypesLoading(false));
-//           return reject(err);
-//         });
-//     });
-//   };
-// };
+export const getAllJobsAPI = () => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setJobLoading(true));
+      request(`/getJobs`, "post", null)
+        .then((res: any) => {
+          console.log(res.data.jobs);
+          dispatch(setJobs(res.data.jobs));
+          dispatch(setJobLoading(false));
+          dispatch(refreshJobs(false));
+          return resolve(res.data);
+        })
+        .catch((err) => {
+          dispatch(setJobTypesLoading(false));
+          return reject(err);
+        });
+    });
+  };
+};
 
 export const getAllJobAPI = async (param?: {}) => {
   const body = {};
