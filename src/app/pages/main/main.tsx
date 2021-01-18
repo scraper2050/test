@@ -13,6 +13,9 @@ const CustomersPage = React.lazy(() => import("../customer/customer"));
 const NewCustomerPage = React.lazy(
   () => import("../customer/new-customer/new-customer")
 );
+const JobReportsPage = React.lazy(
+  () => import("../customer/job-reports/job-reports")
+);
 const ViewMoreCustomerPage = React.lazy(
   () => import("../customer/view-more/view-more")
 );
@@ -22,9 +25,7 @@ const ViewMoreLocationPage = React.lazy(
 const TicketsMapViewPage = React.lazy(
   () => import("../customer/tickets-map-view/tickets-map-view")
 );
-const JobReportsPage = React.lazy(
-  () => import("../customer/job-reports/job-reports")
-);
+
 const ViewJobReportsPage = React.lazy(
   () => import("../customer/job-reports/view-job-report")
 );
@@ -250,6 +251,10 @@ function Main(): any {
 
                   <AuthRoute
                     Component={ViewJobReportsPage}
+                    // actionData={{
+                    //   link: "/main/customers/job-reports/:jobId",
+                    //   title: "Job Reports",
+                    // }}
                     exact
                     path={"/main/customers/job-reports/:jobId"}
                     title={"Job Reports"}
