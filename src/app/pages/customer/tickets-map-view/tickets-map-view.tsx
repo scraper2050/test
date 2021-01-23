@@ -191,10 +191,6 @@ function TicketsWithMapView({ classes }: any) {
     dispatch(setOpenServiceTicketObject(openTicketObj));
   }
 
-  //removing the first element: this first element needs to be deleted from the backend
-  let openTicketsClone = [...openTickets];
-  openTicketsClone.shift();
-
     if(isLoading){
       return <BCCircularLoader heightValue={'200px'}/>
     }
@@ -265,7 +261,7 @@ function TicketsWithMapView({ classes }: any) {
 
 
                     {
-                      openTicketsClone.map((x: any, i: any) => (
+                      openTickets.map((x: any, i: any) => (
                         <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
                           <div className="ticket_title">
                             <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
