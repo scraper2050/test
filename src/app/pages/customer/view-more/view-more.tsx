@@ -1,6 +1,11 @@
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
+import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import BCBackButton from '../../../components/bc-back-button/bc-back-button';
+import ReportsIcon from '../../../../assets/img/icons/customers/Reports';
+import JobsIcon from '../../../../assets/img/icons/customers/Jobs';
+import TicketsIcon from '../../../../assets/img/icons/customers/Tickets';
+import EquipmentIcon from '../../../../assets/img/icons/customers/Equipment';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
@@ -28,8 +33,8 @@ function ViewMorePage({ classes }: any) {
 
   const renderJobSiteComponent = (jobLocation: any) => {
     let locationName = jobLocation.name;
-    let locationNameLink = locationName !== undefined ? locationName.replace(/ /g,'') : 'locationName';
-    let linkKey:any = localStorage.getItem('nestedRouteKey');
+    let locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
     localStorage.setItem('prevNestedRouteKey', linkKey);
     localStorage.setItem('nestedRouteKey', `location/${locationNameLink}`);
     history.push({
@@ -54,16 +59,16 @@ function ViewMorePage({ classes }: any) {
     {
       'Header': 'Address',
       'accessor': 'address',
-      Cell: (row:any) => {
+      Cell: (row: any) => {
         return (
-            <div>
-                <span>{`${row.value && row.value.street ? row.value.street : ''}` + ' '}</span>
-                <span>{`${row.value && row.value.city ? row.value.city : ''}` + ' '}</span>
-                <span>{`${row.value && row.value.state !== 'none' ? row.value.state : ''}` + ' '}</span>
-                <span>{`${row.value && row.value.zipcode ? row.value.zipcode : ''}` + ' '}</span>
-            </div>
+          <div>
+            <span>{`${row.value && row.value.street ? row.value.street : ''}` + ' '}</span>
+            <span>{`${row.value && row.value.city ? row.value.city : ''}` + ' '}</span>
+            <span>{`${row.value && row.value.state !== 'none' ? row.value.state : ''}` + ' '}</span>
+            <span>{`${row.value && row.value.zipcode ? row.value.zipcode : ''}` + ' '}</span>
+          </div>
         )
-    },
+      },
       'className': 'font-bold',
       'sortable': true
     },
@@ -80,7 +85,7 @@ function ViewMorePage({ classes }: any) {
             variant={'extended'}>
             {'View More'}
           </Fab>
-          
+
         </div>;
       },
       'id': 'action',
@@ -90,10 +95,10 @@ function ViewMorePage({ classes }: any) {
   ];
 
   useEffect(() => {
-   const obj: any = location.state;
-   const customerId = obj.customerId;
-   dispatch(loadingJobLocations());
-   dispatch(getJobLocationsAction(customerId));
+    const obj: any = location.state;
+    const customerId = obj.customerId;
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(customerId));
   }, []);
 
   const handleTabChange = (newValue: number) => {
@@ -118,69 +123,114 @@ function ViewMorePage({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-        <BCBackButton
+
+          <Grid container
+          >
+            <BCBackButton
               link={'/main/customers'}
             />
+
             <div className="tab_wrapper">
-            <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'CUSTOMER INFO',
-                'value': 0
-              },
-              {
-                'label': 'JOB/EQUIPMENT INFO',
-                'value': 1
-              }
-            ]}
-          />
-          </div>
-           
-         {
-           customerState.loading ? <BCCircularLoader heightValue={'200px'}/> : 
-           <SwipeableViews index={curTab} className={'swipe_wrapper'}>
-           <div
-             className={`${classes.dataContainer} `}
-             hidden={curTab !== 0}
-             id={'0'}>
-             <PageContainer className="info_wrapper alignAddJobLocation">
-              < CustomerInfoPage customerObj={customerObj}/> 
-               <Fab
-                   aria-label={'delete'}
-                   classes={{
-                   'root': classes.fabRoot
-                   }}
-                   onClick={() => openJobLocationModal()}
-                   color={'primary'}
-                   variant={'extended'}>
-                   {'Add Job Location'}
-               </Fab>
-           </PageContainer>
-           
-             <BCTableContainer
-               columns={columns}
-               isLoading={jobLocations.loading}
-               search
-               searchPlaceholder={"Search Job Locations..."}
-               tableData={jobLocations.data}
-               initialMsg="There are no job locations!"
-             />
-           </div>
-           <div
-             hidden={curTab !== 1}
-             id={'1'}>
-             <Grid container>
-               <Grid
-                 item
-                 xs={12}
-               />
-             </Grid>
-           </div>
-         </SwipeableViews>
-         }
+              <BCTabs
+                curTab={curTab}
+                indicatorColor={'primary'}
+                onChangeTab={handleTabChange}
+                tabsData={[
+                  {
+                    'label': 'CUSTOMER INFO',
+                    'value': 0
+                  },
+                  {
+                    'label': 'JOB/EQUIPMENT INFO',
+                    'value': 1
+                  }
+                ]}
+              />
+            </div>
+          </Grid>
+
+          {
+            customerState.loading ? <BCCircularLoader heightValue={'200px'} /> :
+              <SwipeableViews index={curTab} className={'swipe_wrapper'}>
+                <div
+                  className={`${classes.dataContainer} `}
+                  hidden={curTab !== 0}
+                  id={'0'}>
+                  <PageContainer className="info_wrapper alignAddJobLocation">
+                    < CustomerInfoPage customerObj={customerObj} />
+                    <Fab
+                      aria-label={'delete'}
+                      classes={{
+                        'root': classes.fabRoot
+                      }}
+                      onClick={() => openJobLocationModal()}
+                      color={'primary'}
+                      variant={'extended'}>
+                      {'Add Job Location'}
+                    </Fab>
+                  </PageContainer>
+
+                  <BCTableContainer
+                    columns={columns}
+                    isLoading={jobLocations.loading}
+                    search
+                    searchPlaceholder={"Search Job Locations..."}
+                    tableData={jobLocations.data}
+                    initialMsg="There are no job locations!"
+                  />
+                </div>
+                <div
+                  hidden={curTab !== 1}
+                  style={{
+                    'padding': '30px 0px'
+                  }}
+                  id={'1'}>
+
+                  <Grid container
+                    spacing={4}>
+                    <Grid
+                      item>
+                      <BCAdminCard
+                        cardText={'Reports'}
+                        color={'primary'}
+                        link={'/main/customers'}>
+                        <ReportsIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                    <Grid
+                      item>
+                      <BCAdminCard
+                        cardText={'Jobs'}
+                        color={'secondary'}
+                        link={'/main/customers'}>
+                        <JobsIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                    <Grid
+                      item>
+                      <BCAdminCard
+                        cardText={'Tickets'}
+                        color={'info'}
+                        link={'/main/customers'}>
+                        <TicketsIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                    <Grid
+                      item>
+                      <BCAdminCard
+                        cardText={'Equipment'}
+                        color={'primary-red'}
+                        link={'/main/customers'}>
+                        <EquipmentIcon />
+                      </BCAdminCard>
+                    </Grid>
+                  </Grid>
+                </div>
+              </SwipeableViews>
+          }
         </div>
       </div>
     </div>

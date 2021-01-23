@@ -88,6 +88,7 @@ function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceT
         <TableBody>
           {page.map((row: any, i: number) => {
             prepareRow(row);
+            console.log(row.cell)
             return (
               <TableRow
                 key={`table-row-${i}`}

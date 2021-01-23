@@ -7,5 +7,10 @@ export default (theme: Theme): any => ({
     'color': 'white',
     'height': '28px',
     'width': '28px'
+  },
+  'centerIcon': {
+    'display': 'flex',
+    'align-items': 'center',
+    'margin-right': '15px',
   }
 });

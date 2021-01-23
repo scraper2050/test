@@ -13,7 +13,7 @@ interface Props {
   link: string;
 }
 
-function BCAdminCard({ cardText, classes, color, link, children } : Props) {
+function BCAdminCard({ cardText, classes, color, link, children }: Props) {
   let circleClass: string = '';
   let textClass: string = '';
 
@@ -23,6 +23,9 @@ function BCAdminCard({ cardText, classes, color, link, children } : Props) {
   } else if (color === 'secondary') {
     circleClass = classNames(classes.circleBackground, classes.secondaryBackground);
     textClass = classNames(classes.cardText, classes.secondaryTextColor);
+  } else if (color === 'primary-red') {
+    circleClass = classNames(classes.circleBackground, classes.primaryRedBackground);
+    textClass = classNames(classes.cardText, classes.primaryRedTextColor);
   } else {
     circleClass = classNames(classes.circleBackground, classes.infoBackground);
     textClass = classNames(classes.cardText, classes.infoTextColor);
@@ -34,10 +37,10 @@ function BCAdminCard({ cardText, classes, color, link, children } : Props) {
       <Card className={classes.card}>
         <CardActionArea className={classes.cardActionArea}>
           <div className={circleClass}>
-            { children }
+            {children}
           </div>
           <p className={textClass}>
-            { cardText }
+            {cardText}
           </p>
         </CardActionArea>
       </Card>
