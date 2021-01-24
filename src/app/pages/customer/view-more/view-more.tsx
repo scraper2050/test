@@ -37,8 +37,6 @@ function ViewMorePage({ classes }: any) {
   const history = useHistory();
   const [curTab, setCurTab] = useState(customerObj.from && customerObj.from === 'job-equipment-info' ? 1 : 0);
 
-  console.log(customerObj, 'staaaaate')
-
   const renderJobSiteComponent = (jobLocation: any) => {
     let locationName = jobLocation.name;
     let locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
@@ -152,6 +150,8 @@ function ViewMorePage({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  console.log(jobLocations);
 
   return (
     <div className={classes.pageMainContainer}>

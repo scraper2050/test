@@ -12,5 +12,15 @@ export default (theme: Theme): any => ({
     'display': 'flex',
     'align-items': 'center',
     'margin-right': '15px',
+  },
+  'centerWithBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_BLUE,
+    'borderRadius': '50%',
+    'color': 'white',
+    'height': '28px',
+    'width': '28px',
+    'display': 'flex',
+    'align-items': 'center',
+    'margin-right': '15px',
   }
 });

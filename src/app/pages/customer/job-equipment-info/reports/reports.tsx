@@ -1,15 +1,23 @@
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
+import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../components/bc-tab/bc-tab';
 import { Grid } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './reports.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useLocation, useHistory } from 'react-router-dom';
+import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
 
 function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   const location = useLocation();
   const history = useHistory();
+  const [curTab, setCurTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
+  };
 
   const renderGoBack = (location: any) => {
     let baseObj = location;
@@ -34,25 +42,53 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
 
   return (
     <>
-      {/* <BCSubHeader title={'Admin'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
-        />
-      </BCSubHeader> */}
+      <div className={classes.pageMainContainer}>
+        <div className={classes.pageContainer}>
+          <div className={classes.pageContent}>
 
-      <MainContainer>
-        <PageContainer>
-          <Grid
-            container
-            spacing={4}>
-            <BCBackButtonNoLink
-              func={() => renderGoBack(location.state)}
+            <Grid
+              container>
+              <BCBackButtonNoLink
+                func={() => renderGoBack(location.state)}
+              />
+              <div className="tab_wrapper">
+                <BCTabs
+                  curTab={curTab}
+                  indicatorColor={'primary'}
+                  onChangeTab={handleTabChange}
+                  tabsData={[
+                    {
+                      'label': 'CUSTOMER REPORTS',
+                      'value': 0
+                    },
+                  ]}
+                />
+              </div>
+            </Grid>
+
+            <div
+              style={{
+                'height': '15px'
+              }}
             />
-          </Grid>
-        </PageContainer>
-      </MainContainer>
+
+            <div
+              className={`${classes.dataContainer} `}
+              hidden={curTab !== 0}
+              id={'0'}>
+              <BCTableContainer
+                columns={DUMMY_COLUMN}
+                isLoading={isLoading}
+                search
+                searchPlaceholder={"Search...(Keyword, Datae, Tag, etc.)"}
+                tableData={DUMMY_DATA}
+                initialMsg="There are no data!"
+              />
+            </div>
+
+          </div>
+        </div>
+      </div>
     </>
   );
 }

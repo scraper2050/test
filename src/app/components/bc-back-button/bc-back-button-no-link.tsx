@@ -10,14 +10,16 @@ interface Props {
   classes: any;
 }
 
-function BCBackButtonNoLink({ func, classes} : Props) {
+function BCBackButtonNoLink({ func, classes }: Props) {
   return (
+    <div className={classes.centerIcon}>
       <IconButton
         onClick={func}
         className={classes.roundBackground}
         color={'primary'}>
         <ArrowBackIcon fontSize={'small'} />
-      </IconButton> 
+      </IconButton>
+    </div>
   );
 }
 
