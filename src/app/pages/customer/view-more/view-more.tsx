@@ -22,14 +22,22 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
 
+interface LocationState {
+  customerName?: string;
+  customerId?: string;
+  from?: string;
+}
+
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
-  const [curTab, setCurTab] = useState(0);
-  const location = useLocation();
+  const location = useLocation<LocationState>();
   const customerObj = location.state;
   const history = useHistory();
+  const [curTab, setCurTab] = useState(customerObj.from && customerObj.from === 'job-equipment-info' ? 1 : 0);
+
+  console.log(customerObj, 'staaaaate')
 
   const renderJobSiteComponent = (jobLocation: any) => {
     let locationName = jobLocation.name;
@@ -40,6 +48,32 @@ function ViewMorePage({ classes }: any) {
     history.push({
       pathname: `/main/customers/location/${locationNameLink}`,
       state: jobLocation
+    });
+  };
+
+
+  const renderJobEquipmentButton = (customerState: any, link: string) => {
+    let baseObj = customerState;
+    let customerName =
+      baseObj["profile"] && baseObj["profile"] !== undefined
+        ? baseObj["profile"]["displayName"]
+        : "N/A";
+    let customerId =
+      baseObj["_id"] && baseObj["_id"] !== undefined
+        ? baseObj["_id"]
+        : "N/A";
+    let customerObj = {
+      customerName,
+      customerId,
+    };
+    customerName =
+      customerName !== undefined
+        ? customerName.replace(/ /g, "")
+        : "customername";
+
+    history.push({
+      pathname: `/main/customers/${customerName}/job-equipment-info/${link}`,
+      state: customerObj,
     });
   };
 
@@ -182,18 +216,19 @@ function ViewMorePage({ classes }: any) {
                 <div
                   hidden={curTab !== 1}
                   style={{
-                    'padding': '30px 0px'
+                    'padding': '40px'
                   }}
                   id={'1'}>
 
                   <Grid container
-                    spacing={4}>
+                    spacing={5}>
                     <Grid
                       item>
                       <BCAdminCard
                         cardText={'Reports'}
                         color={'primary'}
-                        link={'/main/customers'}>
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'reports')}
+                      >
                         <ReportsIcon />
                       </BCAdminCard>
                     </Grid>
@@ -203,7 +238,8 @@ function ViewMorePage({ classes }: any) {
                       <BCAdminCard
                         cardText={'Jobs'}
                         color={'secondary'}
-                        link={'/main/customers'}>
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'jobs')}
+                      >
                         <JobsIcon />
                       </BCAdminCard>
                     </Grid>
@@ -213,7 +249,8 @@ function ViewMorePage({ classes }: any) {
                       <BCAdminCard
                         cardText={'Tickets'}
                         color={'info'}
-                        link={'/main/customers'}>
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'tickets')}
+                      >
                         <TicketsIcon />
                       </BCAdminCard>
                     </Grid>
@@ -223,7 +260,8 @@ function ViewMorePage({ classes }: any) {
                       <BCAdminCard
                         cardText={'Equipment'}
                         color={'primary-red'}
-                        link={'/main/customers'}>
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'equipment')}
+                      >
                         <EquipmentIcon />
                       </BCAdminCard>
                     </Grid>

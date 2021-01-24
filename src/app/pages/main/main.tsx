@@ -19,6 +19,18 @@ const JobReportsPage = React.lazy(
 const ViewMoreCustomerPage = React.lazy(
   () => import("../customer/view-more/view-more")
 );
+const CustomersJobEquipmentInfoReportsPage = React.lazy(
+  () => import('../customer/job-equipment-info/reports/reports')
+);
+const CustomersJobEquipmentInfoJobsPage = React.lazy(
+  () => import('../customer/job-equipment-info/jobs/jobs')
+);
+const CustomersJobEquipmentInfoTicketsPage = React.lazy(
+  () => import('../customer/job-equipment-info/tickets/tickets')
+);
+const CustomersJobEquipmentInfoEquipmentPage = React.lazy(
+  () => import('../customer/job-equipment-info/equipment/equipment')
+);
 const ViewMoreLocationPage = React.lazy(
   () => import("../customer/view-more/view-more-location")
 );
@@ -237,7 +249,46 @@ function Main(): any {
                     path={"/main/customers/:customername"}
                     title={"Customers"}
                   />
-
+                  <AuthRoute
+                    Component={CustomersJobEquipmentInfoReportsPage}
+                    actionData={{
+                      link: "/main/customers/:customername/job-equipment-info/reports",
+                      title: "Customers",
+                    }}
+                    exact
+                    path={"/main/customers/:customername/job-equipment-info/reports"}
+                    title={"Customers"}
+                  />
+                  <AuthRoute
+                    Component={CustomersJobEquipmentInfoJobsPage}
+                    actionData={{
+                      link: "/main/customers/:customername/job-equipment-info/jobs",
+                      title: "Customers",
+                    }}
+                    exact
+                    path={"/main/customers/:customername/job-equipment-info/jobs"}
+                    title={"Customers"}
+                  />
+                  <AuthRoute
+                    Component={CustomersJobEquipmentInfoTicketsPage}
+                    actionData={{
+                      link: "/main/customers/:customername/job-equipment-info/tickets",
+                      title: "Customers",
+                    }}
+                    exact
+                    path={"/main/customers/:customername/job-equipment-info/tickets"}
+                    title={"Customers"}
+                  />
+                  <AuthRoute
+                    Component={CustomersJobEquipmentInfoEquipmentPage}
+                    actionData={{
+                      link: "/main/customers/:customername/job-equipment-info/equipment",
+                      title: "Customers",
+                    }}
+                    exact
+                    path={"/main/customers/:customername/job-equipment-info/equipment"}
+                    title={"Customers"}
+                  />
                   <AuthRoute
                     Component={ViewMoreLocationPage}
                     actionData={{
