@@ -9,7 +9,6 @@ import {
 const initialJobReport: JobReportState = {
   loading: false,
   data: [],
-  error: "",
 
   JobReportObj: {
     _id: "",
@@ -156,13 +155,13 @@ export const JobReportReducer: Reducer<any> = (
         loading: false,
         error: action.payload,
       };
-    case types.SET_JOBREPORT:
+    case types.SET_SINGLE_JOBREPORT:
       return {
         ...state,
         loading: false,
         JobReportObj: action.payload,
       };
-    case types.GET_JOBREPORT:
+    case types.GET_SINGLE_JOBREPORT:
       return {
         ...state,
         loading: true,

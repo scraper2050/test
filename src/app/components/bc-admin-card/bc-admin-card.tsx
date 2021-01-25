@@ -10,10 +10,11 @@ interface Props {
   classes: any;
   color: string;
   children?: React.ReactNode;
-  link: string;
+  link?: string;
+  func?: any;
 }
 
-function BCAdminCard({ cardText, classes, color, link, children } : Props) {
+function BCAdminCard({ cardText, classes, color, link, children, func }: Props) {
   let circleClass: string = '';
   let textClass: string = '';
 
@@ -23,25 +24,41 @@ function BCAdminCard({ cardText, classes, color, link, children } : Props) {
   } else if (color === 'secondary') {
     circleClass = classNames(classes.circleBackground, classes.secondaryBackground);
     textClass = classNames(classes.cardText, classes.secondaryTextColor);
+  } else if (color === 'primary-red') {
+    circleClass = classNames(classes.circleBackground, classes.primaryRedBackground);
+    textClass = classNames(classes.cardText, classes.primaryRedTextColor);
   } else {
     circleClass = classNames(classes.circleBackground, classes.infoBackground);
     textClass = classNames(classes.cardText, classes.infoTextColor);
   }
   return (
-    <Link
-      className={classes.link}
-      to={link}>
-      <Card className={classes.card}>
-        <CardActionArea className={classes.cardActionArea}>
-          <div className={circleClass}>
-            { children }
-          </div>
-          <p className={textClass}>
-            { cardText }
-          </p>
-        </CardActionArea>
-      </Card>
-    </Link>
+    link ?
+      <Link
+        className={classes.link}
+        to={link}
+      >
+        <Card className={classes.card}>
+          <CardActionArea className={classes.cardActionArea}>
+            <div className={circleClass}>
+              {children}
+            </div>
+            <p className={textClass}>
+              {cardText}
+            </p>
+          </CardActionArea>
+        </Card>
+      </Link>
+      : func ?
+        <Card className={classes.card} onClick={func} >
+          <CardActionArea className={classes.cardActionArea}>
+            <div className={circleClass}>
+              {children}
+            </div>
+            <p className={textClass}>
+              {cardText}
+            </p>
+          </CardActionArea>
+        </Card> : null
   );
 }
 

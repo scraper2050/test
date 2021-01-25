@@ -123,9 +123,8 @@ export interface JobReport {
 
 export interface JobReportState {
   readonly loading: boolean;
-  readonly data?: JobReport[];
+  readonly jobReports?: JobReport[];
   readonly error?: string;
-  readonly JobReportObj?: JobReport;
 }
 
 export enum JobReportActionType {
