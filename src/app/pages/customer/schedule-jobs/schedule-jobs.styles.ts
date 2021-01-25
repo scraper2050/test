@@ -13,6 +13,5 @@ export default (theme: Theme): any => ({
     'padding': '12px 30px 5px 0',
     'position': 'absolute',
     'right': '0',
-    'zIndex': '1000'
   }
 });
