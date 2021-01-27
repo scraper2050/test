@@ -47,7 +47,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
   };
 
   const renderGoBack = (location: any) => {
-    let baseObj = location;
+    const baseObj = location;
     let customerName =
       baseObj["customerName"] && baseObj["customerName"] !== undefined
         ? baseObj["customerName"]
