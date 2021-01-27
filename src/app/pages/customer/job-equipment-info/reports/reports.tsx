@@ -4,7 +4,7 @@ import BCTabs from '../../../../components/bc-tab/bc-tab';
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import styles from './reports.style';
+import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useLocation, useHistory } from 'react-router-dom';
 import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
@@ -29,6 +29,10 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
       baseObj["customerId"] && baseObj["customerId"] !== undefined
         ? baseObj["customerId"]
         : "N/A";
+
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
 
     history.push({
       pathname: `/main/customers/${customerName}`,
@@ -80,7 +84,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
                 columns={DUMMY_COLUMN}
                 isLoading={isLoading}
                 search
-                searchPlaceholder={"Search...(Keyword, Datae, Tag, etc.)"}
+                searchPlaceholder={"Search...(Keyword, Date, Tag, etc.)"}
                 tableData={DUMMY_DATA}
                 initialMsg="There are no data!"
               />

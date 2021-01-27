@@ -104,7 +104,7 @@ export const jobReducer: Reducer<any> = (
     case types.SET_JOBS:
       return {
         ...state,
-        isLoading: false,
+        'isLoading': false,
         data: [...payload],
       };
     case JobActionType.FAILED:
@@ -113,7 +113,11 @@ export const jobReducer: Reducer<any> = (
         isLoading: false,
         error: [...payload],
       };
-
+    case types.SET_JOB_LOADING:
+      return {
+        ...state,
+        'isLoading': payload
+      };
     case types.SET_REFRESH_JOB_STATUS:
       return {
         ...state,

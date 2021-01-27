@@ -7,7 +7,7 @@ import { formatDate } from 'helpers/format';
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import styles from './tickets.style';
+import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
@@ -20,7 +20,8 @@ import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 
 interface LocationStateTypes {
-  customerId?: string;
+  customerName: string;
+  customerId: string;
 }
 
 function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
@@ -39,7 +40,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
 
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [filteredTickets, setFilteredTickets] = useState<any>([]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -55,6 +56,10 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       baseObj["customerId"] && baseObj["customerId"] !== undefined
         ? baseObj["customerId"]
         : "N/A";
+
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
 
     history.push({
       pathname: `/main/customers/${customerName}`,
@@ -144,8 +149,16 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     }, 200);
   };
 
-  console.log(tickets, 'useTable')
 
+  const handleFilterData = (jobs: any, location: LocationStateTypes) => {
+    let oldJobs = jobs;
+    let filteredTickets = oldJobs;
+
+    filteredTickets = filteredTickets.filter((resticket: any) =>
+      resticket.customer._id === location.customerId);
+
+    setFilteredTickets(filteredTickets);
+  }
 
   const columns: any = [
     {
@@ -229,14 +242,14 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
   ];
 
   useEffect(() => {
-    const obj: any = location.state;
+    if (refresh) {
+      dispatch(getAllJobTypesAPI());
+      dispatch(getAllServiceTicketAPI());
+    }
 
-    const customerId = obj.customerId;
-    const filterJobs = false;
-
-
-    dispatch(getAllJobTypesAPI());
-    dispatch(getAllServiceTicketAPI({ customerId, filterJobs }));
+    if (tickets) {
+      handleFilterData(tickets, location.state);
+    }
 
     if (customerObj._id === '') {
       const obj: any = location.state;
@@ -294,7 +307,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
                 isLoading={isLoading}
                 search
                 searchPlaceholder={"Search...(Keyword, Date, Tag, etc.)"}
-                tableData={tickets}
+                tableData={filteredTickets}
                 initialMsg="There are no data!"
               />
             </div>

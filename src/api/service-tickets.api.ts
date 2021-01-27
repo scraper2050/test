@@ -2,36 +2,16 @@ import request from '../utils/http.service';
 import { refreshServiceTickets, setServiceTicket, setServiceTicketLoading, setOpenServiceTicketLoading, setOpenServiceTicket } from 'actions/service-ticket/service-ticket.action';
 
 
-export const getAllServiceTicketAPI = (data?: {
-  companyId?: string,
-  customerId?: string,
-  filterJobs?: boolean,
-}) => {
-  let customerId = data ? data.customerId : null;
-  let filterJobs = data ? data.filterJobs : false;
+export const getAllServiceTicketAPI = () => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setServiceTicketLoading(true));
       request(`/getServiceTickets`, 'post', null)
         .then((res: any) => {
-          let oldRes = res;
-          let serviceTickets = res.data.serviceTickets;
-
-          if (customerId) {
-            serviceTickets = serviceTickets.filter((ticket: any) =>
-              ticket.customer._id === customerId);
-            if (filterJobs) {
-              serviceTickets = serviceTickets.filter((ticket: any) =>
-                ticket.jobCreated === false);
-            }
-
-            oldRes.data.serviceTickets = serviceTickets;
-          }
-
-          dispatch(setServiceTicket(oldRes.data.serviceTickets));
+          dispatch(setServiceTicket(res.data.serviceTickets));
           dispatch(setServiceTicketLoading(false));
           dispatch(refreshServiceTickets(false));
-          return resolve(oldRes.data);
+          return resolve(res.data);
         })
         .catch(err => {
           dispatch(setServiceTicketLoading(false));
