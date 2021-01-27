@@ -123,12 +123,12 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       className: "font-bold",
       sortable: true,
     },
-    {
-      Header: "Customer",
-      accessor: "customer.profile.displayName",
-      className: "font-bold",
-      sortable: true,
-    },
+    // {
+    //   Header: "Customer",
+    //   accessor: "customer.profile.displayName",
+    //   className: "font-bold",
+    //   sortable: true,
+    // },
     {
       Header: "Type",
       accessor: "type.title",

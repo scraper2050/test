@@ -173,12 +173,12 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       className: 'font-bold',
       sortable: true
     },
-    {
-      Header: 'Customer',
-      accessor: 'customer.profile.displayName',
-      className: 'font-bold',
-      sortable: true
-    },
+    // {
+    //   Header: 'Customer',
+    //   accessor: 'customer.profile.displayName',
+    //   className: 'font-bold',
+    //   sortable: true
+    // },
     {
       Cell({ row }: any) {
         return <div className={'flex items-center'}>

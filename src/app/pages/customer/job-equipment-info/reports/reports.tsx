@@ -100,12 +100,12 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
       className: "font-bold",
       sortable: true,
     },
-    {
-      Header: "Customer",
-      accessor: "customer.profile.displayName",
-      className: "font-bold",
-      sortable: true,
-    },
+    // {
+    //   Header: "Customer",
+    //   accessor: "customer.profile.displayName",
+    //   className: "font-bold",
+    //   sortable: true,
+    // },
     {
       Cell({ row }: any) {
         const Date = formatDate(row.original.scheduleDate);
