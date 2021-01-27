@@ -5,6 +5,7 @@ import auth from "./auth.reducer";
 import { combineReducers } from "redux";
 import companyEquipment from "./company-equipment.reducer";
 import { CustomersReducer as customers } from "./customer.reducer";
+import { customerEquipmentsReducer as customerEquipments } from './customer-equipments.reducer';
 import { ImageReducer as image } from "./image.reducer";
 import { EmployeesReducer as employees } from "./employee.reducer";
 import { jobReducer as jobState } from "./jobs.reducer";
@@ -49,6 +50,7 @@ export default combineReducers({
   profile,
   companyEquipment,
   customers,
+  customerEquipments,
   image,
   employees,
   jobState,

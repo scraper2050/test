@@ -6,21 +6,40 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './equipment.style';
 import { withStyles } from '@material-ui/core/styles';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
+import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
+import { getCutomerEquipments } from 'api/customerEquipments.api';
 import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
 
+interface LocationStateTypes {
+  customerName: string;
+  customerId: string;
+}
+
 function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
-  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const { isLoading = true, customerEquipments, refresh = true } = useSelector(
+    ({ customerEquipments }: any) => ({
+      'isLoading': customerEquipments.isLoading,
+      'customerEquipments': customerEquipments.equipments,
+      'refresh': customerEquipments.refresh,
+    })
+  );
+
+  const { customerObj } = useSelector((state: any) => state.customers);
+
+  const location = useLocation<LocationStateTypes>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
 
   const renderGoBack = (location: any) => {
-    let baseObj = location;
+    const baseObj = location;
     let customerName =
       baseObj["customerName"] && baseObj["customerName"] !== undefined
         ? baseObj["customerName"]
@@ -43,6 +62,52 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
       }
     });
   }
+
+  const columns: any = [
+    {
+      Header: "Brand",
+      accessor: "brand.title",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Type",
+      accessor: "type.title",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Model",
+      accessor: "info.model",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Serial Number",
+      accessor: "info.serialNumber",
+      className: "font-bold",
+      sortable: true,
+    },
+  ]
+
+  useEffect(() => {
+
+    const cusObj = location.state;
+
+    let data: any = {
+      customerId: cusObj.customerId,
+    }
+
+    dispatch(getCutomerEquipments(data))
+
+
+    if (customerObj._id === '') {
+      const obj: any = location.state;
+      const customerId = obj.customerId;
+      dispatch(loadingSingleCustomers());
+      dispatch(getCustomerDetailAction({ customerId }));
+    }
+  }, [customerObj]);
 
   return (
     <>
@@ -81,11 +146,11 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
               hidden={curTab !== 0}
               id={'0'}>
               <BCTableContainer
-                columns={DUMMY_COLUMN}
+                columns={columns}
                 isLoading={isLoading}
                 search
-                searchPlaceholder={"Search...(Keyword, Datae, Tag, etc.)"}
-                tableData={DUMMY_DATA}
+                searchPlaceholder={"Search...(Keyword, Date, Tag, etc.)"}
+                tableData={customerEquipments}
                 initialMsg="There are no data!"
               />
             </div>
