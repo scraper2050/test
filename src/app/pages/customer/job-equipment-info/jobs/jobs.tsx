@@ -15,15 +15,12 @@ import { openModalAction, setModalDataAction, } from "actions/bc-modal/bc-modal.
 import { modalTypes } from "../../../../../constants";
 import { getAllJobsAPI } from "api/job.api";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
-import { Job } from 'actions/job/job.types'
-
+import { Job } from 'actions/job/job.types';
 
 interface LocationStateTypes {
   customerName: string;
   customerId: string;
 }
-
-
 function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   const dispatch = useDispatch();
 
