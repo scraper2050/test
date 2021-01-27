@@ -12,6 +12,16 @@ function BCJobReport({ classes, jobReportData }: any) {
 
   const history = useHistory();
 
+  const goBack = () => {
+    let prevKey: any = localStorage.getItem('prevNestedRouteKey');
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', prevKey);
+
+    history.goBack();
+  }
+
   return (
     <>
       <MainContainer>
@@ -177,7 +187,7 @@ function BCJobReport({ classes, jobReportData }: any) {
             </Grid>
           </DataContainer>
           <Grid container className={classes.btn} item xs={12}>
-            <Button className={classes.cancelBtn} onClick={history.goBack}>Cancel</Button>
+            <Button className={classes.cancelBtn} onClick={goBack}>Cancel</Button>
             <Button className={classes.invoiceBtn}>Generate Invoice</Button>
           </Grid>
         </PageContainer>
