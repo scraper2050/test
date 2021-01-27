@@ -95,7 +95,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   };
 
   const handleFilterData = (jobs: Job[] | [], location: LocationStateTypes) => {
-    let oldJobs = jobs;
+    const oldJobs = jobs;
     let filteredJobs = oldJobs;
 
     filteredJobs = filteredJobs.filter((resJob: any) =>
