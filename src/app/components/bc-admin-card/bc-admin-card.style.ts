@@ -53,5 +53,11 @@ export default (theme: Theme): any => ({
   },
   'secondaryTextColor': {
     'color': CONSTANTS.SECONDARY_CARD_BLUE
-  }
+  },
+  'primaryRedBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_RED
+  },
+  'primaryRedTextColor': {
+    'color': CONSTANTS.PRIMARY_RED
+  },
 });

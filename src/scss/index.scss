@@ -45,6 +45,10 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  height: 50px !important;
+}
+.MuiTableCell-head {
+  height: 35px !important;
 }
 .cursor-pointer {
   cursor: pointer;
@@ -245,7 +249,7 @@ body {
 .tab_wrapper {
   .MuiTab-root,
   .MuiTabs-indicator {
-    width: 200px !important;
+    width: 220px !important;
   }
   .MuiTab-wrapper {
     font-style: normal !important;
