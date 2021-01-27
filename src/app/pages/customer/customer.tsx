@@ -141,6 +141,7 @@ function CustomersPage({ classes }: any) {
                 onRowClick={handleRowClick}
                 search
                 tableData={customers.data}
+                isPageSaveEnabled={true}
               />
             </div>
             <div hidden={curTab !== 1} id={"1"}>

@@ -33,8 +33,8 @@ import {
 import { BrandsReducer as brands } from "./brands.reducer";
 import { EquipmentTypeReducer as equipmentType } from "./equipment-type.reducer";
 import { CompanyProfileReducer as profile } from "./user.reducer";
-import { JobReportReducer as jobReports } from "./job-report.reducer";
-
+import { JobReportReducer as JobReport } from "./job-report.reducer";
+import tableState from './tableState.reducer';
 export interface ReducerParamsInterface {
   payload: any;
   type: string;
@@ -74,5 +74,6 @@ export default combineReducers({
   jobSites,
   jobLocations,
   employeesForJob,
-  jobReports,
+  tableState,
+  JobReport,
 });

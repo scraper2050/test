@@ -20,6 +20,7 @@ function BCTableContainer({
   searchPlaceholder = "Search Customers...",
   pagination = true,
   initialMsg = "There are no contacts!",
+  isPageSaveEnabled,
 }: any) {
   // Const dispatch = useDispatch();
   const [searchText, setSearchText] = useState(""); // eslint-disable-line
@@ -76,6 +77,7 @@ function BCTableContainer({
               onRowClick && onRowClick(ev, row);
             }}
             pagination={pagination}
+            isPageSaveEnabled={isPageSaveEnabled || false}
           />
         )}
       </Grid>
