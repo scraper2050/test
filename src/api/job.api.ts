@@ -38,7 +38,7 @@ export const getAllJobsAPI = () => {
           return resolve(res.data);
         })
         .catch((err) => {
-          dispatch(setJobTypesLoading(false));
+          dispatch(setJobLoading(false));
           return reject(err);
         });
     });
@@ -57,8 +57,8 @@ export const getAllJobAPI = async (param?: {}) => {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
-          err.data.message ||
-          `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {
       throw new Error(`Something went wrong`);
@@ -83,8 +83,8 @@ export const getjobDetailAPI = async (data: any) => {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
-          err.data.message ||
-          `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {
       throw new Error(`Something went wrong`);
@@ -127,8 +127,8 @@ export const saveJobType = async (body: { title: string }) => {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
-          err.data.message ||
-          `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {
       throw new Error(`Something went wrong`);

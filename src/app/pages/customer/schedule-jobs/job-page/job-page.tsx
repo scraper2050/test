@@ -152,11 +152,11 @@ function JobPage({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
-      getAllJobsAPI();
+      dispatch(getAllJobsAPI());
     }
   }, [refresh]);
 
-  const handleRowClick = (event: any, row: any) => {};
+  const handleRowClick = (event: any, row: any) => { };
 
   return (
     <DataContainer id={"0"}>

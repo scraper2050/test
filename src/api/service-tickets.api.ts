@@ -1,6 +1,7 @@
 import request from '../utils/http.service';
 import { refreshServiceTickets, setServiceTicket, setServiceTicketLoading, setOpenServiceTicketLoading, setOpenServiceTicket } from 'actions/service-ticket/service-ticket.action';
 
+
 export const getAllServiceTicketAPI = () => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
@@ -46,9 +47,9 @@ export const callEditTicketAPI = (data: any) => {
 
 
 export const getOpenServiceTickets = (data: {
-  pageNo?: number, 
-  pageSize?: number, 
-  jobTypeTitle?: string, 
+  pageNo?: number,
+  pageSize?: number,
+  jobTypeTitle?: string,
   dueDate?: string,
   customerNames?: any,
   ticketId?: string,
@@ -59,13 +60,13 @@ export const getOpenServiceTickets = (data: {
   delete data.pageNo;
   delete data.pageSize;
   const requestLink = `/getOpenServiceTickets?page=${page}&pagesize=${pagesize}`
-    return new Promise((resolve, reject) => {
-      request(requestLink, 'post', data)
-        .then((res: any) => {
-          return resolve(res.data);
-        })
-        .catch(err => {
-          return reject(err);
-        });
-    });
+  return new Promise((resolve, reject) => {
+    request(requestLink, 'post', data)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
 };

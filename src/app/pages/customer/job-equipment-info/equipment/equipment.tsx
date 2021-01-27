@@ -30,6 +30,10 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
         ? baseObj["customerId"]
         : "N/A";
 
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
+
     history.push({
       pathname: `/main/customers/${customerName}`,
       state: {
