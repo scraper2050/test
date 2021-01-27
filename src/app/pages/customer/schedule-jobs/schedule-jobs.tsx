@@ -114,20 +114,16 @@ function ScheduleJobsPage({ classes }: any) {
               </Fab>
               : null
           } */}
-          {
-            curTab === 1
-              ? <Fab
-                aria-label={'new-ticket'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                onClick={() => openCreateTicketModal()}
-                variant={'extended'}>
-                {'New Ticket'}
-              </Fab>
-              : null
-          }
+          <Fab
+            aria-label={'new-ticket'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            onClick={() => openCreateTicketModal()}
+            variant={'extended'}>
+            {'New Ticket'}
+          </Fab>
         </div>
           <SwipeableViews
             axis={theme.direction === 'rtl'
