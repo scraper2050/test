@@ -115,6 +115,7 @@ const InventoryPage = React.lazy(() => import("../inventory/inventory"));
 const PurchasedTagsPage = React.lazy(
   () => import("../tags/purchased-tags/purchased-tags")
 );
+const BlueTagsPage = React.lazy(() => import("../tags/blue-tags/blue-tags"));
 const CreateInvoicePage = React.lazy(
   () => import("../invoicing/invoices-list/create-invoice/create-invoice")
 );
@@ -177,6 +178,12 @@ function Main(): any {
                     Component={PurchasedTagsPage}
                     exact
                     path={"/main/tags/purchasedtag"}
+                    title={"Tags"}
+                  />
+                  <AuthRoute
+                    Component={BlueTagsPage}
+                    exact
+                    path={"/main/tags/bluetag"}
                     title={"Tags"}
                   />
                   <AuthRoute
