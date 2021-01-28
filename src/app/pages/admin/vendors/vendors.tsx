@@ -31,11 +31,9 @@ function AdminVendorsPage({ classes }: any) {
   const vendors = useSelector((state: any) => state.vendors);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
-
-
   const RenderStatus = ({ status }: StatusTypes) => {
-    const textStatus = status ? 'Confirm' : 'Pending';
-    return <div>
+    const textStatus = status ? 'Confirmed' : 'Pending';
+    return <div className={status ? classes.statusConfirmedText : classes.statusPendingText}>
       {textStatus}
     </div>
   }
