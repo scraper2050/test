@@ -15,12 +15,21 @@ const initialState = Record({
 
 export default handleActions(
   {
-    [loginActions.fetching.toString()]: (state, action) =>
-      state
+    [loginActions.fetching.toString()]: (state, action) => {
+      return state
         .setIn(
           ['loginApi', 'isLoading'],
           true
-        ),
+        )
+        .setIn(
+          ['loginApi', 'hasErrored'],
+          false
+        )
+        .setIn(
+          ['loginApi', 'msg'],
+          ''
+        );
+    },
 
     [loginActions.success.toString()]: (state, action) => {
       const { token, user } = action.payload;
