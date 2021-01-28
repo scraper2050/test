@@ -29,7 +29,7 @@ import {
 } from "actions/bc-modal/bc-modal.action";
 import BCModal from "../../modals/bc-modal";
 import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
-import { info, error } from 'actions/snackbar/snackbar.action';
+import { error } from 'actions/snackbar/snackbar.action';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -259,10 +259,8 @@ function LoginPage({
 
   return (
     <div className={classes.root}>
-      <div className={classes.errorSnackbar}>
+      <BCSnackbar topRight />
 
-        <BCSnackbar topRight />
-      </div>
       <Grid container style={{ flex: "1 1 100%" }}>
         <Grid className={classes.LeftSection} item md={6} />
         <Grid className={classes.LoginGrid} item md={6}>
