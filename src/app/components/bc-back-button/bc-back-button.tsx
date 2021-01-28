@@ -10,10 +10,12 @@ interface Props {
   classes: any;
 }
 
-function BCBackButton({ link, classes } : Props) {
+function BCBackButton({ link, classes }: Props) {
   return (
     <Link
-      to={link}>
+      to={link}
+      className={classes.centerIcon}
+    >
       <IconButton
         className={classes.roundBackground}
         color={'primary'}>

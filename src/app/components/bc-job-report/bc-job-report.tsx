@@ -6,8 +6,22 @@ import styles, {
 } from "./job-reports.styles";
 import React from "react";
 import WallpaperIcon from "@material-ui/icons/Wallpaper";
+import { useHistory } from 'react-router-dom';
 
 function BCJobReport({ classes, jobReportData }: any) {
+
+  const history = useHistory();
+
+  const goBack = () => {
+    let prevKey: any = localStorage.getItem('prevNestedRouteKey');
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', prevKey);
+
+    history.goBack();
+  }
+
   return (
     <>
       <MainContainer>
@@ -34,8 +48,8 @@ function BCJobReport({ classes, jobReportData }: any) {
                     {jobReportData.workPerformedImage === "N/A" ? (
                       <WallpaperIcon className={classes.largeIcon} />
                     ) : (
-                      jobReportData.workPerformedImage
-                    )}
+                        jobReportData.workPerformedImage
+                      )}
                   </Grid>
 
                   <Grid item xs={7}>
@@ -160,8 +174,8 @@ function BCJobReport({ classes, jobReportData }: any) {
                     {jobReportData.workPerformedImage === "N/A" ? (
                       <WallpaperIcon className={classes.smallIcon} />
                     ) : (
-                      jobReportData.workPerformedImage
-                    )}
+                        jobReportData.workPerformedImage
+                      )}
                   </p>
                 </Grid>
 
@@ -173,7 +187,7 @@ function BCJobReport({ classes, jobReportData }: any) {
             </Grid>
           </DataContainer>
           <Grid container className={classes.btn} item xs={12}>
-            <Button className={classes.cancelBtn}>Cancel</Button>
+            <Button className={classes.cancelBtn} onClick={goBack}>Cancel</Button>
             <Button className={classes.invoiceBtn}>Generate Invoice</Button>
           </Grid>
         </PageContainer>
