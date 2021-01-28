@@ -223,21 +223,9 @@ function BCServiceTicketModal({
       <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
         <DialogContent classes={{ root: classes.dialogContent }}>
           <div>
-            <BCSelectOutlined
-              items={{
-                data: [
-                  ...customers.map((o: any) => {
-                    return {
-                      _id: o._id,
-                      displayName: o.profile.displayName,
-                    };
-                  }),
-                ],
-                displayKey: "displayName",
-                valueKey: "_id",
-                className: "serviceTicketLabel",
-              }}
-              label={"Customer"}
+            <BCInput
+              className="serviceTicketLabel"
+              label={"Card Holder Name"}
               name={"customerId"}
               disabled={FormikValues.updateFlag === true}
               required
@@ -246,21 +234,9 @@ function BCServiceTicketModal({
                 handleCustomerChange(event, "customerId", setFieldValue)
               }
             />
-            <BCSelectOutlined
-              items={{
-                data: [
-                  ...jobLocations.map((o: any) => {
-                    return {
-                      _id: o._id,
-                      name: o.name,
-                    };
-                  }),
-                ],
-                displayKey: "name",
-                valueKey: "_id",
-                className: "serviceTicketLabel",
-              }}
-              label={"Job Location"}
+            <BCInput
+              className="serviceTicketLabel"
+              label={"Card Number"}
               name={"jobLocationId"}
               value={FormikValues.jobLocationId}
               handleChange={(event: any) =>
@@ -272,10 +248,18 @@ function BCServiceTicketModal({
                 )
               }
             />
-            {isLoading ? (
+            <BCDateTimePicker
+              disablePast
+              handleChange={dateChangeHandler}
+              className="serviceTicketLabel"
+              label={"Expiry Date"}
+              name={"dueDate"}
+              value={FormikValues.dueDate}
+            />
+            {/* {isLoading ? (
               "Loading Job Sites..."
             ) : (
-              <BCSelectOutlined
+              <BCInput
                 handleChange={formikChange}
                 items={{
                   data: [
@@ -290,29 +274,17 @@ function BCServiceTicketModal({
                   valueKey: "_id",
                   className: "serviceTicketLabel",
                 }}
-                label={"Job Site"}
+                label={"Expiry Date"}
                 name={"jobSiteId"}
                 value={FormikValues.jobSiteId}
               />
-            )}
-            <BCSelectOutlined
+            )} */}
+            <BCInput
               handleChange={formikChange}
-              items={{
-                data: [
-                  ...jobTypes.map((o: any) => {
-                    return {
-                      _id: o._id,
-                      title: o.title,
-                    };
-                  }),
-                ],
-                displayKey: "title",
-                valueKey: "_id",
-                className: "serviceTicketLabel",
-              }}
-              label={"Job Type"}
+              label={"CVV"}
               name={"jobTypeId"}
               value={FormikValues.jobTypeId}
+              className="serviceTicketLabel"
             />
 
             <BCInput
@@ -326,14 +298,6 @@ function BCServiceTicketModal({
             {notesLabelState ? (
               <Label>Notes are required while updating the ticket.</Label>
             ) : null}
-            <BCDateTimePicker
-              disablePast
-              handleChange={dateChangeHandler}
-              className="serviceTicketLabel"
-              label={"Due Date"}
-              name={"dueDate"}
-              value={FormikValues.dueDate}
-            />
           </div>
         </DialogContent>
         <DialogActions
