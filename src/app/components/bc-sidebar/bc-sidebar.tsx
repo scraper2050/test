@@ -119,6 +119,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       label: "Purchased Tag",
       link: "/main/tags/purchasedtag",
     },
+    {
+      label: "Buy Blue Tag",
+      link: "/main/tags/bluetag",
+    },
   ];
 
   useEffect(() => {

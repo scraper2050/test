@@ -26,4 +26,5 @@ export const modalTypes = {
   ADD_JOB_LOCATION: "add-job-location",
   SHOW_MAP_FILTER_POPUP: "show-map-filter-popup",
   JOB_REPORTS_MODAL: "job-reports-modal",
+  ADD_BILLING_MODAL: "add-billing-modal",
 };
