@@ -10,6 +10,9 @@ import { withStyles } from '@material-ui/core/styles';
 import React, { useState, useEffect } from 'react';
 import Api from 'utils/api'
 import { useSnackbar } from 'notistack';
+import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
+import { error, success } from 'actions/snackbar/snackbar.action';
+import { useDispatch } from "react-redux";
 
 interface EmailDataModel {
   value: string;
@@ -23,6 +26,7 @@ interface Props {
 
 function RecoverPage({ classes }: Props): JSX.Element {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [emailData, setEmailData] = useState<EmailDataModel>({
     'errorMsg': '',
@@ -36,9 +40,10 @@ function RecoverPage({ classes }: Props): JSX.Element {
 
   useEffect(() => {
     errMessage !== "" &&
-      enqueueSnackbar(errMessage, {
-        variant: "error",
-      });
+      dispatch(error(errMessage));
+    // enqueueSnackbar(errMessage, {
+    //   variant: "error",
+    // });
   }, [enqueueSnackbar, errMessage]);
 
   const handleChangeEmail = (e: any): void => {
@@ -65,24 +70,49 @@ function RecoverPage({ classes }: Props): JSX.Element {
   };
 
   const handlePasswordReset = () => {
-    Api.post(
-      '/forgotPassword',
-      { email: emailData.value }
-    )
-      .then((res) => {
-        if (res.data.status === 0) {
-          history.push('/');
-        } else {
-          setErrMessage(res.data.message);
-        }
-      })
-      .catch((err) => {
-        setErrMessage(err.response.data.message);
+    if (emailData.value === '') {
+      setEmailData({
+        'errorMsg': 'This field is required',
+        'validate': false,
+        'value': ''
       });
+    } else if (emailData.validate) {
+      Api.post(
+        '/forgotPassword',
+        { email: emailData.value }
+      )
+        .then((res) => {
+          if (res.data.message === "Invalid email address.") {
+            setEmailData({
+              'errorMsg': '',
+              'validate': true,
+              'value': ''
+            });
+            dispatch(error(res.data.message));
+          } else if (res.data.message === "Email sent.") {
+            setEmailData({
+              'errorMsg': '',
+              'validate': true,
+              'value': ''
+            });
+            dispatch(success("Reset password success, please check your email."));
+            history.push('/');
+          } else {
+            console.log(res, 'res');
+            setErrMessage(res.data.message);
+          }
+        })
+        .catch((err) => {
+          setErrMessage(err.response.data.message);
+        });
+    }
   }
 
   return (
     <div className={classes.root}>
+
+      <BCSnackbar topCenter />
+
       <Paper className={classes.formPaper}>
         <Grid
           alignItems={'center'}
