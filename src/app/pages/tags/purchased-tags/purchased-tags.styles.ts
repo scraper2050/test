@@ -18,7 +18,7 @@ export default (theme: Theme): any => ({
         'flex': '1 1 100%',
         'flexDirection': 'column',
         'margin': '0 auto',
-        'padding': '30px',
+        'padding': '10px 30px',
         'paddingLeft': '56px',
         'paddingRight': '65px',
         'width': '100%'

@@ -9,6 +9,7 @@ import BCAddJobSiteModal from "./bc-add-jobsite-modal/bc-add-jobsite-modal";
 import BCAddJobLocationModal from "./bc-add-job-location-modal/bc-add-job-location-modal";
 import BCMapFilterModal from "./bc-map-filter/bc-map-filter-popup";
 import BCEditCutomerInfoModal from "./bc-customer-info-modal/bc-customer-info-modal";
+import BCAddBillingModal from "./bc-add-billing-modal/bc-add-billing-modal";
 import CloseIcon from "@material-ui/icons/Close";
 import {
   closeModalAction,
@@ -170,6 +171,15 @@ function BCModal() {
           maxWidth: "xs",
         });
         setComponent(<ViewJobReportsPage />);
+      case modalTypes.ADD_BILLING_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "xs",
+        });
+        setComponent(<BCAddBillingModal error={data.error} />);
+        break;
       default:
         setComponent(null);
     }
