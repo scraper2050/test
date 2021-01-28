@@ -19,7 +19,7 @@ function BCTableContainer({
   search,
   searchPlaceholder = "Search Customers...",
   pagination = true,
-  initialMsg = "There are no contacts!",
+  initialMsg = "No records found!",
   isPageSaveEnabled,
 }: any) {
   // Const dispatch = useDispatch();
