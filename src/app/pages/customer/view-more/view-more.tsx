@@ -69,6 +69,9 @@ function ViewMorePage({ classes }: any) {
         ? customerName.replace(/ /g, "")
         : "customername";
 
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `${customerName}/job-equipment-info/${link}`);
     history.push({
       pathname: `/main/customers/${customerName}/job-equipment-info/${link}`,
       state: customerObj,

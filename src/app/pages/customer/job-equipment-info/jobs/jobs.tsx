@@ -2,18 +2,42 @@ import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-bu
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../components/bc-tab/bc-tab';
 import { Grid } from '@material-ui/core';
+import Fab from "@material-ui/core/Fab";
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import styles from './jobs.style';
+import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
+import { formatDate, convertMilitaryTime } from "helpers/format";
+import { openModalAction, setModalDataAction, } from "actions/bc-modal/bc-modal.action";
+import { modalTypes } from "../../../../../constants";
+import { getAllJobsAPI } from "api/job.api";
+import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
+import { Job } from 'actions/job/job.types';
 
+interface LocationStateTypes {
+  customerName: string;
+  customerId: string;
+}
 function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
-  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const { isLoading = true, jobs, refresh = true } = useSelector(
+    ({ jobState }: any) => ({
+      'isLoading': jobState.isLoading,
+      'jobs': jobState.data,
+      'refresh': jobState.refresh,
+    })
+  );
+
+  const { customerObj } = useSelector((state: any) => state.customers);
+
+  const location = useLocation<LocationStateTypes>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [filteredJobs, setFilterJobs] = useState<Job[] | []>([]);
 
 
   const handleTabChange = (newValue: number) => {
@@ -21,7 +45,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   };
 
   const renderGoBack = (location: any) => {
-    let baseObj = location;
+    const baseObj = location;
     let customerName =
       baseObj["customerName"] && baseObj["customerName"] !== undefined
         ? baseObj["customerName"]
@@ -30,6 +54,10 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       baseObj["customerId"] && baseObj["customerId"] !== undefined
         ? baseObj["customerId"]
         : "N/A";
+
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
 
     history.push({
       pathname: `/main/customers/${customerName}`,
@@ -40,6 +68,163 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       }
     });
   }
+
+  const openEditJobModal = (job: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          modalTitle: "Edit Job",
+          removeFooter: false,
+        },
+        type: modalTypes.EDIT_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const formatSchedulingTime = (time: string) => {
+    let timeAr = time.split("T");
+    let timeWithSeconds = timeAr[1].substr(0, 5);
+    let hours = timeWithSeconds.substr(0, 2);
+    let minutes = timeWithSeconds.substr(3, 5);
+
+    return { hours, minutes };
+  };
+
+  const handleFilterData = (jobs: Job[] | [], location: LocationStateTypes) => {
+    const oldJobs = jobs;
+    let filteredJobs = oldJobs;
+
+    filteredJobs = filteredJobs.filter((resJob: any) =>
+      resJob.customer._id === location.customerId);
+
+    setFilterJobs(filteredJobs);
+  }
+
+  const columns: any = [
+    {
+      Header: "Job ID",
+      accessor: "jobId",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Header: "Technician",
+      accessor: "technician.profile.displayName",
+      className: "font-bold",
+      sortable: true,
+    },
+    // {
+    //   Header: "Customer",
+    //   accessor: "customer.profile.displayName",
+    //   className: "font-bold",
+    //   sortable: true,
+    // },
+    {
+      Header: "Type",
+      accessor: "type.title",
+      className: "font-bold",
+      sortable: true,
+    },
+    {
+      Cell({ row }: any) {
+        const scheduleDate = formatDate(row.original.scheduleDate);
+        return (
+          <div className={"flex items-center"}>
+            <p>{scheduleDate}</p>
+          </div>
+        );
+      },
+      Header: "Schedule Date",
+      id: "job-schedulee-date",
+      sortable: true,
+    },
+    {
+      Cell({ row }: any) {
+        let startTime = "N/A";
+        let endTime = "N/A";
+        if (row.original.scheduledStartTime !== undefined) {
+          let formatScheduledObj = formatSchedulingTime(
+            row.original.scheduledStartTime
+          );
+          startTime = convertMilitaryTime(
+            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+          );
+        }
+        if (row.original.scheduledEndTime !== undefined) {
+          let formatScheduledObj = formatSchedulingTime(
+            row.original.scheduledEndTime
+          );
+          endTime = convertMilitaryTime(
+            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+          );
+        }
+        return (
+          <div className={"flex items-center"}>
+            <p>{`${startTime} - ${endTime}`}</p>
+          </div>
+        );
+      },
+      Header: "Time",
+      id: "job-time",
+      sortable: true,
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          <div className={"flex items-center"}>
+            {row.original.status === "0" || row.original.status === "1" ? (
+              <Fab
+                aria-label={"edit-job"}
+                classes={{
+                  root: classes.fabRoot,
+                }}
+                color={"primary"}
+                onClick={() => openEditJobModal(row.original)}
+                variant={"extended"}
+              >
+                {"Edit"}
+              </Fab>
+            ) : null}
+          </div>
+        );
+      },
+      Header: "Options",
+      id: "action-options",
+      sortable: false,
+      width: 60,
+    },
+  ];
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsAPI());
+    }
+
+    if (jobs) {
+      handleFilterData(jobs, location.state);
+    }
+
+    if (customerObj._id === '') {
+      const obj: any = location.state;
+      const customerId = obj.customerId;
+      dispatch(loadingSingleCustomers());
+      dispatch(getCustomerDetailAction({ customerId }));
+    }
+  }, [refresh]);
+
+
+
+  const handleRowClick = (event: any, row: any) => { };
 
   return (
     <>
@@ -78,11 +263,11 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
               hidden={curTab !== 0}
               id={'0'}>
               <BCTableContainer
-                columns={DUMMY_COLUMN}
+                columns={columns}
                 isLoading={isLoading}
                 search
-                searchPlaceholder={"Search...(Keyword, Datae, Tag, etc.)"}
-                tableData={DUMMY_DATA}
+                searchPlaceholder={"Search...(Keyword, Date, Tag, etc.)"}
+                tableData={filteredJobs}
                 initialMsg="There are no data!"
               />
             </div>

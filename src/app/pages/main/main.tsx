@@ -277,6 +277,16 @@ function Main(): any {
                     title={"Customers"}
                   />
                   <AuthRoute
+                    Component={ViewJobReportsPage}
+                    actionData={{
+                      link: "/main/customers/:customername/job-equipment-info/jobs/:jobId",
+                      title: "Customers",
+                    }}
+                    exact
+                    path={"/main/customers/:customername/job-equipment-info/jobs/:jobId"}
+                    title={"Customers"}
+                  />
+                  <AuthRoute
                     Component={CustomersJobEquipmentInfoTicketsPage}
                     actionData={{
                       link: "/main/customers/:customername/job-equipment-info/tickets",
