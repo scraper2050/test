@@ -60,4 +60,16 @@ export default (theme: Theme): any => ({
   'primaryRedTextColor': {
     'color': CONSTANTS.PRIMARY_RED
   },
+  'primaryOrangeBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_ORANGE
+  },
+  'primaryOrangeTextColor': {
+    'color': CONSTANTS.PRIMARY_ORANGE
+  },
+  'primaryGreenBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_GREEN
+  },
+  'primaryGreenTextColor': {
+    'color': CONSTANTS.PRIMARY_GREEN
+  },
 });

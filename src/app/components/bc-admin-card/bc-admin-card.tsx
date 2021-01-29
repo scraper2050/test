@@ -27,6 +27,12 @@ function BCAdminCard({ cardText, classes, color, link, children, func }: Props) 
   } else if (color === 'primary-red') {
     circleClass = classNames(classes.circleBackground, classes.primaryRedBackground);
     textClass = classNames(classes.cardText, classes.primaryRedTextColor);
+  } else if (color === 'primary-orange') {
+    circleClass = classNames(classes.circleBackground, classes.primaryOrangeBackground);
+    textClass = classNames(classes.cardText, classes.primaryOrangeTextColor);
+  } else if (color === 'primary-green') {
+    circleClass = classNames(classes.circleBackground, classes.primaryGreenBackground);
+    textClass = classNames(classes.cardText, classes.primaryGreenTextColor);
   } else {
     circleClass = classNames(classes.circleBackground, classes.infoBackground);
     textClass = classNames(classes.cardText, classes.infoTextColor);

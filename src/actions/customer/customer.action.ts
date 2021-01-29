@@ -45,7 +45,6 @@ export const setCustomers = (customers: any) => {
 export const getCustomerDetailAction = (data: any) => {
   return async (dispatch: any) => {
     const customer: any = await getCustomerDetail(data);
-    console.log(customer);
     dispatch({ type: types.SET_SINGLE_CUSTOMER, payload: customer });
   };
 };

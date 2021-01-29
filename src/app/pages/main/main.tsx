@@ -487,11 +487,11 @@ function Main(): any {
                   <AuthRoute
                     Component={ViewMoreVendorPage}
                     actionData={{
-                      link: "/main/admin/vendors/:contractorId",
+                      link: "/main/admin/vendors/:contractorName",
                       title: "Admin",
                     }}
                     exact
-                    path={"/main/admin/vendors/:contractorId"}
+                    path={"/main/admin/vendors/:contractorName"}
                     title={"Admin"}
                   />
                 </Switch>

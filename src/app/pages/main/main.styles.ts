@@ -4,7 +4,7 @@ export const fabRoot = {
     'fontSize': '.775rem',
     'height': '34px',
     'padding': '0 12px',
-    'textTransform': 'capitalize'
+    'textTransform': 'capitalize',
   }
 };
 
