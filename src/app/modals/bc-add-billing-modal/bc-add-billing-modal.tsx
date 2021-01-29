@@ -11,6 +11,7 @@ import {
   DialogActions,
   DialogContent,
   Fab,
+  Grid,
   withStyles,
 } from "@material-ui/core";
 import {
@@ -227,6 +228,7 @@ function BCServiceTicketModal({
               className="serviceTicketLabel"
               label={"Card Holder Name"}
               name={"customerId"}
+              margin={"dense"}
               disabled={FormikValues.updateFlag === true}
               required
               value={FormikValues.customerId}
@@ -238,6 +240,7 @@ function BCServiceTicketModal({
               className="serviceTicketLabel"
               label={"Card Number"}
               name={"jobLocationId"}
+              margin={"dense"}
               value={FormikValues.jobLocationId}
               handleChange={(event: any) =>
                 handleLocationChange(
@@ -248,14 +251,32 @@ function BCServiceTicketModal({
                 )
               }
             />
-            <BCDateTimePicker
+            <BCInput
+              handleChange={formikChange}
+              label={"CVV"}
+              name={"jobTypeId"}
+              value={FormikValues.jobTypeId}
+              className="serviceTicketLabel"
+              margin={"dense"}
+            />
+
+            <BCInput
+              handleChange={formikChange}
+              label={"Expiry Date"}
+              name={"jobSiteId"}
+              value={FormikValues.jobSiteId}
+              className="serviceTicketLabel"
+              margin={"dense"}
+              placeholder="MM/YY"
+            />
+            {/* <BCDateTimePicker
               disablePast
               handleChange={dateChangeHandler}
               className="serviceTicketLabel"
               label={"Expiry Date"}
               name={"dueDate"}
               value={FormikValues.dueDate}
-            />
+            /> */}
             {/* {isLoading ? (
               "Loading Job Sites..."
             ) : (
@@ -279,21 +300,46 @@ function BCServiceTicketModal({
                 value={FormikValues.jobSiteId}
               />
             )} */}
-            <BCInput
-              handleChange={formikChange}
-              label={"CVV"}
-              name={"jobTypeId"}
-              value={FormikValues.jobTypeId}
-              className="serviceTicketLabel"
-            />
 
             <BCInput
               handleChange={formikChange}
-              label={"Notes / Special Instructions"}
+              label={"Billing Address"}
+              name={"jobTypeId"}
+              value={FormikValues.jobTypeId}
+              className="serviceTicketLabel"
+              margin={"dense"}
+            />
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <BCInput
+                  handleChange={formikChange}
+                  label={"City"}
+                  name={"jobTypeId"}
+                  value={FormikValues.jobTypeId}
+                  className="serviceTicketLabel"
+                  margin={"dense"}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <BCInput
+                  handleChange={formikChange}
+                  label={"State"}
+                  name={"jobTypeId"}
+                  value={FormikValues.jobTypeId}
+                  className="serviceTicketLabel"
+                  margin={"dense"}
+                />
+              </Grid>
+            </Grid>
+
+            <BCInput
+              handleChange={formikChange}
+              label={"Nickname"}
               multiline
               name={"note"}
               value={FormikValues.note}
               className="serviceTicketLabel"
+              margin={"dense"}
             />
             {notesLabelState ? (
               <Label>Notes are required while updating the ticket.</Label>
