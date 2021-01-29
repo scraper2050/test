@@ -2,10 +2,10 @@ import BCTableContainer from '../../../components/bc-table-container/bc-table-co
 import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import BCBackButton from '../../../components/bc-back-button/bc-back-button';
-import ReportsIcon from '../../../../assets/img/icons/customers/Reports';
-import JobsIcon from '../../../../assets/img/icons/customers/Jobs';
-import TicketsIcon from '../../../../assets/img/icons/customers/Tickets';
-import EquipmentIcon from '../../../../assets/img/icons/customers/Equipment';
+import ReportsIcon from 'assets/img/icons/customers/Reports';
+import JobsIcon from 'assets/img/icons/customers/Jobs';
+import TicketsIcon from 'assets/img/icons/customers/Tickets';
+import EquipmentIcon from 'assets/img/icons/customers/Equipment';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
