@@ -116,6 +116,6 @@ export default (theme: Theme): any => ({
     'display': 'flex',
     'justifyContent': 'flex-end',
     'width': '100%',
-    'marginBottom': 10 
-  }
+    'marginBottom': 10
+  },
 });

@@ -6,27 +6,49 @@ import { modalTypes } from '../../../../constants';
 import styles from './vendors.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { getVendors, loadingVendors, getVendorDetailAction } from 'actions/vendor/vendor.action';
+import { getVendors, loadingVendors, getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+
+interface StatusTypes {
+  status: number;
+}
+
+
+interface RowStatusTypes {
+  row: {
+    original: {
+
+      status: number
+    }
+  };
+}
+
 
 function AdminVendorsPage({ classes }: any) {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
+  const RenderStatus = ({ status }: StatusTypes) => {
+    const textStatus = status ? 'Confirmed' : 'Pending';
+    return <div className={status ? classes.statusConfirmedText : classes.statusPendingText}>
+      {textStatus}
+    </div>
+  }
+
   const columns: any = [
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {row.index + 1}
-        </div>;
-      },
-      'Header': 'No#',
-      'sortable': true,
-      'width': 60
-    },
+    // {
+    //   'Cell'({ row }: any) {
+    //     return <div className={'flex items-center'}>
+    //       {row.index + 1}
+    //     </div>;
+    //   },
+    //   'Header': 'No#',
+    //   'sortable': true,
+    //   'width': 60
+    // },
     {
       'Header': 'Company Name',
       'accessor': 'contractor.info.companyName',
@@ -34,6 +56,9 @@ function AdminVendorsPage({ classes }: any) {
       'sortable': true
     },
     {
+      'Cell'({ row }: RowStatusTypes) {
+        return <RenderStatus status={row.original.status} />
+      },
       'Header': 'Status',
       'accessor': 'status',
       'className': 'font-bold',
@@ -54,6 +79,7 @@ function AdminVendorsPage({ classes }: any) {
           </Fab>
         </div>;
       },
+      'Header': 'Action',
       'id': 'action',
       'sortable': false,
       'width': 60
@@ -87,12 +113,28 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
-    let customerId =  row['original']['contractor']['_id'];
-    // dispatch(loadingSingleCustomers())
-    dispatch(getVendorDetailAction(customerId));
+    let baseObj = row["original"];
+    let vendorCompanyName =
+      baseObj["contractor"]["info"]
+        && baseObj["contractor"]["info"]["companyName"] !== undefined
+        ? baseObj["contractor"]["info"]["companyName"]
+        : "N/A";
+    let vendorId = baseObj['contractor']['_id'];
+    let vendorObj = { vendorCompanyName, vendorId, };
+    vendorCompanyName =
+      vendorCompanyName !== undefined
+        ? vendorCompanyName.replace(/ /g, "")
+        : "vendorName";
+
+    localStorage.setItem("nestedRouteKey", `${vendorCompanyName}`);
+
+    console.log(vendorCompanyName, 'rooooow')
+    dispatch(loadingSingleVender());
+    dispatch(getVendorDetailAction(vendorId));
+
     history.push({
-      pathname: `vendors/${customerId}`,
-      state: customerId
+      pathname: `vendors/${vendorCompanyName}`,
+      state: vendorObj
     });
   }
 

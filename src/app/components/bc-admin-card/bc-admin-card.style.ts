@@ -53,5 +53,23 @@ export default (theme: Theme): any => ({
   },
   'secondaryTextColor': {
     'color': CONSTANTS.SECONDARY_CARD_BLUE
-  }
+  },
+  'primaryRedBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_RED
+  },
+  'primaryRedTextColor': {
+    'color': CONSTANTS.PRIMARY_RED
+  },
+  'primaryOrangeBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_ORANGE
+  },
+  'primaryOrangeTextColor': {
+    'color': CONSTANTS.PRIMARY_ORANGE
+  },
+  'primaryGreenBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_GREEN
+  },
+  'primaryGreenTextColor': {
+    'color': CONSTANTS.PRIMARY_GREEN
+  },
 });

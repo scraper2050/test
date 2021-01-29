@@ -1,178 +1,189 @@
-import * as CONSTANTS from '../../../constants';
-import styled from 'styled-components';
-import { Grid, List, ListItem } from '@material-ui/core';
-import React, { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import * as CONSTANTS from "../../../constants";
+import styled from "styled-components";
+import { Grid, List, ListItem } from "@material-ui/core";
+import React, { useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 
 interface BCSidebarProps {
   children?: React.ReactNode;
-  setContentGrid?: Function
+  setContentGrid?: Function;
 }
 
 function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
   const history = useHistory();
   const location = useLocation();
   const pathName = location.pathname;
-  let nestedRouteKey = localStorage.getItem('nestedRouteKey');
+  let nestedRouteKey = localStorage.getItem("nestedRouteKey");
   const LINK_DATA = [
     {
-      'label': 'Customer List',
-      'link': '/main/customers'
+      label: "Customer List",
+      link: "/main/customers",
     },
     {
-      'label': 'New Customer',
-      'link': '/main/customers/new-customer'
+      label: "New Customer",
+      link: "/main/customers/new-customer",
     },
     {
-      'label': 'Schedule/Jobs',
-      'link': '/main/customers/schedule'
+      label: "Schedule/Jobs",
+      link: "/main/customers/schedule",
     },
     {
-      'label': 'Map View',
-      'link': '/main/customers/ticket-map-view'
+      label: "Map View",
+      link: "/main/customers/ticket-map-view",
     },
     {
-      'label': "Todo's",
-      'link': '/main/invoicing/todos'
+      label: "Job Reports",
+      link: "/main/customers/job-reports",
     },
     {
-      'label': 'Invoices List',
-      'link': '/main/invoicing/invoices-list'
+      label: "Todo's",
+      link: "/main/invoicing/todos",
     },
     {
-      'label': 'Purchase Order',
-      'link': '/main/invoicing/purchase-order'
+      label: "Invoices List",
+      link: "/main/invoicing/invoices-list",
     },
     {
-      'label': 'Estimates',
-      'link': '/main/invoicing/estimates'
+      label: "Purchase Order",
+      link: "/main/invoicing/purchase-order",
     },
     {
-      'label': 'Billing',
-      'link': '/main/admin/billing'
+      label: "Estimates",
+      link: "/main/invoicing/estimates",
     },
     {
-      'label': 'Brands',
-      'link': '/main/admin/brands'
+      label: "Billing",
+      link: "/main/admin/billing",
     },
     {
-      'label': 'Company Profile',
-      'link': '/main/admin/company-profile'
+      label: "Brands",
+      link: "/main/admin/brands",
     },
     {
-      'label': 'Employees',
-      'link': '/main/admin/employees'
+      label: "Company Profile",
+      link: "/main/admin/company-profile",
     },
     {
-      'label': 'Equipment Type',
-      'link': '/main/admin/equipment-type'
+      label: "Employees",
+      link: "/main/admin/employees",
     },
     {
-      'label': 'Groups',
-      'link': '/main/admin/groups'
+      label: "Equipment Type",
+      link: "/main/admin/equipment-type",
     },
     {
-      'label': 'Invoicing',
-      'link': '/main/admin/invoicing'
+      label: "Groups",
+      link: "/main/admin/groups",
     },
     {
-      'label': 'Job Types',
-      'link': '/main/admin/job-types'
+      label: "Invoicing",
+      link: "/main/admin/invoicing",
     },
     {
-      'label': 'Report Number',
-      'link': '/main/admin/report-number'
+      label: "Job Types",
+      link: "/main/admin/job-types",
     },
     {
-      'label': 'Roles/Permissions',
-      'link': '/main/admin/roles-permissions'
+      label: "Report Number",
+      link: "/main/admin/report-number",
     },
     {
-      'label': 'Vendors',
-      'link': '/main/admin/vendors'
+      label: "Roles/Permissions",
+      link: "/main/admin/roles-permissions",
     },
     {
-      'label': 'Groups',
-      'link': '/main/employees/group'
+      label: "Vendors",
+      link: "/main/admin/vendors",
     },
     {
-      'label': 'Technicians',
-      'link': '/main/employees/technician'
+      label: "Groups",
+      link: "/main/employees/group",
     },
     {
-      'label': 'Managers',
-      'link': '/main/employees/managers'
+      label: "Technicians",
+      link: "/main/employees/technician",
     },
     {
-      'label': 'Office Admin',
-      'link': '/main/employees/office-admin'
+      label: "Managers",
+      link: "/main/employees/managers",
     },
     {
-      'label': 'Company Inventory',
-      'link': '/main/inventory'
+      label: "Office Admin",
+      link: "/main/employees/office-admin",
     },
     {
-      'label': 'Purchased Tag',
-      'link': '/main/tags/purchasedtag'
-    }
+      label: "Company Inventory",
+      link: "/main/inventory",
+    },
+    {
+      label: "Purchased Tag",
+      link: "/main/tags/purchasedtag",
+    },
+    {
+      label: "Buy Blue Tag",
+      link: "/main/tags/bluetag",
+    },
   ];
 
   useEffect(() => {
-    if (pathName !== '/main/dashboard') {
-      setContentGrid && setContentGrid({
-        'lg': 10,
-        'md': 10,
-        'sm': 10
-      });
+    if (pathName !== "/main/dashboard") {
+      setContentGrid &&
+        setContentGrid({
+          lg: 10,
+          md: 10,
+          sm: 10,
+        });
     } else {
-      setContentGrid && setContentGrid({
-        'lg': 12,
-        'md': 12,
-        'sm': 12
-      });
+      setContentGrid &&
+        setContentGrid({
+          lg: 12,
+          md: 12,
+          sm: 12,
+        });
     }
   }, [location]);
-  
+
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
   };
 
-  return pathName !== '/main/dashboard'
-    ? <Grid
-      id={'navbar-container'}
+  return pathName !== "/main/dashboard" ? (
+    <Grid
+      id={"navbar-container"}
       item
       lg={2}
       md={2}
       sm={2}
-      style={{ 'padding': 0 }}
-      xl={1}>
+      style={{ padding: 0 }}
+      xl={1}
+    >
       <ComponentContainer>
-        <StyledList aria-label={'customers sidebar list'}>
+        <StyledList aria-label={"customers sidebar list"}>
           {LINK_DATA.map((item: any, idx: number) => {
-            let mainPath = pathName.split('/main/')[1]; // eslint-disable-line
+            let mainPath = pathName.split("/main/")[1]; // eslint-disable-line
             if (mainPath) {
-              mainPath = mainPath.split('/')[0]; // eslint-disable-line
+              mainPath = mainPath.split("/")[0]; // eslint-disable-line
             } else {
-              mainPath = 'dashboard';
+              mainPath = "dashboard";
             }
-            return (
-              item.link.startsWith(`/main/${mainPath}`)
-                ? <StyledListItem
-                  button
-                  key={idx}
-                  onClick={() => onClickLink(item.link)}
-                  selected={
-                    pathName === item.link || pathName === `${item.link}/${nestedRouteKey}`
-                  }>
-                  {item.label}
-                </StyledListItem>
-                : null
-            );
+            return item.link.startsWith(`/main/${mainPath}`) ? (
+              <StyledListItem
+                button
+                key={idx}
+                onClick={() => onClickLink(item.link)}
+                selected={
+                  pathName === item.link ||
+                  pathName === `${item.link}/${nestedRouteKey}`
+                }
+              >
+                {item.label}
+              </StyledListItem>
+            ) : null;
           })}
         </StyledList>
       </ComponentContainer>
     </Grid>
-    : null;
+  ) : null;
 }
 
 const ComponentContainer = styled.div`

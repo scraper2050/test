@@ -1,18 +1,29 @@
-import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
-import BCTableContent from './bc-table-content';
-import BCTableSearchContainer from '../bc-table-search-container/bc-table-search-container';
-import TableSearchUtils from 'utils/table-search';
-import Typography from '@material-ui/core/Typography';
-import styles from './bc-table.styles';
-import { Grid, Paper, withStyles } from '@material-ui/core';
+import BCCircularLoader from "../bc-circular-loader/bc-circular-loader";
+import BCTableContent from "./bc-table-content";
+import BCTableSearchContainer from "../bc-table-search-container/bc-table-search-container";
+import TableSearchUtils from "utils/table-search";
+import Typography from "@material-ui/core/Typography";
+import styles from "./bc-table.styles";
+import { Grid, Paper, withStyles } from "@material-ui/core";
 // Import { useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import '../../../scss/index.scss';
+import "../../../scss/index.scss";
 
-function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, classes, search, searchPlaceholder = 'Search Customers...', pagination = true, initialMsg = 'There are no contacts!' }: any) {
+function BCTableContainer({
+  tableData,
+  columns,
+  onRowClick,
+  isLoading = false,
+  classes,
+  search,
+  searchPlaceholder = "Search Customers...",
+  pagination = true,
+  initialMsg = "No records found!",
+  isPageSaveEnabled,
+}: any) {
   // Const dispatch = useDispatch();
-  const [searchText, setSearchText] = useState(''); // eslint-disable-line
+  const [searchText, setSearchText] = useState(""); // eslint-disable-line
 
   const [filteredData, setFilteredData] = useState([]);
 
@@ -22,7 +33,7 @@ function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, c
   };
 
   const getFilteredArray = (entities: any, text: any) => {
-    const arr = Object.keys(entities).map(id => entities[id]);
+    const arr = Object.keys(entities).map((id) => entities[id]);
     if (text.length === 0) {
       return arr;
     }
@@ -37,51 +48,41 @@ function BCTableContainer({ tableData, columns, onRowClick, isLoading = false, c
 
   return (
     <Grid container>
-      <Grid
-        item
-        md={6}
-        xs={12}>
-        {search
-          ? <BCTableSearchContainer
+      <Grid item md={6} xs={12}>
+        {search ? (
+          <BCTableSearchContainer
             handleSearchChange={handleSearchChange}
             searchPlaceholder={searchPlaceholder}
             searchText={searchText}
           />
-          : null}
+        ) : null}
       </Grid>
-      <Grid
-        item
-        md={12}
-        xs={12}>
-        {
-          isLoading
-            ? <Paper classes={{ 'root': classes.noDataPaper }}>
-              <BCCircularLoader heightValue={'200px'} />
-            </Paper>
-            : filteredData && filteredData.length === 0
-              ? <Paper classes={{ 'root': classes.noDataPaper }}>
-                <Typography
-                  color={'textSecondary'}
-                  variant={'h5'}>
-                  {initialMsg}
-                </Typography>
-              </Paper>
-              : <BCTableContent
-                columns={columns}
-                data={filteredData}
-                invoiceTable
-                onRowClick={(ev: any, row: any) => {
-                  onRowClick && onRowClick(ev, row);
-                }}
-                pagination={pagination}
-              />
-        }
+      <Grid item md={12} xs={12}>
+        {isLoading ? (
+          <Paper classes={{ root: classes.noDataPaper }}>
+            <BCCircularLoader heightValue={"200px"} />
+          </Paper>
+        ) : filteredData && filteredData.length === 0 ? (
+          <Paper classes={{ root: classes.noDataPaper }}>
+            <Typography color={"textSecondary"} variant={"h5"}>
+              {initialMsg}
+            </Typography>
+          </Paper>
+        ) : (
+          <BCTableContent
+            columns={columns}
+            data={filteredData}
+            invoiceTable
+            onRowClick={(ev: any, row: any) => {
+              onRowClick && onRowClick(ev, row);
+            }}
+            pagination={pagination}
+            isPageSaveEnabled={isPageSaveEnabled || false}
+          />
+        )}
       </Grid>
     </Grid>
   );
 }
 
-export default withStyles(
-  styles,
-  { 'withTheme': true }
-)(BCTableContainer);
+export default withStyles(styles, { withTheme: true })(BCTableContainer);

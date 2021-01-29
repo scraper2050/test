@@ -61,7 +61,7 @@ function CompanyProfilePage() {
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { id, value } } = event;
-    const inputError:{[s: string]: boolean} = {};
+    const inputError: { [s: string]: boolean } = {};
 
     switch (id) {
       case 'companyEmail':
@@ -119,106 +119,107 @@ function CompanyProfilePage() {
   }
 
   return (
-        <MainContainer>
-        <PageContainer>
-          {
-            profileState.isLoading ? (
-              <BCCircularLoader />
-            ) : (
+    <MainContainer>
+      <PageContainer>
+        {
+          profileState.isLoading ? (
+            <BCCircularLoader />
+          ) : (
               <BCAdminProfile
-              avatar={{
-                isEmpty: 'NO',
-                url: !image.data ? profileState.logoUrl : image.data.imageUrl,
-                onChange: imageSelected
-              }}
-              apply={handleUpdateCompanyProfile}
-              cancel={cancel}
-              inputError={profileState.inputError}
-              fields={[
-                {
-                  left: {
-                    id: 'companyName',
-                    label: 'Company Name:',
-                    placehold: 'Input Company Name',
-                    value: profileState.companyName,
-                    text: '',
-                    onChange: handleOnChange
+                avatar={{
+                  isEmpty: 'NO',
+                  url: !image.data ? profileState.logoUrl : image.data.imageUrl,
+                  onChange: imageSelected
+                }}
+                apply={handleUpdateCompanyProfile}
+                cancel={cancel}
+                inputError={profileState.inputError}
+                fields={[
+                  {
+                    left: {
+                      id: 'companyName',
+                      label: 'Company Name:',
+                      placehold: 'Input Company Name',
+                      value: profileState.companyName,
+                      text: '',
+                      onChange: handleOnChange
+                    },
+                    right: {
+                      id: 'companyEmail',
+                      label: 'Company Email:',
+                      placehold: 'Input Company Email',
+                      value: profileState.companyEmail,
+                      text: 'please provide a valid email address',
+                      onChange: handleOnChange
+                    },
                   },
-                  right: {
-                    id: 'companyEmail',
-                    label: 'Company Email:',
-                    placehold: 'Input Company Email',
-                    value: profileState.companyEmail,
-                    text: 'please provide a valid email address',
-                    onChange: handleOnChange
+                  {
+                    left: {
+                      id: 'phone',
+                      label: 'Phone:',
+                      placehold: 'Input Phone Number',
+                      value: phoneNumberFormatter(profileState.phone),
+                      text: 'please provide a valid 10 digit phone number',
+                      onChange: handleOnChange
+                    },
+                    right: {
+                      id: 'fax',
+                      label: 'Fax:',
+                      placehold: 'Input Fax',
+                      value: profileState.fax,
+                      text: '',
+                      onChange: handleOnChange
+                    }
                   },
-                },
-                {
-                  left: {
-                    id: 'phone',
-                    label: 'Phone:',
-                    placehold: 'Input Phone Number',
-                    value: phoneNumberFormatter(profileState.phone),
-                    text: 'please provide a valid 10 digit phone number',
-                    onChange: handleOnChange
+                  {
+                    left: {
+                      id: 'street',
+                      label: 'Street:',
+                      placehold: 'Input Street',
+                      value: profileState.street,
+                      text: '',
+                      onChange: handleOnChange
+                    },
+                    right: {
+                      id: 'city',
+                      label: 'City:',
+                      placehold: 'Input City',
+                      value: profileState.city,
+                      text: '',
+                      onChange: handleOnChange
+                    }
                   },
-                  right: {
-                    id: 'fax',
-                    label: 'Fax:',
-                    placehold: 'Input Fax',
-                    value: profileState.fax,
-                    text: '',
-                    onChange: handleOnChange
-                  }
-                },
-                {
-                  left: {
-                    id: 'street',
-                    label: 'Street:',
-                    placehold: 'Input Street',
-                    value: profileState.street,
-                    text: '',
-                    onChange: handleOnChange
+                  {
+                    left: {
+                      id: 'state',
+                      label: 'State:',
+                      placehold: 'Input State',
+                      value: profileState.state,
+                      text: '',
+                      onChange: handleOnChange
+                    },
+                    right: {
+                      id: 'zipCode',
+                      label: 'Zip Code:',
+                      placehold: 'Input Zip Code',
+                      value: profileState.zipCode,
+                      text: 'please enter a valid zip code',
+                      onChange: handleOnChange
+                    }
                   },
-                  right: {
-                    id: 'city',
-                    label: 'City:',
-                    placehold: 'Input City',
-                    value: profileState.city,
-                    text: '',
-                    onChange: handleOnChange
-                  }
-                },
-                {
-                  left: {
-                    id: 'state',
-                    label: 'State:',
-                    placehold: 'Input State',
-                    value: profileState.state,
-                    text: '',
-                    onChange: handleOnChange
-                  },
-                  right: {
-                    id: 'zipCode',
-                    label: 'Zip Code:',
-                    placehold: 'Input Zip Code',
-                    value: profileState.zipCode,
-                    text: 'please enter a valid zip code',
-                    onChange: handleOnChange
-                  }
-                },
-              ]} />
+                ]} />
             )
-          }
-        </PageContainer>
-      </MainContainer>
-    )
+        }
+      </PageContainer>
+    </MainContainer>
+  )
 }
 
 const MainContainer = styled.div`
   display: flex;
   flex: 1 1 100%;
-  width: 100%;
+  width: 90%;
+  margin-left: 20px;
   overflow-x: hidden;
 `;
 

@@ -48,7 +48,7 @@ function ViewMoreLocationPage({ classes }: any) {
         {
             'Header': 'Address',
             'accessor': 'address',
-            Cell: (row:any) => {
+            Cell: (row: any) => {
                 return (
                     <div>
                         <span>{`${row.value.street}` + ' '}</span>
@@ -85,18 +85,19 @@ function ViewMoreLocationPage({ classes }: any) {
 
     useEffect(() => {
         const obj: any = location.state;
+
         var locationId = obj._id;
         const customerId = obj.customerId;
         dispatch(loadingJobSites());
         dispatch(getJobSites({ customerId, locationId }));
-        if( customerObj._id === ''){
+        if (customerObj._id === '') {
             const obj: any = location.state;
             const customerId = obj.customerId;
             dispatch(loadingSingleCustomers())
-            dispatch(getCustomerDetailAction({customerId}));
-          }
+            dispatch(getCustomerDetailAction({ customerId }));
+        }
         return () => {
-            let linkKey:any = localStorage.getItem('prevNestedRouteKey');
+            let linkKey: any = localStorage.getItem('prevNestedRouteKey');
             localStorage.setItem('nestedRouteKey', linkKey);
         }
     }, []);
@@ -116,42 +117,42 @@ function ViewMoreLocationPage({ classes }: any) {
             dispatch(openModalAction());
         }, 200);
     };
-   
+
     return (
         <div className={classes.pageMainContainer}>
             <div className={classes.pageContainer}>
                 <div className={classes.pageContent}>
-                     <BCBackButtonNoLink
+                    <BCBackButtonNoLink
                         func={history.goBack}
-                    /> 
-                    
-                        <div
-                            className={`${classes.dataContainer} `}
-                            hidden={curTab !== 0}
-                            id={'0'}>
-                            <PageContainer className="info_wrapper alignAddJobSite">
-                                <Fab
-                                    aria-label={'delete'}
-                                    classes={{
-                                        'root': classes.fabRoot
-                                    }}
-                                    onClick={() => openJobLocationModal()}
-                                    color={'primary'}
-                                    variant={'extended'}>
-                                    {'Add Job Site'}
-                                </Fab>
-                            </PageContainer>
+                    />
 
-                            <BCTableContainer
-                                columns={columns}
-                                isLoading={jobSites.loading}
-                                search
-                                searchPlaceholder={"Search Job Sites..."}
-                                tableData={jobSites.data}
-                                initialMsg="There are no job sites!"
-                            />
-                        </div>
-                       
+                    <div
+                        className={`${classes.dataContainer} `}
+                        hidden={curTab !== 0}
+                        id={'0'}>
+                        <PageContainer className="info_wrapper alignAddJobSite">
+                            <Fab
+                                aria-label={'delete'}
+                                classes={{
+                                    'root': classes.fabRoot
+                                }}
+                                onClick={() => openJobLocationModal()}
+                                color={'primary'}
+                                variant={'extended'}>
+                                {'Add Job Site'}
+                            </Fab>
+                        </PageContainer>
+
+                        <BCTableContainer
+                            columns={columns}
+                            isLoading={jobSites.loading}
+                            search
+                            searchPlaceholder={"Search Job Sites..."}
+                            tableData={jobSites.data}
+                            initialMsg="There are no job sites!"
+                        />
+                    </div>
+
                 </div>
             </div>
         </div>

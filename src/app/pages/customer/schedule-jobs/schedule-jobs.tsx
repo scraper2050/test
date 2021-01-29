@@ -31,7 +31,7 @@ function ScheduleJobsPage({ classes }: any) {
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
 
   const openCreateTicketModal = () => {
-    if (customers.length !== 0){
+    if (customers.length !== 0) {
       dispatch(setModalDataAction({
         'data': {
           'modalTitle': 'New Service Ticket',
@@ -82,7 +82,7 @@ function ScheduleJobsPage({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        
+
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
@@ -100,7 +100,7 @@ function ScheduleJobsPage({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-          {/* {
+            {/* {
             curTab === 0
               ? <Fab
                 aria-label={'new-job'}
@@ -114,28 +114,27 @@ function ScheduleJobsPage({ classes }: any) {
               </Fab>
               : null
           } */}
-          {
-            curTab === 1
-              ? <Fab
-                aria-label={'new-ticket'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                onClick={() => openCreateTicketModal()}
-                variant={'extended'}>
-                {'New Ticket'}
-              </Fab>
-              : null
-          }
-        </div>
+            <Fab
+              aria-label={'new-ticket'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              onClick={() => openCreateTicketModal()}
+              variant={'extended'}>
+              {'New Ticket'}
+            </Fab>
+          </div>
           <SwipeableViews
-            axis={theme.direction === 'rtl'
-              ? 'x-reverse'
-              : 'x'}
-            index={curTab}>
-            <JobPage hidden={curTab !== 0} />
-            <ServiceTicket hidden={curTab !== 1} />
+            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+            index={curTab}
+          >
+            <div className={classes.dataContainer} id={"0"}>
+              <JobPage hidden={curTab !== 0} />
+            </div>
+            <div className={classes.dataContainer} id={"1"}>
+              <ServiceTicket hidden={curTab !== 1} />
+            </div>
           </SwipeableViews>
         </div>
       </div>

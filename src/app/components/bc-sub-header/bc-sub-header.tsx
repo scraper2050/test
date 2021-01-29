@@ -29,7 +29,7 @@ const StyledToolbar = styled(Toolbar)`
   box-sizing: border-box;
   margin-top: 77px;
   position: fixed !important;
-  z-index: 1;
+  z-index: 100;
 
   .title {
     color: ${CONSTANTS.PRIMARY_WHITE};

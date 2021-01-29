@@ -1,20 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BCAdminProfile from '../../../../components/bc-admin-profile/bc-admin-profile';
+import BCTabs from '../../../../components/bc-tab/bc-tab';
 import BCBackButton from '../../../../components/bc-back-button/bc-back-button';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import BCAdminCard from '../../../../components/bc-admin-card/bc-admin-card';
+import ReportsIcon from 'assets/img/icons/customers/Reports';
+import JobsIcon from 'assets/img/icons/customers/Jobs';
+import ReceiptIcon from '@material-ui/icons/Receipt';
+import PaymentIcon from '@material-ui/icons/Payment';
 import validator from 'validator';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
 import { CompanyProfile } from 'actions/user/user.types'
+import { useLocation } from "react-router-dom";
+import { getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
+import { Grid, withStyles } from '@material-ui/core';
+import SwipeableViews from 'react-swipeable-views';
+import styles from './view-more.styles';
 
-function CompanyProfilePage() {
+function CompanyProfilePage({ classes }: any) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
-  const company = useSelector((state: any) => state.vendors.detail);
+  const { vendorObj, loading = true } = useSelector((state: any) => state.vendors);
+  const location = useLocation();
+  const [curTab, setCurTab] = useState(0);
+
+
   const [companyName, setCompanyName] = useState('');
   const [companyNameValid] = useState(true);
   const [companyEmail, setCompanyEmail] = useState('');
+  const [companyLogo, setCompanyLogo] = useState('');
   const [companyEmailValid, setCompanyEmailValid] = useState(true);
   const [phone, setPhone] = useState('');
   const [phoneValid, setPhoneValid] = useState(true);
@@ -29,32 +46,8 @@ function CompanyProfilePage() {
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
 
-  useEffect(() => {
-    if(company && company.info.companyName) {
-      setCompanyName(company.info.companyName);
-    }
-    if(company && company.info.companyEmail) {
-      setCompanyEmail(company.info.companyEmail);
-    }
-    if(company && company.contact.phone) {
-      setPhone(company.contact.phone);
-    }
-    if(company && company.address.city) {
-      setCity(company.address.city);
-    }
-    if(company && company.address.state) {
-      setState(company.address.state);
-    }
-    if(company && company.address.zipCode) {
-      setZipCode(company.address.zipCode);
-    }
-    if(company && company.address.street) {
-      setStreet(company.address.street);
-    }
-  });
-
-  const cancel = () => {}
-  const apply = () => {}
+  const cancel = () => { }
+  const apply = () => { }
 
   const imageSelected = (f: File) => {
     if (!f) return;
@@ -63,90 +56,231 @@ function CompanyProfilePage() {
     dispatch(uploadImage(formData));
   }
 
+  const handleTabChange = (newValue: number) => {
+    setCurTab(newValue);
+  };
+
+  useEffect(() => {
+
+    if (vendorObj === undefined) {
+      const obj: any = location.state;
+      const vendorId = obj.vendorId;
+      dispatch(loadingSingleVender());
+      dispatch(getVendorDetailAction(vendorId));
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if (vendorObj) {
+      console.log(vendorObj, 'vendorObj')
+      if (vendorObj.info.companyName) {
+        setCompanyName(vendorObj.info.companyName);
+      }
+      if (vendorObj.info.companyEmail) {
+        setCompanyEmail(vendorObj.info.companyEmail);
+      }
+      if (vendorObj.info.logoUrl) {
+        setCompanyLogo(vendorObj.info.logoUrl);
+      }
+      if (vendorObj.contact.phone) {
+        setPhone(vendorObj.contact.phone);
+      }
+      if (vendorObj.address.city) {
+        setCity(vendorObj.address.city);
+      }
+      if (vendorObj.address.state) {
+        setState(vendorObj.address.state);
+      }
+      if (vendorObj.address.zipCode) {
+        setZipCode(vendorObj.address.zipCode);
+      }
+      if (vendorObj.address.street) {
+        setStreet(vendorObj.address.street);
+      }
+    }
+  }, [vendorObj]);
+
+  console.log(!image.data, 'image')
+
   return (
     <>
-      <MainContainer>
-        <BCBackButton
-          link={'/main/admin/vendors'}
-        />
-        <PageContainer>        
-          <BCAdminProfile
-            avatar={{
-              isEmpty: 'NO',
-              url: !image.data ? '' : image.data.imageUrl,
-              onChange: imageSelected
-            }}
-            apply={apply}
-            cancel={cancel}
-            inputError={{}}
-            fields={[
-              {
-                left: {
-                  id: 'companyName',
-                  label: 'Company Name:',
-                  placehold: 'Input Company Name',
-                  value: companyName,
-                  valid: companyNameValid
-                },
-                right: {
-                  id: 'companyEmail',
-                  label: 'Company Email:',
-                  placehold: 'Input Company Emaill',
-                  value: companyEmail,
-                  valid: companyEmailValid
-                },
-              },
-              {
-                left: {
-                  id: 'phone',
-                  label: 'Phone:',
-                  placehold: 'Input Phone Number',
-                  value: phone,
-                  valid: phoneValid
-                },
-                right: {
-                  id: 'fax',
-                  label: 'Fax:',
-                  placehold: 'Input Fax',
-                  value: fax,
-                  valid: faxValid
-                }
-              },
-              {
-                left: {
-                  id: 'street',
-                  label: 'Street:',
-                  placehold: 'Input Street',
-                  value: street,
-                  valid: streetValid
-                },
-                right: {
-                  id: 'city',
-                  label: 'City:',
-                  placehold: 'Input City',
-                  value: city,
-                  valid: cityValid
-                }
-              },
-              {
-                left: {
-                  id: 'state',
-                  label: 'State:',
-                  placehold: 'Input State',
-                  value: state,
-                  valid: stateValid
-                },
-                right: {
-                  id: 'zipCode',
-                  label: 'Zip Code:',
-                  placehold: 'Input Zip Code',
-                  value: zipCode,
-                  valid: zipCodeValid
-                }
-              },
-            ]} />
-        </PageContainer>
-      </MainContainer>
+      <div className={classes.pageMainContainer}>
+        <div className={classes.pageContainer}>
+          <div className={classes.pageContent}>
+            <Grid container>
+
+              <BCBackButton
+                link={'/main/admin/vendors'}
+              />
+
+              <div className="tab_wrapper">
+                <BCTabs
+                  curTab={curTab}
+                  indicatorColor={'primary'}
+                  onChangeTab={handleTabChange}
+                  tabsData={[
+                    {
+                      'label': 'VENDOR INFO',
+                      'value': 0
+                    },
+                    {
+                      'label': 'JOBS/REPORTS INFO',
+                      'value': 1
+                    }
+                  ]}
+                />
+              </div>
+
+            </Grid>
+
+            {loading ?
+              <BCCircularLoader heightValue={'200px'} />
+              : <SwipeableViews index={curTab} className={'swipe_wrapper'}>
+                <div
+                  className={`${classes.dataContainer} `}
+                  hidden={curTab !== 0}
+                  id={'0'}>
+                  <MainContainer>
+                    <PageContainer>
+                      <BCAdminProfile
+                        avatar={{
+                          isEmpty: 'NO',
+                          url: companyLogo !== '' ? companyLogo : '',
+                          onChange: imageSelected,
+                          noUpdate: true
+                        }}
+                        apply={apply}
+                        cancel={cancel}
+                        inputError={{}}
+                        fields={[
+                          {
+                            left: {
+                              id: 'companyName',
+                              label: 'Company Name:',
+                              placehold: 'Input Company Name',
+                              value: companyName,
+                              valid: companyNameValid
+                            },
+                            right: {
+                              id: 'companyEmail',
+                              label: 'Company Email:',
+                              placehold: 'Input Company Emaill',
+                              value: companyEmail,
+                              valid: companyEmailValid
+                            },
+                          },
+                          {
+                            left: {
+                              id: 'phone',
+                              label: 'Phone:',
+                              placehold: 'Input Phone Number',
+                              value: phone,
+                              valid: phoneValid
+                            },
+                            right: {
+                              id: 'fax',
+                              label: 'Fax:',
+                              placehold: 'Input Fax',
+                              value: fax,
+                              valid: faxValid
+                            }
+                          },
+                          {
+                            left: {
+                              id: 'street',
+                              label: 'Street:',
+                              placehold: 'Input Street',
+                              value: street,
+                              valid: streetValid
+                            },
+                            right: {
+                              id: 'city',
+                              label: 'City:',
+                              placehold: 'Input City',
+                              value: city,
+                              valid: cityValid
+                            }
+                          },
+                          {
+                            left: {
+                              id: 'state',
+                              label: 'State:',
+                              placehold: 'Input State',
+                              value: state,
+                              valid: stateValid
+                            },
+                            right: {
+                              id: 'zipCode',
+                              label: 'Zip Code:',
+                              placehold: 'Input Zip Code',
+                              value: zipCode,
+                              valid: zipCodeValid
+                            }
+                          },
+                        ]} />
+                    </PageContainer>
+
+                  </MainContainer>
+                </div>
+
+                <div
+                  hidden={curTab !== 1}
+                  style={{
+                    'padding': '40px'
+                  }}
+                  id={'1'}>
+                  <Grid container spacing={5}>
+                    <Grid item>
+                      <BCAdminCard
+                        cardText={'Reports'}
+                        color={'primary'}
+                        func={() => { }}
+                      >
+                        <ReportsIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                    <Grid item>
+                      <BCAdminCard
+                        cardText={'Jobs'}
+                        color={'secondary'}
+                        func={() => { }}
+                      >
+                        <JobsIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                    <Grid
+                      item>
+                      <BCAdminCard
+                        cardText={'Invoices'}
+                        color={'primary-orange'}
+                        func={() => { }}
+                      >
+                        <ReceiptIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                    <Grid
+                      item>
+                      <BCAdminCard
+                        cardText={'Estimates'}
+                        color={'primary-green'}
+                        func={() => { }}
+                      >
+                        <PaymentIcon />
+                      </BCAdminCard>
+                    </Grid>
+
+                  </Grid>
+                </div>
+
+              </SwipeableViews>
+            }
+          </div>
+        </div>
+      </div>
     </>
   );
 }
@@ -156,7 +290,6 @@ const MainContainer = styled.div`
   flex: 1 1 100%;
   width: 100%;
   overflow-x: hidden;
-  margin-top: 10px;
 `;
 
 const PageContainer = styled.div`
@@ -165,10 +298,10 @@ const PageContainer = styled.div`
   flex: 1 1 100%;
   padding: 30px;
   width: 100%;
-  padding-left: 65px;
+  /* padding-left: 65px; */
   padding-right: 65px;
   margin: 0 auto;
-  button {
+  button  {
     display: none;
   }
   input {
@@ -177,4 +310,7 @@ const PageContainer = styled.div`
 `;
 
 
-export default CompanyProfilePage;
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(CompanyProfilePage);

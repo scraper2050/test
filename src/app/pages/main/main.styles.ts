@@ -4,7 +4,7 @@ export const fabRoot = {
     'fontSize': '.775rem',
     'height': '34px',
     'padding': '0 12px',
-    'textTransform': 'capitalize'
+    'textTransform': 'capitalize',
   }
 };
 
@@ -13,9 +13,11 @@ export const pageContent = {
     '@media(min-width: 1909px)': {
       'padding-left': '60px'
     },
-    'padding': '5px 30px 10px 30px'
+    'padding': '10px 30px',
   }
 };
+
+
 
 export const pageMainContainer = {
   'pageMainContainer': {
@@ -49,7 +51,7 @@ export const dataContainer = {
     'display': 'flex',
     'flex-direction': 'column',
     'margin-top': '10px',
-    'overflow' : 'hidden'
+    'overflow': 'hidden'
   }
 };
 
