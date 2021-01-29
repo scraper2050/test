@@ -29,7 +29,14 @@ export default (): any => ({
     'flex': '20%',
     'padding': '10px',
     'flex-shrink': '0',
-    'cursor': 'pointer'
+    'cursor': 'pointer',
+    'align-self': 'center',
+  },
+  'noUpdateAvatarArea': {
+    'flex': '20%',
+    'padding': '10px',
+    'flex-shrink': '0',
+    'align-self': 'center',
   },
   'infoArea': {
     'flex': '80%',
@@ -58,7 +65,8 @@ export default (): any => ({
     'margin': 'auto',
     'height': '150px',
     'width': '150px',
-    'borderRadius': '75px',
+    'borderRadius': '50%',
+    'border': '5px solid #00aaff',
     'background': 'grey',
     'display': 'flex',
     'justify-content': 'center',

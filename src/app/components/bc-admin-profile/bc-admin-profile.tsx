@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import styles from './bc-admin-profile.style';
 import { Fab, TextField, withStyles, Typography } from "@material-ui/core";
+import NoLogoImage from 'assets/img/avatars/NoImageFound.png'
 
 interface Props {
   avatar: Avatar;
-  noEdit?:any;
-  inputError: {[k: string]: boolean};
+  noEdit?: any;
+  inputError: { [k: string]: boolean };
   cancel: () => void;
   apply: () => void;
   fields: object[];
@@ -17,6 +18,7 @@ interface Avatar {
   isEmpty: string;
   url?: string;
   onChange: (f: File) => void
+  noUpdate?: boolean
 }
 
 interface ColumnField {
@@ -45,7 +47,7 @@ function BCAdminProfile({ avatar, noEdit, inputError, cancel, apply, fields, cla
   }
 
   const apply_edit = () => {
-    if(!editable) {
+    if (!editable) {
       setEditable(true);
     }
     else {
@@ -58,19 +60,25 @@ function BCAdminProfile({ avatar, noEdit, inputError, cancel, apply, fields, cla
       if (typeof inputError['zipCode'] !== 'undefined' && !inputError['zipCode']) {
         return
       }
-    
+
       setEditable(false);
       apply();
     }
   }
+
+  const avatarUrl = `url(${avatar.url})`
 
   return (
     <div className={classes.profilePane}>
       <div className={classes.infoPane}>
         {
           avatar.isEmpty === 'NO' &&
-          <div className={classes.avatarArea}>
-            <div onClick={() => openFileDialog()} className={classes.imgArea} style={{ 'backgroundImage': `url(${avatar.url})` }}>
+          <div className={avatar.noUpdate ? classes.noUpdateAvatarArea : classes.avatarArea}>
+            <div
+              onClick={avatar.noUpdate ? () => { } : () => openFileDialog()} className={classes.imgArea}
+              style={{
+                'backgroundImage': `url(${avatar.url === '' && avatar.noUpdate ? NoLogoImage : avatar.url})`,
+              }}>
               {
                 avatar.url === '' &&
                 <Fab
@@ -114,7 +122,7 @@ function BCAdminProfile({ avatar, noEdit, inputError, cancel, apply, fields, cla
                       helperText={
                         typeof inputError[element?.left.id] !== 'undefined' && !inputError[element?.left.id]
                         && (
-                        <ErrorText text={element?.left.text} />
+                          <ErrorText text={element?.left.text} />
                         )
                       }
                     />
@@ -143,7 +151,7 @@ function BCAdminProfile({ avatar, noEdit, inputError, cancel, apply, fields, cla
                       helperText={
                         typeof inputError[element?.right.id] !== 'undefined' && !inputError[element?.right.id]
                         && (
-                        <ErrorText text={element.right.text} />
+                          <ErrorText text={element.right.text} />
                         )
                       }
                     />
@@ -154,39 +162,42 @@ function BCAdminProfile({ avatar, noEdit, inputError, cancel, apply, fields, cla
           }
         </div>
       </div>
-      <div className={classes.buttonPane}>
-        <Fab
-          aria-label={'new-ticket'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          color={'primary'}
-          style={{
-            width: '100px',
-            background: '#c00707',
-            marginRight: '30px'
-          }}
-          onClick={cancel}
-          variant={'extended'}>
-          {'Cancel'}
-        </Fab>
-        {!noEdit && 
+      {
+        !avatar.noUpdate &&
+        <div className={classes.buttonPane}>
           <Fab
             aria-label={'new-ticket'}
             classes={{
               'root': classes.fabRoot
             }}
-            color={'secondary'}
+            color={'primary'}
             style={{
               width: '100px',
-              background: '#219653',
+              background: '#c00707',
+              marginRight: '30px'
             }}
-            onClick={apply_edit}
+            onClick={cancel}
             variant={'extended'}>
-            {editable ? 'Apply' : 'Edit'}
+            {'Cancel'}
           </Fab>
-        }
-      </div>
+          {!noEdit &&
+            <Fab
+              aria-label={'new-ticket'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'secondary'}
+              style={{
+                width: '100px',
+                background: '#219653',
+              }}
+              onClick={apply_edit}
+              variant={'extended'}>
+              {editable ? 'Apply' : 'Edit'}
+            </Fab>
+          }
+        </div>
+      }
     </div>
   );
 }

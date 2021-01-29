@@ -91,10 +91,7 @@ function CustomersPage({ classes }: any) {
         ? baseObj["profile"]["displayName"]
         : "N/A";
     let customerId = row["original"]["_id"];
-    let customerObj = {
-      customerName: customerName,
-      customerId,
-    };
+    let customerObj = { customerName, customerId, };
     customerName =
       customerName !== undefined
         ? customerName.replace(/ /g, "")

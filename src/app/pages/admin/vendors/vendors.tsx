@@ -6,7 +6,7 @@ import { modalTypes } from '../../../../constants';
 import styles from './vendors.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { getVendors, loadingVendors, getVendorDetailAction } from 'actions/vendor/vendor.action';
+import { getVendors, loadingVendors, getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -113,12 +113,28 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
-    let customerId = row['original']['contractor']['_id'];
-    // dispatch(loadingSingleCustomers())
-    dispatch(getVendorDetailAction(customerId));
+    let baseObj = row["original"];
+    let vendorCompanyName =
+      baseObj["contractor"]["info"]
+        && baseObj["contractor"]["info"]["companyName"] !== undefined
+        ? baseObj["contractor"]["info"]["companyName"]
+        : "N/A";
+    let vendorId = baseObj['contractor']['_id'];
+    let vendorObj = { vendorCompanyName, vendorId, };
+    vendorCompanyName =
+      vendorCompanyName !== undefined
+        ? vendorCompanyName.replace(/ /g, "")
+        : "vendorName";
+
+    localStorage.setItem("nestedRouteKey", `${vendorCompanyName}`);
+
+    console.log(vendorCompanyName, 'rooooow')
+    dispatch(loadingSingleVender());
+    dispatch(getVendorDetailAction(vendorId));
+
     history.push({
-      pathname: `vendors/${customerId}`,
-      state: customerId
+      pathname: `vendors/${vendorCompanyName}`,
+      state: vendorObj
     });
   }
 
