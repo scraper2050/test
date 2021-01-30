@@ -133,7 +133,9 @@ function CustomerInfoPage({ classes }: any) {
           <div className="customer_details">
             <strong>E-mail: </strong> {customerData.email}
           </div>
-          <div className="customer_details"></div>
+          <div className="customer_details">
+            <strong>Vendor Number: </strong> {customerData.vendorId}
+          </div>
           <div className="customer_details">
             <strong>Phone: </strong> {customerData.phone}
           </div>
