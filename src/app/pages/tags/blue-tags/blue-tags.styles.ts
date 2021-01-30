@@ -21,6 +21,7 @@ export default (theme: Theme): any => ({
         'padding': '10px 30px',
         'paddingLeft': '56px',
         'paddingRight': '65px',
-        'width': '100%'
+        'width': '100%',
+        'overflow': 'hidden',
     }
 });

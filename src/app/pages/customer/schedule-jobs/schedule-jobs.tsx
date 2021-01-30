@@ -126,12 +126,15 @@ function ScheduleJobsPage({ classes }: any) {
             </Fab>
           </div>
           <SwipeableViews
-            axis={theme.direction === 'rtl'
-              ? 'x-reverse'
-              : 'x'}
-            index={curTab}>
-            <JobPage hidden={curTab !== 0} />
-            <ServiceTicket hidden={curTab !== 1} />
+            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+            index={curTab}
+          >
+            <div className={classes.dataContainer} id={"0"}>
+              <JobPage hidden={curTab !== 0} />
+            </div>
+            <div className={classes.dataContainer} id={"1"}>
+              <ServiceTicket hidden={curTab !== 1} />
+            </div>
           </SwipeableViews>
         </div>
       </div>

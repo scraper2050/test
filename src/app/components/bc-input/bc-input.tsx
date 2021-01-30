@@ -1,43 +1,42 @@
-import FormControl from '@material-ui/core/FormControl';
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { TextField, Typography } from '@material-ui/core';
+import FormControl from "@material-ui/core/FormControl";
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { TextField, Typography } from "@material-ui/core";
 
-const useStyles = makeStyles(theme => ({
-  'fullWidth': {
-    'margin-bottom': '5px',
-    'width': '100%'
-  }
+const useStyles = makeStyles((theme) => ({
+  fullWidth: {
+    "margin-bottom": "5px",
+    width: "100%",
+  },
 }));
 
-function BCInput({ handleChange,
+function BCInput({
+  handleChange,
   value,
-  name = '',
+  name = "",
   multiline = false,
-  label = '',
+  label = "",
   rows = 4,
-  placeholder = '',
-  variant = 'outlined',
-  className = ''
+  placeholder = "",
+  variant = "outlined",
+  className = "",
+  margin = "normal",
 }: any) {
   const classes = useStyles();
   const additionalProps: any = {
-    'multiline': false
+    multiline: false,
   };
   if (multiline) {
     additionalProps.rows = rows;
   }
   return (
     <FormControl className={classes.fullWidth}>
-      <Typography
-        gutterBottom
-        className={className}
-        variant={'subtitle1'}>
+      <Typography gutterBottom className={className} variant={"subtitle1"}>
         {label}
       </Typography>
       <TextField
-        id={'outlined-textarea'}
-        label={''}
+        id={"outlined-textarea"}
+        label={""}
         multiline={multiline}
         name={name}
         onChange={(e: any) => handleChange(e)}
@@ -45,7 +44,8 @@ function BCInput({ handleChange,
         rows={rows}
         value={value}
         variant={variant}
-        autoComplete='off'
+        autoComplete="off"
+        margin={margin}
       />
     </FormControl>
   );
