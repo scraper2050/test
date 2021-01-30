@@ -134,7 +134,7 @@ function CustomerInfoPage({ classes }: any) {
             <strong>E-mail: </strong> {customerData.email}
           </div>
           <div className="customer_details">
-            <strong>Vendor Number: </strong> {customerData.vendorId}
+            {customerData.vendorId !== "" ? <> <strong>Vendor Number: </strong> {customerData.vendorId} </> : null}
           </div>
           <div className="customer_details">
             <strong>Phone: </strong> {customerData.phone}
