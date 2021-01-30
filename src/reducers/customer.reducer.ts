@@ -32,6 +32,7 @@ const initialCustomers: CustomersState = {
       lastName: "",
       displayName: "",
     },
+    vendorId: "",
   },
 };
 

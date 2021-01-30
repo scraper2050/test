@@ -48,6 +48,7 @@ function NewCustomerPage({ classes }: Props) {
     },
     street: "",
     zipCode: "",
+    vendorId: "",
   };
   const [positionValue, setPositionValue] = useState({
     lang: 0.0,
@@ -123,6 +124,7 @@ function NewCustomerPage({ classes }: Props) {
     setFieldValue("phone", "");
     setFieldValue("state", 0);
     setFieldValue("zipCode", "");
+    setFieldValue("vendorId", "");
     setPositionValue({
       lang: 0,
       lat: 0,
@@ -314,6 +316,20 @@ function NewCustomerPage({ classes }: Props) {
                             />
                           </FormGroup>
                         </Grid>
+                      </Grid>
+
+                      <Grid className={classes.paper} item sm={12}>
+                        <FormGroup >
+                          <InputLabel className={classes.label}>
+                            {"Vendor Number"}
+                          </InputLabel>
+
+                          <BCTextField
+                            name={"vendorId"}
+                            placeholder={"Vendor Number"}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
                       </Grid>
 
                       <Grid className={classes.paper} item md={12}>
