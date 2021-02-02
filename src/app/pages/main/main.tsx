@@ -108,6 +108,7 @@ const ViewRolePage = React.lazy(
   () => import("../admin/roles-permissions/roles/roles")
 );
 const AdminVendorsPage = React.lazy(() => import("../admin/vendors/vendors"));
+const AdminIntegrationsPage = React.lazy(() => import("../admin/integrations/integrations"));
 const ViewMoreVendorPage = React.lazy(
   () => import("../admin/vendors/view-more/view-more")
 );
@@ -483,6 +484,11 @@ function Main(): any {
                     exact
                     path={"/main/admin/vendors"}
                     title={"Admin"}
+                  />
+                  <AuthRoute
+                    Component={AdminIntegrationsPage}
+                    path={"/main/admin/integrations"}
+                    title={"Integrations"}
                   />
                   <AuthRoute
                     Component={ViewMoreVendorPage}

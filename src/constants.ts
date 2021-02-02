@@ -29,4 +29,5 @@ export const modalTypes = {
   SHOW_MAP_FILTER_POPUP: "show-map-filter-popup",
   JOB_REPORTS_MODAL: "job-reports-modal",
   ADD_BILLING_MODAL: "add-billing-modal",
+  QUICKBOOKS_LOGIN_MODAL: "quickbook-login-modal",
 };
