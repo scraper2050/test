@@ -28,7 +28,9 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
     clientId: config.quickbooks_clientId,
     clientSecret: config.quickbooks_clientSecret,
     environment: 'sandbox',
-    redirectUri: `${config.appBaseURL}main/admin/integrations/callback`,
+    // redirectUri: `${config.appBaseURL}main/admin/integrations/callback`,
+    redirectUri: `${window.location.origin}/main/admin/integrations/callback`,
+    // redirectUri: `https://testing.blueclerk.com/main/admin/integrations/callback`,
   });
 
   const authUri = oauthClient.authorizeUri({
@@ -54,9 +56,9 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
       try {
         if (win.document.URL.indexOf("code") != -1) {
           let resUri = win.document.URL
-          window.clearInterval(pollOAuth);
-          win.close();
-          window.location.reload();
+          await window.clearInterval(pollOAuth);
+          await win.close();
+          // window.location.reload();
         }
       } catch (e) {
         console.log(e)
