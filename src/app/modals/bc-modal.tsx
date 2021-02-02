@@ -25,7 +25,7 @@ const BCTermsContent = React.lazy(
   () => import("../components/bc-terms-content/bc-terms-content")
 );
 
-interface BCModal {}
+interface BCModal { }
 
 interface RootState {
   modal: {

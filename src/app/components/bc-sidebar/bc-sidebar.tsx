@@ -96,6 +96,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       link: "/main/admin/vendors",
     },
     {
+      label: "Integrations",
+      link: "/main/admin/integrations",
+    },
+    {
       label: "Groups",
       link: "/main/employees/group",
     },
