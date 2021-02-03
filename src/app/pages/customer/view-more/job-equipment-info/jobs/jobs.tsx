@@ -1,6 +1,6 @@
-import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
-import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import BCTabs from '../../../../components/bc-tab/bc-tab';
+import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
+import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
+import BCTabs from '../../../../../components/bc-tab/bc-tab';
 import { Grid } from '@material-ui/core';
 import Fab from "@material-ui/core/Fab";
 import React, { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
 import { formatDate, convertMilitaryTime } from "helpers/format";
 import { openModalAction, setModalDataAction, } from "actions/bc-modal/bc-modal.action";
-import { modalTypes } from "../../../../../constants";
+import { modalTypes } from "../../../../../../constants";
 import { getAllJobsAPI } from "api/job.api";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { Job } from 'actions/job/job.types';
@@ -64,7 +64,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       state: {
         customerName,
         customerId,
-        from: 'job-equipment-info'
+        from: 1
       }
     });
   }
