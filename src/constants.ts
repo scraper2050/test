@@ -30,4 +30,5 @@ export const modalTypes = {
   JOB_REPORTS_MODAL: "job-reports-modal",
   ADD_BILLING_MODAL: "add-billing-modal",
   QUICKBOOKS_LOGIN_MODAL: "quickbook-login-modal",
+  ADD_CONTACT_MODAL: "add-contact-modal",
 };

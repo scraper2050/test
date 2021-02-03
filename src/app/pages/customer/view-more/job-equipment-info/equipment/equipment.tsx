@@ -1,6 +1,6 @@
-import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
-import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import BCTabs from '../../../../components/bc-tab/bc-tab';
+import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
+import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
+import BCTabs from '../../../../../components/bc-tab/bc-tab';
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -58,7 +58,7 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
       state: {
         customerName,
         customerId,
-        from: 'job-equipment-info'
+        from: 1
       }
     });
   }

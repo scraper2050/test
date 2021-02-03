@@ -20,16 +20,16 @@ const ViewMoreCustomerPage = React.lazy(
   () => import("../customer/view-more/view-more")
 );
 const CustomersJobEquipmentInfoReportsPage = React.lazy(
-  () => import('../customer/job-equipment-info/reports/reports')
+  () => import('../customer/view-more/job-equipment-info/reports/reports')
 );
 const CustomersJobEquipmentInfoJobsPage = React.lazy(
-  () => import('../customer/job-equipment-info/jobs/jobs')
+  () => import('../customer/view-more/job-equipment-info/jobs/jobs')
 );
 const CustomersJobEquipmentInfoTicketsPage = React.lazy(
-  () => import('../customer/job-equipment-info/tickets/tickets')
+  () => import('../customer/view-more/job-equipment-info/tickets/tickets')
 );
 const CustomersJobEquipmentInfoEquipmentPage = React.lazy(
-  () => import('../customer/job-equipment-info/equipment/equipment')
+  () => import('../customer/view-more/job-equipment-info/equipment/equipment')
 );
 const ViewMoreLocationPage = React.lazy(
   () => import("../customer/view-more/view-more-location")
