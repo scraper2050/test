@@ -129,6 +129,9 @@ const CreatePurchaseOrderPage = React.lazy(
 const CreateEstimatePage = React.lazy(
   () => import("../invoicing/estimates/create-estimates/create-estimates")
 );
+const ViewProfilePage = React.lazy(
+  () => import("../profile/view-profile/view-profile")
+)
 
 function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
@@ -499,6 +502,13 @@ function Main(): any {
                     exact
                     path={"/main/admin/vendors/:contractorName"}
                     title={"Admin"}
+                  />
+
+                  <AuthRoute
+                    Component={ViewProfilePage}
+                    exact
+                    path={"/main/user/view-profile"}
+                    title={"User"}
                   />
                 </Switch>
               </Grid>
