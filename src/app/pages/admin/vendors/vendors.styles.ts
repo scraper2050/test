@@ -14,5 +14,14 @@ export default (theme: Theme): any => ({
     'position': 'absolute',
     'right': '0',
     'zIndex': '1000'
-  }
+  },
+  'statusPendingText': {
+    'color': '#FFA500',
+    'fontStyle': 'italic',
+    'fontWeight': 'bold'
+  },
+  'statusConfirmedText': {
+    'color': '#008000',
+    'fontWeight': 'bold'
+  },
 });

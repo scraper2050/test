@@ -2,10 +2,10 @@ import BCTableContainer from '../../../components/bc-table-container/bc-table-co
 import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import BCBackButton from '../../../components/bc-back-button/bc-back-button';
-import ReportsIcon from '../../../../assets/img/icons/customers/Reports';
-import JobsIcon from '../../../../assets/img/icons/customers/Jobs';
-import TicketsIcon from '../../../../assets/img/icons/customers/Tickets';
-import EquipmentIcon from '../../../../assets/img/icons/customers/Equipment';
+import ReportsIcon from 'assets/img/icons/customers/Reports';
+import JobsIcon from 'assets/img/icons/customers/Jobs';
+import TicketsIcon from 'assets/img/icons/customers/Tickets';
+import EquipmentIcon from 'assets/img/icons/customers/Equipment';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
@@ -21,11 +21,12 @@ import { loadingJobLocations, getJobLocationsAction } from 'actions/job-location
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
+import CustomerContactsPage from './contacts/contacts';
 
 interface LocationState {
   customerName?: string;
   customerId?: string;
-  from?: string;
+  from?: number;
 }
 
 function ViewMorePage({ classes }: any) {
@@ -33,9 +34,10 @@ function ViewMorePage({ classes }: any) {
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
   const location = useLocation<LocationState>();
+  const [from, setFrom] = useState("");
   const customerObj = location.state;
   const history = useHistory();
-  const [curTab, setCurTab] = useState(customerObj.from && customerObj.from === 'job-equipment-info' ? 1 : 0);
+  const [curTab, setCurTab] = useState(0);
 
   const renderJobSiteComponent = (jobLocation: any) => {
     let locationName = jobLocation.name;
@@ -134,11 +136,30 @@ function ViewMorePage({ classes }: any) {
     const customerId = obj.customerId;
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(customerId));
+
+
   }, []);
 
+  useEffect(() => {
+    if (customerObj.from === 1) {
+      setCurTab(1);
+    } else if (customerObj.from === 2) {
+      setCurTab(2);
+    }
+
+  }, [customerObj])
+
   const handleTabChange = (newValue: number) => {
+    let state = {
+      ...customerObj,
+      from: newValue
+    };
+
+    history.replace({ ...history.location, state })
     setCurTab(newValue);
   };
+
+
 
   const openJobLocationModal = () => {
     dispatch(setModalDataAction({
@@ -153,8 +174,6 @@ function ViewMorePage({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
-
-  console.log(jobLocations);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -180,6 +199,10 @@ function ViewMorePage({ classes }: any) {
                   {
                     'label': 'JOB/EQUIPMENT INFO',
                     'value': 1
+                  },
+                  {
+                    'label': 'CONTACTS',
+                    'value': 2
                   }
                 ]}
               />
@@ -216,6 +239,7 @@ function ViewMorePage({ classes }: any) {
                     initialMsg="There are no job locations!"
                   />
                 </div>
+
                 <div
                   hidden={curTab !== 1}
                   style={{
@@ -269,6 +293,18 @@ function ViewMorePage({ classes }: any) {
                       </BCAdminCard>
                     </Grid>
                   </Grid>
+                </div>
+
+
+                <div
+                  className={`${classes.dataContainer} `}
+                  hidden={curTab !== 2}
+                  style={{
+                    'marginTop': '20px'
+                  }}
+                  id={'2'}>
+
+                  <CustomerContactsPage />
                 </div>
               </SwipeableViews>
           }

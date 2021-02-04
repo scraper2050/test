@@ -3,6 +3,8 @@ import BCJobModal from "./bc-job-modal/bc-job-modal";
 import BCModalTransition from "./bc-modal-transition";
 import BCServiceTicketModal from "./bc-service-ticket-modal/bc-service-ticket-modal";
 import BCAddBrandsModal from "./bc-add-brands-modal/bc-add-brands-modal";
+import BCAddContactModal from "./bc-add-contact-modal/bc-add-contact-modal";
+import BCEditProfileModal from "./bc-edit-profile-modal/bc-edit-profile-modal";
 import BCAddJobTypeModal from "./bc-add-job-type-modal/bc-add-job-type-modal";
 import BCAddEquipmentTypeModal from "./bc-add-equipment-type-modal/bc-add-equipment-type-modal";
 import BCAddJobSiteModal from "./bc-add-jobsite-modal/bc-add-jobsite-modal";
@@ -25,7 +27,7 @@ const BCTermsContent = React.lazy(
   () => import("../components/bc-terms-content/bc-terms-content")
 );
 
-interface BCModal {}
+interface BCModal { }
 
 interface RootState {
   modal: {
@@ -104,6 +106,24 @@ function BCModal() {
           maxWidth: "xs",
         });
         setComponent(<BCAddBrandsModal />);
+        break;
+      case modalTypes.ADD_CONTACT_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "sm",
+        });
+        setComponent(<BCAddContactModal />);
+        break;
+      case modalTypes.EDIT_PROFILE:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "md",
+        });
+        setComponent(<BCEditProfileModal props={data.props} />);
         break;
       case modalTypes.ADD_JOB_TYPE:
         setModalOptions({

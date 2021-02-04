@@ -20,16 +20,16 @@ const ViewMoreCustomerPage = React.lazy(
   () => import("../customer/view-more/view-more")
 );
 const CustomersJobEquipmentInfoReportsPage = React.lazy(
-  () => import('../customer/job-equipment-info/reports/reports')
+  () => import('../customer/view-more/job-equipment-info/reports/reports')
 );
 const CustomersJobEquipmentInfoJobsPage = React.lazy(
-  () => import('../customer/job-equipment-info/jobs/jobs')
+  () => import('../customer/view-more/job-equipment-info/jobs/jobs')
 );
 const CustomersJobEquipmentInfoTicketsPage = React.lazy(
-  () => import('../customer/job-equipment-info/tickets/tickets')
+  () => import('../customer/view-more/job-equipment-info/tickets/tickets')
 );
 const CustomersJobEquipmentInfoEquipmentPage = React.lazy(
-  () => import('../customer/job-equipment-info/equipment/equipment')
+  () => import('../customer/view-more/job-equipment-info/equipment/equipment')
 );
 const ViewMoreLocationPage = React.lazy(
   () => import("../customer/view-more/view-more-location")
@@ -108,6 +108,7 @@ const ViewRolePage = React.lazy(
   () => import("../admin/roles-permissions/roles/roles")
 );
 const AdminVendorsPage = React.lazy(() => import("../admin/vendors/vendors"));
+const AdminIntegrationsPage = React.lazy(() => import("../admin/integrations/integrations"));
 const ViewMoreVendorPage = React.lazy(
   () => import("../admin/vendors/view-more/view-more")
 );
@@ -128,6 +129,9 @@ const CreatePurchaseOrderPage = React.lazy(
 const CreateEstimatePage = React.lazy(
   () => import("../invoicing/estimates/create-estimates/create-estimates")
 );
+const ViewProfilePage = React.lazy(
+  () => import("../profile/view-profile/view-profile")
+)
 
 function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
@@ -485,14 +489,26 @@ function Main(): any {
                     title={"Admin"}
                   />
                   <AuthRoute
+                    Component={AdminIntegrationsPage}
+                    path={"/main/admin/integrations"}
+                    title={"Integrations"}
+                  />
+                  <AuthRoute
                     Component={ViewMoreVendorPage}
                     actionData={{
-                      link: "/main/admin/vendors/:contractorId",
+                      link: "/main/admin/vendors/:contractorName",
                       title: "Admin",
                     }}
                     exact
-                    path={"/main/admin/vendors/:contractorId"}
+                    path={"/main/admin/vendors/:contractorName"}
                     title={"Admin"}
+                  />
+
+                  <AuthRoute
+                    Component={ViewProfilePage}
+                    exact
+                    path={"/main/user/view-profile"}
+                    title={"User"}
                   />
                 </Switch>
               </Grid>

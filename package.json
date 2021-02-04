@@ -31,6 +31,7 @@
     "formik": "^2.1.5",
     "google-map-react": "^2.1.3",
     "immutable": "^4.0.0-rc.12",
+    "intuit-oauth": "^3.0.2",
     "moment": "^2.27.0",
     "notistack": "^1.0.0",
     "react": "^16.13.1",

@@ -95,6 +95,11 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
     setProfileOpen(false);
   };
 
+  const handleViewProfile = (): void => {
+    handleClose();
+    history.push('/main/user/view-profile');
+  }
+
   const handleClickLogout = (): void => {
     handleClose();
     dispatch(logoutAction());
@@ -231,7 +236,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                         <MenuList role={'menu'}>
                           <MenuItem
                             className={dropdownItem}
-                            onClick={handleClose}>
+                            onClick={handleViewProfile}>
                             {'View Profile'}
                           </MenuItem>
                           <MenuItem

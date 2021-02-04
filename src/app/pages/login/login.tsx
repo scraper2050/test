@@ -28,6 +28,8 @@ import {
   setModalDataAction,
 } from "actions/bc-modal/bc-modal.action";
 import BCModal from "../../modals/bc-modal";
+import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
+import { error } from 'actions/snackbar/snackbar.action';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -66,13 +68,27 @@ function LoginPage({
     }
   }, [token, user]);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const action = (key: any) => (
+    <>
+      <Button
+        className={classes.dismiss}
+        variant={'contained'}
+        onClick={() => { closeSnackbar(key) }}>
+        Dismiss
+      </Button>
+    </>
+  );
 
   useEffect(() => {
     errMessage !== "" &&
-      enqueueSnackbar(errMessage, {
-        variant: "error",
-      });
+      dispatch(error(errMessage));
+    // enqueueSnackbar(errMessage, {
+    //   variant: "error",
+    //   persist: false,
+    //   action
+    // });
   }, [enqueueSnackbar, errMessage]);
 
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
@@ -134,7 +150,7 @@ function LoginPage({
       if (localStorage.getItem("rememberMe")) {
         const data: any = localStorage.getItem("rememberMe");
         const rememberMeData: any = JSON.parse(data);
-  
+
         setRemember(rememberMeData.rememberMe);
         setAgreeTerm({ ...agreeTerm, value: rememberMeData.agreed });
         setFormData({
@@ -151,7 +167,7 @@ function LoginPage({
           },
         });
       }
-  
+
       if (showAgreeTerms) {
         const data: any = localStorage.getItem("agreed");
         const agreed: any = JSON.parse(data);
@@ -166,6 +182,8 @@ function LoginPage({
   }
 
   const checkValidate = (): boolean => {
+    closeSnackbar();
+
     const formDataTemp = { ...formData };
     let isValidate = true;
     Object.keys(formData).forEach((item) => {
@@ -197,14 +215,14 @@ function LoginPage({
     return isValidate;
   };
 
-  const handleClickLogin = (event: any): void => {
+  const handleClickLogin = async (event: any) => {
     event.preventDefault();
 
     if (!checkValidate()) {
       return;
     }
 
-    loginAction({
+    await loginAction({
       email: formData.email.value,
       password: formData.password.value,
     });
@@ -232,7 +250,7 @@ function LoginPage({
     }
   };
 
-  const handleSocialLogin = (user: any, connectorType: number): void => {};
+  const handleSocialLogin = (user: any, connectorType: number): void => { };
 
   const handleSocialLoginFailure = (err: any, connectorType: number): void => {
     console.log(`${connectorType} login error`);
@@ -241,6 +259,8 @@ function LoginPage({
 
   return (
     <div className={classes.root}>
+      <BCSnackbar topRight />
+
       <Grid container style={{ flex: "1 1 100%" }}>
         <Grid className={classes.LeftSection} item md={6} />
         <Grid className={classes.LoginGrid} item md={6}>
@@ -301,34 +321,35 @@ function LoginPage({
                   {
                     !showAgreeTerms && (
                       <>
-                      <Checkbox
-                        checked={agreeTerm.value}
-                        color="primary"
-                        name="agree-term"
-                        onChange={() => {
-                          setAgreeTerm({
-                            ...agreeTerm,
-                            'showError': false,
-                            'value': !agreeTerm.value
-                          });
-                        } } />
+                        <Checkbox
+                          checked={agreeTerm.value}
+                          color="primary"
+                          name="agree-term"
+                          onChange={() => {
+                            setAgreeTerm({
+                              ...agreeTerm,
+                              'showError': false,
+                              'value': !agreeTerm.value
+                            });
+                          }} />
                         <span onClick={handleClickOpen} role={"button"}>
                           {"I agree with the terms of use and privacy"}
                         </span>
-                        </>
+                      </>
                     )
                   }
                 </div>
               </div>
               <div className={classes.agreementHelperText}>
-              {agreeTerm.showError &&
-                    <FormHelperText error>
-                      {'Please agree to the terms of use and privacy'}
-                    </FormHelperText>
-                  }
+                {agreeTerm.showError &&
+                  <FormHelperText error>
+                    {'Please agree to the terms of use and privacy'}
+                  </FormHelperText>
+                }
               </div>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
+
                   <Button
                     color={"primary"}
                     fullWidth
@@ -430,12 +451,16 @@ const mapStateToProps = (state: {
     token: string;
     user: object;
   };
-}) => ({
-  errMessage: state.auth.loginApi.msg,
-  isLoading: state.auth.loginApi.isLoading,
-  token: state.auth.token,
-  user: state.auth.user,
-});
+}) => {
+  console.log(state, 'sa state')
+  return {
+    errMessage: state.auth.loginApi.msg,
+    isLoading: state.auth.loginApi.isLoading,
+    token: state.auth.token,
+    user: state.auth.user,
+  }
+}
+
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   loginAction: (loginInfo: Auth) => dispatch(loginActions.fetch(loginInfo)),

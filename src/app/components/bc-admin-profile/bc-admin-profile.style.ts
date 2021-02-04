@@ -12,13 +12,16 @@ export default (): any => ({
     'borderRadius': '14px',
     'height': '100%',
     'textAlign': 'center',
-    'width': '100%',
-    'background': 'white'
+    'width': '90%',
+    'background': 'white',
+    'position': 'relative',
   },
   'infoPane': {
     'display': 'flex',
     'flex-direction': 'horizontal',
-    'padding': '20px'
+    'padding': '3rem',
+    'min-height': '15rem',
+    'align-items': 'center'
   },
   'buttonPane': {
     'display': 'flex',
@@ -26,10 +29,17 @@ export default (): any => ({
     'justify-content': 'flex-end'
   },
   'avatarArea': {
-    'flex': '20%',
-    'padding': '10px',
+    'flex': '25%',
+    'padding-right': '2rem',
     'flex-shrink': '0',
-    'cursor': 'pointer'
+    'cursor': 'pointer',
+    'align-self': 'center',
+  },
+  'noUpdateAvatarArea': {
+    'flex': '25%',
+    'padding-right': '2rem',
+    'flex-shrink': '0',
+    'align-self': 'center',
   },
   'infoArea': {
     'flex': '80%',
@@ -40,7 +50,7 @@ export default (): any => ({
   'field': {
     'display': 'flex',
     'flex-direction': 'horizontal',
-    'justify-content': 'space-between'
+    'justify-content': 'space-around',
   },
   'leftField': {
     'width': '45%',
@@ -58,7 +68,8 @@ export default (): any => ({
     'margin': 'auto',
     'height': '150px',
     'width': '150px',
-    'borderRadius': '75px',
+    'borderRadius': '50%',
+    'border': '5px solid #00aaff',
     'background': 'grey',
     'display': 'flex',
     'justify-content': 'center',
@@ -71,5 +82,10 @@ export default (): any => ({
     'display': 'flex',
     'align-items': 'center',
     'font-size': '20px'
+  },
+  'editButton': {
+    'position': 'absolute',
+    'right': '1rem',
+    'top': '1rem'
   }
 });

@@ -4,7 +4,7 @@ export const fabRoot = {
     'fontSize': '.775rem',
     'height': '34px',
     'padding': '0 12px',
-    'textTransform': 'capitalize'
+    'textTransform': 'capitalize',
   }
 };
 
@@ -51,7 +51,8 @@ export const dataContainer = {
     'display': 'flex',
     'flex-direction': 'column',
     'margin-top': '10px',
-    'overflow': 'hidden'
+    'overflow': 'hidden',
+    'position': 'relative',
   }
 };
 

@@ -6,6 +6,8 @@ export const PRIMARY_GRAY = "#ebebeb";
 export const SECONDARY_GREY = "#c4c4c4";
 export const PRIMARY_DARK_GREY = "rgba(0, 0, 0, 0.5)";
 export const SECONDARY_DARK_GREY = "rgba(0, 0, 0, 0.25)";
+export const PRIMARY_ORANGE = "#FE5500";
+export const PRIMARY_GREEN = "rgb(77, 189, 116)";
 
 export const PRIMARY_CARD_BLUE = "#66B8F9";
 export const SECONDARY_CARD_BLUE = "#3582BE";
@@ -27,4 +29,7 @@ export const modalTypes = {
   SHOW_MAP_FILTER_POPUP: "show-map-filter-popup",
   JOB_REPORTS_MODAL: "job-reports-modal",
   ADD_BILLING_MODAL: "add-billing-modal",
+  QUICKBOOKS_LOGIN_MODAL: "quickbook-login-modal",
+  ADD_CONTACT_MODAL: "add-contact-modal",
+  EDIT_PROFILE: "edit-profile-modal",
 };

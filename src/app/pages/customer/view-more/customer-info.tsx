@@ -36,54 +36,51 @@ function CustomerInfoPage({ classes }: any) {
         ? baseObj["profile"]["displayName"]
         : "N/A";
     let customerAddress = baseObj && baseObj["address"];
+    let vendorId = baseObj && baseObj["vendorId"];
     let customerId = baseObj && baseObj["_id"];
     let contactName =
       baseObj &&
-      baseObj["contactName"] &&
-      baseObj["contactName"] !== undefined &&
-      baseObj["contactName"] !== ""
+        baseObj["contactName"] &&
+        baseObj["contactName"] !== undefined &&
+        baseObj["contactName"] !== ""
         ? baseObj["contactName"]
         : "N/A";
     let address: any = "";
     if (customerAddress && customerAddress !== undefined) {
-      address = `${
-        customerAddress["street"] !== undefined &&
+      address = `${customerAddress["street"] !== undefined &&
         customerAddress["street"] !== null
-          ? customerAddress["street"]
-          : ""
-      } 
-      ${
-        customerAddress["city"] !== undefined &&
-        customerAddress["city"] !== null
+        ? customerAddress["street"]
+        : ""
+        } 
+      ${customerAddress["city"] !== undefined &&
+          customerAddress["city"] !== null
           ? customerAddress["city"]
           : ""
-      } ${
-        customerAddress["state"] !== undefined &&
-        customerAddress["state"] !== null &&
-        customerAddress["state"] !== "none"
+        } ${customerAddress["state"] !== undefined &&
+          customerAddress["state"] !== null &&
+          customerAddress["state"] !== "none"
           ? customerAddress["state"]
           : ""
-      } ${
-        customerAddress["zipCode"] !== undefined &&
-        customerAddress["zipCode"] !== null
+        } ${customerAddress["zipCode"] !== undefined &&
+          customerAddress["zipCode"] !== null
           ? customerAddress["zipCode"]
           : ""
-      }`;
+        }`;
     } else {
       address = "N/A";
     }
     let email =
       baseObj &&
-      baseObj["info"] &&
-      baseObj["info"] !== undefined &&
-      baseObj["info"]["email"] !== ""
+        baseObj["info"] &&
+        baseObj["info"] !== undefined &&
+        baseObj["info"]["email"] !== ""
         ? baseObj["info"]["email"]
         : "N/A";
     let phone =
       baseObj &&
-      baseObj["contact"] &&
-      baseObj["contact"] !== undefined &&
-      baseObj["contact"]["phone"] !== ""
+        baseObj["contact"] &&
+        baseObj["contact"] !== undefined &&
+        baseObj["contact"]["phone"] !== ""
         ? baseObj["contact"]["phone"]
         : "N/A";
     let location = baseObj && baseObj["location"] ? baseObj["location"] : [];
@@ -96,6 +93,7 @@ function CustomerInfoPage({ classes }: any) {
       email,
       phone,
       location,
+      vendorId
     };
     return customerObj;
   };
@@ -135,7 +133,9 @@ function CustomerInfoPage({ classes }: any) {
           <div className="customer_details">
             <strong>E-mail: </strong> {customerData.email}
           </div>
-          <div className="customer_details"></div>
+          <div className="customer_details">
+            {customerData.vendorId !== "" ? <> <strong>Vendor Number: </strong> {customerData.vendorId} </> : null}
+          </div>
           <div className="customer_details">
             <strong>Phone: </strong> {customerData.phone}
           </div>

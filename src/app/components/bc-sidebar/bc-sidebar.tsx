@@ -96,6 +96,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       link: "/main/admin/vendors",
     },
     {
+      label: "Integrations",
+      link: "/main/admin/integrations",
+    },
+    {
       label: "Groups",
       link: "/main/employees/group",
     },
@@ -122,6 +126,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
     {
       label: "Buy Blue Tag",
       link: "/main/tags/bluetag",
+    },
+    {
+      label: "Profile",
+      link: "/main/user/view-profile",
     },
   ];
 

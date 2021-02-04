@@ -1,9 +1,9 @@
-import { VendorActionType, VendorsState } from 'actions/vendor/vendor.types';
+import { VendorActionType, VendorsState, } from 'actions/vendor/vendor.types';
 import { Reducer } from 'redux';
 
 const initialVendors: VendorsState = {
   loading: false,
-  data: []
+  data: [],
 }
 
 export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => {
@@ -18,11 +18,16 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
         loading: false,
         data: [...action.payload],
       }
-    case VendorActionType.SET_SINGLE_CONTRACTOR:
+    case VendorActionType.GET_SINGLE_VENDOR:
+      return {
+        ...state,
+        loading: true,
+      }
+    case VendorActionType.SET_SINGLE_VENDOR:
       return {
         ...state,
         loading: false,
-        detail: action.payload,
+        vendorObj: action.payload,
       }
     case VendorActionType.SET:
       return {
