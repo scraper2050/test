@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile'
+import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile';
 import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
@@ -15,7 +15,7 @@ interface Props {
   back: () => void;
 }
 
-function EmployeeProfile({profile, back} : Props) {
+function EmployeeProfile({ profile, back }: Props) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
   const [firstName, setFirstName] = useState(profile.firstName);
@@ -28,7 +28,7 @@ function EmployeeProfile({profile, back} : Props) {
   const [phoneValid, setPhoneValid] = useState(true);
 
   console.log(profile);
-  
+
   const firstNameChanged = (newValue: string) => {
     setFirstName(newValue);
   }
