@@ -1,4 +1,5 @@
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
+import BCBackButtonNoLink from '../../../components/bc-back-button/bc-back-button-no-link';
 import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import BCBackButton from '../../../components/bc-back-button/bc-back-button';
@@ -33,7 +34,7 @@ function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
-  const location = useLocation<LocationState>();
+  const location = useLocation<any>();
   const [from, setFrom] = useState("");
   const customerObj = location.state;
   const history = useHistory();
@@ -182,8 +183,15 @@ function ViewMorePage({ classes }: any) {
 
           <Grid container
           >
-            <BCBackButton
-              link={'/main/customers'}
+            <BCBackButtonNoLink
+              func={() => {
+                history.push({
+                  pathname: '/main/customers',
+                  state: {
+                    prevPage: location.state.currentPage
+                  }
+                })
+              }}
             />
 
             <div className="tab_wrapper">

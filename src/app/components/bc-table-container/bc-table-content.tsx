@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -10,12 +10,18 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import { useLocation, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './bc-table.styles';
 import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 
-function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceTable = false }: any) {
+function BCTableContent({ isLoading, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+
+  const location = useLocation<any>();
+  const locationState = location.state;
+  const [render, setRender] = useState(false)
+
   const {
     getTableProps,
     headerGroups,
@@ -41,12 +47,31 @@ function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceT
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
+    setPage({
+      pageSize,
+      page: newPage
+    })
     gotoPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: any) => {
+    setPage({
+      pageSize: Number(event.target.value),
+      page: pageIndex,
+    })
     setPageSize(Number(event.target.value));
   };
+
+
+  useEffect(() => {
+    if (locationState && locationState.prevPage) {
+      const timer = setTimeout(() => {
+        setPageSize(Number(locationState.prevPage.pageSize));
+        gotoPage(locationState.prevPage.page);
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
   // Render the UI for your table
   return (
