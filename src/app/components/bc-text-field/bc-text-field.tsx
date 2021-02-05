@@ -1,14 +1,17 @@
 import React from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, withStyles } from '@material-ui/core';
 import { FieldAttributes, useField } from 'formik';
+import styles from './bc-text-field.styles';
 
-type BCTextFieldProps = { placeholder: string, variant?: any, type?: any, onChange?: any, required?: boolean } & FieldAttributes<{}>;
+type BCTextFieldProps = { classes: any, disabled?: boolean, placeholder: string, variant?: any, type?: any, onChange?: any, required?: boolean } & FieldAttributes<{}>;
 
-export default function BCTextField({
+function BCTextField({
   placeholder,
   variant,
   type,
   onChange,
+  disabled,
+  classes,
   required = false,
   ...props
 }: BCTextFieldProps) {
@@ -18,6 +21,7 @@ export default function BCTextField({
     : '';
   return (
     <TextField
+      className={disabled ? classes.root : ""}
       error={Boolean(errorText)}
       helperText={errorText}
       type={type}
@@ -26,6 +30,14 @@ export default function BCTextField({
       {...field}
       onChange={onChange}
       required={required}
+      disabled={disabled}
     />
   );
 }
+
+
+
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(BCTextField);

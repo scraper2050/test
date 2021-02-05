@@ -41,7 +41,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const imageUrl = user?.profile?.imageUrl === ''
+  const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
     ? AvatarImg
     : user?.profile?.imageUrl;
 
