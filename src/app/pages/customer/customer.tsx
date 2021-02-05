@@ -19,6 +19,10 @@ function CustomersPage({ classes }: any) {
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
+  const [currentPage, setCurrentPage] = useState({
+    page: 0,
+    pageSize: 10,
+  });
 
   const columns: any = [
     {
@@ -85,13 +89,14 @@ function CustomersPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
+
     let baseObj = row["original"];
     let customerName =
       baseObj["profile"] && baseObj["profile"] !== undefined
         ? baseObj["profile"]["displayName"]
         : "N/A";
     let customerId = row["original"]["_id"];
-    let customerObj = { customerName, customerId, };
+    let customerObj = { customerName, customerId, currentPage };
     customerName =
       customerName !== undefined
         ? customerName.replace(/ /g, "")
@@ -133,6 +138,7 @@ function CustomersPage({ classes }: any) {
               id={"0"}
             >
               <BCTableContainer
+                setPage={setCurrentPage}
                 columns={columns}
                 isLoading={customers.loading}
                 onRowClick={handleRowClick}

@@ -31,6 +31,7 @@ function BCTableContainer({
   initialMsg = "No records found!",
   isPageSaveEnabled,
   searchTerm,
+  setPage,
 }: any) {
 
   const dispatch = useDispatch();
@@ -57,7 +58,7 @@ function BCTableContainer({
     if (tableData) {
       setFilteredData(getFilteredArray(tableData, searchText));
     }
-    console.log('search text  here' , searchText);
+    console.log('search text  here', searchText);
   }, [tableData, searchText]);
 
   return (
@@ -83,17 +84,20 @@ function BCTableContainer({
             </Typography>
           </Paper>
         ) : (
-          <BCTableContent
-            columns={columns}
-            data={filteredData}
-            invoiceTable
-            onRowClick={(ev: any, row: any) => {
-              onRowClick && onRowClick(ev, row);
-            }}
-            pagination={pagination}
-            isPageSaveEnabled={isPageSaveEnabled || false}
-          />
-        )}
+              <BCTableContent
+                columns={columns}
+                data={filteredData}
+                invoiceTable
+                onRowClick={(ev: any, row: any) => {
+                  console.log(ev, 'ev')
+                  onRowClick && onRowClick(ev, row);
+                }}
+                pagination={pagination}
+                isPageSaveEnabled={isPageSaveEnabled || false}
+                setPage={setPage}
+                isLoading={isLoading}
+              />
+            )}
       </Grid>
     </Grid>
   );
@@ -110,7 +114,7 @@ const mapStateToProps = (state: {
 
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  'setSearchTerm': (searchTerm : any) =>
+  'setSearchTerm': (searchTerm: any) =>
     dispatch(setSearchTerm(searchTerm))
 });
 
@@ -121,6 +125,6 @@ export default withStyles(
 )(connect(
   mapStateToProps,
   mapDispatchToProps
-  )(BCTableContainer));
+)(BCTableContainer));
 
 // export default withStyles(styles, { withTheme: true })(BCTableContainer);
