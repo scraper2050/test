@@ -9,7 +9,9 @@ const config = {
   'apiBaseURL':
     process.env.REACT_APP_API_URL ||
     'https://blueclerk-node-api.deploy.blueclerk.com/api/v1/',
-  'appBaseURL': process.env.REACT_APP_BASE_URL || 'http://localhost:3000/'
+  'appBaseURL': process.env.REACT_APP_BASE_URL || 'http://localhost:3000/',
+  'quickbooks_clientId': 'ABpcfFS7x9n3cNJQ3eojqsD0hzHV4wFbF9bHyYHzq8G6vC5b2Z',
+  'quickbooks_clientSecret': 'W9RXt15hXNzcryKKkHmMxKBCGlRVBMyRJK5V1nO9',
 };
 
 export default config;

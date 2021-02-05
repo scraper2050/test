@@ -43,14 +43,14 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const [positionValue, setPositionValue] = useState({
     lang:
       customerInfo &&
-      customerInfo.location &&
-      customerInfo.location.coordinates.length > 1
+        customerInfo.location &&
+        customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[0]
         : 0,
     lat:
       customerInfo &&
-      customerInfo.location &&
-      customerInfo.location.coordinates.length > 1
+        customerInfo.location &&
+        customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[1]
         : 0,
   });
@@ -58,14 +58,14 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const initialValues = {
     name:
       customerInfo &&
-      customerInfo.customerName &&
-      customerInfo.customerName !== "N/A"
+        customerInfo.customerName &&
+        customerInfo.customerName !== "N/A"
         ? customerInfo.customerName
         : "",
     contactName:
       customerInfo &&
-      customerInfo.contactName &&
-      customerInfo.contactName !== "N/A"
+        customerInfo.contactName &&
+        customerInfo.contactName !== "N/A"
         ? customerInfo.contactName
         : "",
     phone:
@@ -74,53 +74,59 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         : "",
     email:
       customerInfo &&
-      customerInfo.email &&
-      customerInfo.email &&
-      customerInfo.email !== "N/A"
+        customerInfo.email &&
+        customerInfo.email &&
+        customerInfo.email !== "N/A"
         ? customerInfo.email
         : "",
     city:
       customerInfo &&
-      customerInfo.customerAddress &&
-      customerInfo.customerAddress.city
+        customerInfo.customerAddress &&
+        customerInfo.customerAddress.city
         ? customerInfo.customerAddress.city
         : "",
     state: {
       id:
         customerInfo &&
-        customerInfo.customerAddress &&
-        customerInfo.customerAddress.state
+          customerInfo.customerAddress &&
+          customerInfo.customerAddress.state
           ? allStates.findIndex(
-              (x) => x.name === customerInfo.customerAddress.state
-            )
+            (x) => x.name === customerInfo.customerAddress.state
+          )
           : 0,
     },
     street:
       customerInfo &&
-      customerInfo.customerAddress &&
-      customerInfo.customerAddress.street
+        customerInfo.customerAddress &&
+        customerInfo.customerAddress.street
         ? customerInfo.customerAddress.street
         : "",
     zipCode:
       customerInfo &&
-      customerInfo.customerAddress &&
-      customerInfo.customerAddress.zipCode
+        customerInfo.customerAddress &&
+        customerInfo.customerAddress.zipCode
         ? customerInfo.customerAddress.zipCode
         : "",
     latitude:
       customerInfo &&
-      customerInfo.location &&
-      customerInfo.location.coordinates.length > 1
+        customerInfo.location &&
+        customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[1]
         : 0,
     longitude:
       customerInfo &&
-      customerInfo.location &&
-      customerInfo.location.coordinates.length > 1
+        customerInfo.location &&
+        customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[0]
         : 0,
     customerId:
       customerInfo && customerInfo.customerId ? customerInfo.customerId : "",
+    vendorId:
+      customerInfo &&
+        customerInfo.vendorId &&
+        customerInfo.vendorId !== ""
+        ? customerInfo.vendorId
+        : "",
   };
 
   const closeModal = () => {
@@ -366,6 +372,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             </Field>
                           </FormGroup>
                         </Grid>
+
                         <Grid className={classes.paper} item sm={6}>
                           <FormGroup>
                             <InputLabel className={classes.label}>
@@ -382,6 +389,21 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             />
                           </FormGroup>
                         </Grid>
+
+                        <Grid className={classes.paper} item sm={12}>
+                          <FormGroup>
+                            <InputLabel className={classes.label}>
+                              {"Vendor Number"}
+                            </InputLabel>
+                            <BCTextField
+                              name={"vendorId"}
+                              placeholder={"Vendor Number"}
+                              onChange={handleChange}
+                            />
+                          </FormGroup>
+                        </Grid>
+
+
                       </Grid>
 
                       <Grid

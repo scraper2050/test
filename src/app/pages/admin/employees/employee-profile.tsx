@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile'
+import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile';
 import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
+import { Grid, withStyles } from '@material-ui/core';
+import styles from './employees.style';
+import BCBackButtonNoLink from '../../../components/bc-back-button/bc-back-button-no-link';
+import { phoneRegExp } from 'helpers/format';
+import * as Yup from 'yup';
 
 interface Props {
   profile: {
@@ -13,9 +18,16 @@ interface Props {
     phone?: string;
   }
   back: () => void;
+  classes: any
 }
 
-function EmployeeProfile({profile, back} : Props) {
+const userProfileSchema = Yup.object().shape({
+  firstName: Yup.string().required('Required'),
+  lastName: Yup.string().required('Required'),
+  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+});
+
+function EmployeeProfile({ profile, back, classes }: Props) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
   const [firstName, setFirstName] = useState(profile.firstName);
@@ -27,8 +39,8 @@ function EmployeeProfile({profile, back} : Props) {
   const [phone, setPhone] = useState(profile.phone);
   const [phoneValid, setPhoneValid] = useState(true);
 
-  console.log(profile);
-  
+  console.log(profile, 'profile');
+
   const firstNameChanged = (newValue: string) => {
     setFirstName(newValue);
   }
@@ -47,18 +59,15 @@ function EmployeeProfile({profile, back} : Props) {
     setLastname(newValue);
   }
 
-  const apply = () => {
-    if (firstNameValid === false
-      || lastNameValid === false
-      || emailValid === false
-      || phoneValid === false) {
-      return;
-    }
+  const apply = (values: any) => {
+    console.log(values)
   }
 
   const cancel = () => {
     back();
   }
+
+  const initialValues = {}
 
   const imageSelected = (f: File) => {
     if (!f) return;
@@ -77,57 +86,67 @@ function EmployeeProfile({profile, back} : Props) {
         />
       </BCSubHeader> */}
 
-      <MainContainer>
-        <PageContainer>
-          <BCAdminProfile
-            avatar={{
-              isEmpty: 'NO',
-              url: !image.data ? '' : image.data.imageUrl,
-              onChange: imageSelected
-            }}
-            apply={apply}
-            cancel={cancel}
-            inputError={{}}
-            fields={[
-              {
-                left: {
-                  id: 'firstName',
-                  label: 'First Name:',
-                  placehold: 'John',
-                  value: firstName,
-                  valid: firstNameValid,
-                  onChange: firstNameChanged
+      <div
+        style={{
+          marginTop: '30px',
+          marginBottom: '10px'
+        }}
+      >
+
+        <BCBackButtonNoLink
+          func={cancel}
+        />
+      </div>
+
+      <div className={classes.pageMainContainer}>
+        <div className={classes.pageContainer}>
+          <div className={classes.pageContent}>
+
+
+
+
+            <BCAdminProfile
+              avatar={{
+                isEmpty: 'NO',
+                url: !image.data ? '' : image.data.imageUrl,
+              }}
+              apply={(values: any) => apply(values)}
+              cancel={cancel}
+              initialValues={initialValues}
+              inputError={{}}
+              fields={[
+                {
+                  left: {
+                    id: 'firstName',
+                    label: 'First Name:',
+                    placehold: 'John',
+                    value: firstName,
+                  },
+                  right: {
+                    id: 'lastName',
+                    label: 'Last name:',
+                    placehold: 'Doe',
+                    value: lastName,
+                  }
                 },
-                right: {
-                  id: 'lastName',
-                  label: 'Last name:',
-                  placehold: 'Doe',
-                  value: lastName,
-                  valid: lastNameValid,
-                  onChange: lastNameChanged
+                {
+                  left: {
+                    id: 'email',
+                    label: 'Email:',
+                    placehold: 'john.doe@gmail.com',
+                    value: email,
+                  },
+                  right: {
+                    id: 'phone',
+                    label: 'Phone:',
+                    placehold: '1234567890',
+                    value: phone,
+                  }
                 }
-              },
-              {
-                left: {
-                  id: 'email',
-                  label: 'Email:',
-                  placehold: 'john.doe@gmail.com',
-                  value: email,
-                  valid: emailValid,
-                  onChange: emailChanged
-                },
-                right: {
-                  id: 'phone',
-                  label: 'Phone:',
-                  placehold: '1234567890',
-                  value: phone,
-                  valid: phoneValid,
-                  onChange: phoneChanged
-                }
-              }
-            ]} />
-        </PageContainer>
-      </MainContainer>
+              ]} />
+          </div>
+        </div>
+      </div>
     </>
   );
 }
@@ -150,5 +169,8 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(EmployeeProfile);
 
-export default EmployeeProfile;

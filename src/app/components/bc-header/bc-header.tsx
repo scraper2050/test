@@ -41,7 +41,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const imageUrl = user?.profile?.imageUrl === ''
+  const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
     ? AvatarImg
     : user?.profile?.imageUrl;
 
@@ -94,6 +94,11 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const handleClose = () => {
     setProfileOpen(false);
   };
+
+  const handleViewProfile = (): void => {
+    handleClose();
+    history.push('/main/user/view-profile');
+  }
 
   const handleClickLogout = (): void => {
     handleClose();
@@ -231,7 +236,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                         <MenuList role={'menu'}>
                           <MenuItem
                             className={dropdownItem}
-                            onClick={handleClose}>
+                            onClick={handleViewProfile}>
                             {'View Profile'}
                           </MenuItem>
                           <MenuItem

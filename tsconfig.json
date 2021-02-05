@@ -18,9 +18,16 @@
     "noEmit": true,
     "jsx": "react",
     "baseUrl": "src",
-    "target": "es5"
+    "target": "es5",
+    "typeRoots": [
+      "./types",
+      "node_module/@types"
+    ],
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }
