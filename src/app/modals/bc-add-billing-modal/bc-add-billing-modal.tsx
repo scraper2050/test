@@ -1,7 +1,4 @@
-// Import * as Yup from 'yup';
-import BCDateTimePicker from "app/components/bc-date-time-picker/bc-date-time-picker";
 import BCInput from "app/components/bc-input/bc-input";
-import BCSelectOutlined from "app/components/bc-select-outlined/bc-select-outlined";
 import React, { useState, useEffect } from "react";
 import { formatDate } from "helpers/format";
 import { refreshServiceTickets } from "actions/service-ticket/service-ticket.action";
@@ -15,9 +12,9 @@ import {
   withStyles,
 } from "@material-ui/core";
 import {
-  callCreateTicketAPI,
-  callEditTicketAPI,
-} from "api/service-tickets.api";
+  AddBillingMethodAPI,
+  EditBillingMethodAPI,
+} from "api/billing-methods.api";
 import {
   closeModalAction,
   setModalDataAction,
@@ -43,7 +40,7 @@ function BCServiceTicketModal({
     jobSite: "",
     jobLocation: "",
     jobType: "",
-    note: "",
+    nickName: "",
     updateFlag: "",
     dueDate: new Date(),
   },
@@ -54,37 +51,10 @@ function BCServiceTicketModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
-  const handleCustomerChange = (
-    event: any,
-    fieldName: any,
-    setFieldValue: any
-  ) => {
-    const customerId = event.target.value;
-    setFieldValue(fieldName, customerId);
-    setFieldValue("jobLocationId", "");
-    dispatch(getJobLocationsAction(customerId));
-  };
-
-  const handleLocationChange = (
-    event: any,
-    fieldName: any,
-    setFieldValue: any,
-    getFieldMeta: any
-  ) => {
-    const locationId = event.target.value;
-    let customerId = getFieldMeta("customerId").value;
-    setFieldValue(fieldName, locationId);
-    setFieldValue("jobSiteId", "");
-    if (locationId !== "") {
-      dispatch(getJobSites({ customerId, locationId }));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-  };
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
-    if (requestObj.note === undefined || requestObj.note === "") {
+    if (requestObj.nickName === undefined || requestObj.nickName === "") {
       setNotesLabelState(true);
       validateFlag = false;
     } else {
@@ -119,12 +89,14 @@ function BCServiceTicketModal({
   } = useFormik({
     // 'enableReinitialize': true,
     initialValues: {
-      customerId: ticket.customer._id,
-      jobSiteId: ticket.jobSite,
-      jobLocationId: ticket.jobLocation,
-      jobTypeId: ticket.jobType,
-      note: ticket.note,
-      dueDate: ticket.dueDate,
+      cardHolderName: ticket.customer._id,
+      expiryDate: ticket.jobSite,
+      cardNumber: ticket.jobLocation,
+      cvv: ticket.cvv,
+      nickName: ticket.nickName,
+      billingAddress: ticket.billingAddress,
+      city: ticket.city,
+      state: ticket.state,
       updateFlag: ticket.updateFlag,
     },
     onSubmit: (values, { setSubmitting }) => {
@@ -134,16 +106,15 @@ function BCServiceTicketModal({
         ...values,
       };
       let editTicketObj = { ...values, ticketId: "" };
-      //tempData.dueDate = formatDate(tempData.dueDate);
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        delete editTicketObj.customerId;
+        delete editTicketObj.cardHolderName;
         if (isValidate(editTicketObj)) {
           let formatedRequest = formatRequestObj(editTicketObj);
           if (formatedRequest.dueDate) {
             formatedRequest.dueDate = formatDate(formatedRequest.dueDate);
           }
-          callEditTicketAPI(formatedRequest)
+          EditBillingMethodAPI(formatedRequest)
             .then((response: any) => {
               dispatch(refreshServiceTickets(true));
               dispatch(closeModalAction());
@@ -166,7 +137,7 @@ function BCServiceTicketModal({
         }
       } else {
         let formatedRequest = formatRequestObj(tempData);
-        callCreateTicketAPI(formatedRequest)
+        AddBillingMethodAPI(formatedRequest)
           .then((response: any) => {
             dispatch(refreshServiceTickets(true));
             dispatch(closeModalAction());
@@ -201,10 +172,6 @@ function BCServiceTicketModal({
   const isLoading = useSelector((state: any) => state.jobSites.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
 
-  const dateChangeHandler = (date: string) => {
-    setFieldValue("dueDate", date);
-  };
-
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -227,35 +194,25 @@ function BCServiceTicketModal({
             <BCInput
               className="serviceTicketLabel"
               label={"Card Holder Name"}
-              name={"customerId"}
+              name={"cardHolderName"}
               margin={"dense"}
-              disabled={FormikValues.updateFlag === true}
               required
-              value={FormikValues.customerId}
-              handleChange={(event: any) =>
-                handleCustomerChange(event, "customerId", setFieldValue)
-              }
+              value={FormikValues.cardHolderName}
+              handleChange={formikChange}
             />
             <BCInput
               className="serviceTicketLabel"
               label={"Card Number"}
-              name={"jobLocationId"}
+              name={"cardNumber"}
               margin={"dense"}
-              value={FormikValues.jobLocationId}
-              handleChange={(event: any) =>
-                handleLocationChange(
-                  event,
-                  "jobLocationId",
-                  setFieldValue,
-                  getFieldMeta
-                )
-              }
+              value={FormikValues.cardNumber}
+              handleChange={formikChange}
             />
             <BCInput
               handleChange={formikChange}
               label={"CVV"}
-              name={"jobTypeId"}
-              value={FormikValues.jobTypeId}
+              name={"cvv"}
+              value={FormikValues.cvv}
               className="serviceTicketLabel"
               margin={"dense"}
             />
@@ -263,49 +220,17 @@ function BCServiceTicketModal({
             <BCInput
               handleChange={formikChange}
               label={"Expiry Date"}
-              name={"jobSiteId"}
-              value={FormikValues.jobSiteId}
+              name={"expiryDate"}
+              value={FormikValues.expiryDate}
               className="serviceTicketLabel"
               margin={"dense"}
               placeholder="MM/YY"
             />
-            {/* <BCDateTimePicker
-              disablePast
-              handleChange={dateChangeHandler}
-              className="serviceTicketLabel"
-              label={"Expiry Date"}
-              name={"dueDate"}
-              value={FormikValues.dueDate}
-            /> */}
-            {/* {isLoading ? (
-              "Loading Job Sites..."
-            ) : (
-              <BCInput
-                handleChange={formikChange}
-                items={{
-                  data: [
-                    ...jobSites.map((o: any) => {
-                      return {
-                        _id: o._id,
-                        name: o.name,
-                      };
-                    }),
-                  ],
-                  displayKey: "name",
-                  valueKey: "_id",
-                  className: "serviceTicketLabel",
-                }}
-                label={"Expiry Date"}
-                name={"jobSiteId"}
-                value={FormikValues.jobSiteId}
-              />
-            )} */}
-
             <BCInput
               handleChange={formikChange}
               label={"Billing Address"}
-              name={"jobTypeId"}
-              value={FormikValues.jobTypeId}
+              name={"billingAddress"}
+              value={FormikValues.billingAddress}
               className="serviceTicketLabel"
               margin={"dense"}
             />
@@ -314,8 +239,8 @@ function BCServiceTicketModal({
                 <BCInput
                   handleChange={formikChange}
                   label={"City"}
-                  name={"jobTypeId"}
-                  value={FormikValues.jobTypeId}
+                  name={"city"}
+                  value={FormikValues.city}
                   className="serviceTicketLabel"
                   margin={"dense"}
                 />
@@ -324,8 +249,8 @@ function BCServiceTicketModal({
                 <BCInput
                   handleChange={formikChange}
                   label={"State"}
-                  name={"jobTypeId"}
-                  value={FormikValues.jobTypeId}
+                  name={"state"}
+                  value={FormikValues.state}
                   className="serviceTicketLabel"
                   margin={"dense"}
                 />
@@ -335,9 +260,9 @@ function BCServiceTicketModal({
             <BCInput
               handleChange={formikChange}
               label={"Nickname"}
-              multiline
-              name={"note"}
-              value={FormikValues.note}
+              // multiline
+              name={"nickName"}
+              value={FormikValues.nickName}
               className="serviceTicketLabel"
               margin={"dense"}
             />
@@ -375,16 +300,6 @@ function BCServiceTicketModal({
           >
             {ticket._id ? "Edit Method" : "Add Method"}
           </Fab>
-          {/* <Fab
-            aria-label={'create-job'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            disabled={isSubmitting}
-            variant={'extended'}>
-            {'Generate Job'}
-          </Fab> */}
         </DialogActions>
       </form>
     );

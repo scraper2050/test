@@ -6,9 +6,18 @@ import Typography from "@material-ui/core/Typography";
 import styles from "./bc-table.styles";
 import { Grid, Paper, withStyles } from "@material-ui/core";
 // Import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
+import { connect, useDispatch } from 'react-redux';
 import React, { useEffect, useState } from "react";
 
 import "../../../scss/index.scss";
+// import console from "console";
+
+interface Props {
+  searchTerm: string;
+  classes: any;
+}
 
 function BCTableContainer({
   tableData,
@@ -21,14 +30,18 @@ function BCTableContainer({
   pagination = true,
   initialMsg = "No records found!",
   isPageSaveEnabled,
+  searchTerm,
 }: any) {
-  // Const dispatch = useDispatch();
-  const [searchText, setSearchText] = useState(""); // eslint-disable-line
+
+  const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState(searchTerm || ''); // eslint-disable-line
 
   const [filteredData, setFilteredData] = useState([]);
 
+
   const handleSearchChange = (event: any) => {
-    // Console.log(event.target.value);
+    //save search state in redux
+    dispatch(setSearchTerm(event.target.value))
     setSearchText(event.target.value);
   };
 
@@ -44,6 +57,7 @@ function BCTableContainer({
     if (tableData) {
       setFilteredData(getFilteredArray(tableData, searchText));
     }
+    console.log('search text  here' , searchText);
   }, [tableData, searchText]);
 
   return (
@@ -85,4 +99,28 @@ function BCTableContainer({
   );
 }
 
-export default withStyles(styles, { withTheme: true })(BCTableContainer);
+
+const mapStateToProps = (state: {
+  searchTerm: {
+    text: string;
+  };
+}) => ({
+  'searchTerm': state.searchTerm.text,
+});
+
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  'setSearchTerm': (searchTerm : any) =>
+    dispatch(setSearchTerm(searchTerm))
+});
+
+
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(connect(
+  mapStateToProps,
+  mapDispatchToProps
+  )(BCTableContainer));
+
+// export default withStyles(styles, { withTheme: true })(BCTableContainer);
