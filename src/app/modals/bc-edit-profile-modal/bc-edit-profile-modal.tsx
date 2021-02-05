@@ -26,8 +26,7 @@ interface ColumnField {
   placehold: string;
   text: string;
   value: any;
-  name: string;
-  type?: string;
+  disabled?: boolean;
   onChange: (newValue: any) => void
 }
 
@@ -100,28 +99,31 @@ function BCEditProfileModal({
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={
-        async (values, { setSubmitting }) => {
-          let oldValues = values;
-          setSubmitting(true)
-          if (image !== "") {
-            oldValues = {
-              ...values,
-              logoUrl: image
-            }
+      onSubmit={async (values, { setSubmitting }) => {
+        let oldValues = values;
+        setSubmitting(true)
+        if (image !== "") {
+          oldValues = {
+            ...values,
+            logoUrl: image
           }
-          await apply(oldValues);
-
-          setSubmitting(false)
-          closeModal();
         }
+        await apply(oldValues);
+
+        setSubmitting(false)
+        closeModal();
+      }
       }
       validationSchema={schema}
+      validateOnChange
     >
       {
         ({
           handleChange,
+          values,
+          errors,
           isSubmitting,
+          setFieldValue,
         }) => (
           <Form>
 
@@ -205,6 +207,7 @@ function BCEditProfileModal({
                                         name={element.left.id}
                                         placeholder={element.left.placehold}
                                         onChange={handleChange}
+                                        disabled={element.left.disabled ? element.left.disabled : false}
                                       />
                                     </FormGroup>
                                     : <div />
@@ -222,6 +225,7 @@ function BCEditProfileModal({
                                         name={element.right.id}
                                         placeholder={element.right.placehold}
                                         onChange={handleChange}
+                                        disabled={element.right.disabled ? element.right.disabled : false}
                                       />
                                     </FormGroup>
                                     : <div />

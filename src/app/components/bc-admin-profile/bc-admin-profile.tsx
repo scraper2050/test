@@ -9,7 +9,7 @@ import { modalTypes } from '../../../constants';
 interface Props {
   avatar: Avatar;
   noEdit?: boolean;
-  inputError: { [k: string]: boolean };
+  inputError?: { [k: string]: boolean };
   cancel?: () => void;
   apply: any;
   fields: object[];
@@ -34,6 +34,7 @@ interface ColumnField {
   placehold: string;
   text: string;
   value: any;
+  disabled?: boolean;
   onChange: (newValue: any) => void
 }
 
