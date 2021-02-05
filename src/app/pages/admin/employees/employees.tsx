@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import styles from './employees.style';
-import {Fab, withStyles } from "@material-ui/core";
+import { Fab, withStyles } from "@material-ui/core";
 import AdminAddNewEmployeePage from './add-new-employee';
-import { Roles as RoleEnums} from './add-new-employee'
+import { Roles as RoleEnums } from './add-new-employee'
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
@@ -83,7 +83,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(getEmployees());
   }, []);
 
-  const add = (firstName:string, lastName:string, email:string, phoneNumber:string, role:string) => {
+  const add = (firstName: string, lastName: string, email: string, phoneNumber: string, role: string) => {
     const data: UserProfile = {
       firstName,
       lastName,
@@ -91,7 +91,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
       phone: phoneNumber
     };
 
-    switch(role) {
+    switch (role) {
       case RoleEnums.Technician:
         dispatch(createTechnician(data));
         break;
@@ -120,6 +120,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
   const renderViewMore = (row: any) => {
     setStage(2);
     const baseObj = row['original'];
+    console.log(baseObj)
     setProfile({
       email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
       firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
@@ -127,7 +128,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
       phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
     });
   }
-  
+
   return (
     <>
       {/* <BCSubHeader title={'Admin'}>
@@ -147,7 +148,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              onClick={() => {setStage(1)}}
+              onClick={() => { setStage(1) }}
               style={{
                 float: 'right'
               }}
@@ -155,22 +156,22 @@ function AdminEmployeesPage({ classes, children }: Props) {
               {'Add New'}
             </Fab>
           </div>
-         }
-         {stage === 0 && 
-          <BCTableContainer
-            columns={columns}
-            isLoading={employees.loading}
-            search
-            tableData={employees.data}
-          />
+          }
+          {stage === 0 &&
+            <BCTableContainer
+              columns={columns}
+              isLoading={employees.loading}
+              search
+              tableData={employees.data}
+            />
           }
 
-          {stage === 1 && 
-          <AdminAddNewEmployeePage submit={add} cancel={cancel}/>
+          {stage === 1 &&
+            <AdminAddNewEmployeePage submit={add} cancel={cancel} />
           }
 
-          {stage === 2 && 
-          <EmployeeProfile profile={profile} back={cancel}/>
+          {stage === 2 &&
+            <EmployeeProfile profile={profile} back={cancel} />
           }
         </PageContainer>
       </MainContainer>

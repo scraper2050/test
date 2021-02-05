@@ -8,8 +8,7 @@ import { CompanyProfile, CompanyProfileStateType } from 'actions/user/user.types
 import { phoneRegExp, digitsOnly } from 'helpers/format';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
 import * as Yup from 'yup';
-import { call, cancel, cancelled, fork, put, take } from 'redux-saga/effects';
-import { loginActions, logoutAction } from 'actions/auth/auth.action';
+import { loginActions } from 'actions/auth/auth.action';
 
 const userProfileSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
@@ -114,8 +113,6 @@ function ViewProfilePage() {
           token,
           user: oldUserProfile,
         }))
-
-
       }
 
     } catch (err) {
@@ -127,8 +124,6 @@ function ViewProfilePage() {
   useEffect(() => {
 
   }, [update]);
-
-  console.log(userProfile)
 
   return (
     <MainContainer>
