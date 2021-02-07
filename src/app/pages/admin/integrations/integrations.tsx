@@ -28,15 +28,12 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
     clientId: config.quickbooks_clientId,
     clientSecret: config.quickbooks_clientSecret,
     environment: 'sandbox',
-    // redirectUri: `${config.appBaseURL}main/admin/integrations/callback`,
     redirectUri: `${window.location.origin}/main/admin/integrations/callback`,
-    // redirectUri: `https://testing.blueclerk.com/main/admin/integrations/callback`,
   });
 
   const authUri = oauthClient.authorizeUri({
     scope: [
       OAuthClient.scopes.Accounting,
-      OAuthClient.scopes.Payments,
       OAuthClient.scopes.OpenId,
       OAuthClient.scopes.Profile,
       OAuthClient.scopes.Email,
