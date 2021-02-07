@@ -15,12 +15,22 @@ import clsx from 'clsx';
 import styles from './bc-table.styles';
 import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
+import { boolean } from 'yup';
 
 function BCTableContent({ isLoading, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const locationState = location.state;
-  const [render, setRender] = useState(false)
+
+  const initialSort = locationState
+    && locationState.prevPage
+    && locationState.prevPage.sortBy ? locationState.prevPage.sortBy : []
+
+  const initialPageIndex = locationState
+    && locationState.prevPage ? locationState.prevPage.page : 0
+
+  const initialPageSize = locationState
+    && locationState.prevPage ? locationState.prevPage.pageSize : 10
 
   const {
     getTableProps,
@@ -29,12 +39,17 @@ function BCTableContent({ isLoading, columns, data, onRowClick, pagination = tru
     page,
     gotoPage,
     setPageSize,
-    'state': { pageIndex, pageSize }
+    'state': { pageIndex, pageSize, sortBy }
   }: any = useTable(
     {
       // 'autoResetHiddenColumns': true,
       columns,
       data,
+      initialState: {
+        sortBy: initialSort,
+        pageIndex: initialPageIndex,
+        pageSize: initialPageSize
+      },
       'getSubRows': (row: any) => row && row.subRows || []
     },
     useGlobalFilter,
@@ -49,7 +64,8 @@ function BCTableContent({ isLoading, columns, data, onRowClick, pagination = tru
   const handleChangePage = (event: any, newPage: any): any => {
     setPage({
       pageSize,
-      page: newPage
+      page: newPage,
+      sortBy,
     })
     gotoPage(newPage);
   };
@@ -58,20 +74,24 @@ function BCTableContent({ isLoading, columns, data, onRowClick, pagination = tru
     setPage({
       pageSize: Number(event.target.value),
       page: pageIndex,
+      sortBy,
     })
     setPageSize(Number(event.target.value));
   };
 
+  const handleSortBy = (sortBy: any) => {
+    setPage({
+      pageSize,
+      page: pageIndex,
+      sortBy,
+    })
+  }
 
   useEffect(() => {
-    if (locationState && locationState.prevPage) {
-      const timer = setTimeout(() => {
-        setPageSize(Number(locationState.prevPage.pageSize));
-        gotoPage(locationState.prevPage.page);
-      }, 100)
-      return () => clearTimeout(timer)
+    if (sortBy.length !== 0) {
+      handleSortBy(sortBy)
     }
-  }, [])
+  }, [sortBy])
 
   // Render the UI for your table
   return (
@@ -94,9 +114,15 @@ function BCTableContent({ isLoading, columns, data, onRowClick, pagination = tru
                     ? 'cell-border-right cursor-default'
                     : ''}`}
                   key={`table-cell-${hindex}`}
+
                   {...(!column.sortable
                     ? column.getHeaderProps()
-                    : column.getHeaderProps(column.getSortByToggleProps()))}>
+                    : column.getHeaderProps(
+                      // handleSorting(column)
+                      column.getSortByToggleProps()
+                    )
+                  )}
+                >
                   {column.render('Header')}
                   {column.sortable
                     ? <TableSortLabel

@@ -24,7 +24,7 @@ function ViewMoreLocationPage({ classes }: any) {
   const jobSites = useSelector((state: any) => state.jobSites);
   const { customerObj, loading } = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
-  const location = useLocation();
+  const location = useLocation<any>();
   const history = useHistory();
 
   const openEditJobSiteModal = (jobSite: any) => {
@@ -91,6 +91,8 @@ function ViewMoreLocationPage({ classes }: any) {
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
+
+  console.log(location.state, 'asd')
 
   useEffect(() => {
     const obj: any = location.state;
@@ -198,7 +200,10 @@ function ViewMoreLocationPage({ classes }: any) {
                 }}
                 id={'1'}>
 
-                <CustomerContactsPage />
+                <CustomerContactsPage
+                  id={location.state._id}
+                  type="JobLocation"
+                />
               </div>
             </SwipeableViews>
           }

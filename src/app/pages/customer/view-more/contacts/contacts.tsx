@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './contacts.style';
 import { Fab, withStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { DUMMY_DATA, DUMMY_COLUMN } from '../job-equipment-info/dummy-data';
+import { DUMMY_DATA } from '../job-equipment-info/dummy-data';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import { modalTypes } from '../../../../../constants';
+import { getContacts } from 'api/contacts.api';
 
-function CustomerContactsPage({ classes, data }: any) {
+function CustomerContactsPage({ classes, id, type }: any) {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+
+  console.log(id, 'asd')
+  console.log(type, 'asd')
 
   const columns: any = [
 
@@ -80,6 +84,15 @@ function CustomerContactsPage({ classes, data }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  useEffect(() => {
+    let data: any = {
+      type,
+      referenceNumber: id
+    }
+
+    dispatch(getContacts(data))
+  }, [])
 
 
   return (
