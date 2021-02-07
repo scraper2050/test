@@ -137,8 +137,6 @@ function ViewMorePage({ classes }: any) {
     const customerId = obj.customerId;
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(customerId));
-
-
   }, []);
 
   useEffect(() => {
@@ -312,7 +310,10 @@ function ViewMorePage({ classes }: any) {
                   }}
                   id={'2'}>
 
-                  <CustomerContactsPage />
+                  <CustomerContactsPage
+                    id={location.state.customerId}
+                    type="Customer"
+                  />
                 </div>
               </SwipeableViews>
           }
