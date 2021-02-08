@@ -14,7 +14,7 @@ const fetchToken = () => {
 
 export default (url: string, type: Method, data?: any, noHeaders?: boolean) => new Promise((resolve, reject) => {
   let token = '';
-  console.log(type, noHeaders,)
+
   if (!noHeaders) {
     token = fetchToken();
   }
@@ -25,7 +25,6 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean) => n
   };
   if (type !== 'get') {
     if (type === "OPTIONS") {
-      console.log(data)
       request.params = data
     } else {
       request.data = data;
