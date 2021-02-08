@@ -58,7 +58,6 @@ function BCTableContainer({
     if (tableData) {
       setFilteredData(getFilteredArray(tableData, searchText));
     }
-    console.log('search text  here', searchText);
   }, [tableData, searchText]);
 
   return (
@@ -89,7 +88,6 @@ function BCTableContainer({
                 data={filteredData}
                 invoiceTable
                 onRowClick={(ev: any, row: any) => {
-                  console.log(ev, 'ev')
                   onRowClick && onRowClick(ev, row);
                 }}
                 pagination={pagination}

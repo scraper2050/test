@@ -15,6 +15,7 @@ export const contactsReducer: Reducer<any> = (
     case types.SET_CONTACTS_LOADING:
       return {
         ...state,
+        refresh: false,
         isLoading: payload
       };
     case types.SET_REFRESH_CONTACTS_STATUS:
@@ -26,6 +27,7 @@ export const contactsReducer: Reducer<any> = (
       return {
         ...state,
         isLoading: false,
+        refresh: false,
         contacts: [...payload],
       };
     default:

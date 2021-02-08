@@ -89,7 +89,6 @@ function CustomersPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
-
     let baseObj = row["original"];
     let customerName =
       baseObj["profile"] && baseObj["profile"] !== undefined

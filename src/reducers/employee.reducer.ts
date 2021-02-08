@@ -8,7 +8,7 @@ const initialEmployees: UsersState = {
 }
 
 export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action) => {
-  console.log(action.type);
+
   switch (action.type) {
     case UsersActionType.GET:
       return {

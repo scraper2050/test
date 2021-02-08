@@ -1,55 +1,40 @@
 import * as CONSTANTS from "../../../constants";
 import BCTextField from "../../components/bc-text-field/bc-text-field";
 import styles from './bc-add-contact-modal.styles';
-import { useFormik } from 'formik';
 import {
   DialogActions,
-  DialogContent,
   Fab,
   Grid,
   InputLabel,
   withStyles,
   FormGroup,
 } from '@material-ui/core';
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { info, error } from 'actions/snackbar/snackbar.action';
 import { useDispatch } from 'react-redux';
-import { saveBrandType } from 'api/brands.api';
-import { getBrands, loadingBrands } from 'actions/brands/brands.action';
 import styled from "styled-components";
+import * as Yup from 'yup';
+import { phoneRegExp } from 'helpers/format';
+import { success, error } from 'actions/snackbar/snackbar.action';
+
+const contactSchema = Yup.object().shape({
+  name: Yup.string().required('Required'),
+  email: Yup.string().email('Invalid email'),
+  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+});
 
 function BCAddContactModal({
-  classes
+  classes,
+  props
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
-  const onSubmit = (values: any, { setSubmitting }: any) => {
-    closeModal();
-    // setSubmitting(true);
-    // const brandType = new Promise(async (resolve, reject) => {
-    //   const title = values.title;
-    //   const savingBrandType = await saveBrandType({ title });
-    //   savingBrandType.status === 1 ? resolve(savingBrandType) : reject(savingBrandType);
-    //   if (savingBrandType.status === 0) {
-    //     dispatch(error(savingBrandType.message));
-    //   } else {
-    //     dispatch(info(savingBrandType.message));
-    //   }
-    // });
-
-    // brandType
-    //   .then(res => onSuccess())
-    //   .catch(err => console.log(err))
-    //   .finally(() => setSubmitting(false));
-  }
-
-  const initialValues = {
-    name: '',
-    email: '',
-    phone: ''
-  }
+  const {
+    apply,
+    initialValues,
+    newContact
+  } = props
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -61,20 +46,30 @@ function BCAddContactModal({
     }, 200);
   };
 
-  const onSuccess = () => {
-    dispatch(closeModalAction());
-    dispatch(getBrands());
-    dispatch(loadingBrands());
-  }
-
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={
-        (values, { setSubmitting }) => {
-          closeModal();
+        async (values, { setSubmitting }) => {
+
+          await setSubmitting(true);
+          try {
+            const response = await apply(values);
+            if (response.status <= 400 && response.status !== 0) {
+              dispatch(success(`${newContact ? "Adding New" : "Update"} Contact Successful!`));
+            } else {
+              dispatch(error("Something went wrong!"))
+            }
+          } catch (err) {
+            dispatch(error("Something went wrong!"))
+            console.log(err)
+          } finally {
+            await setSubmitting(false);
+            closeModal();
+          }
         }
       }
+      validationSchema={contactSchema}
       validateOnChange>
       {
         ({
@@ -84,7 +79,7 @@ function BCAddContactModal({
           isSubmitting,
           setFieldValue,
         }) => (
-          <>
+          <Form>
             <DataContainer >
               <Grid container direction="column" alignItems="center" spacing={2}>
 
@@ -123,7 +118,7 @@ function BCAddContactModal({
                       <strong>{"Phone Number"}</strong>
                     </InputLabel>
                     <BCTextField
-                      name={"number"}
+                      name={"phone"}
                       placeholder={"Phone Number"}
                       type={"number"}
                       onChange={handleChange}
@@ -162,7 +157,7 @@ function BCAddContactModal({
                 {'Submit'}
               </Fab>
             </DialogActions>
-          </>
+          </Form>
         )
       }
     </Formik>

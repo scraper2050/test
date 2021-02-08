@@ -1,4 +1,5 @@
 import { Theme } from '@material-ui/core/styles';
+import * as CONSTANTS from "../../../constants";
 export default (theme: Theme): any => ({
   'dialogActions': {
     'margin-top': '10px',
@@ -25,4 +26,16 @@ export default (theme: Theme): any => ({
     'color': theme.palette.text.secondary,
     'minWidth': '70%'
   },
+  'deleteButton': {
+    'background': '#C00707 !important',
+    // 'borderRadius': '30px',
+    'width': '130px !important',
+    'height': '34px',
+    'fontStyle': 'normal',
+    'fontWeight': 'normal',
+    'fontSize': '20px',
+    'lineHeight': '30px',
+    'marginBottom': '6px',
+    'color': CONSTANTS.PRIMARY_WHITE,
+  }
 });
