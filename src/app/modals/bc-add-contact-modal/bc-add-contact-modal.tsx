@@ -8,9 +8,11 @@ import {
   InputLabel,
   withStyles,
   FormGroup,
+  Select,
+  MenuItem,
 } from '@material-ui/core';
-import { Form, Formik } from "formik";
-import React, { useState } from 'react';
+import { Field, Form, Formik } from 'formik';
+import React, { useState  , useEffect} from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
@@ -30,10 +32,15 @@ function BCAddContactModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    console.log('call api here ')
+  })
+
   const {
     apply,
     initialValues,
-    newContact
+    newContact,
+    contacts
   } = props
 
   const closeModal = () => {
@@ -83,31 +90,47 @@ function BCAddContactModal({
             <DataContainer >
               <Grid container direction="column" alignItems="center" spacing={2}>
 
-                <Grid item className={classes.paper} sm={12}>
+                <Grid
+                  className={classes.paper}
+                  item
+                  sm={12}>
                   <FormGroup>
                     <InputLabel className={classes.label}>
-                      <strong>{"First Name"}</strong>
+                      <strong>{"Select Name"}</strong>
                     </InputLabel>
-                    <BCTextField
-                      name={"first name"}
-                      placeholder={"First Name"}
-                      onChange={handleChange}
-                    />
+                    <Field
+                      as={Select}
+                      enableReinitialize
+                      name={'customer.name'}
+                      // onChange={(e: any) => {
+                      //   handleChange(e);
+                      // }}
+                      type={'select'}
+                      variant={'outlined'}>
+                      {/* {contacts.map((contact, id) =>
+                        <MenuItem
+                          key={id}
+                          value={id}>
+                          {contact.name }
+                        </MenuItem>)
+                      } */}
+                    </Field>
                   </FormGroup>
                 </Grid>
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
                     <InputLabel className={classes.label}>
-                      <strong>{"Last Name"}</strong>
+                      <strong>{"Name"}</strong>
                     </InputLabel>
                     <BCTextField
-                      name={"last name"}
-                      placeholder={"Last Name"}
+                      name={"name"}
+                      placeholder={"Name"}
                       onChange={handleChange}
                     />
                   </FormGroup>
                 </Grid>
+
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>

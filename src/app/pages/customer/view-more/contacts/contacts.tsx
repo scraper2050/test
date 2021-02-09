@@ -114,7 +114,8 @@ function CustomerContactsPage({ classes, id, type }: any) {
         'data': {
           initialValues,
           apply: (values: any) => handleAddContact(values),
-          newContact: true
+          newContact: true,
+          contacts,
         },
         'modalTitle': 'Job Location',
         'removeFooter': false
