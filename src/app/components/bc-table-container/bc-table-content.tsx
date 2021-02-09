@@ -113,10 +113,12 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
 
     if (setPage !== undefined) {
       setPage({
-        page: pageIndex,
+        page: 0,
         pageSize,
         sortBy,
       });
+
+      handleChangePage(null, 0);
     }
 
     if (prevPage) {
@@ -124,7 +126,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
         ...history.location,
         state: {
           ...location.state,
-          page: pageIndex,
+          page: 0,
           pageSize,
           sortBy,
         }
