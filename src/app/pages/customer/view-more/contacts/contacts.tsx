@@ -77,7 +77,6 @@ function CustomerContactsPage({ classes, id, type }: any) {
   ]
 
   const handleAddContact = async (values: any) => {
-
     try {
       const response = await dispatch(addContact(values));
       return response;
@@ -117,7 +116,7 @@ function CustomerContactsPage({ classes, id, type }: any) {
           apply: (values: any) => handleAddContact(values),
           newContact: true
         },
-        'modalTitle': 'Add New Contact',
+        'modalTitle': 'Job Location',
         'removeFooter': false
       },
       'type': modalTypes.ADD_CONTACT_MODAL

@@ -86,16 +86,28 @@ function BCAddContactModal({
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
                     <InputLabel className={classes.label}>
-                      <strong>{"Name"}</strong>
+                      <strong>{"First Name"}</strong>
                     </InputLabel>
                     <BCTextField
-                      name={"name"}
-                      placeholder={"Name"}
+                      name={"first name"}
+                      placeholder={"First Name"}
                       onChange={handleChange}
                     />
                   </FormGroup>
                 </Grid>
 
+                <Grid item className={classes.paper} sm={12}>
+                  <FormGroup>
+                    <InputLabel className={classes.label}>
+                      <strong>{"Last Name"}</strong>
+                    </InputLabel>
+                    <BCTextField
+                      name={"last name"}
+                      placeholder={"Last Name"}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                </Grid>
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
