@@ -46,7 +46,6 @@ export const getCustomerDetailAction = (data: any) => {
   return async (dispatch: any) => {
     const customer: any = await getCustomerDetail(data);
 
-    console.log(customer, 'customer')
     dispatch({ type: types.SET_SINGLE_CUSTOMER, payload: customer });
   };
 };

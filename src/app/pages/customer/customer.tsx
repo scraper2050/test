@@ -18,15 +18,17 @@ function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
+  const history = useHistory();
+
   const location = useLocation<any>();
   const locationState = location.state;
-  const history = useHistory();
 
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const [currentPage, setCurrentPage] = useState({
     page: prevPage ? prevPage.page : 0,
     pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
   });
 
   const columns: any = [

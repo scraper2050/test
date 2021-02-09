@@ -32,7 +32,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   const initialPageSize = prevPage ? prevPage.pageSize : 10
 
 
-
+  console.log(initialSort, 'initialSort');
   const {
     getTableProps,
     headerGroups,
@@ -75,6 +75,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       history.replace({
         ...history.location,
         state: {
+          ...location.state,
           pageSize,
           sortBy,
           page: newPage,
@@ -87,6 +88,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   const handleChangeRowsPerPage = (event: any) => {
     if (setPage !== undefined) {
       setPage({
+        ...location.state,
         page: pageIndex,
         sortBy,
         pageSize: Number(event.target.value)
@@ -98,6 +100,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       history.replace({
         ...history.location,
         state: {
+          ...location.state,
           page: pageIndex,
           sortBy,
           pageSize: Number(event.target.value)
@@ -122,6 +125,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       history.replace({
         ...history.location,
         state: {
+          ...location.state,
           page: pageIndex,
           pageSize,
           sortBy,

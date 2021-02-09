@@ -27,6 +27,8 @@ function ViewMoreLocationPage({ classes }: any) {
   const location = useLocation<any>();
   const history = useHistory();
 
+  console.log(location.state)
+
   const openEditJobSiteModal = (jobSite: any) => {
     let updateJobSiteObj = { ...jobSite, location: { lat: jobSite.location.coordinates[1], long: jobSite.location.coordinates[0] }, update: true }
     dispatch(setModalDataAction({
@@ -42,6 +44,41 @@ function ViewMoreLocationPage({ classes }: any) {
     }, 200);
   };
 
+
+  const renderGoBack = (location: any) => {
+    const baseObj = location;
+    let customerName =
+      baseObj["customerName"] && baseObj["customerName"] !== undefined
+        ? baseObj["customerName"]
+        : "N/A";
+    let customerId =
+      baseObj["customerId"] && baseObj["customerId"] !== undefined
+        ? baseObj["customerId"]
+        : "N/A";
+
+    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    localStorage.setItem('prevNestedRouteKey', linkKey);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
+
+
+    let currentPage =
+      baseObj["currentPage"] && baseObj["currentPage"] !== undefined
+        ? baseObj["currentPage"]
+        : "N/A";
+
+    console.log(currentPage)
+
+
+    history.push({
+      pathname: `/main/customers/${customerName}`,
+      state: {
+        customerName,
+        customerId,
+        prevPage: currentPage
+      }
+    });
+
+  }
   const columns: any = [
     {
       'Header': 'Job Site',
@@ -134,7 +171,7 @@ function ViewMoreLocationPage({ classes }: any) {
 
           <Grid container>
             <BCBackButtonNoLink
-              func={history.goBack}
+              func={() => renderGoBack(location.state)}
             />
 
             <div className="tab_wrapper">
