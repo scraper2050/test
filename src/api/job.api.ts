@@ -31,7 +31,6 @@ export const getAllJobsAPI = () => {
       dispatch(setJobLoading(true));
       request(`/getJobs`, "post", null)
         .then((res: any) => {
-          console.log(res.data.jobs);
           dispatch(setJobs(res.data.jobs));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
@@ -51,7 +50,6 @@ export const getAllJobAPI = async (param?: {}) => {
   try {
     const response: any = await request("/getJobs", "POST", body, false);
     responseData = response.data;
-    console.log(response.data.jobs);
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
@@ -77,7 +75,6 @@ export const getjobDetailAPI = async (data: any) => {
     const response: any = await request("/getJobDetails", "POST", body, false);
     responseData = response.data;
 
-    console.log(response.data.job);
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {

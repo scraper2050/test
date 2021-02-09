@@ -17,20 +17,19 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ isLoading, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ currentPage, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
+  const history = useHistory();
   const locationState = location.state;
 
-  const initialSort = locationState
-    && locationState.prevPage
-    && locationState.prevPage.sortBy ? locationState.prevPage.sortBy : []
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
-  const initialPageIndex = locationState
-    && locationState.prevPage ? locationState.prevPage.page : 0
+  const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : []
 
-  const initialPageSize = locationState
-    && locationState.prevPage ? locationState.prevPage.pageSize : 10
+  const initialPageIndex = prevPage ? prevPage.page : 0
+
+  const initialPageSize = prevPage ? prevPage.pageSize : 10;
 
   const {
     getTableProps,
@@ -62,29 +61,75 @@ function BCTableContent({ isLoading, columns, data, onRowClick, pagination = tru
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
-    setPage({
-      pageSize,
-      page: newPage,
-      sortBy,
-    })
+    if (setPage !== undefined) {
+      setPage({
+        pageSize,
+        sortBy,
+        page: newPage,
+      });
+    }
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...location.state,
+          pageSize,
+          sortBy,
+          page: newPage,
+        }
+      });
+    }
     gotoPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: any) => {
-    setPage({
-      pageSize: Number(event.target.value),
-      page: pageIndex,
-      sortBy,
-    })
+    if (setPage !== undefined) {
+      setPage({
+        ...location.state,
+        page: pageIndex,
+        sortBy,
+        pageSize: Number(event.target.value)
+      });
+    }
+
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...location.state,
+          page: pageIndex,
+          sortBy,
+          pageSize: Number(event.target.value)
+        }
+      });
+    }
+
     setPageSize(Number(event.target.value));
   };
 
   const handleSortBy = (sortBy: any) => {
-    setPage({
-      pageSize,
-      page: pageIndex,
-      sortBy,
-    })
+
+    if (setPage !== undefined) {
+      setPage({
+        page: pageIndex,
+        pageSize,
+        sortBy,
+      });
+    }
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...location.state,
+          page: pageIndex,
+          pageSize,
+          sortBy,
+        }
+      });
+    }
   }
 
   useEffect(() => {

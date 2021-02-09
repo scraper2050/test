@@ -34,7 +34,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
 
   const { customerObj } = useSelector((state: any) => state.customers);
 
-  const location = useLocation<LocationStateTypes>();
+  const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
   const [filteredJobs, setFilterJobs] = useState<Job[] | []>([]);
@@ -44,6 +44,17 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   };
 
 
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
+
+  console.log(locationState)
 
   const handleFilterData = (jobs: any, location: LocationStateTypes) => {
     const oldJobs = jobs;
@@ -150,6 +161,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   ];
 
   const renderViewMore = (row: any) => {
+
     let baseObj = row["original"];
     let jobId = row["original"]["_id"];
     let status =
@@ -157,6 +169,10 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     let customerName =
       baseObj && baseObj["customer"]["profile"] !== undefined
         ? baseObj["customer"]["profile"]["displayName"]
+        : "N/A";
+    let customerId =
+      baseObj && baseObj["customer"]["_id"] !== undefined
+        ? baseObj["customer"]["_id"]
         : "N/A";
     let customerPhone =
       baseObj && baseObj["customer"]["contact"] !== undefined
@@ -270,6 +286,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
 
     let jobReportObj = {
       jobId: jobId,
+      customerId,
       customerName,
       phoneFormat,
       workReport,
@@ -301,7 +318,10 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     dispatch(getJobDetailAction(jobReportObj));
     history.push({
       pathname: `/main/customers/${customerName}/job-equipment-info/jobs/${jobId}`,
-      state: jobReportObj,
+      state: {
+        ...jobReportObj,
+        currentPage,
+      },
     });
   };
 
@@ -361,6 +381,8 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
               hidden={curTab !== 0}
               id={'0'}>
               <BCTableContainer
+                currentPage={currentPage}
+                setPage={setCurrentPage}
                 columns={columns}
                 isLoading={isLoading}
                 search

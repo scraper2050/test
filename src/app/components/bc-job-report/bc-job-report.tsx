@@ -6,20 +6,51 @@ import styles, {
 } from "./job-reports.styles";
 import React from "react";
 import WallpaperIcon from "@material-ui/icons/Wallpaper";
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 function BCJobReport({ classes, jobReportData }: any) {
-
+  const location = useLocation<any>();
   const history = useHistory();
 
   const goBack = () => {
+    let baseObj = location.state;
     let prevKey: any = localStorage.getItem('prevNestedRouteKey');
     let linkKey: any = localStorage.getItem('nestedRouteKey');
 
     localStorage.setItem('prevNestedRouteKey', linkKey);
     localStorage.setItem('nestedRouteKey', prevKey);
 
-    history.goBack();
+
+    const jobEquipmentInfo = linkKey.includes('job-equipment-info');
+
+    if (jobEquipmentInfo) {
+
+      let customerName =
+        baseObj["customerName"] && baseObj["customerName"] !== undefined
+          ? baseObj["customerName"]
+          : "N/A";
+      let customerId =
+        baseObj["customerId"] && baseObj["customerId"] !== undefined
+          ? baseObj["customerId"]
+          : "N/A";
+
+      let currentPage =
+        baseObj["currentPage"] && baseObj["currentPage"] !== undefined
+          ? baseObj["currentPage"]
+          : "N/A";
+
+      history.push({
+        pathname: `/main/customers/${customerName}/job-equipment-info/reports`,
+        state: {
+          customerName,
+          customerId,
+          prevPage: currentPage
+        }
+      });
+
+    } else {
+      history.goBack();
+    }
   }
 
   return (

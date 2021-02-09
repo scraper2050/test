@@ -10,6 +10,7 @@ import { Dispatch } from 'redux';
 import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
 import { connect, useDispatch } from 'react-redux';
 import React, { useEffect, useState } from "react";
+import { useLocation, useHistory } from 'react-router-dom';
 
 import "../../../scss/index.scss";
 // import console from "console";
@@ -32,18 +33,44 @@ function BCTableContainer({
   isPageSaveEnabled,
   searchTerm,
   setPage,
+  currentPage,
 }: any) {
 
   const dispatch = useDispatch();
-  const [searchText, setSearchText] = useState(searchTerm || ''); // eslint-disable-line
+  const location = useLocation<any>();
+  const history = useHistory();
+  const locationState = location.state;
+
+  const initialSearch = locationState
+    && locationState.prevPage
+    && locationState.prevPage.search ? locationState.prevPage.search : '';
+
+  const [searchText, setSearchText] = useState(''); // eslint-disable-line
+  // const [searchText, setSearchText] = useState(searchTerm || ''); // eslint-disable-line
 
   const [filteredData, setFilteredData] = useState([]);
 
 
   const handleSearchChange = (event: any) => {
     //save search state in redux
-    dispatch(setSearchTerm(event.target.value))
+    // dispatch(setSearchTerm(event.target.value))
+
     setSearchText(event.target.value);
+    if (setPage !== undefined) {
+      setPage({
+        ...currentPage,
+        search: event.target.value,
+      })
+    }
+    if (locationState.prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...currentPage,
+          search: event.target.value,
+        }
+      })
+    }
   };
 
   const getFilteredArray = (entities: any, text: any) => {
@@ -54,11 +81,24 @@ function BCTableContainer({
     return TableSearchUtils.filterArrayByString(arr, text);
   };
 
+
+  useEffect(() => {
+    if (tableData) {
+      if (initialSearch !== '') {
+        setSearchText(initialSearch);
+      }
+    }
+  }, []);
+
+
+
   useEffect(() => {
     if (tableData) {
       setFilteredData(getFilteredArray(tableData, searchText));
     }
   }, [tableData, searchText]);
+
+
 
   return (
     <Grid container>
@@ -84,6 +124,7 @@ function BCTableContainer({
           </Paper>
         ) : (
               <BCTableContent
+                currentPage={currentPage}
                 columns={columns}
                 data={filteredData}
                 invoiceTable

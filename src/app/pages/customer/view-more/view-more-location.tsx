@@ -42,6 +42,36 @@ function ViewMoreLocationPage({ classes }: any) {
     }, 200);
   };
 
+
+  const renderGoBack = (location: any) => {
+    const baseObj = location;
+    let customerName =
+      baseObj["customerName"] && baseObj["customerName"] !== undefined
+        ? baseObj["customerName"]
+        : "N/A";
+    let customerId =
+      baseObj["customerId"] && baseObj["customerId"] !== undefined
+        ? baseObj["customerId"]
+        : "N/A";
+
+    let currentPage =
+      baseObj["currentPage"] && baseObj["currentPage"] !== undefined
+        ? baseObj["currentPage"]
+        : "N/A";
+
+    localStorage.setItem('prevNestedRouteKey', `${customerName}`);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
+
+    history.push({
+      pathname: `/main/customers/${customerName}`,
+      state: {
+        customerName,
+        customerId,
+        prevPage: currentPage
+      }
+    });
+
+  }
   const columns: any = [
     {
       'Header': 'Job Site',
@@ -134,7 +164,7 @@ function ViewMoreLocationPage({ classes }: any) {
 
           <Grid container>
             <BCBackButtonNoLink
-              func={history.goBack}
+              func={() => renderGoBack(location.state)}
             />
 
             <div className="tab_wrapper">

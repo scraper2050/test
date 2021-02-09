@@ -12,16 +12,23 @@ import {
   loadingSingleCustomers,
 } from "actions/customer/customer.action";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
+
+  const location = useLocation<any>();
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
   const [currentPage, setCurrentPage] = useState({
-    page: 0,
-    pageSize: 10,
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
   });
 
   const columns: any = [
@@ -137,6 +144,7 @@ function CustomersPage({ classes }: any) {
               id={"0"}
             >
               <BCTableContainer
+                currentPage={currentPage}
                 setPage={setCurrentPage}
                 columns={columns}
                 isLoading={customers.loading}
