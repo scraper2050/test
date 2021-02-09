@@ -29,10 +29,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
 
   const initialPageIndex = prevPage ? prevPage.page : 0
 
-  const initialPageSize = prevPage ? prevPage.pageSize : 10
+  const initialPageSize = prevPage ? prevPage.pageSize : 10;
 
-
-  console.log(initialSort, 'initialSort');
   const {
     getTableProps,
     headerGroups,

@@ -27,8 +27,6 @@ function ViewMoreLocationPage({ classes }: any) {
   const location = useLocation<any>();
   const history = useHistory();
 
-  console.log(location.state)
-
   const openEditJobSiteModal = (jobSite: any) => {
     let updateJobSiteObj = { ...jobSite, location: { lat: jobSite.location.coordinates[1], long: jobSite.location.coordinates[0] }, update: true }
     dispatch(setModalDataAction({
@@ -56,18 +54,13 @@ function ViewMoreLocationPage({ classes }: any) {
         ? baseObj["customerId"]
         : "N/A";
 
-    let linkKey: any = localStorage.getItem('nestedRouteKey');
-    localStorage.setItem('prevNestedRouteKey', linkKey);
-    localStorage.setItem('nestedRouteKey', `${customerName}`);
-
-
     let currentPage =
       baseObj["currentPage"] && baseObj["currentPage"] !== undefined
         ? baseObj["currentPage"]
         : "N/A";
 
-    console.log(currentPage)
-
+    localStorage.setItem('prevNestedRouteKey', `${customerName}`);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
 
     history.push({
       pathname: `/main/customers/${customerName}`,
