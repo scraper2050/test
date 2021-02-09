@@ -8,9 +8,10 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { modalTypes } from '../../../../../constants';
 import { getContacts, addContact, updateContact, removeContact } from 'api/contacts.api';
 
-function CustomerContactsPage({ classes, id, type }: any) {
+function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const dispatch = useDispatch();
   const { isLoading, refresh, contacts } = useSelector((state: any) => state.contacts);
+
 
   const initialValues = {
     name: "",
@@ -116,8 +117,9 @@ function CustomerContactsPage({ classes, id, type }: any) {
           apply: (values: any) => handleAddContact(values),
           newContact: true,
           contacts,
+          customerId,
         },
-        'modalTitle': 'Job Location',
+        'modalTitle': `${type === 'Customer' ? "Add Customer Contact" : "Add Job Location Contact"}`,
         'removeFooter': false
       },
       'type': modalTypes.ADD_CONTACT_MODAL
@@ -141,6 +143,7 @@ function CustomerContactsPage({ classes, id, type }: any) {
             phone: origRow['phone'],
             _id: origRow['_id'],
           },
+          onEdit: true,
           apply: (values: any) => handleUpdateContact(values)
         },
         'modalTitle': 'Edit Contact',

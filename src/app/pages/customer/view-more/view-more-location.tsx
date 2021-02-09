@@ -231,6 +231,7 @@ function ViewMoreLocationPage({ classes }: any) {
                 <CustomerContactsPage
                   id={location.state._id}
                   type="JobLocation"
+                  customerId={location.state.customerId}
                 />
               </div>
             </SwipeableViews>

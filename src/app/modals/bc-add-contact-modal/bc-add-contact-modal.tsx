@@ -12,13 +12,14 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
-import React, { useState  , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
 import * as Yup from 'yup';
 import { phoneRegExp } from 'helpers/format';
 import { success, error } from 'actions/snackbar/snackbar.action';
+import request from 'utils/http.service';
 
 const contactSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
@@ -32,15 +33,15 @@ function BCAddContactModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log('call api here ')
-  })
+  const [contacts, setContacts] = useState<any[]>([]);
+
 
   const {
     apply,
     initialValues,
     newContact,
-    contacts
+    customerId,
+    onEdit,
   } = props
 
   const closeModal = () => {
@@ -53,29 +54,95 @@ function BCAddContactModal({
     }, 200);
   };
 
+  useEffect(() => {
+    if (initialValues.type !== 'Customer' && !onEdit) {
+      let data = {
+        type: 'Customer',
+        referenceNumber: customerId
+      }
+
+
+      request('/getContacts', 'OPTIONS', data, false)
+        .then((res: any) => {
+          try {
+            setContacts(res.data.result)
+          } catch (err) {
+            console.log(err)
+          }
+        })
+    }
+
+  }, [])
+
+  const [initValues, setInitValues] = useState<any>(null);
+
+  const handleSelect = (event: any, setFieldValue: any) => {
+    event.preventDefault();
+
+    let baseValue = event.target.value;
+
+
+    try {
+      setInitValues(true)
+      setFieldValue('contactId', baseValue._id);
+      setFieldValue('name', baseValue.name);
+      setFieldValue('email', baseValue.email);
+      setFieldValue('phone', baseValue.phone);
+    } catch (err) {
+      setInitValues(null)
+
+      setFieldValue('contactId', null);
+      setFieldValue('name', initialValues.name);
+      setFieldValue('email', initialValues.email);
+      setFieldValue('phone', initialValues.phone);
+    }
+  }
+
+
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initValues ? initValues : initialValues}
       onSubmit={
         async (values, { setSubmitting }) => {
+          let data = values;
 
+          if (initValues) {
+            delete data['name'];
+            delete data['email'];
+            delete data['phone'];
+          } else {
+            delete data['contactId'];
+          }
           await setSubmitting(true);
           try {
-            const response = await apply(values);
-            if (response.status <= 400 && response.status !== 0) {
+            const response = await apply(data);
+            if (response.status <= 400 && response.status !== 0 || response.success === 201) {
               dispatch(success(`${newContact ? "Adding New" : "Update"} Contact Successful!`));
             } else {
-              dispatch(error("Something went wrong!"))
+              if (response.message === "Contact already added") {
+
+                dispatch(error(response.message))
+              } else {
+                console.log('dito sa apply')
+
+                dispatch(error("Something went wrong!"))
+              }
             }
           } catch (err) {
-            dispatch(error("Something went wrong!"))
-            console.log(err)
+            if (err.message === "Contact already added") {
+
+              dispatch(error(err.message))
+            } else {
+              dispatch(error("Something went wrong!"))
+              console.log(err)
+            }
           } finally {
             await setSubmitting(false);
             closeModal();
           }
         }
       }
+
       validationSchema={contactSchema}
       validateOnChange>
       {
@@ -90,33 +157,42 @@ function BCAddContactModal({
             <DataContainer >
               <Grid container direction="column" alignItems="center" spacing={2}>
 
-                <Grid
-                  className={classes.paper}
-                  item
-                  sm={12}>
-                  <FormGroup>
-                    <InputLabel className={classes.label}>
-                      <strong>{"Select Name"}</strong>
-                    </InputLabel>
-                    <Field
-                      as={Select}
-                      enableReinitialize
-                      name={'customer.name'}
-                      // onChange={(e: any) => {
-                      //   handleChange(e);
-                      // }}
-                      type={'select'}
-                      variant={'outlined'}>
-                      {/* {contacts.map((contact, id) =>
-                        <MenuItem
-                          key={id}
-                          value={id}>
-                          {contact.name }
-                        </MenuItem>)
-                      } */}
-                    </Field>
-                  </FormGroup>
-                </Grid>
+                {
+                  initialValues.type !== 'Customer' && !onEdit &&
+                  <Grid
+                    className={classes.paper}
+                    item
+                    sm={12}>
+                    <FormGroup>
+                      <InputLabel className={classes.label}>
+                        <strong>{"Select Contacts from Customer"}</strong>
+                      </InputLabel>
+                      <Field
+                        as={Select}
+                        enableReinitialize
+                        onChange={(ev: any) => handleSelect(ev, setFieldValue)}
+                        name={'customer.name'}
+                        // onChange={(e: any) => {
+                        //   handleChange(e);
+                        // }}
+                        type={'select'}
+                        variant={'outlined'}>
+                        <MenuItem >
+                          New Contact
+                          </MenuItem>
+
+                        {contacts.map((contact: any, id: number) =>
+                          <MenuItem
+                            key={id}
+                            value={contact}>
+                            {contact.name}
+                          </MenuItem>)
+                        }
+                      </Field>
+                    </FormGroup>
+                  </Grid>
+                }
+
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
@@ -124,6 +200,7 @@ function BCAddContactModal({
                       <strong>{"Name"}</strong>
                     </InputLabel>
                     <BCTextField
+                      disabled={initValues !== null}
                       name={"name"}
                       placeholder={"Name"}
                       onChange={handleChange}
@@ -138,6 +215,7 @@ function BCAddContactModal({
                       <strong>{"Email"}</strong>
                     </InputLabel>
                     <BCTextField
+                      disabled={initValues !== null}
                       name={"email"}
                       placeholder={"Email"}
                       type={"email"}
@@ -153,6 +231,7 @@ function BCAddContactModal({
                       <strong>{"Phone Number"}</strong>
                     </InputLabel>
                     <BCTextField
+                      disabled={initValues !== null}
                       name={"phone"}
                       placeholder={"Phone Number"}
                       type={"number"}
