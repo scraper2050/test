@@ -14,17 +14,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
 import { CompanyProfile } from 'actions/user/user.types'
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
 import { Grid, withStyles } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
+import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
+
 
 function CompanyProfilePage({ classes }: any) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
   const { vendorObj, loading = true } = useSelector((state: any) => state.vendors);
-  const location = useLocation();
+  const location = useLocation<any>();
+  const history = useHistory();
   const [curTab, setCurTab] = useState(0);
 
 
@@ -101,7 +104,20 @@ function CompanyProfilePage({ classes }: any) {
     }
   }, [vendorObj]);
 
-  console.log(!image.data, 'image')
+
+  const renderGoBack = (location: any) => {
+    const baseObj = location;
+
+    const stateObj = baseObj && baseObj['currentPage'] !== undefined ? {
+      prevPage: baseObj['currentPage']
+    } : {}
+
+    history.push({
+      pathname: `/main/admin/vendors`,
+      state: stateObj
+    });
+
+  }
 
   return (
     <>
@@ -110,8 +126,8 @@ function CompanyProfilePage({ classes }: any) {
           <div className={classes.pageContent}>
             <Grid container>
 
-              <BCBackButton
-                link={'/main/admin/vendors'}
+              <BCBackButtonNoLink
+                func={() => renderGoBack(location.state)}
               />
 
               <div className="tab_wrapper">
