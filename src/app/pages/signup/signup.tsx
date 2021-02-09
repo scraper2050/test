@@ -587,7 +587,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
       {isLoading && <BCSpinnerer />}
       <Snackbar open={alert} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
-          Company Email address already registered. Please try with some other email address.
+            Account already exists.
         </Alert>
       </Snackbar>
     </div>
