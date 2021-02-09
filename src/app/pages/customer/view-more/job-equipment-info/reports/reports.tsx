@@ -9,7 +9,6 @@ import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
 import { formatDate, formatTime, phoneNumberFormatter } from "helpers/format";
 import { loadSingleJob, getJobDetailAction } from "actions/job/job.action";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
@@ -53,8 +52,6 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     pageSize: prevPage ? prevPage.pageSize : 10,
     sortBy: prevPage ? prevPage.sortBy : [],
   });
-
-  console.log(locationState)
 
   const handleFilterData = (jobs: any, location: LocationStateTypes) => {
     const oldJobs = jobs;
