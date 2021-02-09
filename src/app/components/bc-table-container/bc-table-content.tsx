@@ -20,17 +20,16 @@ import { boolean } from 'yup';
 function BCTableContent({ currentPage, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
+  const history = useHistory();
   const locationState = location.state;
 
-  const initialSort = locationState
-    && locationState.prevPage
-    && locationState.prevPage.sortBy ? locationState.prevPage.sortBy : []
+  const { prevPage } = locationState;
 
-  const initialPageIndex = locationState
-    && locationState.prevPage ? locationState.prevPage.page : 0
+  const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : []
 
-  const initialPageSize = locationState
-    && locationState.prevPage ? locationState.prevPage.pageSize : 10
+  const initialPageIndex = prevPage ? prevPage.page : 0
+
+  const initialPageSize = prevPage ? prevPage.pageSize : 10
 
 
 
@@ -68,7 +67,17 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       setPage({
         ...currentPage,
         page: newPage,
-      })
+      });
+    }
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...currentPage,
+          page: newPage,
+        }
+      });
     }
     gotoPage(newPage);
   };
@@ -78,8 +87,20 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       setPage({
         ...currentPage,
         pageSize: Number(event.target.value)
-      })
+      });
     }
+
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...currentPage,
+          pageSize: Number(event.target.value)
+        }
+      });
+    }
+
     setPageSize(Number(event.target.value));
   };
 
@@ -89,7 +110,17 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       setPage({
         ...currentPage,
         sortBy,
-      })
+      });
+    }
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...currentPage,
+          sortBy,
+        }
+      });
     }
   }
 

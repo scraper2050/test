@@ -64,6 +64,15 @@ function BCTableContainer({
         search: event.target.value,
       })
     }
+    if (locationState.prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...currentPage,
+          search: event.target.value,
+        }
+      })
+    }
   };
 
   const getFilteredArray = (entities: any, text: any) => {
