@@ -137,6 +137,7 @@ function CustomersPage({ classes }: any) {
               id={"0"}
             >
               <BCTableContainer
+                currentPage={currentPage}
                 setPage={setCurrentPage}
                 columns={columns}
                 isLoading={customers.loading}
