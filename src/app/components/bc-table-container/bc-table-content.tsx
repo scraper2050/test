@@ -23,7 +23,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   const history = useHistory();
   const locationState = location.state;
 
-  const { prevPage } = locationState;
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : []
 
@@ -65,7 +65,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   const handleChangePage = (event: any, newPage: any): any => {
     if (setPage !== undefined) {
       setPage({
-        ...currentPage,
+        pageSize,
+        sortBy,
         page: newPage,
       });
     }
@@ -74,7 +75,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       history.replace({
         ...history.location,
         state: {
-          ...currentPage,
+          pageSize,
+          sortBy,
           page: newPage,
         }
       });
@@ -85,7 +87,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   const handleChangeRowsPerPage = (event: any) => {
     if (setPage !== undefined) {
       setPage({
-        ...currentPage,
+        page: pageIndex,
+        sortBy,
         pageSize: Number(event.target.value)
       });
     }
@@ -95,7 +98,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       history.replace({
         ...history.location,
         state: {
-          ...currentPage,
+          page: pageIndex,
+          sortBy,
           pageSize: Number(event.target.value)
         }
       });
@@ -108,7 +112,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
 
     if (setPage !== undefined) {
       setPage({
-        ...currentPage,
+        page: pageIndex,
+        pageSize,
         sortBy,
       });
     }
@@ -117,7 +122,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       history.replace({
         ...history.location,
         state: {
-          ...currentPage,
+          page: pageIndex,
+          pageSize,
           sortBy,
         }
       });
