@@ -23,21 +23,23 @@ function BCJobReport({ classes, jobReportData }: any) {
 
     const jobEquipmentInfo = linkKey.includes('job-equipment-info');
 
+
+
+    let customerName =
+      baseObj["customerName"] && baseObj["customerName"] !== undefined
+        ? baseObj["customerName"]
+        : "N/A";
+    let customerId =
+      baseObj["customerId"] && baseObj["customerId"] !== undefined
+        ? baseObj["customerId"]
+        : "N/A";
+
+    let currentPage =
+      baseObj["currentPage"] && baseObj["currentPage"] !== undefined
+        ? baseObj["currentPage"]
+        : "N/A";
+
     if (jobEquipmentInfo) {
-
-      let customerName =
-        baseObj["customerName"] && baseObj["customerName"] !== undefined
-          ? baseObj["customerName"]
-          : "N/A";
-      let customerId =
-        baseObj["customerId"] && baseObj["customerId"] !== undefined
-          ? baseObj["customerId"]
-          : "N/A";
-
-      let currentPage =
-        baseObj["currentPage"] && baseObj["currentPage"] !== undefined
-          ? baseObj["currentPage"]
-          : "N/A";
 
       history.push({
         pathname: `/main/customers/${customerName}/job-equipment-info/reports`,
@@ -49,7 +51,14 @@ function BCJobReport({ classes, jobReportData }: any) {
       });
 
     } else {
-      history.goBack();
+      history.push({
+        pathname: `/main/customers/job-reports`,
+        state: {
+          customerName,
+          customerId,
+          prevPage: currentPage
+        }
+      });
     }
   }
 

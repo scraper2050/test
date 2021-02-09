@@ -39,7 +39,6 @@ function EmployeeProfile({ profile, back, classes }: Props) {
   const [phone, setPhone] = useState(profile.phone);
   const [phoneValid, setPhoneValid] = useState(true);
 
-  console.log(profile, 'profile');
 
   const firstNameChanged = (newValue: string) => {
     setFirstName(newValue);
