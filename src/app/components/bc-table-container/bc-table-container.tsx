@@ -62,7 +62,7 @@ function BCTableContainer({
         search: event.target.value,
       })
     }
-    if (locationState.prevPage) {
+    if (locationState && locationState.prevPage) {
       history.replace({
         ...history.location,
         state: {
