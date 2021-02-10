@@ -225,6 +225,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       allStates[values.state.id].name;
                     updateCustomerrequest.latitude = positionValue.lat;
                     updateCustomerrequest.longitude = positionValue.lang;
+
                     if (isValidate(updateCustomerrequest)) {
                       dispatch(
                         updateCustomerAction(updateCustomerrequest, () => {
@@ -301,7 +302,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             <BCTextField
                               name={"phone"}
                               placeholder={"Phone Number"}
-                              type={"number"}
+                              // type={"number"}
                               onChange={handleChange}
                             />
                           </FormGroup>
