@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTechnician, createAdministrator, createManager, createOfficeAdmin, getEmployees, loadingEmployees } from 'actions/employee/employee.action';
 import { UserProfile } from 'actions/employee/employee.types';
+import { useLocation, useHistory } from 'react-router-dom';
 
 interface Props {
   classes: any;
@@ -26,7 +27,20 @@ function AdminEmployeesPage({ classes, children }: Props) {
     phone: ''
   });
 
-  console.log(employees);
+
+  const location = useLocation<any>();
+  const history = useHistory();
+
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
+
 
   const columns: any = [
     {
@@ -118,15 +132,23 @@ function AdminEmployeesPage({ classes, children }: Props) {
   }
 
   const renderViewMore = (row: any) => {
-    setStage(2);
     const baseObj = row['original'];
-    console.log(baseObj)
+
+    history.replace({
+      ...history.location,
+      state: {
+        prevPage: currentPage
+      }
+    })
+
     setProfile({
       email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
       firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
       lastName: baseObj['profile'] && baseObj['profile']['lastName'] ? baseObj['profile']['lastName'] : '',
       phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
     });
+    setStage(2);
+
   }
 
   return (
@@ -159,6 +181,8 @@ function AdminEmployeesPage({ classes, children }: Props) {
           }
           {stage === 0 &&
             <BCTableContainer
+              currentPage={currentPage}
+              setPage={setCurrentPage}
               columns={columns}
               isLoading={employees.loading}
               search

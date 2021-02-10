@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { getVendors, loadingVendors, getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 
 interface StatusTypes {
   status: number;
@@ -31,12 +31,24 @@ function AdminVendorsPage({ classes }: any) {
   const vendors = useSelector((state: any) => state.vendors);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
+  const location = useLocation<any>();
+
   const RenderStatus = ({ status }: StatusTypes) => {
     const textStatus = status ? 'Confirmed' : 'Pending';
     return <div className={status ? classes.statusConfirmedText : classes.statusPendingText}>
       {textStatus}
     </div>
   }
+
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
 
   const columns: any = [
     // {
@@ -96,7 +108,8 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
+    // console.log(event, row);
+    return;
   };
 
   const openVendorModal = () => {
@@ -128,13 +141,16 @@ function AdminVendorsPage({ classes }: any) {
 
     localStorage.setItem("nestedRouteKey", `${vendorCompanyName}`);
 
-    console.log(vendorCompanyName, 'rooooow')
+
     dispatch(loadingSingleVender());
     dispatch(getVendorDetailAction(vendorId));
 
     history.push({
       pathname: `vendors/${vendorCompanyName}`,
-      state: vendorObj
+      state: {
+        ...vendorObj,
+        currentPage
+      }
     });
   }
 
@@ -179,6 +195,8 @@ function AdminVendorsPage({ classes }: any) {
               hidden={curTab !== 0}
               id={'0'}>
               <BCTableContainer
+                currentPage={currentPage}
+                setPage={setCurrentPage}
                 columns={columns}
                 isLoading={vendors.loading}
                 onRowClick={handleRowClick}

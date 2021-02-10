@@ -1,36 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './contacts.style';
 import { Fab, withStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { DUMMY_DATA, DUMMY_COLUMN } from '../job-equipment-info/dummy-data';
+import { DUMMY_DATA } from '../job-equipment-info/dummy-data';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import { modalTypes } from '../../../../../constants';
+import { getContacts, addContact, updateContact, removeContact } from 'api/contacts.api';
 
-function CustomerContactsPage({ classes, data }: any) {
+function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false)
+  const { isLoading, refresh, contacts } = useSelector((state: any) => state.contacts);
+
+
+  const initialValues = {
+    name: "",
+    email: "",
+    phone: "",
+    type,
+    referenceNumber: id,
+  }
 
   const columns: any = [
 
     {
       'Header': 'Contact Name',
-      'accessor': 'title',
+      'accessor': 'name',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'width': 200
     },
     {
       'Header': 'Email',
-      'accessor': 'edited',
+      'accessor': 'email',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'width': 200
     },
     {
       'Header': 'Phone',
-      'accessor': 'count',
+      'accessor': 'phone',
       'className': 'font-bold',
       'sortable': true,
-      'width': 100
+      'width': 200
     },
     {
       'Cell'({ row }: any) {
@@ -41,23 +53,73 @@ function CustomerContactsPage({ classes, data }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-            onClick={() => openEditContactModal()}
+            onClick={() => openEditContactModal(row)}
             variant={'extended'}>
-            {'Edit Contact'}
+            {'Edit'}
+          </Fab>
+          <Fab
+            aria-label={'edit-contact'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            style={{ marginLeft: 15 }}
+            color={'secondary'}
+            onClick={() => openDeleteContactModal(row)}
+            variant={'extended'}>
+            {'Delete'}
           </Fab>
         </div>
       },
-      'Header': 'Action',
+      'Header': 'Actions',
       'id': 'action-edit-contact',
       'sortable': false,
-      'width': 60
+      'width': 40
     },
   ]
+
+  const handleAddContact = async (values: any) => {
+    try {
+      const response = await dispatch(addContact(values));
+      return response;
+    } catch (err) {
+      throw new Error(err);
+    }
+
+  }
+
+  const handleUpdateContact = async (values: any) => {
+
+    try {
+      const response = await dispatch(updateContact(values));
+      return response;
+    } catch (err) {
+      throw new Error(err);
+    }
+
+  }
+
+  const handleDeleteContact = async (values: any) => {
+
+    try {
+      const response = await dispatch(removeContact(values));
+      return response;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
 
   const openAddContactModal = () => {
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'Add New Contact',
+        'data': {
+          initialValues,
+          apply: (values: any) => handleAddContact(values),
+          newContact: true,
+          contacts,
+          customerId,
+        },
+        'modalTitle': `${type === 'Customer' ? "Add Customer Contact" : "Add Job Location Contact"}`,
         'removeFooter': false
       },
       'type': modalTypes.ADD_CONTACT_MODAL
@@ -68,10 +130,23 @@ function CustomerContactsPage({ classes, data }: any) {
   };
 
 
-  const openEditContactModal = () => {
+
+  const openEditContactModal = (row: any) => {
+    let origRow = row['original'];
+
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'Edit New Contact',
+        'data': {
+          initialValues: {
+            name: origRow['name'],
+            email: origRow['email'],
+            phone: origRow['phone'],
+            _id: origRow['_id'],
+          },
+          onEdit: true,
+          apply: (values: any) => handleUpdateContact(values)
+        },
+        'modalTitle': 'Edit Contact',
         'removeFooter': false
       },
       'type': modalTypes.ADD_CONTACT_MODAL
@@ -80,6 +155,44 @@ function CustomerContactsPage({ classes, data }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+
+  const openDeleteContactModal = (row: any) => {
+    let origRow = row['original'];
+
+    dispatch(setModalDataAction({
+      'data': {
+        'data': {
+          contact: {
+            name: origRow['name'],
+            email: origRow['email'],
+            phone: origRow['phone'],
+            _id: origRow['_id'],
+            type,
+            referenceNumber: id,
+          },
+          apply: (values: any) => handleDeleteContact(values)
+        },
+        'modalTitle': 'Delete Contact',
+        'removeFooter': false
+      },
+      'type': modalTypes.DELETE_CONTACT_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+
+
+  useEffect(() => {
+    let data: any = {
+      type,
+      referenceNumber: id
+    }
+
+    dispatch(getContacts(data));
+  }, [refresh])
 
 
   return (
@@ -102,7 +215,7 @@ function CustomerContactsPage({ classes, data }: any) {
         isLoading={isLoading}
         search
         searchPlaceholder={"Search contacts"}
-        tableData={DUMMY_DATA}
+        tableData={contacts}
         initialMsg="There are no contacts"
       />
     </>

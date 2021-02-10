@@ -27,6 +27,7 @@ function BCTableSearchContainer({
         }}
         placeholder={searchPlaceholder}
         value={searchText}
+        defaultValue={searchText}
       />
       <IconButton
         aria-label={'search'}

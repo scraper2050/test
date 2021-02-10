@@ -40,7 +40,27 @@ function ViewMorePage({ classes }: any) {
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
 
-  const renderJobSiteComponent = (jobLocation: any) => {
+  const prevPage = customerObj && customerObj.prevPage ? customerObj.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
+
+  const renderJobSiteComponent = (jobLocation: any, customerState: any) => {
+
+    let baseObj = customerState;
+    let customerName =
+      baseObj["profile"] && baseObj["profile"] !== undefined
+        ? baseObj["profile"]["displayName"]
+        : "N/A";
+
+    customerName =
+      customerName !== undefined
+        ? customerName.replace(/ /g, "")
+        : "customername";
+
     let locationName = jobLocation.name;
     let locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
     let linkKey: any = localStorage.getItem('nestedRouteKey');
@@ -48,7 +68,11 @@ function ViewMorePage({ classes }: any) {
     localStorage.setItem('nestedRouteKey', `location/${locationNameLink}`);
     history.push({
       pathname: `/main/customers/location/${locationNameLink}`,
-      state: jobLocation
+      state: {
+        ...jobLocation,
+        currentPage,
+        customerName
+      }
     });
   };
 
@@ -119,7 +143,7 @@ function ViewMorePage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-            onClick={() => { renderJobSiteComponent(row.original) }}
+            onClick={() => { renderJobSiteComponent(row.original, customerState.customerObj) }}
             variant={'extended'}>
             {'View More'}
           </Fab>
@@ -137,8 +161,6 @@ function ViewMorePage({ classes }: any) {
     const customerId = obj.customerId;
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(customerId));
-
-
   }, []);
 
   useEffect(() => {
@@ -239,6 +261,8 @@ function ViewMorePage({ classes }: any) {
                   </PageContainer>
 
                   <BCTableContainer
+                    currentPage={currentPage}
+                    setPage={setCurrentPage}
                     columns={columns}
                     isLoading={jobLocations.loading}
                     search
@@ -312,7 +336,10 @@ function ViewMorePage({ classes }: any) {
                   }}
                   id={'2'}>
 
-                  <CustomerContactsPage />
+                  <CustomerContactsPage
+                    id={location.state.customerId}
+                    type="Customer"
+                  />
                 </div>
               </SwipeableViews>
           }

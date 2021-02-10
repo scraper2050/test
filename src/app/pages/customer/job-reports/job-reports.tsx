@@ -6,7 +6,7 @@ import styles from "../customer.styles";
 import { Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   loadSingleJob,
   getJobDetailAction,
@@ -14,12 +14,46 @@ import {
 } from "actions/job/job.action";
 import { formatDate, formatTime, phoneNumberFormatter } from "helpers/format";
 import { loadingCustomers } from "actions/customer/customer.action";
+import { getAllJobsAPI } from "api/job.api";
+import { Job } from 'actions/job/job.types';
 
 function JobReportsPage({ classes }: any) {
   const dispatch = useDispatch();
-  const jobState = useSelector((state: any) => state.jobState);
+  const { isLoading = true, jobs, refresh = true } = useSelector(
+    ({ jobState }: any) => ({
+      'isLoading': jobState.isLoading,
+      'jobs': jobState.data,
+      'refresh': jobState.refresh,
+    })
+  );
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
+
+  const location = useLocation<any>();
+
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
+
+
+  const [filteredJobs, setFilterJobs] = useState<Job[] | []>([]);
+
+  const handleFilterData = (jobs: any) => {
+    const oldJobs = jobs;
+    let filteredJobs = oldJobs;
+
+    filteredJobs
+      .filter((x: any) => x.status !== 2)
+      .forEach((x: any) => filteredJobs.splice(filteredJobs.indexOf(x), 1));
+
+    setFilterJobs(filteredJobs);
+  }
 
   const columns: any = [
     {
@@ -85,14 +119,14 @@ function JobReportsPage({ classes }: any) {
     },
   ];
 
-  useEffect(() => {
-    if (jobState.refresh) {
-      dispatch(loadingCustomers());
-      dispatch(getJobs());
+  // useEffect(() => {
+  //   if (jobState.refresh) {
+  //     dispatch(loadingCustomers());
+  //     dispatch(getJobs());
 
-      //console.log(jobs);
-    }
-  }, [jobState.refresh]);
+  //     //console.log(jobs);
+  //   }
+  // }, [jobState.refresh]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -111,6 +145,10 @@ function JobReportsPage({ classes }: any) {
       baseObj && baseObj["customer"]["profile"] !== undefined
         ? baseObj["customer"]["profile"]["displayName"]
         : "N/A";
+    let customerId =
+      baseObj && baseObj["customer"]["_id"] !== undefined
+        ? baseObj["customer"]["_id"]
+        : "N/A";
     let customerPhone =
       baseObj && baseObj["customer"]["contact"] !== undefined
         ? baseObj["customer"]["contact"]["phone"]
@@ -125,29 +163,25 @@ function JobReportsPage({ classes }: any) {
     let customerAddress = baseObj && baseObj["customer"]["address"];
     let address: any = "";
     if (customerAddress && customerAddress !== undefined) {
-      address = `${
-        customerAddress["street"] !== undefined &&
+      address = `${customerAddress["street"] !== undefined &&
         customerAddress["street"] !== null
-          ? customerAddress["street"]
-          : ""
-      } 
-      ${
-        customerAddress["city"] !== undefined &&
-        customerAddress["city"] !== null
+        ? customerAddress["street"]
+        : ""
+        } 
+      ${customerAddress["city"] !== undefined &&
+          customerAddress["city"] !== null
           ? customerAddress["city"]
           : ""
-      } ${
-        customerAddress["state"] !== undefined &&
-        customerAddress["state"] !== null &&
-        customerAddress["state"] !== "none"
+        } ${customerAddress["state"] !== undefined &&
+          customerAddress["state"] !== null &&
+          customerAddress["state"] !== "none"
           ? customerAddress["state"]
           : ""
-      } ${
-        customerAddress["zipCode"] !== undefined &&
-        customerAddress["zipCode"] !== null
+        } ${customerAddress["zipCode"] !== undefined &&
+          customerAddress["zipCode"] !== null
           ? customerAddress["zipCode"]
           : ""
-      }`;
+        }`;
     } else {
       address = "N/A";
     }
@@ -254,16 +288,31 @@ function JobReportsPage({ classes }: any) {
     dispatch(getJobDetailAction(jobReportObj));
     history.push({
       pathname: `job-reports/${jobId}`,
-      state: jobReportObj,
+      state: {
+        ...jobReportObj,
+        currentPage,
+      },
     });
   };
 
   //Display only complete jobs
-  let newJobState = jobState.data;
+  // let newJobState = jobState.data;
 
-  newJobState
-    .filter((x: any) => x.status !== 2)
-    .forEach((x: any) => newJobState.splice(newJobState.indexOf(x), 1));
+  // newJobState
+  //   .filter((x: any) => x.status !== 2)
+  //   .forEach((x: any) => newJobState.splice(newJobState.indexOf(x), 1));
+
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsAPI());
+    }
+
+    if (jobs) {
+      handleFilterData(jobs);
+    }
+
+  }, [refresh]);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -291,11 +340,13 @@ function JobReportsPage({ classes }: any) {
               id={"0"}
             >
               <BCTableContainer
+                currentPage={currentPage}
+                setPage={setCurrentPage}
                 columns={columns}
-                isLoading={jobState.isLoading}
+                isLoading={isLoading}
                 onRowClick={handleRowClick}
                 search
-                tableData={newJobState}
+                tableData={filteredJobs}
                 searchPlaceholder={"Search Job Reports..."}
                 initialMsg={"There are no Job Report List"}
               />

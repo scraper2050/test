@@ -30,7 +30,7 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
 
   const { customerObj } = useSelector((state: any) => state.customers);
 
-  const location = useLocation<LocationStateTypes>();
+  const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
 

@@ -24,7 +24,7 @@ function ViewMoreLocationPage({ classes }: any) {
   const jobSites = useSelector((state: any) => state.jobSites);
   const { customerObj, loading } = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
-  const location = useLocation();
+  const location = useLocation<any>();
   const history = useHistory();
 
   const openEditJobSiteModal = (jobSite: any) => {
@@ -42,6 +42,36 @@ function ViewMoreLocationPage({ classes }: any) {
     }, 200);
   };
 
+
+  const renderGoBack = (location: any) => {
+    const baseObj = location;
+    let customerName =
+      baseObj["customerName"] && baseObj["customerName"] !== undefined
+        ? baseObj["customerName"]
+        : "N/A";
+    let customerId =
+      baseObj["customerId"] && baseObj["customerId"] !== undefined
+        ? baseObj["customerId"]
+        : "N/A";
+
+    let currentPage =
+      baseObj["currentPage"] && baseObj["currentPage"] !== undefined
+        ? baseObj["currentPage"]
+        : "N/A";
+
+    localStorage.setItem('prevNestedRouteKey', `${customerName}`);
+    localStorage.setItem('nestedRouteKey', `${customerName}`);
+
+    history.push({
+      pathname: `/main/customers/${customerName}`,
+      state: {
+        customerName,
+        customerId,
+        prevPage: currentPage
+      }
+    });
+
+  }
   const columns: any = [
     {
       'Header': 'Job Site',
@@ -134,7 +164,7 @@ function ViewMoreLocationPage({ classes }: any) {
 
           <Grid container>
             <BCBackButtonNoLink
-              func={history.goBack}
+              func={() => renderGoBack(location.state)}
             />
 
             <div className="tab_wrapper">
@@ -198,7 +228,11 @@ function ViewMoreLocationPage({ classes }: any) {
                 }}
                 id={'1'}>
 
-                <CustomerContactsPage />
+                <CustomerContactsPage
+                  id={location.state._id}
+                  type="JobLocation"
+                  customerId={location.state.customerId}
+                />
               </div>
             </SwipeableViews>
           }

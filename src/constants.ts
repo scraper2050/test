@@ -31,5 +31,6 @@ export const modalTypes = {
   ADD_BILLING_MODAL: "add-billing-modal",
   QUICKBOOKS_LOGIN_MODAL: "quickbook-login-modal",
   ADD_CONTACT_MODAL: "add-contact-modal",
+  DELETE_CONTACT_MODAL: "delete-contact-modal",
   EDIT_PROFILE: "edit-profile-modal",
 };
