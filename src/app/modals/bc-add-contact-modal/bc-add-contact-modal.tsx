@@ -234,7 +234,6 @@ function BCAddContactModal({
                       disabled={initValues !== null}
                       name={"phone"}
                       placeholder={"Phone Number"}
-                      type={"number"}
                       onChange={handleChange}
                     />
                   </FormGroup>
