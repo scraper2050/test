@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile'
-import validator from 'validator'
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction, getCompanyProfileAction } from 'actions/user/user.action';
-import { CompanyProfile, CompanyProfileActonType, CompanyProfileStateType } from 'actions/user/user.types'
-import { SettingsInputAntennaTwoTone } from '@material-ui/icons';
-import { phoneNumberFormatter, phoneNumberValidator } from 'helpers/format';
-import { useHistory } from 'react-router-dom';
+import { CompanyProfile, CompanyProfileStateType } from 'actions/user/user.types';
+import { phoneRegExp, digitsOnly } from 'helpers/format';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
+import * as Yup from 'yup';
+
+const companyProfileSchema = Yup.object().shape({
+  companyName: Yup.string().required('Required'),
+  companyEmail: Yup.string().email('Invalid email').required('Required'),
+  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+  zipCode: Yup.string().matches(digitsOnly, 'The field should have digits only')
+});
+
 interface User {
   _id?: string,
   auth?: {
@@ -49,38 +54,14 @@ interface User {
 
 function CompanyProfilePage() {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const image = useSelector((state: any) => state.image);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const [imageUrl, setImageUrl] = useState("");
+  const [update, setUpdate] = useState(true)
 
-  useEffect(() => {
-    let user: User = {};
-    user = JSON.parse(localStorage.getItem('user') || "");
-    dispatch(getCompanyProfileAction(user?.company as string));
-  }, []);
 
-  const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { id, value } } = event;
-    const inputError: { [s: string]: boolean } = {};
+  const initialValues = profileState;
 
-    switch (id) {
-      case 'companyEmail':
-        inputError.companyEmail = validator.isEmail(value);
-        break;
-      case 'phone':
-        inputError.phone = phoneNumberValidator(value);
-        break;
-      case 'zipCode':
-        inputError.zipCode = validator.isNumeric(value);
-        break;
-      default:
-        break;
-    }
-
-    dispatch({ type: CompanyProfileActonType.ONCHANGE, payload: { id, value, inputError } });
-  }
-
-  const handleUpdateCompanyProfile = () => {
+  const handleUpdateCompanyProfile = async (values: any) => {
     const {
       companyName,
       companyEmail,
@@ -91,12 +72,14 @@ function CompanyProfilePage() {
       state,
       zipCode,
       street
-    } = profileState
+    } = values
+
+
     const data: CompanyProfile = {
       companyName,
       companyEmail,
       phone,
-      logoUrl: (image?.data && image.data.imageUrl) ? image.data?.imageUrl : logoUrl,
+      logoUrl,
       fax,
       city,
       state,
@@ -104,19 +87,15 @@ function CompanyProfilePage() {
       street
     }
 
-    dispatch(updateCompanyProfileAction(data));
+    await dispatch(updateCompanyProfileAction(data));
+    setUpdate(!update);
   }
 
-  const cancel = () => {
-    history.push('/main/admin/billing')
-  }
-
-  const imageSelected = (f: File) => {
-    if (!f) return;
-    const formData = new FormData();
-    formData.append('image', f);
-    dispatch(uploadImage(formData));
-  }
+  useEffect(() => {
+    let user: User = {};
+    user = JSON.parse(localStorage.getItem('user') || "");
+    dispatch(getCompanyProfileAction(user?.company as string));
+  }, [update]);
 
   return (
     <MainContainer>
@@ -126,14 +105,16 @@ function CompanyProfilePage() {
             <BCCircularLoader />
           ) : (
               <BCAdminProfile
+                title="Edit Company Profile"
                 avatar={{
                   isEmpty: 'NO',
-                  url: !image.data ? profileState.logoUrl : image.data.imageUrl,
-                  onChange: imageSelected
+                  url: imageUrl === "" ? initialValues.logoUrl : imageUrl,
+                  imageUrl: imageUrl,
                 }}
-                apply={handleUpdateCompanyProfile}
-                cancel={cancel}
+                apply={(value: any) => handleUpdateCompanyProfile(value)}
                 inputError={profileState.inputError}
+                initialValues={initialValues}
+                schema={companyProfileSchema}
                 fields={[
                   {
                     left: {
@@ -141,16 +122,12 @@ function CompanyProfilePage() {
                       label: 'Company Name:',
                       placehold: 'Input Company Name',
                       value: profileState.companyName,
-                      text: '',
-                      onChange: handleOnChange
                     },
                     right: {
                       id: 'companyEmail',
                       label: 'Company Email:',
                       placehold: 'Input Company Email',
                       value: profileState.companyEmail,
-                      text: 'please provide a valid email address',
-                      onChange: handleOnChange
                     },
                   },
                   {
@@ -158,17 +135,13 @@ function CompanyProfilePage() {
                       id: 'phone',
                       label: 'Phone:',
                       placehold: 'Input Phone Number',
-                      value: phoneNumberFormatter(profileState.phone),
-                      text: 'please provide a valid 10 digit phone number',
-                      onChange: handleOnChange
+                      value: profileState.phone,
                     },
                     right: {
                       id: 'fax',
                       label: 'Fax:',
                       placehold: 'Input Fax',
                       value: profileState.fax,
-                      text: '',
-                      onChange: handleOnChange
                     }
                   },
                   {
@@ -177,16 +150,12 @@ function CompanyProfilePage() {
                       label: 'Street:',
                       placehold: 'Input Street',
                       value: profileState.street,
-                      text: '',
-                      onChange: handleOnChange
                     },
                     right: {
                       id: 'city',
                       label: 'City:',
                       placehold: 'Input City',
                       value: profileState.city,
-                      text: '',
-                      onChange: handleOnChange
                     }
                   },
                   {
@@ -195,16 +164,12 @@ function CompanyProfilePage() {
                       label: 'State:',
                       placehold: 'Input State',
                       value: profileState.state,
-                      text: '',
-                      onChange: handleOnChange
                     },
                     right: {
                       id: 'zipCode',
                       label: 'Zip Code:',
                       placehold: 'Input Zip Code',
                       value: profileState.zipCode,
-                      text: 'please enter a valid zip code',
-                      onChange: handleOnChange
                     }
                   },
                 ]} />

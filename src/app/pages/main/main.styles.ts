@@ -51,7 +51,8 @@ export const dataContainer = {
     'display': 'flex',
     'flex-direction': 'column',
     'margin-top': '10px',
-    'overflow': 'hidden'
+    'overflow': 'hidden',
+    'position': 'relative',
   }
 };
 

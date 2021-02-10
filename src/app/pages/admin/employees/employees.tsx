@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 import styles from './employees.style';
-import {Fab, withStyles } from "@material-ui/core";
+import { Fab, withStyles } from "@material-ui/core";
 import AdminAddNewEmployeePage from './add-new-employee';
-import { Roles as RoleEnums} from './add-new-employee'
+import { Roles as RoleEnums } from './add-new-employee'
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTechnician, createAdministrator, createManager, createOfficeAdmin, getEmployees, loadingEmployees } from 'actions/employee/employee.action';
 import { UserProfile } from 'actions/employee/employee.types';
+import { useLocation, useHistory } from 'react-router-dom';
 
 interface Props {
   classes: any;
@@ -26,7 +27,20 @@ function AdminEmployeesPage({ classes, children }: Props) {
     phone: ''
   });
 
-  console.log(employees);
+
+  const location = useLocation<any>();
+  const history = useHistory();
+
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
+
 
   const columns: any = [
     {
@@ -83,7 +97,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(getEmployees());
   }, []);
 
-  const add = (firstName:string, lastName:string, email:string, phoneNumber:string, role:string) => {
+  const add = (firstName: string, lastName: string, email: string, phoneNumber: string, role: string) => {
     const data: UserProfile = {
       firstName,
       lastName,
@@ -91,7 +105,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
       phone: phoneNumber
     };
 
-    switch(role) {
+    switch (role) {
       case RoleEnums.Technician:
         dispatch(createTechnician(data));
         break;
@@ -118,16 +132,25 @@ function AdminEmployeesPage({ classes, children }: Props) {
   }
 
   const renderViewMore = (row: any) => {
-    setStage(2);
     const baseObj = row['original'];
+
+    history.replace({
+      ...history.location,
+      state: {
+        prevPage: currentPage
+      }
+    })
+
     setProfile({
       email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
       firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
       lastName: baseObj['profile'] && baseObj['profile']['lastName'] ? baseObj['profile']['lastName'] : '',
       phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
     });
+    setStage(2);
+
   }
-  
+
   return (
     <>
       {/* <BCSubHeader title={'Admin'}>
@@ -147,7 +170,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              onClick={() => {setStage(1)}}
+              onClick={() => { setStage(1) }}
               style={{
                 float: 'right'
               }}
@@ -155,22 +178,24 @@ function AdminEmployeesPage({ classes, children }: Props) {
               {'Add New'}
             </Fab>
           </div>
-         }
-         {stage === 0 && 
-          <BCTableContainer
-            columns={columns}
-            isLoading={employees.loading}
-            search
-            tableData={employees.data}
-          />
+          }
+          {stage === 0 &&
+            <BCTableContainer
+              currentPage={currentPage}
+              setPage={setCurrentPage}
+              columns={columns}
+              isLoading={employees.loading}
+              search
+              tableData={employees.data}
+            />
           }
 
-          {stage === 1 && 
-          <AdminAddNewEmployeePage submit={add} cancel={cancel}/>
+          {stage === 1 &&
+            <AdminAddNewEmployeePage submit={add} cancel={cancel} />
           }
 
-          {stage === 2 && 
-          <EmployeeProfile profile={profile} back={cancel}/>
+          {stage === 2 &&
+            <EmployeeProfile profile={profile} back={cancel} />
           }
         </PageContainer>
       </MainContainer>

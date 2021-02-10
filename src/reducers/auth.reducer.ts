@@ -33,6 +33,7 @@ export default handleActions(
 
     [loginActions.success.toString()]: (state, action) => {
       const { token, user } = action.payload;
+
       return state
         .setIn(
           ['token'],

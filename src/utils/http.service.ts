@@ -14,16 +14,21 @@ const fetchToken = () => {
 
 export default (url: string, type: Method, data?: any, noHeaders?: boolean) => new Promise((resolve, reject) => {
   let token = '';
+
   if (!noHeaders) {
     token = fetchToken();
   }
   const request: AxiosRequestConfig = {
     'headers': {},
-    'method': type,
+    'method': type === "OPTIONS" ? "get" : type,
     'url': api + url
   };
   if (type !== 'get') {
-    request.data = data;
+    if (type === "OPTIONS") {
+      request.params = data
+    } else {
+      request.data = data;
+    }
   }
   if (!noHeaders) {
     request.headers = {

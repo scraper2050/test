@@ -1,8 +1,8 @@
-import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
-import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
+import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
+import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
 import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
-import BCTabs from '../../../../components/bc-tab/bc-tab';
+import BCTabs from '../../../../../components/bc-tab/bc-tab';
 import { formatDate } from 'helpers/format';
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
-import { modalTypes } from '../../../../../constants';
+import { modalTypes } from '../../../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import { getAllServiceTicketAPI } from 'api/service-tickets.api';
@@ -66,7 +66,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       state: {
         customerName,
         customerId,
-        from: 'job-equipment-info'
+        from: 1
       }
     });
   }

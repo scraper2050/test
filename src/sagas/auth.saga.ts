@@ -13,6 +13,7 @@ export function* handleLogin(action: { payload: Auth }) {
     if (result.message === "Invalid email/password.") {
       yield put(loginActions.fault("Incorrect Email / Password"));
     } else {
+      console.log(result, 'result')
       yield put(loginActions.success(result));
     }
   } catch (error) {

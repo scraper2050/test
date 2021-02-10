@@ -5,6 +5,8 @@ import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
+import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar'
+import Alert from '@material-ui/lab/Alert';
 import Config from '../../../config';
 import FormControl from '@material-ui/core/FormControl';
 import { FormDataModel } from '../../models/form-data';
@@ -62,6 +64,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   };
   const [isLoading, setLoading] = useState(false);
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
+  const [alert , setAlert] = useState(false);
 
   useEffect(
     () => {
@@ -165,6 +168,10 @@ function SignUpPage({ classes }: Props): JSX.Element {
     return isValidate;
   };
 
+  const handleClose = () => {
+    setAlert(false);
+  }
+
   const handleClickSignUp = async () => {
     if (!checkValidate()) {
       return;
@@ -187,19 +194,25 @@ function SignUpPage({ classes }: Props): JSX.Element {
       }
     )
       .then((res) => {
-        setToken(res.data.token);
-        axios.create({
-          'baseURL': config.apiBaseURL,
-          'headers': {
-            'Authorization': res.data.token,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        })
-        .post('/agreeTermAndCondition', params)
-        .then(() => {
+        if(res.data.message === "Company Email address already registered. Please try with some other email address"){
           setLoading(false);
-          history.push('/')
-        });
+          setAlert(true);
+        }
+        else{
+          setToken(res.data.token);
+          axios.create({
+            'baseURL': config.apiBaseURL,
+            'headers': {
+              'Authorization': res.data.token,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          })
+          .post('/agreeTermAndCondition', params)
+          .then(() => {
+            setLoading(false);
+            history.push('/')
+          });
+        }
       })
       .catch(() => {
         setLoading(false);
@@ -572,6 +585,11 @@ function SignUpPage({ classes }: Props): JSX.Element {
       </Grid>
       <BCModal />
       {isLoading && <BCSpinnerer />}
+      <Snackbar open={alert} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+            Account already exists.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

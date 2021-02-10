@@ -19,11 +19,26 @@ export const getCompanyProfile = async (companyId: string) => {
   try {
     const response: any = await request(`/getCompanyProfile/${companyId}`, "GET", false);
     responseData = response.data;
-    
+
   } catch (err) {
     responseData = { message: '' };
     responseData.message = 'Sorry, we were un able to load your profile, please try again'
   }
   return responseData;
+}
+
+
+export const updateProfile = async (data: any) => {
+  let responseData;
+  try {
+    const response: any = await request("/updateProfile", "POST", data, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = { message: '' };
+    responseData.message = 'We are facing some issues, please try again.'
+  }
+
+  return responseData;
+
 }
 

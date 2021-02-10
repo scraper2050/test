@@ -6,9 +6,19 @@ import Typography from "@material-ui/core/Typography";
 import styles from "./bc-table.styles";
 import { Grid, Paper, withStyles } from "@material-ui/core";
 // Import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
+import { connect, useDispatch } from 'react-redux';
 import React, { useEffect, useState } from "react";
+import { useLocation, useHistory } from 'react-router-dom';
 
 import "../../../scss/index.scss";
+// import console from "console";
+
+interface Props {
+  searchTerm: string;
+  classes: any;
+}
 
 function BCTableContainer({
   tableData,
@@ -21,15 +31,46 @@ function BCTableContainer({
   pagination = true,
   initialMsg = "No records found!",
   isPageSaveEnabled,
+  searchTerm,
+  setPage,
+  currentPage,
 }: any) {
-  // Const dispatch = useDispatch();
-  const [searchText, setSearchText] = useState(""); // eslint-disable-line
+
+  const dispatch = useDispatch();
+  const location = useLocation<any>();
+  const history = useHistory();
+  const locationState = location.state;
+
+  const initialSearch = locationState
+    && locationState.prevPage
+    && locationState.prevPage.search ? locationState.prevPage.search : '';
+
+  const [searchText, setSearchText] = useState(''); // eslint-disable-line
+  // const [searchText, setSearchText] = useState(searchTerm || ''); // eslint-disable-line
 
   const [filteredData, setFilteredData] = useState([]);
 
+
   const handleSearchChange = (event: any) => {
-    // Console.log(event.target.value);
+    //save search state in redux
+    // dispatch(setSearchTerm(event.target.value))
+
     setSearchText(event.target.value);
+    if (setPage !== undefined) {
+      setPage({
+        ...currentPage,
+        search: event.target.value,
+      })
+    }
+    if (locationState && locationState.prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...currentPage,
+          search: event.target.value,
+        }
+      })
+    }
   };
 
   const getFilteredArray = (entities: any, text: any) => {
@@ -40,11 +81,24 @@ function BCTableContainer({
     return TableSearchUtils.filterArrayByString(arr, text);
   };
 
+
+  useEffect(() => {
+    if (tableData) {
+      if (initialSearch !== '') {
+        setSearchText(initialSearch);
+      }
+    }
+  }, []);
+
+
+
   useEffect(() => {
     if (tableData) {
       setFilteredData(getFilteredArray(tableData, searchText));
     }
   }, [tableData, searchText]);
+
+
 
   return (
     <Grid container>
@@ -69,20 +123,47 @@ function BCTableContainer({
             </Typography>
           </Paper>
         ) : (
-          <BCTableContent
-            columns={columns}
-            data={filteredData}
-            invoiceTable
-            onRowClick={(ev: any, row: any) => {
-              onRowClick && onRowClick(ev, row);
-            }}
-            pagination={pagination}
-            isPageSaveEnabled={isPageSaveEnabled || false}
-          />
-        )}
+              <BCTableContent
+                currentPage={currentPage}
+                columns={columns}
+                data={filteredData}
+                invoiceTable
+                onRowClick={(ev: any, row: any) => {
+                  onRowClick && onRowClick(ev, row);
+                }}
+                pagination={pagination}
+                isPageSaveEnabled={isPageSaveEnabled || false}
+                setPage={setPage}
+                isLoading={isLoading}
+              />
+            )}
       </Grid>
     </Grid>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(BCTableContainer);
+
+const mapStateToProps = (state: {
+  searchTerm: {
+    text: string;
+  };
+}) => ({
+  'searchTerm': state.searchTerm.text,
+});
+
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  'setSearchTerm': (searchTerm: any) =>
+    dispatch(setSearchTerm(searchTerm))
+});
+
+
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BCTableContainer));
+
+// export default withStyles(styles, { withTheme: true })(BCTableContainer);

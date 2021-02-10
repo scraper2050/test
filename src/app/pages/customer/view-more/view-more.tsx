@@ -1,4 +1,5 @@
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
+import BCBackButtonNoLink from '../../../components/bc-back-button/bc-back-button-no-link';
 import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import BCBackButton from '../../../components/bc-back-button/bc-back-button';
@@ -21,23 +22,45 @@ import { loadingJobLocations, getJobLocationsAction } from 'actions/job-location
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
+import CustomerContactsPage from './contacts/contacts';
 
 interface LocationState {
   customerName?: string;
   customerId?: string;
-  from?: string;
+  from?: number;
 }
 
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
-  const location = useLocation<LocationState>();
+  const location = useLocation<any>();
+  const [from, setFrom] = useState("");
   const customerObj = location.state;
   const history = useHistory();
-  const [curTab, setCurTab] = useState(customerObj.from && customerObj.from === 'job-equipment-info' ? 1 : 0);
+  const [curTab, setCurTab] = useState(0);
 
-  const renderJobSiteComponent = (jobLocation: any) => {
+  const prevPage = customerObj && customerObj.prevPage ? customerObj.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: prevPage ? prevPage.page : 0,
+    pageSize: prevPage ? prevPage.pageSize : 10,
+    sortBy: prevPage ? prevPage.sortBy : [],
+  });
+
+  const renderJobSiteComponent = (jobLocation: any, customerState: any) => {
+
+    let baseObj = customerState;
+    let customerName =
+      baseObj["profile"] && baseObj["profile"] !== undefined
+        ? baseObj["profile"]["displayName"]
+        : "N/A";
+
+    customerName =
+      customerName !== undefined
+        ? customerName.replace(/ /g, "")
+        : "customername";
+
     let locationName = jobLocation.name;
     let locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
     let linkKey: any = localStorage.getItem('nestedRouteKey');
@@ -45,7 +68,11 @@ function ViewMorePage({ classes }: any) {
     localStorage.setItem('nestedRouteKey', `location/${locationNameLink}`);
     history.push({
       pathname: `/main/customers/location/${locationNameLink}`,
-      state: jobLocation
+      state: {
+        ...jobLocation,
+        currentPage,
+        customerName
+      }
     });
   };
 
@@ -116,7 +143,7 @@ function ViewMorePage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-            onClick={() => { renderJobSiteComponent(row.original) }}
+            onClick={() => { renderJobSiteComponent(row.original, customerState.customerObj) }}
             variant={'extended'}>
             {'View More'}
           </Fab>
@@ -136,9 +163,26 @@ function ViewMorePage({ classes }: any) {
     dispatch(getJobLocationsAction(customerId));
   }, []);
 
+  useEffect(() => {
+    if (customerObj.from === 1) {
+      setCurTab(1);
+    } else if (customerObj.from === 2) {
+      setCurTab(2);
+    }
+
+  }, [customerObj])
+
   const handleTabChange = (newValue: number) => {
+    let state = {
+      ...customerObj,
+      from: newValue
+    };
+
+    history.replace({ ...history.location, state })
     setCurTab(newValue);
   };
+
+
 
   const openJobLocationModal = () => {
     dispatch(setModalDataAction({
@@ -154,8 +198,6 @@ function ViewMorePage({ classes }: any) {
     }, 200);
   };
 
-  console.log(jobLocations);
-
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -163,8 +205,15 @@ function ViewMorePage({ classes }: any) {
 
           <Grid container
           >
-            <BCBackButton
-              link={'/main/customers'}
+            <BCBackButtonNoLink
+              func={() => {
+                history.push({
+                  pathname: '/main/customers',
+                  state: {
+                    prevPage: location.state.currentPage
+                  }
+                })
+              }}
             />
 
             <div className="tab_wrapper">
@@ -180,6 +229,10 @@ function ViewMorePage({ classes }: any) {
                   {
                     'label': 'JOB/EQUIPMENT INFO',
                     'value': 1
+                  },
+                  {
+                    'label': 'CONTACTS',
+                    'value': 2
                   }
                 ]}
               />
@@ -208,6 +261,8 @@ function ViewMorePage({ classes }: any) {
                   </PageContainer>
 
                   <BCTableContainer
+                    currentPage={currentPage}
+                    setPage={setCurrentPage}
                     columns={columns}
                     isLoading={jobLocations.loading}
                     search
@@ -216,6 +271,7 @@ function ViewMorePage({ classes }: any) {
                     initialMsg="There are no job locations!"
                   />
                 </div>
+
                 <div
                   hidden={curTab !== 1}
                   style={{
@@ -269,6 +325,21 @@ function ViewMorePage({ classes }: any) {
                       </BCAdminCard>
                     </Grid>
                   </Grid>
+                </div>
+
+
+                <div
+                  className={`${classes.dataContainer} `}
+                  hidden={curTab !== 2}
+                  style={{
+                    'marginTop': '20px'
+                  }}
+                  id={'2'}>
+
+                  <CustomerContactsPage
+                    id={location.state.customerId}
+                    type="Customer"
+                  />
                 </div>
               </SwipeableViews>
           }

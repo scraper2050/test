@@ -6,6 +6,7 @@ import { combineReducers } from "redux";
 import companyEquipment from "./company-equipment.reducer";
 import { CustomersReducer as customers } from "./customer.reducer";
 import { customerEquipmentsReducer as customerEquipments } from './customer-equipments.reducer';
+import { contactsReducer as contacts } from './contacts.reducer';
 import { ImageReducer as image } from "./image.reducer";
 import { EmployeesReducer as employees } from "./employee.reducer";
 import { jobReducer as jobState } from "./jobs.reducer";
@@ -36,6 +37,7 @@ import { EquipmentTypeReducer as equipmentType } from "./equipment-type.reducer"
 import { CompanyProfileReducer as profile } from "./user.reducer";
 import { JobReportReducer as JobReport } from "./job-report.reducer";
 import tableState from './tableState.reducer';
+import searchTerm from './searchText.reducer';
 export interface ReducerParamsInterface {
   payload: any;
   type: string;
@@ -50,6 +52,7 @@ export default combineReducers({
   profile,
   companyEquipment,
   customers,
+  contacts,
   customerEquipments,
   image,
   employees,
@@ -77,5 +80,6 @@ export default combineReducers({
   jobLocations,
   employeesForJob,
   tableState,
+  searchTerm,
   JobReport,
 });

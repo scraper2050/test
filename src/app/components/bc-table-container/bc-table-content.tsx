@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -10,12 +10,27 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import { useLocation, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './bc-table.styles';
 import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
+import { boolean } from 'yup';
 
-function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceTable = false }: any) {
+function BCTableContent({ currentPage, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+
+  const location = useLocation<any>();
+  const history = useHistory();
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : []
+
+  const initialPageIndex = prevPage ? prevPage.page : 0
+
+  const initialPageSize = prevPage ? prevPage.pageSize : 10;
+
   const {
     getTableProps,
     headerGroups,
@@ -23,12 +38,17 @@ function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceT
     page,
     gotoPage,
     setPageSize,
-    'state': { pageIndex, pageSize }
+    'state': { pageIndex, pageSize, sortBy }
   }: any = useTable(
     {
       // 'autoResetHiddenColumns': true,
       columns,
       data,
+      initialState: {
+        sortBy: initialSort,
+        pageIndex: initialPageIndex,
+        pageSize: initialPageSize
+      },
       'getSubRows': (row: any) => row && row.subRows || []
     },
     useGlobalFilter,
@@ -41,12 +61,84 @@ function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceT
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
+    if (setPage !== undefined) {
+      setPage({
+        pageSize,
+        sortBy,
+        page: newPage,
+      });
+    }
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...location.state,
+          pageSize,
+          sortBy,
+          page: newPage,
+        }
+      });
+    }
     gotoPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: any) => {
+    if (setPage !== undefined) {
+      setPage({
+        ...location.state,
+        page: pageIndex,
+        sortBy,
+        pageSize: Number(event.target.value)
+      });
+    }
+
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...location.state,
+          page: pageIndex,
+          sortBy,
+          pageSize: Number(event.target.value)
+        }
+      });
+    }
+
     setPageSize(Number(event.target.value));
   };
+
+  const handleSortBy = (sortBy: any) => {
+
+    if (setPage !== undefined) {
+      setPage({
+        page: 0,
+        pageSize,
+        sortBy,
+      });
+
+      handleChangePage(null, 0);
+    }
+
+    if (prevPage) {
+      history.replace({
+        ...history.location,
+        state: {
+          ...location.state,
+          page: 0,
+          pageSize,
+          sortBy,
+        }
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (sortBy.length !== 0) {
+      handleSortBy(sortBy)
+    }
+  }, [sortBy])
 
   // Render the UI for your table
   return (
@@ -69,9 +161,15 @@ function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceT
                     ? 'cell-border-right cursor-default'
                     : ''}`}
                   key={`table-cell-${hindex}`}
+
                   {...(!column.sortable
                     ? column.getHeaderProps()
-                    : column.getHeaderProps(column.getSortByToggleProps()))}>
+                    : column.getHeaderProps(
+                      // handleSorting(column)
+                      column.getSortByToggleProps()
+                    )
+                  )}
+                >
                   {column.render('Header')}
                   {column.sortable
                     ? <TableSortLabel
@@ -88,7 +186,6 @@ function BCTableContent({ columns, data, onRowClick, pagination = true, invoiceT
         <TableBody>
           {page.map((row: any, i: number) => {
             prepareRow(row);
-            console.log(row.cell)
             return (
               <TableRow
                 key={`table-row-${i}`}

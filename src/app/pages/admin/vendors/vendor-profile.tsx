@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile';
+import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile_copy';
 import styled from 'styled-components';
 import { uploadImage } from 'actions/image/image.action';
 import validator from 'validator';
@@ -12,7 +12,7 @@ interface Props {
   back: () => void;
 }
 
-function VendorProfile({ profile, back } : Props) {
+function VendorProfile({ profile, back }: Props) {
   const image = useSelector((state: any) => state.image);
 
   console.log(profile);
@@ -22,7 +22,7 @@ function VendorProfile({ profile, back } : Props) {
   };
 
   const apply = () => {
-      back();
+    back();
   }
 
   const imageSelected = (f: File) => {
@@ -47,7 +47,7 @@ function VendorProfile({ profile, back } : Props) {
             avatar={{
               'isEmpty': 'YES',
               'url': '',
-              'onChange': ()=>{}
+              'onChange': () => { }
             }}
             cancel={cancel}
             noEdit={true}
