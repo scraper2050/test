@@ -2,15 +2,31 @@ import React, { useState, useEffect } from 'react';
 import styles from './contacts.style';
 import { Fab, withStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { DUMMY_DATA } from '../job-equipment-info/dummy-data';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import { modalTypes } from '../../../../../constants';
 import { getContacts, addContact, updateContact, removeContact } from 'api/contacts.api';
+import { useLocation, useHistory } from 'react-router-dom';
 
 function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const dispatch = useDispatch();
   const { isLoading, refresh, contacts } = useSelector((state: any) => state.contacts);
+
+  const location = useLocation<any>();
+  const history = useHistory();
+
+
+  const locationState = location.state;
+
+  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+
+  const [currentPage, setCurrentPage] = useState({
+    page: 0,
+    pageSize: 10,
+    sortBy: [],
+  });
+
+
 
 
   const initialValues = {
@@ -110,6 +126,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
 
 
   const openAddContactModal = () => {
+
     dispatch(setModalDataAction({
       'data': {
         'data': {
@@ -129,10 +146,9 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
     }, 200);
   };
 
-
-
   const openEditContactModal = (row: any) => {
     let origRow = row['original'];
+
 
     dispatch(setModalDataAction({
       'data': {
@@ -159,6 +175,15 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
 
   const openDeleteContactModal = (row: any) => {
     let origRow = row['original'];
+
+
+    history.replace({
+      ...history.location,
+      state: {
+        ...locationState,
+        onUpdatePage: currentPage
+      }
+    })
 
     dispatch(setModalDataAction({
       'data': {
@@ -211,6 +236,8 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
       </div>
 
       <BCTableContainer
+        currentPage={currentPage}
+        setPage={setCurrentPage}
         columns={columns}
         isLoading={isLoading}
         search

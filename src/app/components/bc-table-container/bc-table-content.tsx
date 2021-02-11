@@ -25,6 +25,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
 
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
+  const onUpdatePage = locationState && locationState.onUpdatePage ? locationState.onUpdatePage : null;
+
   const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : []
 
   const initialPageIndex = prevPage ? prevPage.page : 0
@@ -45,9 +47,9 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       columns,
       data,
       initialState: {
-        sortBy: initialSort,
-        pageIndex: initialPageIndex,
-        pageSize: initialPageSize
+        sortBy: onUpdatePage ? onUpdatePage.sortBy : initialSort,
+        pageIndex: onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        pageSize: onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
     },
@@ -69,14 +71,30 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       });
     }
 
+
+    history.replace({
+      ...history.location,
+      state: {
+        ...locationState,
+        onUpdatePage: {
+          pageSize,
+          sortBy,
+          page: newPage,
+        }
+      }
+    })
+
     if (prevPage) {
       history.replace({
         ...history.location,
         state: {
           ...location.state,
-          pageSize,
-          sortBy,
-          page: newPage,
+
+          prevPage: {
+            pageSize,
+            sortBy,
+            page: newPage,
+          }
         }
       });
     }
@@ -94,14 +112,29 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
     }
 
 
+    history.replace({
+      ...history.location,
+      state: {
+        ...locationState,
+        onUpdatePage: {
+          page: pageIndex,
+          sortBy,
+          pageSize: Number(event.target.value)
+        }
+      }
+    })
+
+
     if (prevPage) {
       history.replace({
         ...history.location,
         state: {
           ...location.state,
-          page: pageIndex,
-          sortBy,
-          pageSize: Number(event.target.value)
+          prevPage: {
+            page: pageIndex,
+            sortBy,
+            pageSize: Number(event.target.value)
+          }
         }
       });
     }
@@ -121,14 +154,29 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       handleChangePage(null, 0);
     }
 
+
+    history.replace({
+      ...history.location,
+      state: {
+        ...locationState,
+        onUpdatePage: {
+          page: 0,
+          pageSize,
+          sortBy,
+        }
+      }
+    })
+
     if (prevPage) {
       history.replace({
         ...history.location,
         state: {
           ...location.state,
-          page: 0,
-          pageSize,
-          sortBy,
+          prevPage: {
+            page: 0,
+            pageSize,
+            sortBy,
+          }
         }
       });
     }
@@ -139,6 +187,21 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       handleSortBy(sortBy)
     }
   }, [sortBy])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (onUpdatePage) {
+        let tempLocationState = location.state;
+
+        delete tempLocationState['onUpdatePage'];
+
+        history.replace({
+          ...history.location,
+          state: { ...tempLocationState }
+        })
+      }
+    }, 5000);
+  }, [])
 
   // Render the UI for your table
   return (
