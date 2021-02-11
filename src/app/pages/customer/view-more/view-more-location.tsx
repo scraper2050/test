@@ -4,7 +4,7 @@ import BCTabs from '../../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
 import styles from './view-more.styles';
 import SwipeableViews from 'react-swipeable-views';
-import { Grid, withStyles } from '@material-ui/core';
+import { Grid, Typography, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -26,6 +26,9 @@ function ViewMoreLocationPage({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const location = useLocation<any>();
   const history = useHistory();
+
+  const customerName = location.state && location.state.customerName;
+  const locationName = location.state && location.state.name;
 
   const openEditJobSiteModal = (jobSite: any) => {
     let updateJobSiteObj = { ...jobSite, location: { lat: jobSite.location.coordinates[1], long: jobSite.location.coordinates[0] }, update: true }
@@ -184,6 +187,12 @@ function ViewMoreLocationPage({ classes }: any) {
                   },
                 ]}
               />
+            </div>
+            <div style={{ flexGrow: 1 }}></div>
+
+            <div className={classes.customerNameLocation}>
+              <Typography><strong>Customer Name: </strong>{customerName}</Typography>
+              <Typography><strong>Job Location: </strong>{locationName}</Typography>
             </div>
           </Grid>
 
