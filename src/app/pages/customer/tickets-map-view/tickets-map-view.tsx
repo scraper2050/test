@@ -178,6 +178,8 @@ function TicketsWithMapView({ classes }: any) {
   })
 
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
+
+    console.log(openTicketObj)
     let prevItemKey = localStorage.getItem('prevItemKey');
     let currentItem = document.getElementById(`openTicket${index}`);
     if (prevItemKey) {
@@ -286,12 +288,17 @@ function TicketsWithMapView({ classes }: any) {
                           <div className="ticket_title">
                             <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
                           </div>
-                          <div className="card_location">
+                          <div className="location_desc_container">
+                            <div className="card_location">
+                              <h4>{x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}</h4>
+                            </div>
+                            {/* <div className="card_location">
                             <h4>{x.company && x.company.info ? x.company.info.companyName : ''}</h4>
-                          </div>
+                          </div> */}
 
-                          <div className="card_desc">
-                            <p>{x.jobType ? x.jobType.title : ''}</p>
+                            <div className="card_desc">
+                              <p>{x.jobType ? x.jobType.title : ''}</p>
+                            </div>
                           </div>
                           <hr></hr>
                           <div className="card-footer">
