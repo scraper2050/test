@@ -10,6 +10,7 @@ import {
   FormGroup,
   Select,
   MenuItem,
+  TextField,
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
 import React, { useState, useEffect } from 'react';
@@ -20,6 +21,7 @@ import * as Yup from 'yup';
 import { phoneRegExp } from 'helpers/format';
 import { success, error } from 'actions/snackbar/snackbar.action';
 import request from 'utils/http.service';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const contactSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
@@ -76,10 +78,10 @@ function BCAddContactModal({
 
   const [initValues, setInitValues] = useState<any>(null);
 
-  const handleSelect = (event: any, setFieldValue: any) => {
+  const handleSelect = (event: any, setFieldValue: any, newValue: any) => {
     event.preventDefault();
 
-    let baseValue = event.target.value;
+    let baseValue = newValue;
 
 
     try {
@@ -158,37 +160,37 @@ function BCAddContactModal({
               <Grid container direction="column" alignItems="center" spacing={2}>
 
                 {
-                  initialValues.type !== 'Customer' && !onEdit &&
+                  initialValues.type !== 'Customer' && !onEdit && contacts.length !== 0 &&
                   <Grid
                     className={classes.paper}
                     item
                     sm={12}>
-                    <FormGroup>
-                      <InputLabel className={classes.label}>
-                        <strong>{"Select Contacts from Customer"}</strong>
-                      </InputLabel>
-                      <Field
-                        as={Select}
-                        enableReinitialize
-                        onChange={(ev: any) => handleSelect(ev, setFieldValue)}
-                        name={'customer.name'}
-                        // onChange={(e: any) => {
-                        //   handleChange(e);
-                        // }}
-                        type={'select'}
-                        variant={'outlined'}>
-                        <MenuItem >
-                          New Contact
-                          </MenuItem>
 
-                        {contacts.map((contact: any, id: number) =>
-                          <MenuItem
-                            key={id}
-                            value={contact}>
-                            {contact.name}
-                          </MenuItem>)
-                        }
-                      </Field>
+                    <FormGroup className={'required'}>
+                      <div className="search_form_wrapper">
+                        <Autocomplete
+
+                          id="tags-standard"
+                          options={contacts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))}
+                          getOptionLabel={(option) => option.name}
+                          onChange={(ev: any, newValue: any) => handleSelect(ev, setFieldValue, newValue)}
+                          renderInput={(params) => (
+                            <>
+                              <InputLabel className={classes.label}>
+                                <strong>{"Select contacts from customer"}</strong>
+                              </InputLabel>
+                              <TextField
+                                {...params}
+                                variant="standard"
+                              // label="Select Contacts from Customer"
+                              // className={classes.textField}
+
+
+                              />
+                            </>
+                          )}
+                        />
+                      </div>
                     </FormGroup>
                   </Grid>
                 }

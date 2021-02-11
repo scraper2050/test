@@ -10,9 +10,9 @@ import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlin
 import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import {
-    FormGroup,
-    TextField
-  } from '@material-ui/core';
+  FormGroup,
+  TextField
+} from '@material-ui/core';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
@@ -27,8 +27,8 @@ function BCMapFilterModal({
   const customers = useSelector(({ customers }: any) => customers.data);
   const loading = useSelector(({ customers }: any) => customers.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
-  const loadingTypes = useSelector((state: any)=> state.jobTypes.isLoading);
-  
+  const loadingTypes = useSelector((state: any) => state.jobTypes.isLoading);
+
 
   useEffect(() => {
     dispatch(loadingCustomers());
@@ -37,62 +37,62 @@ function BCMapFilterModal({
   }, []);
 
   const formatRequestObj = (rawReqObj: any) => {
-    for ( let key in rawReqObj ) {
-        if(rawReqObj[key] === '' || rawReqObj[key] === null || rawReqObj[key].length === 0){
-          delete rawReqObj[key];
-        }
+    for (let key in rawReqObj) {
+      if (rawReqObj[key] === '' || rawReqObj[key] === null || rawReqObj[key].length === 0) {
+        delete rawReqObj[key];
+      }
     }
     return rawReqObj;
   }
-  
+
   const onSubmit = (values: any, { setSubmitting }: any) => {
     setSubmitting(true);
     resetDate();
     const rawData = {
-        pageNo: 1,
-        pageSize: 6,
-        jobTypeTitle: values.jobType, 
-        dueDate: '',
-        customerNames: values.customer,
-        ticketId: values.searchQuery,
-        companyId: ''
+      pageNo: 1,
+      pageSize: 6,
+      jobTypeTitle: values.jobType,
+      dueDate: '',
+      customerNames: values.customer,
+      ticketId: values.searchQuery,
+      companyId: ''
     }
     dispatch(setOpenTicketFilterState(rawData));
     const requestObj = formatRequestObj(rawData);
     dispatch(setOpenServiceTicketLoading(true));
     getOpenServiceTickets(requestObj).then((response: any) => {
-        dispatch(setOpenServiceTicket(response));
-        dispatch(refreshServiceTickets(true));
-        dispatch(setOpenServiceTicketLoading(false));
-        openTicketFilerModal();
-        setTimeout(() => {
-          dispatch(setModalDataAction({ 
-            'data': {},
-            'type': ''
-          }));
-        }, 200);
+      dispatch(setOpenServiceTicket(response));
+      dispatch(refreshServiceTickets(true));
+      dispatch(setOpenServiceTicketLoading(false));
+      openTicketFilerModal();
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+      setSubmitting(false);
+    })
+      .catch((err: any) => {
         setSubmitting(false);
-      })
-        .catch((err: any) => {
-          setSubmitting(false);
-          throw err;
-        });
+        throw err;
+      });
   }
 
   const form = useFormik({
     initialValues: {
       searchQuery: '',
-      customer: [], 
+      customer: [],
       jobType: ''
     },
     onSubmit
   });
- 
+
   const handleCustomerChange = (field: string, setFieldValue: Function, newValue: []) => {
-      const customerDatafromAutoselect = newValue.map((customer:any) => customer.profile.displayName).join(',');
-       setFieldValue('customer', customerDatafromAutoselect);
+    const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
+    setFieldValue('customer', customerDatafromAutoselect);
   }
-  
+
   const {
     errors: FormikErrors,
     values: FormikValues,
@@ -111,11 +111,11 @@ function BCMapFilterModal({
       }));
     }, 200);
   };
-  if(loading && loadingTypes) {
-    return <BCCircularLoader heightValue={'280px'}/>
-  }else {
+  if (loading && loadingTypes) {
+    return <BCCircularLoader heightValue={'280px'} />
+  } else {
 
-  return (
+    return (
       <form onSubmit={FormikSubmit}>
         <DialogContent classes={{ 'root': classes.dialogContent }}>
           <Grid
@@ -125,86 +125,87 @@ function BCMapFilterModal({
               item
               sm={12}
               xs={12}
-            > <FormGroup className={'required'}>
+            >
+              <FormGroup className={'required'}>
                 <TextField
                   name={'searchQuery'}
                   placeholder={'TicketId'}
                   variant={'outlined'}
                   onChange={form.handleChange}
                   type={'search'}
-                  />
+                />
               </FormGroup>
               <FormGroup className={'required'}>
-              <div className="search_form_wrapper">
-                    <Autocomplete
-                      multiple
-                      id="tags-standard"
-                      options={customers}
-                      getOptionLabel={(option) => option.profile.displayName}
-                      onChange={(event: any, newValue: any) => handleCustomerChange('customer', setFieldValue, newValue)}
-                      renderInput={(params) => (
+                <div className="search_form_wrapper">
+                  <Autocomplete
+                    multiple
+                    id="tags-standard"
+                    options={customers}
+                    getOptionLabel={(option) => option.profile.displayName}
+                    onChange={(event: any, newValue: any) => handleCustomerChange('customer', setFieldValue, newValue)}
+                    renderInput={(params) => (
                       <TextField
-                          {...params}
-                          variant="standard"
-                          label="Customers"
+                        {...params}
+                        variant="standard"
+                        label="Customers"
                       />
-                      )}
+                    )}
                   />
                   <i className="material-icons">search</i>
-              </div>
+                </div>
               </FormGroup>
               <BCSelectOutlined
-                  handleChange={formikChange}
-                  error={{
-                      'isError': true,
-                  }}
+                handleChange={formikChange}
+                error={{
+                  'isError': true,
+                }}
 
                 items={{
                   'data': [
-                      ...jobTypes.map((jobType: any) => {
-                          return {
-                            'title': jobType.title
-                          };
-                        })
+                    ...jobTypes.map((jobType: any) => {
+                      return {
+                        'title': jobType.title
+                      };
+                    })
                   ],
                   'displayKey': 'title',
                   'valueKey': 'title'
                 }}
                 label={'Job Type'}
-                name={'jobType'}   
-                value={FormikValues.jobType}           
+                name={'jobType'}
+                value={FormikValues.jobType}
               />
-              
+
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions classes={{
           'root': classes.dialogActions
         }}>
-            <Grid
+          <Grid
             container
             spacing={2}>
-              <Fab
+            <Fab
               aria-label={'create-job'}
               classes={{
-                  'root': classes.fabRoot
+                'root': classes.fabRoot
               }}
               color={'secondary'}
               disabled={isSubmitting}
-              onClick={()=>openTicketFilerModal()}
+              onClick={() => openTicketFilerModal()}
               variant={'extended'}>
               {'Cancel'}
-              </Fab>
-              <Fab
+            </Fab>
+            <Fab
               aria-label={'create-job'}
               classes={{
-                  'root': classes.fabRoot
+                'root': classes.fabRoot
               }}
               color={'primary'}
               disabled={isSubmitting}
               type={'submit'}
               variant={'extended'}>
-                  Apply
+              Apply
               </Fab>
           </Grid>
         </DialogActions>

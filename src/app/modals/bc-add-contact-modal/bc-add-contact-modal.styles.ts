@@ -20,7 +20,8 @@ export default (theme: Theme): any => ({
   },
   'label': {
     'fontSize': '16px !important',
-    'marginBottom': '0 !important'
+    'marginBottom': '0 !important',
+    'color': '#000000 !important'
   },
   'paper': {
     'color': theme.palette.text.secondary,
@@ -37,5 +38,15 @@ export default (theme: Theme): any => ({
     'lineHeight': '30px',
     'marginBottom': '6px',
     'color': CONSTANTS.PRIMARY_WHITE,
+  },
+  selectContainer: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  textField: {
+    'fontSize': '16px !important',
+    'fontWeight': 'bold',
+    'color': '#000000 !important'
   }
+
 });
