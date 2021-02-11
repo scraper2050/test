@@ -215,7 +215,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
         isLoading={isLoading}
         search
         searchPlaceholder={"Search contacts"}
-        tableData={contacts}
+        tableData={contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))}
         initialMsg="There are no contacts"
       />
     </>
