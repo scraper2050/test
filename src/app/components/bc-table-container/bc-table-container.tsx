@@ -45,6 +45,11 @@ function BCTableContainer({
     && locationState.prevPage
     && locationState.prevPage.search ? locationState.prevPage.search : '';
 
+
+  const onPageSearch = locationState
+    && locationState.onUpdatePage
+    && locationState.onUpdatePage.search ? locationState.onUpdatePage.search : null;
+
   const [searchText, setSearchText] = useState(''); // eslint-disable-line
   // const [searchText, setSearchText] = useState(searchTerm || ''); // eslint-disable-line
 
