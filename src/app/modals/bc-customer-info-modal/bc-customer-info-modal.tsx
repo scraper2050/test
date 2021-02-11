@@ -200,6 +200,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   };
 
   const isValidate = (requestObj: any) => {
+
+    console.log(requestObj)
     let validateFlag = true;
     if (requestObj.name === "") {
       setNameLabelState(true);
@@ -220,9 +222,13 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                 <Formik
                   initialValues={initialValues}
                   onSubmit={(values, { setSubmitting }) => {
+
+                    console.log(values)
                     let updateCustomerrequest = { ...values, state: "" };
-                    updateCustomerrequest.state =
-                      allStates[values.state.id].name;
+                    if (values.state.id !== -1) {
+                      updateCustomerrequest.state =
+                        allStates[values.state.id].name;
+                    }
                     updateCustomerrequest.latitude = positionValue.lat;
                     updateCustomerrequest.longitude = positionValue.lang;
 
@@ -238,7 +244,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       );
                     }
                   }}
-                  validateOnChange
+                // validateOnChange
                 >
                   {({
                     handleChange,
