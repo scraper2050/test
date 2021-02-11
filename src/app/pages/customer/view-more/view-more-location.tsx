@@ -125,8 +125,6 @@ function ViewMoreLocationPage({ classes }: any) {
     setCurTab(newValue);
   };
 
-  console.log(location.state)
-
   useEffect(() => {
     const obj: any = location.state;
 
