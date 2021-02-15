@@ -160,7 +160,7 @@ function BCAddContactModal({
               <Grid container direction="column" alignItems="center" spacing={2}>
 
                 {
-                  initialValues.type !== 'Customer' && !onEdit && contacts.length !== 0 &&
+                  initialValues.type !== 'Customer' && !onEdit &&
                   <Grid
                     className={classes.paper}
                     item
@@ -171,7 +171,7 @@ function BCAddContactModal({
                         <Autocomplete
 
                           id="tags-standard"
-                          options={contacts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))}
+                          options={contacts && contacts.length !== 0 ? contacts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : []}
                           getOptionLabel={(option) => option.name}
                           onChange={(ev: any, newValue: any) => handleSelect(ev, setFieldValue, newValue)}
                           renderInput={(params) => (

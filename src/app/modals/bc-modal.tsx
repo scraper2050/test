@@ -59,7 +59,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "xs",
+          maxWidth: "lg",
         });
         setComponent(<BCServiceTicketModal error={data.error} />);
         break;
