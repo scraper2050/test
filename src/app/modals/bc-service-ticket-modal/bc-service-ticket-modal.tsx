@@ -59,7 +59,7 @@ function BCServiceTicketModal({
   }
 
   const handleLocationChange = (event: any, fieldName: any, setFieldValue: any, getFieldMeta: any, newValue: any) => {
-    console.log(newValue)
+    console.log(newValue._id)
 
     // const locationId = event.target.value;
 
