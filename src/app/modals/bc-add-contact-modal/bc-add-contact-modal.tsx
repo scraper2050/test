@@ -282,8 +282,6 @@ function BCAddContactModal({
 const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  margin-top: 12px;
   border-radius: 10px;
   background-color: ${CONSTANTS.PRIMARY_WHITE};
 

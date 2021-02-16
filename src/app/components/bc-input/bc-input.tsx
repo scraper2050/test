@@ -21,6 +21,7 @@ function BCInput({
   variant = "outlined",
   className = "",
   margin = "normal",
+  type = "text"
 }: any) {
   const classes = useStyles();
   const additionalProps: any = {
@@ -31,11 +32,15 @@ function BCInput({
   }
   return (
     <FormControl className={classes.fullWidth}>
+      {
+        label !== "" &&
+        <Typography gutterBottom className={className} variant={"subtitle1"}>
+          {label}
+        </Typography>
+      }
 
-      <Typography gutterBottom className={className} variant={"subtitle1"}>
-        {label}
-      </Typography>
       <TextField
+        type={type}
         id={"outlined-textarea"}
         label={""}
         multiline={multiline}
