@@ -13,7 +13,6 @@ export default (theme: Theme): any => ({
     'display': 'flex',
     'flexDirection': 'column',
     'height': '100%',
-    'padding': '1rem'
   },
   'fabRoot': {
     'color': '#fff',
