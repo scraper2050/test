@@ -543,7 +543,7 @@ function BCServiceTicketModal({
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              disabled={isSubmitting}
+              disabled={isSubmitting || FormikValues.customerId === ''}
               type={'submit'}
               variant={'extended'}>
               {ticket._id
