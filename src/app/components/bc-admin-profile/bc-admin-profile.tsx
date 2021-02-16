@@ -18,6 +18,7 @@ interface Props {
   title?: string;
   initialValues?: any;
   schema?: any;
+  userProfile?: boolean;
 }
 
 interface Avatar {
@@ -66,6 +67,8 @@ function BCAdminProfile(props: Props) {
       dispatch(openModalAction());
     }, 200);
   };
+
+
   return (
     <div className={classes.profilePane}>
       <div className={classes.infoPane}>
@@ -102,7 +105,7 @@ function BCAdminProfile(props: Props) {
                   <Grid key={index} item xs={12}>
                     <Grid container>
                       <Grid item xs={6}>
-                        <Grid container>
+                        <Grid container direction="column">
 
                           {
                             element.left &&
@@ -121,7 +124,7 @@ function BCAdminProfile(props: Props) {
                         </Grid>
                       </Grid>
                       <Grid item xs={6}>
-                        <Grid container>
+                        <Grid container direction="column">
                           {
                             element.right &&
                             <div className={classes.label}>

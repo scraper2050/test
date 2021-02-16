@@ -48,10 +48,14 @@ function BCEditProfileModal({
     fields,
     initialValues,
     schema,
+    userProfile
   } = props
 
+  console.log(userProfile)
 
-  const [image, setImage] = useState("")
+
+  const [image, setImage] = useState<any>("")
+  const [thumb, setThumb] = useState<any>("")
 
 
   const openFileDialog = () => {
@@ -82,16 +86,29 @@ function BCEditProfileModal({
 
 
   const imageSelected = async (f: File) => {
-    if (!f) return;
-    const formData = new FormData();
-    formData.append('image', f);
-    const imageResponse: Image = await upload(formData);
+
+    if (userProfile === undefined) {
+
+      if (!f) return;
+      const formData = new FormData();
+      formData.append('image', f);
+      const imageResponse: Image = await upload(formData);
 
 
-    if (imageResponse.hasOwnProperty('message')) {
-      return;
+      if (imageResponse.hasOwnProperty('message')) {
+        return;
+      } else {
+        setImage(imageResponse.imageUrl ? imageResponse.imageUrl : "");
+      }
     } else {
-      setImage(imageResponse.imageUrl ? imageResponse.imageUrl : "");
+      let reader = new FileReader();
+
+      await setImage(f)
+      reader.onloadend = () => {
+        setThumb(reader.result)
+      }
+
+      reader.readAsDataURL(f);
     }
   }
 
@@ -139,7 +156,7 @@ function BCEditProfileModal({
                     justify="center"
                     className={classes.uploadImageNoData}
                     style={{
-                      'backgroundImage': `url(${image !== "" ? image : avatar.url === '' ? '' : avatar.url})`,
+                      'backgroundImage': `url(${thumb !== "" ? thumb : image !== "" ? image : avatar.url === '' ? '' : avatar.url})`,
                       'border': `${avatar.url !== '' || image !== "" ? '5px solid #00aaff' : '1px dashed #000000'}`,
                     }}
                   >
