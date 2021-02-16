@@ -262,8 +262,8 @@ function BCServiceTicketModal({
     );
   } else {
     return (
-      <form onSubmit={FormikSubmit} className={`ticket_form__wrapper ${classes.formWrapper}`}>
-        <DataContainer>
+      <DataContainer>
+        <form onSubmit={FormikSubmit} className={`ticket_form__wrapper ${classes.formWrapper}`}>
           <DialogContent classes={{ 'root': classes.dialogContent }}>
             <Grid
               container
@@ -561,8 +561,8 @@ function BCServiceTicketModal({
             {'Generate Job'}
           </Fab> */}
           </DialogActions>
-        </DataContainer>
-      </form>
+        </form>
+      </DataContainer>
     );
   }
 }
@@ -580,6 +580,8 @@ const ErrorMessage = styled.div`
 
 
 const DataContainer = styled.div`
+
+margin: auto;
 
   .MuiFormLabel-root {
     font-style: normal;

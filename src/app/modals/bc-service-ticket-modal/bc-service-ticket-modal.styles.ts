@@ -12,7 +12,7 @@ export default (theme: Theme): any => ({
   'formWrapper': {
     'display': 'flex',
     'flexDirection': 'column',
-    'height': '100%',
+    'height': '100% !important',
   },
   'fabRoot': {
     'color': '#fff',
