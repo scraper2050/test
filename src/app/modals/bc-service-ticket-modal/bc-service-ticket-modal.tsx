@@ -3,7 +3,7 @@ import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-pi
 import BCInput from 'app/components/bc-input/bc-input';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import React, { useState, useEffect } from 'react';
-import { formatDate } from 'helpers/format';
+import { formatDateYMD } from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
@@ -41,8 +41,8 @@ function BCServiceTicketModal({
     'note': '',
     'updateFlag': '',
     'dueDate': new Date(),
-    'contactId': '',
-    'customerPo': '',
+    'customerContactId': '',
+    'customerPO': '',
     'image': ''
   },
   error = {
@@ -62,8 +62,8 @@ function BCServiceTicketModal({
     const customerId = newValue ? newValue._id : '';
     await setFieldValue(fieldName, '');
     await setFieldValue('jobLocationId', '');
-    await setFieldValue('jobSiteid', '');
-    await setFieldValue('contactId', '');
+    await setFieldValue('jobSiteId', '');
+    await setFieldValue('customerContactId', '');
     await setJobLocationValue([]);
     await setContactValue([]);
     await setJobSiteValue([]);
@@ -160,8 +160,8 @@ function BCServiceTicketModal({
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
-      'contactId': ticket.contactId,
-      'customerPo': ticket.customerPo,
+      'customerContactId': ticket.contactId,
+      'customerPO': ticket.customerPO,
       'image': ticket.image
     },
     'onSubmit': (values, { setSubmitting }) => {
@@ -172,14 +172,14 @@ function BCServiceTicketModal({
         ...values
       };
       let editTicketObj = { ...values, ticketId: '' };
-      //tempData.dueDate = formatDate(tempData.dueDate);
+      //tempData.dueDate = formatDateYMD(tempData.dueDate);
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           let formatedRequest = formatRequestObj(editTicketObj);
           if (formatedRequest.dueDate) {
-            formatedRequest.dueDate = formatDate(formatedRequest.dueDate);
+            formatedRequest.dueDate = formatDateYMD(formatedRequest.dueDate);
           }
           callEditTicketAPI(formatedRequest).then((response: any) => {
             dispatch(refreshServiceTickets(true));
@@ -479,7 +479,7 @@ function BCServiceTicketModal({
                       id="tags-standard"
                       options={contacts && contacts.length !== 0 ? (contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
-                      onChange={(ev: any, newValue: any) => handleContactChange(ev, 'contactId', setFieldValue, newValue)}
+                      onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
@@ -501,9 +501,9 @@ function BCServiceTicketModal({
                   </InputLabel>
                   <BCInput
                     handleChange={formikChange}
-                    value={FormikValues.customerPo}
+                    value={FormikValues.customerPO}
                     className='serviceTicketLabel'
-                    name={"customerPo"}
+                    name={"customerPO"}
                     placeholder={"Customer PO / Sales Order #"}
                   />
                 </FormGroup>
@@ -515,8 +515,7 @@ function BCServiceTicketModal({
                   <BCInput
                     default
                     type={"file"}
-                    handleChange={formikChange}
-                    value={FormikValues.image}
+                    handleChange={(event: any) => setFieldValue("image", event.currentTarget.files[0])}
                     name={"image"}
                   />
                 </FormGroup>
@@ -581,7 +580,7 @@ const ErrorMessage = styled.div`
 
 const DataContainer = styled.div`
 
-margin: auto;
+  margin: auto;
 
   .MuiFormLabel-root {
     font-style: normal;
