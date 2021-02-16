@@ -23,7 +23,13 @@ export const getAllServiceTicketAPI = () => {
 
 export const callCreateTicketAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/createServiceTicket`, 'post', data)
+
+    let formData = new FormData();
+
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    })
+    request(`/createServiceTicket`, 'post', formData, false)
       .then((res: any) => {
         return resolve(res.data);
       })

@@ -12,7 +12,7 @@ const fetchToken = () => {
   return token;
 };
 
-export default (url: string, type: Method, data?: any, noHeaders?: boolean) => new Promise((resolve, reject) => {
+export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "") => new Promise((resolve, reject) => {
   let token = '';
 
   if (!noHeaders) {
@@ -33,7 +33,7 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean) => n
   if (!noHeaders) {
     request.headers = {
       ...request.headers,
-      'Authorization': token
+      'Authorization': token,
     };
   }
   axios(request)
