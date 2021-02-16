@@ -28,5 +28,15 @@ export default (theme: Theme): any => ({
   },
   'formGroup': {
     'margin': '1rem 0',
-  }
+  },
+  'uploadImageNoData': {
+    'alignSelf': 'center',
+    'height': '219px',
+    'width': '236px',
+    'background': '#FFFFFF',
+    'boxSizing': 'border-box',
+    'borderRadius': '6px',
+    'background-size': '100% 100%',
+    'position': 'relative',
+  },
 });

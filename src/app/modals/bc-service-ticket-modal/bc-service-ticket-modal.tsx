@@ -56,6 +56,8 @@ function BCServiceTicketModal({
   const [contactValue, setContactValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
+  const [isLoadingDatas, setIsLoadingDatas] = useState(false);
+  const [thumb, setThumb] = useState<any>(null);
 
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
@@ -160,9 +162,9 @@ function BCServiceTicketModal({
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
-      'customerContactId': ticket.contactId,
-      'customerPO': ticket.customerPO,
-      'image': ticket.image
+      'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
+      'customerPO': ticket.customerPO !== undefined ? ticket.customerPO : '',
+      'image': ticket.customerPO !== undefined ? ticket.image : ''
     },
     'onSubmit': (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -254,7 +256,77 @@ function BCServiceTicketModal({
   };
 
 
-  console.log(FormikValues)
+  useEffect(() => {
+    if (ticket.customer._id !== '') {
+      dispatch(getJobLocationsAction(ticket.customer._id));
+
+      let data: any = {
+        type: 'Customer',
+        referenceNumber: ticket.customer._id
+      }
+      dispatch(getContacts(data));
+    }
+  }, [])
+
+  useEffect(() => {
+    if (ticket.customer._id !== '') {
+
+      if (jobLocations.length !== 0) {
+        setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0])
+
+        if (ticket.jobLocation !== '') {
+
+          dispatch(getJobSites({ customerId: ticket.customer._id, locationId: ticket.jobLocation }));
+        }
+      }
+    }
+
+  }, [jobLocations])
+
+  useEffect(() => {
+    if (ticket.customer._id !== '') {
+
+      if (contacts.length !== 0) {
+        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0])
+      }
+    }
+  }, [contacts])
+
+
+  useEffect(() => {
+    if (ticket.customer._id !== '') {
+
+      if (contacts.length !== 0) {
+        setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0])
+      }
+    }
+  }, [jobSites])
+
+
+  useEffect(() => {
+
+    let reader = new FileReader();
+
+
+    if (FormikValues.image && FormikValues.image !== '' && FormikValues.image !== undefined) {
+
+
+      if (typeof FormikValues.image === 'string') {
+        setThumb(FormikValues.image)
+      } else {
+
+        reader.onloadend = () => {
+          setThumb(reader.result)
+        }
+        reader.readAsDataURL(FormikValues.image);
+      }
+    }
+  }, [FormikValues.image])
+
+
+
+  // console.log(ticket);
+
 
   if (error.status) {
     return (
@@ -273,6 +345,7 @@ function BCServiceTicketModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
+                      defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0]}
                       id="tags-standard"
                       options={customers && customers.length !== 0 ? (customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.profile.displayName}
@@ -316,8 +389,9 @@ function BCServiceTicketModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
+                      defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
                       value={jobLocationValue}
-                      disabled={FormikValues.customerId === ''}
+                      disabled={FormikValues.customerId === '' || isLoadingDatas}
                       id="tags-standard"
                       options={jobLocations && jobLocations.length !== 0 ? (jobLocations.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
@@ -364,7 +438,7 @@ function BCServiceTicketModal({
                   <div className="search_form_wrapper">
                     <Autocomplete
                       value={jobSiteValue}
-                      disabled={FormikValues.jobLocationId === ''}
+                      disabled={FormikValues.jobLocationId === '' || isLoadingDatas}
                       id="tags-standard"
                       options={jobSites && jobSites.length !== 0 ? (jobSites.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
@@ -409,7 +483,7 @@ function BCServiceTicketModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
-                      value={jobTypeValue}
+                      defaultValue={ticket.jobType && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0]}
                       id="tags-standard"
                       options={jobTypes && jobTypes.length !== 0 ? (jobTypes.sort((a: any, b: any) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.title}
@@ -474,7 +548,7 @@ function BCServiceTicketModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
-                      disabled={FormikValues.customerId === ''}
+                      disabled={FormikValues.customerId === '' || isLoadingDatas}
                       value={contactValue}
                       id="tags-standard"
                       options={contacts && contacts.length !== 0 ? (contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
@@ -519,6 +593,21 @@ function BCServiceTicketModal({
                     name={"image"}
                   />
                 </FormGroup>
+
+                <Grid container
+                  direction="column"
+                  spacing={3}
+                  alignItems="center"
+                  justify="center">
+                  <div
+                    className={classes.uploadImageNoData}
+                    style={{
+                      'backgroundImage': `url(${thumb ? thumb : ''})`,
+                      'border': `${thumb ? '5px solid #00aaff' : '1px dashed #000000'}`,
+                    }}
+                  />
+
+                </Grid>
               </Grid>
             </Grid>
           </DialogContent>
@@ -531,7 +620,7 @@ function BCServiceTicketModal({
                 'root': classes.fabRoot
               }}
               className={'serviceTicketBtn'}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingDatas}
               onClick={() => closeModal()}
               variant={'extended'}>
               {'Cancel'}
@@ -542,7 +631,7 @@ function BCServiceTicketModal({
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              disabled={isSubmitting || FormikValues.customerId === ''}
+              disabled={isSubmitting || FormikValues.customerId === '' || isLoadingDatas}
               type={'submit'}
               variant={'extended'}>
               {ticket._id

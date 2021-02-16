@@ -30,8 +30,15 @@ export const getCompanyProfile = async (companyId: string) => {
 
 export const updateProfile = async (data: any) => {
   let responseData;
+
+
+  let formData = new FormData();
+
+  Object.keys(data).forEach(key => {
+    formData.append(key, data[key]);
+  })
   try {
-    const response: any = await request("/updateProfile", "POST", data, false);
+    const response: any = await request("/updateProfile", "POST", formData, false);
     responseData = response.data;
   } catch (err) {
     responseData = { message: '' };
