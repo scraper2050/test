@@ -26,6 +26,8 @@ export const callCreateTicketAPI = (data: any) => {
 
     let formData = new FormData();
 
+
+
     Object.keys(data).forEach(key => {
       formData.append(key, data[key]);
     })

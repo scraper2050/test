@@ -16,5 +16,18 @@ export default (theme: Theme): any => ({
   'dialogDescription': {
     'padding': '0 24px'
   },
-  
+  'label': {
+    'fontSize': '16px !important',
+    'marginBottom': '0 !important',
+    'color': '#000000 !important'
+  },
+  'formGroup': {
+    'margin': '1rem 0',
+  },
+  'formWrapper': {
+    'display': 'flex',
+    'flexDirection': 'column',
+    'height': '100% !important',
+  },
+
 });
