@@ -15,7 +15,8 @@ import {
   FormGroup,
   InputLabel,
   TextField,
-  Grid
+  Grid,
+  Typography
 } from '@material-ui/core';
 import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -27,6 +28,7 @@ import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { getContacts } from 'api/contacts.api';
 import BCTextField from "../../components/bc-text-field/bc-text-field";
+import { success } from "actions/snackbar/snackbar.action";
 
 
 function BCServiceTicketModal({
@@ -156,18 +158,20 @@ function BCServiceTicketModal({
     // 'enableReinitialize': true,
     'initialValues': {
       'customerId': ticket.customer._id,
-      'jobSiteId': ticket.jobSite,
-      'jobLocationId': ticket.jobLocation,
-      'jobTypeId': ticket.jobType,
+      'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
+      'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
+      'jobTypeId': ticket.jobType ? ticket.jobType : '',
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
       'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       'customerPO': ticket.customerPO !== undefined ? ticket.customerPO : '',
-      'image': ticket.customerPO !== undefined ? ticket.image : ''
+      'image': ticket.image !== undefined ? ticket.image : ''
     },
     'onSubmit': (values, { setSubmitting }) => {
       setSubmitting(true);
+
+      console.log(values)
 
       const tempData = {
         ...ticket,
@@ -193,6 +197,10 @@ function BCServiceTicketModal({
               }));
             }, 200);
             setSubmitting(false);
+
+            if (response.message === "Ticket updated successfully.") {
+              dispatch(success(response.message));
+            }
           })
             .catch((err: any) => {
               setSubmitting(false);
@@ -214,6 +222,10 @@ function BCServiceTicketModal({
             }));
           }, 200);
           setSubmitting(false);
+
+          if (response.message === "Service ticket created successfully.") {
+            dispatch(success(response.message));
+          }
         })
           .catch((err: any) => {
             setSubmitting(false);
@@ -274,8 +286,7 @@ function BCServiceTicketModal({
       if (jobLocations.length !== 0) {
         setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0])
 
-        if (ticket.jobLocation !== '') {
-
+        if (ticket.jobLocation !== '' && ticket.jobLocation !== undefined) {
           dispatch(getJobSites({ customerId: ticket.customer._id, locationId: ticket.jobLocation }));
         }
       }
@@ -296,7 +307,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer._id !== '') {
 
-      if (contacts.length !== 0) {
+      if (jobSites.length !== 0) {
         setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0])
       }
     }
@@ -314,18 +325,13 @@ function BCServiceTicketModal({
       if (typeof FormikValues.image === 'string') {
         setThumb(FormikValues.image)
       } else {
-
         reader.onloadend = () => {
           setThumb(reader.result)
         }
         reader.readAsDataURL(FormikValues.image);
       }
     }
-  }, [FormikValues.image])
-
-
-
-  // console.log(ticket);
+  }, [FormikValues.image]);
 
 
   if (error.status) {
@@ -345,6 +351,7 @@ function BCServiceTicketModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
+                      disabled={ticket.customer._id !== ''}
                       defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0]}
                       id="tags-standard"
                       options={customers && customers.length !== 0 ? (customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
@@ -353,9 +360,11 @@ function BCServiceTicketModal({
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
-                            <strong>{"Customer"}</strong>
+                            <strong>{"Customer "}</strong>
+                            <Typography display="inline" color="error">*</Typography>
                           </InputLabel>
                           <TextField
+                            required
                             {...params}
                             variant="standard"
                           />
@@ -532,7 +541,10 @@ function BCServiceTicketModal({
                   value={FormikValues.note}
                   className='serviceTicketLabel'
                 />
-                {notesLabelState ? <Label>Notes are required while updating the ticket.</Label> : null}
+
+                <Label>
+                  {notesLabelState ? " Notes are required while updating the ticket." : null}
+                </Label>
                 <BCDateTimePicker
                   disablePast
                   handleChange={dateChangeHandler}
@@ -631,7 +643,7 @@ function BCServiceTicketModal({
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              disabled={isSubmitting || FormikValues.customerId === '' || isLoadingDatas}
+              disabled={isSubmitting || isLoadingDatas}
               type={'submit'}
               variant={'extended'}>
               {ticket._id
@@ -669,7 +681,7 @@ const ErrorMessage = styled.div`
 
 const DataContainer = styled.div`
 
-  margin: auto;
+  margin: auto 0;
 
   .MuiFormLabel-root {
     font-style: normal;
