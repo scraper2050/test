@@ -86,14 +86,6 @@ function ViewProfilePage() {
 
       if (response.message === "Profile updated successfully.") {
 
-
-        let reader = new FileReader();
-
-        reader.onloadend = () => {
-          setImageUrl(reader.result)
-        }
-
-        reader.readAsDataURL(logoUrl);
         let oldUserProfile = userProfile;
 
         let profile = oldUserProfile.profile
@@ -102,7 +94,7 @@ function ViewProfilePage() {
           ...profile,
           firstName,
           lastName,
-          imageUrl: logoUrl && logoUrl !== "" ? reader.result : profile.imageUrl,
+          imageUrl: response.imageUrl,
         }
 
         let contact = oldUserProfile.contact
