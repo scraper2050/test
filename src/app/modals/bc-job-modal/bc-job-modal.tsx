@@ -110,6 +110,7 @@ function BCJobModal({
   ];
 
   const handleEmployeeTypeChange = (fieldName: string, data: any) => {
+
     let _id = data ? data._id : 0;
     if (_id === '0') {
       setFieldValue(fieldName, 0);
@@ -120,6 +121,7 @@ function BCJobModal({
       setShowVendorFlag(true);
       setFieldValue('contractorId', '');
     }
+
   }
 
   const handleSelectChange = (fieldName: string, newValue: string) => {
@@ -644,8 +646,9 @@ function BCJobModal({
                   <div className="search_form_wrapper">
                     <Autocomplete
                       value={jobSiteValue}
-                      disabled={ticket.jobSite}
+                      disabled={ticket.jobSite || FormikValues.jobLocationId === ''}
                       id="tags-standard"
+
                       options={jobSites && jobSites.length !== 0 ? (jobSites.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
                       onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
@@ -706,7 +709,6 @@ function BCJobModal({
                     />
                   </div>
                 </FormGroup>
-
 
                 {/* <BCSelectOutlined
                   handleChange={formikChange}

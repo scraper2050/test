@@ -171,8 +171,6 @@ function BCServiceTicketModal({
     'onSubmit': (values, { setSubmitting }) => {
       setSubmitting(true);
 
-      console.log(values)
-
       const tempData = {
         ...ticket,
         ...values
