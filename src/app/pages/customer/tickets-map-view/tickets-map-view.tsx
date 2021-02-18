@@ -5,82 +5,36 @@ import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import '../../../../scss/index.css';
 import "./ticket-map-view.scss";
-import MapViewScreen from './map-view/map-view';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  refreshServiceTickets,
-  setOpenServiceTicket,
-  setClearOpenServiceTicketObject,
-  setClearOpenTicketFilterState,
-  setOpenServiceTicketLoading,
-} from 'actions/service-ticket/service-ticket.action';
-import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { getOpenServiceTickets } from 'api/service-tickets.api';
+import MapViewTicketsScreen from './map-view/map-view-tickets';
+import MapViewJobsScreen from './map-view/map-view-jobs';
+import { getAllJobsAPI } from "api/job.api";
+import { useDispatch, useSelector } from "react-redux";
 import { formatDateYMD } from 'helpers/format';
 
 function TicketsWithMapView({ classes }: any) {
-
   const dispatch = useDispatch();
-  const [curTab, setCurTab] = useState(0);
-
-  const getOpenTickets = (requestObj: {
-    pageNo?: number,
-    pageSize?: number,
-    jobTypeTitle?: string,
-    dueDate?: string,
-    customerNames?: any,
-    ticketId?: string,
-    companyId?: string
-  }) => {
-    dispatch(setOpenServiceTicketLoading(true));
-    getOpenServiceTickets(requestObj).then((response: any) => {
-      dispatch(setOpenServiceTicketLoading(false));
-      dispatch(setOpenServiceTicket(response));
-      dispatch(refreshServiceTickets(true));
-      dispatch(closeModalAction());
-      setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
-      }, 200);
+  const { isLoading = true, jobs, refresh = true } = useSelector(
+    ({ jobState }: any) => ({
+      isLoading: jobState.isLoading,
+      jobs: jobState.data,
+      refresh: jobState.refresh,
     })
-      .catch((err: any) => {
-        throw err;
-      });
-  }
+  );
 
-  useEffect(() => {
-    const rawData = {
-      jobTypeTitle: '',
-      dueDate: formatDateYMD(new Date()),
-      customerNames: '',
-      ticketId: ''
-    }
-    const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
-    getOpenTickets(requestObj);
-    dispatch(setClearOpenServiceTicketObject());
-  }, []);
+
+  const [curTab, setCurTab] = useState(0);
 
 
   const handleTabChange = (newValue: number) => {
-    dispatch(setClearOpenServiceTicketObject());
-
-    dispatch(setClearOpenServiceTicketObject());
-    dispatch(setClearOpenTicketFilterState({
-      'jobTypeTitle': '',
-      'dueDate': '',
-      'customerNames': '',
-      'ticketId': ''
-    }));
-    getOpenTickets({
-      pageNo: 1,
-      pageSize: 6,
-      dueDate: newValue === 0 ? formatDateYMD(new Date()) : '',
-    })
     setCurTab(newValue);
 
   };
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsAPI());
+    }
+  }, [refresh]);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -92,11 +46,11 @@ function TicketsWithMapView({ classes }: any) {
             onChangeTab={handleTabChange}
             tabsData={[
               {
-                'label': 'Today\'s Tickets',
+                'label': 'Open Tickets',
                 'value': 0
               },
               {
-                'label': 'All Tickets',
+                'label': 'Today\s Jobs',
                 'value': 1
               },
               {
@@ -110,23 +64,24 @@ function TicketsWithMapView({ classes }: any) {
               className={classes.dataContainer}
               hidden={curTab !== 0}
               id={'0'}>
-              <MapViewScreen today={true} />
+              <MapViewTicketsScreen today={true} />
             </div>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 1}
               id={'1'}>
-              <MapViewScreen />
+              <MapViewJobsScreen
+                today={true}
+                isLoading={isLoading}
+                jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formatDateYMD(new Date()))} />
             </div>
             <div
+              className={classes.dataContainer}
               hidden={curTab !== 2}
               id={'2'}>
-              <Grid container>
-                <Grid
-                  item
-                  xs={12}
-                />
-              </Grid>
+              <MapViewJobsScreen
+                isLoading={isLoading}
+                jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) !== formatDateYMD(new Date()))} />
             </div>
           </SwipeableViews>
         </div>

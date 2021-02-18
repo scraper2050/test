@@ -23,7 +23,7 @@ import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
-function MapViewScreen({ classes, today }: any) {
+function MapViewTicketsScreen({ classes }: any) {
 
   const dispatch = useDispatch();
   const openTickets = useSelector((state: any) => state.serviceTicket.openTickets);
@@ -36,23 +36,21 @@ function MapViewScreen({ classes, today }: any) {
   const [tempDate, setTempDate] = useState<any>(new Date());
   const [page, setPage] = useState(1);
 
-  // useEffect(() => {
-  //   const rawData = {
-  //     jobTypeTitle: '',
-  //     dueDate: today ? formatDateYMD(new Date()) : '',
-  //     customerNames: '',
-  //     ticketId: ''
-  //   }
-  //   const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
-  //   getOpenTickets(requestObj);
-  //   dispatch(setClearOpenServiceTicketObject());
-  // }, []);
-
+  useEffect(() => {
+    const rawData = {
+      jobTypeTitle: '',
+      dueDate: '',
+      customerNames: '',
+      ticketId: ''
+    }
+    const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
+    getOpenTickets(requestObj);
+    dispatch(setClearOpenServiceTicketObject());
+  }, []);
 
   const openTicketFilerModal = () => {
     setShowFilterModal(!showFilterModal);
   }
-
 
   const resetDate = () => {
     setDateValue(null);
@@ -173,8 +171,6 @@ function MapViewScreen({ classes, today }: any) {
   }
 
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
-
-    console.log(openTicketObj)
     let prevItemKey = localStorage.getItem('prevItemKey');
     let currentItem = document.getElementById(`openTicket${index}`);
     if (prevItemKey) {
@@ -212,6 +208,9 @@ function MapViewScreen({ classes, today }: any) {
 
   let openTicketsClone = [...openTickets];
 
+  if (isLoading) {
+    return <BCCircularLoader heightValue={'200px'} />
+  }
 
   return (
     <Grid container item lg={12} >
@@ -223,84 +222,66 @@ function MapViewScreen({ classes, today }: any) {
         }
       </Grid>
       <Grid container item lg={6} >
-        {
-          isLoading ?
-            <Grid container justify="center">
 
-              <BCCircularLoader heightValue={'200px'} />
-            </Grid>
-            :
-            <>
-              <div className='ticketsFilterContainer'>
-                <div className='filter_wrapper'>
-                  <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
-                  {showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal} resetDate={resetDate} /></div> : null}
-                </div>
-                {today ?
-                  <div
-                    style={{
-                      width: 250
-                    }}
-                  />
-                  :
-                  <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
-                    <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
-                    <DatePicker
-                      autoOk
-                      className={classes.picker}
-                      disablePast={false}
-                      format={'d MMM yyyy'}
-                      id={`datepicker-${'scheduleDate'}`}
-                      inputProps={{
-                        'name': 'scheduleDate',
-                        'placeholder': 'Due Date',
-                      }}
-                      inputVariant={'outlined'}
-                      name={'scheduleDate'}
-                      onChange={(e: any) => dateChangeHandler(e)}
-                      required={false}
-                      value={dateValue}
-                      variant={'inline'}
-                    />
-                    <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
-                  </span>
-
-                }
-                <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
-              </div>
-              <div className='ticketsCardViewContainer'>
-
-
-                {
-                  openTicketsClone.map((x: any, i: any) => (
-                    <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
-                      <div className="ticket_title">
-                        <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
-                      </div>
-                      <div className="location_desc_container">
-                        <div className="card_location">
-                          <h4>{x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}</h4>
-                        </div>
-                        {/* <div className="card_location">
+        <>
+          <div className='ticketsFilterContainer'>
+            <div className='filter_wrapper'>
+              <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
+              {showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal} resetDate={resetDate} /></div> : null}
+            </div>
+            <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
+              <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
+              <DatePicker
+                autoOk
+                className={classes.picker}
+                disablePast={false}
+                format={'d MMM yyyy'}
+                id={`datepicker-${'scheduleDate'}`}
+                inputProps={{
+                  'name': 'scheduleDate',
+                  'placeholder': 'Due Date',
+                }}
+                inputVariant={'outlined'}
+                name={'scheduleDate'}
+                onChange={(e: any) => dateChangeHandler(e)}
+                required={false}
+                value={dateValue}
+                variant={'inline'}
+              />
+              <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
+            </span>
+            <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
+          </div>
+          <div className='ticketsCardViewContainer'>
+            {
+              openTicketsClone.map((x: any, i: any) => (
+                <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
+                  <div className="ticket_title">
+                    <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
+                  </div>
+                  <div className="location_desc_container">
+                    <div className="card_location">
+                      <h4>{x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}</h4>
+                    </div>
+                    {/* <div className="card_location">
                 <h4>{x.company && x.company.info ? x.company.info.companyName : ''}</h4>
               </div> */}
 
-                        <div className="card_desc">
-                          <p>{x.jobType ? x.jobType.title : ''}</p>
-                        </div>
-                      </div>
-                      <hr></hr>
-                      <div className="card-footer">
-                        <span>  <i className="material-icons">access_time</i>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : ''}</span>
-                      </div>
+                    <div className="card_desc">
+                      <p>{x.jobType ? x.jobType.title : ''}</p>
                     </div>
-                  ))
-                }
-              </div>
-              <Pagination count={Math.ceil(totalOpenTickets / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
-                showLastButton />
-            </>
-        }
+                  </div>
+                  <hr></hr>
+                  <div className="card-footer">
+                    <span>  <i className="material-icons">access_time</i>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : ''}</span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <Pagination count={Math.ceil(totalOpenTickets / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
+            showLastButton />
+        </>
       </Grid>
     </Grid>
   )
@@ -309,4 +290,4 @@ function MapViewScreen({ classes, today }: any) {
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(MapViewScreen);
+)(MapViewTicketsScreen);
