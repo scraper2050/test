@@ -59,7 +59,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "xs",
+          maxWidth: "md",
         });
         setComponent(<BCServiceTicketModal error={data.error} />);
         break;
@@ -68,7 +68,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "xs",
+          maxWidth: "md",
         });
         setComponent(<BCServiceTicketModal ticket={data.ticketData} />);
         break;
@@ -77,7 +77,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "sm",
+          maxWidth: "lg",
         });
         setComponent(<BCJobModal />);
         break;
@@ -86,7 +86,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "sm",
+          maxWidth: "lg",
         });
         setComponent(<BCJobModal job={data.job} />);
         break;
