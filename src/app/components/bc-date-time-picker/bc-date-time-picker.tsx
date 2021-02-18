@@ -37,7 +37,9 @@ function BCDateTimePicker({
         gutterBottom
         className={className}
         variant={'subtitle1'}>
-        {`${label}`}
+        <strong>
+          {`${label}`}
+        </strong>
         {required
           ? <sup style={{ 'color': '#C00707' }}>
             {'*'}

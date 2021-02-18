@@ -22,12 +22,22 @@ export default (theme: Theme): any => ({
     'color': '#000000 !important'
   },
   'formGroup': {
-    'margin': '1rem 0',
+    'margin': '.5rem 0 1rem 0',
   },
   'formWrapper': {
     'display': 'flex',
     'flexDirection': 'column',
     'height': '100% !important',
   },
-
+  'uploadImageNoData': {
+    'alignSelf': 'center',
+    'height': '165px',
+    'width': '200px',
+    'background': '#FFFFFF',
+    'boxSizing': 'border-box',
+    'borderRadius': '6px',
+    'background-size': '100% 100%',
+    'position': 'relative',
+    'marginTop': '1rem',
+  },
 });

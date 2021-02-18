@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
+import { callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatToMilitaryTime, formatDate } from 'helpers/format';
@@ -34,6 +35,7 @@ import "../../../scss/job-poup.scss";
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { success } from "actions/snackbar/snackbar.action";
+import { getContacts } from 'api/contacts.api';
 
 
 const initialJobState = {
@@ -83,6 +85,7 @@ function BCJobModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
+  const { contacts } = useSelector((state: any) => state.contacts);
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
@@ -90,6 +93,8 @@ function BCJobModal({
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
+  const [contactValue, setContactValue] = useState<any>([]);
+  const [thumb, setThumb] = useState<any>(null);
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -124,8 +129,10 @@ function BCJobModal({
 
   }
 
-  const handleSelectChange = (fieldName: string, newValue: string) => {
-
+  const handleSelectChange = (fieldName: string, newValue: string, setState?: any) => {
+    if (setState !== undefined) {
+      setState()
+    }
     setFieldValue(fieldName, newValue ? newValue : '')
   }
 
@@ -184,6 +191,12 @@ function BCJobModal({
     dispatch(getVendors());
     dispatch(getAllJobTypesAPI());
     dispatch(getJobLocationsAction(customerId));
+
+    let data: any = {
+      type: 'Customer',
+      referenceNumber: customerId
+    }
+    dispatch(getContacts(data));
   }, []);
 
 
@@ -198,8 +211,7 @@ function BCJobModal({
         }
       }
     }
-
-  }, [jobLocations])
+  }, [jobLocations]);
 
 
   useEffect(() => {
@@ -209,7 +221,17 @@ function BCJobModal({
         setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0])
       }
     }
-  }, [jobSites])
+  }, [jobSites]);
+
+
+  useEffect(() => {
+    if (ticket.customer._id !== '') {
+
+      if (contacts.length !== 0) {
+        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0])
+      }
+    }
+  }, [contacts]);
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -235,11 +257,30 @@ function BCJobModal({
     return validateFlag;
   }
 
-  const onSubmit = (values: any, { setSubmitting }: any) => {
+  const onSubmit = async (values: any, { setSubmitting }: any) => {
     setSubmitting(true);
 
     const customerId = customer._id;
     let jobFromMapFilter = job.jobFromMap;
+
+    const { image, customerPO, customerContactId } = values;
+    const { note, _id } = ticket;
+
+    let tempJobValues = { ...values };
+
+    delete tempJobValues['customerContactId'];
+    delete tempJobValues['customerPO'];
+    delete tempJobValues['image'];
+
+    let tempTicket = {
+      ticketId: _id,
+      note: note === undefined ? "Job Created" : note,
+      image,
+      customerPO,
+      customerContactId
+    }
+
+    let formatedTicketRequest = formatRequestObj(tempTicket);
 
     const tempData = {
       ...job,
@@ -263,6 +304,7 @@ function BCJobModal({
     } else {
       request = createJob;
     }
+
     if (isValidate(tempData)) {
       const requestObj = formatRequestObj(tempData);
       if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
@@ -274,7 +316,10 @@ function BCJobModal({
       delete requestObj.dueDate;
 
       request(requestObj)
-        .then((response: any) => {
+        .then(async (response: any) => {
+          if (response.message === "Job created successfully.") {
+            await callEditTicketAPI(formatedTicketRequest)
+          }
           dispatch(refreshServiceTickets(true));
           dispatch(refreshJobs(true));
           dispatch(closeModalAction());
@@ -317,6 +362,7 @@ function BCJobModal({
       setSubmitting(false);
     }
   }
+
   const form = useFormik({
     initialValues: {
       customerId: job.customer._id,
@@ -337,9 +383,15 @@ function BCJobModal({
       ticketId: job.ticket._id,
       jobLocationId: job.ticket.jobLocation ? job.ticket.jobLocation : '',
       jobSiteId: job.ticket.jobSite ? job.ticket.jobSite : '',
+      customerContactId: ticket.customerContactId !== undefined ? ticket.customerContactId : '',
+      customerPO: ticket.customerPO !== undefined ? ticket.customerPO : '',
+      image: ticket.image !== undefined ? ticket.image : ''
+
     },
     onSubmit
   });
+
+
 
   const {
     errors: FormikErrors,
@@ -351,6 +403,7 @@ function BCJobModal({
     isSubmitting
   } = form;
 
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -360,6 +413,26 @@ function BCJobModal({
       }));
     }, 200);
   };
+
+
+  useEffect(() => {
+
+    let reader = new FileReader();
+
+
+    if (FormikValues.image && FormikValues.image !== '' && FormikValues.image !== undefined) {
+
+
+      if (typeof FormikValues.image === 'string') {
+        setThumb(FormikValues.image)
+      } else {
+        reader.onloadend = () => {
+          setThumb(reader.result)
+        }
+        reader.readAsDataURL(FormikValues.image);
+      }
+    }
+  }, [FormikValues.image]);
 
 
   if (isLoading) {
@@ -385,12 +458,8 @@ function BCJobModal({
             {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
             <Grid
               container
-              spacing={2}>
-              <Grid
-                item
-                sm={6}
-                xs={12}
-              >
+              spacing={5}>
+              <Grid item sm={4} xs={12}>
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
@@ -402,7 +471,7 @@ function BCJobModal({
                         <>
                           <InputLabel className={classes.label}>
                             <strong>{"Employee Type "}</strong>
-                            <Typography display="inline" color="error">*</Typography>
+                            <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>
                           </InputLabel>
                           <TextField
                             required
@@ -464,7 +533,7 @@ function BCJobModal({
                           <>
                             <InputLabel className={classes.label}>
                               <strong>{"Select Technician "}</strong>
-                              <Typography display="inline" color="error">*</Typography>
+                              <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>
                             </InputLabel>
                             <TextField
                               required
@@ -511,7 +580,7 @@ function BCJobModal({
                             <>
                               <InputLabel className={classes.label}>
                                 <strong>{"Select Contractor "}</strong>
-                                <Typography display="inline" color="error">*</Typography>
+                                <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>
                               </InputLabel>
                               <TextField
                                 required
@@ -554,12 +623,12 @@ function BCJobModal({
                       options={jobTypes && jobTypes.length !== 0 ? (jobTypes.sort((a: any, b: any) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.title}
                       disabled={ticket.jobType}
-                      onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue._id)}
+                      onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id)}
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
                             <strong>{"Job Type"}</strong>
-                            <Typography display="inline" color="error">*</Typography>
+                            <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>
                           </InputLabel>
                           <TextField
                             required
@@ -694,7 +763,7 @@ function BCJobModal({
                       id="tags-standard"
                       options={equipments && equipments.length !== 0 ? (equipments.sort((a: any, b: any) => (a.company > b.company) ? 1 : ((b.company > a.company) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.company}
-                      onChange={(ev: any, newValue: any) => handleSelectChange('equipmentId', newValue._id)}
+                      onChange={(ev: any, newValue: any) => handleSelectChange('equipmentId', newValue?._id)}
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
@@ -728,18 +797,11 @@ function BCJobModal({
                   name={'equipmentId'}
                   value={FormikValues.equipmentId}
                 /> */}
-                <BCInput
-                  handleChange={formikChange}
-                  label={'Description'}
-                  multiline
-                  name={'description'}
-                  value={FormikValues.description}
-                />
+
               </Grid>
-              <Grid
-                item
-                sm={6}
-                xs={12}>
+
+              <Grid item sm={4} xs={12}>
+
                 <BCDateTimePicker
                   disablePast={!job._id}
                   handleChange={(e: any) => dateChangeHandler(e, 'scheduleDate')}
@@ -748,6 +810,7 @@ function BCJobModal({
                   required
                   value={FormikValues.scheduleDate}
                 />
+
                 <BCDateTimePicker
                   dateFormat={'HH:mm:ss'}
                   placeholder='Start Time'
@@ -759,6 +822,7 @@ function BCJobModal({
                   value={FormikValues.scheduledStartTime}
                 />
                 {startTimeLabelState ? <Label>Start time is required.</Label> : ''}
+
                 <BCDateTimePicker
                   dateFormat={'HH:mm:ss'}
                   placeholder='End Time'
@@ -770,6 +834,88 @@ function BCJobModal({
                   value={FormikValues.scheduledEndTime}
                 />
                 {endTimeLabelState ? <Label>{scheduledEndTimeMsg}</Label> : ''}
+
+                <div style={{ marginTop: '.5rem' }} />
+                <FormGroup>
+                  <InputLabel className={classes.label}>
+                    <strong>{"Description"}</strong>
+                  </InputLabel>
+                  <BCInput
+                    handleChange={formikChange}
+                    multiline
+                    name={'description'}
+                    value={FormikValues.description}
+                  />
+                </FormGroup>
+              </Grid>
+
+              <Grid item sm={4} xs={12}>
+
+                <FormGroup className={`required ${classes.formGroup}`}>
+                  <div className="search_form_wrapper">
+                    <Autocomplete
+                      value={contactValue}
+                      id="tags-standard"
+                      options={contacts && contacts.length !== 0 ? (contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
+                      getOptionLabel={(option) => option.name}
+                      onChange={(ev: any, newValue: any) => handleSelectChange('customerContactId', newValue?._id, setContactValue(newValue))}
+                      renderInput={(params) => (
+                        <>
+                          <InputLabel className={classes.label}>
+                            <strong>{"Contact Associated"}</strong>
+                          </InputLabel>
+                          <TextField
+                            {...params}
+                            variant="standard"
+                          />
+                        </>
+                      )}
+                    />
+                  </div>
+                </FormGroup>
+
+
+                <FormGroup>
+                  <InputLabel className={classes.label}>
+                    <strong>{"Customer PO"}</strong>
+                  </InputLabel>
+                  <BCInput
+                    handleChange={formikChange}
+                    value={FormikValues.customerPO}
+                    className='serviceTicketLabel'
+                    name={"customerPO"}
+                    placeholder={"Customer PO / Sales Order #"}
+                  />
+                </FormGroup>
+
+                <FormGroup>
+                  <InputLabel className={classes.label}>
+                    <strong>{"Add Photo"}</strong>
+                  </InputLabel>
+                  <BCInput
+                    default
+                    type={"file"}
+                    handleChange={(event: any) => setFieldValue("image", event.currentTarget.files[0])}
+                    name={"image"}
+                  />
+                </FormGroup>
+
+                <Grid container
+                  direction="column"
+                  spacing={3}
+                  alignItems="center"
+                  justify="center">
+                  <div
+                    className={classes.uploadImageNoData}
+                    style={{
+                      'backgroundImage': `url(${thumb ? thumb : ''})`,
+                      'border': `${thumb ? '5px solid #00aaff' : '1px dashed #000000'}`,
+                    }}
+                  />
+                </Grid>
+
+
+
               </Grid>
             </Grid>
           </DialogContent>
@@ -803,7 +949,7 @@ function BCJobModal({
           </DialogActions>
         </form>
 
-      </DataContainer>
+      </DataContainer >
     );
   }
 }

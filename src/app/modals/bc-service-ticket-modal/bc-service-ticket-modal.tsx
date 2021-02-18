@@ -359,7 +359,7 @@ function BCServiceTicketModal({
                         <>
                           <InputLabel className={classes.label}>
                             <strong>{"Customer "}</strong>
-                            <Typography display="inline" color="error">*</Typography>
+                            <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>
                           </InputLabel>
                           <TextField
                             required
@@ -616,8 +616,8 @@ function BCServiceTicketModal({
                       'border': `${thumb ? '5px solid #00aaff' : '1px dashed #000000'}`,
                     }}
                   />
-
                 </Grid>
+
               </Grid>
             </Grid>
           </DialogContent>
