@@ -77,7 +77,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "md",
+          maxWidth: "lg",
         });
         setComponent(<BCJobModal />);
         break;
@@ -86,7 +86,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "md",
+          maxWidth: "lg",
         });
         setComponent(<BCJobModal job={data.job} />);
         break;
