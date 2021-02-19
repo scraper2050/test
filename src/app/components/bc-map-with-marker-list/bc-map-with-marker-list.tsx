@@ -3,12 +3,14 @@ import GoogleMapReact from 'google-map-react';
 import RoomIcon from '@material-ui/icons/Room';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
+import NoLogoImage from 'assets/img/avatars/NoImageFound.png'
 
 import "./bc-map-with-marker.scss";
 const DEFAULT_LAT = 51.477222;
@@ -97,18 +99,40 @@ function MakerPin({ ...props }) {
       return (
         <>
           <RoomIcon className={props.classes.marker} />;
-          <div className={`${props.classes.markerPopup} marker_dropdown`}>
+          <div className={`${props.classes.markerPopup} marker_dropdown elevation-4`}>
             <div className="due_date">
               <span> <i className="material-icons">access_time</i> {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
             </div>
-            <div className="job-type">
-              <h3>Job Type</h3>
-              <span>{props.ticket.jobType ? props.ticket.jobType.title : ''}</span>
-            </div>
-            <div className="job-type">
-              <h3>Notes</h3>
-              <span>{props.ticket.note ? props.ticket.note : ''}</span>
-            </div>
+            <Grid container justify="space-between" alignItems="center" spacing={3}>
+              <Grid item>
+                <div className="job-type">
+                  <h3>Job Type</h3>
+                  <span>{props.ticket.jobType ? props.ticket.jobType.title : ''}</span>
+                </div>
+                <div className="job-type">
+                  <h3>Notes</h3>
+                  <span>{props.ticket.note ? props.ticket.note : ''}</span>
+                </div>
+              </Grid>
+              <Grid item>
+                <Grid container
+                  direction="column"
+                  spacing={3}
+                  alignItems="center"
+                  justify="center">
+                  <div
+                    className={props.classes.uploadImageNoData}
+                    style={{
+                      'backgroundImage': `url(${props.ticket.image ? props.ticket.image : NoLogoImage})`,
+                      'border': `2px solid #00aaff`,
+                      'backgroundSize': 'cover',
+                      'backgroundPosition': 'center',
+                      'backgroundRepeat': 'no-repeat',
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
             <div className="button_wrapper">
               <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
             </div>
