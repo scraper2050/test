@@ -22,6 +22,7 @@ import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import "scss/elevation.scss"
 
 function MapViewTicketsScreen({ classes }: any) {
 
@@ -222,68 +223,65 @@ function MapViewTicketsScreen({ classes }: any) {
         }
       </Grid>
       <Grid container item lg={6} >
-
-        <>
-          <div className='ticketsFilterContainer'>
-            <div className='filter_wrapper'>
-              <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
-              {showFilterModal ? <div className="dropdown_wrapper"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal} resetDate={resetDate} /></div> : null}
-            </div>
-            <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
-              <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
-              <DatePicker
-                autoOk
-                className={classes.picker}
-                disablePast={false}
-                format={'d MMM yyyy'}
-                id={`datepicker-${'scheduleDate'}`}
-                inputProps={{
-                  'name': 'scheduleDate',
-                  'placeholder': 'Due Date',
-                }}
-                inputVariant={'outlined'}
-                name={'scheduleDate'}
-                onChange={(e: any) => dateChangeHandler(e)}
-                required={false}
-                value={dateValue}
-                variant={'inline'}
-              />
-              <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
-            </span>
-            <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
+        <div className='ticketsFilterContainer'>
+          <div className='filter_wrapper'>
+            <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
+            {showFilterModal ? <div className="dropdown_wrapper elevation-5"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal} resetDate={resetDate} /></div> : null}
           </div>
-          <div className='ticketsCardViewContainer'>
-            {
-              openTicketsClone.map((x: any, i: any) => (
-                <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
-                  <div className="ticket_title">
-                    <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
+          <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
+            <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
+            <DatePicker
+              autoOk
+              className={classes.picker}
+              disablePast={false}
+              format={'d MMM yyyy'}
+              id={`datepicker-${'scheduleDate'}`}
+              inputProps={{
+                'name': 'scheduleDate',
+                'placeholder': 'Due Date',
+              }}
+              inputVariant={'outlined'}
+              name={'scheduleDate'}
+              onChange={(e: any) => dateChangeHandler(e)}
+              required={false}
+              value={dateValue}
+              variant={'inline'}
+            />
+            <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
+          </span>
+          <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
+        </div>
+        <div className='ticketsCardViewContainer'>
+          {
+            openTicketsClone.map((x: any, i: any) => (
+              <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
+                <div className="ticket_title">
+                  <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
+                </div>
+                <div className="location_desc_container">
+                  <div className="card_location">
+                    <h4>{x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}</h4>
                   </div>
-                  <div className="location_desc_container">
-                    <div className="card_location">
-                      <h4>{x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}</h4>
-                    </div>
-                    {/* <div className="card_location">
+                  {/* <div className="card_location">
                 <h4>{x.company && x.company.info ? x.company.info.companyName : ''}</h4>
               </div> */}
 
-                    <div className="card_desc">
-                      <p>{x.jobType ? x.jobType.title : ''}</p>
-                    </div>
-                  </div>
-                  <hr></hr>
-                  <div className="card-footer">
-                    <span>  <i className="material-icons">access_time</i>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : ''}</span>
+                  <div className="card_desc">
+                    <p>{x.jobType ? x.jobType.title : ''}</p>
                   </div>
                 </div>
-              ))
-            }
-          </div>
-          <Pagination count={Math.ceil(totalOpenTickets / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
-            showLastButton />
-        </>
+                <hr></hr>
+                <div className="card-footer">
+                  <span>  <i className="material-icons">access_time</i>{x.dueDate ? new Date(x.dueDate).toString().substr(0, 15) : ''}</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <Pagination count={Math.ceil(totalOpenTickets / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
+          showLastButton />
       </Grid>
-    </Grid>
+    </Grid >
   )
 }
 
