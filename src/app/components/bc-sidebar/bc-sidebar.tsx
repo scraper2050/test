@@ -131,6 +131,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       label: "Profile",
       link: "/main/user/view-profile",
     },
+    {
+      label: "Email Preference",
+      link: "/main/user/email-preference",
+    },
   ];
 
   useEffect(() => {
