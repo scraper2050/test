@@ -51,9 +51,6 @@ function BCEditProfileModal({
     userProfile
   } = props
 
-  console.log(userProfile)
-
-
   const [image, setImage] = useState<any>("")
   const [thumb, setThumb] = useState<any>("")
 
