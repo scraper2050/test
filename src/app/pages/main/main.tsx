@@ -132,6 +132,9 @@ const CreateEstimatePage = React.lazy(
 const ViewProfilePage = React.lazy(
   () => import("../profile/view-profile/view-profile")
 )
+const EmailPreferencePage = React.lazy(
+  () => import("../profile/email-preference/email-preference")
+)
 
 function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
@@ -508,6 +511,12 @@ function Main(): any {
                     Component={ViewProfilePage}
                     exact
                     path={"/main/user/view-profile"}
+                    title={"User"}
+                  />
+                  <AuthRoute
+                    Component={EmailPreferencePage}
+                    exact
+                    path={"/main/user/email-preference"}
                     title={"User"}
                   />
                 </Switch>

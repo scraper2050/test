@@ -20,6 +20,9 @@ const useStyles = makeStyles(theme => ({
 function BCDateTimePicker({
   handleChange,
   value,
+  ampm = false,
+  views = ['hours', 'minutes', 'seconds'],
+  disabled = false,
   disablePast = false,
   name = '',
   placeholder = 'Enter Date',
@@ -69,7 +72,8 @@ function BCDateTimePicker({
               variant={variant}
             />
             : <TimePicker
-              ampm={false}
+              disabled={disabled}
+              ampm={ampm}
               autoOk
               className={classes.datePicker}
               format={dateFormat}
@@ -87,7 +91,7 @@ function BCDateTimePicker({
               required={required}
               value={value}
               variant={variant}
-              views={['hours', 'minutes', 'seconds']}
+              views={views}
             />
         }
       </MuiPickersUtilsProvider>

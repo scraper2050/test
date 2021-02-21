@@ -614,6 +614,9 @@ function BCServiceTicketModal({
                     style={{
                       'backgroundImage': `url(${thumb ? thumb : ''})`,
                       'border': `${thumb ? '5px solid #00aaff' : '1px dashed #000000'}`,
+                      'backgroundSize': 'cover',
+                      'backgroundPosition': 'center',
+                      'backgroundRepeat': 'no-repeat',
                     }}
                   />
                 </Grid>

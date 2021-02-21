@@ -51,9 +51,6 @@ function BCEditProfileModal({
     userProfile
   } = props
 
-  console.log(userProfile)
-
-
   const [image, setImage] = useState<any>("")
   const [thumb, setThumb] = useState<any>("")
 
@@ -158,6 +155,9 @@ function BCEditProfileModal({
                     style={{
                       'backgroundImage': `url(${thumb !== "" ? thumb : image !== "" ? image : avatar.url === '' ? '' : avatar.url})`,
                       'border': `${avatar.url !== '' || image !== "" ? '5px solid #00aaff' : '1px dashed #000000'}`,
+                      'backgroundSize': 'cover',
+                      'backgroundPosition': 'center',
+                      'backgroundRepeat': 'no-repeat',
                     }}
                   >
                     <>
