@@ -37,7 +37,7 @@ export default (): any => ({
     'justifyContent': 'flex-end'
   },
   'checkboxContainer': {
-    'marginLeft': '10rem',
+    'marginLeft': '3rem',
   },
   'boxContainer': {
     'textAlign': 'left',

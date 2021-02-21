@@ -17,6 +17,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 function BCAdminProfile({ classes, initialValues, apply }: any) {
   const dispatch = useDispatch();
   const [daily, setDaily] = useState(initialValues.emailPreferences === 1 ? true : false);
+  const [disabled, setDisabled] = useState(true);
 
   let hrs = initialValues.emailTime && initialValues.emailTime.split('T')[1];
   let parseHrs = hrs && parseInt(hrs.split(':')[0]);
@@ -44,7 +45,8 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
   const [ampm, setAmpm] = useState<any>(tempAmpm);
 
   const handleCheckbox = (setFieldValue: any, value: any) => {
-    setFieldValue('emailPreferences', value)
+    setFieldValue('emailPreferences', value);
+    setDisabled(false);
     if (value === 1) {
       setDaily(true)
     } else {
@@ -86,6 +88,9 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
           delete oldValues['emailTime'];
         }
         const response = await apply(oldValues);
+        if (response) {
+          setDisabled(true)
+        }
       }}>
       {
         ({
@@ -199,7 +204,7 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
                           'root': classes.fabRoot
                         }}
                         color={'primary'}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || disabled}
                         type={'submit'}
                         variant={'extended'}>
                         {'Submit'}
