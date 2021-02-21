@@ -37,7 +37,7 @@ export default (): any => ({
     'justifyContent': 'flex-end'
   },
   'checkboxContainer': {
-    'marginLeft': '3rem',
+    'marginLeft': '2rem',
   },
   'boxContainer': {
     'textAlign': 'left',
@@ -45,7 +45,7 @@ export default (): any => ({
   },
   'timePicker': {
     'textAlign': 'left',
-    'marginLeft': '5rem'
+    'marginLeft': '3rem'
   },
   'label': {
     'fontSize': '16px !important',
