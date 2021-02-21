@@ -65,13 +65,17 @@ function EmailPreferencePage() {
           user: oldUserProfile,
         }))
 
-        dispatch(success("Email Preferences successfully updated!"))
+        dispatch(success("Email Preferences successfully updated!"));
+        return true;
       } else if (response.message === "Email time is required for scheduled emails.") {
-        dispatch(info("Email time is required for daily email."))
+        dispatch(info("Email time is required for daily email."));
+        return true;
       } else {
-        dispatch(error("Something went wrong, please try again later."))
+        dispatch(error("Something went wrong, please try again later."));
+        return true;
       }
     } catch (err) {
+      return true;
       console.log(err);
     }
   }
