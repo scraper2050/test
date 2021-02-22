@@ -29,6 +29,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { getContacts } from 'api/contacts.api';
 import BCTextField from "../../components/bc-text-field/bc-text-field";
 import { success } from "actions/snackbar/snackbar.action";
+import './bc-service-ticket.scss'
 
 
 function BCServiceTicketModal({
@@ -50,7 +51,8 @@ function BCServiceTicketModal({
   error = {
     'status': false,
     'message': ''
-  }
+  },
+  detail = false,
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
@@ -60,6 +62,8 @@ function BCServiceTicketModal({
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumb, setThumb] = useState<any>(null);
+
+  console.log(detail)
 
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
@@ -331,6 +335,10 @@ function BCServiceTicketModal({
     }
   }, [FormikValues.image]);
 
+  const detailCustomer = ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0];
+
+
+  console.log(jobLocationValue)
 
   if (error.status) {
     return (
@@ -348,10 +356,12 @@ function BCServiceTicketModal({
               <Grid item xs={12} md={6}>
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
+
                     <Autocomplete
-                      disabled={ticket.customer._id !== ''}
+                      disabled={ticket.customer._id !== '' || detail}
                       defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0]}
                       id="tags-standard"
+                      className={detail ? "detail-only" : ""}
                       options={customers && customers.length !== 0 ? (customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.profile.displayName}
                       onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
@@ -359,7 +369,7 @@ function BCServiceTicketModal({
                         <>
                           <InputLabel className={classes.label}>
                             <strong>{"Customer "}</strong>
-                            <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>
+                            {!detail && <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>}
                           </InputLabel>
                           <TextField
                             required
@@ -398,7 +408,8 @@ function BCServiceTicketModal({
                     <Autocomplete
                       defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
                       value={jobLocationValue}
-                      disabled={FormikValues.customerId === '' || isLoadingDatas}
+                      disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
+                      className={detail ? "detail-only" : ""}
                       id="tags-standard"
                       options={jobLocations && jobLocations.length !== 0 ? (jobLocations.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
@@ -438,15 +449,13 @@ function BCServiceTicketModal({
                 value={FormikValues.jobLocationId}
                 handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue, getFieldMeta)}
               /> */}
-
-
-
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
                       value={jobSiteValue}
-                      disabled={FormikValues.jobLocationId === '' || isLoadingDatas}
+                      disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail}
                       id="tags-standard"
+                      className={detail ? "detail-only" : ""}
                       options={jobSites && jobSites.length !== 0 ? (jobSites.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
                       onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
@@ -492,6 +501,8 @@ function BCServiceTicketModal({
                     <Autocomplete
                       defaultValue={ticket.jobType && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0]}
                       id="tags-standard"
+                      disabled={detail}
+                      className={detail ? "detail-only" : ""}
                       options={jobTypes && jobTypes.length !== 0 ? (jobTypes.sort((a: any, b: any) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.title}
                       onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, 'jobTypeId', setFieldValue, newValue)}
@@ -531,26 +542,38 @@ function BCServiceTicketModal({
                   value={FormikValues.jobTypeId}
                 /> */}
 
-                <BCInput
-                  handleChange={formikChange}
-                  label={'Notes / Special Instructions'}
-                  multiline
-                  name={'note'}
-                  value={FormikValues.note}
-                  className='serviceTicketLabel'
-                />
+                <div className={detail ? 'input-detail-only' : ''}>
+                  <BCInput
+                    handleChange={formikChange}
+                    label={'Notes / Special Instructions'}
+                    multiline
+                    name={'note'}
+                    disabled={detail}
+                    value={FormikValues.note}
+                    className={'serviceTicketLabel'}
+                  />
+                </div>
 
                 <Label>
                   {notesLabelState ? " Notes are required while updating the ticket." : null}
                 </Label>
-                <BCDateTimePicker
-                  disablePast
-                  handleChange={dateChangeHandler}
-                  className='serviceTicketLabel'
-                  label={'Due Date'}
-                  name={'dueDate'}
-                  value={FormikValues.dueDate}
-                />
+
+
+                <div className={detail ? 'input-detail-only' : ''}>
+
+                  <BCDateTimePicker
+                    disablePast
+                    handleChange={dateChangeHandler}
+                    className='serviceTicketLabel'
+                    disabled={detail}
+                    placeholder={"Date"}
+                    label={'Due Date'}
+                    name={'dueDate'}
+                    value={FormikValues.dueDate}
+                  />
+
+
+                </div>
 
 
               </Grid>
@@ -558,9 +581,10 @@ function BCServiceTicketModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
-                      disabled={FormikValues.customerId === '' || isLoadingDatas}
+                      disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
                       value={contactValue}
                       id="tags-standard"
+                      className={detail ? "detail-only" : ""}
                       options={contacts && contacts.length !== 0 ? (contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
                       getOptionLabel={(option) => option.name}
                       onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
@@ -583,26 +607,34 @@ function BCServiceTicketModal({
                   <InputLabel className={classes.label}>
                     <strong>{"Customer PO"}</strong>
                   </InputLabel>
-                  <BCInput
-                    handleChange={formikChange}
-                    value={FormikValues.customerPO}
-                    className='serviceTicketLabel'
-                    name={"customerPO"}
-                    placeholder={"Customer PO / Sales Order #"}
-                  />
+
+                  <div className={detail ? 'input-detail-only' : ''}>
+                    <BCInput
+                      handleChange={formikChange}
+                      value={FormikValues.customerPO}
+                      className='serviceTicketLabel'
+                      disabled={detail}
+                      name={"customerPO"}
+                      placeholder={"Customer PO / Sales Order #"}
+                    />
+                  </div>
                 </FormGroup>
 
-                <FormGroup>
-                  <InputLabel className={classes.label}>
-                    <strong>{"Add Photo"}</strong>
-                  </InputLabel>
-                  <BCInput
-                    default
-                    type={"file"}
-                    handleChange={(event: any) => setFieldValue("image", event.currentTarget.files[0])}
-                    name={"image"}
-                  />
-                </FormGroup>
+                {
+                  !detail ?
+                    <FormGroup>
+                      <InputLabel className={classes.label}>
+                        <strong>{"Add Photo"}</strong>
+                      </InputLabel>
+                      <BCInput
+                        default
+                        type={"file"}
+                        handleChange={(event: any) => setFieldValue("image", event.currentTarget.files[0])}
+                        name={"image"}
+                      />
+                    </FormGroup>
+                    : <div style={{ marginTop: '2rem' }} />
+                }
 
                 <Grid container
                   direction="column"
@@ -627,30 +659,46 @@ function BCServiceTicketModal({
           <DialogActions classes={{
             'root': classes.dialogActions
           }}>
-            <Fab
-              aria-label={'create-job'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              className={'serviceTicketBtn'}
-              disabled={isSubmitting || isLoadingDatas}
-              onClick={() => closeModal()}
-              variant={'extended'}>
-              {'Cancel'}
-            </Fab>
-            <Fab
-              aria-label={'create-job'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              disabled={isSubmitting || isLoadingDatas}
-              type={'submit'}
-              variant={'extended'}>
-              {ticket._id
-                ? 'Save Ticket'
-                : 'Generate Ticket'}
-            </Fab>
+            {
+              !detail ?
+                <>
+                  <Fab
+                    aria-label={'create-job'}
+                    classes={{
+                      'root': classes.fabRoot
+                    }}
+                    className={'serviceTicketBtn'}
+                    disabled={isSubmitting || isLoadingDatas}
+                    onClick={() => closeModal()}
+                    variant={'extended'}>
+                    {'Cancel'}
+                  </Fab>
+                  <Fab
+                    aria-label={'create-job'}
+                    classes={{
+                      'root': classes.fabRoot
+                    }}
+                    color={'primary'}
+                    disabled={isSubmitting || isLoadingDatas}
+                    type={'submit'}
+                    variant={'extended'}>
+                    {ticket._id
+                      ? 'Save Ticket'
+                      : 'Generate Ticket'}
+                  </Fab>
+                </>
+                : <Fab
+                  aria-label={'create-job'}
+                  classes={{
+                    'root': classes.fabRoot
+                  }}
+                  onClick={() => closeModal()}
+                  color={'primary'}
+                  variant={'extended'}>
+                  Close
+                </Fab>
+
+            }
             {/* <Fab
             aria-label={'create-job'}
             classes={{

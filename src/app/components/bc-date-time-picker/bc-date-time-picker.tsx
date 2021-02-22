@@ -54,6 +54,7 @@ function BCDateTimePicker({
           pickerType === 'date'
             ? <KeyboardDatePicker
               autoOk
+              disabled={disabled}
               className={classes.datePicker}
               disablePast={disablePast}
               format={dateFormat}

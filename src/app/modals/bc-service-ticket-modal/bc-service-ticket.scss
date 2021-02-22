@@ -1,0 +1,26 @@
+.search_form_wrapper {
+  .detail-only {
+    .MuiInput-underline:before {
+      border-bottom: none !important;
+    }
+    .MuiAutocomplete-endAdornment {
+      display: none;
+    }
+    .MuiInputBase-input {
+      color: #000 !important;
+    }
+  }
+}
+
+.input-detail-only {
+  .MuiOutlinedInput-notchedOutline {
+    border: none !important;
+  }
+  .MuiInputAdornment-root,
+  .MuiFormHelperText-root {
+    display: none !important;
+  }
+  .MuiInputBase-input {
+    color: #000 !important;
+  }
+}

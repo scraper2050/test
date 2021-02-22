@@ -324,6 +324,11 @@
     position: relative;
     top: 25px;
   }
+  &.detail-only {
+    &.MuiAutocomplete-endAdornment {
+      display: none;
+    }
+  }
 }
 
 .datepicker_wrapper_default {
