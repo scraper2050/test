@@ -74,7 +74,7 @@ function ServiceTicket({ classes }: any) {
     ticket.updateFlag = true;
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'Edit Service Ticket',
+        'modalTitle': 'Service Ticket Details',
         'removeFooter': false,
         'ticketData': ticket,
         'className': 'serviceTicketTitle',

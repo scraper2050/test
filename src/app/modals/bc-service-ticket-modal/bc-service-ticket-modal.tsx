@@ -566,6 +566,7 @@ function BCServiceTicketModal({
                     handleChange={dateChangeHandler}
                     className='serviceTicketLabel'
                     disabled={detail}
+                    placeholder={"Date"}
                     label={'Due Date'}
                     name={'dueDate'}
                     value={FormikValues.dueDate}
