@@ -70,7 +70,7 @@ function BCModal() {
           fullWidth: true,
           maxWidth: "md",
         });
-        setComponent(<BCServiceTicketModal ticket={data.ticketData} />);
+        setComponent(<BCServiceTicketModal ticket={data.ticketData} detail={data.detail} />);
         break;
       case modalTypes.CREATE_JOB_MODAL:
         setModalOptions({
