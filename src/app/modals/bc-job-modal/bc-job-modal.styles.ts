@@ -40,4 +40,10 @@ export default (theme: Theme): any => ({
     'position': 'relative',
     'marginTop': '1rem',
   },
+  'tableContainer': {
+    'maxHeight': '23rem'
+  },
+  'historyContainer': {
+    'marginTop': '1rem'
+  }
 });

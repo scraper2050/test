@@ -26,6 +26,7 @@ function BCTableContainer({
   onRowClick,
   isLoading = false,
   classes,
+  className,
   search,
   searchPlaceholder = "Search Customers...",
   pagination = true,
@@ -34,6 +35,8 @@ function BCTableContainer({
   searchTerm,
   setPage,
   currentPage,
+  pageSize = 10,
+  stickyHeader = false,
 }: any) {
 
   const dispatch = useDispatch();
@@ -129,6 +132,8 @@ function BCTableContainer({
           </Paper>
         ) : (
               <BCTableContent
+                stickyHeader={stickyHeader}
+                className={className ? className : ''}
                 currentPage={currentPage}
                 columns={columns}
                 data={filteredData}
@@ -140,6 +145,7 @@ function BCTableContainer({
                 isPageSaveEnabled={isPageSaveEnabled || false}
                 setPage={setPage}
                 isLoading={isLoading}
+                defaultPageSize={pageSize}
               />
             )}
       </Grid>
