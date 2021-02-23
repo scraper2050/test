@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Fab from "@material-ui/core/Fab";
-import { withStyles } from "@material-ui/core";
+import { withStyles, Grid } from "@material-ui/core";
 import styled from "styled-components";
 
 import BCTableContainer from "../../../../components/bc-table-container/bc-table-container";
@@ -13,7 +13,12 @@ import {
   openModalAction,
   setModalDataAction,
 } from "actions/bc-modal/bc-modal.action";
-import { getJobs, loadingJobs } from "actions/job/job.action";
+import InfoIcon from '@material-ui/icons/Info';
+
+
+interface StatusTypes {
+  status: number;
+}
 
 function JobPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -24,12 +29,41 @@ function JobPage({ classes }: any) {
       refresh: jobState.refresh,
     })
   );
+
+  const RenderStatus = ({ status }: StatusTypes) => {
+    const textStatus = status === 0 ? 'Pending' : status === 1 ? 'Starded' : status === 2 ? 'Finished' : 'Canceled';
+    return <div className={
+      status === 0 ? classes.statusPendingText :
+        status === 1 ? classes.statusStartedText :
+          status === 2 ? classes.statusFinishedText :
+            classes.statusCanceledText}>
+      {textStatus}
+    </div>
+  }
+
   const openEditJobModal = (job: any) => {
     dispatch(
       setModalDataAction({
         data: {
           job: job,
           modalTitle: "Edit Job",
+          removeFooter: false,
+        },
+        type: modalTypes.EDIT_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const openDetailJobModal = (job: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          detail: true,
+          modalTitle: "View Job",
           removeFooter: false,
         },
         type: modalTypes.EDIT_JOB_MODAL,
@@ -55,12 +89,17 @@ function JobPage({ classes }: any) {
       accessor: "jobId",
       className: "font-bold",
       sortable: true,
+      width: 50
     },
     {
+      Cell({ row }: any) {
+        return <RenderStatus status={row.original.status} />
+      },
       Header: "Status",
       accessor: "status",
       className: "font-bold",
       sortable: true,
+      width: 60
     },
     {
       Header: "Technician",
@@ -92,6 +131,7 @@ function JobPage({ classes }: any) {
       Header: "Schedule Date",
       id: "job-schedulee-date",
       sortable: true,
+      width: 60
     },
     {
       Cell({ row }: any) {
@@ -114,7 +154,7 @@ function JobPage({ classes }: any) {
           );
         }
         return (
-          <div className={"flex items-center"}>
+          <div className={"flex items-center"} >
             <p>{`${startTime} - ${endTime}`}</p>
           </div>
         );
@@ -122,31 +162,43 @@ function JobPage({ classes }: any) {
       Header: "Time",
       id: "job-time",
       sortable: true,
+      width: 40
     },
     {
       Cell({ row }: any) {
         return (
-          <div className={"flex items-center"}>
-            {row.original.status === "0" || row.original.status === "1" ? (
-              <Fab
-                aria-label={"edit-job"}
-                classes={{
-                  root: classes.fabRoot,
-                }}
-                color={"primary"}
-                onClick={() => openEditJobModal(row.original)}
-                variant={"extended"}
-              >
-                {"Edit"}
-              </Fab>
-            ) : null}
-          </div>
+          <Grid container alignItems="center">
+            <div className={"flex items-center"}>
+              {row.original.status === 0 || row.original.status === 1 ? (
+                <Fab
+                  aria-label={"edit-job"}
+                  classes={{
+                    root: classes.fabRoot,
+                  }}
+                  color={"primary"}
+                  onClick={() => openEditJobModal(row.original)}
+                  variant={"extended"}
+                >
+                  {"Edit"}
+                </Fab>
+              ) : <div style={{ width: 48, height: 34 }} />}
+            </div>
+            <div
+              onClick={() => openDetailJobModal(row.original)}
+              style={{
+                marginLeft: '.5rem', height: 34,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              className={'flex items-center'}>
+              <InfoIcon style={{ margin: 'auto, 0' }} />
+            </div>
+          </Grid>
         );
       },
       Header: "Options",
       id: "action-options",
       sortable: false,
-      width: 60,
     },
   ];
 

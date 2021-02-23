@@ -88,7 +88,7 @@ function BCModal() {
           fullWidth: true,
           maxWidth: "lg",
         });
-        setComponent(<BCJobModal job={data.job} />);
+        setComponent(<BCJobModal job={data.job} detail={data.detail} />);
         break;
       case modalTypes.ADD_VENDOR_MODAL:
         setModalOptions({
@@ -113,7 +113,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "sm",
+          maxWidth: "md",
         });
         setComponent(<BCAddContactModal props={data.data} />);
         break;

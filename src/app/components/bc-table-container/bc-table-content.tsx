@@ -17,7 +17,7 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ currentPage, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
@@ -49,7 +49,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       initialState: {
         sortBy: onUpdatePage ? onUpdatePage.sortBy : initialSort,
         pageIndex: onUpdatePage ? onUpdatePage.page : initialPageIndex,
-        pageSize: onUpdatePage ? onUpdatePage.pageSize : initialPageSize
+        pageSize: defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
     },
@@ -208,9 +208,10 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
     <TableContainer
       className={`min-h-full sm:border-1 sm:rounded-16 ${invoiceTable
         ? `invoice-paper`
-        : ''}`}
+        : ''} ${className} `}
       component={Paper}>
       <MaUTable
+        stickyHeader={stickyHeader}
         size={'small'}
         {...getTableProps()}>
         <TableHead>
