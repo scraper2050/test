@@ -74,7 +74,8 @@ const initialJobState = {
 
 function BCJobModal({
   classes,
-  job = initialJobState
+  job = initialJobState,
+  detail = false,
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
@@ -89,9 +90,11 @@ function BCJobModal({
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
-  const [showVendorFlag, setShowVendorFlag] = useState(false);
+  const [showVendorFlag, setShowVendorFlag] = useState(job._id && job.employeeType ? true : false);
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
+  const [employeeValue, setEmployeeValue] = useState<any>([]);
+  const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
   const [thumb, setThumb] = useState<any>(null);
@@ -159,7 +162,7 @@ function BCJobModal({
   const handleLocationChange = async (event: any, fieldName: any, setFieldValue: any, getFieldMeta: any, newValue: any) => {
     const locationId = newValue ? newValue._id : '';
 
-    const customerId = job.ticket.customer._id;
+    const customerId = job.ticket.customer._id ? job.ticket.customer._id : job.customer._id;
 
     await setFieldValue(fieldName, '');
     await setFieldValue('jobSiteId', '');
@@ -185,7 +188,7 @@ function BCJobModal({
   }
 
   useEffect(() => {
-    const customerId = job.ticket.customer._id;
+    const customerId = job.ticket.customer._id !== undefined ? job.ticket.customer._id : job.ticket.customer;
     dispatch(getInventory());
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
@@ -199,15 +202,36 @@ function BCJobModal({
     dispatch(getContacts(data));
   }, []);
 
+  useEffect(() => {
+    if (job._id) {
+      if (employeesForJob.length !== 0 && !job.employeeType) {
+        setEmployeeValue(employeesForJob.filter((employee: any) => employee._id === job.technician._id)[0])
+      }
+    }
+  }, [employeesForJob])
+
+  useEffect(() => {
+    if (job._id) {
+      if (jobTypes.length !== 0) {
+        setJobTypeValue(jobTypes.filter((jobType: any) => jobType._id === job.type._id)[0]);
+      }
+    }
+  }, [jobTypes])
 
   useEffect(() => {
     if (ticket.customer._id !== '') {
 
       if (jobLocations.length !== 0) {
-        setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0])
 
-        if (ticket.jobLocation !== '' && ticket.jobLocation !== undefined) {
-          dispatch(getJobSites({ customerId: ticket.customer._id, locationId: ticket.jobLocation }));
+        if (ticket.jobLocation !== '' && ticket.jobLocation !== undefined && ticket.jobLocation) {
+          setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0])
+          dispatch(getJobSites({ customerId: ticket.customer._id !== undefined ? ticket.customer._id : ticket.customer, locationId: ticket.jobLocation }));
+        } else {
+          if (job.jobLocation) {
+            dispatch(getJobSites({ customerId: ticket.customer._id !== undefined ? ticket.customer._id : ticket.customer, locationId: job.jobLocation._id }));
+            setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === job.jobLocation._id)[0])
+          }
+
         }
       }
     }
@@ -218,7 +242,14 @@ function BCJobModal({
     if (ticket.customer._id !== '') {
 
       if (jobSites.length !== 0) {
-        setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0])
+        if (ticket.jobSite) {
+
+          setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0])
+        } else if (job.jobSite) {
+
+          setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === job.jobSite._id)[0])
+
+        }
       }
     }
   }, [jobSites]);
@@ -259,6 +290,8 @@ function BCJobModal({
 
   const onSubmit = async (values: any, { setSubmitting }: any) => {
     setSubmitting(true);
+
+    console.log(values);
 
     const customerId = customer._id;
     let jobFromMapFilter = job.jobFromMap;
@@ -317,11 +350,11 @@ function BCJobModal({
 
       request(requestObj)
         .then(async (response: any) => {
-          if (response.message === "Job created successfully.") {
+          if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
             await callEditTicketAPI(formatedTicketRequest)
           }
-          dispatch(refreshServiceTickets(true));
-          dispatch(refreshJobs(true));
+          await dispatch(refreshServiceTickets(true));
+          await dispatch(refreshJobs(true));
           dispatch(closeModalAction());
           dispatch(setOpenServiceTicketLoading(false));
           //Executed only when job is created from Map View.
@@ -350,7 +383,7 @@ function BCJobModal({
             }));
           }, 200);
 
-          if (response.message === "Job created successfully.") {
+          if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
             dispatch(success(response.message))
           }
         })
@@ -381,7 +414,7 @@ function BCJobModal({
       technicianId: job.technician._id,
       contractorId: job.contractor ? job.contractor._id : '',
       ticketId: job.ticket._id,
-      jobLocationId: job.ticket.jobLocation ? job.ticket.jobLocation : '',
+      jobLocationId: job.jobLocation ? job.jobLocation._id : job.ticket.jobLocation ? job.ticket.jobLocation._id : '',
       jobSiteId: job.ticket.jobSite ? job.ticket.jobSite : '',
       customerContactId: ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       customerPO: ticket.customerPO !== undefined ? ticket.customerPO : '',
@@ -446,7 +479,7 @@ function BCJobModal({
           <DialogContent classes={{ 'root': classes.dialogContent }}>
             <Grid container justify="space-between">
               <Grid item>
-                <Typography variant="h6" className="modal_heading">{`Customer : ${displayName}`}</Typography>
+                <Typography variant="h6" className="modal_heading">{`Customer : ${job.customer.profile ? job.customer.profile.displayName : displayName}`}</Typography>
               </Grid>
               <Grid item>
                 <Typography variant="h6" className="modal_heading" id='dueDate'>{`Due Date : ${FormikValues.dueDate}`}</Typography>
@@ -464,8 +497,9 @@ function BCJobModal({
                   <div className="search_form_wrapper">
                     <Autocomplete
                       id="tags-standard"
+                      defaultValue={job._id && job.employeeType ? employeeTypes[1] : employeeTypes[0]}
                       options={employeeTypes}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleEmployeeTypeChange('employeeType', newValue)}
                       renderInput={(params) => (
                         <>
@@ -526,9 +560,10 @@ function BCJobModal({
                     <div className="search_form_wrapper">
                       <Autocomplete
                         id="tags-standard"
+                        value={employeeValue}  // options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
                         options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                        getOptionLabel={(option) => option.profile.displayName}
-                        onChange={(ev: any, newValue: any) => handleSelectChange('technicianId', newValue?._id)}
+                        getOptionLabel={(option) => option.profile ? option.profile.displayName : ''}
+                        onChange={(ev: any, newValue: any) => handleSelectChange('technicianId', newValue?._id, setEmployeeValue(newValue))}
                         renderInput={(params) => (
                           <>
                             <InputLabel className={classes.label}>
@@ -574,7 +609,7 @@ function BCJobModal({
                         <Autocomplete
                           id="tags-standard"
                           options={vendorsList && vendorsList.length !== 0 ? (vendorsList.sort((a: any, b: any) => (a.contractor.info.companyName > b.contractor.info.companyName) ? 1 : ((b.contractor.info.companyName > a.contractor.info.companyName) ? -1 : 0))) : []}
-                          getOptionLabel={(option) => option.contractor.info.companyName}
+                          getOptionLabel={(option) => option.contractor.info.companyName ? option.contractor.info.companyName : ""}
                           onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue.contractor._id)}
                           renderInput={(params) => (
                             <>
@@ -618,12 +653,12 @@ function BCJobModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
-                      defaultValue={ticket.jobType && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0]}
+                      value={jobTypeValue}
                       id="tags-standard"
                       options={jobTypes && jobTypes.length !== 0 ? (jobTypes.sort((a: any, b: any) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.title}
+                      getOptionLabel={(option) => option.title ? option.title : ""}
                       disabled={ticket.jobType}
-                      onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id)}
+                      onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id, setJobTypeValue(newValue))}
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
@@ -673,7 +708,7 @@ function BCJobModal({
                       disabled={ticket.jobLocation}
                       id="tags-standard"
                       options={jobLocations && jobLocations.length !== 0 ? (jobLocations.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
                       renderInput={(params) => (
                         <>
@@ -719,7 +754,7 @@ function BCJobModal({
                       id="tags-standard"
 
                       options={jobSites && jobSites.length !== 0 ? (jobSites.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
@@ -760,9 +795,10 @@ function BCJobModal({
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
+                      defaultValue={job._id && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === job.type._id)[0]}
                       id="tags-standard"
                       options={equipments && equipments.length !== 0 ? (equipments.sort((a: any, b: any) => (a.company > b.company) ? 1 : ((b.company > a.company) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.company}
+                      getOptionLabel={(option) => option.company ? option.company : ""}
                       onChange={(ev: any, newValue: any) => handleSelectChange('equipmentId', newValue?._id)}
                       renderInput={(params) => (
                         <>
@@ -857,7 +893,7 @@ function BCJobModal({
                       value={contactValue}
                       id="tags-standard"
                       options={contacts && contacts.length !== 0 ? (contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleSelectChange('customerContactId', newValue?._id, setContactValue(newValue))}
                       renderInput={(params) => (
                         <>

@@ -136,6 +136,7 @@ function ServiceTicket({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
   const columns: any = [
     {
       'Header': 'Ticket ID',

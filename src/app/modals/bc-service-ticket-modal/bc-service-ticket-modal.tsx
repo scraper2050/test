@@ -63,8 +63,6 @@ function BCServiceTicketModal({
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumb, setThumb] = useState<any>(null);
 
-  console.log(detail)
-
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
     const customerId = newValue ? newValue._id : '';
@@ -338,7 +336,6 @@ function BCServiceTicketModal({
   const detailCustomer = ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0];
 
 
-  console.log(jobLocationValue)
 
   if (error.status) {
     return (
@@ -363,7 +360,7 @@ function BCServiceTicketModal({
                       id="tags-standard"
                       className={detail ? "detail-only" : ""}
                       options={customers && customers.length !== 0 ? (customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.profile.displayName}
+                      getOptionLabel={(option) => option.profile.displayName ? option.profile.displayName : ""}
                       onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
@@ -412,7 +409,7 @@ function BCServiceTicketModal({
                       className={detail ? "detail-only" : ""}
                       id="tags-standard"
                       options={jobLocations && jobLocations.length !== 0 ? (jobLocations.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
                       renderInput={(params) => (
                         <>
@@ -457,7 +454,7 @@ function BCServiceTicketModal({
                       id="tags-standard"
                       className={detail ? "detail-only" : ""}
                       options={jobSites && jobSites.length !== 0 ? (jobSites.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
@@ -504,7 +501,7 @@ function BCServiceTicketModal({
                       disabled={detail}
                       className={detail ? "detail-only" : ""}
                       options={jobTypes && jobTypes.length !== 0 ? (jobTypes.sort((a: any, b: any) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.title}
+                      getOptionLabel={(option) => option.title ? option.title : ""}
                       onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, 'jobTypeId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
@@ -560,7 +557,6 @@ function BCServiceTicketModal({
 
 
                 <div className={detail ? 'input-detail-only' : ''}>
-
                   <BCDateTimePicker
                     disablePast
                     handleChange={dateChangeHandler}
@@ -571,8 +567,6 @@ function BCServiceTicketModal({
                     name={'dueDate'}
                     value={FormikValues.dueDate}
                   />
-
-
                 </div>
 
 
@@ -586,7 +580,7 @@ function BCServiceTicketModal({
                       id="tags-standard"
                       className={detail ? "detail-only" : ""}
                       options={contacts && contacts.length !== 0 ? (contacts.sort((a: any, b: any) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.name}
+                      getOptionLabel={(option) => option.name ? option.name : ""}
                       onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
