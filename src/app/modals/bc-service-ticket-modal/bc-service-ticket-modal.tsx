@@ -430,6 +430,8 @@ function BCServiceTicketModal({
     }
   ]
 
+  console.log(ticket)
+
   if (error.status) {
     return (
       <ErrorMessage>{error.message}</ErrorMessage>
@@ -789,7 +791,7 @@ function BCServiceTicketModal({
                     disabled={isSubmitting || isLoadingDatas}
                     onClick={() => closeModal()}
                     variant={'extended'}>
-                    {'Cancel'}
+                    {'Close'}
                   </Fab>
                   {
                     ticket._id &&
