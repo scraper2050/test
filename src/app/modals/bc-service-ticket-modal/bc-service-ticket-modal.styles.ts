@@ -39,4 +39,10 @@ export default (theme: Theme): any => ({
     'background-size': '100% 100%',
     'position': 'relative',
   },
+  'historyContainer': {
+    'marginTop': '1rem'
+  },
+  'tableContainer': {
+    'maxHeight': '30rem',
+  },
 });

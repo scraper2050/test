@@ -31,7 +31,9 @@ export const getAllJobsAPI = () => {
       dispatch(setJobLoading(true));
       request(`/getJobs`, "post", null)
         .then((res: any) => {
-          dispatch(setJobs(res.data.jobs));
+          let tempJobs = res.data.jobs?.filter((job: any) => job.status !== 3);
+
+          dispatch(setJobs(tempJobs));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
           return resolve(res.data);
@@ -113,6 +115,18 @@ export const callEditJobAPI = (data: any) => {
       });
   });
 };
+
+export const callUpdateJobAPI = (data: any) => {
+  return new Promise((resolve, reject) => {
+    request(`/updateJob`, 'post', data, false)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch((err) => {
+        return reject(err);
+      });
+  });
+}
 
 export const saveJobType = async (body: { title: string }) => {
   let responseData;

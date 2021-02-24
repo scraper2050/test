@@ -17,7 +17,7 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize, isDefault, defaultPage, defaultSortby, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
@@ -47,8 +47,8 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
       columns,
       data,
       initialState: {
-        sortBy: onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        pageIndex: onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        sortBy: isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
+        pageIndex: isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
         pageSize: defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
@@ -70,7 +70,6 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
         page: newPage,
       });
     }
-
 
     history.replace({
       ...history.location,
@@ -189,18 +188,21 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
   }, [sortBy])
 
   useEffect(() => {
-    setTimeout(() => {
-      if (onUpdatePage) {
-        let tempLocationState = location.state;
+    if (!isDefault) {
+      setTimeout(() => {
 
-        delete tempLocationState['onUpdatePage'];
+        if (onUpdatePage) {
+          let tempLocationState = location.state;
 
-        history.replace({
-          ...history.location,
-          state: { ...tempLocationState }
-        })
-      }
-    }, 5000);
+          delete tempLocationState['onUpdatePage'];
+
+          history.replace({
+            ...history.location,
+            state: { ...tempLocationState }
+          })
+        }
+      }, 5000);
+    }
   }, [])
 
   // Render the UI for your table
