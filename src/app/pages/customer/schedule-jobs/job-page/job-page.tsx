@@ -181,7 +181,7 @@ function JobPage({ classes }: any) {
         return (
           <Grid container alignItems="center">
             <div className={"flex items-center"}>
-              {row.original.status === 0 || row.original.status === 1 ? (
+              {row.original.status === 0 ? (
                 <Fab
                   aria-label={"edit-job"}
                   classes={{
