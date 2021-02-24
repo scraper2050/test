@@ -33,6 +33,7 @@ import './bc-service-ticket.scss'
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import BCTableContainer from "app/components/bc-table-container/bc-table-container";
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import { modalTypes } from "../../../constants";
 
 
 function BCServiceTicketModal({
@@ -148,6 +149,22 @@ function BCServiceTicketModal({
     }
     return rawReqObj;
   }
+
+
+
+  const openCancelTicketModal = async (ticket: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          ticket: ticket,
+          modalTitle: `Cancel Service Ticket`,
+          removeFooter: false,
+        },
+        type: modalTypes.CANCEL_SERVICE_TICKET_MODAL,
+      })
+    );
+  };
+
 
   useEffect(() => {
     if (!ticket.updateFlag) {
@@ -774,6 +791,25 @@ function BCServiceTicketModal({
                     variant={'extended'}>
                     {'Cancel'}
                   </Fab>
+                  {
+                    ticket._id &&
+                    <>
+                      <Fab
+                        aria-label={'create-job'}
+                        classes={{
+                          root: classes.deleteButton
+                        }}
+                        // classes={{
+                        //   'root': classes.fabRoot
+                        // }}
+                        style={{
+                        }}
+                        onClick={() => openCancelTicketModal(ticket)}
+                        variant={'extended'}>
+                        {'Cancel Ticket'}
+                      </Fab>
+                    </>
+                  }
                   <Fab
                     aria-label={'create-job'}
                     classes={{
@@ -812,7 +848,7 @@ function BCServiceTicketModal({
           </Fab> */}
           </DialogActions>
         </form>
-      </DataContainer>
+      </DataContainer >
     );
   }
 }

@@ -1,4 +1,5 @@
 import { Theme } from '@material-ui/core/styles';
+import * as CONSTANTS from "../../../constants";
 export default (theme: Theme): any => ({
   'dialogActions': {
     'padding': '15px 24px !important'
@@ -44,5 +45,16 @@ export default (theme: Theme): any => ({
   },
   'tableContainer': {
     'maxHeight': '30rem',
+  },
+  'deleteButton': {
+    'background': '#C00707 !important',
+    // 'borderRadius': '30px',
+    'minWidth': '130px !important',
+    'fontSize': '16px !important',
+    'padding': '0 12px',
+    'height': '34px',
+    'color': CONSTANTS.PRIMARY_WHITE,
+    'textTransform': 'capitalize',
+    'marginRight': '1.5rem',
   },
 });
