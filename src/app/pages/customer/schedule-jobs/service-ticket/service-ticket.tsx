@@ -21,11 +21,11 @@ function ServiceTicket({ classes }: any) {
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
-    'tickets': serviceTicket.tickets.map((o: any) => {
-      o.createdAt = formatDate(o.createdAt);
-      return o;
-    })
+    'tickets': serviceTicket.tickets
   }));
+
+
+
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
       customerId: ticket.customer._id,
@@ -58,6 +58,7 @@ function ServiceTicket({ classes }: any) {
   };
 
   const openDetailTicketModal = (ticket: any) => {
+
     const reqObj = {
       customerId: ticket.customer._id,
       locationId: ticket.jobLocation
@@ -148,7 +149,15 @@ function ServiceTicket({ classes }: any) {
       'Header': 'Created At',
       'accessor': 'createdAt',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'Cell'({ row }: any) {
+        let formattedDate = formatDate(row.original.createAt);
+        return (
+          <div>
+            {formattedDate}
+          </div>
+        )
+      }
     },
     {
       'Header': 'Customer',
@@ -184,7 +193,7 @@ function ServiceTicket({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return row.original && row.original.status === 0
+        return row.original && row.original.status !== 1
           ? <div className={'flex items-center'}>
             <Fab
               aria-label={'edit-ticket'}
@@ -221,8 +230,6 @@ function ServiceTicket({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getCustomers());
-      dispatch(getAllJobTypesAPI());
       dispatch(getAllServiceTicketAPI());
     }
   }, [refresh]);

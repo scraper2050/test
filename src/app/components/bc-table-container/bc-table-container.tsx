@@ -35,6 +35,7 @@ function BCTableContainer({
   searchTerm,
   setPage,
   currentPage,
+  isDefault = false,
   pageSize = 10,
   stickyHeader = false,
 }: any) {
@@ -146,6 +147,7 @@ function BCTableContainer({
                 setPage={setPage}
                 isLoading={isLoading}
                 defaultPageSize={pageSize}
+                isDefault={isDefault}
               />
             )}
       </Grid>

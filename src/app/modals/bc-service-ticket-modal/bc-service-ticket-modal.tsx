@@ -27,9 +27,13 @@ import { clearJobLocationStore, getJobLocationsAction } from 'actions/job-locati
 import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { getContacts } from 'api/contacts.api';
-import BCTextField from "../../components/bc-text-field/bc-text-field";
+import { formatToMilitaryTime, formatDate, convertMilitaryTime } from 'helpers/format';
 import { success } from "actions/snackbar/snackbar.action";
 import './bc-service-ticket.scss'
+import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
+import BCTableContainer from "app/components/bc-table-container/bc-table-container";
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import { modalTypes } from "../../../constants";
 
 
 function BCServiceTicketModal({
@@ -62,6 +66,10 @@ function BCServiceTicketModal({
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumb, setThumb] = useState<any>(null);
+
+
+  const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
+  const employeesForJob = [...data]
 
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
@@ -141,6 +149,22 @@ function BCServiceTicketModal({
     }
     return rawReqObj;
   }
+
+
+
+  const openCancelTicketModal = async (ticket: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          ticket: ticket,
+          modalTitle: `Cancel Service Ticket`,
+          removeFooter: false,
+        },
+        type: modalTypes.CANCEL_SERVICE_TICKET_MODAL,
+      })
+    );
+  };
+
 
   useEffect(() => {
     if (!ticket.updateFlag) {
@@ -269,6 +293,9 @@ function BCServiceTicketModal({
 
 
   useEffect(() => {
+
+    dispatch(getEmployeesForJobAction());
+
     if (ticket.customer._id !== '') {
       dispatch(getJobLocationsAction(ticket.customer._id));
 
@@ -336,6 +363,72 @@ function BCServiceTicketModal({
   const detailCustomer = ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0];
 
 
+  const formatSchedulingTime = (time: string) => {
+    let timeAr = time.split("T");
+    let timeWithSeconds = timeAr[1].substr(0, 5);
+    let hours = timeWithSeconds.substr(0, 2);
+    let minutes = timeWithSeconds.substr(3, 5);
+
+    return { hours, minutes };
+  };
+
+  const columns: any = [
+    {
+      'Header': 'User',
+      'id': "user",
+      'sortable': true,
+      'Cell'({ row }: any) {
+
+        let user = employeesForJob.filter((employee: any) => employee._id === row.original.user)[0];
+        const { displayName } = user?.profile;
+        return (
+          <div>
+            {displayName}
+          </div>
+        )
+      },
+      'width': 70
+    },
+    {
+      'Header': 'Date',
+      'id': "date",
+      'sortable': true,
+      'Cell'({ row }: any) {
+        let date = formatDate(row.original.date);
+        let time;
+        let formatedTime = formatSchedulingTime(row.original.date);
+        time = convertMilitaryTime(
+          `${formatedTime.hours}:${formatedTime.minutes}`
+        );
+        return (
+          <div>
+            <i> {`${date} ${time}`}</i>
+          </div>
+        )
+      },
+      'width': 80
+    },
+    {
+      'Header': 'Actions',
+      'id': "action",
+      'sortable': true,
+      'Cell'({ row }: any) {
+        let splittedActions = row.original.action.split('|');
+        let actions = splittedActions.filter((action: any) => action !== "");
+        return (
+          <>
+            {
+              actions.length === 0 ? <div /> :
+                <ul>
+                  {actions.map((action: any) => <li>{action}</li>)}
+                </ul>
+            }
+          </>
+
+        )
+      }
+    }
+  ]
 
   if (error.status) {
     return (
@@ -350,7 +443,7 @@ function BCServiceTicketModal({
               container
               spacing={5}>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={detail ? 3 : 6}>
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
 
@@ -571,7 +664,7 @@ function BCServiceTicketModal({
 
 
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={detail ? 3 : 6}>
                 <FormGroup className={`required ${classes.formGroup}`}>
                   <div className="search_form_wrapper">
                     <Autocomplete
@@ -648,6 +741,37 @@ function BCServiceTicketModal({
                 </Grid>
 
               </Grid>
+
+              {
+                detail &&
+                < Grid item sm={6} xs={12} >
+
+                  <div className={`${classes.formGroup} search_form_wrapper`}>
+                    <InputLabel className={classes.label}>
+                      <strong>{"Ticket History"}</strong>
+                    </InputLabel>
+
+                    <div className={classes.historyContainer}>
+                      {
+                        loading ? <BCCircularLoader /> :
+                          employeesForJob.length !== 0 && ticket.track &&
+                          <BCTableContainer
+                            className={classes.tableContainer}
+                            columns={columns}
+                            isLoading={false}
+                            onRowClick={() => { }}
+                            tableData={ticket.track}
+                            pagination={false}
+                            pageSize={ticket.track.length}
+                            isDefault={true}
+                            initialMsg="No history yet"
+                            stickyHeader={true}
+                          />
+                      }
+                    </div>
+                  </div>
+                </ Grid>
+              }
             </Grid>
           </DialogContent>
           <DialogActions classes={{
@@ -667,6 +791,25 @@ function BCServiceTicketModal({
                     variant={'extended'}>
                     {'Cancel'}
                   </Fab>
+                  {
+                    ticket._id &&
+                    <>
+                      <Fab
+                        aria-label={'create-job'}
+                        classes={{
+                          root: classes.deleteButton
+                        }}
+                        // classes={{
+                        //   'root': classes.fabRoot
+                        // }}
+                        style={{
+                        }}
+                        onClick={() => openCancelTicketModal(ticket)}
+                        variant={'extended'}>
+                        {'Cancel Ticket'}
+                      </Fab>
+                    </>
+                  }
                   <Fab
                     aria-label={'create-job'}
                     classes={{
@@ -705,7 +848,7 @@ function BCServiceTicketModal({
           </Fab> */}
           </DialogActions>
         </form>
-      </DataContainer>
+      </DataContainer >
     );
   }
 }

@@ -12,11 +12,17 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { info, error } from 'actions/snackbar/snackbar.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
+import { useLocation, useHistory } from 'react-router-dom';
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
-  const [curTab, setCurTab] = useState(0);
   const theme = useTheme();
+
+  const location = useLocation<any>();
+  const history = useHistory();
+  const locationState = location.state;
+
+  const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
 
   useEffect(() => {
     dispatch(getCustomers());
@@ -24,6 +30,17 @@ function ScheduleJobsPage({ classes }: any) {
   }, []);
 
   const handleTabChange = (newValue: number) => {
+
+    let tempLocationState = { ...locationState }
+
+    history.replace({
+      ...history.location,
+      state: {
+        ...tempLocationState,
+        curTab: newValue
+      }
+    });
+
     setCurTab(newValue);
   };
 

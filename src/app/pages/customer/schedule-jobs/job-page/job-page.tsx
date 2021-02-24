@@ -12,6 +12,7 @@ import { formatDate, convertMilitaryTime } from "helpers/format";
 import {
   openModalAction,
   setModalDataAction,
+  closeModalAction
 } from "actions/bc-modal/bc-modal.action";
 import InfoIcon from '@material-ui/icons/Info';
 
@@ -31,7 +32,7 @@ function JobPage({ classes }: any) {
   );
 
   const RenderStatus = ({ status }: StatusTypes) => {
-    const textStatus = status === 0 ? 'Pending' : status === 1 ? 'Starded' : status === 2 ? 'Finished' : 'Canceled';
+    const textStatus = status === 0 ? 'Scheduled' : status === 1 ? 'Started' : status === 2 ? 'Finished' : 'Canceled';
     return <div className={
       status === 0 ? classes.statusPendingText :
         status === 1 ? classes.statusStartedText :
@@ -54,6 +55,17 @@ function JobPage({ classes }: any) {
     );
     setTimeout(() => {
       dispatch(openModalAction());
+    }, 200);
+  };
+
+
+  const closeModal = () => {
+    dispatch(closeModalAction());
+    setTimeout(() => {
+      dispatch(setModalDataAction({
+        'data': {},
+        'type': ''
+      }));
     }, 200);
   };
 

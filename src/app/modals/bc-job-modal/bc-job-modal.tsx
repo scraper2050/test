@@ -22,7 +22,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
 import { callEditTicketAPI } from 'api/service-tickets.api';
-import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { closeModalAction, setModalDataAction, openModalAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatToMilitaryTime, formatDate, convertMilitaryTime } from 'helpers/format';
 import styled from 'styled-components';
@@ -37,6 +37,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { success } from "actions/snackbar/snackbar.action";
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
+import { modalTypes } from "../../../constants";
 
 
 const initialJobState = {
@@ -79,8 +80,6 @@ function BCJobModal({
   detail = false,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-
-  console.log(detail)
 
 
 
@@ -145,6 +144,24 @@ function BCJobModal({
     }
     setFieldValue(fieldName, newValue ? newValue : '')
   }
+
+
+
+
+
+  const openCancelJobModal = async (job: any, jobOnly?: boolean) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          jobOnly,
+          modalTitle: `Cancel Job`,
+          removeFooter: false,
+        },
+        type: modalTypes.CANCEL_JOB_MODAL,
+      })
+    );
+  };
 
   // const handleLocationChange = (event: any, fieldName: any, setFieldValue: any) => {
   //   const locationId = event.target.value;
@@ -522,7 +539,6 @@ function BCJobModal({
       Cell({ row }: any) {
         let splittedActions = row.original.action.split('|');
         let actions = splittedActions.filter((action: any) => action !== "");
-        console.log(actions)
         return (
           <>
             {
@@ -551,9 +567,12 @@ function BCJobModal({
               <Grid item>
                 <Typography variant="h6" className="modal_heading">{`Customer : ${job.customer.profile ? job.customer.profile.displayName : displayName}`}</Typography>
               </Grid>
-              <Grid item>
-                <Typography variant="h6" className="modal_heading" id='dueDate'>{`Due Date : ${FormikValues.dueDate}`}</Typography>
-              </Grid>
+              {
+                !job._id &&
+                <Grid item>
+                  <Typography variant="h6" className="modal_heading" id='dueDate'>{`Due Date : ${FormikValues.dueDate}`}</Typography>
+                </Grid>
+              }
             </Grid>
             {/* <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading"><span>{`Customer : ${displayName}`}</span>
               <span id='dueDate'>{`Due Date : ${FormikValues.dueDate}`}</span>
@@ -576,7 +595,7 @@ function BCJobModal({
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
-                            <strong>{"Employee Type "}</strong>
+                            <strong>{"Technician Type"}</strong>
                             {!detail && <Typography display="inline" color="error" style={{ lineHeight: '1' }}>*</Typography>}
                           </InputLabel>
                           <TextField
@@ -1078,6 +1097,7 @@ function BCJobModal({
                             tableData={job.track}
                             pagination={false}
                             pageSize={job.track.length}
+                            isDefault={true}
                             initialMsg="No history yet"
                             stickyHeader={true}
                           />
@@ -1107,8 +1127,41 @@ function BCJobModal({
                     disabled={isSubmitting}
                     onClick={() => closeModal()}
                     variant={'extended'}>
-                    {'Cancel'}
+                    {'Close'}
                   </Fab>
+                  {
+                    job._id &&
+                    <>
+                      <Fab
+                        aria-label={'create-job'}
+                        classes={{
+                          root: classes.deleteButton
+                        }}
+                        // classes={{
+                        //   'root': classes.fabRoot
+                        // }}
+                        style={{
+                        }}
+                        onClick={() => openCancelJobModal(job, true)}
+                        variant={'extended'}>
+                        {'Cancel Job'}
+                      </Fab>
+                      <Fab
+                        aria-label={'create-job'}
+                        classes={{
+                          root: classes.deleteButton
+                        }}
+                        // classes={{
+                        //   'root': classes.fabRoot
+                        // }}
+                        style={{
+                        }}
+                        onClick={() => openCancelJobModal(job, false)}
+                        variant={'extended'}>
+                        {'Cancel Both Job and Service Ticket'}
+                      </Fab>
+                    </>
+                  }
                   <Fab
                     aria-label={'create-job'}
                     classes={{
@@ -1119,7 +1172,7 @@ function BCJobModal({
                     type={'submit'}
                     variant={'extended'}>
                     {job._id
-                      ? 'Edit'
+                      ? 'Update'
                       : 'Submit'}
                   </Fab>
                 </>
