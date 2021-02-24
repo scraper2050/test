@@ -21,11 +21,11 @@ function ServiceTicket({ classes }: any) {
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
-    'tickets': serviceTicket.tickets.map((o: any) => {
-      o.createdAt = formatDate(o.createdAt);
-      return o;
-    })
+    'tickets': serviceTicket.tickets
   }));
+
+
+
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
       customerId: ticket.customer._id,
@@ -33,10 +33,10 @@ function ServiceTicket({ classes }: any) {
     }
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(reqObj.customerId));
-    if(reqObj.locationId !== undefined && reqObj.locationId !== null){
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
-    }else {
+    } else {
       dispatch(clearJobSiteStore());
     }
     dispatch(getAllJobTypesAPI());
@@ -56,6 +56,42 @@ function ServiceTicket({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  const openDetailTicketModal = (ticket: any) => {
+
+    const reqObj = {
+      customerId: ticket.customer._id,
+      locationId: ticket.jobLocation
+    }
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(reqObj.customerId));
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    } else {
+      dispatch(clearJobSiteStore());
+    }
+    dispatch(getAllJobTypesAPI());
+    ticket.updateFlag = true;
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Service Ticket Details',
+        'removeFooter': false,
+        'ticketData': ticket,
+        'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+        'height': '100%',
+        'detail': true,
+
+      },
+      'type': modalTypes.EDIT_TICKET_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+
   const openCreateJobModal = (ticket: any) => {
     const reqObj = {
       customerId: ticket.customer._id,
@@ -63,10 +99,10 @@ function ServiceTicket({ classes }: any) {
     }
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(reqObj.customerId));
-    if(reqObj.locationId !== undefined && reqObj.locationId !== null){
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
-    }else {
+    } else {
       dispatch(clearJobSiteStore());
     }
     dispatch(setModalDataAction({
@@ -93,7 +129,7 @@ function ServiceTicket({ classes }: any) {
         },
         'modalTitle': 'Create Job',
         'removeFooter': false,
-        
+
       },
       'type': modalTypes.EDIT_JOB_MODAL
     }));
@@ -101,6 +137,7 @@ function ServiceTicket({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
   const columns: any = [
     {
       'Header': 'Ticket ID',
@@ -112,7 +149,15 @@ function ServiceTicket({ classes }: any) {
       'Header': 'Created At',
       'accessor': 'createdAt',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'Cell'({ row }: any) {
+        let formattedDate = formatDate(row.original.createAt);
+        return (
+          <div>
+            {formattedDate}
+          </div>
+        )
+      }
     },
     {
       'Header': 'Customer',
@@ -148,7 +193,7 @@ function ServiceTicket({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return row.original && row.original.status === 0
+        return row.original && row.original.status !== 1
           ? <div className={'flex items-center'}>
             <Fab
               aria-label={'edit-ticket'}
@@ -170,7 +215,9 @@ function ServiceTicket({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
+        return <div
+          onClick={() => openDetailTicketModal(row.original)}
+          className={'flex items-center'}>
           <InfoIcon />
         </div>;
       },
@@ -183,8 +230,6 @@ function ServiceTicket({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getCustomers());
-      dispatch(getAllJobTypesAPI());
       dispatch(getAllServiceTicketAPI());
     }
   }, [refresh]);

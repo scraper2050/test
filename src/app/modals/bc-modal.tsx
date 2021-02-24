@@ -1,7 +1,9 @@
 import BCAddVendorModal from "./bc-add-vendor-modal/bc-add-vendor-modal";
 import BCJobModal from "./bc-job-modal/bc-job-modal";
+import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
 import BCModalTransition from "./bc-modal-transition";
 import BCServiceTicketModal from "./bc-service-ticket-modal/bc-service-ticket-modal";
+import BCCancelTicketModal from "./bc-service-ticket-modal/bc-cancel-ticket-modal";
 import BCAddBrandsModal from "./bc-add-brands-modal/bc-add-brands-modal";
 import BCAddContactModal from "./bc-add-contact-modal/bc-add-contact-modal";
 import BCDeleteContactModal from "./bc-add-contact-modal/bc-delete-contact-modal";
@@ -68,9 +70,18 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "md",
+          maxWidth: data.detail ? "lg" : "md",
         });
-        setComponent(<BCServiceTicketModal ticket={data.ticketData} />);
+        setComponent(<BCServiceTicketModal ticket={data.ticketData} detail={data.detail} />);
+        break;
+      case modalTypes.CANCEL_SERVICE_TICKET_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "xs",
+        });
+        setComponent(<BCCancelTicketModal props={data} />);
         break;
       case modalTypes.CREATE_JOB_MODAL:
         setModalOptions({
@@ -88,7 +99,16 @@ function BCModal() {
           fullWidth: true,
           maxWidth: "lg",
         });
-        setComponent(<BCJobModal job={data.job} />);
+        setComponent(<BCJobModal job={data.job} detail={data.detail} />);
+        break;
+      case modalTypes.CANCEL_JOB_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "xs",
+        });
+        setComponent(<BCDeleteJobModal props={data} />);
         break;
       case modalTypes.ADD_VENDOR_MODAL:
         setModalOptions({
@@ -113,7 +133,7 @@ function BCModal() {
           disableBackdropClick: true,
           disableEscapeKeyDown: true,
           fullWidth: true,
-          maxWidth: "sm",
+          maxWidth: "md",
         });
         setComponent(<BCAddContactModal props={data.data} />);
         break;

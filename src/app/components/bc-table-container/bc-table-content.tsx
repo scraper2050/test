@@ -17,7 +17,7 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ currentPage, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize, isDefault, defaultPage, defaultSortby, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
@@ -47,9 +47,9 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       columns,
       data,
       initialState: {
-        sortBy: onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        pageIndex: onUpdatePage ? onUpdatePage.page : initialPageIndex,
-        pageSize: onUpdatePage ? onUpdatePage.pageSize : initialPageSize
+        sortBy: isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
+        pageIndex: isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        pageSize: defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
     },
@@ -70,7 +70,6 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
         page: newPage,
       });
     }
-
 
     history.replace({
       ...history.location,
@@ -189,18 +188,21 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   }, [sortBy])
 
   useEffect(() => {
-    setTimeout(() => {
-      if (onUpdatePage) {
-        let tempLocationState = location.state;
+    if (!isDefault) {
+      setTimeout(() => {
 
-        delete tempLocationState['onUpdatePage'];
+        if (onUpdatePage) {
+          let tempLocationState = location.state;
 
-        history.replace({
-          ...history.location,
-          state: { ...tempLocationState }
-        })
-      }
-    }, 5000);
+          delete tempLocationState['onUpdatePage'];
+
+          history.replace({
+            ...history.location,
+            state: { ...tempLocationState }
+          })
+        }
+      }, 5000);
+    }
   }, [])
 
   // Render the UI for your table
@@ -208,9 +210,10 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
     <TableContainer
       className={`min-h-full sm:border-1 sm:rounded-16 ${invoiceTable
         ? `invoice-paper`
-        : ''}`}
+        : ''} ${className} `}
       component={Paper}>
       <MaUTable
+        stickyHeader={stickyHeader}
         size={'small'}
         {...getTableProps()}>
         <TableHead>
