@@ -22,6 +22,14 @@ function ScheduleJobsPage({ classes }: any) {
   const history = useHistory();
   const locationState = location.state;
 
+
+  const [currentPage, setCurrentPage] = useState({
+    page: 0,
+    pageSize: 10,
+    sortBy: [],
+  });
+
+
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
 
   useEffect(() => {
@@ -31,7 +39,12 @@ function ScheduleJobsPage({ classes }: any) {
 
   const handleTabChange = (newValue: number) => {
 
-    let tempLocationState = { ...locationState }
+
+    let tempLocationState = { ...locationState };
+
+    delete tempLocationState["onUpdatePage"];
+
+
 
     history.replace({
       ...history.location,

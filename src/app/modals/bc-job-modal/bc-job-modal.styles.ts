@@ -59,4 +59,7 @@ export default (theme: Theme): any => ({
   'historyContainer': {
     'marginTop': '1rem'
   },
+  'noteContainer': {
+    'paddingLeft': '1.5rem',
+  }
 });

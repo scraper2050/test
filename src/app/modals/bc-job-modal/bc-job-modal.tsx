@@ -234,15 +234,25 @@ function BCJobModal({
     }
   }, [employeesForJob])
 
+
+  console.log(jobTypeValue)
   useEffect(() => {
     if (job._id) {
       if (jobTypes.length !== 0) {
         setJobTypeValue(jobTypes.filter((jobType: any) => jobType._id === job.type._id)[0]);
       }
+    } else {
+      if (jobTypes.length !== 0) {
+        let tempJobValue = ticket.jobType !== '' && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0]
+        setJobTypeValue(tempJobValue)
+
+      }
     }
   }, [jobTypes])
 
   useEffect(() => {
+
+
     if (ticket.customer._id !== '') {
 
       if (jobLocations.length !== 0) {
@@ -321,111 +331,6 @@ function BCJobModal({
     return { hours, minutes };
   };
 
-  const onSubmit = async (values: any, { setSubmitting }: any) => {
-    setSubmitting(true);
-
-    const customerId = customer._id;
-    let jobFromMapFilter = job.jobFromMap;
-
-    const { image, customerPO, customerContactId } = values;
-    const { note, _id } = ticket;
-
-    let tempJobValues = { ...values };
-
-    delete tempJobValues['customerContactId'];
-    delete tempJobValues['customerPO'];
-    delete tempJobValues['image'];
-
-    let tempTicket = {
-      ticketId: _id,
-      note: note === undefined ? "Job Created" : note,
-      image,
-      customerPO,
-      customerContactId
-    }
-
-    let formatedTicketRequest = formatRequestObj(tempTicket);
-
-    const tempData = {
-      ...job,
-      ...values,
-      customerId
-    };
-
-    const editJob = (tempData: any) => {
-      tempData.jobId = job._id;
-      return callEditJobAPI(tempData)
-    }
-
-    const createJob = (tempData: any) => {
-      return callCreateJobAPI(tempData)
-    }
-
-    let request = null;
-
-    if (job._id) {
-      request = editJob;
-    } else {
-      request = createJob;
-    }
-
-    if (isValidate(tempData)) {
-      const requestObj = formatRequestObj(tempData);
-      if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
-        requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
-      if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
-        requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
-      if (requestObj.companyId)
-        delete requestObj.companyId;
-      delete requestObj.dueDate;
-
-      request(requestObj)
-        .then(async (response: any) => {
-          if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
-            await callEditTicketAPI(formatedTicketRequest)
-          }
-          await dispatch(refreshServiceTickets(true));
-          await dispatch(refreshJobs(true));
-          dispatch(closeModalAction());
-          dispatch(setOpenServiceTicketLoading(false));
-          //Executed only when job is created from Map View.
-          if (jobFromMapFilter) {
-            dispatch(setOpenServiceTicketLoading(true));
-            getOpenServiceTickets({ ...openServiceTicketFilter, pageNo: 1, pageSize: 6 }).then((response: any) => {
-              dispatch(setOpenServiceTicketLoading(false));
-              dispatch(setOpenServiceTicket(response));
-              dispatch(refreshServiceTickets(true));
-              dispatch(closeModalAction());
-              setTimeout(() => {
-                dispatch(setModalDataAction({
-                  'data': {},
-                  'type': ''
-                }));
-              }, 200);
-            })
-              .catch((err: any) => {
-                throw err;
-              });
-          }
-          setTimeout(() => {
-            dispatch(setModalDataAction({
-              'data': {},
-              'type': ''
-            }));
-          }, 200);
-
-          if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
-            dispatch(success(response.message))
-          }
-        })
-        .catch((err: any) => {
-          throw err;
-        })
-        .finally(() => { setSubmitting(false) });
-    } else {
-      setSubmitting(false);
-    }
-  }
 
   const form = useFormik({
     initialValues: {
@@ -445,14 +350,120 @@ function BCJobModal({
       technicianId: job.technician._id,
       contractorId: job.contractor ? job.contractor._id : '',
       ticketId: job.ticket._id,
-      jobLocationId: job.jobLocation ? job.jobLocation._id : job.ticket.jobLocation ? job.ticket.jobLocation._id : '',
-      jobSiteId: job.ticket.jobSite ? job.ticket.jobSite : '',
+      jobLocationId: job.jobLocation ? job.jobLocation._id : job.ticket.jobLocation ? job.ticket.jobLocation : '',
+      jobSiteId: job.jobSite ? job.jobSite._id : job.ticket.jobSite ? job.ticket.jobSite : '',
       customerContactId: ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       customerPO: ticket.customerPO !== undefined ? ticket.customerPO : '',
       image: ticket.image !== undefined ? ticket.image : ''
 
     },
-    onSubmit
+    'onSubmit': (values: any, { setSubmitting }: any) => {
+      setSubmitting(true);
+
+      const customerId = customer._id;
+      let jobFromMapFilter = job.jobFromMap;
+
+      const { image, customerPO, customerContactId } = values;
+      const { note, _id } = ticket;
+
+      let tempJobValues = { ...values };
+
+      delete tempJobValues['customerContactId'];
+      delete tempJobValues['customerPO'];
+      delete tempJobValues['image'];
+
+      let tempTicket = {
+        ticketId: _id,
+        note: note === undefined ? "Job Created" : note,
+        image,
+        customerPO,
+        customerContactId
+      }
+
+      let formatedTicketRequest = formatRequestObj(tempTicket);
+
+      const tempData = {
+        ...job,
+        ...values,
+        customerId
+      };
+
+      const editJob = (tempData: any) => {
+        tempData.jobId = job._id;
+        return callEditJobAPI(tempData)
+      }
+
+      const createJob = (tempData: any) => {
+        return callCreateJobAPI(tempData)
+      }
+
+      let request = null;
+
+      if (job._id) {
+        request = editJob;
+      } else {
+        request = createJob;
+      }
+
+      if (isValidate(tempData)) {
+        const requestObj = formatRequestObj(tempData);
+        if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
+          requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
+        if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
+          requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
+        if (requestObj.companyId)
+          delete requestObj.companyId;
+        delete requestObj.dueDate;
+
+        request(requestObj)
+
+          .then(async (response: any) => {
+            if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
+              await dispatch(refreshServiceTickets(true));
+              await dispatch(refreshJobs(true));
+              await callEditTicketAPI(formatedTicketRequest);
+
+            }
+            dispatch(closeModalAction());
+            dispatch(setOpenServiceTicketLoading(false));
+            //Executed only when job is created from Map View.
+            if (jobFromMapFilter) {
+              dispatch(setOpenServiceTicketLoading(true));
+              getOpenServiceTickets({ ...openServiceTicketFilter, pageNo: 1, pageSize: 6 }).then((response: any) => {
+                dispatch(setOpenServiceTicketLoading(false));
+                dispatch(setOpenServiceTicket(response));
+                dispatch(refreshServiceTickets(true));
+                dispatch(closeModalAction());
+                setTimeout(() => {
+                  dispatch(setModalDataAction({
+                    'data': {},
+                    'type': ''
+                  }));
+                }, 200);
+              })
+                .catch((err: any) => {
+                  throw err;
+                });
+            }
+            setTimeout(() => {
+              dispatch(setModalDataAction({
+                'data': {},
+                'type': ''
+              }));
+            }, 200);
+
+            if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
+              dispatch(success(response.message))
+            }
+          })
+          .catch((err: any) => {
+            throw err;
+          })
+          .finally(() => { setSubmitting(false) });
+      } else {
+        setSubmitting(false);
+      }
+    }
   });
 
 
@@ -466,6 +477,8 @@ function BCJobModal({
     getFieldMeta,
     isSubmitting
   } = form;
+
+  console.log(isSubmitting)
 
 
   const closeModal = () => {
@@ -847,6 +860,8 @@ function BCJobModal({
                   <div className="search_form_wrapper">
                     <Autocomplete
                       value={jobSiteValue}
+
+                      defaultValue={ticket.jobSite !== '' && jobSites.length !== 0 && jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0]}
                       disabled={ticket.jobSite || FormikValues.jobLocationId === '' || detail}
                       className={detail ? "detail-only" : ""}
                       id="tags-standard"
@@ -1112,82 +1127,90 @@ function BCJobModal({
 
 
           </DialogContent>
-          <DialogActions classes={{
-            'root': classes.dialogActions
-          }}>
-            {
-              !detail ?
-                <>
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      'root': classes.fabRoot
-                    }}
-                    color={'secondary'}
-                    disabled={isSubmitting}
-                    onClick={() => closeModal()}
-                    variant={'extended'}>
-                    {'Close'}
-                  </Fab>
-                  {
-                    job._id &&
+
+          <Grid container justify="space-between" alignItems="center" >
+            <Grid item className={classes.noteContainer}>
+              {!detail && <Typography variant="body2" style={{ color: '#888f99' }}><i>{`( Note: Some fields might be disabled and can be only changed on ticket. )`}</i></Typography>}
+            </Grid>
+            <Grid item >
+              <DialogActions classes={{
+                'root': classes.dialogActions
+              }}>
+                {
+                  !detail ?
                     <>
                       <Fab
                         aria-label={'create-job'}
                         classes={{
-                          root: classes.deleteButton
+                          'root': classes.fabRoot
                         }}
-                        // classes={{
-                        //   'root': classes.fabRoot
-                        // }}
-                        style={{
-                        }}
-                        onClick={() => openCancelJobModal(job, true)}
+                        color={'secondary'}
+                        disabled={isSubmitting}
+                        onClick={() => closeModal()}
                         variant={'extended'}>
-                        {'Cancel Job'}
+                        {'Close'}
                       </Fab>
+                      {
+                        job._id &&
+                        <>
+                          <Fab
+                            aria-label={'create-job'}
+                            classes={{
+                              root: classes.deleteButton
+                            }}
+                            // classes={{
+                            //   'root': classes.fabRoot
+                            // }}
+                            style={{
+                            }}
+                            onClick={() => openCancelJobModal(job, true)}
+                            variant={'extended'}>
+                            {'Cancel Job'}
+                          </Fab>
+                          <Fab
+                            aria-label={'create-job'}
+                            classes={{
+                              root: classes.deleteButton
+                            }}
+                            // classes={{
+                            //   'root': classes.fabRoot
+                            // }}
+                            style={{
+                            }}
+                            onClick={() => openCancelJobModal(job, false)}
+                            variant={'extended'}>
+                            {'Cancel Job and Service Ticket'}
+                          </Fab>
+                        </>
+                      }
                       <Fab
                         aria-label={'create-job'}
                         classes={{
-                          root: classes.deleteButton
+                          'root': classes.fabRoot
                         }}
-                        // classes={{
-                        //   'root': classes.fabRoot
-                        // }}
-                        style={{
-                        }}
-                        onClick={() => openCancelJobModal(job, false)}
+                        color={'primary'}
+                        disabled={isSubmitting}
+                        type={'submit'}
                         variant={'extended'}>
-                        {'Cancel Both Job and Service Ticket'}
+                        {job._id
+                          ? 'Update'
+                          : 'Submit'}
                       </Fab>
                     </>
-                  }
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      'root': classes.fabRoot
-                    }}
-                    color={'primary'}
-                    disabled={isSubmitting}
-                    type={'submit'}
-                    variant={'extended'}>
-                    {job._id
-                      ? 'Update'
-                      : 'Submit'}
-                  </Fab>
-                </>
-                : <Fab
-                  aria-label={'create-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  onClick={() => closeModal()}
-                  color={'primary'}
-                  variant={'extended'}>
-                  Close
+                    : <Fab
+                      aria-label={'create-job'}
+                      classes={{
+                        'root': classes.fabRoot
+                      }}
+                      onClick={() => closeModal()}
+                      color={'primary'}
+                      variant={'extended'}>
+                      Close
                  </Fab>
-            }
-          </DialogActions>
+                }
+              </DialogActions>
+            </Grid>
+          </Grid>
         </form>
 
       </DataContainer >

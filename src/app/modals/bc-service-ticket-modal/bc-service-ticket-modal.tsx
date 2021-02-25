@@ -509,7 +509,7 @@ function BCServiceTicketModal({
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
-                            <strong>{"Job Location"}</strong>
+                            <strong>{"Job Location "}</strong>
                           </InputLabel>
                           <TextField
                             {...params}
@@ -554,7 +554,7 @@ function BCServiceTicketModal({
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
-                            <strong>{"Job Site"}</strong>
+                            <strong>{"Job Site "}</strong>
                           </InputLabel>
                           <TextField
                             {...params}
@@ -601,7 +601,7 @@ function BCServiceTicketModal({
                       renderInput={(params) => (
                         <>
                           <InputLabel className={classes.label}>
-                            <strong>{"Job Type"}</strong>
+                            <strong>{"Job Type "}</strong>
                           </InputLabel>
                           <TextField
                             {...params}

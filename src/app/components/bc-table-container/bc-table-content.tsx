@@ -23,6 +23,9 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
   const history = useHistory();
   const locationState = location.state;
 
+
+  const curTab = locationState && locationState?.curTab;
+
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const onUpdatePage = locationState && locationState.onUpdatePage ? locationState.onUpdatePage : null;
@@ -181,6 +184,8 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
     }
   }
 
+
+
   useEffect(() => {
     if (sortBy.length !== 0) {
       handleSortBy(sortBy)
@@ -201,9 +206,20 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
             state: { ...tempLocationState }
           })
         }
-      }, 5000);
+      }, 200);
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (!onUpdatePage) {
+
+      if (curTab !== undefined) {
+        setPageSize(10)
+        gotoPage(0)
+        handleSortBy([])
+      }
+    }
+  }, [curTab])
 
   // Render the UI for your table
   return (
