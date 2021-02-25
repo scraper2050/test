@@ -21,7 +21,7 @@ interface StatusTypes {
   status: number;
 }
 
-function JobPage({ classes }: any) {
+function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
   const { isLoading = true, jobs, refresh = true } = useSelector(
     ({ jobState }: any) => ({
