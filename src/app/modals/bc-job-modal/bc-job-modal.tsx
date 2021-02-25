@@ -1129,10 +1129,10 @@ function BCJobModal({
           </DialogContent>
 
           <Grid container justify="space-between" alignItems="center" >
-            <Grid item className={classes.noteContainer}>
-              {!detail && <Typography variant="body2" style={{ color: '#888f99' }}><i>{`( Note: Some fields might be disabled and can be only changed on ticket. )`}</i></Typography>}
+            <Grid item className={classes.noteContainer} sm={5}>
+              {!detail && <Typography variant="body2" style={{ color: '#888f99' }}><i>{`( Note: Some fields cannot be changed because they were selected in the service ticket. To change these, edit the service ticket.)`}</i></Typography>}
             </Grid>
-            <Grid item >
+            <Grid item sm={7}>
               <DialogActions classes={{
                 'root': classes.dialogActions
               }}>
