@@ -40,7 +40,9 @@ function ScheduleJobsPage({ classes }: any) {
   const handleTabChange = (newValue: number) => {
 
 
-    let tempLocationState = { ...locationState }
+    let tempLocationState = { ...locationState };
+
+    delete tempLocationState["onUpdatePage"];
 
 
 
