@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
 export default (theme: Theme): any => ({
   'dialogActions': {
-    'padding': '15px 24px !important'
+    'padding': '15px  24px 15px 0 !important'
   },
   'dialogContent': {
     'padding': '8px 24px !important'
