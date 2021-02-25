@@ -1127,82 +1127,90 @@ function BCJobModal({
 
 
           </DialogContent>
-          <DialogActions classes={{
-            'root': classes.dialogActions
-          }}>
-            {
-              !detail ?
-                <>
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      'root': classes.fabRoot
-                    }}
-                    color={'secondary'}
-                    disabled={isSubmitting}
-                    onClick={() => closeModal()}
-                    variant={'extended'}>
-                    {'Close'}
-                  </Fab>
-                  {
-                    job._id &&
+
+          <Grid container justify="space-between" alignItems="center" >
+            <Grid item className={classes.noteContainer}>
+              {!detail && <Typography variant="body2" style={{ color: '#888f99' }}><i>{`( Note: Some fields might be disabled and can be only changed on ticket. )`}</i></Typography>}
+            </Grid>
+            <Grid item >
+              <DialogActions classes={{
+                'root': classes.dialogActions
+              }}>
+                {
+                  !detail ?
                     <>
                       <Fab
                         aria-label={'create-job'}
                         classes={{
-                          root: classes.deleteButton
+                          'root': classes.fabRoot
                         }}
-                        // classes={{
-                        //   'root': classes.fabRoot
-                        // }}
-                        style={{
-                        }}
-                        onClick={() => openCancelJobModal(job, true)}
+                        color={'secondary'}
+                        disabled={isSubmitting}
+                        onClick={() => closeModal()}
                         variant={'extended'}>
-                        {'Cancel Job'}
+                        {'Close'}
                       </Fab>
+                      {
+                        job._id &&
+                        <>
+                          <Fab
+                            aria-label={'create-job'}
+                            classes={{
+                              root: classes.deleteButton
+                            }}
+                            // classes={{
+                            //   'root': classes.fabRoot
+                            // }}
+                            style={{
+                            }}
+                            onClick={() => openCancelJobModal(job, true)}
+                            variant={'extended'}>
+                            {'Cancel Job'}
+                          </Fab>
+                          <Fab
+                            aria-label={'create-job'}
+                            classes={{
+                              root: classes.deleteButton
+                            }}
+                            // classes={{
+                            //   'root': classes.fabRoot
+                            // }}
+                            style={{
+                            }}
+                            onClick={() => openCancelJobModal(job, false)}
+                            variant={'extended'}>
+                            {'Cancel Job and Service Ticket'}
+                          </Fab>
+                        </>
+                      }
                       <Fab
                         aria-label={'create-job'}
                         classes={{
-                          root: classes.deleteButton
+                          'root': classes.fabRoot
                         }}
-                        // classes={{
-                        //   'root': classes.fabRoot
-                        // }}
-                        style={{
-                        }}
-                        onClick={() => openCancelJobModal(job, false)}
+                        color={'primary'}
+                        disabled={isSubmitting}
+                        type={'submit'}
                         variant={'extended'}>
-                        {'Cancel Both Job and Service Ticket'}
+                        {job._id
+                          ? 'Update'
+                          : 'Submit'}
                       </Fab>
                     </>
-                  }
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      'root': classes.fabRoot
-                    }}
-                    color={'primary'}
-                    disabled={isSubmitting}
-                    type={'submit'}
-                    variant={'extended'}>
-                    {job._id
-                      ? 'Update'
-                      : 'Submit'}
-                  </Fab>
-                </>
-                : <Fab
-                  aria-label={'create-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  onClick={() => closeModal()}
-                  color={'primary'}
-                  variant={'extended'}>
-                  Close
+                    : <Fab
+                      aria-label={'create-job'}
+                      classes={{
+                        'root': classes.fabRoot
+                      }}
+                      onClick={() => closeModal()}
+                      color={'primary'}
+                      variant={'extended'}>
+                      Close
                  </Fab>
-            }
-          </DialogActions>
+                }
+              </DialogActions>
+            </Grid>
+          </Grid>
         </form>
 
       </DataContainer >
