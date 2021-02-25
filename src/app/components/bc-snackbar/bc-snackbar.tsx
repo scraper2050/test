@@ -3,8 +3,11 @@ import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar'
 import Alert from '@material-ui/lab/Alert'
 import { useSelector } from 'react-redux'
 import { SnackbarType } from '../../../reducers/snackbar.type'
+import { useSnackbar } from 'notistack';
 import { info, error } from '../../../actions/snackbar/snackbar.action';
 import { useDispatch } from 'react-redux';
+import './bc-snackbar.scss';
+import Button from '@material-ui/core/Button';
 
 
 function BCSnackbar({
@@ -15,6 +18,7 @@ function BCSnackbar({
   bottomLeft,
 }: any) {
   const dispatch = useDispatch();
+  const { closeSnackbar } = useSnackbar();
 
   const position: SnackbarOrigin =
     topRight ? { vertical: "top", horizontal: "right" }
@@ -37,9 +41,22 @@ function BCSnackbar({
   }, [snackbar])
   if (snackbar.message) {
     return (
-      <Snackbar anchorOrigin={position} open={openSnackbar} autoHideDuration={4000} onClose={handleCloseSnackbar}>
+      <Snackbar
+        anchorOrigin={position}
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}>
         <Alert elevation={6} variant="filled" onClose={handleCloseSnackbar} severity={snackbar.type}>
-          {snackbar.message}
+          <div className="alert-text-container">
+            <label>{snackbar.type}</label>
+            <span>{snackbar.message}</span>
+          </div>
+          <Button
+            onClick={handleCloseSnackbar}
+            color="inherit"
+            size="small">
+            CLOSE
+          </Button>
         </Alert>
       </Snackbar>
     )
