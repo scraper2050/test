@@ -149,7 +149,7 @@ function Main(): any {
           fallback={
             <>
               <BCHeader />
-              {/* <BCToolBar /> */}
+              <BCToolBar />
               <BCCircularLoader heightValue={"calc(100vh - 155px)"} />
             </>
           }

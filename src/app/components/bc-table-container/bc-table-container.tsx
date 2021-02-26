@@ -9,7 +9,7 @@ import { Grid, Paper, withStyles } from "@material-ui/core";
 import { Dispatch } from 'redux';
 import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
 import { connect, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useHistory } from 'react-router-dom';
 
 import "../../../scss/index.scss";
