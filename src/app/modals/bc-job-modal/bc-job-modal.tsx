@@ -1169,6 +1169,7 @@ function BCJobModal({
                             // classes={{
                             //   'root': classes.fabRoot
                             // }}
+                            disabled={isSubmitting}
                             style={{
                             }}
                             onClick={() => openCancelJobModal(job, true)}
@@ -1180,6 +1181,7 @@ function BCJobModal({
                             classes={{
                               root: classes.deleteButton
                             }}
+                            disabled={isSubmitting}
                             // classes={{
                             //   'root': classes.fabRoot
                             // }}

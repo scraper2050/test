@@ -804,6 +804,7 @@ function BCServiceTicketModal({
                         // classes={{
                         //   'root': classes.fabRoot
                         // }}
+                        disabled={isSubmitting || isLoadingDatas}
                         style={{
                         }}
                         onClick={() => openCancelTicketModal(ticket)}
