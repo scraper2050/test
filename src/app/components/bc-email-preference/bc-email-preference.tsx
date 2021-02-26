@@ -22,7 +22,7 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
   let hrs = initialValues.emailTime && initialValues.emailTime.split('T')[1];
   let parseHrs = hrs && parseInt(hrs.split(':')[0]);
   let tempHrs = null;
-  let parseMins = hrs && parseInt(hrs.split(':')[1]);
+  let parseMins = hrs && hrs.split(':')[1];
   let tempMins = null;
   let tempAmpm = null;
 
