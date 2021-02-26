@@ -17,7 +17,7 @@ import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { formatDateYMD } from 'helpers/format';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import Pagination from '@material-ui/lab/Pagination';
-import { info } from 'actions/snackbar/snackbar.action';
+import { info, warning } from 'actions/snackbar/snackbar.action';
 import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
@@ -196,8 +196,10 @@ function MapViewTicketsScreen({ classes }: any) {
       setHasPhoto(false)
     }
 
+    console.log(openTicketObj)
+
     if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
-      dispatch(info('Kindly check job location / customer location.'))
+      dispatch(warning('There\'s no address on this ticket.'))
     }
 
     dispatch(setClearOpenServiceTicketObject());

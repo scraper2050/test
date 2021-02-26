@@ -4,7 +4,7 @@ import RoomIcon from '@material-ui/icons/Room';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -93,6 +93,7 @@ function MakerPin({ ...props }) {
   };
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     if (props.lat === 0 && props.lng === 0) {
+
       return (
         <></>
       )
@@ -163,22 +164,41 @@ function MakerPin({ ...props }) {
 
 function BCMapWithMarkerWithList({ classes, ticketList, hasPhoto = false, lat, lng }: BCMapWithMarkerListProps) {
   const openTicketObj = useSelector((state: any) => state.serviceTicket.openTicketObj);
+  const [tickets, setTickets] = useState<any>(ticketList);
 
   let centerLat = DEFAULT_LAT, centerLng = DEFAULT_LNG;
   if (openTicketObj.jobSite) {
     centerLat = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[1] ? openTicketObj.jobSite.location.coordinates[1] : DEFAULT_LAT;
     centerLng = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[0] ? openTicketObj.jobSite.location.coordinates[0] : DEFAULT_LNG;
-    centerLat = centerLat - .002;
+    centerLat = centerLat - .004;
     centerLng = centerLng + (hasPhoto ? .006 : .002);
   } else if (openTicketObj.jobLocation) {
     centerLat = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[1] ? openTicketObj.jobLocation.location.coordinates[1] : DEFAULT_LAT;
     centerLng = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[0] ? openTicketObj.jobLocation.location.coordinates[0] : DEFAULT_LNG;
-    centerLat = centerLat - .002;
+    centerLat = centerLat - .004;
     centerLng = centerLng + (hasPhoto ? .006 : .002);
   } else if (openTicketObj.customer) {
-    centerLat = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[1] ? openTicketObj.customer.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[0] ? openTicketObj.customer.location.coordinates[0] : DEFAULT_LNG;
+    centerLat = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[1] ? openTicketObj.customer.location.coordinates[1] : 30;
+    centerLng = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[0] ? openTicketObj.customer.location.coordinates[0] : 30;
+    centerLat = centerLat - .004;
+    centerLng = centerLng + (hasPhoto ? .006 : .002);
   }
+
+  useEffect(() => {
+    if (tickets.length === 0) {
+      setTickets(ticketList)
+    }
+
+  }, [ticketList])
+
+  useEffect(() => {
+    if (openTicketObj.customer) {
+      console.log('pumasok?')
+      setTickets([openTicketObj])
+    }
+  }, [openTicketObj])
+
+
   return (
     <GoogleMapReact
       bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
@@ -186,9 +206,17 @@ function BCMapWithMarkerWithList({ classes, ticketList, hasPhoto = false, lat, l
       center={{ lat: centerLat, lng: centerLng }}
       options={createMapOptions}
       defaultZoom={15}>
+
+      {/* <MakerPin
+        classes={classes}
+        lat={centerLat + .002}
+        lng={centerLat - (hasPhoto ? .006 : .002)}
+        ticket={openTicketObj}
+        openTicketObj={openTicketObj}
+      /> */}
       {
-        ticketList.map((ticket: any, index: number) => {
-          let lat = 0, lng = 0;
+        tickets.map((ticket: any, index: number) => {
+          let lat = 30, lng = 30;
           if (ticket.jobSite) {
             lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : 0;
             lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : 0;
@@ -196,8 +224,8 @@ function BCMapWithMarkerWithList({ classes, ticketList, hasPhoto = false, lat, l
             lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : 0;
             lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : 0;
           } else if (ticket.customer) {
-            lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : 0;
-            lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : 0;
+            lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : 30;
+            lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : 30;
           }
 
 
@@ -207,6 +235,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, hasPhoto = false, lat, l
             lat={lat}
             lng={lng}
             ticket={ticket}
+            tickets={tickets}
             openTicketObj={openTicketObj}
           />
 
