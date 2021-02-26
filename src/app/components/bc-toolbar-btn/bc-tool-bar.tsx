@@ -40,20 +40,20 @@ export default function BCToolBar() {
 }
 
 const SubToolBarButton = styled(Button)`
-  margin-left: 25px;
-  border-radius: 2px;
-  width: 192px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  text-transform: initial;
-  background-color: ${CONSTANTS.SECONDARY_GREY};
-  box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY};
+  margin-left: 25px !important;
+  border-radius: 2px !important;
+  width: 192px !important;
+  height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  text-transform: initial !important;
+  background-color: ${CONSTANTS.SECONDARY_GREY} !important;
+  box-shadow: 0px 4px 4px ${CONSTANTS.SECONDARY_DARK_GREY} !important;
 
   a {
-    text-decoration: none;
-    color: ${CONSTANTS.PRIMARY_DARK};
+    text-decoration: none !important;
+    color: ${CONSTANTS.PRIMARY_DARK} !important;
   }
 `;

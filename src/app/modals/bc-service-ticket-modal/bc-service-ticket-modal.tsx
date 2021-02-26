@@ -235,7 +235,7 @@ function BCServiceTicketModal({
         }
       } else {
         delete tempData['customer'];
-        let formatedRequest = formatRequestObj(tempData);
+        let formatedRequest = { ...formatRequestObj(tempData) };
         callCreateTicketAPI(formatedRequest).then((response: any) => {
           dispatch(refreshServiceTickets(true));
           dispatch(closeModalAction());

@@ -99,6 +99,7 @@ export const callCreateJobAPI = (data: any) => {
         return resolve(res.data);
       })
       .catch((err) => {
+        console.log(err)
         return reject(err);
       });
   });
