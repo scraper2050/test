@@ -327,10 +327,10 @@ function JobReportsPage({ classes }: any) {
                 label: "Job Report List",
                 value: 0,
               },
-              {
-                label: "Recent Activities",
-                value: 1,
-              },
+              // {
+              //   label: "Recent Activities",
+              //   value: 1,
+              // },
             ]}
           />
           <SwipeableViews index={curTab}>

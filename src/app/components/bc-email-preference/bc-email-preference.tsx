@@ -22,6 +22,8 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
   let hrs = initialValues.emailTime && initialValues.emailTime.split('T')[1];
   let parseHrs = hrs && parseInt(hrs.split(':')[0]);
   let tempHrs = null;
+  let parseMins = hrs && parseInt(hrs.split(':')[1]);
+  let tempMins = null;
   let tempAmpm = null;
 
   if (parseHrs !== undefined) {
@@ -39,10 +41,11 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
       tempHrs = parseHrs - 12
       tempAmpm = 'PM';
     }
+    tempMins = parseMins;
   }
 
-  const [time, setTime] = useState<any>(tempHrs ? `${tempHrs}` : null);
-  const [ampm, setAmpm] = useState<any>(tempAmpm);
+  const [time, setTime] = useState<any>(tempHrs ? `${tempHrs}:${tempMins}` : null);
+  const [ampm, setAmpm] = useState<any>('PM');
 
   const handleCheckbox = (setFieldValue: any, value: any) => {
     setFieldValue('emailPreferences', value);
@@ -54,8 +57,7 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
     }
   }
 
-  const hours = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
-  const meridiem = ['AM', 'PM'];
+  const hours = ['4:00', '4:30', '5:00', '5:30', '6:00', '6:30', '7:00', '7:30', '8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30'];
 
   return (
     <Formik
@@ -68,14 +70,14 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
             if (time === '12') {
               newTime = '00:00:00'
             } else {
-              newTime = `${time}:00:00`
+              newTime = `${time}:00`
             }
           } else {
             if (time === '12') {
-              newTime = `${time}:00:00`
+              newTime = `${time}:00`
             } else {
-              let parseTime = parseInt(time);
-              newTime = `${parseTime + 12}:00:00`
+              let parseTime = parseInt(time.split(':')[0]);
+              newTime = `${parseTime + 12}:${time.split(':')[1]}:00`
             }
           }
           oldValues = {
@@ -138,49 +140,41 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
                             <strong style={{ fontSize: '18px' }}>Once Daily</strong>
                             <p style={{ marginTop: '.4rem' }}>Email updates once daily with a summary of assigned jobs.</p>
                           </Box>
-                          <Box className={classes.timePicker}>
-                            <InputLabel className={classes.label}>
+
+                        </Grid>
+
+                        <Box className={classes.timePicker}>
+
+                          <Grid container>
+                            <InputLabel className={classes.label} style={{ marginRight: '1rem', alignSelf: "center" }}>
                               <strong>{"Email Time"}</strong>
                             </InputLabel>
-                            <Grid container>
-                              <Autocomplete
-                                disabled={!daily}
-                                value={time}
-                                id="tags-standard"
-                                options={hours}
-                                onChange={(ev: any, newValue: any) => setTime(newValue)}
-                                renderInput={(params) => (
-                                  <>
-                                    <TextField
-                                      required
-                                      placeholder={"HH"}
-                                      {...params}
-                                      variant="standard"
-                                    />
-                                  </>
-                                )}
-                              />
-                              <Autocomplete
-                                style={{ marginLeft: '2rem' }}
-                                value={ampm}
-                                disabled={!daily}
-                                id="tags-standard"
-                                options={meridiem}
-                                onChange={(ev: any, newValue: any) => setAmpm(newValue)}
-                                renderInput={(params) => (
-                                  <>
-                                    <TextField
-                                      required
-                                      {...params}
-                                      placeholder={"AM"}
-                                      variant="standard"
-                                    />
-                                  </>
-                                )}
-                              />
-                            </Grid>
-                          </Box>
-                        </Grid>
+
+                            <Autocomplete
+                              className={classes.autoComplete}
+                              disabled={!daily}
+                              value={time}
+                              id="tags-standard"
+                              options={hours}
+                              disableClearable
+                              onChange={(ev: any, newValue: any) => { setDisabled(false); setTime(newValue) }}
+                              renderInput={(params) => (
+                                <>
+                                  <TextField
+                                    required
+                                    placeholder={"HH:MM"}
+                                    {...params}
+                                    variant="standard"
+                                  />
+                                </>
+                              )}
+                            />
+                            <InputLabel className={classes.label} style={{ marginLeft: '1rem', alignSelf: "flex-end" }}>
+                              {"PM"}
+                            </InputLabel>
+
+                          </Grid>
+                        </Box>
 
                         <Grid container spacing={5} alignItems="flex-start" className={classes.checkboxContainer}>
                           <Checkbox

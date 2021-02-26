@@ -45,7 +45,11 @@ export default (): any => ({
   },
   'timePicker': {
     'textAlign': 'left',
-    'marginLeft': '3rem'
+    'marginLeft': '10rem',
+    'marginTop': '-2rem'
+  },
+  'autoComplete': {
+    'width': '8rem'
   },
   'label': {
     'fontSize': '16px !important',

@@ -9,7 +9,7 @@ function OfficeAdmin({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const theme = useTheme();
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -27,11 +27,11 @@ function OfficeAdmin({ classes }: any) {
               label: "Office Admin List",
               value: 0,
             },
-            {
-              label: "Recent Activities",
+            // {
+            //   label: "Recent Activities",
 
-              value: 1,
-            },
+            //   value: 1,
+            // },
           ]}
         />
         <SwipeableViews

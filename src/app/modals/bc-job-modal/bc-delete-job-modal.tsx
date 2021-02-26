@@ -55,7 +55,7 @@ function BCDeleteJobModal({
   const handleCancel = async () => {
     const requestJobObj = {
       jobId: job._id,
-      status: 3,
+      status: 4,
       comment: 'Cancelled Job'
     }
 
