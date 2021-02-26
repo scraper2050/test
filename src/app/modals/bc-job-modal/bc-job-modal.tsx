@@ -406,7 +406,7 @@ function BCJobModal({
       }
 
       if (isValidate(tempData)) {
-        const requestObj = formatRequestObj(tempData);
+        const requestObj = { ...formatRequestObj(tempData) };
         if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
           requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
         if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
@@ -415,15 +415,23 @@ function BCJobModal({
           delete requestObj.companyId;
         delete requestObj.dueDate;
 
+        if (!job._id) {
+          delete requestObj["customer"]
+          delete requestObj["equipment"]
+          delete requestObj["technician"]
+          delete requestObj["ticket"]
+          delete requestObj["type"]
+        }
+
         request(requestObj)
 
           .then(async (response: any) => {
             if (response.message === "Job created successfully." || response.message === "Job edited successfully.") {
-              await dispatch(refreshServiceTickets(true));
-              await dispatch(refreshJobs(true));
               await callEditTicketAPI(formatedTicketRequest);
 
             }
+            await dispatch(refreshServiceTickets(true));
+            await dispatch(refreshJobs(true));
             dispatch(closeModalAction());
             dispatch(setOpenServiceTicketLoading(false));
             //Executed only when job is created from Map View.
@@ -1161,6 +1169,7 @@ function BCJobModal({
                             // classes={{
                             //   'root': classes.fabRoot
                             // }}
+                            disabled={isSubmitting}
                             style={{
                             }}
                             onClick={() => openCancelJobModal(job, true)}
@@ -1172,6 +1181,7 @@ function BCJobModal({
                             classes={{
                               root: classes.deleteButton
                             }}
+                            disabled={isSubmitting}
                             // classes={{
                             //   'root': classes.fabRoot
                             // }}

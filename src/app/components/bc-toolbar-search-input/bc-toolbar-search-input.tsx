@@ -26,26 +26,26 @@ function BCToolBarSearchInput({ style }: BCToolBarSearchInputProps): JSX.Element
 }
 
 const StyledPaper = styled(Paper)`
-  position: relative;
-  border-radius: 2px;
-  height: 38px;
+  position: relative !important;
+  border-radius: 2px !important;
+  height: 38px !important;
 `;
 
 const StyledInputBase = styled(InputBase)`
-  width: 100%;
-  height: 100%;
-  padding: 11px 40px 11px 11px;
-  font-size: 16px;
-  line-height: 17px;
+  width: 100% !important;
+  height: 100%  !important;
+  padding: 11px 40px 11px 11px !important;
+  font-size: 16px !important;
+  line-height: 17px !important;
 `;
 
 const StyledSearchButton = styled(IconButton)`
-  position: absolute;
-  right: 10px;
-  top: 7px;
-  padding: 0;
-  width: 24px;
-  height: 24px;
+  position: absolute !important;
+  right: 10px !important;
+  top: 7px !important;
+  padding: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
 `;
 
 export default BCToolBarSearchInput;

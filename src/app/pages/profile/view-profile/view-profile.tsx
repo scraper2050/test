@@ -94,6 +94,7 @@ function ViewProfilePage() {
           ...profile,
           firstName,
           lastName,
+          displayName: `${firstName} ${lastName}`,
           imageUrl: response.imageUrl,
         }
 
@@ -155,13 +156,13 @@ function ViewProfilePage() {
                       id: 'firstName',
                       label: 'First Name:',
                       placehold: 'Input First Name',
-                      value: userProfile.profile.firstName,
+                      value: userProfile.profile.firstName.charAt(0).toUpperCase() + userProfile.profile.firstName.slice(1),
                     },
                     right: {
                       id: 'lastName',
                       label: 'Last Name:',
                       placehold: 'Input Last Name',
-                      value: userProfile.profile.lastName,
+                      value: userProfile.profile.lastName.charAt(0).toUpperCase() + userProfile.profile.lastName.slice(1),
                     },
                   },
                   {

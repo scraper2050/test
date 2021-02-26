@@ -9,7 +9,7 @@ function Todos({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const theme = useTheme();
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -27,11 +27,11 @@ function Todos({ classes }: any) {
               label: "Todo's List",
               value: 0,
             },
-            {
-              label: "Recent Activities",
+            // {
+            //   label: "Recent Activities",
 
-              value: 1,
-            },
+            //   value: 1,
+            // },
           ]}
         />
         <SwipeableViews

@@ -17,7 +17,7 @@ import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { formatDateYMD } from 'helpers/format';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import Pagination from '@material-ui/lab/Pagination';
-import { info } from 'actions/snackbar/snackbar.action';
+import { info, warning } from 'actions/snackbar/snackbar.action';
 import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
@@ -36,6 +36,7 @@ function MapViewTicketsScreen({ classes }: any) {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [tempDate, setTempDate] = useState<any>(new Date());
   const [page, setPage] = useState(1);
+  const [hasPhoto, setHasPhoto] = useState(false);
 
   useEffect(() => {
     const rawData = {
@@ -189,8 +190,16 @@ function MapViewTicketsScreen({ classes }: any) {
       }
     }
 
-    if (openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
-      dispatch(info('Kindly check job location / customer location.'))
+    if (openTicketObj.image) {
+      setHasPhoto(true)
+    } else {
+      setHasPhoto(false)
+    }
+
+    console.log(openTicketObj)
+
+    if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
+      dispatch(warning('There\'s no address on this ticket.'))
     }
 
     dispatch(setClearOpenServiceTicketObject());
@@ -219,6 +228,7 @@ function MapViewTicketsScreen({ classes }: any) {
         {
           <MemoizedMap
             ticketList={openTickets}
+            hasPhoto={hasPhoto}
           />
         }
       </Grid>

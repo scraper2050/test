@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -17,7 +17,7 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize, isDefault, defaultPage, defaultSortby, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ className, stickyHeader, defaultPageSize, isDefault, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
@@ -66,6 +66,9 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
+
+    window.scrollTo(0, 20);
+
     if (setPage !== undefined) {
       setPage({
         pageSize,
@@ -239,7 +242,7 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
               {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column: any, hindex: number) =>
                 <TableCell
-                  className={`whitespace-no-wrap p-12 ${column.borderRight
+                  className={`whitespace-no-wrap ${column.borderRight
                     ? 'cell-border-right cursor-default'
                     : ''}`}
                   key={`table-cell-${hindex}`}
@@ -280,9 +283,10 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
                     <TableCell
                       key={`table-cell-${cindex}`}
                       {...cell.getCellProps()}
-                      className={clsx('p-12', cell.column.className, `${cell.column.borderRight
+                      className={clsx(cell.column.className, `${cell.column.borderRight
                         ? 'cell-border-right cursor-default'
-                        : ''}`)}
+                        : ''}`)
+                      }
                       style={{
                         'width': cell.column.width || 'auto'
                       }}
@@ -327,7 +331,7 @@ function BCTableContent({ className, stickyHeader, currentPage, defaultPageSize,
             : null
         }
       </MaUTable>
-    </TableContainer>
+    </TableContainer >
   );
 }
 
