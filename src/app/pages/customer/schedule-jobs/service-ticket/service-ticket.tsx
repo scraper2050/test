@@ -247,7 +247,7 @@ function ServiceTicket({ classes }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Tickets...'}
-        tableData={tickets}
+        tableData={tickets.reverse()}
       />
     </DataContainer>
   );
