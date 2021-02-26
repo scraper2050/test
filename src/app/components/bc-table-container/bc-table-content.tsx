@@ -67,7 +67,8 @@ function BCTableContent({ className, stickyHeader, defaultPageSize, isDefault, c
 
   const handleChangePage = (event: any, newPage: any): any => {
 
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 20);
+
     if (setPage !== undefined) {
       setPage({
         pageSize,

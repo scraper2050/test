@@ -20,7 +20,8 @@ interface BCMapWithMarkerListProps {
   ticketList: any,
   classes: any,
   lat?: any,
-  lng?: any
+  lng?: any,
+  hasPhoto?: any,
 }
 function createMapOptions() {
   return {
@@ -99,7 +100,11 @@ function MakerPin({ ...props }) {
       return (
         <>
           <RoomIcon className={props.classes.marker} />;
-          <div className={`${props.classes.markerPopup} marker_dropdown elevation-4`}>
+          <div className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
+            style={{
+              width: props.ticket.image ? '370px' : '200px'
+            }}
+          >
             <div className="due_date">
               <span> <i className="material-icons">access_time</i> {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
             </div>
@@ -114,24 +119,29 @@ function MakerPin({ ...props }) {
                   <span>{props.ticket.note ? props.ticket.note : ''}</span>
                 </div>
               </Grid>
-              <Grid item>
-                <Grid container
-                  direction="column"
-                  spacing={3}
-                  alignItems="center"
-                  justify="center">
-                  <div
-                    className={props.classes.uploadImageNoData}
-                    style={{
-                      'backgroundImage': `url(${props.ticket.image ? props.ticket.image : NoLogoImage})`,
-                      'border': `2px solid #00aaff`,
-                      'backgroundSize': 'cover',
-                      'backgroundPosition': 'center',
-                      'backgroundRepeat': 'no-repeat',
-                    }}
-                  />
+
+
+              {
+                props.ticket.image &&
+                <Grid item>
+                  <Grid container
+                    direction="column"
+                    spacing={3}
+                    alignItems="center"
+                    justify="center">
+                    <div
+                      className={props.classes.uploadImageNoData}
+                      style={{
+                        'backgroundImage': `url(${props.ticket.image})`,
+                        'border': `2px solid #00aaff`,
+                        'backgroundSize': 'cover',
+                        'backgroundPosition': 'center',
+                        'backgroundRepeat': 'no-repeat',
+                      }}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
+              }
             </Grid>
             <div className="button_wrapper">
               <button onClick={() => openCreateJobModal(props.ticket)}>Create Job</button>
@@ -151,15 +161,20 @@ function MakerPin({ ...props }) {
 
 }
 
-function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMarkerListProps) {
+function BCMapWithMarkerWithList({ classes, ticketList, hasPhoto = false, lat, lng }: BCMapWithMarkerListProps) {
   const openTicketObj = useSelector((state: any) => state.serviceTicket.openTicketObj);
+
   let centerLat = DEFAULT_LAT, centerLng = DEFAULT_LNG;
   if (openTicketObj.jobSite) {
     centerLat = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[1] ? openTicketObj.jobSite.location.coordinates[1] : DEFAULT_LAT;
     centerLng = openTicketObj.jobSite.location && openTicketObj.jobSite.location.coordinates && openTicketObj.jobSite.location.coordinates[0] ? openTicketObj.jobSite.location.coordinates[0] : DEFAULT_LNG;
+    centerLat = centerLat - .002;
+    centerLng = centerLng + (hasPhoto ? .006 : .002);
   } else if (openTicketObj.jobLocation) {
     centerLat = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[1] ? openTicketObj.jobLocation.location.coordinates[1] : DEFAULT_LAT;
     centerLng = openTicketObj.jobLocation.location && openTicketObj.jobLocation.location.coordinates && openTicketObj.jobLocation.location.coordinates[0] ? openTicketObj.jobLocation.location.coordinates[0] : DEFAULT_LNG;
+    centerLat = centerLat - .002;
+    centerLng = centerLng + (hasPhoto ? .006 : .002);
   } else if (openTicketObj.customer) {
     centerLat = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[1] ? openTicketObj.customer.location.coordinates[1] : DEFAULT_LAT;
     centerLng = openTicketObj.customer.location && openTicketObj.customer.location.coordinates.length > 1 && openTicketObj.customer.location.coordinates[0] ? openTicketObj.customer.location.coordinates[0] : DEFAULT_LNG;
@@ -184,6 +199,7 @@ function BCMapWithMarkerWithList({ classes, ticketList, lat, lng }: BCMapWithMar
             lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : 0;
             lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : 0;
           }
+
 
           return <MakerPin
             key={index}

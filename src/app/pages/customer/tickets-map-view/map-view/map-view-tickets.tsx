@@ -36,6 +36,7 @@ function MapViewTicketsScreen({ classes }: any) {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [tempDate, setTempDate] = useState<any>(new Date());
   const [page, setPage] = useState(1);
+  const [hasPhoto, setHasPhoto] = useState(false);
 
   useEffect(() => {
     const rawData = {
@@ -189,7 +190,13 @@ function MapViewTicketsScreen({ classes }: any) {
       }
     }
 
-    if (openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
+    if (openTicketObj.image) {
+      setHasPhoto(true)
+    } else {
+      setHasPhoto(false)
+    }
+
+    if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
       dispatch(info('Kindly check job location / customer location.'))
     }
 
@@ -219,6 +226,7 @@ function MapViewTicketsScreen({ classes }: any) {
         {
           <MemoizedMap
             ticketList={openTickets}
+            hasPhoto={hasPhoto}
           />
         }
       </Grid>
