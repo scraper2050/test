@@ -33,6 +33,7 @@ import "../../../scss/index.scss";
 import { useHistory } from "react-router-dom";
 import BCMapWithMarker from "../../components/bc-map-with-marker/bc-map-with-marker";
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { success, error } from 'actions/snackbar/snackbar.action';
 
 interface Props {
   classes: any;
@@ -238,7 +239,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
               <Grid item sm={12} lg={6}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={(values, { setSubmitting }) => {
+                  onSubmit={async (values, { setSubmitting }) => {
 
                     let updateCustomerrequest = { ...values, state: "" };
                     if (values.state.id !== -1) {
@@ -249,7 +250,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                     updateCustomerrequest.longitude = positionValue.lang;
 
                     if (isValidate(updateCustomerrequest)) {
-                      dispatch(
+                      await dispatch(
                         updateCustomerAction(updateCustomerrequest, () => {
                           closeModal();
                           dispatch(loadingSingleCustomers());
@@ -258,6 +259,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           );
                         })
                       );
+                      dispatch(success("Update Customer Info Successful!"));
                     }
                   }}
                 // validateOnChange

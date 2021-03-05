@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 import { createJobLocationAction } from 'actions/job-location/job-location.action';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { refreshJobLocation } from 'actions/job-location/job-location.action';
+import { success } from 'actions/snackbar/snackbar.action';
 
 import '../../../scss/index.scss';
 
@@ -171,7 +172,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                 lg={6}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={(values, { setSubmitting }) => {
+                  onSubmit={async (values, { setSubmitting }) => {
                     let state = values.address.state.id;
                     values.locationLat = positionValue.lat;
                     values.locationLong = positionValue.long;
@@ -190,10 +191,13 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                     if (isValidate(requestObj)) {
                       if (jobLocationInfo.update) {
                       } else {
-                        dispatch(createJobLocationAction(requestObj, () => {
+
+
+                        await dispatch(createJobLocationAction(requestObj, () => {
                           closeModal();
                         }))
 
+                        dispatch(success("Creating Job Location Successful!"));
                         dispatch(refreshJobLocation(true));
                       }
                     }
