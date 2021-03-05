@@ -3,6 +3,7 @@ import { Reducer } from 'redux';
 
 const initialJobLocations: JobLocationState = {
   loading: false,
+  refresh: true,
   data: []
 }
 
@@ -18,16 +19,22 @@ export const JobLocationReducer: Reducer<any> = (state = initialJobLocations, ac
         loading: false,
         data: [...action.payload],
       }
+    case JobLocationActionType.SET_REFRESH_JOB_LOCATION_STATUS:
+      return {
+        ...state,
+        refresh: action.payload
+      }
     case JobLocationActionType.SET:
       return {
         loading: false,
-        data:[...action.payload],
+        refresh: false,
+        data: [...action.payload],
       }
     case JobLocationActionType.ADD_NEW_JOB_LOCATION:
       return {
         ...state,
         loading: false,
-        data:[...state.data, action.payload],
+        data: [...state.data, action.payload],
       }
     case JobLocationActionType.ADD_NEW_JOB_LOCATION:
       return {
@@ -45,7 +52,7 @@ export const JobLocationReducer: Reducer<any> = (state = initialJobLocations, ac
       return {
         ...state,
         loading: false,
-        data:[]
+        data: []
       }
   }
   return state;

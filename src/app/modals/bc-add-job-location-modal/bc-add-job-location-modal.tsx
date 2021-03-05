@@ -23,13 +23,21 @@ import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import { createJobLocationAction } from 'actions/job-location/job-location.action';
-
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { refreshJobLocation } from 'actions/job-location/job-location.action';
 
 import '../../../scss/index.scss';
 
 interface Props {
   classes: any
 }
+
+
+interface AllStateTypes {
+  abbreviation: string,
+  name: string,
+}
+
 
 function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
   const dispatch = useDispatch();
@@ -59,6 +67,11 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
     },
     "customerId": jobLocationInfo && jobLocationInfo.customerId ? jobLocationInfo.customerId : '',
   }
+
+
+  const filterOptions = createFilterOptions({
+    stringify: (option: AllStateTypes) => option.abbreviation + option.name,
+  });
 
 
   const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
@@ -138,6 +151,12 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
     return validateFlag;
   }
 
+  const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
+    const index = allStates.findIndex((state: AllStateTypes) => state === value);
+    updateMap(values, undefined, undefined, undefined, index);
+    setFieldValue("address.state.id", index);
+  }
+
 
   return (
     <>
@@ -174,6 +193,8 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                         dispatch(createJobLocationAction(requestObj, () => {
                           closeModal();
                         }))
+
+                        dispatch(refreshJobLocation(true));
                       }
                     }
 
@@ -315,7 +336,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                           item
                           sm={6}>
                           <FormGroup>
-                            <InputLabel className={classes.label}>
+                            {/* <InputLabel className={classes.label}>
                               {'State'}
                             </InputLabel>
                             <Field
@@ -335,7 +356,36 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                                   {state.name}
                                 </MenuItem>)
                               }
-                            </Field>
+                            </Field> */}
+
+
+                            <div className="search_form_wrapper">
+
+                              <Autocomplete
+                                id="tags-standard"
+                                options={allStates}
+                                getOptionLabel={(option) => option.name}
+                                autoHighlight
+                                filterOptions={filterOptions}
+                                onChange={(ev: any, newValue: any) => handleSelectState(
+                                  newValue,
+                                  updateMap,
+                                  setFieldValue,
+                                  values
+                                )}
+                                renderInput={(params) => (
+                                  <>
+                                    <InputLabel className={`${classes.label} state-label`}>
+                                      {"State"}
+                                    </InputLabel>
+                                    <TextField
+                                      {...params}
+                                      variant="standard"
+                                    />
+                                  </>
+                                )}
+                              />
+                            </div>
                           </FormGroup>
                         </Grid>
                         <Grid
@@ -510,6 +560,13 @@ const DataContainer = styled.div`
     line-height: 30px;
     color: ${CONSTANTS.PRIMARY_DARK};
     margin-bottom: 6px;
+  }
+  .MuiAutocomplete-inputRoot {
+    height: 40px;
+  }
+  .state-label {
+    color: #383838;
+    font-size: 18px !important;
   }
   .MuiInputBase-input {
     color: #383838;
