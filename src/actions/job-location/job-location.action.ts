@@ -25,6 +25,13 @@ export const getJobLocationsAction = (data: any) => {
   };
 }
 
+export const refreshJobLocation = (refresh: boolean) => {
+  return {
+    payload: refresh,
+    type: JobLocationActionType.SET_REFRESH_JOB_LOCATION_STATUS
+  }
+}
+
 export const setJobLocations = (jobLocations: any) => {
   return {
     type: JobLocationActionType.SET,
