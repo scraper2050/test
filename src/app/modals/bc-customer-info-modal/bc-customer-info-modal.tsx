@@ -32,9 +32,16 @@ import {
 import "../../../scss/index.scss";
 import { useHistory } from "react-router-dom";
 import BCMapWithMarker from "../../components/bc-map-with-marker/bc-map-with-marker";
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { success, error } from 'actions/snackbar/snackbar.action';
 
 interface Props {
   classes: any;
+}
+
+interface AllStateTypes {
+  abbreviation: string,
+  name: string,
 }
 
 function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
@@ -129,6 +136,11 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         : "",
   };
 
+  const filterOptions = createFilterOptions({
+    stringify: (option: AllStateTypes) => option.abbreviation + option.name,
+  });
+
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -212,6 +224,12 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     return validateFlag;
   };
 
+  const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
+    const index = allStates.findIndex((state: AllStateTypes) => state === value);
+    updateMap(values, undefined, undefined, undefined, index);
+    setFieldValue("state.id", index);
+  }
+
   return (
     <>
       <MainContainer>
@@ -221,9 +239,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
               <Grid item sm={12} lg={6}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={(values, { setSubmitting }) => {
+                  onSubmit={async (values, { setSubmitting }) => {
 
-                    console.log(values)
                     let updateCustomerrequest = { ...values, state: "" };
                     if (values.state.id !== -1) {
                       updateCustomerrequest.state =
@@ -233,7 +250,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                     updateCustomerrequest.longitude = positionValue.lang;
 
                     if (isValidate(updateCustomerrequest)) {
-                      dispatch(
+                      await dispatch(
                         updateCustomerAction(updateCustomerrequest, () => {
                           closeModal();
                           dispatch(loadingSingleCustomers());
@@ -242,6 +259,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           );
                         })
                       );
+                      dispatch(success("Update Customer Info Successful!"));
                     }
                   }}
                 // validateOnChange
@@ -351,7 +369,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       <Grid container>
                         <Grid className={classes.paper} item sm={6}>
                           <FormGroup>
-                            <InputLabel className={classes.label}>
+                            {/* <InputLabel className={classes.label}>
                               {"State"}
                             </InputLabel>
                             <Field
@@ -376,7 +394,36 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                                   {state.name}
                                 </MenuItem>
                               ))}
-                            </Field>
+                            </Field> */}
+
+                            <div className="search_form_wrapper">
+
+                              <Autocomplete
+                                defaultValue={allStates[values.state.id]}
+                                id="tags-standard"
+                                options={allStates}
+                                getOptionLabel={(option) => option.name}
+                                autoHighlight
+                                filterOptions={filterOptions}
+                                onChange={(ev: any, newValue: any) => handleSelectState(
+                                  newValue,
+                                  updateMap,
+                                  setFieldValue,
+                                  values
+                                )}
+                                renderInput={(params) => (
+                                  <>
+                                    <InputLabel className={`${classes.label} state-label`}>
+                                      State
+                                    </InputLabel>
+                                    <TextField
+                                      {...params}
+                                      variant="standard"
+                                    />
+                                  </>
+                                )}
+                              />
+                            </div>
                           </FormGroup>
                         </Grid>
 
@@ -536,6 +583,13 @@ const DataContainer = styled.div`
     line-height: 30px;
     color: ${CONSTANTS.PRIMARY_DARK};
     margin-bottom: 6px;
+  }
+  .MuiAutocomplete-inputRoot {
+    height: 40px;
+  }
+  .state-label {
+    color: #383838;
+    font-size: 18px !important;
   }
   .MuiInputBase-input {
     color: #383838;

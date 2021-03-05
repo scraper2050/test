@@ -157,11 +157,14 @@ function ViewMorePage({ classes }: any) {
   ];
 
   useEffect(() => {
-    const obj: any = location.state;
-    const customerId = obj.customerId;
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(customerId));
-  }, []);
+    if (jobLocations.refresh) {
+
+      const obj: any = location.state;
+      const customerId = obj.customerId;
+      dispatch(loadingJobLocations());
+      dispatch(getJobLocationsAction(customerId));
+    }
+  }, [jobLocations.refresh]);
 
   useEffect(() => {
     if (customerObj.from === 1) {
