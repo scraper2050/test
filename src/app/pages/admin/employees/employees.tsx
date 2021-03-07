@@ -7,7 +7,7 @@ import BCTableContainer from '../../../components/bc-table-container/bc-table-co
 import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTechnician, createAdministrator, createManager, createOfficeAdmin, getEmployees, loadingEmployees } from 'actions/employee/employee.action';
+import { getEmployees, loadingEmployees, loadingSingleEmployee, getEmployeeDetailAction } from 'actions/employee/employee.action';
 import { UserProfile } from 'actions/employee/employee.types';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -19,12 +19,6 @@ interface Props {
 function AdminEmployeesPage({ classes, children }: Props) {
   const dispatch = useDispatch();
   const employees = useSelector((state: any) => state.employees);
-  const [profile, setProfile] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  });
 
 
   const location = useLocation<any>();
@@ -85,70 +79,33 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(getEmployees());
   }, []);
 
-  const add = (firstName: string, lastName: string, email: string, phoneNumber: string, role: string) => {
-    const data: UserProfile = {
-      firstName,
-      lastName,
-      email,
-      phone: phoneNumber
-    };
-
-    switch (role) {
-      case RoleEnums.Technician:
-        dispatch(createTechnician(data));
-        break;
-      case RoleEnums.Administrator:
-        dispatch(createAdministrator(data));
-        break;
-      case RoleEnums.Manager:
-        dispatch(createManager(data));
-        break;
-      case RoleEnums.OfficeAdmin:
-        dispatch(createOfficeAdmin(data));
-        break;
-      default:
-    }
-  }
-
-  const cancel = () => {
-  }
-
-  const update = () => {
-
-  }
-
   const renderViewMore = (row: any) => {
     let baseObj = row['original'];
 
+
     let employeeId = baseObj['_id'];
-    console.log(employeeId);
+    let displayName = baseObj['profile']['displayName'].split(' ').join('-');
 
-    history.replace({
-      ...history.location,
+    let employeeObj = { employeeId, displayName };
+
+
+    localStorage.setItem("nestedRouteKey", `${displayName}`);
+
+    dispatch(loadingSingleEmployee);
+    dispatch(getEmployeeDetailAction(employeeId));
+
+
+    history.push({
+      pathname: `/main/admin/employees/${displayName}`,
       state: {
-        prevPage: currentPage
+        ...employeeObj,
+        currentPage
       }
-    })
-
-    setProfile({
-      email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
-      firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
-      lastName: baseObj['profile'] && baseObj['profile']['lastName'] ? baseObj['profile']['lastName'] : '',
-      phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
     });
-
   }
 
   return (
     <>
-      {/* <BCSubHeader title={'Admin'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
-        />
-      </BCSubHeader> */}
-
       <MainContainer>
         <PageContainer>
           <div className={classes.addButtonArea}>
@@ -159,6 +116,8 @@ function AdminEmployeesPage({ classes, children }: Props) {
               }}
               color={'primary'}
               onClick={() => {
+
+                localStorage.setItem("nestedRouteKey", `add-new-employee`);
                 history.push({
                   pathname: `/main/admin/employees/add-new-employee`,
                   state: {

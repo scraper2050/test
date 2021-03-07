@@ -4,7 +4,7 @@ import { UsersState, UsersActionType, types } from './../actions/employee/employ
 const initialEmployees: UsersState = {
   loading: false,
   data: [],
-  added: false
+  added: false,
 }
 
 export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action) => {
@@ -30,6 +30,17 @@ export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action)
     case UsersActionType.ADDED:
       return {
         added: true
+      }
+    case UsersActionType.GET_SINGLE_EMPLOYEE:
+      return {
+        ...state,
+        loading: true,
+      }
+    case UsersActionType.SET_SINGLE_EMPLOYEE:
+      return {
+        ...state,
+        loading: false,
+        vendorObj: action.payload
       }
     default:
   }

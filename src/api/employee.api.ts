@@ -11,8 +11,8 @@ export const getEmployeesForJob = async () => {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(
         err.data.errors ||
-          err.data.message ||
-          `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {
       throw new Error(`Something went wrong`);
@@ -36,11 +36,37 @@ export const getEmployees = async () => {
         `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {*/
-      throw new Error(`Something went wrong`);
+    throw new Error(`Something went wrong`);
     //}
   }
   return responseData.employees;
 };
+
+export const getEmployeeDetail = async (data: any) => {
+  const body = {
+    contractorId: data
+  };
+  let responseData;
+
+  try {
+    const response: any = await request("/getEmployeeDetail", "GET", body);
+    responseData = response.data;
+  } catch (err) {
+    responseData = err.data;
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(
+        err.data.errors ||
+        err.data.message ||
+        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
+      );
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+  return responseData;
+
+}
+
 
 export const addTechnician = async (data: UserProfile) => {
   let responseData;
@@ -58,7 +84,7 @@ export const addTechnician = async (data: UserProfile) => {
         `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {*/
-      throw new Error(`Something went wrong`);
+    throw new Error(`Something went wrong`);
     //}
   }
   return responseData;
@@ -79,7 +105,7 @@ export const addManager = async (data: UserProfile) => {
         `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {*/
-      throw new Error(`Something went wrong`);
+    throw new Error(`Something went wrong`);
     //}
   }
   return responseData;
@@ -100,7 +126,7 @@ export const addOfficeAdmin = async (data: UserProfile) => {
         `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
       );
     } else {*/
-      throw new Error(`Something went wrong`);
+    throw new Error(`Something went wrong`);
     //}
   }
   return responseData;
