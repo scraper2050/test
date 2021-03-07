@@ -17,7 +17,7 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ className, stickyHeader, defaultPageSize, isDefault, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ noHeader, className, stickyHeader, defaultPageSize, isDefault, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
@@ -235,7 +235,7 @@ function BCTableContent({ className, stickyHeader, defaultPageSize, isDefault, c
         stickyHeader={stickyHeader}
         size={'small'}
         {...getTableProps()}>
-        <TableHead>
+        <TableHead style={{ display: noHeader ? 'none' : 'table-header-group' }}>
           {headerGroups.map((headerGroup: any, gindex: number) =>
             <TableRow
               key={`table-${gindex}`}

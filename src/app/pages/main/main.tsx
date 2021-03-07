@@ -6,6 +6,7 @@ import BCSidebar from "../../components/bc-sidebar/bc-sidebar";
 import BCToolBar from "../../components/bc-toolbar-btn/bc-tool-bar";
 import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
 import { Grid } from "@material-ui/core";
+import "scss/elevation.scss";
 import React, { Suspense, useState } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 const DashboardPage = React.lazy(() => import("../dashboard/dashboard"));
