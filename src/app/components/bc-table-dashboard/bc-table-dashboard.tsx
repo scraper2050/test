@@ -63,7 +63,7 @@ function BCTableDashboard(props: Props) {
           pagination={false}
           pageSize={tableData.length}
           isDefault={true}
-          initialMsg="No history yet"
+          initialMsg="No Vendors yet"
           stickyHeader={true}
         />
       </Grid>

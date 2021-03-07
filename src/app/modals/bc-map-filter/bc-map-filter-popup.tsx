@@ -46,6 +46,8 @@ function BCMapFilterModal({
   }
 
   const onSubmit = (values: any, { setSubmitting }: any) => {
+
+    console.log(values)
     setSubmitting(true);
     resetDate();
     const rawData = {
@@ -55,7 +57,8 @@ function BCMapFilterModal({
       dueDate: '',
       customerNames: values.customer,
       ticketId: values.searchQuery,
-      companyId: ''
+      companyId: '',
+      contactName: values.contactName,
     }
     dispatch(setOpenTicketFilterState(rawData));
     const requestObj = formatRequestObj(rawData);
@@ -83,7 +86,8 @@ function BCMapFilterModal({
     initialValues: {
       searchQuery: '',
       customer: [],
-      jobType: ''
+      jobType: '',
+      contactName: '',
     },
     onSubmit
   });
@@ -154,6 +158,17 @@ function BCMapFilterModal({
                   <i className="material-icons">search</i>
                 </div>
               </FormGroup>
+              <FormGroup className={'required'}>
+                <TextField
+                  name={'contactName'}
+                  label={'Contact'}
+                  placeholder={'Contact Name'}
+                  // variant={'outlined'}
+                  onChange={form.handleChange}
+                  type={'search'}
+                />
+              </FormGroup>
+
               <BCSelectOutlined
                 handleChange={formikChange}
                 error={{

@@ -42,7 +42,8 @@ function MapViewTicketsScreen({ classes }: any) {
       jobTypeTitle: '',
       dueDate: '',
       customerNames: '',
-      ticketId: ''
+      ticketId: '',
+      contactName: '',
     }
     const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
     getOpenTickets(requestObj);
@@ -64,7 +65,8 @@ function MapViewTicketsScreen({ classes }: any) {
       jobTypeTitle: '',
       dueDate: '',
       customerNames: '',
-      ticketId: ''
+      ticketId: '',
+      contactName: '',
     }
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
@@ -78,7 +80,8 @@ function MapViewTicketsScreen({ classes }: any) {
       'jobTypeTitle': '',
       'dueDate': '',
       'customerNames': '',
-      'ticketId': ''
+      'ticketId': '',
+      'contactName': '',
     }));
     const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
@@ -90,7 +93,8 @@ function MapViewTicketsScreen({ classes }: any) {
       jobTypeTitle: '',
       dueDate: '',
       customerNames: '',
-      ticketId: ''
+      ticketId: '',
+      contactName: '',
     }
     dispatch(setClearOpenServiceTicketObject());
     const dateObj = new Date(tempDate);
@@ -139,7 +143,8 @@ function MapViewTicketsScreen({ classes }: any) {
       jobTypeTitle: '',
       dueDate: '',
       customerNames: '',
-      ticketId: ''
+      ticketId: '',
+      contactName: '',
     }
     const formattedDate = formatDateYMD(dateObj);
     setDateValue(dateObj);
@@ -158,7 +163,8 @@ function MapViewTicketsScreen({ classes }: any) {
       'jobTypeTitle': '',
       'dueDate': '',
       'customerNames': '',
-      'ticketId': ''
+      'ticketId': '',
+      'contactName': ''
     }));
     getOpenTickets({ pageNo: 1, pageSize: 6 })
   }
