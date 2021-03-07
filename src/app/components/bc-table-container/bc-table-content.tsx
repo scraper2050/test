@@ -52,7 +52,7 @@ function BCTableContent({ noHeader, className, stickyHeader, defaultPageSize, is
       initialState: {
         sortBy: isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
         pageIndex: isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
-        pageSize: defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
+        pageSize: isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
     },
