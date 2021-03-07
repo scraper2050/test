@@ -19,7 +19,6 @@ interface Props {
 function AdminEmployeesPage({ classes, children }: Props) {
   const dispatch = useDispatch();
   const employees = useSelector((state: any) => state.employees);
-  const [stage, setStage] = useState(0);
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
@@ -41,18 +40,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
     sortBy: prevPage ? prevPage.sortBy : [],
   });
 
-
   const columns: any = [
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {row.index + 1}
-        </div>;
-      },
-      'Header': 'No#',
-      'sortable': true,
-      'width': 60
-    },
     {
       'Header': 'Name',
       'accessor': 'profile.displayName',
@@ -120,11 +108,9 @@ function AdminEmployeesPage({ classes, children }: Props) {
         break;
       default:
     }
-    setStage(0);
   }
 
   const cancel = () => {
-    setStage(0);
   }
 
   const update = () => {
@@ -132,7 +118,10 @@ function AdminEmployeesPage({ classes, children }: Props) {
   }
 
   const renderViewMore = (row: any) => {
-    const baseObj = row['original'];
+    let baseObj = row['original'];
+
+    let employeeId = baseObj['_id'];
+    console.log(employeeId);
 
     history.replace({
       ...history.location,
@@ -147,7 +136,6 @@ function AdminEmployeesPage({ classes, children }: Props) {
       lastName: baseObj['profile'] && baseObj['profile']['lastName'] ? baseObj['profile']['lastName'] : '',
       phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
     });
-    setStage(2);
 
   }
 
@@ -163,14 +151,21 @@ function AdminEmployeesPage({ classes, children }: Props) {
 
       <MainContainer>
         <PageContainer>
-          {stage === 0 && <div className={classes.addButtonArea}>
+          <div className={classes.addButtonArea}>
             <Fab
               aria-label={'new-ticket'}
               classes={{
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              onClick={() => { setStage(1) }}
+              onClick={() => {
+                history.push({
+                  pathname: `/main/admin/employees/add-new-employee`,
+                  state: {
+                    currentPage
+                  }
+                });
+              }}
               style={{
                 float: 'right'
               }}
@@ -178,25 +173,22 @@ function AdminEmployeesPage({ classes, children }: Props) {
               {'Add New'}
             </Fab>
           </div>
-          }
-          {stage === 0 &&
-            <BCTableContainer
-              currentPage={currentPage}
-              setPage={setCurrentPage}
-              columns={columns}
-              isLoading={employees.loading}
-              search
-              tableData={employees.data}
-            />
-          }
+          <BCTableContainer
+            currentPage={currentPage}
+            setPage={setCurrentPage}
+            columns={columns}
+            isLoading={employees.loading}
+            search
+            tableData={employees.data}
+          />
 
-          {stage === 1 &&
+          {/* {stage === 1 &&
             <AdminAddNewEmployeePage submit={add} cancel={cancel} />
           }
 
           {stage === 2 &&
             <EmployeeProfile profile={profile} back={cancel} />
-          }
+          } */}
         </PageContainer>
       </MainContainer>
     </>

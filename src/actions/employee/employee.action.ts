@@ -8,45 +8,45 @@ export const newCustomerAction = createApiAction(types.EMPLOYEE_NEW);
 export const deleteCustomerActions = createApiAction(types.EMPLOYEE_REMOVE);
 
 export const loadingEmployees = () => {
-    return {
-        type: UsersActionType.GET
-    }
+  return {
+    type: UsersActionType.GET
+  }
 }
 
 export const getEmployees = () => {
-    return async (dispatch: any) => {
-        const employees: any = await fetchEmployees();
-        dispatch(setEmployees(employees));
-    };
+  return async (dispatch: any) => {
+    const employees: any = await fetchEmployees();
+    dispatch(setEmployees(employees));
+  };
 }
 
 export const setEmployees = (employees: any) => {
-    return {
-        type: types.SET_EMPLOYEES,
-        payload: employees
-    }
+  return {
+    type: types.SET_EMPLOYEES,
+    payload: employees
+  }
 }
 
 export const createTechnician = (data: UserProfile) => {
-    return async (dispatch: any) => {
-        const response: any = await addTechnician(data);
-    };
+  return async (dispatch: any) => {
+    return await addTechnician(data);
+  };
 }
 
 export const createAdministrator = (data: UserProfile) => {
-    /*return async (dispatch: any) => {
-        const response: any = await addAdministrator();
-    };*/
+  /*return async (dispatch: any) => {
+      const response: any = await addAdministrator();
+  };*/
 }
 
 export const createManager = (data: UserProfile) => {
-    return async (dispatch: any) => {
-        const response: any = await addManager(data);
-    };
+  return async (dispatch: any) => {
+    return await addManager(data);
+  };
 }
 
 export const createOfficeAdmin = (data: UserProfile) => {
-    return async (dispatch: any) => {
-        const response: any = await addOfficeAdmin(data);
-    };
+  return async (dispatch: any) => {
+    return await addOfficeAdmin(data);
+  };
 }
