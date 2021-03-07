@@ -53,5 +53,16 @@ export default (theme: Theme): any => ({
   statusText: {
     flexGrow: 1,
     textAlign: 'center'
+  },
+  textTable: {
+    fontFamily: 'Roboto',
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    lineHeight: '14px',
+    letterSpacing: '0px',
+    textAlign: 'left',
+    color: '#9EA5B8',
+    textTransform: 'capitalize',
   }
 });

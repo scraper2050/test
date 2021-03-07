@@ -64,7 +64,12 @@ function DashboardPage({ classes }: any): JSX.Element {
       'Header': 'Company Name',
       'accessor': 'contractor.info.companyName',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'Cell'({ row }: any) {
+        return <div className={classes.textTable}>
+          {row.original?.contractor?.info?.companyName}
+        </div>
+      }
     },
     {
       'Cell'({ row }: RowStatusTypes) {
@@ -127,7 +132,7 @@ function DashboardPage({ classes }: any): JSX.Element {
 
             <Grid item xs={12}>
               <Grid container spacing={10} justify="center" >
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={9}>
                   <BCTableDashboard
                     text={"Vendors"}
                     textButton={"Invite Vendor"}
@@ -138,7 +143,7 @@ function DashboardPage({ classes }: any): JSX.Element {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={3} />
+                {/* <Grid item xs={12} sm={3} /> */}
               </Grid>
             </Grid>
           </Grid>
