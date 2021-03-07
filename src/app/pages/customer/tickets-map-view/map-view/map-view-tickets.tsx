@@ -22,7 +22,6 @@ import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import "scss/elevation.scss"
 
 function MapViewTicketsScreen({ classes }: any) {
 

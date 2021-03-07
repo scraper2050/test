@@ -81,6 +81,8 @@ function BCJobModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
+  console.log(job)
+
 
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
@@ -228,14 +230,13 @@ function BCJobModal({
 
   useEffect(() => {
     if (job._id) {
-      if (employeesForJob.length !== 0 && !job.employeeType) {
+      if (employeesForJob.length !== 0 && !job.employeeType && job.technician) {
         setEmployeeValue(employeesForJob.filter((employee: any) => employee._id === job.technician._id)[0])
       }
     }
   }, [employeesForJob])
 
 
-  console.log(jobTypeValue)
   useEffect(() => {
     if (job._id) {
       if (jobTypes.length !== 0) {
@@ -347,7 +348,7 @@ function BCJobModal({
       scheduleDate: job.scheduleDate,
       scheduledEndTime: job.scheduledEndTime,
       scheduledStartTime: job.scheduledStartTime,
-      technicianId: job.technician._id,
+      technicianId: job.technician ? job.technician._id : '',
       contractorId: job.contractor ? job.contractor._id : '',
       ticketId: job.ticket._id,
       jobLocationId: job.jobLocation ? job.jobLocation._id : job.ticket.jobLocation ? job.ticket.jobLocation : '',
@@ -485,9 +486,6 @@ function BCJobModal({
     getFieldMeta,
     isSubmitting
   } = form;
-
-  console.log(isSubmitting)
-
 
   const closeModal = () => {
     dispatch(closeModalAction());
