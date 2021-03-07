@@ -38,6 +38,7 @@ function BCTableContainer({
   isDefault = false,
   pageSize = 10,
   stickyHeader = false,
+  noHeader = false,
 }: any) {
 
   const dispatch = useDispatch();
@@ -132,24 +133,25 @@ function BCTableContainer({
             </Typography>
           </Paper>
         ) : (
-              <BCTableContent
-                stickyHeader={stickyHeader}
-                className={className ? className : ''}
-                currentPage={currentPage}
-                columns={columns}
-                data={filteredData}
-                invoiceTable
-                onRowClick={(ev: any, row: any) => {
-                  onRowClick && onRowClick(ev, row);
-                }}
-                pagination={pagination}
-                isPageSaveEnabled={isPageSaveEnabled || false}
-                setPage={setPage}
-                isLoading={isLoading}
-                defaultPageSize={pageSize}
-                isDefault={isDefault}
-              />
-            )}
+          <BCTableContent
+            noHeader={noHeader}
+            stickyHeader={stickyHeader}
+            className={className ? className : ''}
+            currentPage={currentPage}
+            columns={columns}
+            data={filteredData}
+            invoiceTable
+            onRowClick={(ev: any, row: any) => {
+              onRowClick && onRowClick(ev, row);
+            }}
+            pagination={pagination}
+            isPageSaveEnabled={isPageSaveEnabled || false}
+            setPage={setPage}
+            isLoading={isLoading}
+            defaultPageSize={pageSize}
+            isDefault={isDefault}
+          />
+        )}
       </Grid>
     </Grid>
   );
