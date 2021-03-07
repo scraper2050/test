@@ -136,6 +136,13 @@ const ViewProfilePage = React.lazy(
 const EmailPreferencePage = React.lazy(
   () => import("../profile/email-preference/email-preference")
 )
+const AdminAddNewEmployeePage = React.lazy(
+  () => import('../admin/employees/add-new-employee')
+)
+
+const EmployeeProfilePage = React.lazy(
+  () => import('../admin/employees/view-more/view-more')
+)
 
 function Main(): any {
   const [contentGrid, setContentGrid] = useState<any>({
@@ -424,6 +431,18 @@ function Main(): any {
                     Component={AdminEmployeesPage}
                     exact
                     path={"/main/admin/employees"}
+                    title={"Admin"}
+                  />
+                  <AuthRoute
+                    Component={AdminAddNewEmployeePage}
+                    exact
+                    path={"/main/admin/employees/add-new-employee"}
+                    title={"Admin"}
+                  />
+                  <AuthRoute
+                    Component={EmployeeProfilePage}
+                    exact
+                    path={"/main/admin/employees/:contractorName"}
                     title={"Admin"}
                   />
                   <AuthRoute
