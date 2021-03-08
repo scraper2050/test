@@ -44,12 +44,12 @@ export const getEmployees = async () => {
 
 export const getEmployeeDetail = async (data: any) => {
   const body = {
-    contractorId: data
-  };
+    employeeId: data
+  }
   let responseData;
 
   try {
-    const response: any = await request("/getEmployeeDetail", "GET", body);
+    const response: any = await request("/getEmployeeDetail", "OPTIONS", body, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;

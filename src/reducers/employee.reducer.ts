@@ -40,7 +40,7 @@ export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action)
       return {
         ...state,
         loading: false,
-        vendorObj: action.payload
+        employeeDetails: action.payload.employee
       }
     default:
   }
