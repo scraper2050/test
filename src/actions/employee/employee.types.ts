@@ -43,16 +43,31 @@ export interface User {
   company?: string
 }
 
+export interface UserDetails {
+  "firstName": string,
+  "lastName": string,
+  "email": string,
+  "phone": string,
+  "emailPreferences": {
+    "preferences": string,
+    "time": string,
+    "timezone": string
+  }
+}
+
 export interface UsersState {
   readonly loading: boolean
   readonly data?: User[]
   readonly error?: string
   readonly added?: boolean
+  readonly employeeDetails?: UserDetails
 }
 
 export enum UsersActionType {
   GET = 'getUsers',
   SUCCESS = 'getUsersSuccess',
   FAILED = 'getUsersFailed',
-  ADDED = 'addedUser'
+  ADDED = 'addedUser',
+  GET_SINGLE_EMPLOYEE = 'getSingleEmployee',
+  SET_SINGLE_EMPLOYEE = 'setSingleEmployee',
 }

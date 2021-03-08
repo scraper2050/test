@@ -6,6 +6,7 @@ import BCSidebar from "../../components/bc-sidebar/bc-sidebar";
 import BCToolBar from "../../components/bc-toolbar-btn/bc-tool-bar";
 import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
 import { Grid } from "@material-ui/core";
+import "scss/elevation.scss";
 import React, { Suspense, useState } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 const DashboardPage = React.lazy(() => import("../dashboard/dashboard"));
@@ -131,6 +132,16 @@ const CreateEstimatePage = React.lazy(
 );
 const ViewProfilePage = React.lazy(
   () => import("../profile/view-profile/view-profile")
+)
+const EmailPreferencePage = React.lazy(
+  () => import("../profile/email-preference/email-preference")
+)
+const AdminAddNewEmployeePage = React.lazy(
+  () => import('../admin/employees/add-new-employee')
+)
+
+const EmployeeProfilePage = React.lazy(
+  () => import('../admin/employees/view-more/view-more')
 )
 
 function Main(): any {
@@ -423,6 +434,18 @@ function Main(): any {
                     title={"Admin"}
                   />
                   <AuthRoute
+                    Component={AdminAddNewEmployeePage}
+                    exact
+                    path={"/main/admin/employees/add-new-employee"}
+                    title={"Admin"}
+                  />
+                  <AuthRoute
+                    Component={EmployeeProfilePage}
+                    exact
+                    path={"/main/admin/employees/:contractorName"}
+                    title={"Admin"}
+                  />
+                  <AuthRoute
                     Component={EquipmentTypePage}
                     exact
                     path={"/main/admin/equipment-type"}
@@ -508,6 +531,12 @@ function Main(): any {
                     Component={ViewProfilePage}
                     exact
                     path={"/main/user/view-profile"}
+                    title={"User"}
+                  />
+                  <AuthRoute
+                    Component={EmailPreferencePage}
+                    exact
+                    path={"/main/user/email-preference"}
                     title={"User"}
                   />
                 </Switch>

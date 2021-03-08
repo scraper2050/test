@@ -29,9 +29,15 @@ import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
 interface Props {
   classes: any;
+}
+
+interface AllStateTypes {
+  abbreviation: string,
+  name: string,
 }
 
 function NewCustomerPage({ classes }: Props) {
@@ -57,6 +63,10 @@ function NewCustomerPage({ classes }: Props) {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const filterOptions = createFilterOptions({
+    stringify: (option: AllStateTypes) => option.abbreviation + option.name,
+  });
+
   const updateMap = (
     values: any,
     street?: any,
@@ -64,6 +74,7 @@ function NewCustomerPage({ classes }: Props) {
     zipCode?: number,
     state?: number
   ): void => {
+
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     let stateVal: any = "";
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
@@ -100,6 +111,7 @@ function NewCustomerPage({ classes }: Props) {
     );
   };
 
+
   const updateMapFromLatLng = (name: string, value: any): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     if (name === "lat") {
@@ -130,6 +142,12 @@ function NewCustomerPage({ classes }: Props) {
       lat: 0,
     });
   };
+
+  const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
+    const index = allStates.findIndex((state: AllStateTypes) => state === value);
+    updateMap(values, undefined, undefined, undefined, index);
+    setFieldValue("state.id", index);
+  }
 
   return (
     <>
@@ -272,7 +290,7 @@ function NewCustomerPage({ classes }: Props) {
                       <Grid container>
                         <Grid className={classes.paper} item sm={6}>
                           <FormGroup>
-                            <InputLabel className={classes.label}>
+                            {/* <InputLabel className={classes.label}>
                               {"State"}
                             </InputLabel>
                             <Field
@@ -292,12 +310,43 @@ function NewCustomerPage({ classes }: Props) {
                               type={"select"}
                               variant={"outlined"}
                             >
-                              {allStates.map((state, id) => (
-                                <MenuItem key={id} value={id}>
-                                  {state.name}
-                                </MenuItem>
-                              ))}
-                            </Field>
+                              {allStates.map((state, id) => {
+                                return (
+                                  <MenuItem key={id} value={id}>
+                                    {state.name}
+                                  </MenuItem>
+                                )
+                              }
+                              )}
+                            </Field> */}
+
+                            <div className="search_form_wrapper">
+
+                              <Autocomplete
+                                id="tags-standard"
+                                options={allStates}
+                                getOptionLabel={(option) => option.name}
+                                autoHighlight
+                                filterOptions={filterOptions}
+                                onChange={(ev: any, newValue: any) => handleSelectState(
+                                  newValue,
+                                  updateMap,
+                                  setFieldValue,
+                                  values
+                                )}
+                                renderInput={(params) => (
+                                  <>
+                                    <InputLabel className={`${classes.label} state-label`}>
+                                      State
+                                    </InputLabel>
+                                    <TextField
+                                      {...params}
+                                      variant="standard"
+                                    />
+                                  </>
+                                )}
+                              />
+                            </div>
                           </FormGroup>
                         </Grid>
                         <Grid className={classes.paper} item sm={6}>
@@ -452,6 +501,13 @@ export const DataContainer = styled.div`
     line-height: 30px;
     color: ${CONSTANTS.PRIMARY_DARK};
     margin-bottom: 6px;
+  }
+  .MuiAutocomplete-inputRoot {
+    height: 40px;
+  }
+  .state-label {
+    color: #383838;
+    font-size: 18px !important;
   }
   .MuiInputBase-input {
     color: #383838;

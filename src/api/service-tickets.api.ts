@@ -8,7 +8,9 @@ export const getAllServiceTicketAPI = () => {
       dispatch(setServiceTicketLoading(true));
       request(`/getServiceTickets`, 'post', null)
         .then((res: any) => {
-          dispatch(setServiceTicket(res.data.serviceTickets));
+          let tempJobs = res.data.serviceTickets?.filter((ticket: any) => ticket.status !== 1);
+
+          dispatch(setServiceTicket(tempJobs.reverse()));
           dispatch(setServiceTicketLoading(false));
           dispatch(refreshServiceTickets(false));
           return resolve(res.data);
@@ -23,7 +25,13 @@ export const getAllServiceTicketAPI = () => {
 
 export const callCreateTicketAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/createServiceTicket`, 'post', data)
+
+    let formData = new FormData();
+
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    })
+    request(`/createServiceTicket`, 'post', formData, false)
       .then((res: any) => {
         return resolve(res.data);
       })
@@ -35,7 +43,13 @@ export const callCreateTicketAPI = (data: any) => {
 
 export const callEditTicketAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/updateServiceTicket`, 'post', data)
+
+    let formData = new FormData();
+
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    })
+    request(`/updateServiceTicket`, 'post', formData)
       .then((res: any) => {
         return resolve(res.data);
       })
@@ -70,3 +84,15 @@ export const getOpenServiceTickets = (data: {
       });
   });
 };
+
+export const callEditServiceTicket = (data: any) => {
+  return new Promise((resolve, reject) => {
+    request(`/editServiceTicket`, 'post', data, false)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch((err) => {
+        return reject(err);
+      });
+  });
+}

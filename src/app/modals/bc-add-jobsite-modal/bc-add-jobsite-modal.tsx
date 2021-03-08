@@ -24,13 +24,21 @@ import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.
 import { useDispatch } from 'react-redux';
 import { createJobSiteAction, getJobSites, updateJobSiteAction } from 'actions/job-site/job-site.action';
 import { useHistory } from 'react-router-dom';
-
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { success } from 'actions/snackbar/snackbar.action';
 
 import '../../../scss/index.scss';
 
 interface Props {
   classes: any
 }
+
+interface AllStateTypes {
+  abbreviation: string,
+  name: string,
+}
+
+
 
 function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const dispatch = useDispatch();
@@ -65,18 +73,22 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     "jobSiteId": jobSiteInfo && jobSiteInfo._id ? jobSiteInfo._id : '',
     "locationId": jobSiteInfo && jobSiteInfo.locationId ? jobSiteInfo.locationId : ''
   }
- 
 
-  const updateMap = (values: any, street?:any, city?:any, zipCode?: number, state?: number): void => {
-    let stateVal:any = '' ;
+  const filterOptions = createFilterOptions({
+    stringify: (option: AllStateTypes) => option.abbreviation + option.name,
+  });
+
+
+  const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
+    let stateVal: any = '';
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if(state){
+    if (state) {
       stateVal = allStates[state].name;
-    } 
+    }
 
     let fullAddr = '';
     fullAddr = fullAddr.concat(street ? street : values.address.street, ' ', city ? city : values.address.city, ' ', stateVal, ' ', zipCode ? zipCode : values.address.zipcode, ' ', 'USA');
-    
+
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
@@ -120,32 +132,38 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
-    if(requestObj.name === ''){
+    if (requestObj.name === '') {
       setNameLabelState(true);
       validateFlag = false;
-    }else{
+    } else {
       setNameLabelState(false);
     }
 
-    if(requestObj.location.lat === 0){
+    if (requestObj.location.lat === 0) {
       setLatLabelState(true);
       validateFlag = false;
-    }else{
+    } else {
       setLatLabelState(false);
-      
+
     }
 
-    if(requestObj.location.long === 0){
+    if (requestObj.location.long === 0) {
       setLongLabelState(true);
       validateFlag = false;
-    }else{
+    } else {
       setLongLabelState(false);
-      
+
     }
     return validateFlag;
   }
 
- 
+  const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
+    const index = allStates.findIndex((state: AllStateTypes) => state === value);
+    updateMap(values, undefined, undefined, undefined, index);
+    setFieldValue("address.state.id", index);
+  }
+
+
   return (
     <>
       <MainContainer>
@@ -159,30 +177,33 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                 lg={6}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={(values, { setSubmitting }) => {
-                     let state = values.address.state.id;
-                     values.location.lat = positionValue.lat;
-                     values.location.long = positionValue.long;
-                     const requestObj = {...values, address:{
-                      city: '', state: '', street: '', zipcode: ''
-                     }};
-                     requestObj.address.city = values.address.city;
-                     requestObj.address.state = allStates[state].name;
-                     requestObj.address.street = values.address.street;
-                     requestObj.address.zipcode = values.address.zipcode;
-                     if (isValidate(requestObj)) {
+                  onSubmit={async (values, { setSubmitting }) => {
+                    let state = values.address.state.id;
+                    values.location.lat = positionValue.lat;
+                    values.location.long = positionValue.long;
+                    const requestObj = {
+                      ...values, address: {
+                        city: '', state: '', street: '', zipcode: ''
+                      }
+                    };
+                    requestObj.address.city = values.address.city;
+                    requestObj.address.state = allStates[state].name;
+                    requestObj.address.street = values.address.street;
+                    requestObj.address.zipcode = values.address.zipcode;
+                    if (isValidate(requestObj)) {
                       if (jobSiteInfo.update) {
-                        dispatch(updateJobSiteAction(requestObj, () => {
+                        await dispatch(updateJobSiteAction(requestObj, () => {
                           closeModal();
                           dispatch(getJobSites(requestObj))
                         }))
+                        dispatch(success("Update Job Site Successful!"));
                       } else {
-                        dispatch(createJobSiteAction(requestObj, () => {
+                        await dispatch(createJobSiteAction(requestObj, () => {
                           closeModal();
                         }))
+                        dispatch(success("Creating Job Site Successful!"));
                       }
                     }
-                       
                     setTimeout(() => {
                       setSubmitting(false);
                     }, 400);
@@ -194,7 +215,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         className={classes.paper}
                         item
                         sm={12}>
-                  
+
                       </Grid>
 
                       <Grid
@@ -210,11 +231,11 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                             name={'name'}
                             placeholder={'Job Site Name'}
                             required={true}
-                            onChange={(e:any)=> { 
+                            onChange={(e: any) => {
                               setFieldValue('name', e.target.value)
                             }}
                           />
-                          {nameLabelState ? <label>Required</label>: ''}
+                          {nameLabelState ? <label>Required</label> : ''}
                         </FormGroup>
                       </Grid>
 
@@ -228,10 +249,10 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                               {'Street'}
                             </InputLabel>
                             <BCTextField
-                              onChange={(e:any)=> { 
+                              onChange={(e: any) => {
                                 setFieldValue('address.street', e.target.value)
                                 updateMap(values, e.target.value)
-                                }}
+                              }}
                               name={'address.street'}
                               placeholder={'Street'}
                             />
@@ -246,9 +267,9 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                               {'City'}
                             </InputLabel>
                             <BCTextField
-                            onChange={(e:any)=> { 
-                              setFieldValue('address.city', e.target.value)
-                              updateMap(values, undefined, e.target.value)
+                              onChange={(e: any) => {
+                                setFieldValue('address.city', e.target.value)
+                                updateMap(values, undefined, e.target.value)
                               }}
                               name={'address.city'}
                               placeholder={'City'}
@@ -263,7 +284,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                           item
                           sm={6}>
                           <FormGroup>
-                            <InputLabel className={classes.label}>
+                            {/* <InputLabel className={classes.label}>
                               {'State'}
                             </InputLabel>
                             <Field
@@ -276,14 +297,44 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                               }}
                               type={'select'}
                               variant={'outlined'}>
-                              { allStates.map((state, id) =>
+                              {allStates.map((state, id) =>
                                 <MenuItem
                                   key={id}
                                   value={id}>
-                                  { state.name }
+                                  {state.name}
                                 </MenuItem>)
                               }
-                            </Field>
+                            </Field> */}
+
+                            <div className="search_form_wrapper">
+
+                              <Autocomplete
+
+                                defaultValue={jobSiteInfo?._id && allStates[values.address.state.id]}
+                                id="tags-standard"
+                                options={allStates}
+                                getOptionLabel={(option) => option.name}
+                                autoHighlight
+                                filterOptions={filterOptions}
+                                onChange={(ev: any, newValue: any) => handleSelectState(
+                                  newValue,
+                                  updateMap,
+                                  setFieldValue,
+                                  values
+                                )}
+                                renderInput={(params) => (
+                                  <>
+                                    <InputLabel className={`${classes.label} state-label`}>
+                                      {"State"}
+                                    </InputLabel>
+                                    <TextField
+                                      {...params}
+                                      variant="standard"
+                                    />
+                                  </>
+                                )}
+                              />
+                            </div>
                           </FormGroup>
                         </Grid>
                         <Grid
@@ -295,9 +346,9 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                               {'Zip Code'}
                             </InputLabel>
                             <BCTextField
-                             onChange={(e:any)=> { 
-                              setFieldValue('address.zipcode', e.target.value)
-                              updateMap(values, '', '', e.target.value)
+                              onChange={(e: any) => {
+                                setFieldValue('address.zipcode', e.target.value)
+                                updateMap(values, '', '', e.target.value)
                               }}
                               name={'address.zipcode'}
                               placeholder={'Zip Code'}
@@ -308,7 +359,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                       </Grid>
 
                       <Grid
-                        className={classNames(classes.paper, 'form_button_wrapper-desktop')} 
+                        className={classNames(classes.paper, 'form_button_wrapper-desktop')}
                         item
                         md={12}>
                         <Box mt={2}>
@@ -328,11 +379,11 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                           </Button>
                         </Box>
                       </Grid>
-                      
+
                     </Form>
                   }
                 </Formik>
-              </Grid> 
+              </Grid>
 
               <Grid
                 className={classNames(classes.paper, classes.mapLocation)}
@@ -356,7 +407,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         type={'number'}
                         value={positionValue.lat}
                       />
-                      {latLabelState ? <label>Required</label>: null}
+                      {latLabelState ? <label>Required</label> : null}
                     </FormGroup>
                   </Grid>
                   <Grid
@@ -368,8 +419,8 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         {'Longitude'}
                       </InputLabel>
                       <TextField
-                         name={'location.long'}
-                        onChange={(e: any) => { 
+                        name={'location.long'}
+                        onChange={(e: any) => {
                           updateMapFromLatLng('lng', e.target.value)
                         }}
                         type={'number'}
@@ -378,9 +429,9 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         variant={'outlined'}
                         value={positionValue.long}
                       />
-                      {longLabelState ? <label>Required</label>: null}
+                      {longLabelState ? <label>Required</label> : null}
                     </FormGroup>
-                    
+
                   </Grid>
                 </Grid>
 
@@ -395,26 +446,26 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
 
 
                 <Grid
-                        className={classNames(classes.paper, 'form_button_wrapper-mobile')} 
-                        item
-                        md={12}>
-                        <Box mt={2}>
-                          <Button
-                            className={'save-customer-button'}
-                            color={'primary'}
-                            type={'submit'}
-                            variant={'contained'}>
-                            {jobSiteInfo && jobSiteInfo.update ? 'Update' : 'Save'}
-                          </Button>
-                          <Button
-                            className={'cancel-customer-button'}
-                            onClick={() => closeModal()}
-                            color={'secondary'}
-                            variant={'contained'}>
-                            {'Cancel'}
-                          </Button>
-                        </Box>
-                      </Grid>
+                  className={classNames(classes.paper, 'form_button_wrapper-mobile')}
+                  item
+                  md={12}>
+                  <Box mt={2}>
+                    <Button
+                      className={'save-customer-button'}
+                      color={'primary'}
+                      type={'submit'}
+                      variant={'contained'}>
+                      {jobSiteInfo && jobSiteInfo.update ? 'Update' : 'Save'}
+                    </Button>
+                    <Button
+                      className={'cancel-customer-button'}
+                      onClick={() => closeModal()}
+                      color={'secondary'}
+                      variant={'contained'}>
+                      {'Cancel'}
+                    </Button>
+                  </Box>
+                </Grid>
 
               </Grid>
             </Grid>
@@ -463,6 +514,13 @@ const DataContainer = styled.div`
     color: #383838;
     font-size: 16px;
     padding: 12px 14px;
+  }
+  .MuiAutocomplete-inputRoot {
+    height: 40px;
+  }
+  .state-label {
+    color: #383838;
+    font-size: 18px !important;
   }
   .required > label:after {
     margin-left: 3px;

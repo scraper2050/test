@@ -9,6 +9,7 @@ import { phoneRegExp, digitsOnly } from 'helpers/format';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
 import * as Yup from 'yup';
 import { loginActions } from 'actions/auth/auth.action';
+import { error } from 'actions/snackbar/snackbar.action'
 
 const userProfileSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
@@ -57,7 +58,7 @@ interface User {
 function ViewProfilePage() {
   const dispatch = useDispatch();
 
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false)
   const [update, setUpdate] = useState(true)
 
@@ -74,14 +75,17 @@ function ViewProfilePage() {
   const handleUpdateProfile = async (values: any) => {
     const { firstName, lastName, phone, logoUrl } = values;
 
+
     try {
-
-
-      const response: any = await updateProfile(values);
+      const response: any = await updateProfile({
+        firstName,
+        lastName,
+        phone,
+        image: logoUrl
+      });
 
       if (response.message === "Profile updated successfully.") {
 
-        console.log(response, 'old');
         let oldUserProfile = userProfile;
 
         let profile = oldUserProfile.profile
@@ -90,7 +94,8 @@ function ViewProfilePage() {
           ...profile,
           firstName,
           lastName,
-          imageUrl: logoUrl && logoUrl !== "" ? logoUrl : profile.imageUrl,
+          displayName: `${firstName} ${lastName}`,
+          imageUrl: response.imageUrl,
         }
 
         let contact = oldUserProfile.contact
@@ -113,6 +118,8 @@ function ViewProfilePage() {
           token,
           user: oldUserProfile,
         }))
+      } else {
+        dispatch(error(response.message))
       }
 
     } catch (err) {
@@ -142,19 +149,20 @@ function ViewProfilePage() {
                 apply={(value: any) => handleUpdateProfile(value)}
                 initialValues={initialValues}
                 schema={userProfileSchema}
+                userProfile={true}
                 fields={[
                   {
                     left: {
                       id: 'firstName',
                       label: 'First Name:',
                       placehold: 'Input First Name',
-                      value: userProfile.profile.firstName,
+                      value: userProfile.profile.firstName.charAt(0).toUpperCase() + userProfile.profile.firstName.slice(1),
                     },
                     right: {
                       id: 'lastName',
                       label: 'Last Name:',
                       placehold: 'Input Last Name',
-                      value: userProfile.profile.lastName,
+                      value: userProfile.profile.lastName.charAt(0).toUpperCase() + userProfile.profile.lastName.slice(1),
                     },
                   },
                   {

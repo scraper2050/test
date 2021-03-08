@@ -12,7 +12,7 @@ export default (): any => ({
     'borderRadius': '14px',
     'height': '100%',
     'textAlign': 'center',
-    'width': '90%',
+    'width': '95%',
     'background': 'white',
     'position': 'relative',
   },

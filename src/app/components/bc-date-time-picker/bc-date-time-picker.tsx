@@ -20,6 +20,9 @@ const useStyles = makeStyles(theme => ({
 function BCDateTimePicker({
   handleChange,
   value,
+  ampm = false,
+  views = ['hours', 'minutes', 'seconds'],
+  disabled = false,
   disablePast = false,
   name = '',
   placeholder = 'Enter Date',
@@ -37,7 +40,9 @@ function BCDateTimePicker({
         gutterBottom
         className={className}
         variant={'subtitle1'}>
-        {`${label}`}
+        <strong>
+          {`${label}`}
+        </strong>
         {required
           ? <sup style={{ 'color': '#C00707' }}>
             {'*'}
@@ -49,6 +54,7 @@ function BCDateTimePicker({
           pickerType === 'date'
             ? <KeyboardDatePicker
               autoOk
+              disabled={disabled}
               className={classes.datePicker}
               disablePast={disablePast}
               format={dateFormat}
@@ -67,7 +73,8 @@ function BCDateTimePicker({
               variant={variant}
             />
             : <TimePicker
-              ampm={false}
+              disabled={disabled}
+              ampm={ampm}
               autoOk
               className={classes.datePicker}
               format={dateFormat}
@@ -85,7 +92,7 @@ function BCDateTimePicker({
               required={required}
               value={value}
               variant={variant}
-              views={['hours', 'minutes', 'seconds']}
+              views={views}
             />
         }
       </MuiPickersUtilsProvider>

@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -17,11 +17,14 @@ import { withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ currentPage, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+function BCTableContent({ noHeader, className, stickyHeader, defaultPageSize, isDefault, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
   const locationState = location.state;
+
+
+  const curTab = locationState && locationState?.curTab;
 
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
@@ -47,9 +50,9 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
       columns,
       data,
       initialState: {
-        sortBy: onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        pageIndex: onUpdatePage ? onUpdatePage.page : initialPageIndex,
-        pageSize: onUpdatePage ? onUpdatePage.pageSize : initialPageSize
+        sortBy: isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
+        pageIndex: isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        pageSize: isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
     },
@@ -63,6 +66,9 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
+
+    window.scrollTo(0, 20);
+
     if (setPage !== undefined) {
       setPage({
         pageSize,
@@ -70,7 +76,6 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
         page: newPage,
       });
     }
-
 
     history.replace({
       ...history.location,
@@ -182,6 +187,8 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
     }
   }
 
+
+
   useEffect(() => {
     if (sortBy.length !== 0) {
       handleSortBy(sortBy)
@@ -189,38 +196,53 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
   }, [sortBy])
 
   useEffect(() => {
-    setTimeout(() => {
-      if (onUpdatePage) {
-        let tempLocationState = location.state;
+    if (!isDefault) {
+      setTimeout(() => {
 
-        delete tempLocationState['onUpdatePage'];
+        if (onUpdatePage) {
+          let tempLocationState = location.state;
 
-        history.replace({
-          ...history.location,
-          state: { ...tempLocationState }
-        })
+          delete tempLocationState['onUpdatePage'];
+
+          history.replace({
+            ...history.location,
+            state: { ...tempLocationState }
+          })
+        }
+      }, 200);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!onUpdatePage) {
+
+      if (curTab !== undefined) {
+        setPageSize(10)
+        gotoPage(0)
+        handleSortBy([])
       }
-    }, 5000);
-  }, [])
+    }
+  }, [curTab])
 
   // Render the UI for your table
   return (
     <TableContainer
       className={`min-h-full sm:border-1 sm:rounded-16 ${invoiceTable
         ? `invoice-paper`
-        : ''}`}
+        : ''} ${className} `}
       component={Paper}>
       <MaUTable
+        stickyHeader={stickyHeader}
         size={'small'}
         {...getTableProps()}>
-        <TableHead>
+        <TableHead style={{ display: noHeader ? 'none' : 'table-header-group' }}>
           {headerGroups.map((headerGroup: any, gindex: number) =>
             <TableRow
               key={`table-${gindex}`}
               {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column: any, hindex: number) =>
                 <TableCell
-                  className={`whitespace-no-wrap p-12 ${column.borderRight
+                  className={`whitespace-no-wrap ${column.borderRight
                     ? 'cell-border-right cursor-default'
                     : ''}`}
                   key={`table-cell-${hindex}`}
@@ -261,9 +283,10 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
                     <TableCell
                       key={`table-cell-${cindex}`}
                       {...cell.getCellProps()}
-                      className={clsx('p-12', cell.column.className, `${cell.column.borderRight
+                      className={clsx(cell.column.className, `${cell.column.borderRight
                         ? 'cell-border-right cursor-default'
-                        : ''}`)}
+                        : ''}`)
+                      }
                       style={{
                         'width': cell.column.width || 'auto'
                       }}
@@ -308,7 +331,7 @@ function BCTableContent({ currentPage, columns, data, onRowClick, pagination = t
             : null
         }
       </MaUTable>
-    </TableContainer>
+    </TableContainer >
   );
 }
 

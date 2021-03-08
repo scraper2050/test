@@ -7,7 +7,7 @@ import BCTableContainer from '../../../components/bc-table-container/bc-table-co
 import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTechnician, createAdministrator, createManager, createOfficeAdmin, getEmployees, loadingEmployees } from 'actions/employee/employee.action';
+import { getEmployees, loadingEmployees, loadingSingleEmployee, getEmployeeDetailAction } from 'actions/employee/employee.action';
 import { UserProfile } from 'actions/employee/employee.types';
 import { useLocation, useHistory } from 'react-router-dom';
 
@@ -19,13 +19,6 @@ interface Props {
 function AdminEmployeesPage({ classes, children }: Props) {
   const dispatch = useDispatch();
   const employees = useSelector((state: any) => state.employees);
-  const [stage, setStage] = useState(0);
-  const [profile, setProfile] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  });
 
 
   const location = useLocation<any>();
@@ -41,18 +34,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
     sortBy: prevPage ? prevPage.sortBy : [],
   });
 
-
   const columns: any = [
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {row.index + 1}
-        </div>;
-      },
-      'Header': 'No#',
-      'sortable': true,
-      'width': 60
-    },
     {
       'Header': 'Name',
       'accessor': 'profile.displayName',
@@ -97,80 +79,52 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(getEmployees());
   }, []);
 
-  const add = (firstName: string, lastName: string, email: string, phoneNumber: string, role: string) => {
-    const data: UserProfile = {
-      firstName,
-      lastName,
-      email,
-      phone: phoneNumber
-    };
-
-    switch (role) {
-      case RoleEnums.Technician:
-        dispatch(createTechnician(data));
-        break;
-      case RoleEnums.Administrator:
-        dispatch(createAdministrator(data));
-        break;
-      case RoleEnums.Manager:
-        dispatch(createManager(data));
-        break;
-      case RoleEnums.OfficeAdmin:
-        dispatch(createOfficeAdmin(data));
-        break;
-      default:
-    }
-    setStage(0);
-  }
-
-  const cancel = () => {
-    setStage(0);
-  }
-
-  const update = () => {
-
-  }
-
   const renderViewMore = (row: any) => {
-    const baseObj = row['original'];
+    let baseObj = row['original'];
 
-    history.replace({
-      ...history.location,
+
+    let employeeId = baseObj['_id'];
+    let displayName = baseObj['profile']['displayName'].split(' ').join('-');
+
+    let employeeObj = { employeeId, displayName };
+
+
+    localStorage.setItem("nestedRouteKey", `${displayName}`);
+
+    dispatch(loadingSingleEmployee);
+    dispatch(getEmployeeDetailAction(employeeId));
+
+
+    history.push({
+      pathname: `/main/admin/employees/${displayName}`,
       state: {
-        prevPage: currentPage
+        ...employeeObj,
+        currentPage
       }
-    })
-
-    setProfile({
-      email: baseObj['auth'] && baseObj['auth']['email'] ? baseObj['auth']['email'] : '',
-      firstName: baseObj['profile'] && baseObj['profile']['firstName'] ? baseObj['profile']['firstName'] : '',
-      lastName: baseObj['profile'] && baseObj['profile']['lastName'] ? baseObj['profile']['lastName'] : '',
-      phone: baseObj['contact'] && baseObj['contact']['contact'] ? baseObj['contact']['contact'] : ''
     });
-    setStage(2);
-
   }
 
   return (
     <>
-      {/* <BCSubHeader title={'Admin'}>
-        <BCToolBarSearchInput style={{
-          'marginLeft': 'auto',
-          'width': '321px'
-        }}
-        />
-      </BCSubHeader> */}
-
       <MainContainer>
         <PageContainer>
-          {stage === 0 && <div className={classes.addButtonArea}>
+          <div className={classes.addButtonArea}>
             <Fab
               aria-label={'new-ticket'}
               classes={{
                 'root': classes.fabRoot
               }}
               color={'primary'}
-              onClick={() => { setStage(1) }}
+              onClick={() => {
+
+                localStorage.setItem("nestedRouteKey", `add-new-employee`);
+                history.push({
+                  pathname: `/main/admin/employees/add-new-employee`,
+                  state: {
+                    currentPage
+                  }
+                });
+              }}
               style={{
                 float: 'right'
               }}
@@ -178,25 +132,22 @@ function AdminEmployeesPage({ classes, children }: Props) {
               {'Add New'}
             </Fab>
           </div>
-          }
-          {stage === 0 &&
-            <BCTableContainer
-              currentPage={currentPage}
-              setPage={setCurrentPage}
-              columns={columns}
-              isLoading={employees.loading}
-              search
-              tableData={employees.data}
-            />
-          }
+          <BCTableContainer
+            currentPage={currentPage}
+            setPage={setCurrentPage}
+            columns={columns}
+            isLoading={employees.loading}
+            search
+            tableData={employees.data}
+          />
 
-          {stage === 1 &&
+          {/* {stage === 1 &&
             <AdminAddNewEmployeePage submit={add} cancel={cancel} />
           }
 
           {stage === 2 &&
             <EmployeeProfile profile={profile} back={cancel} />
-          }
+          } */}
         </PageContainer>
       </MainContainer>
     </>

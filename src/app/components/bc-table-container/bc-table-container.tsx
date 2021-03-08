@@ -9,7 +9,7 @@ import { Grid, Paper, withStyles } from "@material-ui/core";
 import { Dispatch } from 'redux';
 import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
 import { connect, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useHistory } from 'react-router-dom';
 
 import "../../../scss/index.scss";
@@ -26,6 +26,7 @@ function BCTableContainer({
   onRowClick,
   isLoading = false,
   classes,
+  className,
   search,
   searchPlaceholder = "Search Customers...",
   pagination = true,
@@ -34,6 +35,10 @@ function BCTableContainer({
   searchTerm,
   setPage,
   currentPage,
+  isDefault = false,
+  pageSize = 10,
+  stickyHeader = false,
+  noHeader = false,
 }: any) {
 
   const dispatch = useDispatch();
@@ -128,20 +133,25 @@ function BCTableContainer({
             </Typography>
           </Paper>
         ) : (
-              <BCTableContent
-                currentPage={currentPage}
-                columns={columns}
-                data={filteredData}
-                invoiceTable
-                onRowClick={(ev: any, row: any) => {
-                  onRowClick && onRowClick(ev, row);
-                }}
-                pagination={pagination}
-                isPageSaveEnabled={isPageSaveEnabled || false}
-                setPage={setPage}
-                isLoading={isLoading}
-              />
-            )}
+          <BCTableContent
+            noHeader={noHeader}
+            stickyHeader={stickyHeader}
+            className={className ? className : ''}
+            currentPage={currentPage}
+            columns={columns}
+            data={filteredData}
+            invoiceTable
+            onRowClick={(ev: any, row: any) => {
+              onRowClick && onRowClick(ev, row);
+            }}
+            pagination={pagination}
+            isPageSaveEnabled={isPageSaveEnabled || false}
+            setPage={setPage}
+            isLoading={isLoading}
+            defaultPageSize={pageSize}
+            isDefault={isDefault}
+          />
+        )}
       </Grid>
     </Grid>
   );

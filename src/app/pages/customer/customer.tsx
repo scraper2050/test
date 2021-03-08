@@ -130,10 +130,10 @@ function CustomersPage({ classes }: any) {
                   label: "Customer List",
                   value: 0,
                 },
-                {
-                  label: "Recent Activities",
-                  value: 1,
-                },
+                // {
+                //   label: "Recent Activities",
+                //   value: 1,
+                // },
               ]}
             />
           </Grid>

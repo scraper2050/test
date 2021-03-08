@@ -15,5 +15,12 @@ export default (theme: Theme): any => ({
     'position': 'absolute',
     'right': '0',
     'zIndex': '120',
+  },
+  'customerNameLocation': {
+    display: 'flex',
+    flexDirection: 'column',
+    right: 0,
+    // alignItems: 'flex-end',
+    alignText: 'left'
   }
 });
