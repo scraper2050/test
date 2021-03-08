@@ -33,7 +33,7 @@ export const getAllJobsAPI = () => {
         .then((res: any) => {
           let tempJobs = res.data.jobs?.filter((job: any) => job.status !== 3);
 
-          dispatch(setJobs(tempJobs));
+          dispatch(setJobs(tempJobs.reverse()));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
           return resolve(res.data);

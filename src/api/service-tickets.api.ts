@@ -10,7 +10,7 @@ export const getAllServiceTicketAPI = () => {
         .then((res: any) => {
           let tempJobs = res.data.serviceTickets?.filter((ticket: any) => ticket.status !== 1);
 
-          dispatch(setServiceTicket(tempJobs));
+          dispatch(setServiceTicket(tempJobs.reverse()));
           dispatch(setServiceTicketLoading(false));
           dispatch(refreshServiceTickets(false));
           return resolve(res.data);

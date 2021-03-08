@@ -230,7 +230,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={"Search Jobs..."}
-        tableData={jobs.reverse()}
+        tableData={jobs}
       />
     </DataContainer>
   );
