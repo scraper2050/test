@@ -19,7 +19,7 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
   const [daily, setDaily] = useState(initialValues.emailPreferences === 1 ? true : false);
   const [disabled, setDisabled] = useState(true);
 
-  let hrs = initialValues.emailTime && initialValues.emailTime.split('T')[1];
+  let hrs = initialValues.emailTime && initialValues.emailTime.includes('T') ? initialValues.emailTime.split('T')[1] : initialValues.emailTime;
   let parseHrs = hrs && parseInt(hrs.split(':')[0]);
   let tempHrs = null;
   let parseMins = hrs && hrs.split(':')[1];
@@ -41,10 +41,10 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
       tempHrs = parseHrs - 12
       tempAmpm = 'PM';
     }
-    tempMins = parseMins;
+    tempMins = parseMins && parseMins.length === 1 ? `${parseMins}0` : parseMins;
   }
 
-  const [time, setTime] = useState<any>(tempHrs ? `${tempHrs}:${tempMins}` : null);
+  const [time, setTime] = useState<any>(initialValues.emailTime && tempHrs ? `${tempHrs}:${tempMins}` : null);
   const [ampm, setAmpm] = useState<any>('PM');
 
   const handleCheckbox = (setFieldValue: any, value: any) => {

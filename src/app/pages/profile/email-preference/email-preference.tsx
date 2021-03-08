@@ -17,8 +17,7 @@ function EmailPreferencePage() {
   const dispatch = useDispatch();
 
   const [imageUrl, setImageUrl] = useState<any>("");
-  const [isLoading, setIsLoading] = useState(false)
-  const [update, setUpdate] = useState(true)
+  const [isLoading, setIsLoading] = useState(false);
 
   const userProfile: any = JSON.parse(localStorage.getItem('user') || '');
 
@@ -29,7 +28,7 @@ function EmailPreferencePage() {
   }
 
   const apply = async (values: any) => {
-
+    console.log(values)
     try {
       const response: any = await updateEmployeeEmailPreferences(values);
 
@@ -80,9 +79,6 @@ function EmailPreferencePage() {
     }
   }
 
-  useEffect(() => {
-
-  }, [update]);
 
   return (
     <MainContainer>
@@ -91,11 +87,11 @@ function EmailPreferencePage() {
           isLoading ? (
             <BCCircularLoader />
           ) : (
-              <BCEmailPreference
-                apply={(values: any) => apply(values)}
-                initialValues={initialValues}
-              />
-            )
+            <BCEmailPreference
+              apply={(values: any) => apply(values)}
+              initialValues={initialValues}
+            />
+          )
         }
       </PageContainer>
     </MainContainer>

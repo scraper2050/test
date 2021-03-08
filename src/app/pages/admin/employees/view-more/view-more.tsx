@@ -13,7 +13,7 @@ import validator from 'validator';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
-import { CompanyProfile } from 'actions/user/user.types'
+import { updateEmployeeEmailPreferences } from 'api/email-preferences.api';
 import { useLocation, useHistory } from "react-router-dom";
 import { getEmployees, loadingEmployees, loadingSingleEmployee, getEmployeeDetailAction } from 'actions/employee/employee.action';
 import { Grid, withStyles } from '@material-ui/core';
@@ -21,6 +21,7 @@ import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
 import BCEmailPreference from '../../../../components/bc-email-preference/bc-email-preference';
+import { error, success, info } from 'actions/snackbar/snackbar.action'
 
 
 function EmployeeProfilePage({ classes }: any) {
@@ -31,46 +32,33 @@ function EmployeeProfilePage({ classes }: any) {
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
 
-  const image = useSelector((state: any) => state.image);
-  const [firstName, setFirstName] = useState(employeeDetails?.firstName);
-  const [firstNameValid] = useState(true);
-  const [lastName, setLastname] = useState(employeeDetails?.lastName);
-  const [lastNameValid] = useState(true);
-  const [email, setEmail] = useState(employeeDetails?.email);
-  const [emailValid, setEmailVaild] = useState(true);
-  const [phone, setPhone] = useState(employeeDetails?.phone);
-  const [phoneValid, setPhoneValid] = useState(true);
 
   const cancel = () => { }
 
-  const firstNameChanged = (newValue: string) => {
-    setFirstName(newValue);
-  }
-
-  const emailChanged = (newValue: string) => {
-    setEmail(newValue);
-    setEmailVaild(validator.isEmail(newValue));
-  }
-
-  const phoneChanged = (newValue: string) => {
-    setPhone(newValue);
-    setPhoneValid(validator.isMobilePhone(newValue));
-  }
-
-  const lastNameChanged = (newValue: string) => {
-    setLastname(newValue);
-  }
 
   const apply = (values: any) => {
     console.log(values)
   }
 
+  const applyEmployeeDetail = async (values: any) => {
+    try {
+      const response: any = await updateEmployeeEmailPreferences(values);
 
-  const imageSelected = (f: File) => {
-    if (!f) return;
-    const formData = new FormData();
-    formData.append('image', f);
-    dispatch(uploadImage(formData));
+      if (response.message === "preferences updated successfully.") {
+
+        dispatch(success("Email Preferences successfully updated!"));
+        return true;
+      } else if (response.message === "Email time is required for scheduled emails.") {
+        dispatch(info("Email time is required for daily email."));
+        return true;
+      } else {
+        dispatch(error("Something went wrong, please try again later."));
+        return true;
+      }
+    } catch (err) {
+      return true;
+      console.log(err);
+    }
   }
 
   const handleTabChange = (newValue: number) => {
@@ -82,6 +70,8 @@ function EmployeeProfilePage({ classes }: any) {
     if (employeeDetails === undefined) {
       const obj: any = location.state;
       const employeeId = obj.employeeId;
+
+      console.log(employeeId)
       dispatch(loadingSingleEmployee());
       dispatch(getEmployeeDetailAction(employeeId));
     }
@@ -118,12 +108,17 @@ function EmployeeProfilePage({ classes }: any) {
   //   }
   // }, [vendorObj]);
 
-  const initialValues = {}
+  const initialValues = {
+    firstName: employeeDetails?.firstName,
+    lastName: employeeDetails?.lastName,
+    phone: employeeDetails?.phone,
+    email: employeeDetails?.email,
+  }
 
   const initialValuesEmail = {
-    employeeId: employeeDetails?._id,
+    employeeId: location.state.employeeId,
     emailPreferences: employeeDetails?.emailPreferences.preferences,
-    emailTime: employeeDetails?.emailPreferences.time
+    emailTime: employeeDetails?.emailPreferences.preferences === 1 ? employeeDetails?.emailPreferences.time : null,
   }
 
 
@@ -141,6 +136,8 @@ function EmployeeProfilePage({ classes }: any) {
     });
 
   }
+
+  console.log(employeeDetails)
 
   return (
     <>
@@ -185,7 +182,8 @@ function EmployeeProfilePage({ classes }: any) {
                       <BCAdminProfile
                         avatar={{
                           isEmpty: 'NO',
-                          url: !image.data ? '' : image.data.imageUrl,
+                          url: '',
+                          noUpdate: true
                         }}
                         apply={(values: any) => apply(values)}
                         cancel={cancel}
@@ -197,13 +195,13 @@ function EmployeeProfilePage({ classes }: any) {
                               id: 'firstName',
                               label: 'First Name:',
                               placehold: 'John',
-                              value: firstName,
+                              value: employeeDetails?.firstName.charAt(0).toUpperCase() + employeeDetails?.firstName.slice(1),
                             },
                             right: {
                               id: 'lastName',
                               label: 'Last name:',
                               placehold: 'Doe',
-                              value: lastName,
+                              value: employeeDetails?.lastName.charAt(0).toUpperCase() + employeeDetails?.lastName.slice(1),
                             }
                           },
                           {
@@ -211,13 +209,13 @@ function EmployeeProfilePage({ classes }: any) {
                               id: 'email',
                               label: 'Email:',
                               placehold: 'john.doe@gmail.com',
-                              value: email,
+                              value: employeeDetails?.email,
                             },
                             right: {
                               id: 'phone',
                               label: 'Phone:',
                               placehold: '1234567890',
-                              value: phone,
+                              value: employeeDetails?.phone,
                             }
                           }
                         ]} />
@@ -233,7 +231,7 @@ function EmployeeProfilePage({ classes }: any) {
                   }}
                   id={'1'}>
                   <BCEmailPreference
-                    apply={(values: any) => apply(values)}
+                    apply={(values: any) => applyEmployeeDetail(values)}
                     initialValues={initialValuesEmail}
                   />
                 </div>
