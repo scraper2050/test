@@ -81,10 +81,6 @@ function BCJobModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
-  console.log(job)
-
-
-
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   // const employeesForJob = useSelector(({ employeesForJob }: any) => employeesForJob.data);
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
@@ -102,6 +98,7 @@ function BCJobModal({
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [employeeValue, setEmployeeValue] = useState<any>([]);
+  const [contractorValue, setContractorValue] = useState<any>([]);
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
@@ -236,6 +233,14 @@ function BCJobModal({
     }
   }, [employeesForJob])
 
+
+  useEffect(() => {
+    if (job._id) {
+      if (vendorsList.length !== 0 && job.employeeType && job.contractor) {
+        setContractorValue(vendorsList.filter((vendor: any) => vendor.contractor._id === job.contractor._id)[0])
+      }
+    }
+  }, [vendorsList])
 
   useEffect(() => {
     if (job._id) {
@@ -719,12 +724,14 @@ function BCJobModal({
                     <FormGroup className={`required ${classes.formGroup}`}>
                       <div className="search_form_wrapper">
                         <Autocomplete
+                          value={contractorValue}
+                          // defaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
                           id="tags-standard"
                           disabled={detail}
                           className={detail ? "detail-only" : ""}
                           options={vendorsList && vendorsList.length !== 0 ? (vendorsList.sort((a: any, b: any) => (a.contractor.info.companyName > b.contractor.info.companyName) ? 1 : ((b.contractor.info.companyName > a.contractor.info.companyName) ? -1 : 0))) : []}
-                          getOptionLabel={(option) => option.contractor.info.companyName ? option.contractor.info.companyName : ""}
-                          onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue.contractor._id)}
+                          getOptionLabel={(option) => option.contractor?.info?.companyName ? option.contractor.info.companyName : ""}
+                          onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue.contractor._id, setContractorValue(newValue))}
                           renderInput={(params) => (
                             <>
                               <InputLabel className={classes.label}>
@@ -1103,27 +1110,30 @@ function BCJobModal({
                 < Grid item sm={6} xs={12} >
 
                   <div className={`${classes.formGroup} search_form_wrapper`}>
-                    <InputLabel className={classes.label}>
-                      <strong>{"Job History"}</strong>
-                    </InputLabel>
-                    <div className={classes.historyContainer}>
-                      {
-                        loading ? <BCCircularLoader /> :
-                          employeesForJob.length !== 0 && job.track &&
-                          <BCTableContainer
-                            className={classes.tableContainer}
-                            columns={columns}
-                            isLoading={loading}
-                            onRowClick={() => { }}
-                            tableData={job.track}
-                            pagination={false}
-                            pageSize={job.track.length}
-                            isDefault={true}
-                            initialMsg="No history yet"
-                            stickyHeader={true}
-                          />
-                      }
-                    </div>
+                    <Grid container>
+
+                      <InputLabel className={classes.label}>
+                        <strong>{"Job History"}</strong>
+                      </InputLabel>
+                      <div className={classes.historyContainer}>
+                        {
+                          loading ? <BCCircularLoader /> :
+                            employeesForJob.length !== 0 && job.track &&
+                            <BCTableContainer
+                              className={classes.tableContainer}
+                              columns={columns}
+                              isLoading={loading}
+                              onRowClick={() => { }}
+                              tableData={job.track}
+                              pagination={false}
+                              pageSize={job.track.length}
+                              isDefault={true}
+                              initialMsg="No history yet"
+                              stickyHeader={true}
+                            />
+                        }
+                      </div>
+                    </Grid>
                   </div>
                 </Grid>
               }
