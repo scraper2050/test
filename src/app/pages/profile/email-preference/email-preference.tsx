@@ -28,7 +28,6 @@ function EmailPreferencePage() {
   }
 
   const apply = async (values: any) => {
-    console.log(values)
     try {
       const response: any = await updateEmployeeEmailPreferences(values);
 
