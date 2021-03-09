@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import '../../../../scss/index.css';
 import "./ticket-map-view.scss";
 import MapViewTicketsScreen from './map-view/map-view-tickets';
+import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
 import { getAllJobsAPI } from "api/job.api";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,13 +65,13 @@ function TicketsWithMapView({ classes }: any) {
               className={classes.dataContainer}
               hidden={curTab !== 0}
               id={'0'}>
-              <MapViewTicketsScreen today={true} />
+              <MapViewTicketsScreen />
             </div>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 1}
               id={'1'}>
-              <MapViewJobsScreen
+              <MapViewTodayJobsScreen
                 today={true}
                 isLoading={isLoading}
                 jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formatDateYMD(new Date()))} />
@@ -79,9 +80,7 @@ function TicketsWithMapView({ classes }: any) {
               className={classes.dataContainer}
               hidden={curTab !== 2}
               id={'2'}>
-              <MapViewJobsScreen
-                isLoading={isLoading}
-                jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) !== formatDateYMD(new Date()))} />
+              <MapViewJobsScreen />
             </div>
           </SwipeableViews>
         </div>

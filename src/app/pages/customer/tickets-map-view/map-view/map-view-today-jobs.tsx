@@ -20,7 +20,7 @@ import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { getSearchJobs } from "api/job.api";
 
-function MapViewJobsScreen({ classes, today }: any) {
+function MapViewTodayJobsScreen({ classes, today }: any) {
 
   const dispatch = useDispatch();
 
@@ -357,4 +357,4 @@ function MapViewJobsScreen({ classes, today }: any) {
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(MapViewJobsScreen);
+)(MapViewTodayJobsScreen);
