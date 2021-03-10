@@ -24,13 +24,14 @@ import { modalTypes } from '../../../constants';
 import styles from './signup.styles';
 import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import Api, { setToken } from 'utils/api';
+import Api, { setToken, setUser } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import BCModal from '../../modals/bc-modal';
 import axios from 'axios';
 import config from '../../../config';
+import { loginActions } from 'actions/auth/auth.action';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -64,7 +65,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   };
   const [isLoading, setLoading] = useState(false);
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
-  const [alert , setAlert] = useState(false);
+  const [alert, setAlert] = useState(false);
 
   useEffect(
     () => {
@@ -193,13 +194,14 @@ function SignUpPage({ classes }: Props): JSX.Element {
         'phone': formData.phone_number.value
       }
     )
-      .then((res) => {
-        if(res.data.message === "Company Email address already registered. Please try with some other email address"){
+      .then(async (res) => {
+        if (res.data.message === "Company Email address already registered. Please try with some other email address") {
           setLoading(false);
           setAlert(true);
         }
-        else{
+        else {
           setToken(res.data.token);
+          setUser(JSON.stringify(res.data.user));
           axios.create({
             'baseURL': config.apiBaseURL,
             'headers': {
@@ -207,11 +209,12 @@ function SignUpPage({ classes }: Props): JSX.Element {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
           })
-          .post('/agreeTermAndCondition', params)
-          .then(() => {
-            setLoading(false);
-            history.push('/')
-          });
+            .post('/agreeTermAndCondition', params)
+            .then(() => {
+              setLoading(false);
+              history.push('/')
+            });
+
         }
       })
       .catch(() => {
@@ -587,7 +590,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
       {isLoading && <BCSpinnerer />}
       <Snackbar open={alert} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
-            Account already exists.
+          Account already exists.
         </Alert>
       </Snackbar>
     </div>

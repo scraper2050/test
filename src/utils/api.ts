@@ -15,3 +15,9 @@ export const setToken = (token: string): void => {
     token
   );
 };
+export const setUser = (user: any): void => {
+  localStorage.setItem(
+    'user',
+    user
+  );
+};
