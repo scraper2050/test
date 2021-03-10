@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, withStyles } from '@material-ui/core';
-import { MemoizedMap } from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
+import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import { useDispatch, useSelector } from 'react-redux';
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-popup';
 import { DatePicker } from "@material-ui/pickers";
@@ -30,6 +30,7 @@ function MapViewTicketsScreen({ classes }: any) {
   const totalOpenTickets = useSelector((state: any) => state.serviceTicket.totalOpenTickets);
   const openServiceTicketFIlter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const isLoading = useSelector((state: any) => state.serviceTicket.isLoading);
+  const [selectedTicket, setSelectedTicket] = useState<any>({});
 
   const [dateValue, setDateValue] = useState<any>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -47,7 +48,7 @@ function MapViewTicketsScreen({ classes }: any) {
     }
     const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
     getOpenTickets(requestObj);
-    dispatch(setClearOpenServiceTicketObject());
+    setSelectedTicket({});
   }, []);
 
   const openTicketFilerModal = () => {
@@ -68,7 +69,7 @@ function MapViewTicketsScreen({ classes }: any) {
       ticketId: '',
       contactName: '',
     }
-    dispatch(setClearOpenServiceTicketObject());
+    setSelectedTicket({})
     const dateObj = new Date(tempDate);
     // const selectDate = dateObj.setHours(0,0,0,0);
     // const todayDate = new Date().setHours(0,0,0,0);
@@ -96,7 +97,8 @@ function MapViewTicketsScreen({ classes }: any) {
       ticketId: '',
       contactName: '',
     }
-    dispatch(setClearOpenServiceTicketObject());
+
+    setSelectedTicket({})
     const dateObj = new Date(tempDate);
     var tomorrow = new Date(dateObj.getTime() + (24 * 60 * 60 * 1000));
     const formattedDate = formatDateYMD(tomorrow);
@@ -158,7 +160,7 @@ function MapViewTicketsScreen({ classes }: any) {
   const resetDateFilter = () => {
     setPage(1);
     setDateValue(null);
-    dispatch(setClearOpenServiceTicketObject());
+    setSelectedTicket({});
     dispatch(setClearOpenTicketFilterState({
       'jobTypeTitle': '',
       'dueDate': '',
@@ -171,8 +173,10 @@ function MapViewTicketsScreen({ classes }: any) {
 
 
   const handleChange = (event: any, value: any) => {
+    setSelectedTicket({});
     setPage(value);
-    dispatch(setClearOpenServiceTicketObject());
+
+
     const requestObj = { ...openServiceTicketFIlter, pageNo: value, pageSize: 6 };
     getOpenTickets(requestObj);
   }
@@ -201,14 +205,13 @@ function MapViewTicketsScreen({ classes }: any) {
       setHasPhoto(false)
     }
 
-    console.log(openTicketObj)
-
     if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
       dispatch(warning('There\'s no address on this ticket.'))
     }
 
-    dispatch(setClearOpenServiceTicketObject());
-    dispatch(setOpenServiceTicketObject(openTicketObj));
+
+
+    setSelectedTicket(openTicketObj);
   }
 
   useEffect(() => {
@@ -232,7 +235,8 @@ function MapViewTicketsScreen({ classes }: any) {
       <Grid container item lg={6} className='ticketsMapContainer'>
         {
           <MemoizedMap
-            ticketList={openTickets}
+            list={openTicketsClone}
+            selected={selectedTicket}
             hasPhoto={hasPhoto}
           />
         }
@@ -268,8 +272,8 @@ function MapViewTicketsScreen({ classes }: any) {
         </div>
         <div className='ticketsCardViewContainer'>
           {
-            openTicketsClone.map((x: any, i: any) => (
-              <div className={'ticketItemDiv'} key={i} onClick={() => handleOpenTicketCardClick(x, i)} id={`openTicket${i}`}>
+            openTickets.map((x: any, i: any) => (
+              <div className={'ticketItemDiv'} key={i} onClick={() => { setSelectedTicket({}); handleOpenTicketCardClick(x, i) }} id={`openTicket${i}`}>
                 <div className="ticket_title">
                   <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
                 </div>
@@ -293,7 +297,7 @@ function MapViewTicketsScreen({ classes }: any) {
             ))
           }
         </div>
-        <Pagination count={Math.ceil(totalOpenTickets / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
+        <Pagination count={Math.ceil(totalOpenTickets / 6)} color="primary" onClick={() => setSelectedTicket({})} onChange={handleChange} showFirstButton page={page}
           showLastButton />
       </Grid>
     </Grid >

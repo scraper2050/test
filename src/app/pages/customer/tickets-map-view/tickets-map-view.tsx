@@ -8,19 +8,8 @@ import "./ticket-map-view.scss";
 import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
-import { getAllJobsAPI } from "api/job.api";
-import { useDispatch, useSelector } from "react-redux";
-import { formatDateYMD } from 'helpers/format';
 
 function TicketsWithMapView({ classes }: any) {
-  const dispatch = useDispatch();
-  const { isLoading = true, jobs, refresh = true } = useSelector(
-    ({ jobState }: any) => ({
-      isLoading: jobState.isLoading,
-      jobs: jobState.data,
-      refresh: jobState.refresh,
-    })
-  );
 
 
   const [curTab, setCurTab] = useState(0);
@@ -30,12 +19,6 @@ function TicketsWithMapView({ classes }: any) {
     setCurTab(newValue);
 
   };
-
-  useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
-    }
-  }, [refresh]);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -71,10 +54,7 @@ function TicketsWithMapView({ classes }: any) {
               className={classes.dataContainer}
               hidden={curTab !== 1}
               id={'1'}>
-              <MapViewTodayJobsScreen
-                today={true}
-                isLoading={isLoading}
-                jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formatDateYMD(new Date()))} />
+              <MapViewTodayJobsScreen />
             </div>
             <div
               className={classes.dataContainer}

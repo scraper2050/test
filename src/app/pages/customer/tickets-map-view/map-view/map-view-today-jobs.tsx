@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, withStyles } from '@material-ui/core';
-import { MemoizedMap } from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
+import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import { useDispatch, useSelector } from 'react-redux';
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
 import { DatePicker } from "@material-ui/pickers";
@@ -13,7 +13,7 @@ import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { formatDateYMD } from 'helpers/format';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import Pagination from '@material-ui/lab/Pagination';
-import { info } from 'actions/snackbar/snackbar.action';
+import { info, warning } from 'actions/snackbar/snackbar.action';
 import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
@@ -39,6 +39,8 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   const [page, setPage] = useState(1);
   const [paginatedJobs, setPaginatedJobs] = useState<any>([])
   const [totalItems, setTotalItems] = useState(0)
+  const [hasPhoto, setHasPhoto] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<any>({});
 
 
   const openTicketFilerModal = () => {
@@ -204,27 +206,38 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
 
 
-  const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
+  const handleJobCardClick = (JobObj: any, index: any) => {
     let prevItemKey = localStorage.getItem('prevItemKey');
-    let currentItem = document.getElementById(`openTicket${index}`);
+    let currentItem = document.getElementById(`openTodayJob${index}`);
     if (prevItemKey) {
       let prevItem = document.getElementById(prevItemKey);
       if (prevItem)
         prevItem.style.border = 'none';
       if (currentItem) {
         currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem('prevItemKey', `openTicket${index}`)
+        localStorage.setItem('prevItemKey', `openTodayJob${index}`)
       }
     } else {
       if (currentItem) {
         currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem('prevItemKey', `openTicket${index}`)
+        localStorage.setItem('prevItemKey', `openTodayJob${index}`)
       }
     }
 
-    if (openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
-      dispatch(info('There\'s no address on this job.'))
+    if (JobObj.ticket.image) {
+      setHasPhoto(true)
+    } else {
+      setHasPhoto(false)
     }
+
+
+    if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
+      dispatch(warning('There\'s no address on this job.'))
+    }
+
+    console.log(JobObj)
+
+    setSelectedJob(JobObj);
   }
 
 
@@ -232,6 +245,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   const resetDateFilter = async () => {
     setPage(1);
     resetDate();
+    setSelectedJob({});
 
     const rawData = {
       customerNames: '',
@@ -243,6 +257,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   }
 
   const handleChange = (event: any, value: any) => {
+    setSelectedJob({});
     setPage(value);
 
     const requestObj = { ...filterJobs, page: value, pageSize: 6 };
@@ -258,7 +273,10 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       <Grid container item lg={6} className='ticketsMapContainer'>
         {
           <MemoizedMap
-            ticketList={[]}
+            list={jobs}
+            selected={selectedJob}
+            hasPhoto={hasPhoto}
+            onJob={true}
           />
         }
       </Grid>
@@ -272,7 +290,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
             </button>
             {
               showFilterModal ?
-                <div className="dropdown_wrapper">
+                <div className="dropdown_wrapper elevation-5">
                   <BCMapFilterModal
                     openTicketFilerModal={openTicketFilerModal}
                     resetDate={resetDate}
@@ -323,7 +341,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
               :
 
               jobs.map((x: any, i: any) => (
-                <div className={'ticketItemDiv'} key={i} onClick={() => { }}>
+                <div className={'ticketItemDiv'} key={i} onClick={() => handleJobCardClick(x, i)} id={`openTodayJob${i}`}>
                   <div className="ticket_title">
                     <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
                   </div>
