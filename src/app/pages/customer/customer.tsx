@@ -33,14 +33,6 @@ function CustomersPage({ classes }: any) {
 
   const columns: any = [
     {
-      Cell({ row }: any) {
-        return <div className={"flex items-center"}>{row.index + 1}</div>;
-      },
-      Header: "No#",
-      sortable: true,
-      width: 60,
-    },
-    {
       Header: "Name",
       accessor: "profile.displayName",
       className: "font-bold",
