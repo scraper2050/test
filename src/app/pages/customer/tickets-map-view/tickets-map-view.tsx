@@ -34,7 +34,7 @@ function TicketsWithMapView({ classes }: any) {
                 'value': 0
               },
               {
-                'label': 'Today\s Jobs',
+                'label': 'Today\'s Jobs',
                 'value': 1
               },
               {
