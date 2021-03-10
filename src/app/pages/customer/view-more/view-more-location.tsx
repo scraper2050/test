@@ -80,7 +80,8 @@ function ViewMoreLocationPage({ classes }: any) {
       'Header': 'Job Site',
       'accessor': 'name',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'width': 60
     },
     {
       'Header': 'Address',
@@ -99,6 +100,20 @@ function ViewMoreLocationPage({ classes }: any) {
       'sortable': true
     },
     {
+      'Header': 'Latitude',
+      'accessor': 'location.coordinates[0]',
+      'className': 'font-bold',
+      'sortable': false,
+      'width': 40
+    },
+    {
+      'Header': 'Longitude',
+      'accessor': 'location.coordinates[1]',
+      'className': 'font-bold',
+      'sortable': false,
+      'width': 40
+    },
+    {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
           <Fab
@@ -114,6 +129,7 @@ function ViewMoreLocationPage({ classes }: any) {
 
         </div>;
       },
+      'Header': 'Actions',
       'id': 'action',
       'sortable': false,
       'width': 60

@@ -110,13 +110,8 @@ function ViewMorePage({ classes }: any) {
       'Header': 'Job Location',
       'accessor': 'name',
       'className': 'font-bold',
-      'sortable': true
-    },
-    {
-      'Header': 'Contact Name',
-      'accessor': 'contact.name',
-      'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'width': 50
     },
     {
       'Header': 'Address',
@@ -134,6 +129,21 @@ function ViewMorePage({ classes }: any) {
       'className': 'font-bold',
       'sortable': true
     },
+
+    {
+      'Header': 'Latitude',
+      'accessor': 'location.coordinates[0]',
+      'className': 'font-bold',
+      'sortable': false,
+      'width': 40
+    },
+    {
+      'Header': 'Longitude',
+      'accessor': 'location.coordinates[1]',
+      'className': 'font-bold',
+      'sortable': false,
+      'width': 40
+    },
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
@@ -150,9 +160,11 @@ function ViewMorePage({ classes }: any) {
 
         </div>;
       },
+
+      'Header': 'Actions',
       'id': 'action',
       'sortable': false,
-      'width': 60
+      'width': 40
     }
   ];
 
@@ -165,6 +177,16 @@ function ViewMorePage({ classes }: any) {
       dispatch(getJobLocationsAction(customerId));
     }
   }, [jobLocations.refresh]);
+
+  useEffect(() => {
+
+    const obj: any = location.state;
+    const customerId = obj.customerId;
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(customerId));
+
+
+  }, [location.pathname])
 
   useEffect(() => {
     if (customerObj.from === 1) {
