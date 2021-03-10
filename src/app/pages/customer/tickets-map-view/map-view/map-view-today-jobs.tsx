@@ -20,7 +20,7 @@ import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { getSearchJobs } from "api/job.api";
 
-function MapViewJobsScreen({ classes, today }: any) {
+function MapViewTodayJobsScreen({ classes, today }: any) {
 
   const dispatch = useDispatch();
 
@@ -208,19 +208,19 @@ function MapViewJobsScreen({ classes, today }: any) {
 
   const handleJobCardClick = (JobObj: any, index: any) => {
     let prevItemKey = localStorage.getItem('prevItemKey');
-    let currentItem = document.getElementById(`openScheduledJob${index}`);
+    let currentItem = document.getElementById(`openTodayJob${index}`);
     if (prevItemKey) {
       let prevItem = document.getElementById(prevItemKey);
       if (prevItem)
         prevItem.style.border = 'none';
       if (currentItem) {
         currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem('prevItemKey', `openScheduledJob${index}`)
+        localStorage.setItem('prevItemKey', `openTodayJob${index}`)
       }
     } else {
       if (currentItem) {
         currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem('prevItemKey', `openScheduledJob${index}`)
+        localStorage.setItem('prevItemKey', `openTodayJob${index}`)
       }
     }
 
@@ -341,7 +341,7 @@ function MapViewJobsScreen({ classes, today }: any) {
               :
 
               jobs.map((x: any, i: any) => (
-                <div className={'ticketItemDiv'} key={i} onClick={() => handleJobCardClick(x, i)} id={`openScheduledJob${i}`}>
+                <div className={'ticketItemDiv'} key={i} onClick={() => handleJobCardClick(x, i)} id={`openTodayJob${i}`}>
                   <div className="ticket_title">
                     <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
                   </div>
@@ -375,4 +375,4 @@ function MapViewJobsScreen({ classes, today }: any) {
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(MapViewJobsScreen);
+)(MapViewTodayJobsScreen);

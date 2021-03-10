@@ -7,7 +7,7 @@ import CustomersIcon from 'assets/img/icons/dashboard/Customers';
 import JobsIcon from 'assets/img/icons/dashboard/Jobs';
 import TicketsIcon from 'assets/img/icons/dashboard/Tickets';
 import { useHistory } from 'react-router-dom';
-import { getVendors, loadingVendors } from 'actions/vendor/vendor.action';
+import { getVendors, loadingVendors, getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../constants';
@@ -58,6 +58,35 @@ function DashboardPage({ classes }: any): JSX.Element {
       </div>
     </div>
   }
+
+  const renderViewMore = (row: any) => {
+    let baseObj = row["original"];
+    let vendorCompanyName =
+      baseObj["contractor"]["info"]
+        && baseObj["contractor"]["info"]["companyName"] !== undefined
+        ? baseObj["contractor"]["info"]["companyName"]
+        : "N/A";
+    let vendorId = baseObj['contractor']['_id'];
+    let vendorObj = { vendorCompanyName, vendorId, };
+    vendorCompanyName =
+      vendorCompanyName !== undefined
+        ? vendorCompanyName.replace(/ /g, "")
+        : "vendorName";
+
+    localStorage.setItem("nestedRouteKey", `${vendorCompanyName}`);
+
+
+    dispatch(loadingSingleVender());
+    dispatch(getVendorDetailAction(vendorId));
+
+    history.push({
+      pathname: `admin/vendors/${vendorCompanyName}`,
+      state: {
+        ...vendorObj,
+      }
+    });
+  }
+
 
   const columns: any = [
     {
@@ -136,10 +165,12 @@ function DashboardPage({ classes }: any): JSX.Element {
                   <BCTableDashboard
                     text={"Vendors"}
                     textButton={"Invite Vendor"}
-                    onClick={() => openVendorModal()}
+                    click={() => openVendorModal()}
                     columns={columns}
                     isLoading={vendors.loading}
                     tableData={vendors.data}
+
+                    onRowClick={(row: any) => renderViewMore(row)}
                   />
                 </Grid>
 

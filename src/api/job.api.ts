@@ -1,4 +1,5 @@
 import request from "utils/http.service";
+import { formatDateYMD } from 'helpers/format';
 import {
   refreshJobTypes,
   setJobTypes,
@@ -148,3 +149,40 @@ export const saveJobType = async (body: { title: string }) => {
   }
   return responseData;
 };
+
+
+export const getSearchJobs = async (data: {
+  page?: number,
+  pageSize?: number,
+  customerNames?: any,
+  jobId?: string,
+}) => {
+
+  const page = data.page;
+  const pageSize = data.pageSize;
+  delete data.page;
+  delete data.pageSize;
+
+  const requestLink = `/searchJobs?page=${page}&pageSize=${pageSize}`;
+
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      const res: any = await request(requestLink, 'post', data);
+
+      if (res.status === 200) {
+        return resolve(res);
+      }
+      // if (today) {
+      //   return resolve(res.data?.filter((job: any) => formatDateYMD(job.scheduleDate) === formatDateYMD(new Date())));
+      // } else {
+      //   return resolve(res.data?.filter((job: any) => formatDateYMD(job.scheduleDate) !== formatDateYMD(new Date())));
+      // }
+    } catch (err) {
+      return reject(err);
+    }
+  });
+
+}
+
+
