@@ -73,8 +73,8 @@ function BCDeleteJobModal({
 
         if (responseTicket.status) {
 
-          await dispatch(refreshServiceTickets(true));
           await dispatch(refreshJobs(true));
+          await dispatch(refreshServiceTickets(true));
           await closeModal();
 
           dispatch(success(`${job.jobId} and ${job.ticket.ticketId} successfully canceled!`));
@@ -85,6 +85,8 @@ function BCDeleteJobModal({
 
         console.log(responseTicket)
       } else {
+
+        await dispatch(refreshServiceTickets(true));
         await dispatch(refreshJobs(true));
         await closeModal();
 
