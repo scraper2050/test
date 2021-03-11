@@ -183,10 +183,10 @@ export default (theme: Theme): any => ({
     'zIndex': '0'
   },
   'profileAvatarImage': {
-    'borderRadius': '23px',
-    'height': '45px',
-    'marginRight': '15px',
-    'width': '45px'
+    'borderRadius': '23px !important',
+    'height': '45px !important',
+    'marginRight': '15px !important',
+    'width': '45px !important'
   },
   'sideBarLogoBrand': {
     'alignItems': 'center',

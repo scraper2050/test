@@ -70,14 +70,14 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
       'label': 'Tags',
       'link': '/main/tags/purchasedtag'
     },
-    {
-      'label': 'Inventory',
-      'link': '/main/inventory'
-    },
-    {
-      'label': 'Employees',
-      'link': '/main/employees/group'
-    },
+    // {
+    //   'label': 'Inventory',
+    //   'link': '/main/inventory'
+    // },
+    // {
+    //   'label': 'Employees',
+    //   'link': '/main/employees/group'
+    // },
     {
       'label': 'Admin',
       'link': '/main/admin'

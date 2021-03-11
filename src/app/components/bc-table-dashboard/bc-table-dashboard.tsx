@@ -7,20 +7,22 @@ interface Props {
   classes: any;
   text: string;
   textButton: string;
-  onClick?: any;
+  click?: any;
   columns: any;
   isLoading: boolean;
   tableData: any;
+  onRowClick?: any;
 }
 function BCTableDashboard(props: Props) {
   const {
     classes,
     text,
     textButton,
-    onClick,
+    click,
     columns,
     isLoading,
     tableData,
+    onRowClick
   } = props;
 
   return (
@@ -28,7 +30,7 @@ function BCTableDashboard(props: Props) {
       container
       direction="column"
       className={`${classes.tableContainer} elevation-1`}
-      onClick={onClick}>
+    >
       <Grid item className={classes.header} xs={12}>
         <Grid container>
           <Grid item xs={9}>
@@ -42,7 +44,7 @@ function BCTableDashboard(props: Props) {
               justify="center"
               alignItems="center"
               className={`${classes.buttonContainer}`}
-              onClick={onClick}>
+              onClick={click}>
 
               <Grid item>
                 {textButton}
@@ -58,13 +60,13 @@ function BCTableDashboard(props: Props) {
           className={classes.table}
           columns={columns}
           isLoading={isLoading}
-          onRowClick={() => { }}
           tableData={tableData}
           pagination={false}
           pageSize={tableData.length}
           isDefault={true}
           initialMsg="No Vendors yet"
           stickyHeader={true}
+          onRowClick={(ev: any, row: any) => onRowClick(row)}
         />
       </Grid>
     </Grid>

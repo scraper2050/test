@@ -8,7 +8,15 @@ export const getCustomers = async (param?: {}) => {
   let responseData;
   try {
     const response: any = await request("/getCustomers", "POST", body, false);
+
     responseData = response.data;
+    if (response.status === 200) {
+
+      responseData = {
+        ...response.data,
+        customers: response.data.customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))
+      }
+    }
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {

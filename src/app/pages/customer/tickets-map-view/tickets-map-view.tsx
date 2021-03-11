@@ -6,20 +6,10 @@ import React, { useEffect, useState } from 'react';
 import '../../../../scss/index.css';
 import "./ticket-map-view.scss";
 import MapViewTicketsScreen from './map-view/map-view-tickets';
+import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
-import { getAllJobsAPI } from "api/job.api";
-import { useDispatch, useSelector } from "react-redux";
-import { formatDateYMD } from 'helpers/format';
 
 function TicketsWithMapView({ classes }: any) {
-  const dispatch = useDispatch();
-  const { isLoading = true, jobs, refresh = true } = useSelector(
-    ({ jobState }: any) => ({
-      isLoading: jobState.isLoading,
-      jobs: jobState.data,
-      refresh: jobState.refresh,
-    })
-  );
 
 
   const [curTab, setCurTab] = useState(0);
@@ -29,12 +19,6 @@ function TicketsWithMapView({ classes }: any) {
     setCurTab(newValue);
 
   };
-
-  useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
-    }
-  }, [refresh]);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -50,7 +34,7 @@ function TicketsWithMapView({ classes }: any) {
                 'value': 0
               },
               {
-                'label': 'Today\s Jobs',
+                'label': 'Today\'s Jobs',
                 'value': 1
               },
               {
@@ -64,24 +48,19 @@ function TicketsWithMapView({ classes }: any) {
               className={classes.dataContainer}
               hidden={curTab !== 0}
               id={'0'}>
-              <MapViewTicketsScreen today={true} />
+              <MapViewTicketsScreen />
             </div>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 1}
               id={'1'}>
-              <MapViewJobsScreen
-                today={true}
-                isLoading={isLoading}
-                jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formatDateYMD(new Date()))} />
+              <MapViewTodayJobsScreen />
             </div>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 2}
               id={'2'}>
-              <MapViewJobsScreen
-                isLoading={isLoading}
-                jobs={jobs.filter((job: any) => formatDateYMD(job.scheduleDate) !== formatDateYMD(new Date()))} />
+              <MapViewJobsScreen />
             </div>
           </SwipeableViews>
         </div>

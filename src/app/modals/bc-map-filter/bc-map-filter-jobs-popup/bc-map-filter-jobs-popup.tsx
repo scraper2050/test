@@ -4,7 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import styles from './bc-map-filter-popup.styles';
+import styles from '../bc-map-filter-popup.styles';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
@@ -21,19 +21,21 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 function BCMapFilterModal({
   classes,
   openTicketFilerModal,
-  resetDate
+  resetDate,
+  setPage,
+  getScheduledJobs
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   const loading = useSelector(({ customers }: any) => customers.loading);
-  const jobTypes = useSelector((state: any) => state.jobTypes.data);
-  const loadingTypes = useSelector((state: any) => state.jobTypes.isLoading);
+  // const jobTypes = useSelector((state: any) => state.jobTypes.data);
+  // const loadingTypes = useSelector((state: any) => state.jobTypes.isLoading);
 
 
   useEffect(() => {
     dispatch(loadingCustomers());
     dispatch(getCustomers());
-    dispatch(getAllJobTypesAPI());
+    // dispatch(getAllJobTypesAPI());
   }, []);
 
   const formatRequestObj = (rawReqObj: any) => {
@@ -45,55 +47,35 @@ function BCMapFilterModal({
     return rawReqObj;
   }
 
-  const onSubmit = (values: any, { setSubmitting }: any) => {
+  const onSubmit = async (values: any, { setSubmitting }: any) => {
 
     setSubmitting(true);
     resetDate();
-    const rawData = {
-      pageNo: 1,
-      pageSize: 6,
-      jobTypeTitle: values.jobType,
-      dueDate: '',
-      customerNames: values.customer,
-      ticketId: values.searchQuery,
-      companyId: '',
-      contactName: values.contactName,
-    }
-    dispatch(setOpenTicketFilterState(rawData));
-    const requestObj = formatRequestObj(rawData);
-    dispatch(setOpenServiceTicketLoading(true));
-    getOpenServiceTickets(requestObj).then((response: any) => {
-      dispatch(setOpenServiceTicket(response));
-      dispatch(refreshServiceTickets(true));
-      dispatch(setOpenServiceTicketLoading(false));
-      openTicketFilerModal();
-      setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
-      }, 200);
-      setSubmitting(false);
-    })
-      .catch((err: any) => {
-        setSubmitting(false);
-        throw err;
-      });
+    setPage(1);
+
+
+
+    await getScheduledJobs({ ...values, page: 1, pageSize: 6 });
+
+    setSubmitting(false);
+
+    openTicketFilerModal();
+
   }
 
   const form = useFormik({
     initialValues: {
-      searchQuery: '',
-      customer: [],
-      jobType: '',
-      contactName: '',
+      jobId: '',
+      customerNames: "",
+      // jobType: '',
+      // contactName: '',
     },
     onSubmit
   });
 
   const handleCustomerChange = (field: string, setFieldValue: Function, newValue: []) => {
     const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
-    setFieldValue('customer', customerDatafromAutoselect);
+    setFieldValue('customerNames', customerDatafromAutoselect);
   }
 
   const {
@@ -114,7 +96,7 @@ function BCMapFilterModal({
       }));
     }, 200);
   };
-  if (loading && loadingTypes) {
+  if (loading) {
     return <BCCircularLoader heightValue={'280px'} />
   } else {
 
@@ -131,8 +113,8 @@ function BCMapFilterModal({
             >
               <FormGroup className={'required'}>
                 <TextField
-                  name={'searchQuery'}
-                  placeholder={'TicketId'}
+                  name={'jobId'}
+                  placeholder={'Job ID'}
                   variant={'outlined'}
                   onChange={form.handleChange}
                   type={'search'}
@@ -157,7 +139,8 @@ function BCMapFilterModal({
                   <i className="material-icons">search</i>
                 </div>
               </FormGroup>
-              <FormGroup className={'required'}>
+
+              {/* <FormGroup className={'required'}>
                 <TextField
                   name={'contactName'}
                   label={'Contact'}
@@ -166,9 +149,9 @@ function BCMapFilterModal({
                   onChange={form.handleChange}
                   type={'search'}
                 />
-              </FormGroup>
+              </FormGroup> */}
 
-              <BCSelectOutlined
+              {/* <BCSelectOutlined
                 handleChange={formikChange}
                 error={{
                   'isError': true,
@@ -188,7 +171,7 @@ function BCMapFilterModal({
                 label={'Job Type'}
                 name={'jobType'}
                 value={FormikValues.jobType}
-              />
+              /> */}
 
             </Grid>
           </Grid>
