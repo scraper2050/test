@@ -42,6 +42,7 @@ function BCServiceTicketModal({
     jobType: "",
     nickName: "",
     updateFlag: "",
+    zipCode: '',
     dueDate: new Date(),
   },
   error = {
@@ -89,15 +90,16 @@ function BCServiceTicketModal({
   } = useFormik({
     // 'enableReinitialize': true,
     initialValues: {
-      cardHolderName: ticket.customer._id,
-      expiryDate: ticket.jobSite,
+      name: ticket.customer._id,
+      exp: ticket.jobSite,
       cardNumber: ticket.jobLocation,
-      cvv: ticket.cvv,
+      cvc: ticket.cvv,
       nickName: ticket.nickName,
-      billingAddress: ticket.billingAddress,
+      address: ticket.billingAddress,
       city: ticket.city,
       state: ticket.state,
       updateFlag: ticket.updateFlag,
+      zipcode: ticket.zipcode
     },
     onSubmit: (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -108,7 +110,7 @@ function BCServiceTicketModal({
       let editTicketObj = { ...values, ticketId: "" };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        delete editTicketObj.cardHolderName;
+        delete editTicketObj.name;
         if (isValidate(editTicketObj)) {
           let formatedRequest = formatRequestObj(editTicketObj);
           if (formatedRequest.dueDate) {
@@ -116,6 +118,7 @@ function BCServiceTicketModal({
           }
           EditBillingMethodAPI(formatedRequest)
             .then((response: any) => {
+              debugger
               dispatch(refreshServiceTickets(true));
               dispatch(closeModalAction());
               setTimeout(() => {
@@ -194,10 +197,10 @@ function BCServiceTicketModal({
             <BCInput
               className="serviceTicketLabel"
               label={"Card Holder Name"}
-              name={"cardHolderName"}
+              name={"name"}
               margin={"dense"}
               required
-              value={FormikValues.cardHolderName}
+              value={FormikValues.name}
               handleChange={formikChange}
             />
             <BCInput
@@ -211,8 +214,8 @@ function BCServiceTicketModal({
             <BCInput
               handleChange={formikChange}
               label={"CVV"}
-              name={"cvv"}
-              value={FormikValues.cvv}
+              name={"cvc"}
+              value={FormikValues.cvc}
               className="serviceTicketLabel"
               margin={"dense"}
             />
@@ -220,8 +223,8 @@ function BCServiceTicketModal({
             <BCInput
               handleChange={formikChange}
               label={"Expiry Date"}
-              name={"expiryDate"}
-              value={FormikValues.expiryDate}
+              name={"exp"}
+              value={FormikValues.exp}
               className="serviceTicketLabel"
               margin={"dense"}
               placeholder="MM/YY"
@@ -229,8 +232,16 @@ function BCServiceTicketModal({
             <BCInput
               handleChange={formikChange}
               label={"Billing Address"}
-              name={"billingAddress"}
-              value={FormikValues.billingAddress}
+              name={"address"}
+              value={FormikValues.address}
+              className="serviceTicketLabel"
+              margin={"dense"}
+            />
+            <BCInput
+              handleChange={formikChange}
+              label={"Zip Code"}
+              name={"zipcode"}
+              value={FormikValues.zipcode}
               className="serviceTicketLabel"
               margin={"dense"}
             />
