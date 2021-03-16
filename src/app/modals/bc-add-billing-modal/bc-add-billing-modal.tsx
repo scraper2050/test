@@ -294,15 +294,6 @@ function BCServiceTicketModal({
               margin={"dense"}
             />
             <ErrorMessage>{validate.address}</ErrorMessage>
-            {/* <BCInput
-              handleChange={formikChange}
-              label={"Zip Code"}
-              name={"zipcode"}
-              value={FormikValues.zipcode}
-              className="serviceTicketLabel"
-              margin={"dense"}
-            />
-            <ErrorMessage>{validate.zipcode}</ErrorMessage> */}
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <BCInput
@@ -327,7 +318,15 @@ function BCServiceTicketModal({
                 <ErrorMessage>{validate.state}</ErrorMessage>
               </Grid>
             </Grid>
-
+            <BCInput
+              handleChange={formikChange}
+              label={"Zip Code"}
+              name={"zipcode"}
+              value={FormikValues.zipcode}
+              className="serviceTicketLabel"
+              margin={"dense"}
+            />
+            <ErrorMessage>{validate.zipcode}</ErrorMessage>
             <BCInput
               handleChange={formikChange}
               label={"Nickname"}
