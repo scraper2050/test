@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
     "margin-bottom": "5px",
     width: "100%",
   },
+  inputBox: {
+    marginTop: "0px"
+  }
 }));
 
 function BCInput({
@@ -34,13 +37,14 @@ function BCInput({
     <FormControl className={classes.fullWidth}>
       {
         label !== "" &&
-        <Typography gutterBottom className={className} variant={"subtitle1"}>
+        <Typography className={className} variant={"subtitle1"}>
           {label}
         </Typography>
       }
 
       <TextField
         type={type}
+        className={classes.inputBox}
         id={"outlined-textarea"}
         label={""}
         multiline={multiline}
