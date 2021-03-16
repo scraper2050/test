@@ -5,6 +5,8 @@ import { refreshServiceTickets } from "actions/service-ticket/service-ticket.act
 import styles from "./bc-add-billing-modal.styles";
 import { useFormik } from "formik";
 import { makeStyles } from '@material-ui/core/styles';
+import { success } from "actions/snackbar/snackbar.action";
+import { getCompanyCards } from "api/company-cards.api";
 import {
   Box,
   DialogActions,
@@ -138,7 +140,6 @@ function BCServiceTicketModal({
           }
           EditBillingMethodAPI(formatedRequest)
             .then((response: any) => {
-              debugger
               dispatch(refreshServiceTickets(true));
               dispatch(closeModalAction());
               setTimeout(() => {
@@ -150,6 +151,7 @@ function BCServiceTicketModal({
                 );
               }, 200);
               setSubmitting(false);
+              dispatch(success(response.message));
             })
             .catch((err: any) => {
               setSubmitting(false);
@@ -201,6 +203,8 @@ function BCServiceTicketModal({
                 })
               );
             }, 200);
+            dispatch(getCompanyCards())
+            dispatch(success(response.message));
           })
           .catch((err: any) => {
             setSubmitting(false);
@@ -290,7 +294,7 @@ function BCServiceTicketModal({
               margin={"dense"}
             />
             <ErrorMessage>{validate.address}</ErrorMessage>
-            <BCInput
+            {/* <BCInput
               handleChange={formikChange}
               label={"Zip Code"}
               name={"zipcode"}
@@ -298,7 +302,7 @@ function BCServiceTicketModal({
               className="serviceTicketLabel"
               margin={"dense"}
             />
-            <ErrorMessage>{validate.zipcode}</ErrorMessage>
+            <ErrorMessage>{validate.zipcode}</ErrorMessage> */}
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <BCInput
