@@ -140,6 +140,8 @@ function BCServiceTicketModal({
         }
       } else {
         let formatedRequest = formatRequestObj(tempData);
+        console.log(formatedRequest)
+        debugger
         AddBillingMethodAPI(formatedRequest)
           .then((response: any) => {
             dispatch(refreshServiceTickets(true));
