@@ -47,6 +47,7 @@ function BCInput({
       <MaskedInput
         mask={[/\d/, /\d/, '/', /\d/, /\d/]}
         type={type}
+        id={"outlined-textarea-mask"}
         className="masked-input"
         name={name}
         onChange={(e: any) => handleChange(e)}
