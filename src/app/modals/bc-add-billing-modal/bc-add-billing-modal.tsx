@@ -124,6 +124,7 @@ function BCServiceTicketModal({
       zipcode: ticket.zipcode
     },
     onSubmit: (values, { setSubmitting }) => {
+      console.log(values)
       setSubmitting(true);
       const tempData = {
         ...ticket,
@@ -277,7 +278,7 @@ function BCServiceTicketModal({
             <ErrorMessage>{validate.cvc}</ErrorMessage>
             <BCInput
               handleChange={formikChange}
-              label={"Expiry Date"}
+              label={"Expiration Date"}
               name={"exp"}
               value={FormikValues.exp}
               className="serviceTicketLabel"
