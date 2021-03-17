@@ -8,10 +8,14 @@ import { Theme, makeStyles, withStyles } from '@material-ui/core/styles';
 
 const commonStyles = (theme: Theme) => ({
   'input': {
+    '&:hover': {
+      'borderColor': 'black'
+    },
     '&:focus': {
-      'borderColor': '#80bdff',
+      'borderColor': '#00aaff',
+      'borderWidth': '2px',
       'borderRadius': 4,
-      'boxShadow': '0 0 0 0.2rem rgba(0,123,255,.25)'
+      // 'boxShadow': '0 0 0 0.2rem rgba(0,123,255,.25)'
     },
     'backgroundColor': theme.palette.background.paper,
     'borderRadius': 4,
@@ -95,7 +99,8 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
       {!nakedSelect
         ? <Typography
           style={{
-            'marginRight': 10
+            'marginRight': 10,
+            'fontWeight': 600
           }}
           className={items.className ? items.className : ''}
           variant={'subtitle1'}>
