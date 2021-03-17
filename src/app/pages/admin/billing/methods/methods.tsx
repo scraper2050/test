@@ -17,8 +17,9 @@ import { CompanyCard } from "actions/company-cards/company-cards.types";
 import CardIcon from "assets/img/icons/billings/Card";
 import ArrowRightIcon from "assets/img/icons/billings/ArrowRight";
 import MoreIcon from "assets/img/icons/billings/More";
-
-
+import visa from 'assets/img/icons/card/visa.svg';
+import master from 'assets/img/icons/card/master.svg';
+import discover from 'assets/img/icons/card/discover.svg';
 interface Props {
   classes: any;
 }
@@ -81,7 +82,7 @@ function BillingMethodsPage({ classes }: Props) {
     )
   }
 
-
+  console.log(companyCards)
   return (
     <>
       <div className={classes.pageMainContainer}>
@@ -108,7 +109,6 @@ function BillingMethodsPage({ classes }: Props) {
                     <BCCircularLoader heightValue={'200px'} />
                   </div>
                   :
-
                   <Grid container direction="column" spacing={3} >
 
                     {
@@ -124,9 +124,15 @@ function BillingMethodsPage({ classes }: Props) {
                                   <Grid
                                     container
                                     className={`${classes.contentItem}`}>
-                                    <CardIcon />
-                                    <div className={classes.contentItemTextContainer}>
-                                      <b>**** **** **** {card.ending}</b>
+                                    <div className={classes.contentItemTextContainer}>                                      
+                                      <div className={classes.flex}>
+                                        {card.cardType === "Visa" && <img alt="icon" src={visa} className={classes.billingCard}/>}
+                                        {!card.cardType && <img alt="icon" src={visa} className={classes.billingCard}/>}
+                                        <div>
+                                          <b>{card.cardType}....{card.ending}</b>
+                                          <div className={classes.cardExp}>Exp. {card.expirationMonth}/{card.expirationYear}</div>
+                                        </div>
+                                      </div>
                                     </div>
 
                                     <IconButton aria-label="more" component="span">

@@ -59,19 +59,30 @@ export default (theme: Theme): any => ({
     'textAlign': 'left',
   },
   'content': {
-    'padding': '1rem 1.5rem',
+    'padding': '1rem 1.5rem 0',
+    'marginBottom': '-1px'
   },
   'contentItem': {
-    'padding': '1.5rem 2rem',
+    'padding': '1.5rem 1rem',
+    'borderBottom': 'solid 1px #C4C4C4',
     'alignItems': 'center',
 
   },
   'contentItemTextContainer': {
     'flexGrow': 1,
-    'marginLeft': '2rem',
   },
   'addCreditCard': {
     'cursor': 'pointer'
+  },
+  'flex': {
+    'display': 'flex',
+  },
+  'cardExp': {
+    'marginTop': '0.5rem'
+  },
+  'billingCard': {
+    'width': '30px',
+    'margin': '-25px 20px 0 0',
   }
 });
 

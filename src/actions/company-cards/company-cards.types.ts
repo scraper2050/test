@@ -7,7 +7,10 @@ export const types = {
 
 export interface CompanyCard {
   _id: string
-  ending: string
+  ending: string,
+  expirationMonth: string,
+  expirationYear: string,
+  cardType: string
 }
 
 
