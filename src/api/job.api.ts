@@ -156,6 +156,7 @@ export const getSearchJobs = async (data: {
   pageSize?: number,
   customerNames?: any,
   jobId?: string,
+  schedule_date?: string
 }) => {
 
   const page = data.page;

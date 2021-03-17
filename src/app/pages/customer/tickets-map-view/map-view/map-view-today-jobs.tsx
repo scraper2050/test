@@ -13,22 +13,24 @@ import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { formatDateYMD } from 'helpers/format';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import Pagination from '@material-ui/lab/Pagination';
-import { info, warning } from 'actions/snackbar/snackbar.action';
+import { warning } from 'actions/snackbar/snackbar.action';
 import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { getSearchJobs } from "api/job.api";
-
+import moment from 'moment';
+import { Job } from '../../../../../actions/job/job.types';
 function MapViewTodayJobsScreen({ classes, today }: any) {
 
   const dispatch = useDispatch();
 
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [totalJobs, setTotalJobs] = useState(-1);
   const [filterJobs, setFilterJobs] = useState({
     customerNames: "",
     jobId: "",
+    schedule_date: ''
   });
   const [showFilterModal, setShowFilterModal] = useState(false);
 
@@ -42,11 +44,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   const [hasPhoto, setHasPhoto] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>({});
 
-
   const openTicketFilerModal = () => {
     setShowFilterModal(!showFilterModal);
   }
-
 
   const resetDate = () => {
     setDateValue(null);
@@ -57,7 +57,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
     const rawData = {
       customerNames: '',
       jobId: '',
-      // today: false,
+      schedule_date: ''
     }
     const requestObj = { ...rawData, page: 1, pageSize: 6 };
     getScheduledJobs(requestObj);
@@ -69,32 +69,22 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       pageSize?: number,
       customerNames?: any,
       jobId?: string,
-      // today?: boolean,
+      schedule_date?: string
     }
   ) => {
     setIsLoading(true);
     const response: any = await getSearchJobs(requestObj);
-
     const { data } = response;
-
-
-
     if (data.status) {
       setJobs(data.jobs);
       setTotalJobs(data.total);
       setIsLoading(false);
-    } else {
-
+    }
+    else {
       setIsLoading(false);
     }
-
     return;
   }
-
-
-
-
-
 
   useEffect(() => {
     let offset = (page - 1) * 6;
@@ -267,6 +257,8 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   // if (isLoading) {
   //   return <BCCircularLoader heightValue={'200px'} />
   // }
+  const todaysJobs = jobs?.filter(item => moment(item?.scheduleDate).isSame(Date(), 'day'));
+  const totalTodaysJobs = todaysJobs.length;
 
   return (
     <Grid container item lg={12} >
@@ -340,7 +332,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
               </div>
               :
 
-              jobs.map((x: any, i: any) => (
+              todaysJobs.map((x: any, i: any) => (
                 <div className={'ticketItemDiv'} key={i} onClick={() => handleJobCardClick(x, i)} id={`openTodayJob${i}`}>
                   <div className="ticket_title">
                     <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
@@ -364,7 +356,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
           }
         </div>
-        <Pagination count={Math.ceil(totalJobs / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
+        <Pagination count={Math.ceil(totalTodaysJobs / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
           showLastButton />
       </Grid>
 
