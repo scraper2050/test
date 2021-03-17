@@ -9,7 +9,6 @@ import {
   openModalAction,
   setModalDataAction,
 } from "actions/bc-modal/bc-modal.action";
-import { refreshServiceTickets } from "actions/service-ticket/service-ticket.action";
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { useDispatch, useSelector } from "react-redux";
 import * as CONSTANTS from "../../../../../constants";
@@ -17,8 +16,6 @@ import { getCompanyCards } from "api/company-cards.api";
 import { CompanyCard } from "actions/company-cards/company-cards.types";
 import CardIcon from "assets/img/icons/billings/Card";
 import ArrowRightIcon from "assets/img/icons/billings/ArrowRight";
-import { DeleteBillingMethodAPI } from "api/billing-methods.api";
-import { success } from "actions/snackbar/snackbar.action";
 import CompanyCards from './companyCards';
 interface Props {
   classes: any;
@@ -76,25 +73,24 @@ function BillingMethodsPage({ classes }: Props) {
     )
   }
 
-  const onDelete = (id:string) => {
-    let formatedRequest = { cardId: id }
-    DeleteBillingMethodAPI(formatedRequest)
-      .then((response: any) => {
-        dispatch(refreshServiceTickets(true));
-        dispatch(getCompanyCards())
-        setTimeout(() => {
-          dispatch(
-            setModalDataAction({
-              data: {},
-              type: "",
-            })
-          );
-        }, 200);
-        dispatch(success("Card deleted successfully"));
+  const onDelete = (id:string, ending: string) => {
+    
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'data': {
+            cardId: id,
+            ending: ending
+          },
+          'modalTitle': ' ',
+          'removeFooter': false
+        },
+        type: modalTypes.DELETE_BILLING_MODAL,
       })
-      .catch((err: any) => {
-        throw err;
-      });
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
   return (

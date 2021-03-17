@@ -1,4 +1,5 @@
 import BCInput from "app/components/bc-input/bc-input";
+import AutoComplete from 'app/components/bc-autocomplete/bc-autocomplete';
 import BCSelectOutlined from "app/components/bc-select-outlined/bc-select-outlined";
 import React, { useState, useEffect } from "react";
 import { formatDate } from "helpers/format";
@@ -241,7 +242,7 @@ function BCServiceTicketModal({
       );
     }, 200);
   };
-
+  console.log(FormikValues)
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   } else {
@@ -310,21 +311,11 @@ function BCServiceTicketModal({
                 <ErrorMessage>{validate.city}</ErrorMessage>
               </Grid>
               <Grid item xs={6}>
-                <BCSelectOutlined 
+                <AutoComplete 
                   handleChange={formikChange}
                   label={"State"}
                   name={"state"}
-                  items={{
-                    'data': [
-                      ...allStates.map((state: any) => {
-                        return {
-                          'title': state.name
-                        };
-                      })
-                    ],
-                    'displayKey': 'title',
-                    'valueKey': 'title'
-                  }}
+                  data={allStates}
                   value={FormikValues.state}
                   className="serviceTicketLabel"
                   margin={"dense"}

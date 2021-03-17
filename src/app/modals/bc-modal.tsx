@@ -15,6 +15,7 @@ import BCAddJobLocationModal from "./bc-add-job-location-modal/bc-add-job-locati
 import BCMapFilterModal from "./bc-map-filter/bc-map-filter-popup";
 import BCEditCutomerInfoModal from "./bc-customer-info-modal/bc-customer-info-modal";
 import BCAddBillingModal from "./bc-add-billing-modal/bc-add-billing-modal";
+import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
 import CloseIcon from "@material-ui/icons/Close";
 import {
   closeModalAction,
@@ -137,6 +138,15 @@ function BCModal() {
         });
         setComponent(<BCAddContactModal props={data.data} />);
         break;
+      case modalTypes.DELETE_BILLING_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "xs",
+        });
+        setComponent(<BCDeleteBillingConfirmModal data={data.data} />);
+        break;
       case modalTypes.DELETE_CONTACT_MODAL:
         setModalOptions({
           disableBackdropClick: true,
@@ -234,6 +244,7 @@ function BCModal() {
         setComponent(null);
     }
   }, [type]);
+
   const handleClose = () => {
     dispatch(closeModalAction());
     setTimeout(() => {

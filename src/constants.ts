@@ -35,4 +35,5 @@ export const modalTypes = {
   ADD_CONTACT_MODAL: "add-contact-modal",
   DELETE_CONTACT_MODAL: "delete-contact-modal",
   EDIT_PROFILE: "edit-profile-modal",
+  DELETE_BILLING_MODAL: 'delete-billing-modal'
 };
