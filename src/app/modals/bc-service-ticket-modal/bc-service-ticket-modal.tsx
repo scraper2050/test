@@ -50,7 +50,8 @@ function BCServiceTicketModal({
     'dueDate': new Date(),
     'customerContactId': '',
     'customerPO': '',
-    'image': ''
+    'image': '',
+    'postCode': ''
   },
   error = {
     'status': false,

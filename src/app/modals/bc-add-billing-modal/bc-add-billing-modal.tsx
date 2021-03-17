@@ -4,7 +4,11 @@ import { formatDate } from "helpers/format";
 import { refreshServiceTickets } from "actions/service-ticket/service-ticket.action";
 import styles from "./bc-add-billing-modal.styles";
 import { useFormik } from "formik";
+import { makeStyles } from '@material-ui/core/styles';
+import { success } from "actions/snackbar/snackbar.action";
+import { getCompanyCards } from "api/company-cards.api";
 import {
+  Box,
   DialogActions,
   DialogContent,
   Fab,
@@ -30,6 +34,13 @@ import {
   getJobLocationsAction,
 } from "actions/job-location/job-location.action";
 import styled from "styled-components";
+import { Message } from "@material-ui/icons";
+
+const useStyles = makeStyles({
+  buttons: {
+    width: "100%"
+  }
+})
 
 function BCServiceTicketModal({
   classes,
@@ -42,6 +53,7 @@ function BCServiceTicketModal({
     jobType: "",
     nickName: "",
     updateFlag: "",
+    zipCode: '',
     dueDate: new Date(),
   },
   error = {
@@ -50,8 +62,19 @@ function BCServiceTicketModal({
   },
 }: any): JSX.Element {
   const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState("")
+  const [validate, setValidate] = useState({
+    name: '',
+    address: '',
+    cardNumber: '',
+    city: '',
+    cvc: '',
+    exp: '',
+    state: '',
+    zipcode: ''
+  })
   const [notesLabelState, setNotesLabelState] = useState(false);
-
+  const classes1 = useStyles();
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
     if (requestObj.nickName === undefined || requestObj.nickName === "") {
@@ -89,17 +112,19 @@ function BCServiceTicketModal({
   } = useFormik({
     // 'enableReinitialize': true,
     initialValues: {
-      cardHolderName: ticket.customer._id,
-      expiryDate: ticket.jobSite,
+      name: ticket.customer._id,
+      exp: ticket.jobSite,
       cardNumber: ticket.jobLocation,
-      cvv: ticket.cvv,
+      cvc: ticket.cvv,
       nickName: ticket.nickName,
-      billingAddress: ticket.billingAddress,
+      address: ticket.billingAddress,
       city: ticket.city,
       state: ticket.state,
       updateFlag: ticket.updateFlag,
+      zipcode: ticket.zipcode
     },
     onSubmit: (values, { setSubmitting }) => {
+      console.log(values)
       setSubmitting(true);
       const tempData = {
         ...ticket,
@@ -108,7 +133,7 @@ function BCServiceTicketModal({
       let editTicketObj = { ...values, ticketId: "" };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        delete editTicketObj.cardHolderName;
+        delete editTicketObj.name;
         if (isValidate(editTicketObj)) {
           let formatedRequest = formatRequestObj(editTicketObj);
           if (formatedRequest.dueDate) {
@@ -127,6 +152,7 @@ function BCServiceTicketModal({
                 );
               }, 200);
               setSubmitting(false);
+              dispatch(success(response.message));
             })
             .catch((err: any) => {
               setSubmitting(false);
@@ -137,8 +163,37 @@ function BCServiceTicketModal({
         }
       } else {
         let formatedRequest = formatRequestObj(tempData);
+        
         AddBillingMethodAPI(formatedRequest)
           .then((response: any) => {
+            setSubmitting(false);
+            let invalid:any = {
+              name: '',
+              address: '',
+              cardNumber: '',
+              city: '',
+              cvc: '',
+              exp: '',
+              state: '',
+              zipcode: ''
+            }
+            if(response.message.length > 0) {
+              for(let i = 0; i < response.message.length; i++) {
+                let value = response.message[i].split(":")[0];
+                let message = response.message[i].split(":")[1];
+                invalid[value.split(" ")[1]] = message
+              }
+            }
+            if(invalid.name || invalid.address || invalid.cardNumber || invalid.city || invalid.cvc || invalid.exp || invalid.state || invalid.zipcode){
+              setErrorMessage('')
+              return setValidate(invalid);
+            }
+            if(response.status === 0) {
+              setValidate(invalid);
+              return setErrorMessage(response.message)
+            }
+            setValidate(invalid);
+            setErrorMessage('')
             dispatch(refreshServiceTickets(true));
             dispatch(closeModalAction());
             setTimeout(() => {
@@ -149,7 +204,8 @@ function BCServiceTicketModal({
                 })
               );
             }, 200);
-            setSubmitting(false);
+            dispatch(getCompanyCards())
+            dispatch(success(response.message));
           })
           .catch((err: any) => {
             setSubmitting(false);
@@ -190,50 +246,55 @@ function BCServiceTicketModal({
     return (
       <form onSubmit={FormikSubmit} className="ticket_form__wrapper">
         <DialogContent classes={{ root: classes.dialogContent }}>
+          <ErrorMessage>{errorMessage}</ErrorMessage>
           <div>
             <BCInput
               className="serviceTicketLabel"
               label={"Card Holder Name"}
-              name={"cardHolderName"}
+              name={"name"}
               margin={"dense"}
               required
-              value={FormikValues.cardHolderName}
+              value={FormikValues.name}
               handleChange={formikChange}
             />
+            <ErrorMessage>{validate.name}</ErrorMessage>
             <BCInput
               className="serviceTicketLabel"
               label={"Card Number"}
-              name={"cardNumber"}
               margin={"dense"}
+              name={"cardNumber"}
               value={FormikValues.cardNumber}
               handleChange={formikChange}
             />
+            <ErrorMessage>{validate.cardNumber}</ErrorMessage>
             <BCInput
               handleChange={formikChange}
               label={"CVV"}
-              name={"cvv"}
-              value={FormikValues.cvv}
+              name={"cvc"}
+              value={FormikValues.cvc}
               className="serviceTicketLabel"
               margin={"dense"}
             />
-
+            <ErrorMessage>{validate.cvc}</ErrorMessage>
             <BCInput
               handleChange={formikChange}
-              label={"Expiry Date"}
-              name={"expiryDate"}
-              value={FormikValues.expiryDate}
+              label={"Expiration Date"}
+              name={"exp"}
+              value={FormikValues.exp}
               className="serviceTicketLabel"
               margin={"dense"}
               placeholder="MM/YY"
             />
+            <ErrorMessage>{validate.exp}</ErrorMessage>
             <BCInput
               handleChange={formikChange}
               label={"Billing Address"}
-              name={"billingAddress"}
-              value={FormikValues.billingAddress}
+              name={"address"}
+              value={FormikValues.address}
               className="serviceTicketLabel"
               margin={"dense"}
             />
+            <ErrorMessage>{validate.address}</ErrorMessage>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <BCInput
@@ -244,6 +305,7 @@ function BCServiceTicketModal({
                   className="serviceTicketLabel"
                   margin={"dense"}
                 />
+                <ErrorMessage>{validate.city}</ErrorMessage>
               </Grid>
               <Grid item xs={6}>
                 <BCInput
@@ -254,13 +316,21 @@ function BCServiceTicketModal({
                   className="serviceTicketLabel"
                   margin={"dense"}
                 />
+                <ErrorMessage>{validate.state}</ErrorMessage>
               </Grid>
             </Grid>
-
+            <BCInput
+              handleChange={formikChange}
+              label={"Zip Code"}
+              name={"zipcode"}
+              value={FormikValues.zipcode}
+              className="serviceTicketLabel"
+              margin={"dense"}
+            />
+            <ErrorMessage>{validate.zipcode}</ErrorMessage>
             <BCInput
               handleChange={formikChange}
               label={"Nickname"}
-              // multiline
               name={"nickName"}
               value={FormikValues.nickName}
               className="serviceTicketLabel"
@@ -288,18 +358,20 @@ function BCServiceTicketModal({
           >
             {"Cancel"}
           </Fab>
-          <Fab
-            aria-label={"create-job"}
-            classes={{
-              root: classes.fabRoot,
-            }}
-            color={"primary"}
-            disabled={isSubmitting}
-            type={"submit"}
-            variant={"extended"}
-          >
-            {ticket._id ? "Edit Method" : "Add Method"}
-          </Fab>
+          <Box className={classes1.buttons}>
+            <Fab
+              aria-label={"create-job"}
+              classes={{
+                root: classes.fabRoot,
+              }}
+              color={"primary"}
+              disabled={isSubmitting}
+              type={"submit"}
+              variant={"extended"}
+            >
+              {ticket._id ? "Edit Method" : "Add Method"}
+            </Fab>
+          </Box>
         </DialogActions>
       </form>
     );
@@ -312,8 +384,6 @@ const Label = styled.div`
 
 const ErrorMessage = styled.div`
   color: red;
-  font-size: 18px;
-  padding: 5px;
-  text-align: center;
+  font-size: 14px;
 `;
 export default withStyles(styles, { withTheme: true })(BCServiceTicketModal);

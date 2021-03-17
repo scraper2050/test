@@ -23,7 +23,7 @@ export const getAllBillingMethodsAPI = () => {
 
 export const AddBillingMethodAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/add-billing-method`, 'post', data)
+    request(`/addCompanyCard`, 'post', data)
       .then((res: any) => {
         return resolve(res.data);
       })

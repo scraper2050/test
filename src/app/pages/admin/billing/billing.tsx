@@ -5,8 +5,23 @@ import MoneyIcon from '@material-ui/icons/Money';
 import React from 'react';
 import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 function BillingPage() {
+  const history = useHistory();
+
+
+  const renderViewMore = (nestedRouteKey: string) => {
+    localStorage.setItem("nestedRouteKey", `${nestedRouteKey}`);
+
+
+    history.push({
+      pathname: `/main/admin/billing/${nestedRouteKey}`,
+    });
+  }
+
+
+
   return (
     <>
       {/* <BCSubHeader title={'Admin'}>
@@ -27,7 +42,7 @@ function BillingPage() {
               <BCAdminCard
                 cardText={'Billing Methods'}
                 color={'primary'}
-                link={'/main/admin/billing/billing-methods'}>
+                func={() => renderViewMore("billing-methods")}>
                 <MoneyIcon />
               </BCAdminCard>
             </Grid>

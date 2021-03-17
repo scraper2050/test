@@ -8,6 +8,7 @@ export default (theme: Theme): any => ({
   },
   'fabRoot': {
     'color': '#fff',
+    'backgroundColor': "#00AAFF",
     'fontSize': '.775rem',
     'height': '34px',
     'padding': '0 12px',

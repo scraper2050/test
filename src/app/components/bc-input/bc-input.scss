@@ -1,0 +1,28 @@
+.masked-input {
+  width: 387px;
+  font-size: 16px;
+  font-family: inherit;
+  // height: 40px;
+  // border: solid 1px #00aaff;
+  border: solid 1px rgb(196, 196, 196);
+  border-radius: 4px;
+  height: 2em;
+  margin: 0;
+  display: block;
+  outline: none;
+  padding: 4px 16px 4px;
+  box-sizing: content-box;
+  letter-spacing: inherit;
+  animation-duration: 10ms;
+}
+
+#outlined-textarea-mask:focus, 
+#outlined-textarea-mask:active
+{
+    border: solid 2px #00aaff !important;
+    outline: none !important;
+    padding: 3px 16px 3px;
+}
+.masked-input:hover {
+  border: solid 1px black;
+}
