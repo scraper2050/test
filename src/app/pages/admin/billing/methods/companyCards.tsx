@@ -13,6 +13,7 @@ import MenuList from '@material-ui/core/MenuList';
 import visa from 'assets/img/icons/card/visa.svg';
 import master from 'assets/img/icons/card/master.svg';
 import discover from 'assets/img/icons/card/discover.svg';
+import americanexpress from 'assets/img/icons/card/americanexpress.svg';
 
 interface Props {
   classes: any;
@@ -69,6 +70,7 @@ const CompanyCards = ({ classes, card, onDelete }: Props) => {
           {card.cardType === "Visa" && <img alt="icon" src={visa} className={classes.billingCard}/>}
           {card.cardType === "Discover" && <img alt="icon" src={discover} className={classes.billingCard}/>}
           {card.cardType === "MasterCard" && <img alt="icon" src={master} className={classes.billingCard}/>}
+          {card.cardType === "American Express" && <img alt="icon" src={americanexpress} className={classes.billingCard}/>}
           {!card.cardType && <img alt="icon" src={visa} className={classes.billingCard}/>}
           <div>
             <b>{card.cardType}....{card.ending}</b>
