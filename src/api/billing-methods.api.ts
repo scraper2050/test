@@ -21,6 +21,18 @@ export const getAllBillingMethodsAPI = () => {
   };
 };
 
+export const DeleteBillingMethodAPI = (data:any) => {
+  return new Promise((resolve, reject) => {
+    request(`/removeCompanyCard`, 'post', data)
+      .then((res:any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      })
+  })
+}
+
 export const AddBillingMethodAPI = (data: any) => {
   return new Promise((resolve, reject) => {
     request(`/addCompanyCard`, 'post', data)

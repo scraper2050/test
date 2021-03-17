@@ -83,6 +83,18 @@ export default (theme: Theme): any => ({
   'billingCard': {
     'width': '30px',
     'margin': '-25px 20px 0 0',
+  },
+  'moreIcon' : {
+    'width': '25px',
+    'height': '25px'
+  },
+  'menuList': {
+    'zIndex': 1
+  },
+  'MenuItem': {
+    '&:hover': {
+      background: "#00AAFF",
+   },
   }
 });
 
