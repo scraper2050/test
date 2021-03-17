@@ -90,7 +90,7 @@ function BillingMethodsPage({ classes }: Props) {
             })
           );
         }, 200);
-        dispatch(success(response.message));
+        dispatch(success("Card deleted successfully"));
       })
       .catch((err: any) => {
         throw err;
