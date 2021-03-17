@@ -127,6 +127,8 @@ function BillingMethodsPage({ classes }: Props) {
                                     <div className={classes.contentItemTextContainer}>                                      
                                       <div className={classes.flex}>
                                         {card.cardType === "Visa" && <img alt="icon" src={visa} className={classes.billingCard}/>}
+                                        {card.cardType === "Discover" && <img alt="icon" src={discover} className={classes.billingCard}/>}
+                                        {card.cardType === "MasterCard" && <img alt="icon" src={master} className={classes.billingCard}/>}
                                         {!card.cardType && <img alt="icon" src={visa} className={classes.billingCard}/>}
                                         <div>
                                           <b>{card.cardType}....{card.ending}</b>
