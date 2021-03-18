@@ -1,4 +1,6 @@
 import BCInput from "app/components/bc-input/bc-input";
+import AutoComplete from 'app/components/bc-autocomplete/bc-autocomplete';
+import BCSelectOutlined from "app/components/bc-select-outlined/bc-select-outlined";
 import React, { useState, useEffect } from "react";
 import { formatDate } from "helpers/format";
 import { refreshServiceTickets } from "actions/service-ticket/service-ticket.action";
@@ -7,6 +9,7 @@ import { useFormik } from "formik";
 import { makeStyles } from '@material-ui/core/styles';
 import { success } from "actions/snackbar/snackbar.action";
 import { getCompanyCards } from "api/company-cards.api";
+import { allStates } from 'utils/constants';
 import {
   Box,
   DialogActions,
@@ -239,7 +242,7 @@ function BCServiceTicketModal({
       );
     }, 200);
   };
-
+  console.log(FormikValues)
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   } else {
@@ -308,10 +311,11 @@ function BCServiceTicketModal({
                 <ErrorMessage>{validate.city}</ErrorMessage>
               </Grid>
               <Grid item xs={6}>
-                <BCInput
+                <AutoComplete 
                   handleChange={formikChange}
                   label={"State"}
                   name={"state"}
+                  data={allStates}
                   value={FormikValues.state}
                   className="serviceTicketLabel"
                   margin={"dense"}

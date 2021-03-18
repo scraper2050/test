@@ -1,5 +1,5 @@
 import BCBackButton from "../../../../components/bc-back-button/bc-back-button";
-import { Grid, IconButton } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import styles from "./methods.style";
@@ -16,10 +16,7 @@ import { getCompanyCards } from "api/company-cards.api";
 import { CompanyCard } from "actions/company-cards/company-cards.types";
 import CardIcon from "assets/img/icons/billings/Card";
 import ArrowRightIcon from "assets/img/icons/billings/ArrowRight";
-import MoreIcon from "assets/img/icons/billings/More";
-import visa from 'assets/img/icons/card/visa.svg';
-import master from 'assets/img/icons/card/master.svg';
-import discover from 'assets/img/icons/card/discover.svg';
+import CompanyCards from './companyCards';
 interface Props {
   classes: any;
 }
@@ -31,7 +28,6 @@ interface HeaderProps {
 function BillingMethodsPage({ classes }: Props) {
   const dispatch = useDispatch();
 
-
   const { isLoading = true, companyCards, refresh = true } = useSelector(({ companyCards }: any) => (
     {
       'isLoading': companyCards.loading,
@@ -39,9 +35,6 @@ function BillingMethodsPage({ classes }: Props) {
       'refresh': companyCards.refresh
     }
   ));
-
-
-
 
   const openCreateTicketModal = () => {
     dispatch(
@@ -72,8 +65,6 @@ function BillingMethodsPage({ classes }: Props) {
     }
   }, [refresh]);
 
-  console.log(companyCards);
-
   const HeaderContainer = ({ title }: HeaderProps) => {
     return (
       <div className={classes.header}>
@@ -82,7 +73,26 @@ function BillingMethodsPage({ classes }: Props) {
     )
   }
 
-  console.log(companyCards)
+  const onDelete = (id:string, ending: string) => {
+    
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'data': {
+            cardId: id,
+            ending: ending
+          },
+          'modalTitle': ' ',
+          'removeFooter': false
+        },
+        type: modalTypes.DELETE_BILLING_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   return (
     <>
       <div className={classes.pageMainContainer}>
@@ -119,29 +129,7 @@ function BillingMethodsPage({ classes }: Props) {
                           <div className={classes.content}>
                             {
                               companyCards.map((card: CompanyCard, index: number) => {
-                                let divider = (index + 1) === companyCards.length ? false : index === 0 ? false : true;
-                                return (
-                                  <Grid
-                                    container
-                                    className={`${classes.contentItem}`}>
-                                    <div className={classes.contentItemTextContainer}>                                      
-                                      <div className={classes.flex}>
-                                        {card.cardType === "Visa" && <img alt="icon" src={visa} className={classes.billingCard}/>}
-                                        {card.cardType === "Discover" && <img alt="icon" src={discover} className={classes.billingCard}/>}
-                                        {card.cardType === "MasterCard" && <img alt="icon" src={master} className={classes.billingCard}/>}
-                                        {!card.cardType && <img alt="icon" src={visa} className={classes.billingCard}/>}
-                                        <div>
-                                          <b>{card.cardType}....{card.ending}</b>
-                                          <div className={classes.cardExp}>Exp. {card.expirationMonth}/{card.expirationYear}</div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <IconButton aria-label="more" component="span">
-                                      <MoreIcon />
-                                    </IconButton>
-                                  </Grid>
-                                )
+                                return <CompanyCards  key={index} card = {card} onDelete = {onDelete}/>
                               })
                             }
                           </div>

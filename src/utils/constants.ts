@@ -6,10 +6,10 @@ export const apiUrls = {
   'login': '/login'
 };
 export const allStates = [
-  {
-    abbreviation: 'none',
-    name: 'none',
-  },
+  // {
+  //   abbreviation: 'none',
+  //   name: 'none',
+  // },
   {
     abbreviation: 'AL',
     name: 'Alabama',
