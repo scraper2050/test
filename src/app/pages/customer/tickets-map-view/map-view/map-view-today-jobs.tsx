@@ -21,6 +21,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import { getSearchJobs } from "api/job.api";
 import moment from 'moment';
 import { Job } from '../../../../../actions/job/job.types';
+
 function MapViewTodayJobsScreen({ classes, today }: any) {
 
   const dispatch = useDispatch();
@@ -47,6 +48,12 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   const openTicketFilerModal = () => {
     setShowFilterModal(!showFilterModal);
   }
+
+  const { allJobs } = useSelector(
+    ({ jobState }: any) => ({
+      'allJobs': jobState.data,
+    })
+  );
 
   const resetDate = () => {
     setDateValue(null);
@@ -197,8 +204,11 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
 
   const handleJobCardClick = (JobObj: any, index: any) => {
+
+    
     let prevItemKey = localStorage.getItem('prevItemKey');
     let currentItem = document.getElementById(`openTodayJob${index}`);
+  
     if (prevItemKey) {
       let prevItem = document.getElementById(prevItemKey);
       if (prevItem)
@@ -220,12 +230,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       setHasPhoto(false)
     }
 
-
     if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
       dispatch(warning('There\'s no address on this job.'))
     }
-
-    console.log(JobObj)
 
     setSelectedJob(JobObj);
   }
@@ -257,7 +264,8 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   // if (isLoading) {
   //   return <BCCircularLoader heightValue={'200px'} />
   // }
-  const todaysJobs = jobs?.filter(item => moment(item?.scheduleDate).isSame(Date(), 'day'));
+
+  const todaysJobs = allJobs?.filter((item: any) => moment(item?.scheduleDate).utc().isSame(Date(), 'day'));
   const totalTodaysJobs = todaysJobs.length;
 
   return (
@@ -265,7 +273,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       <Grid container item lg={6} className='ticketsMapContainer'>
         {
           <MemoizedMap
-            list={jobs}
+            list={todaysJobs}
             selected={selectedJob}
             hasPhoto={hasPhoto}
             onJob={true}
