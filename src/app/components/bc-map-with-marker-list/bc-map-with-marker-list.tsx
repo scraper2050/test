@@ -132,16 +132,6 @@ function MakerPin({ ...props }) {
           >
             <div className="due_date">
               <span> <i className="material-icons">access_time</i> {props.ticket.scheduleDate ? new Date(props.ticket.scheduleDate).toString().substr(0, 15) : ''}</span>
-              <div
-                onClick={() => openDetailJobModal(props.ticket)}
-                style={{
-                  marginLeft: '.5rem', height: 34,
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                className={'flex items-center'}>
-                <InfoIcon style={{ margin: 'auto, 0' }} />
-              </div>
             </div>
             <Grid container justify="space-between" alignItems="center" spacing={3}>
               <Grid item>
@@ -154,8 +144,6 @@ function MakerPin({ ...props }) {
                   <span>{props.ticket.description ? props.ticket.description : ''}</span>
                 </div>
               </Grid>
-
-
               {
                 props.ticket.ticket.image &&
                 <Grid item>
@@ -178,6 +166,18 @@ function MakerPin({ ...props }) {
                 </Grid>
               }
             </Grid>
+            <div
+              onClick={() => openDetailJobModal(props.ticket)}
+              style={{
+                marginLeft: '.5rem', height: 34,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+              className={'flex items-center'}>
+              <InfoIcon style={{ margin: 'auto, 0' }} />
+            </div>
           </div>
         </>
       )
@@ -270,6 +270,7 @@ function MakerPin({ ...props }) {
 }
 
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false }: BCMapWithMarkerListProps) {
+
   const [tickets, setTickets] = useState<any>(list);
 
   let centerLat = DEFAULT_LAT, centerLng = DEFAULT_LNG;
