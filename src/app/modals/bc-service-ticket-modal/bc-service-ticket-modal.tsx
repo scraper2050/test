@@ -42,6 +42,7 @@ function BCServiceTicketModal({
     'customer': {
       '_id': ''
     },
+    'source': 'blueclerk',
     'jobSite': '',
     'jobLocation': '',
     'jobType': '',
@@ -185,6 +186,7 @@ function BCServiceTicketModal({
     // 'enableReinitialize': true,
     'initialValues': {
       'customerId': ticket.customer._id,
+      'source': 'blueclerk',
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
       'jobTypeId': ticket.jobType ? ticket.jobType : '',
