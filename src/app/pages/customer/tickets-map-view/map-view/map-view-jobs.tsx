@@ -81,6 +81,7 @@ function MapViewJobsScreen({ classes, today }: any) {
 
     if (data.status) {
       setJobs(data.jobs);
+      console.log(data.jobs);
       setTotalJobs(data.total);
       setIsLoading(false);
     } else {
@@ -351,7 +352,7 @@ function MapViewJobsScreen({ classes, today }: any) {
                     </div>
 
                     <div className="card_desc">
-                      <p>{x.jobType ? x.jobType.title : ''}</p>
+                      <p>{x.type ? x.type.title : ''}</p>
                     </div>
                   </div>
                   <hr></hr>

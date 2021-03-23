@@ -351,7 +351,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
                     </div>
 
                     <div className="card_desc">
-                      <p>{x.jobType ? x.jobType.title : ''}</p>
+                    <p>{x.type ? x.type.title : ''}</p>
                     </div>
                   </div>
                   <hr></hr>

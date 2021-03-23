@@ -310,11 +310,12 @@ function BCJobModal({
       setScheduledEndTimeMsg('');
       setStartTimeLabelState(true);
       validateFlag = false;
-    } else if (requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime === null) {
+    } /*else if (requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime === null) {
       setScheduledEndTimeMsg('End time is required.');
       setEndTimeLabelState(true);
       validateFlag = false;
-    } else if (requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
+    }*/
+     else if (requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
       setScheduledEndTimeMsg('End time should be greater than start time.');
       setEndTimeLabelState(true);
       setStartTimeLabelState(false);
