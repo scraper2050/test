@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 function BCDateTimePicker({
   handleChange,
   value,
-  ampm = false,
+  ampm = true,
   views = ['hours', 'minutes', 'seconds'],
   disabled = false,
   disablePast = false,
