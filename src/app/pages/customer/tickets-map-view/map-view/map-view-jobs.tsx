@@ -81,7 +81,7 @@ function MapViewJobsScreen({ classes, today }: any) {
 
     if (data.status) {
       setJobs(data.jobs);
-      console.log(data.jobs);
+     // console.log(data.jobs);
       setTotalJobs(data.total);
       setIsLoading(false);
     } else {

@@ -307,20 +307,21 @@ function BCJobModal({
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
     if (requestObj.scheduledStartTime === null && requestObj.scheduledEndTime !== null) {
-      setScheduledEndTimeMsg('');
+    //  setScheduledEndTimeMsg('');
       setStartTimeLabelState(true);
       validateFlag = false;
     } /*else if (requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime === null) {
       setScheduledEndTimeMsg('End time is required.');
       setEndTimeLabelState(true);
       validateFlag = false;
-    }*/
+    }
      else if (requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
       setScheduledEndTimeMsg('End time should be greater than start time.');
       setEndTimeLabelState(true);
       setStartTimeLabelState(false);
       validateFlag = false;
-    } else {
+    } */
+    else {
       setScheduledEndTimeMsg('');
       setStartTimeLabelState(false);
       setEndTimeLabelState(false);
@@ -417,7 +418,8 @@ function BCJobModal({
         if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
           requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
         if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
-          requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
+        //  requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
+        requestObj.scheduledEndTime = '';
         if (requestObj.companyId)
           delete requestObj.companyId;
         delete requestObj.dueDate;
