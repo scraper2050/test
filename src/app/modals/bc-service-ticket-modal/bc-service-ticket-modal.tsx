@@ -208,7 +208,7 @@ function BCServiceTicketModal({
       //tempData.dueDate = formatDateYMD(tempData.dueDate);
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        delete editTicketObj.customerId;
+        // delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           let formatedRequest = formatRequestObj(editTicketObj);
           if (formatedRequest.dueDate) {
@@ -433,8 +433,6 @@ function BCServiceTicketModal({
     }
   ]
 
-  console.log(ticket)
-
   if (error.status) {
     return (
       <ErrorMessage>{error.message}</ErrorMessage>
@@ -453,7 +451,7 @@ function BCServiceTicketModal({
                   <div className="search_form_wrapper">
 
                     <Autocomplete
-                      disabled={ticket.customer?._id !== '' || detail}
+                      disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
                       defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
                       id="tags-standard"
                       className={detail ? "detail-only" : ""}
