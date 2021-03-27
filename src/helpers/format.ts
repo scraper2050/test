@@ -13,6 +13,8 @@ export const formatTime = (time: Date) => moment(time).format('hh:mm a');
 
 export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:ss');
 
+export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format("YYYY-MM-DDTHH:mm:ss")).toDate().toString();
+
 export const convertMilitaryTime = (time: string) => {
 
   let timeAr = time.match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];

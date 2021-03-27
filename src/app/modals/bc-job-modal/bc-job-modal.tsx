@@ -24,7 +24,7 @@ import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api
 import { callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction, openModalAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatToMilitaryTime, formatDate, convertMilitaryTime } from 'helpers/format';
+import { formatToMilitaryTime, formatDate, convertMilitaryTime, formatISOToDateString } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import { getVendors } from 'actions/vendor/vendor.action';
@@ -353,8 +353,8 @@ function BCJobModal({
       jobTypeId: job.ticket.jobType ? job.ticket.jobType : '',
       dueDate: job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
       scheduleDate: job.scheduleDate,
-      scheduledEndTime: job.scheduledEndTime,
-      scheduledStartTime: job.scheduledStartTime,
+      scheduledStartTime: !!job?.scheduledStartTime ? formatISOToDateString(job.scheduledStartTime) : null,
+      scheduledEndTime: !!job.scheduledEndTime ? formatISOToDateString(job.scheduledEndTime) : null,
       technicianId: job.technician ? job.technician._id : '',
       contractorId: job.contractor ? job.contractor._id : '',
       ticketId: job.ticket._id,
@@ -415,11 +415,19 @@ function BCJobModal({
 
       if (isValidate(tempData)) {
         const requestObj = { ...formatRequestObj(tempData) };
-        if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
-          requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
-        if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
-        //  requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
-        requestObj.scheduledEndTime = '';
+
+        if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null) {
+          requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime)
+        } else {
+          requestObj.scheduledStartTime = "";
+        };
+          
+        if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null) {  
+          requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime)
+        } else {
+          requestObj.scheduledEndTime = ""; 
+        }
+                
         if (requestObj.companyId)
           delete requestObj.companyId;
         delete requestObj.dueDate;
@@ -431,6 +439,8 @@ function BCJobModal({
           delete requestObj["ticket"]
           delete requestObj["type"]
         }
+
+        console.log("req", requestObj);
 
         request(requestObj)
 
