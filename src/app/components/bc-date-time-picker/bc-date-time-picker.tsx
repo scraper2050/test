@@ -3,7 +3,7 @@ import FormControl from '@material-ui/core/FormControl';
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { MuiPickersUtilsProvider, TimePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 
 const useStyles = makeStyles(theme => ({
   'datePicker': {
@@ -21,7 +21,7 @@ function BCDateTimePicker({
   handleChange,
   value,
   ampm = true,
-  views = ['hours', 'minutes', 'seconds'],
+  views = ['hours', 'minutes'],
   disabled = false,
   disablePast = false,
   name = '',
@@ -72,12 +72,11 @@ function BCDateTimePicker({
               value={value}
               variant={variant}
             />
-            : <TimePicker
+            : <KeyboardTimePicker
+              autoOk
               disabled={disabled}
               ampm={ampm}
-              autoOk
               className={classes.datePicker}
-              format={dateFormat}
               id={`timepicker-${name}`}
               inputProps={{
                 'name': name,
