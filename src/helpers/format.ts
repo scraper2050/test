@@ -1,6 +1,11 @@
 import moment from 'moment';
 
-export const formatDate = (date: Date) => moment(date).format('MM/DD/YYYY');
+export const formatDate = (date: string): string | undefined => {
+  if (typeof date !== undefined && date !== null) {
+    return moment(date).format("MM/DD/YYYY");
+  }
+};
+
 
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 
