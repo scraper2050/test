@@ -346,7 +346,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                                 key={index}
                                 className={dropdownItem}
                                 onClick={() => viewNotificationInfo(item)}>
-                                {`${item.ticketId} created via web`}
+                                {`${item.ticketId} created via web at ${new Date().toLocaleString()}`}
                               </MenuItem>
                             )
                           })}
