@@ -72,6 +72,19 @@ export default (theme: Theme): any => ({
     'listStyle': 'none',
     'marginLeft': 'auto'
   },
+  'bell': {
+    'alignItems': 'center',
+    'display': 'flex',
+    'flex': '0 0 20px',
+    'justifyContent': 'flex-end',
+    'listStyle': 'none',
+    'marginLeft': '20px'
+  },
+  'notificationCnt': {
+    '& > span ': {
+      'right': 'auto'
+    }
+  },
   'headerToolsButton': {
     '&:first-child': {
       'marginLeft': '0'

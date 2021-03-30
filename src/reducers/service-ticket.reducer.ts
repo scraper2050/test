@@ -15,7 +15,8 @@ const initialServiceTicket = {
     'customerNames': '',
     'ticketId': '',
     'contactName': '',
-  }
+  },
+  'notifications': [],
 };
 
 export default (state = initialServiceTicket, { payload, type }: ReducerParamsInterface) => {
@@ -65,6 +66,11 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
       return {
         ...state,
         'filterTicketState': payload
+      }
+    case types.SET_SERVICE_TICKET_NOTIFICATION:
+      return {
+        ...state,
+        'notifications': payload
       }
     default:
       return state;

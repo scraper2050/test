@@ -54,6 +54,7 @@
     "redux-thunk": "^2.3.0",
     "rounded-bar-chartjs": "^1.0.2",
     "scoped-css-loader": "^1.0.0",
+    "socket.io-client": "^4.0.0",
     "spinkit": "^2.0.1",
     "styled-components": "^5.1.1",
     "typescript": "^3.9.5",
