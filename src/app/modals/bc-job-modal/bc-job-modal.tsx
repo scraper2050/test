@@ -24,7 +24,7 @@ import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api
 import { callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction, openModalAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatToMilitaryTime, formatDate, convertMilitaryTime } from 'helpers/format';
+import { formatToMilitaryTime, formatDate, convertMilitaryTime, formatISOToDateString } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import { getVendors } from 'actions/vendor/vendor.action';
@@ -164,7 +164,7 @@ function BCJobModal({
 
   // const handleLocationChange = (event: any, fieldName: any, setFieldValue: any) => {
   //   const locationId = event.target.value;
-  //   const customerId = job.ticket.customer._id;
+  //   const customerId = job.ticket.customer?._id;
   //   setFieldValue(fieldName, locationId);
   //   setFieldValue('jobSiteId', '');
   //   if (locationId !== '') {
@@ -185,7 +185,7 @@ function BCJobModal({
   const handleLocationChange = async (event: any, fieldName: any, setFieldValue: any, getFieldMeta: any, newValue: any) => {
     const locationId = newValue ? newValue._id : '';
 
-    const customerId = job.ticket.customer._id ? job.ticket.customer._id : job.customer._id;
+    const customerId = job.ticket.customer?._id ? job.ticket.customer?._id : job.customer?._id;
 
     await setFieldValue(fieldName, '');
     await setFieldValue('jobSiteId', '');
@@ -211,7 +211,7 @@ function BCJobModal({
   }
 
   useEffect(() => {
-    const customerId = job.ticket.customer._id !== undefined ? job.ticket.customer._id : job.ticket.customer;
+    const customerId = job.ticket.customer?._id !== undefined ? job.ticket.customer?._id : job.ticket.customer;
     dispatch(getInventory());
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
@@ -259,16 +259,16 @@ function BCJobModal({
   useEffect(() => {
 
 
-    if (ticket.customer._id !== '') {
+    if (ticket.customer?._id !== '') {
 
       if (jobLocations.length !== 0) {
 
         if (ticket.jobLocation !== '' && ticket.jobLocation !== undefined && ticket.jobLocation) {
           setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0])
-          dispatch(getJobSites({ customerId: ticket.customer._id !== undefined ? ticket.customer._id : ticket.customer, locationId: ticket.jobLocation }));
+          dispatch(getJobSites({ customerId: ticket.customer?._id !== undefined ? ticket.customer?._id : ticket.customer, locationId: ticket.jobLocation }));
         } else {
           if (job.jobLocation) {
-            dispatch(getJobSites({ customerId: ticket.customer._id !== undefined ? ticket.customer._id : ticket.customer, locationId: job.jobLocation._id }));
+            dispatch(getJobSites({ customerId: ticket.customer?._id !== undefined ? ticket.customer?._id : ticket.customer, locationId: job.jobLocation._id }));
             setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === job.jobLocation._id)[0])
           }
 
@@ -279,7 +279,7 @@ function BCJobModal({
 
 
   useEffect(() => {
-    if (ticket.customer._id !== '') {
+    if (ticket.customer?._id !== '') {
 
       if (jobSites.length !== 0) {
         if (ticket.jobSite) {
@@ -296,7 +296,7 @@ function BCJobModal({
 
 
   useEffect(() => {
-    if (ticket.customer._id !== '') {
+    if (ticket.customer?._id !== '') {
 
       if (contacts.length !== 0) {
         setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0])
@@ -307,19 +307,21 @@ function BCJobModal({
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
     if (requestObj.scheduledStartTime === null && requestObj.scheduledEndTime !== null) {
-      setScheduledEndTimeMsg('');
+    //  setScheduledEndTimeMsg('');
       setStartTimeLabelState(true);
       validateFlag = false;
-    } else if (requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime === null) {
+    } /*else if (requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime === null) {
       setScheduledEndTimeMsg('End time is required.');
       setEndTimeLabelState(true);
       validateFlag = false;
-    } else if (requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
+    }
+     else if (requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
       setScheduledEndTimeMsg('End time should be greater than start time.');
       setEndTimeLabelState(true);
       setStartTimeLabelState(false);
       validateFlag = false;
-    } else {
+    } */
+    else {
       setScheduledEndTimeMsg('');
       setStartTimeLabelState(false);
       setEndTimeLabelState(false);
@@ -340,7 +342,7 @@ function BCJobModal({
 
   const form = useFormik({
     initialValues: {
-      customerId: job.customer._id,
+      customerId: job.customer?._id,
       description: job.ticket.note ? job.ticket.note : '',
       employeeType: !job.employeeType
         ? 0
@@ -351,8 +353,8 @@ function BCJobModal({
       jobTypeId: job.ticket.jobType ? job.ticket.jobType : '',
       dueDate: job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
       scheduleDate: job.scheduleDate,
-      scheduledEndTime: job.scheduledEndTime,
-      scheduledStartTime: job.scheduledStartTime,
+      scheduledStartTime: !!job?.scheduledStartTime ? formatISOToDateString(job.scheduledStartTime) : null,
+      scheduledEndTime: !!job.scheduledEndTime ? formatISOToDateString(job.scheduledEndTime) : null,
       technicianId: job.technician ? job.technician._id : '',
       contractorId: job.contractor ? job.contractor._id : '',
       ticketId: job.ticket._id,
@@ -366,7 +368,7 @@ function BCJobModal({
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
 
-      const customerId = customer._id;
+      const customerId = customer?._id;
       let jobFromMapFilter = job.jobFromMap;
 
       const { image, customerPO, customerContactId } = values;
@@ -413,10 +415,19 @@ function BCJobModal({
 
       if (isValidate(tempData)) {
         const requestObj = { ...formatRequestObj(tempData) };
-        if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null)
-          requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime);
-        if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null)
-          requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime);
+
+        if (requestObj.scheduledStartTime && requestObj.scheduledStartTime !== null) {
+          requestObj.scheduledStartTime = formatToMilitaryTime(requestObj.scheduledStartTime)
+        } else {
+          requestObj.scheduledStartTime = "";
+        };
+          
+        if (requestObj.scheduledEndTime && requestObj.scheduledEndTime !== null) {  
+          requestObj.scheduledEndTime = formatToMilitaryTime(requestObj.scheduledEndTime)
+        } else {
+          requestObj.scheduledEndTime = ""; 
+        }
+                
         if (requestObj.companyId)
           delete requestObj.companyId;
         delete requestObj.dueDate;
@@ -428,6 +439,8 @@ function BCJobModal({
           delete requestObj["ticket"]
           delete requestObj["type"]
         }
+
+        console.log("req", requestObj);
 
         request(requestObj)
 

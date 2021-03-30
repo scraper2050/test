@@ -42,6 +42,7 @@ function BCServiceTicketModal({
     'customer': {
       '_id': ''
     },
+    'source': 'blueclerk',
     'jobSite': '',
     'jobLocation': '',
     'jobType': '',
@@ -50,7 +51,8 @@ function BCServiceTicketModal({
     'dueDate': new Date(),
     'customerContactId': '',
     'customerPO': '',
-    'image': ''
+    'image': '',
+    'postCode': ''
   },
   error = {
     'status': false,
@@ -183,7 +185,8 @@ function BCServiceTicketModal({
   } = useFormik({
     // 'enableReinitialize': true,
     'initialValues': {
-      'customerId': ticket.customer._id,
+      'customerId': ticket.customer?._id,
+      'source': 'blueclerk',
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
       'jobTypeId': ticket.jobType ? ticket.jobType : '',
@@ -205,7 +208,7 @@ function BCServiceTicketModal({
       //tempData.dueDate = formatDateYMD(tempData.dueDate);
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        delete editTicketObj.customerId;
+        // delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           let formatedRequest = formatRequestObj(editTicketObj);
           if (formatedRequest.dueDate) {
@@ -296,25 +299,25 @@ function BCServiceTicketModal({
 
     dispatch(getEmployeesForJobAction());
 
-    if (ticket.customer._id !== '') {
-      dispatch(getJobLocationsAction(ticket.customer._id));
+    if (ticket.customer?._id !== '') {
+      dispatch(getJobLocationsAction(ticket.customer?._id));
 
       let data: any = {
         type: 'Customer',
-        referenceNumber: ticket.customer._id
+        referenceNumber: ticket.customer?._id
       }
       dispatch(getContacts(data));
     }
   }, [])
 
   useEffect(() => {
-    if (ticket.customer._id !== '') {
+    if (ticket.customer?._id !== '') {
 
       if (jobLocations.length !== 0) {
         setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0])
 
         if (ticket.jobLocation !== '' && ticket.jobLocation !== undefined) {
-          dispatch(getJobSites({ customerId: ticket.customer._id, locationId: ticket.jobLocation }));
+          dispatch(getJobSites({ customerId: ticket.customer?._id, locationId: ticket.jobLocation }));
         }
       }
     }
@@ -322,7 +325,7 @@ function BCServiceTicketModal({
   }, [jobLocations])
 
   useEffect(() => {
-    if (ticket.customer._id !== '') {
+    if (ticket.customer?._id !== '') {
 
       if (contacts.length !== 0) {
         setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0])
@@ -332,7 +335,7 @@ function BCServiceTicketModal({
 
 
   useEffect(() => {
-    if (ticket.customer._id !== '') {
+    if (ticket.customer?._id !== '') {
 
       if (jobSites.length !== 0) {
         setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0])
@@ -360,7 +363,7 @@ function BCServiceTicketModal({
     }
   }, [FormikValues.image]);
 
-  const detailCustomer = ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0];
+  const detailCustomer = ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0];
 
 
   const formatSchedulingTime = (time: string) => {
@@ -430,8 +433,6 @@ function BCServiceTicketModal({
     }
   ]
 
-  console.log(ticket)
-
   if (error.status) {
     return (
       <ErrorMessage>{error.message}</ErrorMessage>
@@ -450,8 +451,8 @@ function BCServiceTicketModal({
                   <div className="search_form_wrapper">
 
                     <Autocomplete
-                      disabled={ticket.customer._id !== '' || detail}
-                      defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer._id === ticket.customer._id)[0]}
+                      disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
+                      defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
                       id="tags-standard"
                       className={detail ? "detail-only" : ""}
                       options={customers && customers.length !== 0 ? (customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}

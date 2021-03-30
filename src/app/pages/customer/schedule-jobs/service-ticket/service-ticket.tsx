@@ -28,7 +28,7 @@ function ServiceTicket({ classes }: any) {
 
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
-      customerId: ticket.customer._id,
+      customerId: ticket.customer?._id,
       locationId: ticket.jobLocation
     }
     dispatch(loadingJobLocations());
@@ -60,7 +60,7 @@ function ServiceTicket({ classes }: any) {
   const openDetailTicketModal = (ticket: any) => {
 
     const reqObj = {
-      customerId: ticket.customer._id,
+      customerId: ticket.customer?._id,
       locationId: ticket.jobLocation
     }
     dispatch(loadingJobLocations());
@@ -94,8 +94,8 @@ function ServiceTicket({ classes }: any) {
 
   const openCreateJobModal = (ticket: any) => {
     const reqObj = {
-      customerId: ticket.customer._id,
-      locationId: ticket.jobLocation
+      customerId: ticket.customer?._id ? ticket.customer?._id :'',
+      locationId: ticket.jobLocation ? ticket.jobLocation :''
     }
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(reqObj.customerId));
@@ -146,12 +146,12 @@ function ServiceTicket({ classes }: any) {
       'sortable': true
     },
     {
-      'Header': 'Created At',
+      'Header': 'Created On',
       'accessor': 'createdAt',
       'className': 'font-bold',
       'sortable': true,
       'Cell'({ row }: any) {
-        let formattedDate = formatDate(row.original.createAt);
+        let formattedDate = formatDate(row.original.createdAt);
         return (
           <div>
             {formattedDate}
@@ -229,6 +229,7 @@ function ServiceTicket({ classes }: any) {
   ];
 
   useEffect(() => {
+    console.log(tickets);
     if (refresh) {
       dispatch(getAllServiceTicketAPI());
     }
