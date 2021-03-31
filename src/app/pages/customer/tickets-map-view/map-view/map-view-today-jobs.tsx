@@ -21,6 +21,8 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import { getSearchJobs } from "api/job.api";
 import moment from 'moment';
 import { Job } from '../../../../../actions/job/job.types';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { getCustomerDetail } from 'api/customer.api';
 
 function MapViewTodayJobsScreen({ classes, today }: any) {
 
@@ -45,7 +47,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   const [hasPhoto, setHasPhoto] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>({});
 
-  const openTicketFilerModal = () => {
+  const openTicketFilterModal = () => {
     setShowFilterModal(!showFilterModal);
   }
 
@@ -203,7 +205,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
 
 
-  const handleJobCardClick = (JobObj: any, index: any) => {
+  const handleJobCardClick = async (JobObj: any, index: any) => {
 
     
     let prevItemKey = localStorage.getItem('prevItemKey');
@@ -230,11 +232,14 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       setHasPhoto(false)
     }
 
-    if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
-      dispatch(warning('There\'s no address on this job.'))
-    }
+    // if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
+    //   dispatch(warning('There\'s no address on this job.'))
+    // }
+    const customer = await getCustomerDetail({
+      customerId: JobObj.customer._id,
+    })
 
-    setSelectedJob(JobObj);
+    setSelectedJob({...JobObj, customer});
   }
 
 
@@ -284,20 +289,22 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       <Grid container item lg={6} >
         <div className='ticketsFilterContainer'>
           <div className='filter_wrapper'>
-            <button onClick={() => openTicketFilerModal()}>
+            <button onClick={() => openTicketFilterModal()}>
               <i className="material-icons" >filter_list</i>
               <span>Filter</span>
             </button>
             {
               showFilterModal ?
+              <ClickAwayListener onClickAway={openTicketFilterModal}>
                 <div className="dropdown_wrapper elevation-5">
                   <BCMapFilterModal
-                    openTicketFilerModal={openTicketFilerModal}
+                    openTicketFilterModal={openTicketFilterModal}
                     resetDate={resetDate}
                     setPage={setPage}
                     getScheduledJobs={getScheduledJobs}
                   />
                 </div>
+              </ClickAwayListener>
                 : null
             }
           </div>

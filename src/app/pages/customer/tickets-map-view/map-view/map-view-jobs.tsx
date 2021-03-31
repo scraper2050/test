@@ -18,7 +18,9 @@ import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import { getSearchJobs } from "api/job.api";
+import { getSearchJobs, getAllJobsAPI } from "api/job.api";
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { getCustomerDetail } from 'api/customer.api';
 
 function MapViewJobsScreen({ classes, today }: any) {
 
@@ -42,8 +44,7 @@ function MapViewJobsScreen({ classes, today }: any) {
   const [hasPhoto, setHasPhoto] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>({});
 
-
-  const openTicketFilerModal = () => {
+  const openTicketFilterModal = () => {
     setShowFilterModal(!showFilterModal);
   }
 
@@ -53,13 +54,17 @@ function MapViewJobsScreen({ classes, today }: any) {
     setTempDate(new Date());
   }
 
+  const filterScheduledJobs = (jobs: any) =>  {
+    return jobs.filter((job: any) => job && job.status !== 2); 
+  }
+
   useEffect(() => {
     const rawData = {
       customerNames: '',
       jobId: '',
       // today: false,
     }
-    const requestObj = { ...rawData, page: 1, pageSize: 6 };
+    const requestObj = { ...rawData, page: 1, pageSize: 0 };
     getScheduledJobs(requestObj);
   }, []);
 
@@ -80,8 +85,7 @@ function MapViewJobsScreen({ classes, today }: any) {
 
 
     if (data.status) {
-      setJobs(data.jobs);
-     // console.log(data.jobs);
+      setJobs(filterScheduledJobs(data.jobs));
       setTotalJobs(data.total);
       setIsLoading(false);
     } else {
@@ -207,7 +211,7 @@ function MapViewJobsScreen({ classes, today }: any) {
 
 
 
-  const handleJobCardClick = (JobObj: any, index: any) => {
+  const handleJobCardClick = async (JobObj: any, index: any) => {
     let prevItemKey = localStorage.getItem('prevItemKey');
     let currentItem = document.getElementById(`openScheduledJob${index}`);
     if (prevItemKey) {
@@ -231,17 +235,16 @@ function MapViewJobsScreen({ classes, today }: any) {
       setHasPhoto(false)
     }
 
+    // if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
+    //   dispatch(warning('There\'s no address on this job.'))
+    // }
+    
+    const customer = await getCustomerDetail({
+      customerId: JobObj.customer._id,
+    })
 
-    if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
-      dispatch(warning('There\'s no address on this job.'))
-    }
-
-    console.log(JobObj)
-
-    setSelectedJob(JobObj);
+    setSelectedJob({...JobObj, customer});
   }
-
-
 
   const resetDateFilter = async () => {
     setPage(1);
@@ -252,7 +255,7 @@ function MapViewJobsScreen({ classes, today }: any) {
       customerNames: '',
       jobId: '',
     }
-    const requestObj = { ...rawData, page: 1, pageSize: 6 };
+    const requestObj = { ...rawData, page: 1, pageSize: 0 };
 
     getScheduledJobs(requestObj);
   }
@@ -260,8 +263,7 @@ function MapViewJobsScreen({ classes, today }: any) {
   const handleChange = (event: any, value: any) => {
     setSelectedJob({});
     setPage(value);
-
-    const requestObj = { ...filterJobs, page: value, pageSize: 6 };
+    const requestObj = { ...filterJobs, page: 1, pageSize: 0 };
     getScheduledJobs(requestObj);
   }
 
@@ -285,48 +287,47 @@ function MapViewJobsScreen({ classes, today }: any) {
       <Grid container item lg={6} >
         <div className='ticketsFilterContainer'>
           <div className='filter_wrapper'>
-            <button onClick={() => openTicketFilerModal()}>
+            <button onClick={() => openTicketFilterModal()}>
               <i className="material-icons" >filter_list</i>
               <span>Filter</span>
             </button>
             {
               showFilterModal ?
+              <ClickAwayListener onClickAway={openTicketFilterModal}>
                 <div className="dropdown_wrapper elevation-5">
                   <BCMapFilterModal
-                    openTicketFilerModal={openTicketFilerModal}
+                    openTicketFilterModal={openTicketFilterModal}
                     resetDate={resetDate}
                     setPage={setPage}
                     getScheduledJobs={getScheduledJobs}
                   />
-                </div>
+                  </div>
+                </ClickAwayListener>
                 : null
             }
           </div>
-          {
-            true ? <div style={{ width: 250 }} /> :
-              <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
-                <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
-                <DatePicker
-                  autoOk
-                  className={classes.picker}
-                  disablePast={false}
-                  format={'d MMM yyyy'}
-                  id={`datepicker-${'scheduleDate'}`}
+            <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
+              <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
+              <DatePicker
+                autoOk
+                className={classes.picker}
+                disablePast={false}
+                format={'d MMM yyyy'}
+                id={`datepicker-${'scheduleDate'}`}
 
-                  inputProps={{
-                    'name': 'scheduleDate',
-                    'placeholder': 'Scheduled Date',
-                  }}
-                  inputVariant={'outlined'}
-                  name={'scheduleDate'}
-                  onChange={(e: any) => dateChangeHandler(e)}
-                  required={false}
-                  value={dateValue}
-                  variant={'inline'}
-                />
-                <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
-              </span>
-          }
+                inputProps={{
+                  'name': 'scheduleDate',
+                  'placeholder': 'Scheduled Date',
+                }}
+                inputVariant={'outlined'}
+                name={'scheduleDate'}
+                onChange={(e: any) => dateChangeHandler(e)}
+                required={false}
+                value={dateValue}
+                variant={'inline'}
+              />
+              <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
+            </span>
           <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
         </div>
         <div className='ticketsCardViewContainer'>
@@ -340,8 +341,7 @@ function MapViewJobsScreen({ classes, today }: any) {
                 <BCCircularLoader heightValue={'200px'} />
               </div>
               :
-
-              jobs.map((x: any, i: any) => (
+              paginatedJobs.map((x: any, i: any) => (
                 <div className={'ticketItemDiv'} key={i} onClick={() => handleJobCardClick(x, i)} id={`openScheduledJob${i}`}>
                   <div className="ticket_title">
                     <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
@@ -365,7 +365,7 @@ function MapViewJobsScreen({ classes, today }: any) {
 
           }
         </div>
-        <Pagination count={Math.ceil(totalJobs / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
+        <Pagination count={Math.ceil(totalItems / 6)} color="primary" onChange={handleChange} showFirstButton
           showLastButton />
       </Grid>
 
