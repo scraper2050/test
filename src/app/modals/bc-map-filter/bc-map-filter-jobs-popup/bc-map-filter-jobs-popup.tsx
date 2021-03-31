@@ -12,10 +12,11 @@ import {
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { DatePicker } from "@material-ui/pickers";
 import moment from 'moment';
+import { getContacts } from 'api/contacts.api';
 
 function BCMapFilterModal({
   classes,
-  openTicketFilerModal,
+  openTicketFilterModal,
   resetDate,
   setPage,
   getScheduledJobs
@@ -24,6 +25,7 @@ function BCMapFilterModal({
   const customers = useSelector(({ customers }: any) => customers.data);
   const loading = useSelector(({ customers }: any) => customers.loading);
   const [selectedDate, setSelectedDate] = useState(moment(new Date()).format('YYYY/MM-DD'))
+  const contacts = useSelector(({contacts}: any) => contacts?.contacts);
 
   useEffect(() => {
     dispatch(loadingCustomers());
@@ -36,21 +38,35 @@ function BCMapFilterModal({
     setPage(1);
     await getScheduledJobs({ ...values, page: 1, pageSize: 6 });
     setSubmitting(false);
-    openTicketFilerModal();
+    openTicketFilterModal();
   }
 
   const form = useFormik({
     initialValues: {
       jobId: '',
       customerNames: "",
-      schedule_date: "",
+      contact: "",
+      // schedule_date: "",
     },
     onSubmit
   });
 
-  const handleCustomerChange = (field: string, setFieldValue: Function, newValue: []) => {
-    const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
+  const handleCustomerChange = (field: string, setFieldValue: Function, newValue: any) => {
+    // const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
+    const customerDatafromAutoselect = newValue?.profile?.displayName;
+    // const customerContacts: string[] = newValue.map((customer: any) => customer.contact.phone).filter(Boolean);  
     setFieldValue('customerNames', customerDatafromAutoselect);
+    // setContacts(customerContacts);
+    let data: any = {
+      type: 'Customer',
+      referenceNumber: newValue._id
+    }
+
+    dispatch(getContacts(data));
+  }
+
+  const handleCustomerContactChange = (field: string, setFieldValue: Function, newValue: string) => {
+    setFieldValue('contact', newValue);
   }
 
   const handleDateChange = (field: string, setFieldValue: Function) => {
@@ -68,8 +84,7 @@ function BCMapFilterModal({
 
   if (loading) {
     return <BCCircularLoader heightValue={'280px'} />
-  }
-  else {
+  } else {
     return (
       <form onSubmit={FormikSubmit}>
         <DialogContent classes={{ 'root': classes.dialogContent }}>
@@ -93,7 +108,7 @@ function BCMapFilterModal({
               <FormGroup className={'required'}>
                 <div className="search_form_wrapper">
                   <Autocomplete
-                    multiple
+                    // multiple
                     id="tags-standard"
                     options={customers}
                     getOptionLabel={(option) => option.profile.displayName}
@@ -102,7 +117,7 @@ function BCMapFilterModal({
                       <TextField
                         {...params}
                         variant="standard"
-                        label="Customers"
+                        label="Customer"
                       />
                     )}
                   />
@@ -111,6 +126,31 @@ function BCMapFilterModal({
               </FormGroup>
 
               <FormGroup className={'required'}>
+                <Autocomplete
+                  id="tags-standard"
+                  options={contacts}
+                  getOptionLabel={(option) => option?.name}
+                  onChange={(event: any, newValue: any) => handleCustomerContactChange('contact', setFieldValue, newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name={'contact'}
+                      variant="standard"
+                      label={'Contact Name'}
+                      type={'search'}
+                    />
+                    )}
+                  />
+                  {/* <TextField
+                    name={'contactName'}
+                    label={'Contact'}
+                    placeholder={'Contact Name'}
+                    onChange={form.handleChange}
+                    type={'search'}
+                  /> */}
+              </FormGroup>
+
+              {/* <FormGroup className={'required'}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <p>Schedule Date</p>
                   <DatePicker
@@ -131,7 +171,7 @@ function BCMapFilterModal({
                     variant={'inline'}
                   />
                 </div>
-              </FormGroup>
+              </FormGroup> */}
             </Grid>
           </Grid>
         </DialogContent>
@@ -148,7 +188,7 @@ function BCMapFilterModal({
               }}
               color={'secondary'}
               disabled={isSubmitting}
-              onClick={() => openTicketFilerModal()}
+              onClick={() => openTicketFilterModal()}
               variant={'extended'}>
               {'Cancel'}
             </Fab>

@@ -20,7 +20,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 
 function BCMapFilterModal({
   classes,
-  openTicketFilerModal,
+  openTicketFilterModal,
   resetDate
 }: any): JSX.Element {
   const dispatch = useDispatch();
@@ -66,7 +66,7 @@ function BCMapFilterModal({
       dispatch(setOpenServiceTicket(response));
       dispatch(refreshServiceTickets(true));
       dispatch(setOpenServiceTicketLoading(false));
-      openTicketFilerModal();
+      openTicketFilterModal();
       setTimeout(() => {
         dispatch(setModalDataAction({
           'data': {},
@@ -206,7 +206,7 @@ function BCMapFilterModal({
               }}
               color={'secondary'}
               disabled={isSubmitting}
-              onClick={() => openTicketFilerModal()}
+              onClick={() => openTicketFilterModal()}
               variant={'extended'}>
               {'Cancel'}
             </Fab>

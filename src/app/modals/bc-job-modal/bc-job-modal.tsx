@@ -440,8 +440,6 @@ function BCJobModal({
           delete requestObj["type"]
         }
 
-        console.log("req", requestObj);
-
         request(requestObj)
 
           .then(async (response: any) => {
