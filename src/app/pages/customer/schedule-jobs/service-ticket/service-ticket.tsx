@@ -229,7 +229,6 @@ function ServiceTicket({ classes }: any) {
   ];
 
   useEffect(() => {
-    console.log(tickets);
     if (refresh) {
       dispatch(getAllServiceTicketAPI());
     }

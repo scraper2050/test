@@ -22,6 +22,7 @@ import "../ticket-map-view.scss";
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 function MapViewTicketsScreen({ classes }: any) {
 
@@ -51,8 +52,17 @@ function MapViewTicketsScreen({ classes }: any) {
     setSelectedTicket({});
   }, []);
 
-  const openTicketFilerModal = () => {
+  const openTicketFilterModal = () => {
     setShowFilterModal(!showFilterModal);
+  }
+
+  const handleClickAway = (event: any) => {
+    const target = event.target; 
+    const isBody = (target as Element).nodeName === 'BODY';
+
+    if (!isBody) {
+      openTicketFilterModal()
+    };
   }
 
   const resetDate = () => {
@@ -205,11 +215,12 @@ function MapViewTicketsScreen({ classes }: any) {
       setHasPhoto(false)
     }
 
-    if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
-      dispatch(warning('There\'s no address on this ticket.'))
-    }
 
+    // if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
+    //   dispatch(warning('There\'s no address on this ticket.'))
+    // }
 
+    console.log(openTicketObj.customer);
 
     setSelectedTicket(openTicketObj);
   }
@@ -243,9 +254,19 @@ function MapViewTicketsScreen({ classes }: any) {
       </Grid>
       <Grid container item lg={6} >
         <div className='ticketsFilterContainer'>
-          <div className='filter_wrapper'>
-            <button onClick={() => openTicketFilerModal()}>  <i className="material-icons" >filter_list</i> <span>Filter</span></button>
-            {showFilterModal ? <div className="dropdown_wrapper elevation-5"><BCMapFilterModal openTicketFilerModal={openTicketFilerModal} resetDate={resetDate} /></div> : null}
+          <div className='filter_wrapper' >
+            <button onClick={() => openTicketFilterModal()}>
+              <i className="material-icons" >filter_list</i>
+              <span>Filter</span>
+            </button>
+            {showFilterModal
+              ? <ClickAwayListener onClickAway={handleClickAway}>
+                <div className="dropdown_wrapper elevation-5">
+                  <BCMapFilterModal openTicketFilterModal={openTicketFilterModal} resetDate={resetDate} />
+                </div>
+              </ClickAwayListener>
+              : null
+            }
           </div>
           <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
             <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
