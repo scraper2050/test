@@ -235,9 +235,9 @@ function MapViewJobsScreen({ classes, today }: any) {
       setHasPhoto(false)
     }
 
-    // if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
-    //   dispatch(warning('There\'s no address on this job.'))
-    // }
+    if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
+      dispatch(warning('There\'s no address on this job.'))
+    }
     
     const customer = await getCustomerDetail({
       customerId: JobObj.customer._id,
