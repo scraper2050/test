@@ -65,3 +65,10 @@ export const setServiceTicketNotification = (serviceTicketObj: any) => {
     'type': types.SET_SERVICE_TICKET_NOTIFICATION
   }
 }
+
+export const setSelectedCustomers = (customers: any[]) => { 
+  return {
+    'payload': customers,
+    'type': types.SET_SELECTED_CUSTOMERS
+  };
+};

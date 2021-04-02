@@ -11,7 +11,8 @@ import {
   setClearOpenServiceTicketObject,
   setClearOpenTicketFilterState,
   setOpenServiceTicketLoading,
-  setOpenTicketFilterState
+  setOpenTicketFilterState,
+  setSelectedCustomers
 } from 'actions/service-ticket/service-ticket.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { formatDateYMD } from 'helpers/format';
@@ -38,9 +39,10 @@ function MapViewTicketsScreen({ classes }: any) {
   const [tempDate, setTempDate] = useState<any>(new Date());
   const [page, setPage] = useState(1);
   const [hasPhoto, setHasPhoto] = useState(false);
+  const ticketFilterObject = useSelector(({serviceTicket}: any) => serviceTicket?.filterTicketState); 
 
   useEffect(() => {
-    const rawData = {
+    let rawData = {
       jobTypeTitle: '',
       dueDate: '',
       customerNames: '',
@@ -48,6 +50,7 @@ function MapViewTicketsScreen({ classes }: any) {
       contactName: '',
     }
     const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
+    resetDateFilter();
     getOpenTickets(requestObj);
     setSelectedTicket({});
   }, []);
@@ -66,18 +69,19 @@ function MapViewTicketsScreen({ classes }: any) {
   }
 
   const resetDate = () => {
-    setDateValue(null);
-    setTempDate(new Date());
+    // setDateValue(null);
+    // setTempDate(new Date());
   }
 
 
   const handleButtonClickMinusDay = () => {
+    const { jobTypeTitle, customerNames, ticketId, contactName } = ticketFilterObject;
     let rawData = {
-      jobTypeTitle: '',
+      jobTypeTitle: jobTypeTitle || '' ,
       dueDate: '',
-      customerNames: '',
-      ticketId: '',
-      contactName: '',
+      customerNames: customerNames || '',
+      ticketId: ticketId || '',
+      contactName: contactName || '',
     }
     setSelectedTicket({})
     const dateObj = new Date(tempDate);
@@ -87,13 +91,13 @@ function MapViewTicketsScreen({ classes }: any) {
     const formattedDate = formatDateYMD(yesterday);
     setDateValue(formattedDate);
     setTempDate(yesterday);
-    dispatch(setClearOpenTicketFilterState({
-      'jobTypeTitle': '',
-      'dueDate': '',
-      'customerNames': '',
-      'ticketId': '',
-      'contactName': '',
-    }));
+    // dispatch(setClearOpenTicketFilterState({
+    //   'jobTypeTitle': '',
+    //   'dueDate': '',
+    //   'customerNames': '',
+    //   'ticketId': '',
+    //   'contactName': '',
+    // }));
     const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
     getOpenTickets(requestObj);
@@ -115,7 +119,7 @@ function MapViewTicketsScreen({ classes }: any) {
 
     setDateValue(formattedDate);
     setTempDate(tomorrow);
-    dispatch(setClearOpenTicketFilterState(rawData));
+    // dispatch(setClearOpenTicketFilterState(rawData));
     const requestObj = { ...openServiceTicketFIlter, pageNo: 1, pageSize: 6, dueDate: formattedDate };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
     getOpenTickets(requestObj);
@@ -151,17 +155,19 @@ function MapViewTicketsScreen({ classes }: any) {
 
   const dateChangeHandler = (date: string) => {
     const dateObj = new Date(date);
+    const { jobTypeTitle, customerNames, ticketId, contactName } = ticketFilterObject;
     let rawData = {
-      jobTypeTitle: '',
-      dueDate: '',
-      customerNames: '',
-      ticketId: '',
-      contactName: '',
+      jobTypeTitle: jobTypeTitle || '' ,
+      // dueDate: '',
+      customerNames: customerNames || '',
+      ticketId: ticketId || '',
+      contactName: contactName || '',
     }
+
     const formattedDate = formatDateYMD(dateObj);
     setDateValue(dateObj);
     setTempDate(date);
-    dispatch(setClearOpenTicketFilterState(rawData));
+    // dispatch(setClearOpenTicketFilterState(rawData));
     const requestObj = { ...rawData, pageNo: 1, pageSize: 6, dueDate: formattedDate };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
     getOpenTickets(requestObj);
@@ -170,15 +176,18 @@ function MapViewTicketsScreen({ classes }: any) {
   const resetDateFilter = () => {
     setPage(1);
     setDateValue(null);
+    setTempDate(new Date());
     setSelectedTicket({});
     dispatch(setClearOpenTicketFilterState({
-      'jobTypeTitle': '',
-      'dueDate': '',
-      'customerNames': '',
-      'ticketId': '',
-      'contactName': ''
+      jobTypeTitle: '',
+      dueDate: '',
+      customerNames: '',
+      ticketId: '',
+      contactName: ''
     }));
     getOpenTickets({ pageNo: 1, pageSize: 6 })
+    dispatch(setSelectedCustomers([]))
+    setShowFilterModal(false);
   }
 
 
@@ -215,12 +224,9 @@ function MapViewTicketsScreen({ classes }: any) {
       setHasPhoto(false)
     }
 
-
-    // if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
-    //   dispatch(warning('There\'s no address on this ticket.'))
-    // }
-
-    console.log(openTicketObj.customer);
+    if (!openTicketObj.jobLocation || openTicketObj.jobLocation === undefined && openTicketObj.customer.location.coordinates.length === 0) {
+      dispatch(warning('There\'s no address on this ticket.'))
+    }
 
     setSelectedTicket(openTicketObj);
   }
