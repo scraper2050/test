@@ -23,8 +23,6 @@ function BCJobReport({ classes, jobReportData }: any) {
 
     const jobEquipmentInfo = linkKey.includes('job-equipment-info');
 
-
-
     let customerName =
       baseObj["customerName"] && baseObj["customerName"] !== undefined
         ? baseObj["customerName"]
@@ -77,7 +75,7 @@ function BCJobReport({ classes, jobReportData }: any) {
               <Grid className={classes.paper} item xs={6}>
                 <p className={classes.subTitle}>{"customer information"}</p>
                 <Grid container>
-                  <Grid item xs={5}>
+                  <Grid item xs={6}>
                     <div>
                       <strong>Name</strong>
                       <p className={classes.noMargin}>
@@ -85,14 +83,38 @@ function BCJobReport({ classes, jobReportData }: any) {
                       </p>
                     </div>
 
-                    {jobReportData.workPerformedImage === "N/A" ? (
+                    {/* {jobReportData.workPerformedImage === "N/A" ? (
                       <WallpaperIcon className={classes.largeIcon} />
                     ) : (
                         jobReportData.workPerformedImage
-                      )}
+                      )} */}
+                  </Grid>
+                  <Grid item xs={6}>
+                    <div>
+                      <strong>Phone Number</strong>
+                      <p className={classes.noMargin}>
+                        {jobReportData.phoneFormat}
+                      </p>
+                    </div>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <div className={classes.addMargin}>
+                      <strong>Email</strong>
+                      <p className={classes.noMargin}>
+                        {jobReportData.customerEmail}
+                      </p>
+                    </div>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <div className={classes.addMargin}>
+                      <strong>Address</strong>
+                      <p className={classes.noMargin}>
+                        {jobReportData.address}
+                      </p>
+                    </div>
                   </Grid>
 
-                  <Grid item xs={7}>
+                  {/* <Grid item xs={7}>
                     <div>
                       <strong>Phone Number</strong>
                       <p className={classes.noMargin}>
@@ -113,12 +135,22 @@ function BCJobReport({ classes, jobReportData }: any) {
                         {jobReportData.address}
                       </p>
                     </div>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
 
               <Grid className={classes.paper} item xs={6}>
-                <p className={classes.subTitle}>{"job details"}</p>
+                <Grid container>
+                  <Grid item xs={6}><p className={classes.subTitle}>{"job details"}</p></Grid>
+                  <Grid item xs={6}>
+                    <div className={classes.mt_24}>
+                      <strong>Technician Name</strong>
+                      <p className={classes.noMargin}>
+                        {jobReportData.technicianName}
+                      </p>
+                    </div>
+                  </Grid>
+                </Grid>
                 <Grid container>
                   <Grid xs={4}>
                     <div>
@@ -147,47 +179,84 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </div>
                   </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <div className={classes.addMargin}>
-                    <strong>Technician Name</strong>
-                    <p className={classes.noMargin}>
-                      {jobReportData.technicianName}
-                    </p>
-                  </div>
-
-                  <div className={classes.addMargin}>
-                    <strong>Recorded Note</strong>
-                    <p className={classes.noMargin}>
-                      {jobReportData.recordNote}
-                    </p>
-                  </div>
-
-                  <div className={classes.addMargin}>
-                    <strong>Purchase Order Created</strong>
-                    <p className={classes.noMargin}>
-                      {jobReportData.purchaseOrder}
-                    </p>
-                  </div>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <div className={classes.addMargin}>
+                      <strong>Recorded Note</strong>
+                      <p className={classes.noMargin}>
+                        {jobReportData.recordNote}
+                      </p>
+                    </div>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <div className={classes.addMargin}>
+                      <strong>Purchase Order Created</strong>
+                      <p className={classes.noMargin}>
+                        {jobReportData.purchaseOrder}
+                      </p>
+                    </div>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
 
             <Grid className={classes.paper} item xs={12}>
               <p className={classes.subTitle}>{"company"}</p>
-              <div>
-                <strong className={classes.noMargin}>Name </strong>{" "}
-                <span>{jobReportData.companyName}</span>
-              </div>
-
-              <div>
-                <strong className={classes.noMargin}>Email </strong>{" "}
-                <span>{jobReportData.companyEmail}</span>
-              </div>
-
-              <div>
-                <strong className={classes.noMargin}>Phone </strong>{" "}
-                <span>{jobReportData.companyPhone}</span>
-              </div>
+              <Grid container>
+                <Grid item xs={3}><WallpaperIcon className={classes.largeIcon} /></Grid>
+                <Grid item xs={9}>
+                  <Grid container>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>Name </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyName}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>Email </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyEmail}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>Phone </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyPhone}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>Fax </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyFax || 'N/A'}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>Street </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyAddress['street']}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>City </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyPhone}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>State </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyPhone}</p>
+                      </div>
+                    </Grid>
+                    <Grid item xs={6} className={classes.mt_24}>
+                      <div>
+                        <strong className={classes.noMargin}>Zip Code </strong>{" "}
+                        <p className={classes.m_0}>{jobReportData.companyPhone}</p>
+                      </div>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
             </Grid>
 
             <Grid className={classes.paper} item xs={12}>

@@ -142,7 +142,6 @@ function BCAdminProfile(props: Props) {
                         </Grid>
                       </Grid>
                     </Grid>
-
                   </Grid>
                 )
               })

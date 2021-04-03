@@ -39,6 +39,22 @@ export default (theme: Theme): any => ({
     marginTop: "40px",
   },
 
+  mt_24: {
+    marginTop: '24px',
+  },
+
+  mb_0: {
+    margineBottom: 0,
+  },
+
+  mt_0: {
+    marginTop: 0,
+  },
+
+  m_0: {
+    margin: 0,
+  },
+
   largeIcon: {
     fontSize: "100px",
     backgroundColor: CONSTANTS.PRIMARY_GRAY,
