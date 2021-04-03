@@ -62,7 +62,6 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
     const socket = io(`${Config.socketSever}`);
     socket.on(SocketMessage.CREATESERVICETICKET, (data) => {
       const oldNotification = notification.filter((item: any) => item._id === data._id );
-      console.log('>>>>>>>>>>', notification);
       if(oldNotification.length == 0) notification.push(data);
       setNotification(notification);
       dispatch(setServiceTicketNotification(notification));
