@@ -203,11 +203,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
     ]);
   };
 
-
-
   const handleJobCardClick = async (JobObj: any, index: any) => {
-
-    
     let prevItemKey = localStorage.getItem('prevItemKey');
     let currentItem = document.getElementById(`openTodayJob${index}`);
   
@@ -232,9 +228,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       setHasPhoto(false)
     }
 
-    // if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
-    //   dispatch(warning('There\'s no address on this job.'))
-    // }
+    if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
+      dispatch(warning('There\'s no address on this job.'))
+    }
     const customer = await getCustomerDetail({
       customerId: JobObj.customer._id,
     })
