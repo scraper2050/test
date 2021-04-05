@@ -11,6 +11,7 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png'
+import InfoIcon from '@material-ui/icons/Info';
 
 import "./bc-map-with-marker.scss";
 const DEFAULT_LAT = 51.477222;
@@ -94,6 +95,23 @@ function MakerPin({ ...props }) {
     }, 200);
   };
 
+  const openDetailJobModal = (job: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          detail: true,
+          modalTitle: "View Job",
+          removeFooter: false,
+        },
+        type: modalTypes.EDIT_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
 
 
   if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
@@ -104,7 +122,6 @@ function MakerPin({ ...props }) {
         <></>
       )
     } else {
-      console.log(props.ticket)
       return (
         <>
           <RoomIcon className={props.classes.marker} />;
@@ -127,8 +144,6 @@ function MakerPin({ ...props }) {
                   <span>{props.ticket.description ? props.ticket.description : ''}</span>
                 </div>
               </Grid>
-
-
               {
                 props.ticket.ticket.image &&
                 <Grid item>
@@ -151,6 +166,18 @@ function MakerPin({ ...props }) {
                 </Grid>
               }
             </Grid>
+            <div
+              onClick={() => openDetailJobModal(props.ticket)}
+              style={{
+                marginLeft: '.5rem', height: 34,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+              className={'flex items-center'}>
+              <InfoIcon style={{ margin: 'auto, 0' }} />
+            </div>
           </div>
         </>
       )
@@ -175,6 +202,16 @@ function MakerPin({ ...props }) {
           >
             <div className="due_date">
               <span> <i className="material-icons">access_time</i> {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString().substr(0, 15) : ''}</span>
+              {/* <div
+                onClick={() => openDetailJobModal(props.ticket)}
+                style={{
+                  marginLeft: '.5rem', height: 34,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                className={'flex items-center'}>
+                <InfoIcon style={{ margin: 'auto, 0' }} />
+              </div> */}
             </div>
             <Grid container justify="space-between" alignItems="center" spacing={3}>
               <Grid item>
@@ -233,6 +270,7 @@ function MakerPin({ ...props }) {
 }
 
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false }: BCMapWithMarkerListProps) {
+
   const [tickets, setTickets] = useState<any>(list);
 
   let centerLat = DEFAULT_LAT, centerLng = DEFAULT_LNG;

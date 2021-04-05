@@ -3,19 +3,21 @@ import { ReducerParamsInterface } from 'reducers';
 import { types } from '../actions/service-ticket/service-ticket.types';
 
 const initialServiceTicket = {
-  'isLoading': false,
-  'refresh': true,
-  'tickets': [],
-  'openTickets': [],
-  'openTicketObj': {},
-  'totalOpenTickets': 0,
-  'filterTicketState': {
-    'jobTypeTitle': '',
-    'dueDate': '',
-    'customerNames': '',
-    'ticketId': '',
-    'contactName': '',
-  }
+  isLoading: false,
+  refresh: true,
+  tickets: [],
+  openTickets: [],
+  openTicketObj: {},
+  totalOpenTickets: 0,
+  filterTicketState: {
+    jobTypeTitle: '',
+    dueDate: '',
+    customerNames: '',
+    ticketId: '',
+    contactName: '',
+  },
+  notifications: [],
+  selectedCustomers: [], 
 };
 
 export default (state = initialServiceTicket, { payload, type }: ReducerParamsInterface) => {
@@ -65,6 +67,17 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
       return {
         ...state,
         'filterTicketState': payload
+      }
+    case types.SET_SERVICE_TICKET_NOTIFICATION:
+      return {
+        ...state,
+        'notifications': payload
+      }
+    
+    case types.SET_SELECTED_CUSTOMERS:
+      return {
+        ...state,
+        selectedCustomers: payload
       }
     default:
       return state;

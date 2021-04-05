@@ -15,6 +15,7 @@ import BCAddJobLocationModal from "./bc-add-job-location-modal/bc-add-job-locati
 import BCMapFilterModal from "./bc-map-filter/bc-map-filter-popup";
 import BCEditCutomerInfoModal from "./bc-customer-info-modal/bc-customer-info-modal";
 import BCAddBillingModal from "./bc-add-billing-modal/bc-add-billing-modal";
+import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
 import CloseIcon from "@material-ui/icons/Close";
 import {
   closeModalAction,
@@ -41,7 +42,7 @@ interface RootState {
 }
 
 function BCModal() {
-  const [component, setComponent] = useState<any>(null);
+  const [component, setComponent] = useState<any>(null); 
   const [modalOptions, setModalOptions] = useState<any>({
     fullWidth: true,
     maxWidth: "md", // Xs, sm, md, lg, xl
@@ -72,7 +73,7 @@ function BCModal() {
           fullWidth: true,
           maxWidth: data.detail ? "lg" : "md",
         });
-        setComponent(<BCServiceTicketModal ticket={data.ticketData} detail={data.detail} />);
+        setComponent(<BCServiceTicketModal onSubmit={data.onSubmit} ticket={data.ticketData} detail={data.detail} />);
         break;
       case modalTypes.CANCEL_SERVICE_TICKET_MODAL:
         setModalOptions({
@@ -136,6 +137,15 @@ function BCModal() {
           maxWidth: "md",
         });
         setComponent(<BCAddContactModal props={data.data} />);
+        break;
+      case modalTypes.DELETE_BILLING_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: "xs",
+        });
+        setComponent(<BCDeleteBillingConfirmModal data={data.data} />);
         break;
       case modalTypes.DELETE_CONTACT_MODAL:
         setModalOptions({
@@ -234,6 +244,7 @@ function BCModal() {
         setComponent(null);
     }
   }, [type]);
+
   const handleClose = () => {
     dispatch(closeModalAction());
     setTimeout(() => {

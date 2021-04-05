@@ -1,12 +1,19 @@
 import moment from 'moment';
 
-export const formatDate = (date: Date) => moment(date).format('MM/DD/YYYY');
+export const formatDate = (date: string): string | undefined => {
+  if (typeof date !== undefined && date !== null) {
+    return moment(date).format("MM/DD/YYYY");
+  }
+};
+
 
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 
 export const formatTime = (time: Date) => moment(time).format('hh:mm a');
 
 export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:ss');
+
+export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format("YYYY-MM-DDTHH:mm:ss")).toDate().toString();
 
 export const convertMilitaryTime = (time: string) => {
 

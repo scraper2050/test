@@ -25,12 +25,15 @@
     z-index: 1;
   }
   .due_date {
+    display: flex;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
     color: #979797;
     padding-bottom: 30px;
+    margin-bottom: 15px;
+    justify-content: space-between;
     span {
       display: flex;
       align-items: center;
@@ -81,4 +84,5 @@
   // position: absolute;
   left: -50px !important;
   top: -60px !important;
+  border: 0!important;
 }
