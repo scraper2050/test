@@ -41,35 +41,35 @@ import { modalTypes } from "../../../constants";
 
 
 const initialJobState = {
-  'customer': {
-    '_id': ''
+  customer: {
+    _id: ''
   },
-  'description': '',
-  'employeeType': false,
-  'equipment': {
-    '_id': ''
+  description: '',
+  employeeType: false,
+  equipment: {
+    _id: ''
   },
-  'dueDate': '',
-  'scheduleDate': null,
-  'scheduledEndTime': null,
-  'scheduledStartTime': null,
-  'technician': {
-    '_id': ''
+  dueDate: '',
+  scheduleDate: null,
+  scheduledEndTime: null,
+  scheduledStartTime: null,
+  technician: {
+    _id: ''
   },
-  'contractor': {
-    '_id': ''
+  contractor: {
+    _id: ''
   },
-  'ticket': {
-    '_id': ''
+  ticket: {
+    _id: ''
   },
-  'type': {
-    '_id': ''
+  type: {
+    _id: ''
   },
-  'jobLocation': {
-    '_id': ''
+  jobLocation: {
+    _id: ''
   },
-  'jobSite': {
-    '_id': ''
+  jobSite: {
+    _id: ''
   }
 }
 

@@ -42,7 +42,7 @@ interface RootState {
 }
 
 function BCModal() {
-  const [component, setComponent] = useState<any>(null);
+  const [component, setComponent] = useState<any>(null); 
   const [modalOptions, setModalOptions] = useState<any>({
     fullWidth: true,
     maxWidth: "md", // Xs, sm, md, lg, xl
@@ -73,7 +73,7 @@ function BCModal() {
           fullWidth: true,
           maxWidth: data.detail ? "lg" : "md",
         });
-        setComponent(<BCServiceTicketModal ticket={data.ticketData} detail={data.detail} />);
+        setComponent(<BCServiceTicketModal onSubmit={data.onSubmit} ticket={data.ticketData} detail={data.detail} />);
         break;
       case modalTypes.CANCEL_SERVICE_TICKET_MODAL:
         setModalOptions({
