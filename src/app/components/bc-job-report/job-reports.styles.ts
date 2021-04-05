@@ -99,6 +99,25 @@ export default (theme: Theme): any => ({
       color: `${CONSTANTS.PRIMARY_DARK} !important`,
     },
   },
+  avatarArea: {
+    flex: '25%',
+    paddingRight: '2rem',
+    flexShrink: '0',
+    cursor: 'pointer',
+    alignSelf: 'center',
+  },
+  imgArea: {
+    margin: 'auto',
+    height: '150px',
+    width: '150px',
+    borderRadius: '50%',
+    border: '5px solid #00aaff',
+    background: 'grey',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundSize: '100% 100%'
+  },
 });
 
 export const MainContainer = styled.div`
