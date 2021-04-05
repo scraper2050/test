@@ -83,6 +83,10 @@ function ViewJobReportsPage({ classes }: any) {
       baseObj && baseObj["company"]["info"] !== undefined
         ? baseObj["company"]["info"]["companyName"]
         : "N/A";
+    let companyLogo =
+      baseObj && baseObj["company"]["info"] !== undefined
+        ? baseObj["company"]["info"]["logoUrl"]
+        : "N/A";
     let companyEmail =
       baseObj && baseObj["company"]["info"] !== undefined
         ? baseObj["company"]["info"]["companyEmail"]
@@ -120,6 +124,10 @@ function ViewJobReportsPage({ classes }: any) {
         : "N/A";
     let formatworkPerformedTimeScan = formatTime(workPerformedTimeScan);
     let status = baseObj && baseObj["status"] === 2 ? baseObj["status"] : "N/A";
+    let serviceTicket = baseObj && baseObj["ticket"] || null;
+    let startTime = baseObj && baseObj["startTime"] !== undefined ? new Date(baseObj["startTime"]).toLocaleString() : 'N/A';
+    let endTime = baseObj && baseObj["endTime"] !== undefined ? new Date(baseObj["endTime"]).toLocaleString() : 'N/A';
+
     let jobReportObj = {
       workReport,
       customerName: customerName,
@@ -135,6 +143,7 @@ function ViewJobReportsPage({ classes }: any) {
       purchaseOrder,
       companyName,
       companyEmail,
+      companyLogo,
       companyFax,
       companyPhone,
       companyAddress,
@@ -144,6 +153,9 @@ function ViewJobReportsPage({ classes }: any) {
       // workPerformedImage,
       workPerformedNote,
       status,
+      serviceTicket,
+      startTime,
+      endTime,
     };
 
     return jobReportObj;
