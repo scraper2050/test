@@ -39,25 +39,26 @@ import { modalTypes } from "../../../constants";
 function BCServiceTicketModal({
   classes,
   ticket = {
-    'customer': {
-      '_id': ''
+    customer: {
+      _id: ''
     },
-    'source': 'blueclerk',
-    'jobSite': '',
-    'jobLocation': '',
-    'jobType': '',
-    'note': '',
-    'updateFlag': '',
-    'dueDate': new Date(),
-    'customerContactId': '',
-    'customerPO': '',
-    'image': '',
-    'postCode': ''
+    source: 'blueclerk',
+    jobSite: '',
+    jobLocation: '',
+    jobType: '',
+    note: '',
+    updateFlag: '',
+    dueDate: new Date(),
+    customerContactId: '',
+    customerPO: '',
+    image: '',
+    postCode: ''
   },
   error = {
-    'status': false,
-    'message': ''
+    status: false,
+    message: ''
   },
+  onSubmit,
   detail = false,
 }: any): JSX.Element {
   const dispatch = useDispatch();
@@ -83,7 +84,7 @@ function BCServiceTicketModal({
     await setJobLocationValue([]);
     await setContactValue([]);
     await setJobSiteValue([]);
-
+    
     if (customerId !== "") {
       let data: any = {
         type: 'Customer',
@@ -185,7 +186,7 @@ function BCServiceTicketModal({
   } = useFormik({
     // 'enableReinitialize': true,
     'initialValues': {
-      'customerId': ticket.customer?._id,
+      'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
@@ -194,7 +195,7 @@ function BCServiceTicketModal({
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
       'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
-      'customerPO': ticket.customerPO !== undefined ? ticket.customerPO : '',
+      'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : '',
       'image': ticket.image !== undefined ? ticket.image : ''
     },
     'onSubmit': (values, { setSubmitting }) => {
@@ -214,6 +215,7 @@ function BCServiceTicketModal({
           if (formatedRequest.dueDate) {
             formatedRequest.dueDate = formatDateYMD(formatedRequest.dueDate);
           }
+
           callEditTicketAPI(formatedRequest).then((response: any) => {
             dispatch(refreshServiceTickets(true));
             dispatch(closeModalAction());
@@ -227,7 +229,15 @@ function BCServiceTicketModal({
 
             if (response.message === "Ticket updated successfully.") {
               dispatch(success(response.message));
+              
+              if (typeof onSubmit == 'function') {
+                setTimeout(() => {
+                  onSubmit(response);
+                }, 500)
+              }
             }
+
+            
           })
             .catch((err: any) => {
               setSubmitting(false);

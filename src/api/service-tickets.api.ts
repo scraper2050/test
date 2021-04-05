@@ -49,6 +49,8 @@ export const callEditTicketAPI = (data: any) => {
     Object.keys(data).forEach(key => {
       formData.append(key, data[key]);
     })
+
+
     request(`/updateServiceTicket`, 'post', formData)
       .then((res: any) => {
         return resolve(res.data);

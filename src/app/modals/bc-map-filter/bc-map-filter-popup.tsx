@@ -14,13 +14,19 @@ import {
   TextField
 } from '@material-ui/core';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
-import { refreshServiceTickets, setOpenServiceTicket, setOpenTicketFilterState, setOpenServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
+import {
+  refreshServiceTickets,
+  setOpenServiceTicket,
+  setOpenTicketFilterState,
+  setOpenServiceTicketLoading,
+  setSelectedCustomers
+} from 'actions/service-ticket/service-ticket.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
 
 function BCMapFilterModal({
   classes,
-  openTicketFilerModal,
+  openTicketFilterModal,
   resetDate
 }: any): JSX.Element {
   const dispatch = useDispatch();
@@ -28,7 +34,9 @@ function BCMapFilterModal({
   const loading = useSelector(({ customers }: any) => customers.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const loadingTypes = useSelector((state: any) => state.jobTypes.isLoading);
-
+  const ticketFilterObject = useSelector(({serviceTicket}: any) => serviceTicket?.filterTicketState); 
+  const selectedCustomers =  useSelector(({serviceTicket}: any) => serviceTicket?.selectedCustomers); 
+  const [customerOptions, setCustomerOptions] = useState([]);
 
   useEffect(() => {
     dispatch(loadingCustomers());
@@ -46,33 +54,35 @@ function BCMapFilterModal({
   }
 
   const onSubmit = (values: any, { setSubmitting }: any) => {
-
+    const { dueDate } = ticketFilterObject; 
     setSubmitting(true);
-    resetDate();
+    // resetDate();
     const rawData = {
       pageNo: 1,
       pageSize: 6,
       jobTypeTitle: values.jobType,
-      dueDate: '',
+      dueDate: dueDate || '',
       customerNames: values.customer,
       ticketId: values.searchQuery,
       companyId: '',
       contactName: values.contactName,
     }
+
     dispatch(setOpenTicketFilterState(rawData));
+    dispatch(setSelectedCustomers(customerOptions));
     const requestObj = formatRequestObj(rawData);
     dispatch(setOpenServiceTicketLoading(true));
     getOpenServiceTickets(requestObj).then((response: any) => {
       dispatch(setOpenServiceTicket(response));
       dispatch(refreshServiceTickets(true));
       dispatch(setOpenServiceTicketLoading(false));
-      openTicketFilerModal();
-      setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
-      }, 200);
+      openTicketFilterModal();
+      // setTimeout(() => {
+      //   dispatch(setModalDataAction({
+      //     'data': {},
+      //     'type': ''
+      //   }));
+      // }, 200);
       setSubmitting(false);
     })
       .catch((err: any) => {
@@ -83,16 +93,17 @@ function BCMapFilterModal({
 
   const form = useFormik({
     initialValues: {
-      searchQuery: '',
-      customer: [],
-      jobType: '',
-      contactName: '',
+      searchQuery: ticketFilterObject?.ticketId || '',
+      customer: ticketFilterObject?.customerNames || [],
+      jobType: ticketFilterObject?.jobTypeTitle || '',
+      contactName: ticketFilterObject?.contactName || '',
     },
     onSubmit
   });
 
   const handleCustomerChange = (field: string, setFieldValue: Function, newValue: []) => {
     const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
+    setCustomerOptions(newValue);
     setFieldValue('customer', customerDatafromAutoselect);
   }
 
@@ -136,6 +147,7 @@ function BCMapFilterModal({
                   variant={'outlined'}
                   onChange={form.handleChange}
                   type={'search'}
+                  defaultValue={ticketFilterObject?.ticketId}
                 />
               </FormGroup>
               <FormGroup className={'required'}>
@@ -143,6 +155,7 @@ function BCMapFilterModal({
                   <Autocomplete
                     multiple
                     id="tags-standard"
+                    defaultValue={selectedCustomers}
                     options={customers}
                     getOptionLabel={(option) => option.profile.displayName}
                     onChange={(event: any, newValue: any) => handleCustomerChange('customer', setFieldValue, newValue)}
@@ -165,6 +178,7 @@ function BCMapFilterModal({
                   // variant={'outlined'}
                   onChange={form.handleChange}
                   type={'search'}
+                  defaultValue={ticketFilterObject?.contactName}
                 />
               </FormGroup>
 
@@ -206,7 +220,7 @@ function BCMapFilterModal({
               }}
               color={'secondary'}
               disabled={isSubmitting}
-              onClick={() => openTicketFilerModal()}
+              onClick={() => openTicketFilterModal()}
               variant={'extended'}>
               {'Cancel'}
             </Fab>
