@@ -39,6 +39,22 @@ export default (theme: Theme): any => ({
     marginTop: "40px",
   },
 
+  mt_24: {
+    marginTop: '24px',
+  },
+
+  mb_0: {
+    margineBottom: 0,
+  },
+
+  mt_0: {
+    marginTop: 0,
+  },
+
+  m_0: {
+    margin: 0,
+  },
+
   largeIcon: {
     fontSize: "100px",
     backgroundColor: CONSTANTS.PRIMARY_GRAY,
@@ -82,6 +98,25 @@ export default (theme: Theme): any => ({
     "&:hover": {
       color: `${CONSTANTS.PRIMARY_DARK} !important`,
     },
+  },
+  avatarArea: {
+    flex: '25%',
+    paddingRight: '2rem',
+    flexShrink: '0',
+    cursor: 'pointer',
+    alignSelf: 'center',
+  },
+  imgArea: {
+    margin: 'auto',
+    height: '150px',
+    width: '150px',
+    borderRadius: '50%',
+    border: '5px solid #00aaff',
+    background: 'grey',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundSize: '100% 100%'
   },
 });
 

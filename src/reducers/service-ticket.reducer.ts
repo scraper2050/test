@@ -71,7 +71,7 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
     case types.SET_SERVICE_TICKET_NOTIFICATION:
       return {
         ...state,
-        'notifications': payload
+        'notifications': [...payload]
       }
     
     case types.SET_SELECTED_CUSTOMERS:
