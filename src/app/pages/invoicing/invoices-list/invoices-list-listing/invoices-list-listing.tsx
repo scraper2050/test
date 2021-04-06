@@ -82,6 +82,7 @@ function InvoicingListListing({ classes }: any) {
       className={classes.dataContainer}
       id={'0'}>
       <BCTableContainer
+        cellSize={"medium"}
         columns={columns}
         isLoading={invoiceList.loading}
         onRowClick={handleRowClick}
