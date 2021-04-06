@@ -54,17 +54,18 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notification, setNotification] = React.useState<Array<any>>([]);;
   const [showNotification, setShowNotification] = useState(false);
 
 
   useEffect(() => {
     const socket = io(`${Config.socketSever}`);
     socket.on(SocketMessage.CREATESERVICETICKET, (data) => {
-      const oldNotification = notification.filter((item: any) => item._id === data._id );
-      if(oldNotification.length == 0) notification.push(data);
-      setNotification(notification);
-      dispatch(setServiceTicketNotification(notification));
+      
+      const oldNotification = serviceTickets.filter((item: any) => item._id === data._id );
+      if(user?.company && user?.company === data.company && oldNotification.length == 0) {
+        serviceTickets.push(data);
+        dispatch(setServiceTicketNotification(serviceTickets));
+      }
     })
   }, [])
 
@@ -138,8 +139,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
 
   const viewNotificationInfo = (ticket:any): void => {
     handleClose();
-    const filterNotication = notification.filter((item:any) => item._id !== ticket._id);
-    setNotification(filterNotication);
+    const filterNotication = serviceTickets.filter((item:any) => item._id !== ticket._id);
     dispatch(setServiceTicketNotification(filterNotication));
     openDetailTicketModal(ticket);
   }
@@ -278,10 +278,10 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
               </Button>
             </div>
             <div className={[classes.headerTools,classes.bell].join(' ')}>
-                {notification.length > 0 && (
+                {serviceTickets.length > 0 && (
                   <Badge
                   className={[classes.margin, classes.notificationCnt].join(' ')}
-                  badgeContent={notification.length}
+                  badgeContent={serviceTickets.length}
                   color="secondary"
                 >
                   <Button
@@ -302,7 +302,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                   </Button>
                 </Badge>
                 )}
-                {notification.length === 0 && (
+                {serviceTickets.length === 0 && (
                   <Button
                     aria-describedby={notificationPopover}
                     buttonRef={(node: any) => {
@@ -320,7 +320,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                     />
                   </Button>
                 )}
-              {notification.length > 0 && <Popper
+              {serviceTickets.length > 0 && <Popper
                 anchorEl={notificationEl}
                 className={classNames({
                   [classes.popperClose]: !showNotification,
@@ -339,7 +339,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                     <Paper className={classes.dropdown}>
                       <ClickAwayListener onClickAway={handleClose}>
                         <MenuList role={'menu'}>
-                          {notification.map((item, index) => {
+                          {serviceTickets && serviceTickets.map((item:any, index:number) => {
                             return(
                               <MenuItem
                                 key={index}
