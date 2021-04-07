@@ -101,9 +101,6 @@ function EmployeeProfile({ profile, back, classes }: Props) {
         <div className={classes.pageContainer}>
           <div className={classes.pageContent}>
 
-
-
-
             <BCAdminProfile
               avatar={{
                 isEmpty: 'NO',

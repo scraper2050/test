@@ -13,11 +13,24 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { useLocation, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './bc-table.styles';
-import { withStyles } from '@material-ui/core';
+import { makeStyles, withStyles } from '@material-ui/core';
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
 
-function BCTableContent({ noHeader, className, stickyHeader, defaultPageSize, isDefault, columns, data, onRowClick, pagination = true, invoiceTable = false, setPage }: any) {
+
+function BCTableContent({
+  noHeader,
+  className,
+  stickyHeader,
+  defaultPageSize,
+  isDefault,
+  columns,
+  data,
+  onRowClick,
+  pagination = true,
+  invoiceTable = false,
+  setPage,
+  cellSize }: any) {
 
   const location = useLocation<any>();
   const history = useHistory();
@@ -224,6 +237,21 @@ function BCTableContent({ noHeader, className, stickyHeader, defaultPageSize, is
     }
   }, [curTab])
 
+
+  const useStyles = makeStyles({
+    cellMd: {
+      padding: "13px 24px 13px 16px;"
+    },
+    // mediumXs: {
+    //   "& .MuiTableCell-sizeSmall": {
+    //     padding: "13px 24px 13px 16px;"
+    //   }
+    // },
+  });
+
+
+  const tableClass = useStyles(); 
+
   // Render the UI for your table
   return (
     <TableContainer
@@ -281,6 +309,7 @@ function BCTableContent({ noHeader, className, stickyHeader, defaultPageSize, is
                 {row.cells.map((cell: any, cindex: number) => {
                   return (
                     <TableCell
+                      classes={{root: cellSize ? tableClass.cellMd : "" }}
                       key={`table-cell-${cindex}`}
                       {...cell.getCellProps()}
                       className={clsx(cell.column.className, `${cell.column.borderRight
