@@ -9,7 +9,7 @@ export type ApiAction = {
   cancelled: ActionFunctionAny<Action<any>>,
 }
 
-export const createApiAction = (baseAction: string) => ({
+export const createApiAction = (baseAction: string): ApiAction => ({
   'cancelled': createAction(`${baseAction}/cancelled`),
   'fault': createAction(`${baseAction}/fault`),
   'fetch': createAction(`${baseAction}/fetch`),

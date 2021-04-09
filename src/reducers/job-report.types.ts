@@ -1,9 +1,10 @@
 // I am to creat a job-report.types.ts in actions/customer/job-report/ folder for this:
 export const types = {
-  LOAD_JOBREPORT: "loadJobReportActions",
-  SET_JOBREPORTS: "setJobReports",
-  SET_SINGLE_JOBREPORT: "setSingleJobReport",
-  GET_SINGLE_JOBREPORT: "getSingleJobReport",
+  'LOAD_JOBREPORT': 'loadJobReportActions',
+  'LOAD_JOBREPORTS': 'loadJobReportsActions',
+  'SET_JOBREPORTS': 'setJobReports',
+  'SET_SINGLE_JOBREPORT': 'setSingleJobReport',
+  'GET_SINGLE_JOBREPORT': 'getSingleJobReport'
 };
 
 export interface JobReport {
@@ -125,10 +126,21 @@ export interface JobReportState {
   readonly loading: boolean;
   readonly jobReports?: JobReport[];
   readonly error?: string;
+  readonly JobReportObj: JobReport
+}
+
+export enum JobReportsActionType {
+  CANCELLED = `loadJobReportsActions/cancelled`,
+  FAULT = 'loadJobReportsActions/fault',
+  FETCH = 'loadJobReportsActions/fetch',
+  SUCCESS = 'loadJobReportsActions/success',
 }
 
 export enum JobReportActionType {
-  GET = "getJobReports",
-  SUCCESS = "getJobReportSuccess",
-  FAILED = "getJobReportFailed",
+  CANCELLED = `loadJobReportActions/cancelled`,
+  FAULT = 'loadJobReportActions/fault',
+  FETCH = 'loadJobReportActions/fetch',
+  SUCCESS = 'loadJobReportActions/success',
 }
+
+

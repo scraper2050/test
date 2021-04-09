@@ -14,6 +14,7 @@ import {
 } from 'actions/job/job.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 
 
 function JobReportsPage({ classes }: any) {
@@ -23,6 +24,8 @@ function JobReportsPage({ classes }: any) {
     'jobs': jobState.data,
     'refresh': jobState.refresh
   }));
+
+
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
 
@@ -126,6 +129,11 @@ function JobReportsPage({ classes }: any) {
       'width': 60
     }
   ];
+
+
+  useEffect(() => {
+    dispatch(loadJobReportsActions.fetch());
+  }, []);
 
   /*
    * UseEffect(() => {
@@ -327,16 +335,6 @@ function JobReportsPage({ classes }: any) {
    *   .forEach((x: any) => newJobState.splice(newJobState.indexOf(x), 1));
    */
 
-
-  useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
-    }
-
-    if (jobs) {
-      handleFilterData(jobs);
-    }
-  }, [refresh]);
 
   return (
     <div className={classes.pageMainContainer}>

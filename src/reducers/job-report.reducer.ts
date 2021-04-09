@@ -1,129 +1,130 @@
-import { Reducer } from "redux";
+import { Reducer } from 'redux';
 import {
-  JobReportState,
   JobReportActionType,
-  types,
-} from "./../actions/customer/job-report/job-report.types";
+  JobReportState,
+  JobReportsActionType,
+  types
+} from './job-report.types';
 
 // I am to creat a job-report.reducer.ts in reducers/ folder for this:
 const initialJobReport: JobReportState = {
-  loading: false,
-  data: [],
+  'loading': false,
+  'jobReports': [],
 
-  JobReportObj: {
-    _id: "",
-    jobId: "",
-    status: 0,
-    employeeType: false,
-    dateTime: "",
-    description: "",
-    createdAt: "",
-    ticket: {
-      scheduleDateTime: "",
-      note: "",
-      ticketId: "",
+  'JobReportObj': {
+    '_id': '',
+    'jobId': '',
+    'status': 0,
+    'employeeType': false,
+    'dateTime': '',
+    'description': '',
+    'createdAt': '',
+    'ticket': {
+      'scheduleDateTime': '',
+      'note': '',
+      'ticketId': ''
     },
-    technician: {
-      auth: {
-        email: "",
+    'technician': {
+      'auth': {
+        'email': ''
       },
-      profile: {
-        displayName: "",
+      'profile': {
+        'displayName': ''
       },
-      contact: {
-        phone: "",
+      'contact': {
+        'phone': ''
       },
-      permissions: {
-        role: "",
-      },
+      'permissions': {
+        'role': ''
+      }
     },
-    customer: {
-      auth: {
-        email: "",
+    'customer': {
+      'auth': {
+        'email': ''
       },
-      info: {
-        email: "",
+      'info': {
+        'email': ''
       },
-      profile: {
-        displayName: "",
+      'profile': {
+        'displayName': ''
       },
-      contact: {
-        phone: "",
+      'contact': {
+        'phone': ''
       },
-      address: {
-        street: "",
-        city: "",
-        state: "",
-        zipCode: "",
-      },
+      'address': {
+        'street': '',
+        'city': '',
+        'state': '',
+        'zipCode': ''
+      }
     },
-    type: {
-      title: "",
+    'type': {
+      'title': ''
     },
-    company: {
-      auth: {
-        email: "",
+    'company': {
+      'auth': {
+        'email': ''
       },
-      info: {
-        companyName: "",
-        logoUrl: "",
+      'info': {
+        'companyName': '',
+        'logoUrl': ''
       },
-      contact: {
-        phone: "",
+      'contact': {
+        'phone': ''
       },
-      permissions: {
-        role: "",
+      'permissions': {
+        'role': ''
       },
-      address: {
-        street: "",
-        city: "",
-        state: "",
-        zipCode: "",
-      },
+      'address': {
+        'street': '',
+        'city': '',
+        'state': '',
+        'zipCode': ''
+      }
     },
-    createdBy: {
-      auth: {
-        email: "",
+    'createdBy': {
+      'auth': {
+        'email': ''
       },
-      info: {
-        companyName: "",
+      'info': {
+        'companyName': ''
       },
-      profile: {
-        displayName: "",
+      'profile': {
+        'displayName': ''
       },
-      contact: {
-        phone: "",
+      'contact': {
+        'phone': ''
       },
-      permissions: {
-        role: "",
+      'permissions': {
+        'role': ''
       },
-      address: {
-        street: "",
-        city: "",
-        state: "",
-        zipCode: "",
-      },
+      'address': {
+        'street': '',
+        'city': '',
+        'state': '',
+        'zipCode': ''
+      }
     },
-    scans: {
-      comment: "",
-      timeOfScan: "",
-      equipment: {
-        info: {
-          model: "",
-          serialNumber: "",
-          nfcTag: "",
-          location: "",
+    'scans': {
+      'comment': '',
+      'timeOfScan': '',
+      'equipment': {
+        'info': {
+          'model': '',
+          'serialNumber': '',
+          'nfcTag': '',
+          'location': ''
         },
-        images: [""],
-        type: {
-          title: "",
+        'images': [''],
+        'type': {
+          'title': ''
         },
-        brand: {
-          title: "",
-        },
-      },
-    },
-  },
+        'brand': {
+          'title': ''
+        }
+      }
+    }
+  }
 };
 
 export const JobReportReducer: Reducer<any> = (
@@ -131,41 +132,54 @@ export const JobReportReducer: Reducer<any> = (
   action
 ) => {
   switch (action.type) {
-    case JobReportActionType.GET:
+    case JobReportsActionType.CANCELLED:
       return {
         ...state,
-        loading: true,
-        data: initialJobReport,
+        'loading': false
+      };
+    case JobReportsActionType.SUCCESS:
+      return {
+        ...state,
+        'jobReports': action.payload.reports,
+        'loading': false
+      };
+    case JobReportsActionType.FAULT:
+      return {
+        ...state,
+        'error': action.payload,
+        'loading': false
+
+      };
+    case JobReportsActionType.FETCH:
+      return {
+        ...state,
+        'loading': true
+      };
+
+    case JobReportActionType.CANCELLED:
+      return {
+        ...state,
+        'loading': false
       };
     case JobReportActionType.SUCCESS:
       return {
         ...state,
-        loading: false,
-        data: [...action.payload],
+        'jobReportObj': action.payload,
+        'loading': false
       };
-    case types.SET_JOBREPORTS:
+    case JobReportActionType.FAULT:
       return {
         ...state,
-        loading: false,
-        data: [...action.payload],
+        'error': action.payload,
+        'loading': false
+
       };
-    case JobReportActionType.FAILED:
+    case JobReportActionType.FETCH:
       return {
         ...state,
-        loading: false,
-        error: action.payload,
+        'loading': true
       };
-    case types.SET_SINGLE_JOBREPORT:
-      return {
-        ...state,
-        loading: false,
-        JobReportObj: action.payload,
-      };
-    case types.GET_SINGLE_JOBREPORT:
-      return {
-        ...state,
-        loading: true,
-      };
+    default:
+      return state;
   }
-  return state;
 };
