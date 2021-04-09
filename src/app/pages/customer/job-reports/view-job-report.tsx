@@ -1,28 +1,27 @@
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCJobReport from '../../../components/bc-job-report/bc-job-report';
-import { formatJobReportDetails } from './util';
+import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import { useParams } from 'react-router-dom';
 import React, { useEffect } from 'react';
-import { getJobDetailAction, loadSingleJob } from 'actions/job/job.action';
 import { useDispatch, useSelector } from 'react-redux';
 
 
 function ViewJobReportsPage() {
   const dispatch = useDispatch();
   const { jobId } = useParams();
-  const { jobObj, isLoading } = useSelector((state: any) => state.jobState);
+  const { loading, jobReportObj, error } = useSelector(({ JobReport }: any) =>
+    JobReport);
 
   useEffect(() => {
-    dispatch(loadSingleJob());
-    dispatch(getJobDetailAction({ jobId }));
+    dispatch(loadJobReportActions.fetch({ jobId }));
   }, []);
 
 
-  if (isLoading) {
+  if (loading) {
     return <BCCircularLoader heightValue={'200px'} />;
   }
-  const jobReportData = formatJobReportDetails(jobObj);
-  return <BCJobReport jobReportData={jobReportData} />;
+
+  return <BCJobReport jobReportData={jobReportObj} />;
 }
 
 export default ViewJobReportsPage;
