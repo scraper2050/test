@@ -1,10 +1,7 @@
 // I am to creat a job-report.types.ts in actions/customer/job-report/ folder for this:
 export const types = {
   'LOAD_JOBREPORT': 'loadJobReportActions',
-  'LOAD_JOBREPORTS': 'loadJobReportsActions',
-  'SET_JOBREPORTS': 'setJobReports',
-  'SET_SINGLE_JOBREPORT': 'setSingleJobReport',
-  'GET_SINGLE_JOBREPORT': 'getSingleJobReport'
+  'LOAD_JOBREPORTS': 'loadJobReportsActions'
 };
 
 export interface JobReport {
@@ -111,7 +108,7 @@ export interface JobReport {
         nfcTag: string;
         location: string;
       };
-      images: [string];
+      images: string[];
       type: {
         title: string;
       };
