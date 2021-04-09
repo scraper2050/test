@@ -8,12 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function ViewJobReportsPage() {
   const dispatch = useDispatch();
-  const { jobId } = useParams();
+  const { jobReportId } = useParams();
   const { loading, jobReportObj, error } = useSelector(({ JobReport }: any) =>
     JobReport);
 
   useEffect(() => {
-    dispatch(loadJobReportActions.fetch({ jobId }));
+    dispatch(loadJobReportActions.fetch({ jobReportId }));
   }, []);
 
 

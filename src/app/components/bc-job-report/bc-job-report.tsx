@@ -1,5 +1,6 @@
 import React from 'react';
 import WallpaperIcon from '@material-ui/icons/Wallpaper';
+import { useHistory } from 'react-router-dom';
 import { Button, Grid, withStyles } from '@material-ui/core';
 import styles, {
   DataContainer,
@@ -8,14 +9,13 @@ import styles, {
 } from './job-reports.styles';
 
 
-import { useHistory, useLocation } from 'react-router-dom';
-
 function BCJobReport({ classes, jobReportData }: any) {
-  const location = useLocation<any>();
   const history = useHistory();
 
+  if (!jobReportData) {
+    return null;
+  }
   const goBack = () => {
-    const baseObj = location.state;
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
     const linkKey: any = localStorage.getItem('nestedRouteKey');
 
@@ -25,37 +25,14 @@ function BCJobReport({ classes, jobReportData }: any) {
 
     const jobEquipmentInfo = linkKey.includes('job-equipment-info');
 
-    const customerName =
-      baseObj.customerName && baseObj.customerName !== undefined
-        ? baseObj.customerName
-        : 'N/A';
-    const customerId =
-      baseObj.customerId && baseObj.customerId !== undefined
-        ? baseObj.customerId
-        : 'N/A';
-
-    const currentPage =
-      baseObj.currentPage && baseObj.currentPage !== undefined
-        ? baseObj.currentPage
-        : 'N/A';
 
     if (jobEquipmentInfo) {
       history.push({
-        'pathname': `/main/customers/${customerName}/job-equipment-info/reports`,
-        'state': {
-          customerId,
-          customerName,
-          'prevPage': currentPage
-        }
+        'pathname': `/main/customers/${jobReportData.job.customer}/job-equipment-info/reports`
       });
     } else {
       history.push({
-        'pathname': `/main/customers/job-reports`,
-        'state': {
-          customerId,
-          customerName,
-          'prevPage': currentPage
-        }
+        'pathname': `/main/customers/job-reports`
       });
     }
   };
@@ -69,8 +46,7 @@ function BCJobReport({ classes, jobReportData }: any) {
               item
               xs={12}>
               <p className={classes.reportTag}>
-                {'Work Report #'}
-                {jobReportData.workReport}
+                {'Work Report'}
               </p>
             </Grid>
 
@@ -90,7 +66,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Name'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.customerName}
+                      {jobReportData.job.customer}
                     </p>
                   </div>
 
@@ -108,7 +84,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Phone Number'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.phoneFormat}
+                      {jobReportData.company.company.contact.phone || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -120,7 +96,8 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Email'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.customerEmail}
+                      {'Customer Email'}
+                      {/* {jobReportData.customerEmail} */}
                     </p>
                   </div>
                 </Grid>

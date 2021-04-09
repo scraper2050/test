@@ -1,10 +1,10 @@
-import { getJobReports } from 'api/job-report.api';
+import { getJobReportDetail } from 'api/job-report.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import { call, cancelled, fork, put, take } from 'redux-saga/effects';
 
 export function *handleGetJobReport(action: { payload: any }) {
   try {
-    const result = yield call(getJobReports, action.payload);
+    const result = yield call(getJobReportDetail, action.payload);
     yield put(loadJobReportActions.success(result));
   } catch (error) {
     yield put(loadJobReportActions.fault(error.toString()));

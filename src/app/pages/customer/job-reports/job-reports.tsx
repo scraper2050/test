@@ -43,16 +43,6 @@ function JobReportsPage({ classes }: any) {
 
   const columns: any = [
     {
-      Cell({ row }: any) {
-        return <div className={'flex items-center'}>
-          {row.index + 1}
-        </div>;
-      },
-      'Header': 'No#',
-      'className': 'font-bold',
-      'sortable': true
-    },
-    {
       'Header': 'Job ID',
       'accessor': 'jobId',
       'className': 'font-bold',
@@ -119,10 +109,10 @@ function JobReportsPage({ classes }: any) {
   };
 
   const handleViewMore = (row: any) => {
-    const jobId = row.original._id;
-    localStorage.setItem('nestedRouteKey', `${jobId}`);
+    const jobReportId = row.original._id;
+    localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
-      'pathname': `job-reports/${jobId}`,
+      'pathname': `job-reports/${jobReportId}`,
       'state': {
         currentPage
       }
