@@ -126,18 +126,4 @@ export interface JobReportState {
   readonly JobReportObj: JobReport
 }
 
-export enum JobReportsActionType {
-  CANCELLED = `loadJobReportsActions/cancelled`,
-  FAULT = 'loadJobReportsActions/fault',
-  FETCH = 'loadJobReportsActions/fetch',
-  SUCCESS = 'loadJobReportsActions/success',
-}
-
-export enum JobReportActionType {
-  CANCELLED = `loadJobReportActions/cancelled`,
-  FAULT = 'loadJobReportActions/fault',
-  FETCH = 'loadJobReportActions/fetch',
-  SUCCESS = 'loadJobReportActions/success',
-}
-
 

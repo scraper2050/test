@@ -1,10 +1,8 @@
 import { Reducer } from 'redux';
 import {
-  JobReportActionType,
-  JobReportState,
-  JobReportsActionType,
-  types
+  JobReportState
 } from './job-report.types';
+import { loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 
 // I am to creat a job-report.reducer.ts in reducers/ folder for this:
 const initialJobReport: JobReportState = {
@@ -132,49 +130,49 @@ export const JobReportReducer: Reducer<any> = (
   action
 ) => {
   switch (action.type) {
-    case JobReportsActionType.CANCELLED:
+    case loadJobReportsActions.cancelled.toString():
       return {
         ...state,
         'loading': false
       };
-    case JobReportsActionType.SUCCESS:
+    case loadJobReportsActions.success.toString():
       return {
         ...state,
         'jobReports': action.payload.reports,
         'loading': false
       };
-    case JobReportsActionType.FAULT:
+    case loadJobReportsActions.fault.toString():
       return {
         ...state,
         'error': action.payload,
         'loading': false
 
       };
-    case JobReportsActionType.FETCH:
+    case loadJobReportsActions.fetch.toString():
       return {
         ...state,
         'loading': true
       };
 
-    case JobReportActionType.CANCELLED:
+    case loadJobReportActions.cancelled.toString():
       return {
         ...state,
         'loading': false
       };
-    case JobReportActionType.SUCCESS:
+    case loadJobReportActions.success.toString():
       return {
         ...state,
         'jobReportObj': action.payload,
         'loading': false
       };
-    case JobReportActionType.FAULT:
+    case loadJobReportActions.fault.toString():
       return {
         ...state,
         'error': action.payload,
         'loading': false
 
       };
-    case JobReportActionType.FETCH:
+    case loadJobReportActions.fetch.toString():
       return {
         ...state,
         'loading': true
