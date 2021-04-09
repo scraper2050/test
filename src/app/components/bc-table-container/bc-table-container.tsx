@@ -39,6 +39,7 @@ function BCTableContainer({
   pageSize = 10,
   stickyHeader = false,
   noHeader = false,
+  cellSize,
 }: any) {
 
   const dispatch = useDispatch();
@@ -134,6 +135,7 @@ function BCTableContainer({
           </Paper>
         ) : (
           <BCTableContent
+            cellSize={cellSize}
             noHeader={noHeader}
             stickyHeader={stickyHeader}
             className={className ? className : ''}
