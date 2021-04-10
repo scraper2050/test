@@ -1,6 +1,7 @@
+import { call, cancelled, put, takeLatest } from 'redux-saga/effects';
 import { getJobReportDetail, getJobReports } from 'api/job-report.api';
 import { loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
-import { call, cancelled, fork, put, take, takeLatest } from 'redux-saga/effects';
+
 
 export function *handleGetJobReport(action: { payload: any }) {
   try {
