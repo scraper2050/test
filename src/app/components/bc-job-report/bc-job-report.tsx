@@ -1,7 +1,7 @@
 import React from 'react';
-import WallpaperIcon from '@material-ui/icons/Wallpaper';
 import { useHistory } from 'react-router-dom';
 import { Button, Grid, withStyles } from '@material-ui/core';
+import { formatDatTimelll, formatDateYMD, formatTime } from 'helpers/format';
 import styles, {
   DataContainer,
   MainContainer,
@@ -15,6 +15,9 @@ function BCJobReport({ classes, jobReportData }: any) {
   if (!jobReportData) {
     return null;
   }
+
+
+  const { job, scans, purchaseOrders } = jobReportData;
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
     const linkKey: any = localStorage.getItem('nestedRouteKey');
@@ -28,7 +31,7 @@ function BCJobReport({ classes, jobReportData }: any) {
 
     if (jobEquipmentInfo) {
       history.push({
-        'pathname': `/main/customers/${jobReportData.job.customer}/job-equipment-info/reports`
+        'pathname': `/main/customers/${job.customer._id}/job-equipment-info/reports`
       });
     } else {
       history.push({
@@ -66,7 +69,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Name'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.job.customer}
+                      {job.customer.profile.displayName || 'N/A'}
                     </p>
                   </div>
 
@@ -84,7 +87,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Phone Number'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.company.company.contact.phone || 'N/A'}
+                      {job.customer.contact.phone || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -96,8 +99,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Email'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {'Customer Email'}
-                      {/* {jobReportData.customerEmail} */}
+                      {job.customer.info.email || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -109,7 +111,10 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Address'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.address}
+                      {job.customer.address.street }
+                      {job.customer.address.city}
+                      {job.customer.address.state}
+                      {job.customer.address.zipCode}
                     </p>
                   </div>
                 </Grid>
@@ -159,7 +164,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Technician Name'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.technicianName}
+                      {job.technician.profile.displayName || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -173,7 +178,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Job Type'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.jobType}
+                      {job.type.title || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -186,7 +191,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Date'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.formatJobDate}
+                      {formatDateYMD(job.scheduleDate) || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -199,7 +204,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.formatJobTime}
+                      {formatTime(job.scheduleDate) || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -213,7 +218,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Purchase Order Created'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.purchaseOrder}
+                      {/* {jobReportData.purchaseOrder} */}
                     </p>
                   </div>
                 </Grid>
@@ -225,9 +230,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Service Ticket Note'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.serviceTicket
-                        ? jobReportData.serviceTicket.note
-                        : 'N/A'}
+                      {job.ticket.note || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -239,7 +242,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Job Notes'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.recordNote}
+                      {job.comment || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -253,7 +256,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Start Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.startTime}
+                      {formatDatTimelll(job.startTime) || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -265,7 +268,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'End Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {jobReportData.endTime}
+                      {formatDatTimelll(job.endTime) || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -278,7 +281,7 @@ function BCJobReport({ classes, jobReportData }: any) {
             item
             xs={12}>
             <p className={classes.subTitle}>
-              {'company'}
+              {'Company'}
             </p>
             <Grid container>
               <Grid
@@ -288,7 +291,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   <div
                     className={classes.imgArea}
                     style={{
-                      'backgroundImage': `url(${jobReportData.companyLogo})`
+                      'backgroundImage': `url(${job.company.info.logoUrl})`
                     }}
                   />
                 </div>
@@ -304,11 +307,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'Name'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyName}
+                        {job.company.info.companyName || 'N/A'}
                       </p>
                     </div>
                   </Grid>
@@ -319,11 +320,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'Email'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyEmail}
+                        {job.company.info.companyEmail || 'N/A'}
                       </p>
                     </div>
                   </Grid>
@@ -334,11 +333,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'Phone'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyPhone}
+                        {job.company.contact.phone || 'N/A'}
                       </p>
                     </div>
                   </Grid>
@@ -349,11 +346,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'Fax'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyFax || 'N/A'}
+                        {job.company.contact.fax || 'N/A'}
                       </p>
                     </div>
                   </Grid>
@@ -364,11 +359,10 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'Street'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyAddress.street}
+                        {job.company.address.street || 'N/A'}
+
                       </p>
                     </div>
                   </Grid>
@@ -379,11 +373,10 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'City'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyAddress.city}
+                        {job.company.address.city || 'N/A'}
+
                       </p>
                     </div>
                   </Grid>
@@ -394,11 +387,10 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'State'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyAddress.state}
+                        {job.company.address.state || 'N/A'}
+
                       </p>
                     </div>
                   </Grid>
@@ -409,11 +401,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                     <div>
                       <strong className={classes.noMargin}>
                         {'Zip Code'}
-                        {' '}
                       </strong>
-                      {' '}
                       <p className={classes.m_0}>
-                        {jobReportData.companyAddress.zipCode}
+                        {job.company.address.zipCode || 'N/A'}
                       </p>
                     </div>
                   </Grid>
@@ -427,7 +417,7 @@ function BCJobReport({ classes, jobReportData }: any) {
             item
             xs={12}>
             <p className={classes.subTitle}>
-              {'work performed'}
+              {'Work performed'}
             </p>
             <Grid
               className={classes.addMargin}
@@ -439,7 +429,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   {'Unit Number/Location'}
                 </strong>
                 <p>
-                  {jobReportData.location}
+                  {/* {jobReportData.location} */}
                 </p>
               </Grid>
 
@@ -450,7 +440,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   {'Date'}
                 </strong>
                 <p>
-                  {jobReportData.formatworkPerformedDate}
+                  {/* {jobReportData.formatworkPerformedDate} */}
                 </p>
               </Grid>
 
@@ -461,7 +451,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   {'Time of Scan'}
                 </strong>
                 <p>
-                  {jobReportData.formatworkPerformedTimeScan}
+                  {/* {jobReportData.formatworkPerformedTimeScan} */}
                 </p>
               </Grid>
 
@@ -472,10 +462,10 @@ function BCJobReport({ classes, jobReportData }: any) {
                   {'Image'}
                 </strong>
                 <p>
-                  {jobReportData.workPerformedImage === 'N/A'
+                  {/* {jobReportData.workPerformedImage === 'N/A'
                     ? <WallpaperIcon className={classes.smallIcon} />
                     : jobReportData.workPerformedImage
-                  }
+                  } */}
                 </p>
               </Grid>
 
@@ -486,7 +476,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   {'Note'}
                 </strong>
                 <p>
-                  {jobReportData.workPerformedNote}
+                  {/* {jobReportData.workPerformedNote} */}
                 </p>
               </Grid>
             </Grid>

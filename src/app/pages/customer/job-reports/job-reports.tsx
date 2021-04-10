@@ -16,7 +16,6 @@ function JobReportsPage({ classes }: any) {
   const { loading, jobReports, error } = useSelector(({ JobReport }: any) =>
     JobReport);
 
-
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
 
@@ -44,13 +43,13 @@ function JobReportsPage({ classes }: any) {
   const columns: any = [
     {
       'Header': 'Job ID',
-      'accessor': 'jobId',
+      'accessor': 'job.jobId',
       'className': 'font-bold',
       'sortable': true
     },
     {
       'Header': 'Customer',
-      'accessor': 'customer.profile.displayName',
+      'accessor': 'customerName',
       'className': 'font-bold',
       'sortable': true
     },
@@ -71,7 +70,7 @@ function JobReportsPage({ classes }: any) {
     },
     {
       'Header': 'Technician',
-      'accessor': 'technician.profile.displayName',
+      'accessor': 'technicianName',
       'className': 'font-bold',
       'sortable': true
     },

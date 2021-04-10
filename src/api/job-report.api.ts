@@ -16,15 +16,10 @@ export const getJobReports = async (data: any) => {
 };
 
 export const getJobReportDetail = async (data: any) => {
-  const body = {
-    'jobReportId': data.id
-  };
-  let responseData = {};
   try {
-    const response: any = await request('/getJobReport', 'GET', body, false);
-    responseData = response.data;
+    const response: any = await request(`/getJobReport?jobReportId=${data.jobReportId}`, 'GET', false);
+    return response.data.report;
   } catch (err) {
-    responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -33,7 +28,6 @@ export const getJobReportDetail = async (data: any) => {
       throw new Error(`Something went wrong`);
     }
   }
-  return responseData;
 };
 
 // Export const getJobReportDetail = async (data: any) => {};
