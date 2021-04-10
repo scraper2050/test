@@ -32,15 +32,18 @@ export default (theme: Theme): any => ({
   },
 
   'noMargin': {
-    'marginTop': '0px'
+    'marginTop': '0px',
+    'paddingRight': '15px'
   },
 
   'addMargin': {
-    'marginTop': '15px'
+    'marginTop': '15px',
+    'paddingRight': '15px'
   },
 
   'mt_24': {
-    'marginTop': '24px'
+    'marginTop': '24px',
+    'paddingRight': '15px'
   },
 
   'mb_0': {
