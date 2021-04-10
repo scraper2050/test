@@ -3,17 +3,16 @@ import { login } from 'api/auth.api';
 import { call, cancel, cancelled, fork, put, take } from 'redux-saga/effects';
 import { loginActions, logoutAction } from 'actions/auth/auth.action';
 
-export function* handleLogin(action: { payload: Auth }) {
+export function *handleLogin(action: { payload: Auth }) {
   yield put(loginActions.fetching());
   try {
     const result = yield call(
       login,
       action.payload
     );
-    if (result.message === "Invalid email/password.") {
-      yield put(loginActions.fault("Incorrect Email / Password"));
+    if (result.message === 'Invalid email/password.') {
+      yield put(loginActions.fault('Incorrect Email / Password'));
     } else {
-      console.log(result, 'result')
       yield put(loginActions.success(result));
     }
   } catch (error) {
@@ -25,7 +24,7 @@ export function* handleLogin(action: { payload: Auth }) {
   }
 }
 
-export default function* authFlow() {
+export default function *authFlow() {
   while (true) {
     const loginAction = yield take(loginActions.fetch);
 
