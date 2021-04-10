@@ -11,7 +11,6 @@ function ViewJobReportsPage() {
   const { jobReportId } = useParams();
   const { loading, jobReportObj, error } = useSelector(({ JobReport }: any) =>
     JobReport);
-  console.log(jobReportObj);
   useEffect(() => {
     dispatch(loadJobReportActions.fetch({ jobReportId }));
   }, []);

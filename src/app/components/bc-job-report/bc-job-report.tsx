@@ -111,13 +111,22 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Address'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.customer.address.street}
-                      <br />
-                      {job.customer.address.city}
-                      <br />
-                      {job.customer.address.state}
-                      {','}
-                      {job.customer.address.zipCode}
+                      {job.customer.address.street && <>
+                        {job.customer.address.street}
+                        <br />
+                      </>}
+                      {job.customer.address.city && <>
+                        {job.customer.address.city}
+                        <br />
+                      </>}
+                      {job.customer.address.state && <>
+                        {job.customer.address.state}
+                        {' '}
+                        {job.customer.address.zipCode}
+                        <br />
+                      </>}
+
+
                     </p>
                   </div>
                 </Grid>
