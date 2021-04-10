@@ -30,10 +30,10 @@ export function *handleGetJobReports(action: { payload: any }) {
 
 export default function *watchJobReportLoad() {
   while (true) {
-    const fetchAction = yield take(loadJobReportActions.fetch);
-    yield fork(handleGetJobReport, fetchAction);
     const fetchReports = yield take(loadJobReportsActions.fetch);
     yield fork(handleGetJobReports, fetchReports);
+    const fetchAction = yield take(loadJobReportActions.fetch);
+    yield fork(handleGetJobReport, fetchAction);
   }
 }
 
