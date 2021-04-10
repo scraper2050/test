@@ -1,6 +1,7 @@
+import { call, cancelled, put, takeLatest } from 'redux-saga/effects';
 import { getJobReportDetail, getJobReports } from 'api/job-report.api';
 import { loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
-import { call, cancelled, fork, put, take } from 'redux-saga/effects';
+
 
 export function *handleGetJobReport(action: { payload: any }) {
   try {
@@ -29,12 +30,8 @@ export function *handleGetJobReports(action: { payload: any }) {
 }
 
 export default function *watchJobReportLoad() {
-  while (true) {
-    const fetchReports = yield take(loadJobReportsActions.fetch);
-    yield fork(handleGetJobReports, fetchReports);
-    const fetchAction = yield take(loadJobReportActions.fetch);
-    yield fork(handleGetJobReport, fetchAction);
-  }
+  yield takeLatest(loadJobReportsActions.fetch, handleGetJobReports);
+  yield takeLatest(loadJobReportActions.fetch, handleGetJobReport);
 }
 
 
