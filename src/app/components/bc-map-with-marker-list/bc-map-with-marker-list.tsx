@@ -361,10 +361,6 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : DEFAULT_LAT;
             lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : DEFAULT_LNG;
           }
-          if (selected) {
-            console.log(lat, lng);
-          }
-
 
           return <MakerPin
             classes={classes}

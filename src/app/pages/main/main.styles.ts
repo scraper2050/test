@@ -4,7 +4,7 @@ export const fabRoot = {
     'fontSize': '.775rem',
     'height': '34px',
     'padding': '0 12px',
-    'textTransform': 'capitalize',
+    'textTransform': 'capitalize'
   }
 };
 
@@ -14,9 +14,9 @@ export const pageContent = {
       'padding-left': '60px'
     },
     'padding': '10px 30px',
+    'position': 'relative'
   }
 };
-
 
 
 export const pageMainContainer = {
@@ -52,7 +52,7 @@ export const dataContainer = {
     'flex-direction': 'column',
     'margin-top': '10px',
     'overflow': 'hidden',
-    'position': 'relative',
+    'position': 'relative'
   }
 };
 
@@ -60,4 +60,4 @@ export const swipe_wrapper = {
   'swipe_wrapper': {
     'overflow': 'inherit'
   }
-}
+};
