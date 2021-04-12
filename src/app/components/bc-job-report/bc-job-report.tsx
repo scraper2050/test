@@ -9,7 +9,7 @@ import styles, {
 } from './job-reports.styles';
 
 const renderTime = (startTime:Date, endTime: Date) => {
-  if (!(startTime && endTime)) {
+  if (!startTime && !endTime) {
     return 'N/A';
   }
   const start = formatTime(startTime);
