@@ -15,6 +15,8 @@ export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:s
 
 export const formatDatTimelll = (time: Date) => moment(time).format('lll');
 
+export const formatDatTimell = (time: Date) => moment(time).format('ll');
+
 export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
 
