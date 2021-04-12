@@ -120,7 +120,7 @@ function MakerPin({ ...props }) {
         { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} />}
         {';'}
         <div
-          className={`${props.classes.markerPopup} marker_dropdown elevation -4`}
+          className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
           style={{
             'width': props.ticket.ticket.image ? '370px' : '200px'
           }}>
