@@ -1,39 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, withStyles } from '@material-ui/core';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import { useDispatch, useSelector } from 'react-redux';
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
-import { DatePicker } from "@material-ui/pickers";
+import { DatePicker } from '@material-ui/pickers';
 import {
   refreshServiceTickets,
   setOpenServiceTicket,
-  setOpenServiceTicketLoading,
+  setOpenServiceTicketLoading
 } from 'actions/service-ticket/service-ticket.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import { formatDateYMD } from 'helpers/format';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import Pagination from '@material-ui/lab/Pagination';
 import { warning } from 'actions/snackbar/snackbar.action';
-import "../ticket-map-view.scss";
+import '../ticket-map-view.scss';
 import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import { getSearchJobs } from "api/job.api";
+import { getSearchJobs } from 'api/job.api';
 import moment from 'moment';
 import { Job } from '../../../../../actions/job/job.types';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { getCustomerDetail } from 'api/customer.api';
 
 function MapViewTodayJobsScreen({ classes, today }: any) {
-
   const dispatch = useDispatch();
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [totalJobs, setTotalJobs] = useState(-1);
   const [filterJobs, setFilterJobs] = useState({
-    customerNames: "",
-    jobId: "",
-    schedule_date: ''
+    'customerNames': '',
+    'jobId': '',
+    'schedule_date': ''
   });
   const [showFilterModal, setShowFilterModal] = useState(false);
 
@@ -42,33 +41,33 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   const [dateValue, setDateValue] = useState<any>(null);
   const [tempDate, setTempDate] = useState<any>(new Date());
   const [page, setPage] = useState(1);
-  const [paginatedJobs, setPaginatedJobs] = useState<any>([])
-  const [totalItems, setTotalItems] = useState(0)
+  const [paginatedJobs, setPaginatedJobs] = useState<any>([]);
+  const [totalItems, setTotalItems] = useState(0);
   const [hasPhoto, setHasPhoto] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>({});
 
   const openTicketFilterModal = () => {
     setShowFilterModal(!showFilterModal);
-  }
+  };
 
-  const { allJobs } = useSelector(
-    ({ jobState }: any) => ({
-      'allJobs': jobState.data,
-    })
-  );
+  const { allJobs } = useSelector(({ jobState }: any) => ({
+    'allJobs': jobState.data
+  }));
 
   const resetDate = () => {
     setDateValue(null);
     setTempDate(new Date());
-  }
+  };
 
   useEffect(() => {
     const rawData = {
-      customerNames: '',
-      jobId: '',
-      schedule_date: ''
-    }
-    const requestObj = { ...rawData, page: 1, pageSize: 6 };
+      'customerNames': '',
+      'jobId': '',
+      'schedule_date': ''
+    };
+    const requestObj = { ...rawData,
+      'page': 1,
+      'pageSize': 6 };
     getScheduledJobs(requestObj);
   }, []);
 
@@ -88,71 +87,61 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       setJobs(data.jobs);
       setTotalJobs(data.total);
       setIsLoading(false);
-    }
-    else {
+    } else {
       setIsLoading(false);
     }
-    return;
-  }
+  };
 
   useEffect(() => {
-    let offset = (page - 1) * 6;
+    const offset = (page - 1) * 6;
 
-    let paginatedItems = jobs.slice(offset).slice(0, 6);
+    const paginatedItems = jobs.slice(offset).slice(0, 6);
 
-    setPaginatedJobs([
-      ...paginatedItems
-    ]);
-    setTotalItems(jobs.length)
-
-  }, [jobs])
+    setPaginatedJobs([...paginatedItems]);
+    setTotalItems(jobs.length);
+  }, [jobs]);
 
 
   const handleButtonClickMinusDay = () => {
-
     const dateObj = new Date(tempDate);
-    var yesterday = new Date(dateObj.getTime() - (24 * 60 * 60 * 1000));
+    const yesterday = new Date(dateObj.getTime() - 24 * 60 * 60 * 1000);
     const formattedDate = formatDateYMD(yesterday);
 
     setDateValue(formattedDate);
     setTempDate(yesterday);
 
 
-    let filteredDateJobs = jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formattedDate);
+    const filteredDateJobs = jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formattedDate);
 
     setPage(1);
 
-    let offset = (1 - 1) * 6;
+    const offset = (1 - 1) * 6;
 
-    let paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
+    const paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
 
     setTotalItems(filteredDateJobs.length);
-    setPaginatedJobs([
-      ...paginatedItems
-    ]);
-  }
+    setPaginatedJobs([...paginatedItems]);
+  };
 
   const handleButtonClickPlusDay = () => {
     const dateObj = new Date(tempDate);
-    var tomorrow = new Date(dateObj.getTime() + (24 * 60 * 60 * 1000));
+    const tomorrow = new Date(dateObj.getTime() + 24 * 60 * 60 * 1000);
     const formattedDate = formatDateYMD(tomorrow);
 
     setDateValue(formattedDate);
     setTempDate(tomorrow);
 
-    let filteredDateJobs = jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formattedDate);
+    const filteredDateJobs = jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formattedDate);
 
     setPage(1);
 
-    let offset = (1 - 1) * 6;
+    const offset = (1 - 1) * 6;
 
-    let paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
+    const paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
 
     setTotalItems(filteredDateJobs.length);
-    setPaginatedJobs([
-      ...paginatedItems
-    ]);
-  }
+    setPaginatedJobs([...paginatedItems]);
+  };
 
   const getOpenTickets = (requestObj: {
     pageNo?: number,
@@ -179,65 +168,62 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
       .catch((err: any) => {
         throw err;
       });
-  }
+  };
 
 
   const dateChangeHandler = (date: string) => {
-    let dateObj = new Date(date);
-    let formattedDate = formatDateYMD(dateObj);
+    const dateObj = new Date(date);
+    const formattedDate = formatDateYMD(dateObj);
 
-    let filteredDateJobs = jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formattedDate);
+    const filteredDateJobs = jobs.filter((job: any) => formatDateYMD(job.scheduleDate) === formattedDate);
 
     setDateValue(dateObj);
     setTempDate(date);
 
     setPage(1);
 
-    let offset = (1 - 1) * 6;
+    const offset = (1 - 1) * 6;
 
-    let paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
+    const paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
 
     setTotalItems(filteredDateJobs.length);
-    setPaginatedJobs([
-      ...paginatedItems
-    ]);
+    setPaginatedJobs([...paginatedItems]);
   };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
-    let prevItemKey = localStorage.getItem('prevItemKey');
-    let currentItem = document.getElementById(`openTodayJob${index}`);
-  
+    const prevItemKey = localStorage.getItem('prevItemKey');
+    const currentItem = document.getElementById(`openTodayJob${index}`);
+
     if (prevItemKey) {
-      let prevItem = document.getElementById(prevItemKey);
-      if (prevItem)
+      const prevItem = document.getElementById(prevItemKey);
+      if (prevItem) {
         prevItem.style.border = 'none';
+      }
       if (currentItem) {
         currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem('prevItemKey', `openTodayJob${index}`)
+        localStorage.setItem('prevItemKey', `openTodayJob${index}`);
       }
-    } else {
-      if (currentItem) {
-        currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem('prevItemKey', `openTodayJob${index}`)
-      }
+    } else if (currentItem) {
+      currentItem.style.border = `1px solid #00aaff`;
+      localStorage.setItem('prevItemKey', `openTodayJob${index}`);
     }
 
     if (JobObj.ticket.image) {
-      setHasPhoto(true)
+      setHasPhoto(true);
     } else {
-      setHasPhoto(false)
+      setHasPhoto(false);
     }
 
     if (JobObj.jobLocation === undefined && JobObj.customer?.location?.coordinates.length === 0 || JobObj.jobLocation === undefined && JobObj.customer.location === undefined) {
-      dispatch(warning('There\'s no address on this job.'))
+      dispatch(warning('There\'s no address on this job.'));
     }
     const customer = await getCustomerDetail({
-      customerId: JobObj.customer._id,
-    })
+      'customerId': JobObj.customer._id
+    });
 
-    setSelectedJob({...JobObj, customer});
-  }
-
+    setSelectedJob({ ...JobObj,
+      customer });
+  };
 
 
   const resetDateFilter = async () => {
@@ -246,68 +232,95 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
     setSelectedJob({});
 
     const rawData = {
-      customerNames: '',
-      jobId: '',
-    }
-    const requestObj = { ...rawData, page: 1, pageSize: 6 };
+      'customerNames': '',
+      'jobId': ''
+    };
+    const requestObj = { ...rawData,
+      'page': 1,
+      'pageSize': 6 };
 
     getScheduledJobs(requestObj);
-  }
+  };
 
   const handleChange = (event: any, value: any) => {
     setSelectedJob({});
     setPage(value);
 
-    const requestObj = { ...filterJobs, page: value, pageSize: 6 };
+    const requestObj = { ...filterJobs,
+      'page': value,
+      'pageSize': 6 };
     getScheduledJobs(requestObj);
-  }
+  };
 
-  // if (isLoading) {
-  //   return <BCCircularLoader heightValue={'200px'} />
-  // }
+  /*
+   * If (isLoading) {
+   *   return <BCCircularLoader heightValue={'200px'} />
+   * }
+   */
 
-  const todaysJobs = allJobs?.filter((item: any) => moment(item?.scheduleDate).utc().isSame(Date(), 'day'));
+  const todaysJobs = allJobs?.filter((item: any) => moment(item?.scheduleDate).utc()
+    .isSame(Date(), 'day'));
   const totalTodaysJobs = todaysJobs.length;
 
   return (
-    <Grid container item lg={12} >
-      <Grid container item lg={6} className='ticketsMapContainer'>
+    <Grid
+      container
+      item
+      lg={12} >
+      <Grid
+        className={'ticketsMapContainer'}
+        container
+        item
+        lg={6}>
         {
           <MemoizedMap
-            list={todaysJobs}
-            selected={selectedJob}
             hasPhoto={hasPhoto}
-            onJob={true}
+            list={todaysJobs}
+            onJob
+            selected={selectedJob}
           />
         }
       </Grid>
 
-      <Grid container item lg={6} >
-        <div className='ticketsFilterContainer'>
-          <div className='filter_wrapper'>
+      <Grid
+        container
+        item
+        lg={6} >
+        <div className={'ticketsFilterContainer'}>
+          <div className={'filter_wrapper'}>
             <button onClick={() => openTicketFilterModal()}>
-              <i className="material-icons" >filter_list</i>
-              <span>Filter</span>
+              <i className={'material-icons'} >
+                {'filter_list'}
+              </i>
+              <span>
+                {'Filter'}
+              </span>
             </button>
             {
-              showFilterModal ?
-              <ClickAwayListener onClickAway={openTicketFilterModal}>
-                <div className="dropdown_wrapper elevation-5">
-                  <BCMapFilterModal
-                    openTicketFilterModal={openTicketFilterModal}
-                    resetDate={resetDate}
-                    setPage={setPage}
-                    getScheduledJobs={getScheduledJobs}
-                  />
-                </div>
-              </ClickAwayListener>
+              showFilterModal
+                ? <ClickAwayListener onClickAway={openTicketFilterModal}>
+                  <div className={'dropdown_wrapper elevation-5'}>
+                    <BCMapFilterModal
+                      getScheduledJobs={getScheduledJobs}
+                      openTicketFilterModal={openTicketFilterModal}
+                      resetDate={resetDate}
+                      setPage={setPage}
+                    />
+                  </div>
+                </ClickAwayListener>
                 : null
             }
           </div>
           {
-            true ? <div style={{ width: 250 }} /> :
-              <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
-                <button className="prev_btn"><i className="material-icons" onClick={() => handleButtonClickMinusDay()}>keyboard_arrow_left</i></button>
+            true ? <div style={{ 'width': 250 }} />
+              : <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
+                <button className={'prev_btn'}>
+                  <i
+                    className={'material-icons'}
+                    onClick={() => handleButtonClickMinusDay()}>
+                    {'keyboard_arrow_left'}
+                  </i>
+                </button>
                 <DatePicker
                   autoOk
                   className={classes.picker}
@@ -317,7 +330,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
                   inputProps={{
                     'name': 'scheduleDate',
-                    'placeholder': 'Scheduled Date',
+                    'placeholder': 'Scheduled Date'
                   }}
                   inputVariant={'outlined'}
                   name={'scheduleDate'}
@@ -326,53 +339,88 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
                   value={dateValue}
                   variant={'inline'}
                 />
-                <button className="next_btn"><i className="material-icons" onClick={() => handleButtonClickPlusDay()}>keyboard_arrow_right</i></button>
+                <button className={'next_btn'}>
+                  <i
+                    className={'material-icons'}
+                    onClick={() => handleButtonClickPlusDay()}>
+                    {'keyboard_arrow_right'}
+                  </i>
+                </button>
               </span>
           }
-          <button onClick={() => resetDateFilter()}><i className="material-icons">undo</i> <span>Reset</span></button>
+          <button onClick={() => resetDateFilter()}>
+            <i className={'material-icons'}>
+              {'undo'}
+            </i>
+            {' '}
+            <span>
+              {'Reset'}
+            </span>
+          </button>
         </div>
-        <div className='ticketsCardViewContainer'>
+        <div className={'ticketsCardViewContainer'}>
           {
-            isLoading ?
-              <div style={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'center'
+            isLoading
+              ? <div style={{
+                'display': 'flex',
+                'width': '100%',
+                'justifyContent': 'center'
               }}>
                 <BCCircularLoader heightValue={'200px'} />
               </div>
-              :
-
-              todaysJobs.map((x: any, i: any) => (
-                <div className={'ticketItemDiv'} key={i} onClick={() => handleJobCardClick(x, i)} id={`openTodayJob${i}`}>
-                  <div className="ticket_title">
-                    <h3>{x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}</h3>
+              : todaysJobs.map((x: any, i: any) =>
+                <div
+                  className={'ticketItemDiv'}
+                  id={`openTodayJob${i}`}
+                  key={i}
+                  onClick={() => handleJobCardClick(x, i)}>
+                  <div className={'ticket_title'}>
+                    <h3>
+                      {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
+                    </h3>
+                    <div className={`job-status job-status_${x.status}`} />
                   </div>
-                  <div className="location_desc_container">
-                    <div className="card_location">
-                      <h4>{x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}</h4>
+                  <div className={'location_desc_container'}>
+                    <div className={'card_location'}>
+                      <h4>
+                        {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
+                      </h4>
                     </div>
 
-                    <div className="card_desc">
-                    <p>{x.type ? x.type.title : ''}</p>
+                    <div className={'card_desc'}>
+                      <p>
+                        {x.type ? x.type.title : ''}
+                      </p>
                     </div>
                   </div>
-                  <hr></hr>
-                  <div className="card-footer">
-                    <span>  <i className="material-icons">access_time</i>{x.scheduleDate ? new Date(x.scheduleDate).toString().substr(0, 15) : ''}</span>
+                  <hr />
+                  <div className={'card-footer'}>
+                    <span>
+                      {' '}
+                      <i className={'material-icons'}>
+                        {'access_time'}
+                      </i>
+                      {x.scheduleDate ? new Date(x.scheduleDate).toString()
+                        .substr(0, 15) : ''}
+                    </span>
                   </div>
-                </div>
-              ))
+                </div>)
 
 
           }
         </div>
-        <Pagination count={Math.ceil(totalTodaysJobs / 6)} color="primary" onChange={handleChange} showFirstButton page={page}
-          showLastButton />
+        <Pagination
+          color={'primary'}
+          count={Math.ceil(totalTodaysJobs / 6)}
+          onChange={handleChange}
+          page={page}
+          showFirstButton
+          showLastButton
+        />
       </Grid>
 
     </Grid>
-  )
+  );
 }
 
 export default withStyles(
