@@ -306,8 +306,8 @@ function MakerPin({ ...props }) {
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false }: BCMapWithMarkerListProps) {
   const [tickets, setTickets] = useState<any>(list);
 
-  let centerLat = DEFAULT_LAT; let
-    centerLng = DEFAULT_LNG;
+  let centerLat = DEFAULT_LAT;
+  let centerLng = DEFAULT_LNG;
 
 
   if (selected.jobSite) {
@@ -321,8 +321,8 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
     centerLat -= 0.004;
     centerLng += hasPhoto ? 0.006 : 0.002;
   } else if (selected.customer) {
-    centerLat = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : 30;
-    centerLng = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[0] ? selected.customer.location.coordinates[0] : 30;
+    centerLat = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : DEFAULT_LAT;
+    centerLng = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
     centerLat -= 0.004;
     centerLng += hasPhoto ? 0.006 : 0.002;
   }
