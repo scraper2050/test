@@ -360,8 +360,8 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
       /> */}
       {
         list.map((ticket: any, index: number) => {
-          let lat = 30;
-          let lng = 30;
+          let lat = DEFAULT_LAT;
+          let lng = DEFAULT_LNG;
           if (ticket.jobSite) {
             lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : DEFAULT_LAT;
             lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : DEFAULT_LNG;
@@ -371,6 +371,9 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
           } else if (ticket.customer) {
             lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : DEFAULT_LAT;
             lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : DEFAULT_LNG;
+          }
+          if (selected) {
+            console.log(lat, lng);
           }
 
 
