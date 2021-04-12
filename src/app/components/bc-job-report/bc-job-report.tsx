@@ -1,12 +1,24 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, Grid, withStyles } from '@material-ui/core';
-import { formatDatTimelll, formatDateYMD, formatTime } from 'helpers/format';
+import { formatDatTimell, formatDatTimelll, formatTime } from 'helpers/format';
 import styles, {
   DataContainer,
   MainContainer,
   PageContainer
 } from './job-reports.styles';
+
+const renderTime = (startTime:Date, endTime: Date) => {
+  if (!startTime && !endTime) {
+    return 'N/A';
+  }
+  const start = formatTime(startTime);
+  const end = formatTime(endTime);
+  if (endTime) {
+    return `${start} - ${end}`;
+  }
+  return start;
+};
 
 
 function BCJobReport({ classes, jobReportData }: any) {
@@ -17,7 +29,7 @@ function BCJobReport({ classes, jobReportData }: any) {
   }
 
 
-  const { job, scans, purchaseOrders } = jobReportData;
+  const { job } = jobReportData;
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
     const linkKey: any = localStorage.getItem('nestedRouteKey');
@@ -203,7 +215,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Date'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {formatDateYMD(job.scheduleDate) || 'N/A'}
+                      {formatDatTimell(job.scheduleDate) || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -216,7 +228,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {formatTime(job.scheduleDate) || 'N/A'}
+                      {renderTime(job.scheduledStartTime, job.scheduledEndTime)}
                     </p>
                   </div>
                 </Grid>
