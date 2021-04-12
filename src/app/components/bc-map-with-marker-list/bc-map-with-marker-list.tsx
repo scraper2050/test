@@ -17,7 +17,6 @@ import './bc-map-with-marker.scss';
 const DEFAULT_LAT = 32.3888811;
 const DEFAULT_LNG = -98.6732501;
 const checkIfDefault = (lat:number, long: number) => {
-  console.log(lat, long);
   return !(lat === DEFAULT_LAT && long === DEFAULT_LNG);
 };
 
@@ -116,11 +115,6 @@ function MakerPin({ ...props }) {
 
 
   if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
-    if (props.lat === 0 && props.lng === 0) {
-      return (
-        <></>
-      );
-    }
     return (
       <>
         { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} />}
@@ -207,11 +201,6 @@ function MakerPin({ ...props }) {
 
 
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
-    if (props.lat === 0 && props.lng === 0) {
-      return (
-        <></>
-      );
-    }
     return (
       <>
         { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} /> }
