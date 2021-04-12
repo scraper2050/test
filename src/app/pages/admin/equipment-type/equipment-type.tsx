@@ -1,12 +1,13 @@
+import React, { useEffect, useState, Fragment } from "react";
 import BCTabs from "../../../components/bc-tab/bc-tab";
 import SwipeableViews from "react-swipeable-views";
 import styles from "./equipment-type.styles";
 import EquipmentTypeListing from "./equipment-type-listing/equipment-type-listing";
-import React, { useEffect, useState } from "react";
 import { useDispatch } from 'react-redux';
 import { Fab, useTheme, withStyles } from "@material-ui/core";
 import { modalTypes } from '../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 
 function EquipmentType({ classes }: any) {
   const dispatch = useDispatch();

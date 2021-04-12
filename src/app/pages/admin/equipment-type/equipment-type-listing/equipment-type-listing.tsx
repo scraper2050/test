@@ -1,8 +1,8 @@
+import React, { useEffect, Fragment } from "react";
 import BCTableContainer from "../../../../components/bc-table-container/bc-table-container";
 import styled from "styled-components";
 import styles from "./../equipment-type.styles";
 import { withStyles } from "@material-ui/core";
-import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getEquipmentType,
@@ -45,6 +45,7 @@ function EquipmentTypeListing({ classes }: any) {
         <BCCircularLoader heightValue={'200px'} />
       ) : (
         <BCTableContainer
+          cellSize={"medium"}
           columns={columns}
           onRowClick={handleRowClick}
           search

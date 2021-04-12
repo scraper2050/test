@@ -67,6 +67,7 @@ function TodosListing({ classes }: any) {
         <BCCircularLoader heightValue={'200px'} />
       ) : (
           <BCTableContainer
+          cellSize={"medium"}
             columns={columns}
             onRowClick={handleRowClick}
             search

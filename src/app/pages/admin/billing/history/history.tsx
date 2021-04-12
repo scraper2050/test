@@ -68,7 +68,7 @@ function BillingHistoryPage({ classes }: Props) {
   ];
 
   const handleRowClick = (event: any, row: any) => {
-    //console.log(event, row);
+    console.log(event, row);
   };
 
   return (

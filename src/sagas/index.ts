@@ -8,6 +8,8 @@ import customersSaga from './customer.saga';
  */
 import watchAllCompanyEquipmentsLoad from './company-equipment.saga';
 import watchAllEmployeesLoad from './employee.saga';
+import watchJobReportLoad from './job-report.saga';
+
 
 export default function *rootSaga() {
   yield all([
@@ -16,6 +18,7 @@ export default function *rootSaga() {
     authFlow(),
     watchAllEmployeesLoad(),
     watchAllCompanyEquipmentsLoad(),
+    watchJobReportLoad(),
     bcModalSaga()
   ]);
 }
