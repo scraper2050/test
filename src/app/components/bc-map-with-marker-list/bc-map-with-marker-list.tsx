@@ -16,6 +16,9 @@ import InfoIcon from '@material-ui/icons/Info';
 import './bc-map-with-marker.scss';
 const DEFAULT_LAT = 32.3888811;
 const DEFAULT_LNG = -98.6732501;
+const checkIfDefault = (lat:number, long: number) => {
+  return !(lat === DEFAULT_LAT && long === DEFAULT_LNG);
+};
 
 interface BCMapWithMarkerListProps {
   list: any,
@@ -34,6 +37,7 @@ function createMapOptions() {
 
 
 function MakerPin({ ...props }) {
+  const { lat, lng } = props;
   const dispatch = useDispatch();
 
   const openCreateJobModal = (ticketObj: any) => {
@@ -111,14 +115,9 @@ function MakerPin({ ...props }) {
 
 
   if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
-    if (props.lat === 0 && props.lng === 0) {
-      return (
-        <></>
-      );
-    }
     return (
       <>
-        <RoomIcon className={props.classes.marker} />
+        { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} />}
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -202,14 +201,9 @@ function MakerPin({ ...props }) {
 
 
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
-    if (props.lat === 0 && props.lng === 0) {
-      return (
-        <></>
-      );
-    }
     return (
       <>
-        <RoomIcon className={props.classes.marker} />
+        { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} /> }
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -297,10 +291,12 @@ function MakerPin({ ...props }) {
       </>
     );
   }
-  if (props.lat === 0 && props.lng === 0) {
+  if (!(props.lat === DEFAULT_LAT && props.lng === DEFAULT_LNG)) {
     return <></>;
   }
-  return <RoomIcon className={props.classes.marker} />;
+  return checkIfDefault(lat, lng)
+    ? <RoomIcon className={props.classes.marker} />
+    : null;
 }
 
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false }: BCMapWithMarkerListProps) {
@@ -353,17 +349,20 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
       /> */}
       {
         list.map((ticket: any, index: number) => {
-          let lat = 30; let
-            lng = 30;
+          let lat = DEFAULT_LAT;
+          let lng = DEFAULT_LNG;
           if (ticket.jobSite) {
-            lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : 0;
-            lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : 0;
+            lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : DEFAULT_LAT;
+            lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : DEFAULT_LNG;
           } else if (ticket.jobLocation) {
-            lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : 0;
-            lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : 0;
+            lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : DEFAULT_LAT;
+            lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : DEFAULT_LNG;
           } else if (ticket.customer) {
-            lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : 30;
-            lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : 30;
+            lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : DEFAULT_LAT;
+            lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : DEFAULT_LNG;
+          }
+          if (selected) {
+            console.log(lat, lng);
           }
 
 
