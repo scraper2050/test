@@ -16,15 +16,16 @@ function Todos({ classes }: any) {
   };
 
   return (
-    <div className={classes.groupMainContainer}>
-      <div className={classes.groupPageConatiner}>
+    <div className={classes.pageMainContainer}>
+      <div className={classes.pageConatiner}>
+        <div className={classes.pageContent}>
         <BCTabs
           curTab={curTab}
           indicatorColor={"primary"}
           onChangeTab={handleTabChange}
           tabsData={[
             {
-              label: "Todo's List",
+              label: "Todo's",
               value: 0,
             },
             // {
@@ -40,6 +41,7 @@ function Todos({ classes }: any) {
         >
           <TodosListing hidden={curTab !== 0} />
         </SwipeableViews>
+        </div>
       </div>
     </div>
   );

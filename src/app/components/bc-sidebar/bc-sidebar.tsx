@@ -40,7 +40,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       link: "/main/invoicing/todos",
     },
     {
-      label: "Invoices List",
+      label: "Invoices",
       link: "/main/invoicing/invoices-list",
     },
     {
