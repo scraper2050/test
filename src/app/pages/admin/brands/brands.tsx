@@ -13,8 +13,6 @@ function Brands({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const theme = useTheme();
 
-  useEffect(() => { }, []);
-
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };

@@ -61,6 +61,7 @@
       line-height: 19px;
       color: #000000;
       text-transform: capitalize;
+      word-break: break-word;
     }
   }
   .button_wrapper {
@@ -84,5 +85,5 @@
   // position: absolute;
   left: -50px !important;
   top: -60px !important;
-  border: 0!important;
+  border: 0 !important;
 }

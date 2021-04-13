@@ -1,5 +1,6 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import Fab from '@material-ui/core/Fab';
+import styled from 'styled-components';
 import styles from './../purchase-order.styles';
 import { withStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
@@ -86,19 +87,24 @@ function PurchaseOrderListing({ classes }: any) {
   };
 
   return (
-    <div
-      className={classes.dataContainer}
-      id={'0'}>
+    <DataContainer id={'0'}>
       <BCTableContainer
         columns={columns}
         isLoading={purchaseOrder.loading}
         onRowClick={handleRowClick}
         search
-        searchPlaceholder={'Search Managers...'}
+        searchPlaceholder={'Search invoices...'}
         tableData={purchaseOrder.data}
       />
-    </div>
+    </DataContainer>
   );
 }
+
+const DataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  overflow: hidden;
+`;
 
 export default withStyles(styles, { 'withTheme': true })(PurchaseOrderListing);

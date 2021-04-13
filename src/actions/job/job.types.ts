@@ -1,10 +1,10 @@
 export const types = {
-  SET_JOBS: "SET_JOB",
-  JOB_LOADING: "JOB_LOADING",
-  SET_REFRESH_JOB_STATUS: "SET_REFRESH_JOB_STATUS",
-  SET_SINGLE_JOB: "SET_SINGLE_JOB",
-  GET_SINGLE_JOB: "GET_SINGLE_JOB",
-  SET_JOB_LOADING: "SET_JOB_LOADING",
+  'SET_JOBS': 'SET_JOB',
+  'JOB_LOADING': 'JOB_LOADING',
+  'SET_REFRESH_JOB_STATUS': 'SET_REFRESH_JOB_STATUS',
+  'SET_SINGLE_JOB': 'SET_SINGLE_JOB',
+  'GET_SINGLE_JOB': 'GET_SINGLE_JOB',
+  'SET_JOB_LOADING': 'SET_JOB_LOADING'
 };
 
 export interface Job {
@@ -90,7 +90,9 @@ export interface JobsState {
 }
 
 export enum JobActionType {
-  GET = "getJobs",
-  SUCCESS = "getJobsSuccess",
-  FAILED = "getJobsFailed",
+  GET = 'getJobs',
+  SUCCESS = 'getJobsSuccess',
+  FAILED = 'getJobsFailed',
 }
+
+export const JobTypes = ['pending', 'started', 'finished', 'cancelled'];
