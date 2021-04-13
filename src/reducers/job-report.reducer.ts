@@ -2,14 +2,14 @@ import { Reducer } from 'redux';
 import {
   JobReportState
 } from './job-report.types';
-import { loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
+import { emailJobReportActions, loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 
 // I am to creat a job-report.reducer.ts in reducers/ folder for this:
 const initialJobReport: JobReportState = {
   'loading': false,
   'jobReports': [],
 
-  'JobReportObj': {
+  'jobReportObj': {
     '_id': '',
     'jobId': '',
     'status': 0,
@@ -122,6 +122,11 @@ const initialJobReport: JobReportState = {
         }
       }
     }
+  },
+  'email': {
+    'error': '',
+    'sending': false,
+    'sent': false
   }
 };
 
@@ -176,6 +181,41 @@ export const JobReportReducer: Reducer<any> = (
       return {
         ...state,
         'loading': true
+      };
+    case emailJobReportActions.cancelled.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'sending': false
+        }
+      };
+    case emailJobReportActions.success.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'sending': false,
+          'sent': true
+
+        }
+      };
+    case emailJobReportActions.fault.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'error': action.payload,
+          'sending': false
+        }
+      };
+    case emailJobReportActions.fetch.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'sending': true
+        }
       };
     default:
       return state;

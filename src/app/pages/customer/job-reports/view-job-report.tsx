@@ -9,12 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 function ViewJobReportsPage() {
   const dispatch = useDispatch();
   const { jobReportId } = useParams();
+
   const { loading, jobReportObj, error } = useSelector(({ JobReport }: any) =>
     JobReport);
   useEffect(() => {
     dispatch(loadJobReportActions.fetch({ jobReportId }));
   }, []);
-
 
   if (loading) {
     return <BCCircularLoader heightValue={'200px'} />;
