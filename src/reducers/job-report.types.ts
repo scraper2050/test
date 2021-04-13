@@ -1,5 +1,6 @@
 // I am to creat a job-report.types.ts in actions/customer/job-report/ folder for this:
 export const types = {
+  'EMAIL_JOBREPORTS': 'emailJobReportActions',
   'LOAD_JOBREPORT': 'loadJobReportActions',
   'LOAD_JOBREPORTS': 'loadJobReportsActions'
 };
@@ -119,11 +120,18 @@ export interface JobReport {
   };
 }
 
+export interface Email {
+  sending: boolean;
+  sent: boolean;
+  error: string;
+}
+
 export interface JobReportState {
   readonly loading: boolean;
   readonly jobReports?: JobReport[];
   readonly error?: string;
-  readonly JobReportObj: JobReport
+  readonly jobReportObj: JobReport;
+  readonly email: Email
 }
 
 
