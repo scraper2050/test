@@ -120,7 +120,7 @@ export interface JobReport {
   };
 }
 
-export interface email {
+export interface Email {
   sending: boolean;
   sent: boolean;
   error: string;
@@ -131,7 +131,7 @@ export interface JobReportState {
   readonly jobReports?: JobReport[];
   readonly error?: string;
   readonly jobReportObj: JobReport;
-  readonly email: email
+  readonly email: Email
 }
 
 
