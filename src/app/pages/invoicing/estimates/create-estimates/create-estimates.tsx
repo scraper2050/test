@@ -119,9 +119,10 @@ function CreateEstimates({ classes }: any) {
       }));
       console.log(data);
       callCreateEstimatesAPI(data).then((response: any) => {
-        console.log(response);
         history.push(redirectURL);
-        return resolve();
+        // Missing an argument 
+        // remove response from argument
+        return resolve(response);
       })
         .catch((err: any) => {
           console.log(err);

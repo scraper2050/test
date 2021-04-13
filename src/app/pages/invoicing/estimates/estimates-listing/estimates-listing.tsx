@@ -1,7 +1,8 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import Fab from '@material-ui/core/Fab';
+import styled from 'styled-components';
 import styles from './../estimates.styles';
-import { withStyles } from '@material-ui/core';
+import { Box, makeStyles, withStyles } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import {
   getInvoicingEstimates,
@@ -58,15 +59,17 @@ function EstimatesListing({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <Fab
-            aria-label={'create-invoices'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            variant={'extended'}>
-            {'Create Invoices'}
-          </Fab>
+          <Box display="inline" pr={1}>
+            <Fab
+              aria-label={'create-invoice'}
+              classes={{
+                'root': classes.fabRoot,
+              }}
+              color={'primary'}
+              variant={'extended'}>
+              {'Create Invoice'}
+              </Fab>
+          </Box>
           <Fab
             aria-label={'create-purchase-order'}
             classes={{
@@ -78,11 +81,11 @@ function EstimatesListing({ classes }: any) {
           </Fab>
         </div>;
       },
-      'Header': 'Option',
-      'id': 'action-create-job',
+      "Header": 'Options',
+      'id': 'action-create-invoice',
       'sortable': false,
       'width': 60
-    }
+    },
   ];
 
   useEffect(() => {
@@ -95,19 +98,24 @@ function EstimatesListing({ classes }: any) {
   };
 
   return (
-    <div
-      className={classes.dataContainer}
-      id={'0'}>
+    <DataContainer id={'0'}>
       <BCTableContainer
         columns={columns}
         isLoading={estimates.loading}
         onRowClick={handleRowClick}
         search
-        searchPlaceholder={'Search Managers...'}
+        searchPlaceholder={'Search invoices...'}
         tableData={estimates.data}
       />
-    </div>
+    </DataContainer>
   );
 }
+
+const DataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  overflow: hidden;
+`;
 
 export default withStyles(styles, { 'withTheme': true })(EstimatesListing);

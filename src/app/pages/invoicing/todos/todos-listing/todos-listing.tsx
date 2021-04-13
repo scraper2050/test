@@ -15,7 +15,7 @@ function TodosListing({ classes }: any) {
   const invoiceTodos = useSelector((state: any) => state.invoiceTodos);
   const columns: any = [
     {
-      Header: "Job Id",
+      Header: "Job ID",
       accessor: "jobId",
       className: "font-bold",
       sortable: true,
@@ -71,7 +71,7 @@ function TodosListing({ classes }: any) {
             columns={columns}
             onRowClick={handleRowClick}
             search
-            searchPlaceholder={"Search Managers..."}
+            searchPlaceholder={"Search invoices..."}
             tableData={invoiceTodos.data}
           />
         )}

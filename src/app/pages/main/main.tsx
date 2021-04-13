@@ -8,7 +8,7 @@ import BCSnackbar from '../../components/bc-snackbar/bc-snackbar';
 import { Grid } from '@material-ui/core';
 import 'scss/elevation.scss';
 import React, { Suspense, useState } from 'react';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
@@ -267,6 +267,11 @@ function Main(): any {
                     path={'/main/customers/job-reports/:jobReportId'}
                     title={'Job Reports'}
                   />
+
+                  <Redirect
+                    exact
+                    from={`/main/invoicing`}
+                    to={`/main/invoicing/todos`} />
 
                   <AuthRoute
                     Component={InvoicingTodosPage}

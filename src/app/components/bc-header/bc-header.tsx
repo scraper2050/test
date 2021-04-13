@@ -99,7 +99,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
     },
     {
       'label': 'Invoicing',
-      'link': '/main/invoicing/todos'
+      'link': '/main/invoicing'
     },
     {
       'label': 'Tags',

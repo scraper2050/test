@@ -23,7 +23,24 @@ function Estimates({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
+      <div className={classes.pageContent}>
+          <BCTabs
+            curTab={curTab}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Estimates List',
+                'value': 0
+              },
+              // {
+              //   'label': 'Recent Activities',
+
+              //   'value': 1
+              // }
+            ]}
+          />
+          <div className={classes.addButtonArea}>
           <Fab
             aria-label={'new-ticket'}
             classes={{
@@ -35,23 +52,6 @@ function Estimates({ classes }: any) {
             {'Create Estimate'}
           </Fab>
         </div>
-        <div className={classes.pageContent}>
-          <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'Estimates List',
-                'value': 0
-              },
-              {
-                'label': 'Recent Activities',
-
-                'value': 1
-              }
-            ]}
-          />
           <SwipeableViews
             axis={theme.direction === 'rtl'
               ? 'x-reverse'
@@ -60,6 +60,9 @@ function Estimates({ classes }: any) {
             <EstimatesListing hidden={curTab !== 0} />
           </SwipeableViews>
         </div>
+        
+        
+        
       </div>
     </div>
   );
