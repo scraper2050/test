@@ -7,6 +7,7 @@ import styles, {
   MainContainer,
   PageContainer
 } from './job-reports.styles';
+import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
 
 const renderTime = (startTime:Date, endTime: Date) => {
   if (!startTime && !endTime) {
@@ -24,12 +25,12 @@ const renderTime = (startTime:Date, endTime: Date) => {
 function BCJobReport({ classes, jobReportData }: any) {
   const history = useHistory();
 
-  if (!jobReportData) {
+  const { job } = jobReportData;
+  if (!jobReportData || !job) {
     return null;
   }
 
 
-  const { job } = jobReportData;
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
     const linkKey: any = localStorage.getItem('nestedRouteKey');
@@ -516,9 +517,14 @@ function BCJobReport({ classes, jobReportData }: any) {
             onClick={goBack}>
             {'Cancel'}
           </Button>
-          <Button className={classes.invoiceBtn}>
-            {'Email Report'}
-          </Button>
+          <EmailReportButton
+            Component={
+              <Button className={classes.invoiceBtn}>
+                {'Email Report'}
+              </Button>
+            }
+            jobReport={jobReportData}
+          />
           <Button className={classes.invoiceBtn}>
             {'Generate Invoice'}
           </Button>

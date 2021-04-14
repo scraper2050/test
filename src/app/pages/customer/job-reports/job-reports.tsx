@@ -1,6 +1,7 @@
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
+import { JobReport } from '../../../../reducers/job-report.types';
 import SwipeableViews from 'react-swipeable-views';
 import { formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
@@ -9,6 +10,8 @@ import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import EmailReportButton from './email-job-report';
+import { MailOutlineOutlined } from '@material-ui/icons';
 
 
 function JobReportsPage({ classes }: any) {
@@ -78,8 +81,27 @@ function JobReportsPage({ classes }: any) {
       Cell({ row }: any) {
         return (
           <div className={'flex items-center'}>
+            <EmailReportButton
+              Component={<Fab
+                aria-label={'email'}
+                classes={{
+                  'root': classes.fabRoot
+                }}
+                color={'primary'}
+                style={{ 'marginRight': 20 }}
+                variant={'extended'}>
+                <MailOutlineOutlined
+                  fontSize={'default'}
+                  style={{ 'marginRight': 5 }}
+                />
+                {' '}
+                {'Email'}
+              </Fab>}
+              jobReport={row.original}
+            />
+
             <Fab
-              aria-label={'delete'}
+              aria-label={'view more'}
               classes={{
                 'root': classes.fabRoot
               }}
