@@ -82,7 +82,6 @@ function AdminEmployeesPage({ classes, children }: Props) {
   const renderViewMore = (row: any) => {
     let baseObj = row['original'];
 
-
     let employeeId = baseObj['_id'];
     let displayName = baseObj['profile']['displayName'].split(' ').join('-');
 
