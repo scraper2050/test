@@ -77,7 +77,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                 <Grid
                   item
                   xs={6}>
-                  <div>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Name'}
                     </strong>
@@ -95,7 +95,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                 <Grid
                   item
                   xs={6}>
-                  <div>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Phone Number'}
                     </strong>
@@ -138,8 +138,6 @@ function BCJobReport({ classes, jobReportData }: any) {
                         {job.customer.address.zipCode}
                         <br />
                       </>}
-
-
                     </p>
                   </div>
                 </Grid>
@@ -176,7 +174,7 @@ function BCJobReport({ classes, jobReportData }: any) {
               <Grid container>
                 <Grid
                   item
-                  xs={6}>
+                  xs={12}>
                   <p className={classes.subTitle}>
                     {'job details'}
                   </p>
@@ -184,7 +182,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                 <Grid
                   item
                   xs={6}>
-                  <div className={classes.mt_24}>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Technician Name'}
                     </strong>
@@ -193,12 +191,10 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </p>
                   </div>
                 </Grid>
-              </Grid>
-              <Grid container>
                 <Grid
                   item
-                  xs={4}>
-                  <div>
+                  xs={6}>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Job Type'}
                     </strong>
@@ -207,11 +203,12 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </p>
                   </div>
                 </Grid>
-
+              </Grid>
+              <Grid container>
                 <Grid
                   item
-                  xs={4}>
-                  <div>
+                  xs={6}>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Date'}
                     </strong>
@@ -223,8 +220,8 @@ function BCJobReport({ classes, jobReportData }: any) {
 
                 <Grid
                   item
-                  xs={4}>
-                  <div>
+                  xs={6}>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Time'}
                     </strong>
@@ -237,18 +234,6 @@ function BCJobReport({ classes, jobReportData }: any) {
               <Grid container>
                 <Grid
                   item
-                  xs={12}>
-                  <div className={classes.addMargin}>
-                    <strong>
-                      {'Purchase Order Created'}
-                    </strong>
-                    <p className={classes.noMargin}>
-                      {/* {jobReportData.purchaseOrder} */}
-                    </p>
-                  </div>
-                </Grid>
-                <Grid
-                  item
                   xs={6}>
                   <div className={classes.addMargin}>
                     <strong>
@@ -259,6 +244,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </p>
                   </div>
                 </Grid>
+
                 <Grid
                   item
                   xs={6}>
@@ -271,7 +257,47 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </p>
                   </div>
                 </Grid>
+
               </Grid>
+              {(job.jobLocation || job.jobSite || job.customerContactId) && <Grid container>
+                { job.jobLocation && <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Job Location'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.jobLocation.name}
+                    </p>
+                  </div>
+                </Grid>}
+                { job.jobSite && <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Job Site'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.jobSite.name}
+                    </p>
+                  </div>
+                </Grid> }
+                { job.customerContactId && <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Contact'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.customerContactId?.name || 'N/A'}
+                    </p>
+                  </div>
+                </Grid>}
+              </Grid>}
+
               <Grid container>
                 <Grid
                   item
