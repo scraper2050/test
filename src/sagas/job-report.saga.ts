@@ -6,7 +6,6 @@ import { emailJobReportActions, loadJobReportActions, loadJobReportsActions } fr
 export function *handleGetJobReport(action: { payload: any }) {
   try {
     const result = yield call(getJobReportDetail, action.payload);
-    console.log(result);
     yield put(loadJobReportActions.success(result));
   } catch (error) {
     yield put(loadJobReportActions.fault(error.toString()));
