@@ -27,7 +27,8 @@ interface BCMapWithMarkerListProps {
   lng?: any,
   hasPhoto?: any,
   selected?: any,
-  onJob?: boolean
+  onJob?: boolean,
+  showPins?: boolean
 }
 function createMapOptions() {
   return {
@@ -140,7 +141,9 @@ function MakerPin({ ...props }) {
             container
             justify={'space-between'}
             spacing={3}>
-            <Grid item>
+            <Grid
+              item
+              xs={6}>
               <div className={'job-type'}>
                 <h3>
                   {'Job Type'}
@@ -160,7 +163,9 @@ function MakerPin({ ...props }) {
             </Grid>
             {
               props.ticket.ticket.image &&
-                <Grid item>
+                <Grid
+                  item
+                  xs={6}>
                   <Grid
                     alignItems={'center'}
                     container
@@ -291,15 +296,17 @@ function MakerPin({ ...props }) {
       </>
     );
   }
-  if (!(props.lat === DEFAULT_LAT && props.lng === DEFAULT_LNG)) {
+
+  if (!props.showPins && !(props.openTicketObj._id === props.ticket._id)) {
     return <></>;
   }
+
   return checkIfDefault(lat, lng)
     ? <RoomIcon className={props.classes.marker} />
     : null;
 }
 
-function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false }: BCMapWithMarkerListProps) {
+function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false, showPins = false }: BCMapWithMarkerListProps) {
   const [tickets, setTickets] = useState<any>(list);
 
   let centerLat = DEFAULT_LAT;
@@ -369,6 +376,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             lng={lng}
             onJob={onJob}
             openTicketObj={selected}
+            showPins={showPins}
             ticket={ticket}
             tickets={list}
           />;
