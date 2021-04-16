@@ -2,7 +2,8 @@
 export const types = {
   'EMAIL_JOBREPORTS': 'emailJobReportActions',
   'LOAD_JOBREPORT': 'loadJobReportActions',
-  'LOAD_JOBREPORTS': 'loadJobReportsActions'
+  'LOAD_JOBREPORTS': 'loadJobReportsActions',
+  'RESET_EMAIL_STATE': 'RESET_EMAIL_STATE'
 };
 
 export interface JobReport {

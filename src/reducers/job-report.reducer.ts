@@ -2,7 +2,8 @@ import { Reducer } from 'redux';
 import {
   JobReportState
 } from './job-report.types';
-import { emailJobReportActions, loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
+import { emailJobReportActions, loadJobReportActions, loadJobReportsActions, resetEmailState } from 'actions/customer/job-report/job-report.action';
+import { types } from 'reducers/job-report.types';
 
 // I am to creat a job-report.reducer.ts in reducers/ folder for this:
 const initialJobReport: JobReportState = {
@@ -217,6 +218,17 @@ export const JobReportReducer: Reducer<any> = (
           'sending': true
         }
       };
+
+    case types.RESET_EMAIL_STATE:
+      return {
+        ...state,
+        'email': {
+          'error': '',
+          'sending': false,
+          'sent': false
+        }
+      };
+
     default:
       return state;
   }

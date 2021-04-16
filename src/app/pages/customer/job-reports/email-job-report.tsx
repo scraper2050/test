@@ -1,5 +1,5 @@
-import React from 'react';
-import { emailJobReportActions } from 'actions/customer/job-report/job-report.action';
+import React, { useEffect } from 'react';
+import { emailJobReportActions, resetEmailState } from 'actions/customer/job-report/job-report.action';
 import { modalTypes } from '../../../../constants';
 import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -33,6 +33,7 @@ export default function EmailReportButton({ jobReport, Component }: EmailReportP
       },
       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
     }));
+    dispatch(resetEmailState());
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
