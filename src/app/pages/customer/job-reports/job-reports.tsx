@@ -174,7 +174,7 @@ function JobReportsPage({ classes }: any) {
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}
-                tableData={jobReports}
+                tableData={jobReports.reverse()}
               />
             </div>
             <div
