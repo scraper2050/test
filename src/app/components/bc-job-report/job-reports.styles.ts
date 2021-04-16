@@ -83,7 +83,8 @@ export default (theme: Theme): any => ({
   'btn': {
     'float': 'right',
     'display': 'flex',
-    'justifyContent': 'flex-end',
+    'justifyContent': 'space-between',
+    'alignItems': 'center',
     'margin': '-50px 20px 30px 0px'
   },
   'cancelBtn': {
@@ -142,6 +143,9 @@ export const PageContainer = styled.div`
   border-radius: 10px;
   p {
     word-break: break-word;
+  }
+  .lastEmail {
+    color:${CONSTANTS.PRIMARY_DARK_GREY};
   }
 `;
 

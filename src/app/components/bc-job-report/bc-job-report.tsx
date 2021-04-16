@@ -213,7 +213,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Date'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {formatDatTimell(job.scheduleDate) || 'N/A'}
+                      {job.scheduleDate
+                        ? formatDatTimell(job.scheduleDate)
+                        : 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -307,7 +309,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'Start Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {formatDatTimelll(job.startTime) || 'N/A'}
+                      {job.startTime
+                        ? formatDatTimelll(job.startTime)
+                        : 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -319,7 +323,9 @@ function BCJobReport({ classes, jobReportData }: any) {
                       {'End Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {formatDatTimelll(job.endTime) || 'N/A'}
+                      {job.endTime
+                        ? formatDatTimelll(job.endTime)
+                        : 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -538,22 +544,31 @@ function BCJobReport({ classes, jobReportData }: any) {
           container
           item
           xs={12}>
-          <Button
-            className={classes.cancelBtn}
-            onClick={goBack}>
-            {'Cancel'}
-          </Button>
-          <EmailReportButton
-            Component={
-              <Button className={classes.invoiceBtn}>
-                {'Email Report'}
-              </Button>
-            }
-            jobReport={jobReportData}
-          />
-          <Button className={classes.invoiceBtn}>
-            {'Generate Invoice'}
-          </Button>
+          { jobReportData.lastEmailSent &&
+          <div className={'lastEmail'}>
+            {'Last Email Sent at: '}
+            {' '}
+            {formatDatTimelll(jobReportData.lastEmailSent)}
+          </div>
+          }
+          <div>
+            <Button
+              className={classes.cancelBtn}
+              onClick={goBack}>
+              {'Cancel'}
+            </Button>
+            <EmailReportButton
+              Component={
+                <Button className={classes.invoiceBtn}>
+                  {'Email Report'}
+                </Button>
+              }
+              jobReport={jobReportData}
+            />
+            <Button className={classes.invoiceBtn}>
+              {'Generate Invoice'}
+            </Button>
+          </div>
         </Grid>
       </PageContainer>
     </MainContainer>
