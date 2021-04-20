@@ -59,9 +59,10 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
 
   useEffect(() => {
     if (token) {
-      const socket = io(`ws://localhost:3006`, {
+      const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
       });
+
 
       socket.on(SocketMessage.CREATESERVICETICKET, data => {
         const newTickets = [...serviceTickets, data];
