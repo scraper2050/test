@@ -12,7 +12,7 @@ import {
   SwipeableDrawer,
   Toolbar
 } from '@material-ui/core';
-import Badge from "@material-ui/core/Badge";
+import Badge from '@material-ui/core/Badge';
 import { io } from 'socket.io-client';
 // eslint-disable-next-line sort-imports
 import AvatarImg from '../../../assets/img/user_avatar.png';
@@ -44,7 +44,7 @@ interface Props {
 }
 
 function BCHeader({ token, user, classes }: Props): JSX.Element {
-  const serviceTickets = useSelector((state: any)=>state.serviceTicket.notifications);
+  const serviceTickets = useSelector((state: any) => state.serviceTicket.notifications);
 
   const history = useHistory();
   const location = useLocation();
@@ -58,16 +58,17 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
 
 
   useEffect(() => {
-    const socket = io(`${Config.socketSever}`);
-    socket.on(SocketMessage.CREATESERVICETICKET, (data) => {
-      
-      const oldNotification = serviceTickets.filter((item: any) => item._id === data._id );
-      if(user?.company && user?.company === data.company && oldNotification.length == 0) {
-        serviceTickets.push(data);
-        dispatch(setServiceTicketNotification(serviceTickets));
-      }
-    })
-  }, [])
+    const socket = io(`${Config.socketSever}`, {
+      'extraHeaders': {
+        'Authorization': token
+      },
+      'transports': ['websocket']
+    });
+    socket.on(SocketMessage.CREATESERVICETICKET, data => {
+      const newTickets = [...serviceTickets, data];
+      dispatch(setServiceTicketNotification(newTickets));
+    });
+  }, []);
 
   const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
     ? AvatarImg
@@ -105,14 +106,16 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
       'label': 'Tags',
       'link': '/main/tags/purchasedtag'
     },
-    // {
-    //   'label': 'Inventory',
-    //   'link': '/main/inventory'
-    // },
-    // {
-    //   'label': 'Employees',
-    //   'link': '/main/employees/group'
-    // },
+    /*
+     * {
+     *   'label': 'Inventory',
+     *   'link': '/main/inventory'
+     * },
+     * {
+     *   'label': 'Employees',
+     *   'link': '/main/employees/group'
+     * },
+     */
     {
       'label': 'Admin',
       'link': '/main/admin'
@@ -135,21 +138,20 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const handleViewProfile = (): void => {
     handleClose();
     history.push('/main/user/view-profile');
-  }
+  };
 
   const viewNotificationInfo = (ticket:any): void => {
     handleClose();
     const filterNotication = serviceTickets.filter((item:any) => item._id !== ticket._id);
     dispatch(setServiceTicketNotification(filterNotication));
     openDetailTicketModal(ticket);
-  }
+  };
 
   const openDetailTicketModal = (ticket: any) => {
-
     const reqObj = {
-      customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation
-    }
+      'customerId': ticket.customer?._id,
+      'locationId': ticket.jobLocation
+    };
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(reqObj.customerId));
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
@@ -168,7 +170,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
         'className': 'serviceTicketTitle',
         'maxHeight': '754px',
         'height': '100%',
-        'detail': true,
+        'detail': true
 
       },
       'type': modalTypes.EDIT_TICKET_MODAL
@@ -277,49 +279,48 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                 />
               </Button>
             </div>
-            <div className={[classes.headerTools,classes.bell].join(' ')}>
-                {serviceTickets.length > 0 && (
-                  <Badge
-                  className={[classes.margin, classes.notificationCnt].join(' ')}
-                  badgeContent={serviceTickets.length}
-                  color="secondary"
-                >
-                  <Button
-                    aria-describedby={notificationPopover}
-                    buttonRef={(node: any) => {
-                      setNotificationEl(node);
-                    }}
-                    onClick={showNotificationDetails}
-                    className={classes.headerToolsButton}
-                    color={'primary'}
-                    href={''}
-                    target={'_blank'}
-                    variant={'contained'}>
-                    <img
-                      alt={'Bell'}
-                      src={BellIconSvg}
-                    />
-                  </Button>
-                </Badge>
-                )}
-                {serviceTickets.length === 0 && (
-                  <Button
-                    aria-describedby={notificationPopover}
-                    buttonRef={(node: any) => {
-                      setNotificationEl(node);
-                    }}
-                    onClick={showNotificationDetails}
-                    className={classes.headerToolsButton}
-                    color={'primary'}
-                    href={''}
-                    target={'_blank'}
-                    variant={'contained'}>
-                    <img
-                      alt={'Bell'}
-                      src={BellIconSvg}
-                    />
-                  </Button>
-                )}
+            <div className={[classes.headerTools, classes.bell].join(' ')}>
+              {serviceTickets.length > 0 &&
+              <Badge
+                badgeContent={serviceTickets.length}
+                className={[classes.margin, classes.notificationCnt].join(' ')}
+                color={'secondary'}>
+                <Button
+                  aria-describedby={notificationPopover}
+                  buttonRef={(node: any) => {
+                    setNotificationEl(node);
+                  }}
+                  className={classes.headerToolsButton}
+                  color={'primary'}
+                  href={''}
+                  onClick={showNotificationDetails}
+                  target={'_blank'}
+                  variant={'contained'}>
+                  <img
+                    alt={'Bell'}
+                    src={BellIconSvg}
+                  />
+                </Button>
+              </Badge>
+              }
+              {serviceTickets.length === 0 &&
+              <Button
+                aria-describedby={notificationPopover}
+                buttonRef={(node: any) => {
+                  setNotificationEl(node);
+                }}
+                className={classes.headerToolsButton}
+                color={'primary'}
+                href={''}
+                onClick={showNotificationDetails}
+                target={'_blank'}
+                variant={'contained'}>
+                <img
+                  alt={'Bell'}
+                  src={BellIconSvg}
+                />
+              </Button>
+              }
               {serviceTickets.length > 0 && <Popper
                 anchorEl={notificationEl}
                 className={classNames({
@@ -340,14 +341,14 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                       <ClickAwayListener onClickAway={handleClose}>
                         <MenuList role={'menu'}>
                           {serviceTickets && serviceTickets.map((item:any, index:number) => {
-                            return(
+                            return (
                               <MenuItem
-                                key={index}
                                 className={dropdownItem}
+                                key={index}
                                 onClick={() => viewNotificationInfo(item)}>
                                 {`${item.ticketId} created via web at ${new Date().toLocaleString()}`}
                               </MenuItem>
-                            )
+                            );
                           })}
                         </MenuList>
                       </ClickAwayListener>
