@@ -3,7 +3,7 @@ import BCTabs from '../../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
 import { JobReport } from '../../../../reducers/job-report.types';
 import SwipeableViews from 'react-swipeable-views';
-import { formatDate } from 'helpers/format';
+import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import styles from '../customer.styles';
 import { Grid, withStyles } from '@material-ui/core';
@@ -58,7 +58,7 @@ function JobReportsPage({ classes }: any) {
     },
     {
       Cell({ row }: any) {
-        const Date = formatDate(row.original.scheduleDate);
+        const Date = formatDate(row.original.jobDate);
         return (
           <div className={'flex items-center'}>
             <p>
@@ -76,6 +76,16 @@ function JobReportsPage({ classes }: any) {
       'accessor': 'technicianName',
       'className': 'font-bold',
       'sortable': true
+    },
+    {
+      'Cell'({ row }: any) {
+        return `${row.original.emailHistory[0]?.sentAt
+          ? formatDatTimelll(row.original.emailHistory.reverse()[0]?.sentAt)
+          : 'N/A'}`;
+      },
+      'Header': 'Last Email Send Date',
+      'accessor': 'emailHistory.sentAt',
+      'className': 'font-bold'
     },
     {
       Cell({ row }: any) {
@@ -174,7 +184,7 @@ function JobReportsPage({ classes }: any) {
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}
-                tableData={jobReports}
+                tableData={jobReports.reverse()}
               />
             </div>
             <div
