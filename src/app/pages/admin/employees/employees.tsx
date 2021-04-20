@@ -58,6 +58,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
         return `${EmployeeRoles[row.original?.permissions?.role] || ''}`;
       },
       'Header': 'Role',
+      'accessor': 'permissions.role',
       'className': 'font-bold',
       'sortable': true
     },
