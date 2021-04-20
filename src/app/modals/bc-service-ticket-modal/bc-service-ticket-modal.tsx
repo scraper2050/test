@@ -466,7 +466,7 @@ function BCServiceTicketModal({
                       id="tags-standard"
                       className={detail ? "detail-only" : ""}
                       options={customers && customers.length !== 0 ? (customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                      getOptionLabel={(option) => option.profile.displayName ? option.profile.displayName : ""}
+                      getOptionLabel={(option) => option.profile?.displayName ? option.profile.displayName : ""}
                       onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
                       renderInput={(params) => (
                         <>
