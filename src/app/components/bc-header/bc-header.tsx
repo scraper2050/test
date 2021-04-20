@@ -58,16 +58,17 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
 
 
   useEffect(() => {
-    const socket = io(`${Config.socketSever}`, {
-      'extraHeaders': {
-        'Authorization': token
-      },
-      'transports': ['websocket']
-    });
-    socket.on(SocketMessage.CREATESERVICETICKET, data => {
-      const newTickets = [...serviceTickets, data];
-      dispatch(setServiceTicketNotification(newTickets));
-    });
+    if (token) {
+      const socket = io(`${Config.socketSever}`, {
+        'extraHeaders': { 'Authorization': token }
+      });
+
+
+      socket.on(SocketMessage.CREATESERVICETICKET, data => {
+        const newTickets = [...serviceTickets, data];
+        dispatch(setServiceTicketNotification(newTickets));
+      });
+    }
   }, []);
 
   const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
