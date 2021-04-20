@@ -131,3 +131,14 @@ export const addOfficeAdmin = async (data: UserProfile) => {
   }
   return responseData;
 };
+
+export const addAdministrator = async (data: UserProfile) => {
+  let responseData;
+  try {
+    const response: any = await request("/createAdminEmployee", "POST", data, false);
+    responseData = response.data;
+  } catch (err) {
+    if(err) throw new Error(`Something went wrong`);
+  }
+  return responseData;
+}

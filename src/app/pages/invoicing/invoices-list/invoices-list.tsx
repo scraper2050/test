@@ -11,8 +11,6 @@ function InvoiceList({ classes }: any) {
   const theme = useTheme();
   const history = useHistory();
 
-  useEffect(() => { }, []);
-
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
@@ -24,7 +22,24 @@ function InvoiceList({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
+        <div className={classes.pageContent}>
+        <BCTabs
+            curTab={curTab}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Invoices',
+                'value': 0
+              }
+              // {
+              //   'label': 'Recent Activities',
+
+              //   'value': 1
+              // }
+            ]}
+          />
+          <div className={classes.addButtonArea}>
           <Fab
             aria-label={'new-ticket'}
             classes={{
@@ -35,24 +50,7 @@ function InvoiceList({ classes }: any) {
             variant={'extended'}>
             {'Custom Invoice'}
           </Fab>
-        </div>
-        <div className={classes.pageContent}>
-          <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'Invoicing List',
-                'value': 0
-              },
-              {
-                'label': 'Recent Activities',
-
-                'value': 1
-              }
-            ]}
-          />
+          </div>
           <SwipeableViews
             axis={
               theme.direction === 'rtl'

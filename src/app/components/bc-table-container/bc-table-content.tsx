@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -10,7 +10,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './bc-table.styles';
 import { makeStyles, withStyles } from '@material-ui/core';
@@ -31,7 +31,6 @@ function BCTableContent({
   invoiceTable = false,
   setPage,
   cellSize }: any) {
-
   const location = useLocation<any>();
   const history = useHistory();
   const locationState = location.state;
@@ -43,9 +42,9 @@ function BCTableContent({
 
   const onUpdatePage = locationState && locationState.onUpdatePage ? locationState.onUpdatePage : null;
 
-  const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : []
+  const initialSort = prevPage && prevPage.sortBy ? prevPage.sortBy : [];
 
-  const initialPageIndex = prevPage ? prevPage.page : 0
+  const initialPageIndex = prevPage ? prevPage.page : 0;
 
   const initialPageSize = prevPage ? prevPage.pageSize : 10;
 
@@ -62,10 +61,10 @@ function BCTableContent({
       // 'autoResetHiddenColumns': true,
       columns,
       data,
-      initialState: {
-        sortBy: isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        pageIndex: isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
-        pageSize: isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
+      'initialState': {
+        'sortBy': isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
+        'pageIndex': isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        'pageSize': isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
     },
@@ -79,39 +78,38 @@ function BCTableContent({
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
-
     window.scrollTo(0, 20);
 
     if (setPage !== undefined) {
       setPage({
         pageSize,
         sortBy,
-        page: newPage,
+        'page': newPage
       });
     }
 
     history.replace({
       ...history.location,
-      state: {
+      'state': {
         ...locationState,
-        onUpdatePage: {
+        'onUpdatePage': {
           pageSize,
           sortBy,
-          page: newPage,
+          'page': newPage
         }
       }
-    })
+    });
 
     if (prevPage) {
       history.replace({
         ...history.location,
-        state: {
+        'state': {
           ...location.state,
 
-          prevPage: {
+          'prevPage': {
             pageSize,
             sortBy,
-            page: newPage,
+            'page': newPage
           }
         }
       });
@@ -123,35 +121,35 @@ function BCTableContent({
     if (setPage !== undefined) {
       setPage({
         ...location.state,
-        page: pageIndex,
+        'page': pageIndex,
         sortBy,
-        pageSize: Number(event.target.value)
+        'pageSize': Number(event.target.value)
       });
     }
 
 
     history.replace({
       ...history.location,
-      state: {
+      'state': {
         ...locationState,
-        onUpdatePage: {
-          page: pageIndex,
+        'onUpdatePage': {
+          'page': pageIndex,
           sortBy,
-          pageSize: Number(event.target.value)
+          'pageSize': Number(event.target.value)
         }
       }
-    })
+    });
 
 
     if (prevPage) {
       history.replace({
         ...history.location,
-        state: {
+        'state': {
           ...location.state,
-          prevPage: {
-            page: pageIndex,
+          'prevPage': {
+            'page': pageIndex,
             sortBy,
-            pageSize: Number(event.target.value)
+            'pageSize': Number(event.target.value)
           }
         }
       });
@@ -161,12 +159,11 @@ function BCTableContent({
   };
 
   const handleSortBy = (sortBy: any) => {
-
     if (setPage !== undefined) {
       setPage({
-        page: 0,
+        'page': 0,
         pageSize,
-        sortBy,
+        sortBy
       });
 
       handleChangePage(null, 0);
@@ -175,52 +172,50 @@ function BCTableContent({
 
     history.replace({
       ...history.location,
-      state: {
+      'state': {
         ...locationState,
-        onUpdatePage: {
-          page: 0,
+        'onUpdatePage': {
+          'page': 0,
           pageSize,
-          sortBy,
+          sortBy
         }
       }
-    })
+    });
 
     if (prevPage) {
       history.replace({
         ...history.location,
-        state: {
+        'state': {
           ...location.state,
-          prevPage: {
-            page: 0,
+          'prevPage': {
+            'page': 0,
             pageSize,
-            sortBy,
+            sortBy
           }
         }
       });
     }
-  }
-
+  };
 
 
   useEffect(() => {
     if (sortBy.length !== 0) {
-      handleSortBy(sortBy)
+      handleSortBy(sortBy);
     }
-  }, [sortBy])
+  }, [sortBy]);
 
   useEffect(() => {
     if (!isDefault) {
       setTimeout(() => {
-
         if (onUpdatePage) {
-          let tempLocationState = location.state;
+          const tempLocationState = location.state;
 
-          delete tempLocationState['onUpdatePage'];
+          delete tempLocationState.onUpdatePage;
 
           history.replace({
             ...history.location,
-            state: { ...tempLocationState }
-          })
+            'state': { ...tempLocationState }
+          });
         }
       }, 200);
     }
@@ -228,29 +223,30 @@ function BCTableContent({
 
   useEffect(() => {
     if (!onUpdatePage) {
-
       if (curTab !== undefined) {
-        setPageSize(10)
-        gotoPage(0)
-        handleSortBy([])
+        setPageSize(10);
+        gotoPage(0);
+        handleSortBy([]);
       }
     }
-  }, [curTab])
+  }, [curTab]);
 
 
   const useStyles = makeStyles({
-    cellMd: {
-      padding: "13px 24px 13px 16px;"
-    },
-    // mediumXs: {
-    //   "& .MuiTableCell-sizeSmall": {
-    //     padding: "13px 24px 13px 16px;"
-    //   }
-    // },
+    'cellMd': {
+      'padding': '13px 24px 13px 16px;'
+    }
+    /*
+     * MediumXs: {
+     *   "& .MuiTableCell-sizeSmall": {
+     *     padding: "13px 24px 13px 16px;"
+     *   }
+     * },
+     */
   });
 
 
-  const tableClass = useStyles(); 
+  const tableClass = useStyles();
 
   // Render the UI for your table
   return (
@@ -260,10 +256,10 @@ function BCTableContent({
         : ''} ${className} `}
       component={Paper}>
       <MaUTable
-        stickyHeader={stickyHeader}
         size={'small'}
+        stickyHeader={stickyHeader}
         {...getTableProps()}>
-        <TableHead style={{ display: noHeader ? 'none' : 'table-header-group' }}>
+        <TableHead style={{ 'display': noHeader ? 'none' : 'table-header-group' }}>
           {headerGroups.map((headerGroup: any, gindex: number) =>
             <TableRow
               key={`table-${gindex}`}
@@ -278,11 +274,9 @@ function BCTableContent({
                   {...(!column.sortable
                     ? column.getHeaderProps()
                     : column.getHeaderProps(
-                      // handleSorting(column)
-                      column.getSortByToggleProps()
-                    )
-                  )}
-                >
+                      // HandleSorting(column)
+                      column.getSortByToggleProps())
+                  )}>
                   {column.render('Header')}
                   {column.sortable
                     ? <TableSortLabel
@@ -303,13 +297,13 @@ function BCTableContent({
               <TableRow
                 key={`table-row-${i}`}
                 {...row.getRowProps()}
-                className={'truncate cursor-pointer'}
+                className={'truncate'}
                 hover={!invoiceTable}
                 onClick={(ev: any) => onRowClick(ev, row)}>
                 {row.cells.map((cell: any, cindex: number) => {
                   return (
                     <TableCell
-                      classes={{root: cellSize ? tableClass.cellMd : "" }}
+                      classes={{ 'root': cellSize ? tableClass.cellMd : '' }}
                       key={`table-cell-${cindex}`}
                       {...cell.getCellProps()}
                       className={clsx(cell.column.className, `${cell.column.borderRight
@@ -318,8 +312,7 @@ function BCTableContent({
                       }
                       style={{
                         'width': cell.column.width || 'auto'
-                      }}
-                    >
+                      }}>
                       {cell.render('Cell')}
                     </TableCell>
                   );
@@ -334,10 +327,6 @@ function BCTableContent({
               <TableRow>
                 <TablePagination
                   ActionsComponent={BCTablePagination}
-                  SelectProps={{
-                    'inputProps': { 'aria-label': 'rows per page' },
-                    'native': false
-                  }}
                   classes={{
                     'root': 'overflow-hidden',
                     'spacer': 'w-0 max-w-0'
@@ -354,6 +343,10 @@ function BCTableContent({
                       'value': data.length + 1
                     }
                   ]}
+                  SelectProps={{
+                    'inputProps': { 'aria-label': 'rows per page' },
+                    'native': false
+                  }}
                 />
               </TableRow>
             </TableFooter>

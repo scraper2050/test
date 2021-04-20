@@ -278,6 +278,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
             list={todaysJobs}
             onJob
             selected={selectedJob}
+            showPins
           />
         }
       </Grid>

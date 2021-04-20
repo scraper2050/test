@@ -7,6 +7,9 @@ import styles, {
   MainContainer,
   PageContainer
 } from './job-reports.styles';
+import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
+import EmailHistory from './email-history';
+
 
 const renderTime = (startTime:Date, endTime: Date) => {
   if (!startTime && !endTime) {
@@ -24,12 +27,12 @@ const renderTime = (startTime:Date, endTime: Date) => {
 function BCJobReport({ classes, jobReportData }: any) {
   const history = useHistory();
 
-  if (!jobReportData) {
+  const { job } = jobReportData;
+  if (!jobReportData || !job) {
     return null;
   }
 
 
-  const { job } = jobReportData;
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
     const linkKey: any = localStorage.getItem('nestedRouteKey');
@@ -61,7 +64,7 @@ function BCJobReport({ classes, jobReportData }: any) {
               item
               xs={12}>
               <p className={classes.reportTag}>
-                {'Work Report'}
+                {`Work Report - ${job.jobId}`}
               </p>
             </Grid>
 
@@ -76,7 +79,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                 <Grid
                   item
                   xs={6}>
-                  <div>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Name'}
                     </strong>
@@ -94,7 +97,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                 <Grid
                   item
                   xs={6}>
-                  <div>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Phone Number'}
                     </strong>
@@ -137,8 +140,6 @@ function BCJobReport({ classes, jobReportData }: any) {
                         {job.customer.address.zipCode}
                         <br />
                       </>}
-
-
                     </p>
                   </div>
                 </Grid>
@@ -175,7 +176,7 @@ function BCJobReport({ classes, jobReportData }: any) {
               <Grid container>
                 <Grid
                   item
-                  xs={6}>
+                  xs={12}>
                   <p className={classes.subTitle}>
                     {'job details'}
                   </p>
@@ -183,47 +184,71 @@ function BCJobReport({ classes, jobReportData }: any) {
                 <Grid
                   item
                   xs={6}>
-                  <div className={classes.mt_24}>
-                    <strong>
-                      {'Technician Name'}
-                    </strong>
+                  <div className={classes.addMargin}>
                     <p className={classes.noMargin}>
-                      {job.technician.profile.displayName || 'N/A'}
+                      {job.ticket.customerPO
+                        ? <img
+                          alt={'job report'}
+                          src={job.ticket.image}
+                        />
+                        : <div className={'no-image'} >
+                          {' No Image Available'}
+                        </div>}
                     </p>
                   </div>
                 </Grid>
+                <Grid
+                  item
+                  xs={6}>
+                  <Grid container>
+                    <Grid
+                      item
+                      xs={12}>
+                      <div className={classes.addMargin}>
+                        <strong>
+                          {'Technician Name'}
+                        </strong>
+                        <p className={classes.noMargin}>
+                          {job.technician.profile.displayName || 'N/A'}
+                        </p>
+                      </div>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}>
+                      <div className={classes.addMargin}>
+                        <strong>
+                          {'Job Type'}
+                        </strong>
+                        <p className={classes.noMargin}>
+                          {job.type.title || 'N/A'}
+                        </p>
+                      </div>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
               </Grid>
               <Grid container>
                 <Grid
                   item
-                  xs={4}>
-                  <div>
-                    <strong>
-                      {'Job Type'}
-                    </strong>
-                    <p className={classes.noMargin}>
-                      {job.type.title || 'N/A'}
-                    </p>
-                  </div>
-                </Grid>
-
-                <Grid
-                  item
-                  xs={4}>
-                  <div>
+                  xs={6}>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Date'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {formatDatTimell(job.scheduleDate) || 'N/A'}
+                      {job.scheduleDate
+                        ? formatDatTimell(job.scheduleDate)
+                        : 'N/A'}
                     </p>
                   </div>
                 </Grid>
 
                 <Grid
                   item
-                  xs={4}>
-                  <div>
+                  xs={6}>
+                  <div className={classes.addMargin}>
                     <strong>
                       {'Time'}
                     </strong>
@@ -233,16 +258,84 @@ function BCJobReport({ classes, jobReportData }: any) {
                   </div>
                 </Grid>
               </Grid>
+
+              {(job.jobLocation || job.jobSite || job.customerContactId) && <Grid container>
+                { job.jobLocation && <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Job Location'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.jobLocation.name}
+                    </p>
+                  </div>
+                </Grid>}
+                { job.jobSite && <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Job Site'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.jobSite.name}
+                    </p>
+                  </div>
+                </Grid> }
+                { job.customerContactId && <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Contact'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.customerContactId?.name || 'N/A'}
+                    </p>
+                  </div>
+                </Grid>}
+              </Grid>}
+
               <Grid container>
                 <Grid
                   item
-                  xs={12}>
+                  xs={6}>
                   <div className={classes.addMargin}>
                     <strong>
-                      {'Purchase Order Created'}
+                      {'Start Time'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {/* {jobReportData.purchaseOrder} */}
+                      {job.startTime
+                        ? formatDatTimelll(job.startTime)
+                        : 'N/A'}
+                    </p>
+                  </div>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'End Time'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.endTime
+                        ? formatDatTimelll(job.endTime)
+                        : 'N/A'}
+                    </p>
+                  </div>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Purchase Order'}
+                    </strong>
+                    <p className={classes.noMargin}>
+                      {job.ticket.customerPO || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -258,6 +351,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </p>
                   </div>
                 </Grid>
+
                 <Grid
                   item
                   xs={6}>
@@ -267,32 +361,6 @@ function BCJobReport({ classes, jobReportData }: any) {
                     </strong>
                     <p className={classes.noMargin}>
                       {job.comment || 'N/A'}
-                    </p>
-                  </div>
-                </Grid>
-              </Grid>
-              <Grid container>
-                <Grid
-                  item
-                  xs={6}>
-                  <div className={classes.addMargin}>
-                    <strong>
-                      {'Start Time'}
-                    </strong>
-                    <p className={classes.noMargin}>
-                      {formatDatTimelll(job.startTime) || 'N/A'}
-                    </p>
-                  </div>
-                </Grid>
-                <Grid
-                  item
-                  xs={6}>
-                  <div className={classes.addMargin}>
-                    <strong>
-                      {'End Time'}
-                    </strong>
-                    <p className={classes.noMargin}>
-                      {formatDatTimelll(job.endTime) || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -516,13 +584,19 @@ function BCJobReport({ classes, jobReportData }: any) {
             onClick={goBack}>
             {'Cancel'}
           </Button>
-          <Button className={classes.invoiceBtn}>
-            {'Email Report'}
-          </Button>
+          <EmailReportButton
+            Component={
+              <Button className={classes.invoiceBtn}>
+                {'Email Report'}
+              </Button>
+            }
+            jobReport={jobReportData}
+          />
           <Button className={classes.invoiceBtn}>
             {'Generate Invoice'}
           </Button>
         </Grid>
+        <EmailHistory emailHistory={jobReportData.emailHistory} />
       </PageContainer>
     </MainContainer>
   );

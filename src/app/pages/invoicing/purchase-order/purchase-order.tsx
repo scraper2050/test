@@ -23,18 +23,6 @@ function PurchaseOrder({ classes }: any) {
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        <div className={classes.topActionBar}>
-          <Fab
-            aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            onClick={() => openCreatePurchaseOrderPage()}
-            variant={'extended'}>
-            {'Create Purchase Order'}
-          </Fab>
-        </div>
         <div className={classes.pageContent}>
           <BCTabs
             curTab={curTab}
@@ -45,13 +33,25 @@ function PurchaseOrder({ classes }: any) {
                 'label': 'Purchase Order',
                 'value': 0
               },
-              {
-                'label': 'Recent Activities',
+              // {
+              //   'label': 'Recent Activities',
 
-                'value': 1
-              }
+              //   'value': 1
+              // }
             ]}
           />
+          <div className={classes.addButtonArea}>
+            <Fab
+              aria-label={'new-ticket'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              onClick={() => openCreatePurchaseOrderPage()}
+              variant={'extended'}>
+              {'Create Purchase Order'}
+            </Fab>
+          </div>
           <SwipeableViews
             axis={theme.direction === 'rtl'
               ? 'x-reverse'

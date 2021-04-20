@@ -44,14 +44,14 @@ export interface User {
 }
 
 export interface UserDetails {
-  "firstName": string,
-  "lastName": string,
-  "email": string,
-  "phone": string,
-  "emailPreferences": {
-    "preferences": string,
-    "time": string,
-    "timezone": string
+  'firstName': string,
+  'lastName': string,
+  'email': string,
+  'phone': string,
+  'emailPreferences': {
+    'preferences': string,
+    'time': string,
+    'timezone': string
   }
 }
 
@@ -62,6 +62,8 @@ export interface UsersState {
   readonly added?: boolean
   readonly employeeDetails?: UserDetails
 }
+
+export const EmployeeRoles = ['Office Admin', 'Technician', 'Manager', 'Company Administrator', 'Admin', 'Customer'];
 
 export enum UsersActionType {
   GET = 'getUsers',
