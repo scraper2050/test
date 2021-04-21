@@ -9,6 +9,7 @@ import customersSaga from './customer.saga';
 import watchAllCompanyEquipmentsLoad from './company-equipment.saga';
 import watchAllEmployeesLoad from './employee.saga';
 import watchJobReportLoad from './job-report.saga';
+import watchSubscription from './subscriptions.saga';
 
 
 export default function *rootSaga() {
@@ -19,6 +20,7 @@ export default function *rootSaga() {
     watchAllEmployeesLoad(),
     watchAllCompanyEquipmentsLoad(),
     watchJobReportLoad(),
+    watchSubscription(),
     bcModalSaga()
   ]);
 }
