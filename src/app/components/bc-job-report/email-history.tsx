@@ -37,7 +37,7 @@ const columns: any = [
 const EmailHistoryContainer = styled.div`
 margin-bottom: 40px;`;
 export default function EmailHistory({ emailHistory }:EmailHistoryProps) {
-  if (emailHistory.length === 0) {
+  if (!emailHistory.length) {
     return null;
   }
   return <EmailHistoryContainer>
