@@ -19,12 +19,13 @@ function BillingSubscriptionPage({ classes }:Props) {
 
 
   useEffect(() => {
+    localStorage.setItem('nestedRouteKey', `subscription`);
     dispatch(loadSubscriptions.fetch());
   }, []);
 
   const columns: any = [
     {
-      'Header': 'Subscription',
+      'Header': 'Type',
       'accessor': 'label',
       'sortable': true,
       'width': 60
@@ -45,9 +46,23 @@ function BillingSubscriptionPage({ classes }:Props) {
                 'root': classes.fabRoot
               }}
               color={'primary'}
+              style={{
+                'width': 110,
+                'marginRight': 10
+              }}
               // OnClick={() => renderViewMore(row)}
               variant={'extended'}>
               {'Edit'}
+            </Fab>
+            <Fab
+              aria-label={'view more'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              // OnClick={() => renderViewMore(row)}
+              variant={'extended'}>
+              {'View More'}
             </Fab>
           </div>
         );
