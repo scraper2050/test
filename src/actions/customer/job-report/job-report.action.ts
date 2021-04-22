@@ -7,6 +7,11 @@ export const loadJobReportsActions = createApiAction(types.LOAD_JOBREPORTS);
 export const emailJobReportActions = createApiAction(types.EMAIL_JOBREPORTS);
 
 
+export const updateEmailHistory = (jobReportId: string) => {
+  return { 'type': types.UPDATE_EMAIL_HISTORY,
+    'payload': jobReportId };
+};
+
 export const resetEmailState = () => {
   return { 'type': types.RESET_EMAIL_STATE };
 };
