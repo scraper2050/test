@@ -15,7 +15,8 @@ pipelines:
         script:
           - unset CI
           - yarn install
-          - yarn build
+          - yarn add env-cmd
+          - yarn build:production
         artifacts:
           - build/**
     - step:
@@ -45,7 +46,8 @@ pipelines:
         script:
           - unset CI
           - yarn install
-          - yarn build
+          - yarn add env-cmd
+          - yarn build:staging
         artifacts:
           - build/**
     - step:

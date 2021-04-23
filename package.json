@@ -64,6 +64,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:staging": "env-cmd -f .env.staging react-scripts build",
+    "build:production": "env-cmd -f .env.production react-scripts build",
     "lint": "node ./node_modules/eslint/bin/eslint",
     "lint-src": "npm run lint -- src/**/*.ts{,x}"
   },
