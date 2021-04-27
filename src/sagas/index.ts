@@ -10,6 +10,8 @@ import watchAllCompanyEquipmentsLoad from './company-equipment.saga';
 import watchAllEmployeesLoad from './employee.saga';
 import watchJobReportLoad from './job-report.saga';
 import watchSubscription from './subscriptions.saga';
+import watchNotifications from './notification.saga';
+import watchLoadServiceTicket from './service-ticket.saga';
 
 
 export default function *rootSaga() {
@@ -21,6 +23,8 @@ export default function *rootSaga() {
     watchAllCompanyEquipmentsLoad(),
     watchJobReportLoad(),
     watchSubscription(),
+    watchNotifications(),
+    watchLoadServiceTicket(),
     bcModalSaga()
   ]);
 }

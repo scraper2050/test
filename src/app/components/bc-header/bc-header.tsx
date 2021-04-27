@@ -16,8 +16,8 @@ import Badge from '@material-ui/core/Badge';
 import { io } from 'socket.io-client';
 // eslint-disable-next-line sort-imports
 import AvatarImg from '../../../assets/img/user_avatar.png';
-import HelpIconSvg from '../../../assets/img/Help-Icon.svg';
-import BellIconSvg from '../../../assets/img/Bell-Icon.svg';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
@@ -36,6 +36,9 @@ import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-sit
 import { getAllJobTypesAPI } from 'api/job.api';
 import { modalTypes } from '../../../constants';
 import Config from '../../../config';
+import { loadNotificationsActions } from 'actions/notifications/notifications.action';
+import HeaderNotifications from './bc-header-notification';
+import { computeUnreadNotifications } from './util';
 
 interface Props {
   token: string;
@@ -43,8 +46,10 @@ interface Props {
   classes: any;
 }
 
+
 function BCHeader({ token, user, classes }: Props): JSX.Element {
   const serviceTickets = useSelector((state: any) => state.serviceTicket.notifications);
+  const { notifications, error, loading } = useSelector((state: any) => state.notifications);
 
   const history = useHistory();
   const location = useLocation();
@@ -56,8 +61,8 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const [profileOpen, setProfileOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
-
   useEffect(() => {
+    dispatch(loadNotificationsActions.fetch());
     if (token) {
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
@@ -266,63 +271,34 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                 );
               })}
             </ul>
-
-            <div className={classes.headerTools}>
+            <div className={classes.headerTools} >
               <Button
                 className={classes.headerToolsButton}
-                color={'primary'}
                 href={'http://blueclerk.com/support/'}
-                target={'_blank'}
-                variant={'contained'}>
-                <img
-                  alt={'Help'}
-                  src={HelpIconSvg}
-                />
+                target={'_blank'}>
+                <ContactSupportIcon color={'primary'} />
               </Button>
-            </div>
-            <div className={[classes.headerTools, classes.bell].join(' ')}>
-              {serviceTickets.length > 0 &&
-              <Badge
-                badgeContent={serviceTickets.length}
-                className={[classes.margin, classes.notificationCnt].join(' ')}
-                color={'secondary'}>
-                <Button
-                  aria-describedby={notificationPopover}
-                  buttonRef={(node: any) => {
-                    setNotificationEl(node);
-                  }}
-                  className={classes.headerToolsButton}
-                  color={'primary'}
-                  href={''}
-                  onClick={showNotificationDetails}
-                  target={'_blank'}
-                  variant={'contained'}>
-                  <img
-                    alt={'Bell'}
-                    src={BellIconSvg}
-                  />
-                </Button>
-              </Badge>
-              }
-              {serviceTickets.length === 0 &&
               <Button
                 aria-describedby={notificationPopover}
                 buttonRef={(node: any) => {
                   setNotificationEl(node);
                 }}
                 className={classes.headerToolsButton}
-                color={'primary'}
+                color={'default'}
                 href={''}
                 onClick={showNotificationDetails}
-                target={'_blank'}
-                variant={'contained'}>
-                <img
-                  alt={'Bell'}
-                  src={BellIconSvg}
-                />
+                target={'_blank'}>
+                <Badge
+                  badgeContent={computeUnreadNotifications(notifications)}
+                  color={'secondary'}
+                  invisible={!notifications.length}>
+                  <NotificationsIcon
+                    color={'primary'}
+                  />
+                </Badge>
               </Button>
-              }
-              {serviceTickets.length > 0 && <Popper
+
+              <Popper
                 anchorEl={notificationEl}
                 className={classNames({
                   [classes.popperClose]: !showNotification,
@@ -338,25 +314,17 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                   <Grow
                     {...TransitionProps}
                     style={{ 'transformOrigin': '0 0 0' }}>
-                    <Paper className={classes.dropdown}>
-                      <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList role={'menu'}>
-                          {serviceTickets && serviceTickets.map((item:any, index:number) => {
-                            return (
-                              <MenuItem
-                                className={dropdownItem}
-                                key={index}
-                                onClick={() => viewNotificationInfo(item)}>
-                                {`${item.ticketId} created via web at ${new Date().toLocaleString()}`}
-                              </MenuItem>
-                            );
-                          })}
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
+                    <ClickAwayListener onClickAway={handleClose}>
+                      <Paper className={classes.dropdown}>
+                        <HeaderNotifications
+                          close={handleClose}
+                          items={notifications}
+                        />
+                      </Paper>
+                    </ClickAwayListener>
                   </Grow>
                 }
-              </Popper>}
+              </Popper>
             </div>
             <div className={classes.profile}>
               <Button

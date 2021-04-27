@@ -6,6 +6,7 @@ export const formatDate = (date: string): string | undefined => {
   }
 };
 
+export const fromNow = (date: Date) => moment(date).fromNow();
 
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 
