@@ -1,7 +1,15 @@
-import { NotificationACtionTypes } from './notifications.types';
+import { NotificationActionTypes } from './notifications.types';
+import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
 import { createApiAction } from 'actions/action.utils';
 
 
-export const loadNotificationsActions = createApiAction(NotificationACtionTypes.LOAD_NOTIFICATIONS);
-export const markNotificationAsRead = createApiAction(NotificationACtionTypes.UPDATE_NOTIFICATION);
+export const loadNotificationsActions = createApiAction(NotificationActionTypes.LOAD_NOTIFICATIONS);
+export const markNotificationAsRead = createApiAction(NotificationActionTypes.UPDATE_NOTIFICATION);
+export const dismissNotificationAction = createApiAction(NotificationActionTypes.DISMISS_NOTIFICATION);
 
+export const pushNotification = (payload: NotificationItem[]) => {
+  return {
+    payload,
+    'type': NotificationActionTypes.PUSH_NOTIFICATION
+  };
+};

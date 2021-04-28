@@ -297,7 +297,7 @@ function BCTableContent({
               <TableRow
                 key={`table-row-${i}`}
                 {...row.getRowProps()}
-                className={`truncate${row.original.readStatus.isRead
+                className={`truncate${row.original.readStatus?.isRead
                   ? ''
                   : ' unread'}`}
                 hover={!invoiceTable}

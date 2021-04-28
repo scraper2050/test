@@ -1,14 +1,17 @@
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
-import InfoIcon from '@material-ui/icons/Info';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import React from 'react';
 import { fromNow } from 'helpers/format';
 import { PRIMARY_BLUE, modalTypes } from '../../../constants';
 import styled from 'styled-components';
 import styles from './notification.styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Grid, withStyles } from '@material-ui/core';
+import { Button, Fab, Grid, IconButton, withStyles } from '@material-ui/core';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import AlertDialogSlide from 'app/components/bc-dialog/bc-dialog';
+import { dismissNotificationAction } from 'actions/notifications/notifications.action';
+import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
 
 
 const NoticationPageContainer = styled.div`
@@ -22,7 +25,7 @@ const NoticationPageContainer = styled.div`
         cursor: pointer;
     }
     tr.unread {
-        background: #fafafa;
+        background: ${PRIMARY_BLUE};
         td {
             color: white;
         }
@@ -99,19 +102,25 @@ function NotificationPage() {
     {
       Cell({ row }: any) {
         return (
-          <div >
-            <div
-              className={'flex items-center'}
+          <div>
+            <Button
               onClick={() => openDetailJobModal(row.original.metadata._id, row.original._id)}
-              style={{
-                'alignItems': 'center',
-                'display': 'flex',
-                'height': 34,
-                'marginLeft': '.5rem'
+              size={'small'}
+              style={{ 'marginRight': '20px' }}>
+              {'View'}
+            </Button>
 
-              }}>
-              <InfoIcon style={{ 'margin': 'auto, 0' }} />
-            </div>
+
+            <AlertDialogSlide
+              buttonText={'Dismiss'}
+              color={'secondary'}
+              confirmMethod={() => dispatch(dismissNotificationAction.fetch({ 'id': row.original._id,
+                'isDismissed': true }))}
+              size={'small'}>
+              <div>
+                {'Are you sure you want to dismiss this notification?'}
+              </div>
+            </AlertDialogSlide>
           </div>
         );
       },
@@ -128,24 +137,30 @@ function NotificationPage() {
     return <BCCircularLoader />;
   }
 
-  return <NoticationPageContainer>
-    <Grid container>
+  const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
+
+  return (
+    <NoticationPageContainer>
       <Grid
-        item
-        xs={8}>
-        <BCTableContainer
-          cellSize
-          columns={columns}
-          initialMsg={'No notificatons'}
-          pageSize={notifications.length}
-          pagination={false}
-          search
-          searchPlaceholder={'Search Notifications'}
-          tableData={notifications}
-        />
+        container
+        justify={'center'}>
+        <Grid
+          item
+          xs={8}>
+          <BCTableContainer
+            cellSize
+            columns={columns}
+            hover
+            initialMsg={'No notificatons'}
+            pageSize={activeNotifications.length}
+            pagination
+            search
+            searchPlaceholder={'Search Notifications'}
+            tableData={activeNotifications}
+          />
+        </Grid>
       </Grid>
-    </Grid>
-  </NoticationPageContainer>;
+    </NoticationPageContainer>);
 }
 
 export default withStyles(styles, { 'withTheme': true })(NotificationPage);

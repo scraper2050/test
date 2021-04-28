@@ -14,7 +14,6 @@ import {
 } from '@material-ui/core';
 import Badge from '@material-ui/core/Badge';
 import { io } from 'socket.io-client';
-// eslint-disable-next-line sort-imports
 import AvatarImg from '../../../assets/img/user_avatar.png';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
@@ -29,15 +28,10 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { SocketMessage } from 'helpers/contants';
-import { setServiceTicketNotification } from 'actions/service-ticket/service-ticket.action';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
-import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
-import { getAllJobTypesAPI } from 'api/job.api';
-import { modalTypes } from '../../../constants';
+
 import Config from '../../../config';
-import { loadNotificationsActions } from 'actions/notifications/notifications.action';
-import HeaderNotifications from './bc-header-notification';
+import { loadNotificationsActions, pushNotification } from 'actions/notifications/notifications.action';
+import HeaderNotifications, { NotificationItem } from './bc-header-notification';
 import { computeUnreadNotifications } from './util';
 
 interface Props {
@@ -48,9 +42,8 @@ interface Props {
 
 
 function BCHeader({ token, user, classes }: Props): JSX.Element {
-  const serviceTickets = useSelector((state: any) => state.serviceTicket.notifications);
   const { notifications, error, loading } = useSelector((state: any) => state.notifications);
-
+  const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -67,11 +60,8 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
       });
-
-
       socket.on(SocketMessage.CREATESERVICETICKET, data => {
-        const newTickets = [...serviceTickets, data];
-        dispatch(setServiceTicketNotification(newTickets));
+        dispatch(pushNotification(data));
       });
     }
   }, []);
@@ -146,45 +136,6 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
     history.push('/main/user/view-profile');
   };
 
-  const viewNotificationInfo = (ticket:any): void => {
-    handleClose();
-    const filterNotication = serviceTickets.filter((item:any) => item._id !== ticket._id);
-    dispatch(setServiceTicketNotification(filterNotication));
-    openDetailTicketModal(ticket);
-  };
-
-  const openDetailTicketModal = (ticket: any) => {
-    const reqObj = {
-      'customerId': ticket.customer?._id,
-      'locationId': ticket.jobLocation
-    };
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'detail': true
-
-      },
-      'type': modalTypes.EDIT_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
 
   const handleClickLogout = (): void => {
     handleClose();
@@ -291,7 +242,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                 <Badge
                   badgeContent={computeUnreadNotifications(notifications)}
                   color={'secondary'}
-                  invisible={!notifications.length}>
+                  invisible={computeUnreadNotifications(notifications) === 0}>
                   <NotificationsIcon
                     color={'primary'}
                   />
@@ -318,7 +269,8 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                       <Paper className={classes.dropdown}>
                         <HeaderNotifications
                           close={handleClose}
-                          items={notifications}
+                          items={activeNotifications}
+                          loading={loading}
                         />
                       </Paper>
                     </ClickAwayListener>

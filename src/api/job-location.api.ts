@@ -37,7 +37,7 @@ export const getJobLocations = async (data: any) => {
 
 export const getJobLocation = async (id: string) => {
   try {
-    const response: any = await request(`jobLocation/${id}`, 'GET', {}, false);
+    const response: any = await request(`/jobLocation/${id}`, 'GET', {}, false);
     return response.data;
   } catch (err) {
     const responseData = { 'msg': '' };

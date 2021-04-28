@@ -59,13 +59,6 @@ export const setClearOpenTicketFilterState = (openTicketFilterObj: any) => {
   };
 };
 
-export const setServiceTicketNotification = (serviceTicketObj: any) => {
-  return {
-    'payload': serviceTicketObj,
-    'type': types.SET_SERVICE_TICKET_NOTIFICATION
-  };
-};
-
 export const setSelectedCustomers = (customers: any[]) => {
   return {
     'payload': customers,

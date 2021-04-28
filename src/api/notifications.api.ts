@@ -16,11 +16,11 @@ export const getNotifications = async () => {
 };
 
 
-export const updateNotification = async (id:string) => {
+export const updateNotification = async ({ id, isRead = true, isDismissed = false }:any) => {
   try {
     const response: any = await request(`/updateNotification/${id}`, 'PUT', {
-      'isDismissed': false,
-      'isRead': true
+      'isDismissed': isDismissed,
+      'isRead': isRead
 
     }, false);
     return response.data;

@@ -122,9 +122,8 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
   }
 
   const {
-    image, jobLocation, jobSite, jobType, contactName, note, dueDate, customer, customerPo
+    image, jobLocation, jobSite, jobType, customerContactId, note, dueDate, customer, customerPo
   } = openTicketObj;
-
 
   return <BCViewServiceTicketModalContainer>
     <Grid
@@ -146,7 +145,7 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
             {'Job Location'}
           </Typography>
           <Typography>
-            {jobLocation || 'N/A'}
+            {jobLocation?.name || 'N/A'}
           </Typography>
         </div>
         <div className={'detail'}>
@@ -154,7 +153,7 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
             {'Job Site'}
           </Typography>
           <Typography>
-            {jobSite || 'N/A'}
+            {jobSite?.name || 'N/A'}
           </Typography>
         </div>
         <div className={'detail'}>
@@ -162,7 +161,7 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
             {'Job Type'}
           </Typography>
           <Typography>
-            {jobType || 'N/A'}
+            {jobType?.title || 'N/A'}
           </Typography>
         </div>
         <div className={'detail'}>
@@ -192,7 +191,7 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
             {'Contact Associated'}
           </Typography>
           <Typography>
-            {contactName || 'N/A'}
+            {customerContactId?.name || 'N/A'}
           </Typography>
         </div>
         <div className={'detail'}>

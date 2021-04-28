@@ -4,8 +4,9 @@ import React, { Fragment } from 'react';
 import ServiceTicketNotication from './header-notifications/bc-header-service-ticket-notification';
 import { Button, MenuList } from '@material-ui/core';
 import styled from 'styled-components';
-import { SECONDARY_CARD_BLUE, SECONDARY_GREY } from '../../../constants';
+import { SECONDARY_CARD_BLUE, SECONDARY_DARK_GREY, SECONDARY_GREY } from '../../../constants';
 import { useHistory } from 'react-router-dom';
+import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 
 
 export type NotificationItem = Notification
@@ -13,6 +14,7 @@ export type NotificationItem = Notification
 interface HeaderNotification {
     items: NotificationItem[];
     close: () => void;
+    loading: boolean
 }
 
 function renderItem(item:NotificationItem, index:number) {
@@ -28,10 +30,15 @@ function renderItem(item:NotificationItem, index:number) {
 }
 
 const HeaderNotificationContainer = styled(MenuList)`
-padding: 5px 8px;
-max-width: 300px;
+    padding: 5px 8px;
+    max-width: 300px;
     h3 {
-            margin:0 0 16px 16px;
+      margin:0 0 16px 16px;
+    }
+    h4 {
+      margin: 20px;
+      color: ${SECONDARY_DARK_GREY};
+      font-size: 2rem;
     }
 .MuiListItem-root {
     border-radius: 6px;
@@ -73,12 +80,17 @@ max-width: 300px;
 }
 `;
 
-export default function HeaderNotifications({ items, close }: HeaderNotification) {
+export default function HeaderNotifications({ items, close, loading }: HeaderNotification) {
   const history = useHistory();
   return <HeaderNotificationContainer role={'menu'}>
     <h3>
       {'Notifications'}
     </h3>
+    {loading && <BCCircularLoader />}
+
+    {!items.length && <h4>
+      {'No notifications'}
+    </h4>}
     {items && items.slice(0, 5).map((item:NotificationItem, index:number) => {
       return renderItem(item, index);
     })}
