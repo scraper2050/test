@@ -39,7 +39,7 @@ p {
 `;
 
 export default function EmailJobReportModal({ jobId, customerEmail, customer, onClick }:any) {
-  const { sent, sending, error } = useSelector(({ JobReport }:any) => JobReport.email);
+  const { sent, sending, error } = useSelector(({ jobReport }:any) => jobReport.email);
   const dispatch = useDispatch();
   const closeModal = () => {
     dispatch(closeModalAction());
