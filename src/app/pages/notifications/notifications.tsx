@@ -25,16 +25,16 @@ const NoticationPageContainer = styled.div`
         cursor: pointer;
     }
     tr.unread {
-        background: ${PRIMARY_BLUE};
+        background: #f1f1f1;
         td {
-            color: white;
+          font-weight: 800;
         }
     }
     `;
 
 
 const NotificationTypes:any = {
-  'CreateServiceTicket': 'Service Ticket'
+  'ServiceTicketCreated': 'Service Ticket'
 };
 
 
@@ -106,8 +106,10 @@ function NotificationPage() {
             <Button
               onClick={() => openDetailJobModal(row.original.metadata._id, row.original._id)}
               size={'small'}
-              style={{ 'marginRight': '20px' }}>
+              style={{ 'marginRight': '20px' }}
+              variant={'outlined'}>
               {'View'}
+
             </Button>
 
 
@@ -117,7 +119,8 @@ function NotificationPage() {
               confirmMethod={() => dispatch(dismissNotificationAction.fetch({ 'id': row.original._id,
                 'isDismissed': true }))}
               confirmText={'Dismiss'}
-              size={'small'}>
+              size={'small'}
+              variant={'outlined'}>
               <Typography variant={'h6'}>
                 {'Are you sure you want to dismiss this notification?'}
               </Typography>
