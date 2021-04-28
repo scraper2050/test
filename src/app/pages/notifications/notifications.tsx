@@ -7,7 +7,7 @@ import { PRIMARY_BLUE, modalTypes } from '../../../constants';
 import styled from 'styled-components';
 import styles from './notification.styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Fab, Grid, IconButton, withStyles } from '@material-ui/core';
+import { Button, Fab, Grid, IconButton, Typography, withStyles } from '@material-ui/core';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import AlertDialogSlide from 'app/components/bc-dialog/bc-dialog';
 import { dismissNotificationAction } from 'actions/notifications/notifications.action';
@@ -116,10 +116,11 @@ function NotificationPage() {
               color={'secondary'}
               confirmMethod={() => dispatch(dismissNotificationAction.fetch({ 'id': row.original._id,
                 'isDismissed': true }))}
+              confirmText={'Dismiss'}
               size={'small'}>
-              <div>
+              <Typography variant={'h6'}>
                 {'Are you sure you want to dismiss this notification?'}
-              </div>
+              </Typography>
             </AlertDialogSlide>
           </div>
         );
@@ -133,15 +134,12 @@ function NotificationPage() {
 
 
   const { notifications, error, loading } = useSelector((state: any) => state.notifications);
-  if (loading) {
-    return <BCCircularLoader />;
-  }
-
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
 
   return (
     <NoticationPageContainer>
       <Grid
+        alignItems={'flex-start'}
         container
         justify={'center'}>
         <Grid
@@ -152,6 +150,7 @@ function NotificationPage() {
             columns={columns}
             hover
             initialMsg={'No notificatons'}
+            isLoading={loading}
             pageSize={activeNotifications.length}
             pagination
             search

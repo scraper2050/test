@@ -21,6 +21,11 @@ export const NotificationsReducer: Reducer<any> = (
         ...state,
         'loading': true
       };
+    case loadNotificationsActions.fetching.toString():
+      return {
+        ...state,
+        'loading': true
+      };
     case loadNotificationsActions.success.toString():
       return {
         ...state,

@@ -41,15 +41,15 @@ export function *handleNotificationMarkAsRead(action: {payload: string}) {
 }
 
 export function *handleNotificationDismiss(action: {payload: string}) {
-  yield put(markNotificationAsRead.fetching());
+  yield put(dismissNotificationAction.fetching());
   try {
     const result = yield call(updateNotification, action.payload);
-    yield put(markNotificationAsRead.success(result.notification));
+    yield put(dismissNotificationAction.success(result.notification));
   } catch (error) {
-    yield put(markNotificationAsRead.fault(error.toString()));
+    yield put(dismissNotificationAction.fault(error.toString()));
   } finally {
     if (yield cancelled()) {
-      yield put(markNotificationAsRead.cancelled());
+      yield put(dismissNotificationAction.cancelled());
     }
   }
 }

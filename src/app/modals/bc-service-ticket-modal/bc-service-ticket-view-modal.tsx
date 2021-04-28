@@ -113,7 +113,8 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
 
   useEffect(() => {
     if (!loadingObj) {
-      dispatch(markNotificationAsRead.fetch(notificationId));
+      dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
+        'isRead': true }));
     }
   }, [openTicketObj]);
 
