@@ -122,7 +122,8 @@ const initialJobReport: JobReportState = {
           'title': ''
         }
       }
-    }
+    },
+    'emailHistory': []
   },
   'email': {
     'error': '',
@@ -216,6 +217,37 @@ export const JobReportReducer: Reducer<any> = (
         'email': {
           ...state.email,
           'sending': true
+        }
+      };
+
+    case types.UPDATE_EMAIL_HISTORY:
+      return {
+        ...state,
+        'jobReports': state.jobReports.map((jobReport:any) => {
+          if (jobReport._id === action.payload.jobReportId) {
+            return {
+              ...jobReport,
+              'emailHistory': [
+                ...jobReport.emailHistory,
+                {
+                  'sentAt': Date.now()
+                }
+              ]
+            };
+          }
+          return jobReport;
+        }),
+        'jobReportObj': {
+          ...state.jobReportObj,
+          'emailHistory': action.payload.email
+            ? [
+              ...state.jobReportObj.emailHistory,
+              {
+                'sentAt': Date.now(),
+                'sentTo': action.payload.email
+              }
+            ]
+            : state.jobReportObj.emailHistory
         }
       };
 

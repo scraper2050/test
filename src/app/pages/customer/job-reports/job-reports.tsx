@@ -1,7 +1,6 @@
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
-import { JobReport } from '../../../../reducers/job-report.types';
 import SwipeableViews from 'react-swipeable-views';
 import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
@@ -16,8 +15,8 @@ import { MailOutlineOutlined } from '@material-ui/icons';
 
 function JobReportsPage({ classes }: any) {
   const dispatch = useDispatch();
-  const { loading, jobReports, error } = useSelector(({ JobReport }: any) =>
-    JobReport);
+  const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
+    jobReport);
 
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();

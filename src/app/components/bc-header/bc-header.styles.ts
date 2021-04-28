@@ -67,10 +67,14 @@ export default (theme: Theme): any => ({
   'headerTools': {
     'alignItems': 'center',
     'display': 'flex',
-    'flex': '0 0 120px',
+    'flex': '0 0 200px',
     'justifyContent': 'flex-end',
     'listStyle': 'none',
-    'marginLeft': 'auto'
+    'marginLeft': 'auto',
+    '& svg': {
+      'height': '1.1em',
+      'width': '1.1em'
+    }
   },
   'bell': {
     'alignItems': 'center',
@@ -86,19 +90,9 @@ export default (theme: Theme): any => ({
     }
   },
   'headerToolsButton': {
-    '&:first-child': {
-      'marginLeft': '0'
-    },
-    '&:last-child': {
-      'marginRight': '0'
-    },
-    'backgroundColor': CONSTANTS.PRIMARY_BLUE,
-    'borderRadius': '12px',
-    'height': '24px',
-    'margin': '0 12px',
-    'minWidth': '24px',
-    'padding': '0',
-    'width': '24px'
+    'borderRadius': '50%',
+    'margin': '0 4px',
+    'minWidth': 'unset'
   },
   'logoBrand': {
     'alignItems': 'center',
@@ -180,7 +174,7 @@ export default (theme: Theme): any => ({
   'profile': {
     'flex': '0 0 200px',
     'marginLeft': '6px',
-    'paddingLeft': '20px',
+    'paddingLeft': '10px',
     'paddingRight': '40px'
   },
   'profileAvatar': {

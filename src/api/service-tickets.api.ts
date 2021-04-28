@@ -1,5 +1,5 @@
 import request from '../utils/http.service';
-import { refreshServiceTickets, setServiceTicket, setServiceTicketLoading, setOpenServiceTicketLoading, setOpenServiceTicket } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoading, setServiceTicket, setServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 
 
 export const getAllServiceTicketAPI = () => {
@@ -8,7 +8,7 @@ export const getAllServiceTicketAPI = () => {
       dispatch(setServiceTicketLoading(true));
       request(`/getServiceTickets`, 'post', null)
         .then((res: any) => {
-          let tempJobs = res.data.serviceTickets?.filter((ticket: any) => ticket.status !== 1);
+          const tempJobs = res.data.serviceTickets?.filter((ticket: any) => ticket.status !== 1);
 
           dispatch(setServiceTicket(tempJobs.reverse()));
           dispatch(setServiceTicketLoading(false));
@@ -25,12 +25,11 @@ export const getAllServiceTicketAPI = () => {
 
 export const callCreateTicketAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-
-    let formData = new FormData();
+    const formData = new FormData();
 
     Object.keys(data).forEach(key => {
       formData.append(key, data[key]);
-    })
+    });
     request(`/createServiceTicket`, 'post', formData, false)
       .then((res: any) => {
         return resolve(res.data);
@@ -43,12 +42,11 @@ export const callCreateTicketAPI = (data: any) => {
 
 export const callEditTicketAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-
-    let formData = new FormData();
+    const formData = new FormData();
 
     Object.keys(data).forEach(key => {
       formData.append(key, data[key]);
-    })
+    });
 
 
     request(`/updateServiceTicket`, 'post', formData)
@@ -75,7 +73,7 @@ export const getOpenServiceTickets = (data: {
   const pagesize = data.pageSize;
   delete data.pageNo;
   delete data.pageSize;
-  const requestLink = `/getOpenServiceTickets?page=${page}&pagesize=${pagesize}`
+  const requestLink = `/getOpenServiceTickets?page=${page}&pagesize=${pagesize}`;
   return new Promise((resolve, reject) => {
     request(requestLink, 'post', data)
       .then((res: any) => {
@@ -93,8 +91,20 @@ export const callEditServiceTicket = (data: any) => {
       .then((res: any) => {
         return resolve(res.data);
       })
-      .catch((err) => {
+      .catch(err => {
         return reject(err);
       });
   });
-}
+};
+
+export const getServiceTicketDetail = (ticketId:string) => {
+  return new Promise((resolve, reject) => {
+    request(`/getServiceTicketDetail`, 'post', { ticketId }, false)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};

@@ -297,7 +297,9 @@ function BCTableContent({
               <TableRow
                 key={`table-row-${i}`}
                 {...row.getRowProps()}
-                className={'truncate'}
+                className={`truncate${row.original.readStatus?.isRead
+                  ? ''
+                  : ' unread'}`}
                 hover={!invoiceTable}
                 onClick={(ev: any) => onRowClick(ev, row)}>
                 {row.cells.map((cell: any, cindex: number) => {

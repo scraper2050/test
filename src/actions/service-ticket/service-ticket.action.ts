@@ -32,43 +32,44 @@ export const setOpenServiceTicketLoading = (isLoading: any) => {
   };
 };
 
-export const setOpenServiceTicketObject = (openTicket: any) => { 
+export const setOpenServiceTicketObject = (openTicket: any) => {
   return {
     'payload': openTicket,
     'type': types.SET_OPEN_SERVICE_TICKET_OBJECT
   };
 };
 
-export const setClearOpenServiceTicketObject = () => { 
+export const setClearOpenServiceTicketObject = () => {
   return {
     'type': types.SET_CLEAR_OPEN_SERVICE_TICKET_OBJECT
   };
 };
 
-export const setOpenTicketFilterState = (openTicketFilterObj: any) => { 
+export const setOpenTicketFilterState = (openTicketFilterObj: any) => {
   return {
-    'payload':openTicketFilterObj,
+    'payload': openTicketFilterObj,
     'type': types.SET_OPEN_TICKET_FILTER_STATE
   };
 };
 
-export const setClearOpenTicketFilterState = (openTicketFilterObj: any) => { 
+export const setClearOpenTicketFilterState = (openTicketFilterObj: any) => {
   return {
-    'payload':openTicketFilterObj,
+    'payload': openTicketFilterObj,
     'type': types.SET_OPEN_TICKET_FILTER_STATE
   };
 };
 
-export const setServiceTicketNotification = (serviceTicketObj: any) => {
-  return {
-    'payload': serviceTicketObj,
-    'type': types.SET_SERVICE_TICKET_NOTIFICATION
-  }
-}
-
-export const setSelectedCustomers = (customers: any[]) => { 
+export const setSelectedCustomers = (customers: any[]) => {
   return {
     'payload': customers,
     'type': types.SET_SELECTED_CUSTOMERS
   };
 };
+
+export const getServiceTicketDetailAction = (ticketId:string) => {
+  return {
+    'payload': ticketId,
+    'type': types.GET_SERVICE_TICKET_DETAIL
+  };
+};
+

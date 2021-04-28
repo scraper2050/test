@@ -1,100 +1,112 @@
 import BCBackButton from '../../../../components/bc-back-button/bc-back-button';
-import { Grid, Fab } from '@material-ui/core';
-import React from 'react';
+import { Fab, Grid } from '@material-ui/core';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles';
 import styles from './subscription.style';
-import { useDispatch, useSelector } from "react-redux";
-import BCTableContainer from "../../../../components/bc-table-container/bc-table-container";
+import { useDispatch, useSelector } from 'react-redux';
+import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
+import { loadSubscriptions } from 'actions/subscription/subscription.action';
+import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 
 interface Props {
   classes: any;
 }
 
-function BillingSubscriptionPage({classes}:Props) {
+function BillingSubscriptionPage({ classes }:Props) {
   const dispatch = useDispatch();
-  const subscriptionHistory = useSelector(
-    (state: any) => state.subscriptionHistory || {}
-  );
+  const { error, loading, subscriptions } = useSelector((state: any) => state.subscriptions);
+
+
+  useEffect(() => {
+    localStorage.setItem('nestedRouteKey', `subscription`);
+    dispatch(loadSubscriptions.fetch());
+  }, []);
 
   const columns: any = [
     {
-      Cell({ row }: any) {
-        return <div className={"flex items-center"}>{row.index + 1}</div>;
-      },
-      Header: "No#",
-      sortable: true,
-      width: 60,
+      'Header': 'Type',
+      'accessor': 'label',
+      'sortable': true,
+      'width': 60
     },
     {
-      Header: "Name",
-      accessor: "profile.displayName",
-      className: "font-bold",
-      sortable: true,
-    },
-    {
-      Header: "Phone",
-      accessor: "contact.phone",
-      className: "font-bold",
-      sortable: true,
-    },
-    {
-      Header: "Email",
-      accessor: "info.email",
-      className: "font-bold",
-      sortable: true,
+      'Header': 'Number of Subscriptions',
+      'accessor': 'value',
+      'className': 'font-bold',
+      'sortable': true
     },
     {
       Cell({ row }: any) {
         return (
-          <div className={"flex items-center"}>
+          <div className={'flex items-center'}>
             <Fab
-              aria-label={"delete"}
+              aria-label={'edit'}
               classes={{
-                root: classes.fabRoot,
+                'root': classes.fabRoot
               }}
-              color={"primary"}
-              // onClick={() => renderViewMore(row)}
-              variant={"extended"}
-            >
-              {"View More"}
+              color={'primary'}
+              style={{
+                'width': 110,
+                'marginRight': 10
+              }}
+              // OnClick={() => renderViewMore(row)}
+              variant={'extended'}>
+              {'Edit'}
+            </Fab>
+            <Fab
+              aria-label={'view more'}
+              classes={{
+                'root': classes.fabRoot
+              }}
+              color={'primary'}
+              // OnClick={() => renderViewMore(row)}
+              variant={'extended'}>
+              {'View More'}
             </Fab>
           </div>
         );
       },
-      id: "action",
-      sortable: false,
-      width: 60,
-    },
+      'id': 'action',
+      'sortable': false,
+      'width': 60
+    }
   ];
 
-  const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
+  if (error) {
+    return <h2>
+      {error}
+    </h2>;
   }
 
 
+  if (loading) {
+    return <BCCircularLoader heightValue={'200px'} />;
+  }
+
   return (
-    <>
-      <MainContainer>
-      <BCBackButton link={'/main/admin/billing'}/>
-        <PageContainer>
-          <PageContent>
+    <MainContainer>
+      <BCBackButton link={'/main/admin/billing'} />
+      <PageContainer>
+        <PageContent>
           <Grid container >
-            <BCTableContainer
-              columns={columns}
-              isLoading={subscriptionHistory.loading}
-              onRowClick={handleRowClick}
-              search
-              tableData={subscriptionHistory.data}
-              isPageSaveEnabled={true}
-              searchPlaceholder={'Search for subscriptions'}
-            />
-            
+            <Grid
+              item
+              xs={6}>
+              <BCTableContainer
+                columns={columns}
+                isLoading={subscriptions.loading}
+                isPageSaveEnabled
+                search
+                searchPlaceholder={'Search for subscriptions'}
+                tableData={subscriptions}
+              />
             </Grid>
-            </PageContent>
-        </PageContainer>
-      </MainContainer>
-    </>
+
+          </Grid>
+        </PageContent>
+      </PageContainer>
+    </MainContainer>
   );
 }
 
@@ -117,7 +129,14 @@ const PageContent = styled.div`
     padding-left: 60px
   };
   padding: 20px 30px;
+
+  td {
+    text-transform: capitalize;
+  }
+  button {
+    color: white;
+  }
 }`;
 
 
-export default withStyles(styles,{withTheme: true})(BillingSubscriptionPage);
+export default withStyles(styles, { 'withTheme': true })(BillingSubscriptionPage);

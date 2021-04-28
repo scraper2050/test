@@ -3,7 +3,8 @@ export const types = {
   'EMAIL_JOBREPORTS': 'emailJobReportActions',
   'LOAD_JOBREPORT': 'loadJobReportActions',
   'LOAD_JOBREPORTS': 'loadJobReportsActions',
-  'RESET_EMAIL_STATE': 'RESET_EMAIL_STATE'
+  'RESET_EMAIL_STATE': 'RESET_EMAIL_STATE',
+  'UPDATE_EMAIL_HISTORY': 'UPDATE_EMAIL_HISTORY'
 };
 
 export interface JobReport {
@@ -119,6 +120,7 @@ export interface JobReport {
       };
     };
   };
+  emailHistory: [];
 }
 
 export interface Email {
