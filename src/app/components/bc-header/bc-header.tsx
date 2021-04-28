@@ -60,7 +60,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
       });
-      socket.on(SocketMessage.CREATESERVICETICKET, data => {
+      socket.on(SocketMessage.CREATENOTIFICATION, data => {
         dispatch(pushNotification(data));
       });
     }
