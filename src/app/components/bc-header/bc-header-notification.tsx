@@ -19,7 +19,7 @@ interface HeaderNotification {
 
 function renderItem(item:NotificationItem, index:number) {
   const notificationTypes:any = {
-    'CreateServiceTicket': <ServiceTicketNotication
+    'ServiceTicketCreated': <ServiceTicketNotication
       {...item}
       key={index}
     />

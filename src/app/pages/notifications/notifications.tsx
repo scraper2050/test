@@ -34,7 +34,7 @@ const NoticationPageContainer = styled.div`
 
 
 const NotificationTypes:any = {
-  'CreateServiceTicket': 'Service Ticket'
+  'ServiceTicketCreated': 'Service Ticket'
 };
 
 
