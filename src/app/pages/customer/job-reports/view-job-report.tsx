@@ -10,8 +10,8 @@ function ViewJobReportsPage() {
   const dispatch = useDispatch();
   const { jobReportId } = useParams();
 
-  const { loading, jobReportObj, error } = useSelector(({ JobReport }: any) =>
-    JobReport);
+  const { loading, jobReportObj, error } = useSelector(({ jobReport }: any) =>
+    jobReport);
   useEffect(() => {
     dispatch(loadJobReportActions.fetch({ jobReportId }));
   }, []);
