@@ -1,3 +1,4 @@
 export enum SocketMessage {
-    CREATESERVICETICKET = 'createServiceTicketMsg',
+    CREATESERVICETICKET= 'createServiceTicketMsg',
+    CREATENOTIFICATION = 'createNotification',
 }

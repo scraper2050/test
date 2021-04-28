@@ -35,11 +35,12 @@ import {
 import { BrandsReducer as brands } from './brands.reducer';
 import { EquipmentTypeReducer as equipmentType } from './equipment-type.reducer';
 import { CompanyProfileReducer as profile } from './user.reducer';
-import { JobReportReducer as JobReport } from './job-report.reducer';
+import { JobReportReducer as jobReport } from './job-report.reducer';
 import { CompanyCardsReducer as companyCards } from './company-cards.reducer';
 import tableState from './tableState.reducer';
 import searchTerm from './searchText.reducer';
 import { SubscriptionReducer as subscriptions } from './subscription.reducer';
+import { NotificationsReducer as notifications } from './notifications.reducer';
 
 
 export interface ReducerParamsInterface {
@@ -50,42 +51,44 @@ export interface RootState {
   jobState: JobsSate;
   snackbarState?: SnackbarState;
   customersState: CustomersState;
+  serviceTicket: any
 }
 export default combineReducers({
   auth,
-  profile,
+  brands,
+  companyCards,
   companyEquipment,
-  customers,
   contacts,
   customerEquipments,
-  image,
+  customers,
   employees,
+  employeesForJob,
+  equipmentType,
+  estimates,
+  groups,
+  image,
+  inventory,
+  invoiceList,
+  invoiceTodos,
+  jobLocations,
+  jobReport,
+  jobSites,
   jobState,
   jobTypes,
+  managers,
   modal,
+  notifications,
+  officeAdmin,
+  profile,
+  purchaseOrder,
+  purchasedTags,
   'routeData': routeReducer,
+  searchTerm,
   serviceTicket,
   snackbar,
-  tax,
-  vendors,
-  groups,
-  technicians,
-  managers,
-  officeAdmin,
-  invoiceTodos,
-  invoiceList,
-  purchaseOrder,
-  estimates,
-  inventory,
-  purchasedTags,
-  brands,
-  equipmentType,
-  jobSites,
-  jobLocations,
-  employeesForJob,
-  tableState,
-  searchTerm,
   subscriptions,
-  JobReport,
-  companyCards
+  tableState,
+  tax,
+  technicians,
+  vendors
 });

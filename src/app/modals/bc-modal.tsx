@@ -28,6 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewJobReportsPage from '../../app/pages/customer/job-reports/view-job-report';
 import EmailJobReportModal from './bc-email-job-report-modal/bc-email-job-report-modal';
+import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-view-modal';
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -76,6 +77,18 @@ function BCModal() {
           detail={data.detail}
           onSubmit={data.onSubmit}
           ticket={data.ticketData}
+        />);
+        break;
+      case modalTypes.VIEW_SERVICE_TICKET_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCViewServiceTicketModal
+          notificationId={data.notificationId}
+          ticketId={data.ticketId}
         />);
         break;
       case modalTypes.CANCEL_SERVICE_TICKET_MODAL:
