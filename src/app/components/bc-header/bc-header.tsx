@@ -13,7 +13,7 @@ import {
   Toolbar
 } from '@material-ui/core';
 import Badge from '@material-ui/core/Badge';
-import { io } from 'socket.io-client';
+
 import AvatarImg from '../../../assets/img/user_avatar.png';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
@@ -56,14 +56,6 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
 
   useEffect(() => {
     dispatch(loadNotificationsActions.fetch());
-    if (token) {
-      const socket = io(`${Config.socketSever}`, {
-        'extraHeaders': { 'Authorization': token }
-      });
-      socket.on(SocketMessage.CREATENOTIFICATION, data => {
-        dispatch(pushNotification(data));
-      });
-    }
   }, []);
 
   const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
