@@ -2,19 +2,21 @@ import BCTableContainer from '../../../components/bc-table-container/bc-table-co
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
-import { formatDate } from 'helpers/format';
+import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import styles from '../customer.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import EmailReportButton from './email-job-report';
+import { MailOutlineOutlined } from '@material-ui/icons';
 
 
 function JobReportsPage({ classes }: any) {
   const dispatch = useDispatch();
-  const { loading, jobReports, error } = useSelector(({ JobReport }: any) =>
-    JobReport);
+  const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
+    jobReport);
 
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
@@ -55,7 +57,7 @@ function JobReportsPage({ classes }: any) {
     },
     {
       Cell({ row }: any) {
-        const Date = formatDate(row.original.scheduleDate);
+        const Date = formatDate(row.original.jobDate);
         return (
           <div className={'flex items-center'}>
             <p>
@@ -75,11 +77,40 @@ function JobReportsPage({ classes }: any) {
       'sortable': true
     },
     {
+      'Cell'({ row }: any) {
+        return `${row.original.emailHistory[0]?.sentAt
+          ? formatDatTimelll(row.original.emailHistory.reverse()[0]?.sentAt)
+          : 'N/A'}`;
+      },
+      'Header': 'Last Email Send Date',
+      'accessor': 'emailHistory.sentAt',
+      'className': 'font-bold'
+    },
+    {
       Cell({ row }: any) {
         return (
           <div className={'flex items-center'}>
+            <EmailReportButton
+              Component={<Fab
+                aria-label={'email'}
+                classes={{
+                  'root': classes.fabRoot
+                }}
+                color={'primary'}
+                style={{ 'marginRight': 20 }}
+                variant={'extended'}>
+                <MailOutlineOutlined
+                  fontSize={'default'}
+                  style={{ 'marginRight': 5 }}
+                />
+                {' '}
+                {'Email'}
+              </Fab>}
+              jobReport={row.original}
+            />
+
             <Fab
-              aria-label={'delete'}
+              aria-label={'view more'}
               classes={{
                 'root': classes.fabRoot
               }}
@@ -152,7 +183,7 @@ function JobReportsPage({ classes }: any) {
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}
-                tableData={jobReports}
+                tableData={jobReports.reverse()}
               />
             </div>
             <div

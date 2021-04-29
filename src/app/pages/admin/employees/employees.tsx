@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 import styles from './employees.style';
-import { Fab, withStyles } from "@material-ui/core";
+import { Fab, withStyles } from '@material-ui/core';
 import AdminAddNewEmployeePage from './add-new-employee';
-import { Roles as RoleEnums } from './add-new-employee'
+import { Roles as RoleEnums } from './add-new-employee';
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import EmployeeProfile from './employee-profile';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getEmployees, loadingEmployees, loadingSingleEmployee, getEmployeeDetailAction } from 'actions/employee/employee.action';
-import { UserProfile } from 'actions/employee/employee.types';
-import { useLocation, useHistory } from 'react-router-dom';
+import { getEmployeeDetailAction, getEmployees, loadingEmployees, loadingSingleEmployee } from 'actions/employee/employee.action';
+import { EmployeeRoles, UserProfile } from 'actions/employee/employee.types';
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface Props {
   classes: any;
@@ -29,9 +29,9 @@ function AdminEmployeesPage({ classes, children }: Props) {
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const [currentPage, setCurrentPage] = useState({
-    page: prevPage ? prevPage.page : 0,
-    pageSize: prevPage ? prevPage.pageSize : 10,
-    sortBy: prevPage ? prevPage.sortBy : [],
+    'page': prevPage ? prevPage.page : 0,
+    'pageSize': prevPage ? prevPage.pageSize : 10,
+    'sortBy': prevPage ? prevPage.sortBy : []
   });
 
   const columns: any = [
@@ -50,6 +50,15 @@ function AdminEmployeesPage({ classes, children }: Props) {
     {
       'Header': 'Email',
       'accessor': 'auth.email',
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
+      'Cell'({ row }: any) {
+        return `${EmployeeRoles[row.original?.permissions?.role] || ''}`;
+      },
+      'Header': 'Role',
+      'accessor': 'permissions.role',
       'className': 'font-bold',
       'sortable': true
     },
@@ -80,77 +89,74 @@ function AdminEmployeesPage({ classes, children }: Props) {
   }, []);
 
   const renderViewMore = (row: any) => {
-    let baseObj = row['original'];
+    const baseObj = row.original;
+
+    const employeeId = baseObj._id;
+    const displayName = baseObj.profile.displayName.split(' ').join('-');
+
+    const employeeObj = { employeeId,
+      displayName };
 
 
-    let employeeId = baseObj['_id'];
-    let displayName = baseObj['profile']['displayName'].split(' ').join('-');
-
-    let employeeObj = { employeeId, displayName };
-
-
-    localStorage.setItem("nestedRouteKey", `${displayName}`);
+    localStorage.setItem('nestedRouteKey', `${displayName}`);
 
     dispatch(loadingSingleEmployee);
     dispatch(getEmployeeDetailAction(employeeId));
 
 
     history.push({
-      pathname: `/main/admin/employees/${displayName}`,
-      state: {
+      'pathname': `/main/admin/employees/${displayName}`,
+      'state': {
         ...employeeObj,
         currentPage
       }
     });
-  }
+  };
 
   return (
-    <>
-      <MainContainer>
-        <PageContainer>
-          <div className={classes.addButtonArea}>
-            <Fab
-              aria-label={'new-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => {
+    <MainContainer>
+      <PageContainer>
+        <div className={classes.addButtonArea}>
+          <Fab
+            aria-label={'new-ticket'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            onClick={() => {
+              localStorage.setItem('nestedRouteKey', `add-new-employee`);
+              history.push({
+                'pathname': `/main/admin/employees/add-new-employee`,
+                'state': {
+                  currentPage
+                }
+              });
+            }}
+            style={{
+              'float': 'right'
+            }}
+            variant={'extended'}>
+            {'Add New'}
+          </Fab>
+        </div>
+        <BCTableContainer
+          columns={columns}
+          currentPage={currentPage}
+          isLoading={employees.loading}
+          search
+          setPage={setCurrentPage}
+          tableData={employees.data}
+        />
 
-                localStorage.setItem("nestedRouteKey", `add-new-employee`);
-                history.push({
-                  pathname: `/main/admin/employees/add-new-employee`,
-                  state: {
-                    currentPage
-                  }
-                });
-              }}
-              style={{
-                float: 'right'
-              }}
-              variant={'extended'}>
-              {'Add New'}
-            </Fab>
-          </div>
-          <BCTableContainer
-            currentPage={currentPage}
-            setPage={setCurrentPage}
-            columns={columns}
-            isLoading={employees.loading}
-            search
-            tableData={employees.data}
-          />
-
-          {/* {stage === 1 &&
+        {/* {stage === 1 &&
             <AdminAddNewEmployeePage submit={add} cancel={cancel} />
           }
 
           {stage === 2 &&
             <EmployeeProfile profile={profile} back={cancel} />
           } */}
-        </PageContainer>
-      </MainContainer>
-    </>
+      </PageContainer>
+    </MainContainer>
   );
 }
 

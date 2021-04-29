@@ -6,6 +6,8 @@ export const formatDate = (date: string): string | undefined => {
   }
 };
 
+export const fromNow = (date: Date) => moment(date).subtract('seconds', 60)
+  .fromNow();
 
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 

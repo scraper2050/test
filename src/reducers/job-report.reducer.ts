@@ -2,14 +2,15 @@ import { Reducer } from 'redux';
 import {
   JobReportState
 } from './job-report.types';
-import { loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
+import { emailJobReportActions, loadJobReportActions, loadJobReportsActions, resetEmailState } from 'actions/customer/job-report/job-report.action';
+import { types } from 'reducers/job-report.types';
 
 // I am to creat a job-report.reducer.ts in reducers/ folder for this:
 const initialJobReport: JobReportState = {
   'loading': false,
   'jobReports': [],
 
-  'JobReportObj': {
+  'jobReportObj': {
     '_id': '',
     'jobId': '',
     'status': 0,
@@ -121,7 +122,13 @@ const initialJobReport: JobReportState = {
           'title': ''
         }
       }
-    }
+    },
+    'emailHistory': []
+  },
+  'email': {
+    'error': '',
+    'sending': false,
+    'sent': false
   }
 };
 
@@ -177,6 +184,83 @@ export const JobReportReducer: Reducer<any> = (
         ...state,
         'loading': true
       };
+    case emailJobReportActions.cancelled.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'sending': false
+        }
+      };
+    case emailJobReportActions.success.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'sending': false,
+          'sent': true
+
+        }
+      };
+    case emailJobReportActions.fault.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'error': action.payload,
+          'sending': false
+        }
+      };
+    case emailJobReportActions.fetch.toString():
+      return {
+        ...state,
+        'email': {
+          ...state.email,
+          'sending': true
+        }
+      };
+
+    case types.UPDATE_EMAIL_HISTORY:
+      return {
+        ...state,
+        'jobReports': state.jobReports.map((jobReport:any) => {
+          if (jobReport._id === action.payload.jobReportId) {
+            return {
+              ...jobReport,
+              'emailHistory': [
+                ...jobReport.emailHistory,
+                {
+                  'sentAt': Date.now()
+                }
+              ]
+            };
+          }
+          return jobReport;
+        }),
+        'jobReportObj': {
+          ...state.jobReportObj,
+          'emailHistory': action.payload.email
+            ? [
+              ...state.jobReportObj.emailHistory,
+              {
+                'sentAt': Date.now(),
+                'sentTo': action.payload.email
+              }
+            ]
+            : state.jobReportObj.emailHistory
+        }
+      };
+
+    case types.RESET_EMAIL_STATE:
+      return {
+        ...state,
+        'email': {
+          'error': '',
+          'sending': false,
+          'sent': false
+        }
+      };
+
     default:
       return state;
   }

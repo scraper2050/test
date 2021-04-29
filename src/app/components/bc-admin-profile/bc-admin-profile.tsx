@@ -104,7 +104,7 @@ function BCAdminProfile(props: Props) {
                 return (
                   <Grid key={index} item xs={12}>
                     <Grid container>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} sm={6}>
                         <Grid container direction="column">
 
                           {
@@ -123,7 +123,7 @@ function BCAdminProfile(props: Props) {
                           }
                         </Grid>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item xs={6} sm={6}>
                         <Grid container direction="column">
                           {
                             element.right &&

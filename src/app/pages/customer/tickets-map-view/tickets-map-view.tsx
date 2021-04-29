@@ -23,7 +23,7 @@ display: flex;
 > div {
   position: relative;
   display: flex;
-  margin-right: 20px;
+  margin-right: 10px;
   font-size: 13px;
     text-transform: capitalize;
     align-items: center;
@@ -46,6 +46,15 @@ display: flex;
     &_3 {
       background-color: #c00707;
     }
+  }
+
+  @media(max-width: 1200px) {
+    position: relative;
+    top: 0;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    right: 0;
+    justify-content: flex-end;
   }
 `;
 

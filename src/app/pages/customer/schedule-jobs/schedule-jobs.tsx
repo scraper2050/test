@@ -130,20 +130,7 @@ function ScheduleJobsPage({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-            {/* {
-            curTab === 0
-              ? <Fab
-                aria-label={'new-job'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                onClick={() => openJobModal()}
-                variant={'extended'}>
-                {'Create Job'}
-              </Fab>
-              : null
-          } */}
+            
             <Fab
               aria-label={'new-ticket'}
               classes={{

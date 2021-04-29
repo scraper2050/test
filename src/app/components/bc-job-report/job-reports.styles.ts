@@ -84,6 +84,7 @@ export default (theme: Theme): any => ({
     'float': 'right',
     'display': 'flex',
     'justifyContent': 'flex-end',
+    'alignItems': 'center',
     'margin': '-50px 20px 30px 0px'
   },
   'cancelBtn': {
@@ -140,8 +141,28 @@ export const PageContainer = styled.div`
   background-color: ${CONSTANTS.PRIMARY_WHITE};
   margin: 20px;
   border-radius: 10px;
+  .no-image {
+    height: 100px;
+    width: calc(100% - 20px);
+    background: ${CONSTANTS.PRIMARY_GRAY};
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    color: ${CONSTANTS.PRIMARY_DARK_GREY}
+  }
+  img {
+    width: 100%;
+    padding-right: 15px;
+    box-sizing: border-box;
+  }
   p {
     word-break: break-word;
+  }
+  .lastEmail {
+    color:${CONSTANTS.PRIMARY_DARK_GREY};
   }
 `;
 

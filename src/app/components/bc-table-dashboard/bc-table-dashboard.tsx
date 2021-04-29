@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './bc-table-dashboard.style';
+import React from "react";
+import styles from "./bc-table-dashboard.style";
 import { Grid, withStyles } from "@material-ui/core";
 import BCTableContainer from "app/components/bc-table-container/bc-table-container";
 
@@ -22,7 +22,7 @@ function BCTableDashboard(props: Props) {
     columns,
     isLoading,
     tableData,
-    onRowClick
+    onRowClick,
   } = props;
 
   return (
@@ -33,22 +33,20 @@ function BCTableDashboard(props: Props) {
     >
       <Grid item className={classes.header} xs={12}>
         <Grid container>
-          <Grid item xs={9}>
+          <Grid item xs={8}>
             <Grid container className={classes.headerText} alignItems="center">
               {text}
             </Grid>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={4} md={3} lg={3} className={classes.buttonGrid}>
             <Grid
               container
               justify="center"
               alignItems="center"
               className={`${classes.buttonContainer}`}
-              onClick={click}>
-
-              <Grid item>
-                {textButton}
-              </Grid>
+              onClick={click}
+            >
+              <Grid item>{textButton}</Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -70,11 +68,7 @@ function BCTableDashboard(props: Props) {
         />
       </Grid>
     </Grid>
-  )
+  );
 }
 
-
-export default withStyles(
-  styles,
-  { 'withTheme': true }
-)(BCTableDashboard);
+export default withStyles(styles, { withTheme: true })(BCTableDashboard);

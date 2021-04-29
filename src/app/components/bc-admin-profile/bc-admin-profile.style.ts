@@ -11,8 +11,9 @@ export default (): any => ({
   'profilePane': {
     'borderRadius': '14px',
     'height': '100%',
+    'padding': '10px',
     'textAlign': 'center',
-    'width': '95%',
+    'width': '100%',
     'background': 'white',
     'position': 'relative',
   },
@@ -87,5 +88,5 @@ export default (): any => ({
     'position': 'absolute',
     'right': '1rem',
     'top': '1rem'
-  }
+  },
 });

@@ -67,7 +67,7 @@ function TodosListing({ classes }: any) {
         <BCCircularLoader heightValue={'200px'} />
       ) : (
           <BCTableContainer
-          cellSize={"medium"}
+            cellSize={"medium"}
             columns={columns}
             onRowClick={handleRowClick}
             search
@@ -83,6 +83,10 @@ const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 25px;
+  
+  @media (max-width: 768px) {
+    width: 85%;
+  }
 `;
 
 export default withStyles(styles, { withTheme: true })(TodosListing);

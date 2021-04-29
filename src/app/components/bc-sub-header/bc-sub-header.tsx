@@ -23,7 +23,7 @@ function BCSubHeader({ title, children }: BCSubHeaderProps): JSX.Element {
 const StyledToolbar = styled(Toolbar)`
   width: 100%;
   background: ${CONSTANTS.PRIMARY_BLUE};
-  padding: 20px 65px 20px 39px;
+  padding: 20px 40px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -35,6 +35,13 @@ const StyledToolbar = styled(Toolbar)`
     color: ${CONSTANTS.PRIMARY_WHITE};
     margin: 0;
     font-weight: normal;
+  }
+
+  @media (max-width: 600px) {
+    .title {
+      font-size: 24px;
+      margin-right: 20px
+    }
   }
 `;
 

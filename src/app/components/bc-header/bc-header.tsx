@@ -12,12 +12,11 @@ import {
   SwipeableDrawer,
   Toolbar
 } from '@material-ui/core';
-import Badge from "@material-ui/core/Badge";
-import { io } from 'socket.io-client';
-// eslint-disable-next-line sort-imports
+import Badge from '@material-ui/core/Badge';
+
 import AvatarImg from '../../../assets/img/user_avatar.png';
-import HelpIconSvg from '../../../assets/img/Help-Icon.svg';
-import BellIconSvg from '../../../assets/img/Bell-Icon.svg';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
@@ -29,13 +28,11 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { SocketMessage } from 'helpers/contants';
-import { setServiceTicketNotification } from 'actions/service-ticket/service-ticket.action';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
-import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
-import { getAllJobTypesAPI } from 'api/job.api';
-import { modalTypes } from '../../../constants';
+
 import Config from '../../../config';
+import { loadNotificationsActions, pushNotification } from 'actions/notifications/notifications.action';
+import HeaderNotifications, { NotificationItem } from './bc-header-notification';
+import { computeUnreadNotifications } from './util';
 
 interface Props {
   token: string;
@@ -43,9 +40,10 @@ interface Props {
   classes: any;
 }
 
-function BCHeader({ token, user, classes }: Props): JSX.Element {
-  const serviceTickets = useSelector((state: any)=>state.serviceTicket.notifications);
 
+function BCHeader({ token, user, classes }: Props): JSX.Element {
+  const { notifications, error, loading } = useSelector((state: any) => state.notifications);
+  const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -56,18 +54,9 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const [profileOpen, setProfileOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
-
   useEffect(() => {
-    const socket = io(`${Config.socketSever}`);
-    socket.on(SocketMessage.CREATESERVICETICKET, (data) => {
-      
-      const oldNotification = serviceTickets.filter((item: any) => item._id === data._id );
-      if(user?.company && user?.company === data.company && oldNotification.length == 0) {
-        serviceTickets.push(data);
-        dispatch(setServiceTicketNotification(serviceTickets));
-      }
-    })
-  }, [])
+    dispatch(loadNotificationsActions.fetch());
+  }, []);
 
   const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
     ? AvatarImg
@@ -105,14 +94,16 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
       'label': 'Tags',
       'link': '/main/tags/purchasedtag'
     },
-    // {
-    //   'label': 'Inventory',
-    //   'link': '/main/inventory'
-    // },
-    // {
-    //   'label': 'Employees',
-    //   'link': '/main/employees/group'
-    // },
+    /*
+     * {
+     *   'label': 'Inventory',
+     *   'link': '/main/inventory'
+     * },
+     * {
+     *   'label': 'Employees',
+     *   'link': '/main/employees/group'
+     * },
+     */
     {
       'label': 'Admin',
       'link': '/main/admin'
@@ -135,48 +126,8 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const handleViewProfile = (): void => {
     handleClose();
     history.push('/main/user/view-profile');
-  }
-
-  const viewNotificationInfo = (ticket:any): void => {
-    handleClose();
-    const filterNotication = serviceTickets.filter((item:any) => item._id !== ticket._id);
-    dispatch(setServiceTicketNotification(filterNotication));
-    openDetailTicketModal(ticket);
-  }
-
-  const openDetailTicketModal = (ticket: any) => {
-
-    const reqObj = {
-      customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation
-    }
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'detail': true,
-
-      },
-      'type': modalTypes.EDIT_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
   };
+
 
   const handleClickLogout = (): void => {
     handleClose();
@@ -263,64 +214,34 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                 );
               })}
             </ul>
-
-            <div className={classes.headerTools}>
+            <div className={classes.headerTools} >
               <Button
                 className={classes.headerToolsButton}
-                color={'primary'}
                 href={'http://blueclerk.com/support/'}
-                target={'_blank'}
-                variant={'contained'}>
-                <img
-                  alt={'Help'}
-                  src={HelpIconSvg}
-                />
+                target={'_blank'}>
+                <ContactSupportIcon color={'primary'} />
               </Button>
-            </div>
-            <div className={[classes.headerTools,classes.bell].join(' ')}>
-                {serviceTickets.length > 0 && (
-                  <Badge
-                  className={[classes.margin, classes.notificationCnt].join(' ')}
-                  badgeContent={serviceTickets.length}
-                  color="secondary"
-                >
-                  <Button
-                    aria-describedby={notificationPopover}
-                    buttonRef={(node: any) => {
-                      setNotificationEl(node);
-                    }}
-                    onClick={showNotificationDetails}
-                    className={classes.headerToolsButton}
+              <Button
+                aria-describedby={notificationPopover}
+                buttonRef={(node: any) => {
+                  setNotificationEl(node);
+                }}
+                className={classes.headerToolsButton}
+                color={'default'}
+                href={''}
+                onClick={showNotificationDetails}
+                target={'_blank'}>
+                <Badge
+                  badgeContent={computeUnreadNotifications(notifications)}
+                  color={'secondary'}
+                  invisible={computeUnreadNotifications(notifications) === 0}>
+                  <NotificationsIcon
                     color={'primary'}
-                    href={''}
-                    target={'_blank'}
-                    variant={'contained'}>
-                    <img
-                      alt={'Bell'}
-                      src={BellIconSvg}
-                    />
-                  </Button>
+                  />
                 </Badge>
-                )}
-                {serviceTickets.length === 0 && (
-                  <Button
-                    aria-describedby={notificationPopover}
-                    buttonRef={(node: any) => {
-                      setNotificationEl(node);
-                    }}
-                    onClick={showNotificationDetails}
-                    className={classes.headerToolsButton}
-                    color={'primary'}
-                    href={''}
-                    target={'_blank'}
-                    variant={'contained'}>
-                    <img
-                      alt={'Bell'}
-                      src={BellIconSvg}
-                    />
-                  </Button>
-                )}
-              {serviceTickets.length > 0 && <Popper
+              </Button>
+
+              <Popper
                 anchorEl={notificationEl}
                 className={classNames({
                   [classes.popperClose]: !showNotification,
@@ -336,25 +257,18 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                   <Grow
                     {...TransitionProps}
                     style={{ 'transformOrigin': '0 0 0' }}>
-                    <Paper className={classes.dropdown}>
-                      <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList role={'menu'}>
-                          {serviceTickets && serviceTickets.map((item:any, index:number) => {
-                            return(
-                              <MenuItem
-                                key={index}
-                                className={dropdownItem}
-                                onClick={() => viewNotificationInfo(item)}>
-                                {`${item.ticketId} created via web at ${new Date().toLocaleString()}`}
-                              </MenuItem>
-                            )
-                          })}
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
+                    <ClickAwayListener onClickAway={handleClose}>
+                      <Paper className={classes.dropdown}>
+                        <HeaderNotifications
+                          close={handleClose}
+                          items={activeNotifications}
+                          loading={loading}
+                        />
+                      </Paper>
+                    </ClickAwayListener>
                   </Grow>
                 }
-              </Popper>}
+              </Popper>
             </div>
             <div className={classes.profile}>
               <Button

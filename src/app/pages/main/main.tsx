@@ -5,10 +5,10 @@ import BCModal from '../../modals/bc-modal';
 import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
 import BCToolBar from '../../components/bc-toolbar-btn/bc-tool-bar';
 import BCSnackbar from '../../components/bc-snackbar/bc-snackbar';
-import { Grid } from '@material-ui/core';
+import {Grid, useMediaQuery, useTheme } from '@material-ui/core';
 import 'scss/elevation.scss';
 import React, { Suspense, useState } from 'react';
-import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
@@ -63,6 +63,7 @@ const CreateEstimatePage = React.lazy(() => import('../invoicing/estimates/creat
 const ViewProfilePage = React.lazy(() => import('../profile/view-profile/view-profile'));
 const EmailPreferencePage = React.lazy(() => import('../profile/email-preference/email-preference'));
 const AdminAddNewEmployeePage = React.lazy(() => import('../admin/employees/add-new-employee'));
+const NotificationPage = React.lazy(() => import('../notifications/notifications'));
 
 const EmployeeProfilePage = React.lazy(() => import('../admin/employees/view-more/view-more'));
 
@@ -72,6 +73,10 @@ function Main(): any {
     'md': 12,
     'sm': 12
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   return (
     <Router>
       <Switch>
@@ -91,7 +96,10 @@ function Main(): any {
               className={'main-container'}
               container
               spacing={0}>
-              <BCSidebar setContentGrid={setContentGrid} />
+              <BCSidebar
+                setContentGrid={setContentGrid}
+                isMobile={isMobile} />
+              
               <Grid
                 id={'content-container'}
                 item
@@ -271,7 +279,8 @@ function Main(): any {
                   <Redirect
                     exact
                     from={`/main/invoicing`}
-                    to={`/main/invoicing/todos`} />
+                    to={`/main/invoicing/todos`}
+                  />
 
                   <AuthRoute
                     Component={InvoicingTodosPage}
@@ -469,7 +478,14 @@ function Main(): any {
                     path={'/main/user/email-preference'}
                     title={'User'}
                   />
+                  <AuthRoute
+                    Component={NotificationPage}
+                    exact
+                    path={'/main/notifications'}
+                    title={'Notifications'}
+                  />
                 </Switch>
+                {/* <BCSidebar.Menu isOpened={ isOpened } setOpened={setOpened} /> */}
               </Grid>
             </Grid>
             <BCModal />
