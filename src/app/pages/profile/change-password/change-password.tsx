@@ -39,6 +39,7 @@ function ChangePasswordPage() {
     'onSubmit': values => {
       dispatch(changePasswordAction.fetch(values));
     },
+    'validateOnBlur': false,
     'validateOnChange': true,
     'validationSchema': ChangePasswordValidation
   });
@@ -68,6 +69,7 @@ function ChangePasswordPage() {
               <p className={'subtitle'}>
                 {'New password must be more than 8 characters, contain at least one upper case letter, one number, and one special character'}
               </p>
+
               <div className={'form-container'}>
                 <form onSubmit={formik.handleSubmit} >
                   <BCUncontrolledPasswordInput
@@ -82,7 +84,7 @@ function ChangePasswordPage() {
                     value={formik.values.currentPassword}
                   />
                   <BCUncontrolledPasswordInput
-                    error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
+                    error={Boolean(formik.values.newPassword) && Boolean(formik.errors.newPassword)}
                     helperText={formik.touched.newPassword && formik.errors.newPassword}
                     id={'newPassword'}
                     label={'New Password'}
@@ -93,7 +95,7 @@ function ChangePasswordPage() {
                     value={formik.values.newPassword}
                   />
                   <BCUncontrolledPasswordInput
-                    error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                    error={Boolean(formik.values.confirmPassword) && Boolean(formik.errors.confirmPassword)}
                     helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                     id={'confirmPassword'}
                     label={'Confirm Password'}
