@@ -45,3 +45,8 @@ export interface Info {
   logoUrl: string;
   industry: string;
 }
+
+export interface ChangePassword {
+  currentPassword: string;
+  newPassword: string;
+}

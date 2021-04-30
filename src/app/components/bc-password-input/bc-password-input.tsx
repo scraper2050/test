@@ -21,8 +21,8 @@ const useStyles = makeStyles((theme: Theme) =>
 interface BCPasswordInputProps {
   id?: string;
   label?: string;
-  size: "small" | "medium";
-  variant?: "outlined" | "filled";
+  size: 'small' | 'medium';
+  variant?: 'outlined' | 'filled';
   inputData: FormDataModel;
   onChange: Function;
 }

@@ -132,6 +132,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       'link': '/main/user/view-profile'
     },
     {
+      'label': 'Change Password',
+      'link': '/main/user/change-password'
+    },
+    {
       'label': 'Email Preferences',
       'link': '/main/user/email-preference'
     }
