@@ -6,6 +6,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -43,7 +44,7 @@ function BCUncontrolledPasswordInput({
   const [showPassword, setShowPassword] = useState(false);
 
 
-  return <div style={{ 'position': 'relative' }}>
+  return <InputContainer>
     <InputLabel>
       {label}
     </InputLabel>
@@ -70,7 +71,14 @@ function BCUncontrolledPasswordInput({
         ? <Visibility />
         : <VisibilityOff />}
     </IconButton>
-  </div>;
+  </InputContainer>;
 }
+
+
+const InputContainer = styled.div`
+position: relative;
+button {
+  top: 37px
+}`;
 
 export default BCUncontrolledPasswordInput;

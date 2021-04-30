@@ -65,6 +65,9 @@ function ChangePasswordPage() {
                   {'Change Password'}
                 </strong>
               </Typography>
+              <p className={'subtitle'}>
+                {'New password must be more than 8 characters, contain at least one upper case letter, one number, and one special character'}
+              </p>
               <div className={'form-container'}>
                 <form onSubmit={formik.handleSubmit} >
                   <BCUncontrolledPasswordInput
@@ -154,16 +157,15 @@ border-radius: 4px;
   color: ${PRIMARY_RED}
 }
 h4 {
+  margin-bottom: 0;
+}
+p.subtitle {
   margin-bottom: 30px;
 }
 label {
   margin-bottom: 8px;
 }
-form > div {
-  button {
-    top: 37px
-  }
-}
+
 .actions-container {
   display: flex;
   justify-content: flex-end;
