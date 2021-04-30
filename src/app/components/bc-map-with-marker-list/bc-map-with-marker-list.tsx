@@ -309,8 +309,6 @@ function MakerPin({ ...props }) {
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false, showPins = false }: BCMapWithMarkerListProps) {
   const [tickets, setTickets] = useState<any>(list);
 
-  console.log(selected);
-
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
 
