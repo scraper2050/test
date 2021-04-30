@@ -325,18 +325,16 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
     centerLng += hasPhoto ? 0.006 : 0.002;
   } else if (selected.customer) {
     centerLat = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
+    centerLng = selected.customer.location?.coordinates?.length > 1 && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
     centerLat -= 0.004;
     centerLng += hasPhoto ? 0.006 : 0.002;
   }
-
 
   useEffect(() => {
     if (tickets.length === 0) {
       setTickets(list);
     }
   }, [list]);
-
 
   return (
     <GoogleMapReact
@@ -367,6 +365,11 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
           } else if (ticket.customer) {
             lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : DEFAULT_LAT;
             lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : DEFAULT_LNG;
+          }
+
+          if (selected) {
+            lat = centerLat;
+            lng = centerLng;
           }
 
           return <MakerPin
