@@ -31,10 +31,11 @@ export function *handleChangePassword(action: {payload: ChangePassword}) {
       changePassword,
       action.payload
     );
-    if (result.message) {
+
+    if (result.status === 0) {
       yield put(changePasswordAction.fault(result.message));
     } else {
-      yield put(changePasswordAction.success(result));
+      yield put(changePasswordAction.success(result.message));
     }
   } catch (error) {
     yield put(changePasswordAction.fault(error.toString()));
