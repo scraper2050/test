@@ -354,24 +354,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         sm={12}>
                         <FormGroup>
                           <InputLabel className={classes.label}>
-                            {'Unit # / Bldg Name / House #'}
-                          </InputLabel>
-                          <BCTextField
-                            name={'unit'}
-                            onChange={(e: any) => {
-                              setFieldValue('unit', e.target.value);
-                              updateMap(values, e.target.value);
-                            }}
-                            placeholder={'Unit #'}
-                          />
-                        </FormGroup>
-                      </Grid>
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={6}>
-                        <FormGroup>
-                          <InputLabel className={classes.label}>
                             {'Street'}
                           </InputLabel>
                           <BCTextField
@@ -381,6 +363,25 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               updateMap(values, e.target.value);
                             }}
                             placeholder={'Street'}
+                          />
+                        </FormGroup>
+
+                      </Grid>
+                      <Grid
+                        className={classes.paper}
+                        item
+                        sm={6}>
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Unit # / House #'}
+                          </InputLabel>
+                          <BCTextField
+                            name={'unit'}
+                            onChange={(e: any) => {
+                              setFieldValue('unit', e.target.value);
+                              updateMap(values, e.target.value);
+                            }}
+                            placeholder={'Unit #'}
                           />
                         </FormGroup>
                       </Grid>
