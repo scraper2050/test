@@ -22,7 +22,7 @@ const ChangePasswordValidation = yup.object().shape({
   'newPassword': yup
     .string()
     .min(8, 'Password must be more than 8 characters')
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/gu, 'Password must contain Symbol(!@#$%), Capital letter and a Number')
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/gu, 'New password must contain at least one upper case letter, one number, and one special character')
     .required('New Password is required')
 });
 
@@ -39,7 +39,7 @@ function ChangePasswordPage() {
     'onSubmit': values => {
       dispatch(changePasswordAction.fetch(values));
     },
-    'validateOnBlur': true,
+    'validateOnChange': true,
     'validationSchema': ChangePasswordValidation
   });
 
@@ -73,6 +73,7 @@ function ChangePasswordPage() {
                     id={'currentPassword'}
                     label={'Current Password'}
                     name={'currentPassword'}
+                    onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     placeholder={'Current Password'}
                     value={formik.values.currentPassword}
@@ -83,6 +84,7 @@ function ChangePasswordPage() {
                     id={'newPassword'}
                     label={'New Password'}
                     name={'newPassword'}
+                    onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     placeholder={'Current Password'}
                     value={formik.values.newPassword}
@@ -93,6 +95,7 @@ function ChangePasswordPage() {
                     id={'confirmPassword'}
                     label={'Confirm Password'}
                     name={'confirmPassword'}
+                    onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     placeholder={'Current Password'}
                     value={formik.values.confirmPassword}
@@ -158,8 +161,7 @@ label {
 }
 form > div {
   button {
-    top: 50%;
-    transform: translateY(-50%)
+    top: 37px
   }
 }
 .actions-container {
