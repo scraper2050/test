@@ -257,8 +257,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
    *   return <BCCircularLoader heightValue={'200px'} />
    * }
    */
-
-  const todaysJobs = allJobs?.filter((item: any) => moment(item?.scheduleDate).utc()
+  const todaysJobs = allJobs?.filter((item: any) => moment(item?.scheduleDate)
     .isSame(Date(), 'day'));
   const totalTodaysJobs = todaysJobs.length;
 
