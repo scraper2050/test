@@ -104,6 +104,9 @@ export default (theme: Theme): any => ({
     'justifyContent': 'center',
     'overflow': 'hidden',
     'width': `${CONSTANTS.SIDEBAR_WIDTH}px`,
+    [theme.breakpoints.down('md')]: {
+      flex: "0 0 150px",
+    },
     [theme.breakpoints.down('sm')]: {
       flex: "0 0 140px",
     },
@@ -189,10 +192,13 @@ export default (theme: Theme): any => ({
     'marginLeft': '6px',
     'paddingLeft': '10px',
     'paddingRight': '40px',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       flex: '0 0 auto',
+      paddingRight: '15px'
+    },
+    [theme.breakpoints.down('sm')]: {
       paddingRight: '10px'
-    }
+    },
   },
   'profileAvatar': {
     'alignItems': 'center',

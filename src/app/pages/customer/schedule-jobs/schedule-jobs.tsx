@@ -145,6 +145,7 @@ function ScheduleJobsPage({ classes }: any) {
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={curTab}
+            disabled
           >
             <div className={classes.dataContainer} id={"0"}>
               <JobPage hidden={curTab !== 0} />
