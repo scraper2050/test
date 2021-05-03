@@ -21,46 +21,36 @@ function App() {
   const AuthenticationCheck =
     isAuthenticated
       ? <Switch>
-        <Suspense fallback={<BCCircularLoader />}>
-          <Route
-            component={MainPage}
-            path={'/main'}
-          />
-          <Route
-            exact
-            path={'/'}
-            render={() => {
-              return (
-                <Redirect to={'/main/dashboard'} />
-              );
-            }}
-          />
-        </Suspense>
+        <Route
+          component={MainPage}
+          path={'/main'}
+        />
+        <Route
+          exact
+          path={'/'}
+          render={() => {
+            return (
+              <Redirect to={'/main/dashboard'} />
+            );
+          }}
+        />
       </Switch>
 
       : <Switch>
-        <Suspense fallback={<BCCircularLoader />}>
-          <Route
-            component={LoginPage}
-            exact
-            path={'/'}
-          />
-          <Route
-            component={SignUpPage}
-            path={'/signup'}
-          />
-          <Route
-            component={RecoverPage}
-            path={'/recover'}
-          />
-          <Route
-            render={() => {
-              return (
-                <Redirect to={'/'} />
-              );
-            }}
-          />
-        </Suspense>
+        <Route
+          component={LoginPage}
+          exact
+          path={'/'}
+        />
+        <Route
+          component={SignUpPage}
+          path={'/signup'}
+        />
+        <Route
+          component={RecoverPage}
+          path={'/recover'}
+        />
+        <Route render={() => <Redirect to={'/'} />} />
       </Switch>;
 
   useEffect(() => {
@@ -95,11 +85,13 @@ function App() {
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Router>
         <div className={'App'}>
-          {
-            isLoading
-              ? <BCCircularLoader />
-              : AuthenticationCheck
-          }
+          <Suspense fallback={<BCCircularLoader />}>
+            {
+              isLoading
+                ? <BCCircularLoader />
+                : AuthenticationCheck
+            }
+          </Suspense>
         </div>
       </Router>
     </MuiPickersUtilsProvider>
