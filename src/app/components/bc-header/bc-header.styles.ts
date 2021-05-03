@@ -74,6 +74,9 @@ export default (theme: Theme): any => ({
     '& svg': {
       'height': '1.1em',
       'width': '1.1em'
+    },
+    [theme.breakpoints.down('xs')]: {
+      flex: '0 0 100px'
     }
   },
   'bell': {
@@ -100,7 +103,20 @@ export default (theme: Theme): any => ({
     'flex': `0 0 ${CONSTANTS.SIDEBAR_WIDTH}px`,
     'justifyContent': 'center',
     'overflow': 'hidden',
-    'width': `${CONSTANTS.SIDEBAR_WIDTH}px`
+    'width': `${CONSTANTS.SIDEBAR_WIDTH}px`,
+    [theme.breakpoints.down('md')]: {
+      flex: "0 0 150px",
+    },
+    [theme.breakpoints.down('sm')]: {
+      flex: "0 0 140px",
+    },
+    [theme.breakpoints.down('xs')]: {
+      flex: "0 0 100px",
+      '& > img': {
+        width: '100%',
+        height: 'auto'
+      }
+    },
   },
   'menuList': {
     'padding': '0'
@@ -175,7 +191,14 @@ export default (theme: Theme): any => ({
     'flex': '0 0 200px',
     'marginLeft': '6px',
     'paddingLeft': '10px',
-    'paddingRight': '40px'
+    'paddingRight': '40px',
+    [theme.breakpoints.down('md')]: {
+      flex: '0 0 auto',
+      paddingRight: '15px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      paddingRight: '10px'
+    },
   },
   'profileAvatar': {
     'alignItems': 'center',

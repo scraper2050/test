@@ -36,7 +36,8 @@ function BillingPage() {
         <PageContainer>
           <Grid
             container
-            spacing={4}>
+            spacing={4}
+          >
             <Grid
               item>
               <BCAdminCard
@@ -83,7 +84,7 @@ const PageContainer = styled.div`
   flex-direction: column;
   flex: 1 1 100%;
   padding: 30px;
-  width: 100%;
+  width: 80%;
   padding-left: 65px;
   padding-right: 65px;
   margin: 0 auto;

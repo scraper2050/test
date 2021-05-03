@@ -1,40 +1,39 @@
-import * as CONSTANTS from '../../../constants';
-import BCSubHeader from './../bc-sub-header/bc-sub-header';
-import BCToolBarSearchInput from './../bc-toolbar-search-input/bc-toolbar-search-input';
-import { Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import React from 'react';
-import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import * as CONSTANTS from "../../../constants";
+import BCSubHeader from "./../bc-sub-header/bc-sub-header";
+import BCToolBarSearchInput from "./../bc-toolbar-search-input/bc-toolbar-search-input";
+import { Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import React from "react";
+import styled from "styled-components";
+import { useSelector } from "react-redux";
+
 interface RootState {
   routeData: {
-    title: string,
+    title: string;
     actionData: {
-      link: string,
-      title: string
-    }
-  }
+      link: string;
+      title: string;
+    };
+  };
 }
 export default function BCToolBar() {
   const title = useSelector(({ routeData }: RootState) => routeData.title);
-  const actionData = useSelector(({ routeData }: RootState) => routeData.actionData);
+  const actionData = useSelector(
+    ({ routeData }: RootState) => routeData.actionData
+  );
   return (
     <BCSubHeader title={title}>
-      <BCToolBarSearchInput style={{
-        'marginLeft': 'auto',
-        'width': '321px'
-      }}
+      <BCToolBarSearchInput
+        style={{
+          marginLeft: "auto",
+          width: "250px",
+        }}
       />
-      {
-        actionData && actionData.link
-          ? <SubToolBarButton variant={'contained'}>
-            <Link to={actionData.link}>
-              {actionData.title}
-            </Link>
-          </SubToolBarButton>
-          : null
-      }
-
+      {actionData && actionData.link ? (
+        <SubToolBarButton variant={"contained"}>
+          <Link to={actionData.link}>{actionData.title}</Link>
+        </SubToolBarButton>
+      ) : null}
     </BCSubHeader>
   );
 }

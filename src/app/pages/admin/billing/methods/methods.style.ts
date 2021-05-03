@@ -9,7 +9,7 @@ export default (theme: Theme): any => ({
   'addButtonArea': {
     'display': 'flex',
     'justifyContent': 'flex-end',
-    'padding': '12px 30px 5px 0',
+    'padding': '20px 30px 5px 0',
     'position': 'absolute',
     'right': '0',
     'zIndex': '1000'

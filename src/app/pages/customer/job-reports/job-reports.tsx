@@ -170,7 +170,7 @@ function JobReportsPage({ classes }: any) {
                */
             ]}
           />
-          <SwipeableViews index={curTab}>
+          <SwipeableViews index={curTab} disabled>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 0}

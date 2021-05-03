@@ -113,7 +113,8 @@ function BCAdminProfile(props: Props) {
                     <Grid container>
                       <Grid
                         item
-                        xs={6}>
+                        xs={6}
+                        sm={6}>
                         <Grid
                           container
                           direction={'column'}>
@@ -136,7 +137,8 @@ function BCAdminProfile(props: Props) {
                       </Grid>
                       <Grid
                         item
-                        xs={6}>
+                        xs={6}
+                        sm={6}>
                         <Grid
                           container
                           direction={'column'}>

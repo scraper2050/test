@@ -235,17 +235,14 @@ function BCTableContent({
   const useStyles = makeStyles({
     'cellMd': {
       'padding': '13px 24px 13px 16px;'
+    },
+    'table': {
+      'width': '95%',
+      'overflow':'hidden',
     }
-    /*
-     * MediumXs: {
-     *   "& .MuiTableCell-sizeSmall": {
-     *     padding: "13px 24px 13px 16px;"
-     *   }
-     * },
-     */
   });
 
-
+  
   const tableClass = useStyles();
 
   // Render the UI for your table

@@ -6,7 +6,7 @@ export default (): any => ({
     height: '88px',
     borderRadius: '10px',
     background: '#BCE8FF',
-    padding: '1.5rem',
+    padding: '1rem',
     cursor: 'pointer',
     fontFamily: 'Roboto',
     fontSize: '20px',
@@ -21,10 +21,10 @@ export default (): any => ({
     width: '48px !important',
     height: '48px !important',
     background: '#00AAFF',
-    borderRadius: '50%',
+    borderRadius: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: '1rem'
-  }
+    marginRight: '1rem',
+  },
 });

@@ -5,7 +5,7 @@ import BCModal from '../../modals/bc-modal';
 import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
 import BCToolBar from '../../components/bc-toolbar-btn/bc-tool-bar';
 import BCSnackbar from '../../components/bc-snackbar/bc-snackbar';
-import { Grid } from '@material-ui/core';
+import {Grid, useMediaQuery, useTheme } from '@material-ui/core';
 import 'scss/elevation.scss';
 import React, { Suspense, useState } from 'react';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
@@ -74,6 +74,10 @@ function Main(): any {
     'md': 12,
     'sm': 12
   });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   return (
     <Router>
       <Switch>
@@ -93,7 +97,10 @@ function Main(): any {
               className={'main-container'}
               container
               spacing={0}>
-              <BCSidebar setContentGrid={setContentGrid} />
+              <BCSidebar
+                setContentGrid={setContentGrid}
+                isMobile={isMobile} />
+              
               <Grid
                 id={'content-container'}
                 item
@@ -485,6 +492,7 @@ function Main(): any {
                     title={'Notifications'}
                   />
                 </Switch>
+                {/* <BCSidebar.Menu isOpened={ isOpened } setOpened={setOpened} /> */}
               </Grid>
             </Grid>
             <BCModal />

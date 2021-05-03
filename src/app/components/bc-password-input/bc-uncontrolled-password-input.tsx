@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
       'position': 'absolute',
       'right': '25px',
       'top': '17px',
-      'zIndex': 999
+      'zIndex': 1
     }
   }));
 

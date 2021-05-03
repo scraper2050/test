@@ -30,7 +30,7 @@ const NoticationPageContainer = styled.div`
           font-weight: 800;
         }
     }
-    `;
+`;
 
 
 const NotificationTypes:any = {
@@ -147,7 +147,11 @@ function NotificationPage() {
         justify={'center'}>
         <Grid
           item
-          xs={8}>
+          lg={8}
+          sm={12}
+          md={12}
+          xs={12}
+        >
           <BCTableContainer
             cellSize
             columns={columns}
