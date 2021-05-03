@@ -1,12 +1,12 @@
+import Alert from '@material-ui/lab/Alert';
 import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
+import BCModal from '../../modals/bc-modal';
 import BCPhoneNumberInputut from '../../components/bc-phone-number-input/bc-phone-number-input';
 import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
 import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert';
 import Config from '../../../config';
 import FormControl from '@material-ui/core/FormControl';
 import { FormDataModel } from '../../models/form-data';
@@ -18,8 +18,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import PassowrdInput from '../../components/bc-password-input/bc-password-input';
 import Select from '@material-ui/core/Select';
+import Snackbar from '@material-ui/core/Snackbar';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 import { modalTypes } from '../../../constants';
 import styles from './signup.styles';
 import { useDispatch } from 'react-redux';
@@ -28,10 +30,7 @@ import Api, { setToken, setUser } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import BCModal from '../../modals/bc-modal';
-import axios from 'axios';
-import config from '../../../config';
-import { loginActions } from 'actions/auth/auth.action';
+
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -42,6 +41,7 @@ interface Props {
 
 function SignUpPage({ classes }: Props): JSX.Element {
   const history = useHistory();
+  const { location } = history;
   const dispatch = useDispatch();
   const handleClickOpen = () => {
     dispatch(setModalDataAction({
@@ -67,18 +67,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
   const [alert, setAlert] = useState(false);
 
-  useEffect(
-    () => {
-      Api.post('/getIndustries').then(({ data }) => {
-        console.log(
-          ' get industries api res => ',
-          data
-        );
-        setIndustries(data.industries);
-      });
-    },
-    []
-  );
 
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     'company': initFormData(),
@@ -116,6 +104,23 @@ function SignUpPage({ classes }: Props): JSX.Element {
     });
   };
 
+
+  useEffect(
+    () => {
+      Api.post('/getIndustries').then(({ data }) => {
+        setIndustries(data.industries);
+      });
+      if (location.search) {
+        setFormData({ ...formData,
+          'email': { 'errorMsg': '',
+            'validate': true,
+            'value': location.search.split('email=')[1] } });
+      }
+    },
+
+
+    []
+  );
   const handleChangeIndustry = (e: any) => {
     const selectedValue = e.target.value;
     if (selectedValue === 0) {
@@ -171,7 +176,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
 
   const handleClose = () => {
     setAlert(false);
-  }
+  };
 
   const handleClickSignUp = async () => {
     if (!checkValidate()) {
@@ -194,16 +199,15 @@ function SignUpPage({ classes }: Props): JSX.Element {
         'phone': formData.phone_number.value
       }
     )
-      .then(async (res) => {
-        if (res.data.message === "Company Email address already registered. Please try with some other email address") {
+      .then(async res => {
+        if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
           setLoading(false);
           setAlert(true);
-        }
-        else {
+        } else {
           setToken(res.data.token);
           setUser(JSON.stringify(res.data.user));
           axios.create({
-            'baseURL': config.apiBaseURL,
+            'baseURL': Config.apiBaseURL,
             'headers': {
               'Authorization': res.data.token,
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -212,9 +216,8 @@ function SignUpPage({ classes }: Props): JSX.Element {
             .post('/agreeTermAndCondition', params)
             .then(() => {
               setLoading(false);
-              history.push('/')
+              history.push('/');
             });
-
         }
       })
       .catch(() => {
@@ -588,9 +591,13 @@ function SignUpPage({ classes }: Props): JSX.Element {
       </Grid>
       <BCModal />
       {isLoading && <BCSpinnerer />}
-      <Snackbar open={alert} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error">
-          Account already exists.
+      <Snackbar
+        onClose={handleClose}
+        open={alert}>
+        <Alert
+          onClose={handleClose}
+          severity={'error'}>
+          {'Account already exists.'}
         </Alert>
       </Snackbar>
     </div>
