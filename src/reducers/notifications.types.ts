@@ -1,3 +1,5 @@
+import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
+
 type ServiceTicketNotification = {
   _id: string;
   scheduleDate: string;
@@ -98,4 +100,9 @@ export interface NotificationState {
   error: string;
   notifications: Notification[];
   loading: boolean;
+  notificationObj: {
+    loading: boolean;
+    error: string;
+    response: string;
+  }
 }

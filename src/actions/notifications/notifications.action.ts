@@ -6,6 +6,7 @@ import { createApiAction } from 'actions/action.utils';
 export const loadNotificationsActions = createApiAction(NotificationActionTypes.LOAD_NOTIFICATIONS);
 export const markNotificationAsRead = createApiAction(NotificationActionTypes.UPDATE_NOTIFICATION);
 export const dismissNotificationAction = createApiAction(NotificationActionTypes.DISMISS_NOTIFICATION);
+export const acceptOrRejectContractNotificationAction = createApiAction(NotificationActionTypes.ACCEPT_REJECT_CONTRACT_NOTIFICATION);
 
 export const pushNotification = (payload: NotificationItem[]) => {
   return {

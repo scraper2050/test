@@ -4,3 +4,5 @@ export interface Contract {
   contractor: string,
   type: string
 }
+
+export type Status = 'accepted' | 'cancelled' | 'invitation' | 'rejected'

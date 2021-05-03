@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ViewJobReportsPage from '../../app/pages/customer/job-reports/view-job-report';
 import EmailJobReportModal from './bc-email-job-report-modal/bc-email-job-report-modal';
 import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-view-modal';
+import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -268,6 +269,20 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCAddBillingModal error={data.error} />);
+        break;
+      case modalTypes.CONTRACT_VIEW_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCContractViewModal
+          contractId={data.contractId}
+          message={data.message}
+          notificationId={data.notificationId}
+          status={data.status}
+        />);
         break;
       default:
         setComponent(null);

@@ -1,6 +1,6 @@
 import { NotificationState } from './notifications.types';
 import { Reducer } from 'redux';
-import { dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
+import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
 import { types } from 'actions/auth/auth.types';
 import { NotificationActionTypes } from 'actions/notifications/notifications.types';
@@ -8,7 +8,13 @@ import { NotificationActionTypes } from 'actions/notifications/notifications.typ
 const initialNotificationState: NotificationState = {
   'error': '',
   'loading': false,
+  'notificationObj': {
+    'error': '',
+    'loading': false,
+    'response': ''
+  },
   'notifications': []
+
 };
 
 export const NotificationsReducer: Reducer<any> = (
@@ -59,6 +65,44 @@ export const NotificationsReducer: Reducer<any> = (
         ...state,
         'notifications': [action.payload, ...state.notifications]
       };
+
+    case acceptOrRejectContractNotificationAction.success.toString():
+      return {
+        ...state,
+        'notificationObj': {
+          ...state.notificationObj,
+          'loading': false,
+          'response': action.payload
+        },
+        'notifications': state.notifications.map((notification:NotificationItem) =>
+          notification._id === action.payload._id
+            ? { ...notification,
+              'dismissedStatus': { ...notification.dismissedStatus,
+                'isDismissed': true } }
+            : notification)
+      };
+
+    case acceptOrRejectContractNotificationAction.fetching.toString():
+      return {
+        ...state,
+        'notificationObj': {
+          ...state.notificationObj,
+          'loading': true,
+          'response': ''
+
+        }
+      };
+
+    case acceptOrRejectContractNotificationAction.fault.toString():
+      return {
+        ...state,
+        'notificationObj': {
+          ...state.notificationObj,
+          'error': action.payload,
+          'loading': false
+        }
+      };
+
     default:
       return state;
   }

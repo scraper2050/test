@@ -27,7 +27,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { SocketMessage } from 'helpers/contants';
 
 import Config from '../../../config';
 import { loadNotificationsActions, pushNotification } from 'actions/notifications/notifications.action';
