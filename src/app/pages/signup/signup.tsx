@@ -42,6 +42,7 @@ interface Props {
 
 function SignUpPage({ classes }: Props): JSX.Element {
   const history = useHistory();
+  const { location } = history;
   const dispatch = useDispatch();
   const handleClickOpen = () => {
     dispatch(setModalDataAction({
@@ -67,14 +68,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
   const [alert, setAlert] = useState(false);
 
-  useEffect(
-    () => {
-      Api.post('/getIndustries').then(({ data }) => {
-        setIndustries(data.industries);
-      });
-    },
-    []
-  );
 
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     'company': initFormData(),
@@ -112,6 +105,23 @@ function SignUpPage({ classes }: Props): JSX.Element {
     });
   };
 
+
+  useEffect(
+    () => {
+      Api.post('/getIndustries').then(({ data }) => {
+        setIndustries(data.industries);
+      });
+      if (location.search) {
+        setFormData({ ...formData,
+          'email': { 'errorMsg': '',
+            'validate': true,
+            'value': location.search.split('email=')[1] } });
+      }
+    },
+
+
+    []
+  );
   const handleChangeIndustry = (e: any) => {
     const selectedValue = e.target.value;
     if (selectedValue === 0) {
