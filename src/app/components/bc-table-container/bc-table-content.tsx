@@ -240,7 +240,6 @@ function BCTableContent({
       'width': '95%',
       'overflow':'hidden',
     }
-
   });
 
   

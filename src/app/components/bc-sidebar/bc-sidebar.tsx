@@ -4,6 +4,7 @@ import { AppBar, Grid, List, ListItem, makeStyles, Tab, Tabs } from '@material-u
 import React, { useEffect } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
+
 interface BCSidebarProps {
   children?: React.ReactNode;
   setContentGrid?: Function;
@@ -190,6 +191,10 @@ function BCSidebar({ children, setContentGrid, isMobile }: BCSidebarProps) {
     {
       'label': 'Profile',
       'link': '/main/user/view-profile'
+    },
+    {
+      'label': 'Change Password',
+      'link': '/main/user/change-password'
     },
     {
       'label': 'Email Preferences',

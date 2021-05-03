@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './bc-admin-profile.style';
-import { withStyles, Typography, Grid } from "@material-ui/core";
+import { Grid, Typography, withStyles } from '@material-ui/core';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
 import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -49,7 +49,7 @@ function BCAdminProfile(props: Props) {
     avatar,
     fields,
     classes,
-    title,
+    title
   } = props;
 
   const dispatch = useDispatch();
@@ -77,8 +77,10 @@ function BCAdminProfile(props: Props) {
           <div
             className={`edit_button ${classes.editButton}`}
             onClick={() => openAddContactModal()}>
-            <button className="MuiFab-primary">
-              <i className="material-icons">edit</i>
+            <button className={'MuiFab-primary'}>
+              <i className={'material-icons'}>
+                {'edit'}
+              </i>
             </button>
           </div>
         }
@@ -89,23 +91,33 @@ function BCAdminProfile(props: Props) {
             <div
               className={classes.imgArea}
               style={{
-                'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`,
-              }}>
-            </div>
+                'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`
+              }}
+            />
           </div>
         }
 
         <div className={avatar.isEmpty === 'YES' ? classes.infoArea : classes.infoAreaFullwidth}>
-          <Grid container spacing={3}>
+          <Grid
+            container
+            spacing={3}>
 
             {
               fields &&
               fields.map((element: RowField, index: number) => {
                 return (
-                  <Grid key={index} item xs={12}>
+                  <Grid
+                    item
+                    key={index}
+                    xs={12}>
                     <Grid container>
-                      <Grid item xs={6} sm={6}>
-                        <Grid container direction="column">
+                      <Grid
+                        item
+                        xs={6}
+                        sm={6}>
+                        <Grid
+                          container
+                          direction={'column'}>
 
                           {
                             element.left &&
@@ -123,8 +135,13 @@ function BCAdminProfile(props: Props) {
                           }
                         </Grid>
                       </Grid>
-                      <Grid item xs={6} sm={6}>
-                        <Grid container direction="column">
+                      <Grid
+                        item
+                        xs={6}
+                        sm={6}>
+                        <Grid
+                          container
+                          direction={'column'}>
                           {
                             element.right &&
                             <div className={classes.label}>
@@ -143,7 +160,7 @@ function BCAdminProfile(props: Props) {
                       </Grid>
                     </Grid>
                   </Grid>
-                )
+                );
               })
             }
           </Grid>
