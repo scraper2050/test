@@ -1,12 +1,12 @@
+import Alert from '@material-ui/lab/Alert';
 import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
+import BCModal from '../../modals/bc-modal';
 import BCPhoneNumberInputut from '../../components/bc-phone-number-input/bc-phone-number-input';
 import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
 import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
 import Config from '../../../config';
 import FormControl from '@material-ui/core/FormControl';
 import { FormDataModel } from '../../models/form-data';
@@ -18,8 +18,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import PassowrdInput from '../../components/bc-password-input/bc-password-input';
 import Select from '@material-ui/core/Select';
+import Snackbar from '@material-ui/core/Snackbar';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 import { modalTypes } from '../../../constants';
 import styles from './signup.styles';
 import { useDispatch } from 'react-redux';
@@ -28,10 +30,7 @@ import Api, { setToken, setUser } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import BCModal from '../../modals/bc-modal';
-import axios from 'axios';
-import config from '../../../config';
-import { loginActions } from 'actions/auth/auth.action';
+
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -208,7 +207,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
           setToken(res.data.token);
           setUser(JSON.stringify(res.data.user));
           axios.create({
-            'baseURL': config.apiBaseURL,
+            'baseURL': Config.apiBaseURL,
             'headers': {
               'Authorization': res.data.token,
               'Content-Type': 'application/x-www-form-urlencoded'
