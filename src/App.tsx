@@ -53,13 +53,6 @@ function App() {
             component={RecoverPage}
             path={'/recover'}
           />
-          <Route
-            render={() => {
-              return (
-                <Redirect to={'/'} />
-              );
-            }}
-          />
         </Suspense>
       </Switch>;
 

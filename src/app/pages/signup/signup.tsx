@@ -5,7 +5,7 @@ import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar'
+import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import Config from '../../../config';
 import FormControl from '@material-ui/core/FormControl';
@@ -70,10 +70,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
   useEffect(
     () => {
       Api.post('/getIndustries').then(({ data }) => {
-        console.log(
-          ' get industries api res => ',
-          data
-        );
         setIndustries(data.industries);
       });
     },
@@ -171,7 +167,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
 
   const handleClose = () => {
     setAlert(false);
-  }
+  };
 
   const handleClickSignUp = async () => {
     if (!checkValidate()) {
@@ -194,12 +190,11 @@ function SignUpPage({ classes }: Props): JSX.Element {
         'phone': formData.phone_number.value
       }
     )
-      .then(async (res) => {
-        if (res.data.message === "Company Email address already registered. Please try with some other email address") {
+      .then(async res => {
+        if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
           setLoading(false);
           setAlert(true);
-        }
-        else {
+        } else {
           setToken(res.data.token);
           setUser(JSON.stringify(res.data.user));
           axios.create({
@@ -212,9 +207,8 @@ function SignUpPage({ classes }: Props): JSX.Element {
             .post('/agreeTermAndCondition', params)
             .then(() => {
               setLoading(false);
-              history.push('/')
+              history.push('/');
             });
-
         }
       })
       .catch(() => {
@@ -588,9 +582,13 @@ function SignUpPage({ classes }: Props): JSX.Element {
       </Grid>
       <BCModal />
       {isLoading && <BCSpinnerer />}
-      <Snackbar open={alert} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error">
-          Account already exists.
+      <Snackbar
+        onClose={handleClose}
+        open={alert}>
+        <Alert
+          onClose={handleClose}
+          severity={'error'}>
+          {'Account already exists.'}
         </Alert>
       </Snackbar>
     </div>
