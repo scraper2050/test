@@ -26,22 +26,20 @@ const NoticationPageContainer = styled.div`
     svg {
         cursor: pointer;
     }
+    .actions {
+      display: flex;
+    }
+    td {
+      white-space: pre-wrap;
+    }
     tr.unread {
         background: #f1f1f1;
         td {
           font-weight: 800;
+          f
         }
     }
 `;
-
-
-const NotificationTypes:any = {
-  [NotificationTypeTypes.SERVICE_TICKET_CREATED]: 'Service Ticket',
-  [NotificationTypeTypes.CONTRACT_ACCEPTED]: 'Contract Accepted',
-  [NotificationTypeTypes.CONTRACT_INVITATION]: 'Contract Invitation',
-  [NotificationTypeTypes.CONTRACT_REJECTED]: 'Contract Rejected',
-  [NotificationTypeTypes.CONTRACT_CANCELLED]: 'Contract Cancelled'
-};
 
 
 function NotificationPage() {
@@ -106,7 +104,7 @@ function NotificationPage() {
     {
       Cell({ 'row': { original } }: {row: {original: Notification } }) {
         return (
-          <div>
+          <div className={'actions'}>
             <Button
               onClick={() => handleClick(original.notificationType, original)}
               size={'small'}
