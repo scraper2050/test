@@ -69,6 +69,7 @@ export default function BCContractViewModal({ message, notificationId, contractI
 
 
   useEffect(() => {
+    dispatch(acceptOrRejectContractNotificationAction.cancelled());
     dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
       'isRead': true }));
   }, []);

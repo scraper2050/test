@@ -82,6 +82,16 @@ export const NotificationsReducer: Reducer<any> = (
             : notification)
       };
 
+    case acceptOrRejectContractNotificationAction.cancelled.toString():
+      return {
+        ...state,
+        'notificationObj': {
+          'error': false,
+          'loading': false,
+          'response': ''
+        }
+      };
+
     case acceptOrRejectContractNotificationAction.fetching.toString():
       return {
         ...state,
@@ -89,7 +99,6 @@ export const NotificationsReducer: Reducer<any> = (
           ...state.notificationObj,
           'loading': true,
           'response': ''
-
         }
       };
 
