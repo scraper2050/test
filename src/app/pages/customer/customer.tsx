@@ -23,7 +23,8 @@ function CustomersPage({ classes }: any) {
   const location = useLocation<any>();
   const locationState = location.state;
 
-  const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+  const prevPage =
+    locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,

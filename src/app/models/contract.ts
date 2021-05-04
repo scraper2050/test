@@ -4,3 +4,4 @@ export interface Contract {
   contractor: string,
   type: string
 }
+

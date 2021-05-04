@@ -21,7 +21,8 @@ export default (theme: Theme): any => ({
     '-ms-filter': "progid:DXImageTransform.Microsoft.Blur(PixelRadius=3,MakeShadow=true,ShadowOpacity=0.30)",
     'zoom': ' 1',
 
-    'margin-top': '20px',
+    'margin-top': '25px',
+    'margin-left': '50px',
     'width': '300px',
     'cursor': 'pointer'
   },

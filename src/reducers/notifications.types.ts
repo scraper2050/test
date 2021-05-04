@@ -1,3 +1,5 @@
+import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
+
 type ServiceTicketNotification = {
   _id: string;
   scheduleDate: string;
@@ -13,6 +15,14 @@ type ServiceTicketNotification = {
   company: string;
   ticketId: string;
 };
+
+export enum NotificationTypeTypes {
+  CONTRACT_ACCEPTED = 'ContractAccepted',
+  CONTRACT_CANCELLED = 'ContractCanceled',
+  CONTRACT_INVITATION = 'ContractInvitation',
+  CONTRACT_REJECTED = 'ContractRejected',
+  SERVICE_TICKET_CREATED = 'ServiceTicketCreated'
+}
 
 export type Notification = {
   _id: string;
@@ -98,4 +108,11 @@ export interface NotificationState {
   error: string;
   notifications: Notification[];
   loading: boolean;
+  notificationObj: {
+    loading: boolean;
+    error: string;
+    response: string;
+  }
 }
+
+

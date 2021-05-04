@@ -1,14 +1,13 @@
+import { AcceptRejectContractProps, AcceptRejectVendorAPI } from 'api/vendor.api';
+import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import {
   all,
   call,
   cancelled,
-  fork,
   put,
-  take,
   takeLatest
 
 } from 'redux-saga/effects';
-import { dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { getNotifications, updateNotification } from 'api/notifications.api';
 
 
@@ -54,10 +53,31 @@ export function *handleNotificationDismiss(action: {payload: string}) {
   }
 }
 
+export function *handleAcceptOrReject(action: {payload: any}) {
+  yield put(acceptOrRejectContractNotificationAction.fetching());
+  try {
+    const result = yield call(AcceptRejectVendorAPI, action.payload);
+    if (result.status === 0) {
+      yield put(acceptOrRejectContractNotificationAction.fault(result.message));
+    } else {
+      yield put(acceptOrRejectContractNotificationAction.success(result.notification));
+      yield put(dismissNotificationAction.fetch({ 'id': action.payload.notificationId,
+        'isDismissed': true }));
+    }
+  } catch (error) {
+    yield put(acceptOrRejectContractNotificationAction.fault(error.toString()));
+  } finally {
+    if (yield cancelled()) {
+      yield put(acceptOrRejectContractNotificationAction.cancelled());
+    }
+  }
+}
+
 export default function *watchNotifications() {
   yield all([
     takeLatest(loadNotificationsActions.fetch, handleGetNotifications),
     takeLatest(markNotificationAsRead.fetch, handleNotificationMarkAsRead),
-    takeLatest(dismissNotificationAction.fetch, handleNotificationDismiss)
+    takeLatest(dismissNotificationAction.fetch, handleNotificationDismiss),
+    takeLatest(acceptOrRejectContractNotificationAction.fetch, handleAcceptOrReject)
   ]);
 }

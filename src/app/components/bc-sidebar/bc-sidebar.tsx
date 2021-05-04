@@ -1,15 +1,76 @@
 import * as CONSTANTS from '../../../constants';
 import styled from 'styled-components';
-import { Grid, List, ListItem } from '@material-ui/core';
+import { AppBar, Grid, List, ListItem, makeStyles, Tab, Tabs } from '@material-ui/core';
 import React, { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+
 
 interface BCSidebarProps {
   children?: React.ReactNode;
   setContentGrid?: Function;
+  isMobile: boolean
 }
 
-function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
+
+
+function a11yProps(index: any) {
+  return {
+    id: `scrollable-auto-tab-${index}`,
+    'aria-controls': `scrollable-auto-tabpanel-${index}`,
+  };
+}
+
+const tabStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    width: '100%',
+    textTransform: 'capitalize',
+  },
+  link: {
+    textTransform: 'none'
+  }
+}));
+
+
+function ScrollableTabs({ items, pathName, onClickLink, nestedRouteKey }: any) {
+  const classes = tabStyles();
+
+  return (
+    <div className={classes.root}>
+      <AppBar position="static" color="default">
+        <Tabs
+          value={pathName}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="on"
+          aria-label="scrollable auto tabs example"
+        >
+          {items && items.map((item: any, idx: number) => {
+              let mainPath = pathName.split("/main/")[1]; // eslint-disable-line
+              if (mainPath) {
+                mainPath = mainPath.split("/")[0]; // eslint-disable-line
+              } else {
+                mainPath = "dashboard";
+              }
+            return item.link.startsWith(`/main/${mainPath}`) && (
+              <Tab
+                key={item?.link}
+                component={Link}
+                to={item?.link}
+                value={item?.link}
+                label={item?.label}
+                classes={{ root: classes.link }}
+                {...a11yProps(idx)} />
+              );
+            })}
+        </Tabs>
+      </AppBar>
+    </div>
+  );
+}
+
+function BCSidebar({ children, setContentGrid, isMobile }: BCSidebarProps) {
   const history = useHistory();
   const location = useLocation();
   const pathName = location.pathname;
@@ -132,6 +193,10 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       'link': '/main/user/view-profile'
     },
     {
+      'label': 'Change Password',
+      'link': '/main/user/change-password'
+    },
+    {
       'label': 'Email Preferences',
       'link': '/main/user/email-preference'
     }
@@ -141,11 +206,13 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
 
   useEffect(() => {
     if (withSidebar) {
+      const gridSize = isMobile ? 12 : 10;
+      
       setContentGrid &&
         setContentGrid({
-          'lg': 10,
-          'md': 10,
-          'sm': 10
+          'lg': gridSize,
+          'md': gridSize,
+          'sm': gridSize
         });
     } else {
       setContentGrid &&
@@ -155,7 +222,7 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
           'sm': 12
         });
     }
-  }, [location]);
+  }, [location, isMobile]);
 
   const onClickLink = (strLink: string): void => {
     history.push(strLink);
@@ -167,33 +234,41 @@ function BCSidebar({ children, setContentGrid }: BCSidebarProps) {
       item
       lg={2}
       md={2}
-      sm={2}
+      sm={12}
+      xs={12}
       style={{ 'padding': 0 }}
       xl={1}>
-      <ComponentContainer>
-        <StyledList aria-label={'customers sidebar list'}>
-          {LINK_DATA.map((item: any, idx: number) => {
-            let mainPath = pathName.split("/main/")[1]; // eslint-disable-line
-            if (mainPath) {
-              mainPath = mainPath.split("/")[0]; // eslint-disable-line
-            } else {
-              mainPath = 'dashboard';
-            }
-            return item.link.startsWith(`/main/${mainPath}`)
-              ? <StyledListItem
-                button
-                key={idx}
-                onClick={() => onClickLink(item.link)}
-                selected={
-                  pathName === item.link ||
-                  pathName === `${item.link}/${nestedRouteKey}`
-                }>
-                {item.label}
-              </StyledListItem>
-              : null;
-          })}
-        </StyledList>
-      </ComponentContainer>
+      {isMobile ?
+        <ScrollableTabs
+          pathName={pathName}
+          items={LINK_DATA}
+          onClickLink={onClickLink}
+          nestedRouteKey={nestedRouteKey}
+        /> :
+        <ComponentContainer>
+          <StyledList aria-label={'customers sidebar list'}>
+            {LINK_DATA.map((item: any, idx: number) => {
+              let mainPath = pathName.split("/main/")[1]; // eslint-disable-line
+              if (mainPath) {
+                mainPath = mainPath.split("/")[0]; // eslint-disable-line
+              } else {
+                mainPath = 'dashboard';
+              }
+              return item.link.startsWith(`/main/${mainPath}`)
+                ? <StyledListItem
+                  button
+                  key={idx}
+                  onClick={() => onClickLink(item.link)}
+                  selected={
+                    pathName === item.link ||
+                    pathName === `${item.link}/${nestedRouteKey}`
+                  }>
+                  {item.label}
+                </StyledListItem>
+                : null;
+            })}
+          </StyledList>
+        </ComponentContainer>}
     </Grid>
     : null;
 }

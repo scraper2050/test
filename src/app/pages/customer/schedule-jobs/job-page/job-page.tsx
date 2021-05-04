@@ -15,6 +15,7 @@ import {
 } from 'actions/bc-modal/bc-modal.action';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'reducers';
 
 // Import { VendorsReducer } from 'reducers/vendor.reducer';
 
@@ -25,6 +26,7 @@ interface StatusTypes {
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
+  const { _id } = useSelector(({ auth }:RootState) => auth);
   const { isLoading = true, jobs, refresh = true } = useSelector(({ jobState }: any) => ({
     'isLoading': jobState.isLoading,
     'jobs': jobState.data,
@@ -204,7 +206,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             alignItems={'center'}
             container>
             <div className={'flex items-center'}>
-              {row.original.status === 0 && !row.original.employeeType
+              {row.original.status === 0 && (!row.original.employeeType || row.original.createdBy.profile._id === _id)
                 ? <Fab
                   aria-label={'edit-job'}
                   classes={{

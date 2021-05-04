@@ -33,11 +33,6 @@ function Estimates({ classes }: any) {
                 'label': 'Estimates List',
                 'value': 0
               },
-              // {
-              //   'label': 'Recent Activities',
-
-              //   'value': 1
-              // }
             ]}
           />
           <div className={classes.addButtonArea}>

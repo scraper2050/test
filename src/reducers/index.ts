@@ -41,6 +41,8 @@ import tableState from './tableState.reducer';
 import searchTerm from './searchText.reducer';
 import { SubscriptionReducer as subscriptions } from './subscription.reducer';
 import { NotificationsReducer as notifications } from './notifications.reducer';
+import { NotificationState } from './notifications.types';
+import { UserModel } from 'app/models/user';
 
 
 export interface ReducerParamsInterface {
@@ -48,10 +50,12 @@ export interface ReducerParamsInterface {
   type: string;
 }
 export interface RootState {
+  auth: UserModel
   jobState: JobsSate;
   snackbarState?: SnackbarState;
   customersState: CustomersState;
-  serviceTicket: any
+  serviceTicket: any;
+  notifications: NotificationState;
 }
 export default combineReducers({
   auth,

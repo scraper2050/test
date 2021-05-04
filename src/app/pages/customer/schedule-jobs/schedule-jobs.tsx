@@ -130,20 +130,7 @@ function ScheduleJobsPage({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-            {/* {
-            curTab === 0
-              ? <Fab
-                aria-label={'new-job'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                onClick={() => openJobModal()}
-                variant={'extended'}>
-                {'Create Job'}
-              </Fab>
-              : null
-          } */}
+            
             <Fab
               aria-label={'new-ticket'}
               classes={{
@@ -158,6 +145,7 @@ function ScheduleJobsPage({ classes }: any) {
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={curTab}
+            disabled
           >
             <div className={classes.dataContainer} id={"0"}>
               <JobPage hidden={curTab !== 0} />

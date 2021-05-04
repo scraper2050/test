@@ -1,20 +1,87 @@
 import { Record } from 'immutable';
 import { handleActions } from 'redux-actions';
 
-import { loginActions, logoutAction, setAuthAction } from 'actions/auth/auth.action';
+import { changePasswordAction, loginActions, logoutAction, setAuthAction } from 'actions/auth/auth.action';
 
 const initialState = Record({
+  'changePasswordApi': Record({
+    'hasErrored': false,
+    'isLoading': false,
+    'msg': ''
+  })(),
   'loginApi': Record({
     'hasErrored': false,
     'isLoading': false,
     'msg': ''
   })(),
+
   'token': null,
   'user': null
 })();
 
 export default handleActions(
   {
+    [changePasswordAction.fetching.toString()]: (state, action) => {
+      return state
+        .setIn(
+          ['changePasswordApi', 'isLoading'],
+          true
+        )
+        .setIn(
+          ['changePasswordApi', 'hasErrored'],
+          false
+        )
+        .setIn(
+          ['changePasswordApi', 'msg'],
+          ''
+        );
+    },
+    [changePasswordAction.success.toString()]: (state, action) => {
+      return state
+        .setIn(
+          ['changePasswordApi', 'isLoading'],
+          false
+        )
+        .setIn(
+          ['changePasswordApi', 'hasErrored'],
+          false
+        )
+        .setIn(
+          ['changePasswordApi', 'msg'],
+          action.payload
+        );
+    },
+    [changePasswordAction.fault.toString()]: (state, action) => {
+      return state
+        .setIn(
+          ['changePasswordApi', 'isLoading'],
+          false
+        )
+        .setIn(
+          ['changePasswordApi', 'hasErrored'],
+          true
+        )
+        .setIn(
+          ['changePasswordApi', 'msg'],
+          action.payload
+        );
+    },
+    [changePasswordAction.cancelled.toString()]: (state, action) => {
+      return state
+        .setIn(
+          ['changePasswordApi', 'isLoading'],
+          false
+        )
+        .setIn(
+          ['changePasswordApi', 'hasErrored'],
+          false
+        )
+        .setIn(
+          ['changePasswordApi', 'msg'],
+          ''
+        );
+    },
+
     [loginActions.fetching.toString()]: (state, action) => {
       return state
         .setIn(
