@@ -37,5 +37,6 @@ export const modalTypes = {
   'DELETE_CONTACT_MODAL': 'delete-contact-modal',
   'EDIT_PROFILE': 'edit-profile-modal',
   'DELETE_BILLING_MODAL': 'delete-billing-modal',
-  'EMAIL_JOB_REPORT_MODAL': 'email-job-report-modal'
+  'EMAIL_JOB_REPORT_MODAL': 'email-job-report-modal',
+  'CONTRACT_VIEW_MODAL': 'contract-view-modal'
 };

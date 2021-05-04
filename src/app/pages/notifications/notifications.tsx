@@ -1,6 +1,5 @@
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import React from 'react';
 import { fromNow } from 'helpers/format';
 import { PRIMARY_BLUE, modalTypes } from '../../../constants';
@@ -12,6 +11,9 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import AlertDialogSlide from 'app/components/bc-dialog/bc-dialog';
 import { dismissNotificationAction } from 'actions/notifications/notifications.action';
 import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
+import { Notification, NotificationTypeTypes } from 'reducers/notifications.types';
+import { openContractModal, openDetailJobModal } from './notification-click-handlers';
+import { getNotificationMethods, getNotificationValues } from './notification-dict';
 
 
 const NoticationPageContainer = styled.div`
@@ -24,48 +26,38 @@ const NoticationPageContainer = styled.div`
     svg {
         cursor: pointer;
     }
+    .actions {
+      display: flex;
+    }
+    td {
+      white-space: pre-wrap;
+    }
     tr.unread {
         background: #f1f1f1;
         td {
           font-weight: 800;
+          f
         }
     }
 `;
 
 
-const NotificationTypes:any = {
-  'ServiceTicketCreated': 'Service Ticket'
-};
-
-
 function NotificationPage() {
   const dispatch = useDispatch();
-  const openDetailJobModal = (id:string, notificationId:string) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'ticketId': id,
-        'notificationId': notificationId
-      },
-      'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
 
+  const handleClick = (notificationType:string, original: Notification) => {
+    const clickHandler = getNotificationMethods(dispatch, notificationType, original);
+    clickHandler();
+  };
 
   const columns: any = [
 
     {
-      'Cell'({ row }: any) {
+      'Cell'({ 'row': { original } }: {row: {original: Notification } }) {
+        const { typeText } = getNotificationValues(original.notificationType, original);
         return (
           <div className={'type'}>
-            {NotificationTypes[row.original.notificationType]}
+            {typeText}
           </div>
         );
       },
@@ -75,20 +67,30 @@ function NotificationPage() {
       'width': 70
     },
     {
+      'Cell'({ 'row': { original } }: {row: {original: Notification } }) {
+        const { notificationType } = original;
+        const { details } = getNotificationValues(notificationType, original);
+        return (
+          <div >
+            {details}
+          </div>
+        );
+      },
 
-      'accessor': 'metadata.ticketId',
+      'accessor': 'notificationType',
       'Header': 'Details',
       'id': 'id',
       'sortable': true
 
     },
     {
-      'Cell'({ row }: any) {
-        const { readStatus } = row.original;
+      'Cell'({ 'row': { original } }: {row: {original: Notification } }) {
+        const { readStatus } = original;
+        const date = new Date(readStatus.readAt);
         return (
           <div>
             {readStatus.isRead
-              ? `Viewed by ${readStatus.readBy.profile.displayName} ${fromNow(readStatus.readAt)}`
+              ? `Viewed by ${readStatus.readBy.profile.displayName} ${fromNow(date)}`
               : 'Unread'}
           </div>
         );
@@ -100,23 +102,20 @@ function NotificationPage() {
 
     },
     {
-      Cell({ row }: any) {
+      Cell({ 'row': { original } }: {row: {original: Notification } }) {
         return (
-          <div>
+          <div className={'actions'}>
             <Button
-              onClick={() => openDetailJobModal(row.original.metadata._id, row.original._id)}
+              onClick={() => handleClick(original.notificationType, original)}
               size={'small'}
               style={{ 'marginRight': '20px' }}
               variant={'outlined'}>
               {'View'}
-
             </Button>
-
-
             <AlertDialogSlide
               buttonText={'Dismiss'}
               color={'secondary'}
-              confirmMethod={() => dispatch(dismissNotificationAction.fetch({ 'id': row.original._id,
+              confirmMethod={() => dispatch(dismissNotificationAction.fetch({ 'id': original._id,
                 'isDismissed': true }))}
               confirmText={'Dismiss'}
               size={'small'}
@@ -148,10 +147,9 @@ function NotificationPage() {
         <Grid
           item
           lg={8}
-          sm={12}
           md={12}
-          xs={12}
-        >
+          sm={12}
+          xs={12}>
           <BCTableContainer
             cellSize
             columns={columns}
