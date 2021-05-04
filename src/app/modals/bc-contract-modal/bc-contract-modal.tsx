@@ -1,17 +1,13 @@
 import { ReactComponent as AcceptedContract } from 'assets/img/contract-accepted.svg';
 import { ReactComponent as RejectedContract } from 'assets/img/contract-rejected.svg';
 import { ReactComponent as PolicySVG } from 'assets/img/policy.svg';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import { PRIMARY_GREEN } from '../../../constants';
-import { closeModalAction } from 'actions/bc-modal/bc-modal.action';
 import styled from 'styled-components';
-import { Button, Fab, Grid, Typography } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { Button } from '@material-ui/core';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { acceptOrRejectContractNotificationAction, markNotificationAsRead } from 'actions/notifications/notifications.action';
-import { Status } from 'app/models/contract';
+import { acceptOrRejectContractNotificationAction, dismissNotificationAction, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { AcceptRejectContractProps } from 'api/vendor.api';
-import { NotificationState } from 'reducers/notifications.types';
+import { NotificationTypeTypes } from 'reducers/notifications.types';
 import { RootState } from 'reducers';
 import Alert from '@material-ui/lab/Alert/Alert';
 
@@ -52,36 +48,36 @@ interface BCViewServiceTicketModalProps {
     contractId: string;
     message: {body: string; title: string};
     notificationId: string;
-    status: Status;
+    notificationType: any;
 }
 
 
-const renderImage = (status:string) => {
+const renderImage = (notificationType:string) => {
   const images:any = {
-    'accepted': <AcceptedContract />,
-    'cancelled': <PolicySVG />,
-    'invitation': <PolicySVG />,
-    'rejected': <RejectedContract />
+    [NotificationTypeTypes.CONTRACT_ACCEPTED]: <AcceptedContract />,
+    [NotificationTypeTypes.CONTRACT_INVITATION]: <PolicySVG />,
+    [NotificationTypeTypes.CONTRACT_CANCELLED]: <PolicySVG />,
+    [NotificationTypeTypes.CONTRACT_REJECTED]: <RejectedContract />
   };
-  return images[status];
+  return images[notificationType];
 };
 
 
-export default function BCContractViewModal({ message, notificationId, contractId, status }:BCViewServiceTicketModalProps) {
+export default function BCContractViewModal({ message, notificationId, contractId, notificationType }:BCViewServiceTicketModalProps) {
   const { error, loading, response } = useSelector(({ notifications }:RootState) => notifications.notificationObj);
   const dispatch = useDispatch();
 
-  const acceptOrCancel = ({ status, contractId }: AcceptRejectContractProps) => {
-    dispatch(acceptOrRejectContractNotificationAction.fetch({ contractId,
-      status
-    }));
-  };
 
+  useEffect(() => {
+    dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
+      'isRead': true }));
+  }, []);
 
   const handleClick = (status:string) => {
-    acceptOrCancel({ contractId,
+    dispatch(acceptOrRejectContractNotificationAction.fetch({ contractId,
+      notificationId,
       status
-    });
+    }));
   };
 
 
@@ -91,13 +87,20 @@ export default function BCContractViewModal({ message, notificationId, contractI
       severity={'error'}
       variant={'filled'}>
       <div className={'alert-text-container'}>
-        {'This is an error message'}
+        {error}
+      </div>
+    </Alert>}
+    {response && <Alert
+      elevation={6}
+      severity={'success'}
+      variant={'filled'}>
+      <div className={'alert-text-container'}>
+        {response}
       </div>
     </Alert>}
     <br />
     <div className={'header-container'}>
-
-      { renderImage(status) }
+      { renderImage(notificationType) }
       <h2>
         {message.title}
       </h2>
@@ -106,8 +109,7 @@ export default function BCContractViewModal({ message, notificationId, contractI
       </p>
     </div>
     <div className={'actions-container'} >
-
-      {status === 'invitation' && <>
+      {notificationType === NotificationTypeTypes.CONTRACT_INVITATION && <>
         <Button
           color={'secondary'}
           disabled={loading}
@@ -122,7 +124,6 @@ export default function BCContractViewModal({ message, notificationId, contractI
           fullWidth
           onClick={() => handleClick('accept')}
           variant={'contained'}>
-
           {'Accept'}
         </Button>
       </>}

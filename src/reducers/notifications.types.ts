@@ -16,6 +16,14 @@ type ServiceTicketNotification = {
   ticketId: string;
 };
 
+export enum NotificationTypeTypes {
+  CONTRACT_ACCEPTED = 'ContractAccepted',
+  CONTRACT_CANCELLED = 'ContractCanceled',
+  CONTRACT_INVITATION = 'ContractInvitation',
+  CONTRACT_REJECTED = 'ContractRejected',
+  SERVICE_TICKET_CREATED = 'ServiceTicketCreated'
+}
+
 export type Notification = {
   _id: string;
   company: string;
@@ -106,3 +114,5 @@ export interface NotificationState {
     response: string;
   }
 }
+
+

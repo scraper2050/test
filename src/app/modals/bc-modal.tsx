@@ -281,7 +281,7 @@ function BCModal() {
           contractId={data.contractId}
           message={data.message}
           notificationId={data.notificationId}
-          status={data.status}
+          notificationType={data.notificationType}
         />);
         break;
       default:

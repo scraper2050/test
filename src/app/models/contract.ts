@@ -5,4 +5,3 @@ export interface Contract {
   type: string
 }
 
-export type Status = 'accepted' | 'cancelled' | 'invitation' | 'rejected'

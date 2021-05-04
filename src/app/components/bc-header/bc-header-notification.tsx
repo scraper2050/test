@@ -1,6 +1,6 @@
 import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 import ContractNotification from './header-notifications/bc-header-contract-notification';
-import { Notification } from 'reducers/notifications.types';
+import { Notification, NotificationTypeTypes } from 'reducers/notifications.types';
 import React from 'react';
 import ServiceTicketNotication from './header-notifications/bc-header-service-ticket-notification';
 import styled from 'styled-components';
@@ -19,27 +19,23 @@ interface HeaderNotification {
 
 function renderItem(item:NotificationItem, index:number) {
   const notificationTypes:any = {
-    'ContractAccepted': <ContractNotification
+    [NotificationTypeTypes.CONTRACT_ACCEPTED]: <ContractNotification
       {...item}
       key={index}
-      status={'accepted'}
     />,
-    'ContractCanceled': <ContractNotification
+    [NotificationTypeTypes.CONTRACT_CANCELLED]: <ContractNotification
       {...item}
       key={index}
-      status={'cancelled'}
     />,
-    'ContractInvitation': <ContractNotification
+    [NotificationTypeTypes.CONTRACT_INVITATION]: <ContractNotification
       {...item}
       key={index}
-      status={'invitation'}
     />,
-    'ContractRejected': <ContractNotification
+    [NotificationTypeTypes.CONTRACT_REJECTED]: <ContractNotification
       {...item}
       key={index}
-      status={'rejected'}
     />,
-    'ServiceTicketCreated': <ServiceTicketNotication
+    [NotificationTypeTypes.SERVICE_TICKET_CREATED]: <ServiceTicketNotication
       {...item}
       key={index}
     />

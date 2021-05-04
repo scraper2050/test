@@ -1,16 +1,14 @@
+import { AcceptRejectContractProps, AcceptRejectVendorAPI } from 'api/vendor.api';
+import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import {
   all,
   call,
   cancelled,
-  fork,
   put,
-  take,
   takeLatest
 
 } from 'redux-saga/effects';
-import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { getNotifications, updateNotification } from 'api/notifications.api';
-import { AcceptRejectContractProps, AcceptRejectVendorAPI } from 'api/vendor.api';
 
 
 export function *handleGetNotifications(action: { payload: any }) {
@@ -55,7 +53,7 @@ export function *handleNotificationDismiss(action: {payload: string}) {
   }
 }
 
-export function *handleAcceptOrReject(action: {payload: AcceptRejectContractProps}) {
+export function *handleAcceptOrReject(action: {payload: any}) {
   yield put(acceptOrRejectContractNotificationAction.fetching());
   try {
     const result = yield call(AcceptRejectVendorAPI, action.payload);
@@ -63,6 +61,8 @@ export function *handleAcceptOrReject(action: {payload: AcceptRejectContractProp
       yield put(acceptOrRejectContractNotificationAction.fault(result.message));
     } else {
       yield put(acceptOrRejectContractNotificationAction.success(result.notification));
+      yield put(dismissNotificationAction.fetch({ 'id': action.payload.notificationId,
+        'isDismissed': true }));
     }
   } catch (error) {
     yield put(acceptOrRejectContractNotificationAction.fault(error.toString()));
