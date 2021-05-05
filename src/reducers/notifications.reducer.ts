@@ -72,14 +72,8 @@ export const NotificationsReducer: Reducer<any> = (
         'notificationObj': {
           ...state.notificationObj,
           'loading': false,
-          'response': action.payload
-        },
-        'notifications': state.notifications.map((notification:NotificationItem) =>
-          notification._id === action.payload._id
-            ? { ...notification,
-              'dismissedStatus': { ...notification.dismissedStatus,
-                'isDismissed': true } }
-            : notification)
+          'response': action.payload.message
+        }
       };
 
     case acceptOrRejectContractNotificationAction.cancelled.toString():
