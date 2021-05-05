@@ -60,9 +60,9 @@ export function *handleAcceptOrReject(action: {payload: any}) {
     if (result.status === 0) {
       yield put(acceptOrRejectContractNotificationAction.fault(result.message));
     } else {
-      yield put(acceptOrRejectContractNotificationAction.success(result.notification));
-      yield put(dismissNotificationAction.fetch({ 'id': action.payload.notificationId,
-        'isDismissed': true }));
+      yield put(acceptOrRejectContractNotificationAction.success({ '_id': action.payload.notificationId,
+        'message': result.message
+      }));
     }
   } catch (error) {
     yield put(acceptOrRejectContractNotificationAction.fault(error.toString()));

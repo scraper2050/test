@@ -15,13 +15,21 @@ export default (theme: Theme): any => ({
     'right': '0',
     'zIndex': '1000'
   },
+  'Text': {
+    'fontWeight': '800'
+  },
+  'cancelledText': {
+    'color': 'red'
+  },
+  'finishedText': {
+    'color': 'green',
+    'fontStyle': 'italic'
+  },
   'statusPendingText': {
     'color': '#FFA500',
-    'fontStyle': 'italic',
-    'fontWeight': 'bold'
+    'fontStyle': 'italic'
   },
   'statusConfirmedText': {
-    'color': '#008000',
-    'fontWeight': 'bold'
-  },
+    'color': '#008000'
+  }
 });

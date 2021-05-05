@@ -10,6 +10,7 @@ import { AcceptRejectContractProps } from 'api/vendor.api';
 import { NotificationTypeTypes } from 'reducers/notifications.types';
 import { RootState } from 'reducers';
 import Alert from '@material-ui/lab/Alert/Alert';
+import { closeModalAction } from 'actions/bc-modal/bc-modal.action';
 
 
 const BCContractViewModalContainer = styled.div`
@@ -29,7 +30,9 @@ const BCContractViewModalContainer = styled.div`
         height: 120px;
     }
     }
-  
+    .MuiAlert-filledSuccess {
+      color: #4caf50;
+    }
     .actions-container {
         display: flex;
         width: 100%;
@@ -75,11 +78,24 @@ export default function BCContractViewModal({ message, notificationId, contractI
   }, []);
 
   const handleClick = (status:string) => {
+    dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
+      'isRead': true }));
     dispatch(acceptOrRejectContractNotificationAction.fetch({ contractId,
       notificationId,
       status
     }));
   };
+
+
+  useEffect(() => {
+    if (response) {
+      dispatch(dismissNotificationAction.fetch({ 'id': notificationId,
+        'isDismissed': true }));
+      setTimeout(() => {
+        dispatch(closeModalAction());
+      }, 1500);
+    }
+  }, [response]);
 
 
   return <BCContractViewModalContainer>

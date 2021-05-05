@@ -6,10 +6,10 @@ import { modalTypes } from '../../../../constants';
 import styles from './vendors.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { getVendors, loadingVendors, getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
+import { getVendorDetailAction, getVendors, loadingSingleVender, loadingVendors } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 interface StatusTypes {
   status: number;
@@ -33,11 +33,13 @@ function AdminVendorsPage({ classes }: any) {
   const history = useHistory();
   const location = useLocation<any>();
 
-  const RenderStatus = ({ status }: StatusTypes) => {
-    const textStatus = status ? 'Confirmed' : 'Pending';
-    return <div className={status ? classes.statusConfirmedText : classes.statusPendingText}>
+  function RenderStatus({ status }: StatusTypes) {
+    const statusValues = ['Pending', 'Accepted', 'Cancelled', 'Rejected', 'Finished'];
+    const classNames = [classes.statusPendingText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.finishedText];
+    const textStatus = statusValues[status];
+    return <div className={`${classes.Text} ${classNames[status]}`}>
       {textStatus}
-    </div>
+    </div>;
   }
 
   const locationState = location.state;
@@ -45,22 +47,24 @@ function AdminVendorsPage({ classes }: any) {
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const [currentPage, setCurrentPage] = useState({
-    page: prevPage ? prevPage.page : 0,
-    pageSize: prevPage ? prevPage.pageSize : 10,
-    sortBy: prevPage ? prevPage.sortBy : [],
+    'page': prevPage ? prevPage.page : 0,
+    'pageSize': prevPage ? prevPage.pageSize : 10,
+    'sortBy': prevPage ? prevPage.sortBy : []
   });
 
   const columns: any = [
-    // {
-    //   'Cell'({ row }: any) {
-    //     return <div className={'flex items-center'}>
-    //       {row.index + 1}
-    //     </div>;
-    //   },
-    //   'Header': 'No#',
-    //   'sortable': true,
-    //   'width': 60
-    // },
+    /*
+     * {
+     *   'Cell'({ row }: any) {
+     *     return <div className={'flex items-center'}>
+     *       {row.index + 1}
+     *     </div>;
+     *   },
+     *   'Header': 'No#',
+     *   'sortable': true,
+     *   'width': 60
+     * },
+     */
     {
       'Header': 'Company Name',
       'accessor': 'contractor.info.companyName',
@@ -69,7 +73,7 @@ function AdminVendorsPage({ classes }: any) {
     },
     {
       'Cell'({ row }: RowStatusTypes) {
-        return <RenderStatus status={row.original.status} />
+        return <RenderStatus status={row.original.status} />;
       },
       'Header': 'Status',
       'accessor': 'status',
@@ -108,8 +112,8 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const handleRowClick = (event: any, row: any) => {
-    // console.log(event, row);
-    return;
+    // Console.log(event, row);
+
   };
 
   const openVendorModal = () => {
@@ -126,33 +130,34 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const renderViewMore = (row: any) => {
-    let baseObj = row["original"];
+    const baseObj = row.original;
     let vendorCompanyName =
-      baseObj["contractor"]["info"]
-        && baseObj["contractor"]["info"]["companyName"] !== undefined
-        ? baseObj["contractor"]["info"]["companyName"]
-        : "N/A";
-    let vendorId = baseObj['contractor']['_id'];
-    let vendorObj = { vendorCompanyName, vendorId, };
+      baseObj.contractor.info &&
+        baseObj.contractor.info.companyName !== undefined
+        ? baseObj.contractor.info.companyName
+        : 'N/A';
+    const vendorId = baseObj.contractor._id;
+    const vendorObj = { vendorCompanyName,
+      vendorId };
     vendorCompanyName =
       vendorCompanyName !== undefined
-        ? vendorCompanyName.replace(/ /g, "")
-        : "vendorName";
+        ? vendorCompanyName.replace(/ /g, '')
+        : 'vendorName';
 
-    localStorage.setItem("nestedRouteKey", `${vendorCompanyName}`);
+    localStorage.setItem('nestedRouteKey', `${vendorCompanyName}`);
 
 
     dispatch(loadingSingleVender());
     dispatch(getVendorDetailAction(vendorId));
 
     history.push({
-      pathname: `vendors/${vendorCompanyName}`,
-      state: {
+      'pathname': `vendors/${vendorCompanyName}`,
+      'state': {
         ...vendorObj,
         currentPage
       }
     });
-  }
+  };
 
   return (
     <div className={classes.pageMainContainer}>
@@ -195,12 +200,12 @@ function AdminVendorsPage({ classes }: any) {
               hidden={curTab !== 0}
               id={'0'}>
               <BCTableContainer
-                currentPage={currentPage}
-                setPage={setCurrentPage}
                 columns={columns}
+                currentPage={currentPage}
                 isLoading={vendors.loading}
                 onRowClick={handleRowClick}
                 search
+                setPage={setCurrentPage}
                 tableData={vendors.data}
               />
             </div>
