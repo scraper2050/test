@@ -34,6 +34,8 @@ function AdminVendorsPage({ classes }: any) {
   const history = useHistory();
   const location = useLocation<any>();
 
+  console.log(vendors.data);
+
   function RenderStatus({ status }: StatusTypes) {
     const statusValues = ['Pending', 'Accepted', 'Cancelled', 'Rejected', 'Finished'];
     const classNames = [classes.statusPendingText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.finishedText];
@@ -154,7 +156,7 @@ function AdminVendorsPage({ classes }: any) {
           'title': `Cancel or Finish contract with ${vendor.contractor.info.companyName}`
         },
         'contractId': vendor._id,
-        'notificationType': 'ContractCanceled'
+        'notificationType': 'ContractInvitation'
       },
       'type': modalTypes.CONTRACT_VIEW_MODAL
     }));
@@ -240,7 +242,7 @@ function AdminVendorsPage({ classes }: any) {
                 onRowClick={handleRowClick}
                 search
                 setPage={setCurrentPage}
-                tableData={vendors.data}
+                tableData={vendors.data.reverse()}
               />
             </div>
 

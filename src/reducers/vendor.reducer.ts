@@ -40,7 +40,7 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
     case VendorActionType.GET:
       return {
         'loading': true,
-        'data': initialVendors
+        'data': []
       };
     case VendorActionType.GET_SINGLE_VENDOR:
       return {
