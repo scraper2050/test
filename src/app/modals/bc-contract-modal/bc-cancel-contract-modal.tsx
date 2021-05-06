@@ -1,8 +1,6 @@
 import { ReactComponent as AcceptedContract } from 'assets/img/contract-accepted.svg';
 import { ReactComponent as RejectedContract } from 'assets/img/contract-rejected.svg';
 import { ReactComponent as InvitationContract } from 'assets/img/contract-invitation.svg';
-import { ReactComponent as CancelledContract } from 'assets/img/contract-cancelled.svg';
-import { ReactComponent as FinishedContract } from 'assets/img/contract-finished.svg';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import React, { useEffect } from 'react';
@@ -13,7 +11,6 @@ import { NotificationTypeTypes } from 'reducers/notifications.types';
 import { RootState } from 'reducers';
 import Alert from '@material-ui/lab/Alert/Alert';
 import { closeModalAction } from 'actions/bc-modal/bc-modal.action';
-import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
 
 
 const BCContractViewModalContainer = styled.div`
@@ -53,7 +50,7 @@ const BCContractViewModalContainer = styled.div`
 interface BCViewServiceTicketModalProps {
     contractId: string;
     message: {body: string; title: string};
-    notificationId?: string;
+    notificationId: string;
     notificationType: any;
 }
 
@@ -62,76 +59,60 @@ const renderImage = (notificationType:string) => {
   const images:any = {
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: <AcceptedContract />,
     [NotificationTypeTypes.CONTRACT_INVITATION]: <InvitationContract />,
-    [NotificationTypeTypes.CONTRACT_CANCELLED]: <CancelledContract />,
-    [NotificationTypeTypes.CONTRACT_REJECTED]: <RejectedContract />,
-    [NotificationTypeTypes.CONTRACT_FINISHED]: <FinishedContract />
+    [NotificationTypeTypes.CONTRACT_CANCELLED]: <RejectedContract />,
+    [NotificationTypeTypes.CONTRACT_REJECTED]: <RejectedContract />
   };
   return images[notificationType];
 };
 
 
 export default function BCContractViewModal({ message, notificationId, contractId, notificationType }:BCViewServiceTicketModalProps) {
-  const { vendorError, data, vendorResponse, vendorLoading } = useSelector(({ vendors }:RootState) => ({ 'vendorError': vendors.error,
-    'data': vendors.data,
-    'vendorResponse': vendors.response,
-    'vendorLoading': vendors.contractLoading }));
   const { error, loading, response } = useSelector(({ notifications }:RootState) => notifications.notificationObj);
   const dispatch = useDispatch();
 
 
   useEffect(() => {
-    if (notificationId) {
-      dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
-        'isRead': true }));
-    }
+    dispatch(acceptOrRejectContractNotificationAction.cancelled());
+    dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
+      'isRead': true }));
   }, []);
 
   const handleClick = (status:string) => {
-    if (!notificationId) {
-      dispatch(cancelOrFinishContractActions.fetch({ contractId,
-        'status': status }));
-    } else {
-      dispatch(acceptOrRejectContractNotificationAction.fetch({ contractId,
-        notificationId,
-        status
-      }));
-    }
+    dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
+      'isRead': true }));
+    dispatch(acceptOrRejectContractNotificationAction.fetch({ contractId,
+      notificationId,
+      status
+    }));
   };
 
 
   useEffect(() => {
-    if (response || vendorResponse) {
+    if (response) {
+      dispatch(dismissNotificationAction.fetch({ 'id': notificationId,
+        'isDismissed': true }));
       setTimeout(() => {
-        dispatch(cancelOrFinishContractActions.cancelled());
-        if (notificationId) {
-          dispatch(acceptOrRejectContractNotificationAction.cancelled());
-          dispatch(dismissNotificationAction.fetch({ 'id': notificationId,
-            'isDismissed': true }));
-        }
         dispatch(closeModalAction());
       }, 1500);
     }
-  }, [response, vendorResponse]);
+  }, [response]);
 
-  const errorMessage = error || vendorError;
-  const responseMessage = response || vendorResponse;
-  const isLoading = loading || vendorLoading;
 
   return <BCContractViewModalContainer>
-    {errorMessage && <Alert
+    {error && <Alert
       elevation={6}
       severity={'error'}
       variant={'filled'}>
       <div className={'alert-text-container'}>
-        {errorMessage}
+        {error}
       </div>
     </Alert>}
-    {responseMessage && <Alert
+    {response && <Alert
       elevation={6}
       severity={'success'}
       variant={'filled'}>
       <div className={'alert-text-container'}>
-        {responseMessage}
+        {response}
       </div>
     </Alert>}
     <br />
@@ -145,30 +126,22 @@ export default function BCContractViewModal({ message, notificationId, contractI
       </p>
     </div>
     <div className={'actions-container'} >
-      {(notificationType === NotificationTypeTypes.CONTRACT_INVITATION || !notificationId) && <>
+      {notificationType === NotificationTypeTypes.CONTRACT_INVITATION && <>
         <Button
           color={'secondary'}
-          disabled={isLoading}
+          disabled={loading}
           fullWidth
-          onClick={() => handleClick(`${!notificationId
-            ? 'cancel'
-            : 'reject'}`)}
+          onClick={() => handleClick('reject')}
           variant={'contained'}>
-          {`${!notificationId
-            ? 'Cancel'
-            : 'Reject'}`}
+          {'Reject'}
         </Button>
         <Button
           color={'primary'}
-          disabled={isLoading}
+          disabled={loading}
           fullWidth
-          onClick={() => handleClick(`${!notificationId
-            ? 'finish'
-            : 'accept'}`)}
+          onClick={() => handleClick('accept')}
           variant={'contained'}>
-          {`${!notificationId
-            ? 'Finish'
-            : 'Accept'}`}
+          {'Accept'}
         </Button>
       </>}
     </div>

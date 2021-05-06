@@ -43,6 +43,7 @@ import { SubscriptionReducer as subscriptions } from './subscription.reducer';
 import { NotificationsReducer as notifications } from './notifications.reducer';
 import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
+import { VendorsState } from 'actions/vendor/vendor.types';
 
 
 export interface ReducerParamsInterface {
@@ -56,6 +57,7 @@ export interface RootState {
   customersState: CustomersState;
   serviceTicket: any;
   notifications: NotificationState;
+  vendors: VendorsState;
 }
 export default combineReducers({
   auth,

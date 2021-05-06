@@ -6,10 +6,11 @@ import { modalTypes } from '../../../../constants';
 import styles from './vendors.styles';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { getVendorDetailAction, getVendors, loadingSingleVender, loadingVendors } from 'actions/vendor/vendor.action';
+import { cancelOrFinishContractActions, getVendorDetailAction, getVendors, loadingSingleVender, loadingVendors } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { editableStatus } from 'app/models/contract';
 
 interface StatusTypes {
   status: number;
@@ -81,10 +82,23 @@ function AdminVendorsPage({ classes }: any) {
       'sortable': true
     },
     {
+
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
+          {editableStatus.includes(row.original.status) && <Fab
+            aria-label={'edit'}
+            classes={{
+              'root': classes.fabRoot
+            }}
+            color={'primary'}
+            onClick={() => editVendor(row.original)}
+            style={{ 'marginRight': '15px' }}
+            variant={'extended'}>
+            {'Edit'}
+          </Fab>}
+
           <Fab
-            aria-label={'delete'}
+            aria-label={'view more'}
             classes={{
               'root': classes.fabRoot
             }}
@@ -123,6 +137,26 @@ function AdminVendorsPage({ classes }: any) {
         'removeFooter': false
       },
       'type': modalTypes.ADD_VENDOR_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const editVendor = (vendor:any) => {
+    console.log(vendor);
+    dispatch(setModalDataAction({
+      'data': {
+        'removeFooter': false,
+        'maxHeight': '450px',
+        'height': '100%',
+        'message': {
+          'title': `Cancel or Finish contract with ${vendor.contractor.info.companyName}`
+        },
+        'contractId': vendor._id,
+        'notificationType': 'ContractCanceled'
+      },
+      'type': modalTypes.CONTRACT_VIEW_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());

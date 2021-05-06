@@ -1,10 +1,12 @@
-import { ReactComponent as AcceptedContract } from '../../../../assets/img/contract-accepted.svg';
+import { ReactComponent as AcceptedContract } from 'assets/img/contract-accepted.svg';
+import { ReactComponent as RejectedContract } from 'assets/img/contract-rejected.svg';
+import { ReactComponent as InvitationContract } from 'assets/img/contract-invitation.svg';
+import { ReactComponent as CancelledContract } from 'assets/img/contract-cancelled.svg';
+import { ReactComponent as FinishedContract } from 'assets/img/contract-finished.svg';
 
 import { MenuItem } from '@material-ui/core';
 import { NotificationItem } from '../bc-header-notification';
-import { ReactComponent as PolicySVG } from '../../../../assets/img/policy.svg';
 import React from 'react';
-import { ReactComponent as RejectedContract } from '../../../../assets/img/contract-rejected.svg';
 import { fromNow } from 'helpers/format';
 import { modalTypes } from '../../../../constants';
 import styled from 'styled-components';
@@ -16,9 +18,10 @@ import { NotificationTypeTypes } from 'reducers/notifications.types';
 const renderImage = (notificationType:string) => {
   const images:any = {
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: <AcceptedContract />,
-    [NotificationTypeTypes.CONTRACT_INVITATION]: <PolicySVG />,
-    [NotificationTypeTypes.CONTRACT_CANCELLED]: <PolicySVG />,
-    [NotificationTypeTypes.CONTRACT_REJECTED]: <RejectedContract />
+    [NotificationTypeTypes.CONTRACT_INVITATION]: <InvitationContract />,
+    [NotificationTypeTypes.CONTRACT_CANCELLED]: <CancelledContract />,
+    [NotificationTypeTypes.CONTRACT_REJECTED]: <RejectedContract />,
+    [NotificationTypeTypes.CONTRACT_FINISHED]: <FinishedContract />
   };
   return images[notificationType];
 };
