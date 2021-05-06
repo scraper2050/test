@@ -159,20 +159,18 @@ export default function BCContractViewModal({ message, notificationId, contractI
     </div>
     <div className={'actions-container'} >
       {(notificationType === NotificationTypeTypes.CONTRACT_INVITATION || !notificationId) && !responseMessage && <>
-        <Button
+        {notificationId && <Button
           color={'secondary'}
           disabled={isLoading}
           fullWidth
-          onClick={() => handleClick(`${!notificationId
-            ? 'cancel'
-            : 'reject'}`)}
+          onClick={() => handleClick(`reject`)}
           variant={'contained'}>
-          {`${!notificationId
-            ? 'Cancel'
-            : 'Reject'}`}
-        </Button>
+          {`Reject`}
+        </Button>}
         <Button
-          color={'primary'}
+          color={!notificationId
+            ? 'secondary'
+            : 'primary'}
           disabled={isLoading}
           fullWidth
           onClick={() => handleClick(`${!notificationId
@@ -180,7 +178,7 @@ export default function BCContractViewModal({ message, notificationId, contractI
             : 'accept'}`)}
           variant={'contained'}>
           {`${!notificationId
-            ? 'Finish'
+            ? 'Remove'
             : 'Accept'}`}
         </Button>
       </>}
