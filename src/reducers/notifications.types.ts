@@ -19,6 +19,7 @@ type ServiceTicketNotification = {
 export enum NotificationTypeTypes {
   CONTRACT_ACCEPTED = 'ContractAccepted',
   CONTRACT_CANCELLED = 'ContractCanceled',
+  CONTRACT_FINISHED = 'ContractFinished',
   CONTRACT_INVITATION = 'ContractInvitation',
   CONTRACT_REJECTED = 'ContractRejected',
   SERVICE_TICKET_CREATED = 'ServiceTicketCreated'

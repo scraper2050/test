@@ -12,6 +12,7 @@ import watchJobReportLoad from './job-report.saga';
 import watchSubscription from './subscriptions.saga';
 import watchNotifications from './notification.saga';
 import watchLoadServiceTicket from './service-ticket.saga';
+import watchCompanyContractsLoad from './vendor.saga';
 
 
 export default function *rootSaga() {
@@ -21,6 +22,7 @@ export default function *rootSaga() {
     authFlow(),
     watchAllEmployeesLoad(),
     watchAllCompanyEquipmentsLoad(),
+    watchCompanyContractsLoad(),
     watchJobReportLoad(),
     watchSubscription(),
     watchNotifications(),
