@@ -4,13 +4,14 @@ import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './vendors.styles';
-import { Grid, withStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import { cancelOrFinishContractActions, getVendorDetailAction, getVendors, loadingSingleVender, loadingVendors } from 'actions/vendor/vendor.action';
+import { Grid, MenuItem, Select, withStyles } from '@material-ui/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { getVendorDetailAction, getVendors, loadingSingleVender, loadingVendors } from 'actions/vendor/vendor.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { editableStatus } from 'app/models/contract';
+import styled from 'styled-components';
 
 interface StatusTypes {
   status: number;
@@ -26,15 +27,47 @@ interface RowStatusTypes {
   };
 }
 
+const status = [
+  {
+    'label': 'Active',
+    'value': 'active'
+  },
+  {
+    'label': 'Archive',
+    'value': 'archive'
+  }
+];
+
+const StyledSelect = styled(Select)`
+background: white;
+padding: 0 20px;
+height: 40px;
+width: 120px;`;
+
+
+function ToolBar({ handleChange, menuItems }:any) {
+  return <StyledSelect
+    defaultValue={'active'}
+    onChange={handleChange}>
+    {menuItems.map((item:any) => <MenuItem
+      key={item.value}
+      value={item.value}>
+      {item.label}
+    </MenuItem>)}
+  </StyledSelect>;
+}
+
 
 function AdminVendorsPage({ classes }: any) {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
   const [curTab, setCurTab] = useState(0);
+  const [tableData, setTableData] = useState([]);
   const history = useHistory();
   const location = useLocation<any>();
 
-  console.log(vendors.data);
+  const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1].includes(vendor.status)), [vendors]);
+  const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1].includes(vendor.status)), [vendors]);
 
   function RenderStatus({ status }: StatusTypes) {
     const statusValues = ['Pending', 'Accepted', 'Cancelled', 'Rejected', 'Finished'];
@@ -88,7 +121,7 @@ function AdminVendorsPage({ classes }: any) {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
           {editableStatus.includes(row.original.status) && <Fab
-            aria-label={'edit'}
+            aria-label={'change-status'}
             classes={{
               'root': classes.fabRoot
             }}
@@ -96,7 +129,7 @@ function AdminVendorsPage({ classes }: any) {
             onClick={() => editVendor(row.original)}
             style={{ 'marginRight': '15px' }}
             variant={'extended'}>
-            {'Edit'}
+            {'Change Status'}
           </Fab>}
 
           <Fab
@@ -117,6 +150,12 @@ function AdminVendorsPage({ classes }: any) {
       'width': 60
     }
   ];
+
+  useEffect(() => {
+    if (vendors) {
+      setTableData(activeVendors);
+    }
+  }, [vendors]);
 
   useEffect(() => {
     dispatch(loadingVendors());
@@ -146,14 +185,13 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const editVendor = (vendor:any) => {
-    console.log(vendor);
     dispatch(setModalDataAction({
       'data': {
         'removeFooter': false,
         'maxHeight': '450px',
         'height': '100%',
         'message': {
-          'title': `Cancel or Finish contract with ${vendor.contractor.info.companyName}`
+          'title': `Finish contract with ${vendor.contractor.info.companyName}`
         },
         'contractId': vendor._id,
         'notificationType': 'ContractInvitation'
@@ -163,6 +201,14 @@ function AdminVendorsPage({ classes }: any) {
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
+  };
+
+  const handleFilterChange = (e:any) => {
+    if (e.target.value === 'active') {
+      setTableData(activeVendors);
+    } else {
+      setTableData(nonActiveVendors);
+    }
   };
 
   const renderViewMore = (row: any) => {
@@ -242,7 +288,12 @@ function AdminVendorsPage({ classes }: any) {
                 onRowClick={handleRowClick}
                 search
                 setPage={setCurrentPage}
-                tableData={vendors.data.reverse()}
+                tableData={tableData.reverse()}
+                toolbar={
+                  <ToolBar
+                    handleChange={handleFilterChange}
+                    menuItems={status}
+                  />}
               />
             </div>
 

@@ -1,19 +1,20 @@
-import BCCircularLoader from "../bc-circular-loader/bc-circular-loader";
-import BCTableContent from "./bc-table-content";
-import BCTableSearchContainer from "../bc-table-search-container/bc-table-search-container";
-import TableSearchUtils from "utils/table-search";
-import Typography from "@material-ui/core/Typography";
-import styles from "./bc-table.styles";
-import { Grid, Paper, withStyles } from "@material-ui/core";
+import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
+import BCTableContent from './bc-table-content';
+import BCTableSearchContainer from '../bc-table-search-container/bc-table-search-container';
+import TableSearchUtils from 'utils/table-search';
+import Typography from '@material-ui/core/Typography';
+import styles from './bc-table.styles';
+import { Grid, Paper, withStyles } from '@material-ui/core';
 // Import { useDispatch } from 'react-redux';
-import { Dispatch } from "redux";
-import { setSearchTerm } from "actions/searchTerm/searchTerm.action";
-import { connect, useDispatch } from "react-redux";
-import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { Dispatch } from 'redux';
+import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
+import { connect, useDispatch } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import "../../../scss/index.scss";
-// import console from "console";
+import '../../../scss/index.scss';
+import styled from 'styled-components';
+// Import console from "console";
 
 interface Props {
   searchTerm: string;
@@ -28,9 +29,9 @@ function BCTableContainer({
   classes,
   className,
   search,
-  searchPlaceholder = "Search Customers...",
+  searchPlaceholder = 'Search Customers...',
   pagination = true,
-  initialMsg = "No records found!",
+  initialMsg = 'No records found!',
   isPageSaveEnabled,
   searchTerm,
   setPage,
@@ -40,6 +41,7 @@ function BCTableContainer({
   stickyHeader = false,
   noHeader = false,
   cellSize,
+  toolbar
 }: any) {
   const dispatch = useDispatch();
   const location = useLocation<any>();
@@ -49,7 +51,7 @@ function BCTableContainer({
   const initialSearch =
     locationState && locationState.prevPage && locationState.prevPage.search
       ? locationState.prevPage.search
-      : "";
+      : '';
 
   const onPageSearch =
     locationState &&
@@ -67,22 +69,22 @@ function BCTableContainer({
     if (setPage !== undefined) {
       setPage({
         ...currentPage,
-        search: event.target.value,
+        'search': event.target.value
       });
     }
     if (locationState && locationState.prevPage) {
       history.replace({
         ...history.location,
-        state: {
+        'state': {
           ...currentPage,
-          search: event.target.value,
-        },
+          'search': event.target.value
+        }
       });
     }
   };
 
   const getFilteredArray = (entities: any, text: any) => {
-    const arr = Object.keys(entities).map((id) => entities[id]);
+    const arr = Object.keys(entities).map(id => entities[id]);
     if (text.length === 0) {
       return arr;
     }
@@ -91,7 +93,7 @@ function BCTableContainer({
 
   useEffect(() => {
     if (tableData) {
-      if (initialSearch !== "") {
+      if (initialSearch !== '') {
         setSearchText(initialSearch);
       }
     }
@@ -104,52 +106,70 @@ function BCTableContainer({
   }, [tableData, searchText]);
 
   return (
-    <Grid container>
-      <Grid item xs={12} sm={6}>
-        {search ? (
-          <BCTableSearchContainer
+    <TableContainer container>
+      <Grid
+        className={'actions-container'}
+        item
+        sm={6}
+        xs={12}>
+        {search
+          ? <BCTableSearchContainer
             handleSearchChange={handleSearchChange}
             searchPlaceholder={searchPlaceholder}
             searchText={searchText}
           />
-        ) : null}
+          : null}
+        {toolbar}
       </Grid>
-      <Grid item xs={12}>
-        {isLoading ? (
-          <Paper classes={{ root: classes.noDataPaper }}>
-            <BCCircularLoader heightValue={"200px"} />
+      <Grid
+        item
+        xs={12}>
+        {isLoading
+          ? <Paper classes={{ 'root': classes.noDataPaper }}>
+            <BCCircularLoader heightValue={'200px'} />
           </Paper>
-        ) : filteredData && filteredData.length === 0 ? (
-          <Paper classes={{ root: classes.noDataPaper }}>
-            <Typography color={"textSecondary"} variant={"h5"}>
-              {initialMsg}
-            </Typography>
-          </Paper>
-        ) : (
-              <BCTableContent
-            cellSize={cellSize}
-            noHeader={noHeader}
-            stickyHeader={stickyHeader}
-            className={className ? className : ""}
-            currentPage={currentPage}
-            columns={columns}
-            data={filteredData}
-            invoiceTable
-            onRowClick={(ev: any, row: any) => {
-              onRowClick && onRowClick(ev, row);
-            }}
-            pagination={pagination}
-            isPageSaveEnabled={isPageSaveEnabled || false}
-            setPage={setPage}
-            isLoading={isLoading}
-            defaultPageSize={pageSize}
-            isDefault={isDefault}
-          />
-        )}
+          : filteredData && filteredData.length === 0
+            ? <Paper classes={{ 'root': classes.noDataPaper }}>
+              <Typography
+                color={'textSecondary'}
+                variant={'h5'}>
+                {initialMsg}
+              </Typography>
+            </Paper>
+            : <BCTableContent
+              cellSize={cellSize}
+              className={className ? className : ''}
+              columns={columns}
+              currentPage={currentPage}
+              data={filteredData}
+              defaultPageSize={pageSize}
+              invoiceTable
+              isDefault={isDefault}
+              isLoading={isLoading}
+              isPageSaveEnabled={isPageSaveEnabled || false}
+              noHeader={noHeader}
+              onRowClick={(ev: any, row: any) => {
+                onRowClick && onRowClick(ev, row);
+              }}
+              pagination={pagination}
+              setPage={setPage}
+              stickyHeader={stickyHeader}
+            />
+        }
       </Grid>
-    </Grid>
+    </TableContainer>
   );
 }
+
+const TableContainer = styled(Grid)`
+.actions-container {
+  display:flex;
+  > .MuiPaper-root {
+    flex: 1;
+    margin-right: 20px;
+  }
+}
+`;
 
 
 const mapStateToProps = (state: {
@@ -157,14 +177,12 @@ const mapStateToProps = (state: {
     text: string;
   };
 }) => ({
-  searchTerm: state.searchTerm.text,
+  'searchTerm': state.searchTerm.text
 });
 
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setSearchTerm: (searchTerm: any) => dispatch(setSearchTerm(searchTerm)),
+  'setSearchTerm': (searchTerm: any) => dispatch(setSearchTerm(searchTerm))
 });
 
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(BCTableContainer)
-);
+export default withStyles(styles, { 'withTheme': true })(connect(mapStateToProps, mapDispatchToProps)(BCTableContainer));
