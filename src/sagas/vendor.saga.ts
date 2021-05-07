@@ -1,35 +1,60 @@
-import { getCompanyContracts } from 'api/vendor.api';
-import { loadCompanyContractsActions } from 'actions/vendor/vendor.action';
 import {
+  all,
   call,
   cancelled,
   fork,
   put,
-  take
+  take,
+  takeLatest
 } from 'redux-saga/effects';
+import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
+import { cancelOrFinishVendorApi } from 'api/vendor.api';
+import { vendorStatusToNumber } from 'actions/vendor/vendor.types';
 
-export function* handleCompanyContractsTypes(action: { payload: any }) {
-  yield put(loadCompanyContractsActions.fetching());
+
+/*
+ * Export function *handleCompanyContractsTypes(action: { payload: any }) {
+ *   yield put(loadCompanyContractsActions.fetching());
+ *   try {
+ *     const result = yield call(getCompanyContracts);
+ *     yield put(loadCompanyContractsActions.success(result));
+ *   } catch (error) {
+ *     yield put(loadCompanyContractsActions.fault(error.toString()));
+ *   } finally {
+ *     if (yield cancelled()) {
+ *       yield put(loadCompanyContractsActions.cancelled());
+ *     }
+ *   }
+ * }
+ */
+
+export function *handleCancelOrFinish(action: { payload: any }) {
+  console.log('called');
+  yield put(cancelOrFinishContractActions.fetching());
   try {
-    const result = yield call(
-      getCompanyContracts
-    );
-    yield put(loadCompanyContractsActions.success(result));
+    const result = yield call(cancelOrFinishVendorApi, action.payload);
+    console.log('api');
+    if (result.status !== 0) {
+      console.log('result');
+      yield put(cancelOrFinishContractActions.success({ '_id': action.payload.contractId,
+        'message': result.message,
+        'status': vendorStatusToNumber[action.payload.status] }));
+    } else {
+      console.log('error');
+      yield put(cancelOrFinishContractActions.fault(result.message));
+    }
   } catch (error) {
-    yield put(loadCompanyContractsActions.fault(error.toString()));
+    yield put(cancelOrFinishContractActions.fault(error.toString()));
   } finally {
     if (yield cancelled()) {
-      yield put(loadCompanyContractsActions.cancelled());
+      yield put(cancelOrFinishContractActions.cancelled());
     }
   }
 }
 
-export function* watchCompanyContractsLoad() {
-  while (true) {
-    const fetchAction = yield take(loadCompanyContractsActions.fetch);
-    yield fork(
-      handleCompanyContractsTypes,
-      fetchAction
-    );
-  }
+export default function *watchCompanyContractsLoad() {
+  yield all([
+    // TakeLatest(loadCompanyContractsActions.fetch, handleCompanyContractsTypes),
+    takeLatest(cancelOrFinishContractActions.fetch, handleCancelOrFinish)
+  ]);
 }

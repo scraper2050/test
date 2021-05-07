@@ -35,6 +35,10 @@ function renderItem(item:NotificationItem, index:number) {
       {...item}
       key={index}
     />,
+    [NotificationTypeTypes.CONTRACT_FINISHED]: <ContractNotification
+      {...item}
+      key={index}
+    />,
     [NotificationTypeTypes.SERVICE_TICKET_CREATED]: <ServiceTicketNotication
       {...item}
       key={index}

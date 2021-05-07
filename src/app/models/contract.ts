@@ -5,3 +5,5 @@ export interface Contract {
   type: string
 }
 
+export const editableStatus = [0, 1]; // Pending, accepted
+

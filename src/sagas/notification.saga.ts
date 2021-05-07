@@ -1,4 +1,4 @@
-import { AcceptRejectContractProps, AcceptRejectVendorAPI } from 'api/vendor.api';
+import { acceptRejectVendorAPI } from 'api/vendor.api';
 import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import {
   all,
@@ -56,13 +56,13 @@ export function *handleNotificationDismiss(action: {payload: string}) {
 export function *handleAcceptOrReject(action: {payload: any}) {
   yield put(acceptOrRejectContractNotificationAction.fetching());
   try {
-    const result = yield call(AcceptRejectVendorAPI, action.payload);
+    const result = yield call(acceptRejectVendorAPI, action.payload);
     if (result.status === 0) {
       yield put(acceptOrRejectContractNotificationAction.fault(result.message));
     } else {
-      yield put(acceptOrRejectContractNotificationAction.success(result.notification));
-      yield put(dismissNotificationAction.fetch({ 'id': action.payload.notificationId,
-        'isDismissed': true }));
+      yield put(acceptOrRejectContractNotificationAction.success({ '_id': action.payload.notificationId,
+        'message': result.message
+      }));
     }
   } catch (error) {
     yield put(acceptOrRejectContractNotificationAction.fault(error.toString()));

@@ -80,7 +80,7 @@ export interface AcceptRejectContractProps {
   status: string;
 }
 
-export const AcceptRejectVendorAPI = ({ contractId, status }:AcceptRejectContractProps) => {
+export const acceptRejectVendorAPI = ({ contractId, status }:AcceptRejectContractProps) => {
   return new Promise((resolve, reject) => {
     request(`/acceptOrRejectContract`, 'post', { contractId,
       status })
@@ -92,4 +92,18 @@ export const AcceptRejectVendorAPI = ({ contractId, status }:AcceptRejectContrac
       });
   });
 };
+
+export const cancelOrFinishVendorApi = ({ contractId, status }:AcceptRejectContractProps) => {
+  return new Promise((resolve, reject) => {
+    request(`/CancelOrFinish`, 'post', { contractId,
+      status })
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 

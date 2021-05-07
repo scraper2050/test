@@ -24,10 +24,14 @@ export const getNotificationValues = (notificationType: string, notification:Not
     [NotificationTypeTypes.CONTRACT_CANCELLED]: {
       'details': notification.message?.body,
       'typeText': 'Contract Cancelled'
+    },
+    [NotificationTypeTypes.CONTRACT_FINISHED]: {
+      'details': notification.message?.body,
+      'typeText': 'Contract Finished,'
     }
   };
 
-  return notificationTypes[notificationType];
+  return notificationTypes[notificationType] || '';
 };
 
 export const getNotificationMethods = (dispatch:Dispatch, notificationType: string, notification:Notification) => {
@@ -36,7 +40,8 @@ export const getNotificationMethods = (dispatch:Dispatch, notificationType: stri
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: () => openContractModal(dispatch, notification),
     [NotificationTypeTypes.CONTRACT_INVITATION]: () => openContractModal(dispatch, notification),
     [NotificationTypeTypes.CONTRACT_REJECTED]: () => openContractModal(dispatch, notification),
-    [NotificationTypeTypes.CONTRACT_CANCELLED]: () => openContractModal(dispatch, notification)
+    [NotificationTypeTypes.CONTRACT_CANCELLED]: () => openContractModal(dispatch, notification),
+    [NotificationTypeTypes.CONTRACT_FINISHED]: () => openContractModal(dispatch, notification)
   };
 
   return notificationTypes[notificationType];
