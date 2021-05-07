@@ -50,6 +50,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       {
         'class': classes.statusCanceledText,
         'text': 'Canceled'
+      },
+      {
+        'class': classes.resheduledText,
+        'text': 'Rescheduled'
       }
     ];
     const textStatus = statusArray[status].text;
