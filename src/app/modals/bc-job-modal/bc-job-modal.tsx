@@ -124,16 +124,17 @@ function BCJobModal({
 
   const handleEmployeeTypeChange = (fieldName: string, data: any) => {
     const _id = data ? data._id : 0;
+    setFieldValue('contractorId', '');
+    setFieldValue('technicianId', '');
     if (_id === '0') {
       setFieldValue(fieldName, 0);
       setShowVendorFlag(false);
-      setFieldValue('technicianId', '');
     } else if (_id === '1') {
       setFieldValue(fieldName, 1);
       setShowVendorFlag(true);
-      setFieldValue('contractorId', '');
     }
   };
+
 
   const handleSelectChange = (fieldName: string, newValue: string, setState?: any) => {
     if (setState !== undefined) {
@@ -381,15 +382,19 @@ function BCJobModal({
         customerId
       };
 
+
+      delete tempData.contractor;
+      delete tempData.technician;
+
       if (values.contractorId && values.contractorId !== '') {
-        delete tempData.technician;
         delete tempData.technicianId;
+        tempData.employeeType = 1;
       }
 
 
       if (values.technicianId && values.technicianId !== '') {
-        delete tempData.contractor;
         delete tempData.contractorId;
+        tempData.employeeType = 0;
       }
 
 
