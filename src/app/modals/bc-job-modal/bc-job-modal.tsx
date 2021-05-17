@@ -19,7 +19,7 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
 import { callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -84,7 +84,7 @@ function BCJobModal({
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   // Const employeesForJob = useSelector(({ employeesForJob }: any) => employeesForJob.data);
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
-  const employeesForJob = [...data];
+  const employeesForJob = useMemo(() => [...data], [data]);
   const vendorsList = useSelector(({ vendors }: any) => vendors.data);
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
@@ -372,6 +372,7 @@ function BCJobModal({
         customerContactId
       };
 
+
       const formatedTicketRequest = formatRequestObj(tempTicket);
 
       const tempData = {
@@ -379,6 +380,18 @@ function BCJobModal({
         ...values,
         customerId
       };
+
+      if (values.contractorId && values.contractorId !== '') {
+        delete tempData.technician;
+        delete tempData.technicianId;
+      }
+
+
+      if (values.technicianId && values.technicianId !== '') {
+        delete tempData.contractor;
+        delete tempData.contractorId;
+      }
+
 
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
@@ -424,7 +437,6 @@ function BCJobModal({
           delete requestObj.ticket;
           delete requestObj.type;
         }
-
         request(requestObj)
 
           .then(async (response: any) => {
@@ -698,7 +710,7 @@ function BCJobModal({
                       disabled={detail}
                       getOptionLabel={option => option.profile ? option.profile.displayName : ''}
                       id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                      onChange={(ev: any, newValue: any) => handleSelectChange('technicianId', newValue?._id, setEmployeeValue(newValue))}
+                      onChange={(ev: any, newValue: any) => handleSelectChange('technicianId', newValue?._id, () => setEmployeeValue(newValue))}
                       options={employeesForJob && employeesForJob.length !== 0 ? employeesForJob.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
                       renderInput={params =>
                         <>
@@ -754,9 +766,9 @@ function BCJobModal({
                         className={detail ? 'detail-only' : ''}
                         // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
                         disabled={detail}
-                        getOptionLabel={option => option.contractor?.info?.companyName ? option.contractor.info.companyName : ''}
+                        getOptionLabel={option => option?.contractor?.info?.companyName ? option.contractor.info.companyName : ''}
                         id={'tags-standard'}
-                        onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue.contractor._id, setContractorValue(newValue))}
+                        onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue.contractor._id, () => setContractorValue(newValue))}
                         options={vendorsList && vendorsList.length !== 0 ? vendorsList.sort((a: any, b: any) => a.contractor.info.companyName > b.contractor.info.companyName ? 1 : b.contractor.info.companyName > a.contractor.info.companyName ? -1 : 0) : []}
                         renderInput={params =>
                           <>
