@@ -137,6 +137,14 @@ function BCJobModal({
 
 
   const handleSelectChange = (fieldName: string, newValue: string, setState?: any) => {
+    if (fieldName === 'contractorId') {
+      setFieldValue('technicianId', '');
+    }
+    if (fieldName === 'technicianId') {
+      setFieldValue('contractorId', '');
+    }
+
+
     if (setState !== undefined) {
       setState();
     }
@@ -382,18 +390,20 @@ function BCJobModal({
         customerId
       };
 
-
       delete tempData.contractor;
       delete tempData.technician;
+
 
       if (values.contractorId && values.contractorId !== '') {
         delete tempData.technicianId;
         tempData.employeeType = 1;
+        tempData.contractorId = values.contractorId;
       }
 
 
       if (values.technicianId && values.technicianId !== '') {
         delete tempData.contractorId;
+        tempData.technicianId = values.technicianId;
         tempData.employeeType = 0;
       }
 
@@ -829,7 +839,7 @@ function BCJobModal({
                     disabled={ticket.jobType || detail}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id, setJobTypeValue(newValue))}
+                    onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id, () => setJobTypeValue(newValue))}
                     options={jobTypes && jobTypes.length !== 0 ? jobTypes.sort((a: any, b: any) => a.title > b.title ? 1 : b.title > a.title ? -1 : 0) : []}
                     renderInput={params =>
                       <>
