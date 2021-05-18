@@ -117,6 +117,7 @@ function CustomerInfoPage({ classes }: any) {
     return <BCCircularLoader heightValue={"200px"} />;
   } else {
     const customerData = renderCustomerInfo(customerObj);
+    console.log("testing: ", customerData)
     return (
       <div className="customer_info_wrapper">
         <div className="customer_container">
@@ -128,7 +129,9 @@ function CustomerInfoPage({ classes }: any) {
           </div>
           <div className="customer_details">
             <strong>Address: </strong>{" "}
-            {customerData.address.trim() !== "" ? customerData.address : "N/A"}
+            {customerData?.customerAddress?.street+', '+customerData?.customerAddress?.unit}
+            <br/>
+            {customerData?.customerAddress?.city+', '+customerData?.customerAddress?.state+' '+customerData?.customerAddress?.zipCode}
           </div>
           <div className="customer_details">
             <strong>E-mail: </strong> {customerData.email}
