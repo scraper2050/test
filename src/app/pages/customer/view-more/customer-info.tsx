@@ -117,7 +117,6 @@ function CustomerInfoPage({ classes }: any) {
     return <BCCircularLoader heightValue={"200px"} />;
   } else {
     const customerData = renderCustomerInfo(customerObj);
-    console.log("testing: ", customerData)
     return (
       <div className="customer_info_wrapper">
         <div className="customer_container">
