@@ -46,28 +46,33 @@ function CustomerInfoPage({ classes }: any) {
         ? baseObj["contactName"]
         : "N/A";
     let address: any = "";
+    let address1: any = "";
     if (customerAddress && customerAddress !== undefined) {
-      address = `${customerAddress["street"] !== undefined &&
-        customerAddress["street"] !== null
+      address = `${!!customerAddress["street"]
         ? customerAddress["street"]
         : ""
-        } 
-      ${customerAddress["city"] !== undefined &&
-          customerAddress["city"] !== null
+        }
+      ${!!customerAddress["unit"]
+        ? ", "+customerAddress["unit"]
+        : ""
+        }`;
+    } else {
+      address = "N/A";
+    }
+    if (customerAddress && customerAddress !== undefined) {
+      address1 = `${!!customerAddress["city"]
           ? customerAddress["city"]
           : ""
-        } ${customerAddress["state"] !== undefined &&
-          customerAddress["state"] !== null &&
+        } ${!!customerAddress["state"] &&
           customerAddress["state"] !== "none"
-          ? customerAddress["state"]
+          ? ", "+customerAddress["state"]
           : ""
-        } ${customerAddress["zipCode"] !== undefined &&
-          customerAddress["zipCode"] !== null
+        } ${!!customerAddress["zipCode"]
           ? customerAddress["zipCode"]
           : ""
         }`;
     } else {
-      address = "N/A";
+      address1 = "N/A";
     }
     let email =
       baseObj &&
@@ -87,6 +92,7 @@ function CustomerInfoPage({ classes }: any) {
     let customerObj = {
       customerName: customerName,
       address,
+      address1,
       contactName: contactName,
       customerId,
       customerAddress,
@@ -128,9 +134,9 @@ function CustomerInfoPage({ classes }: any) {
           </div>
           <div className="customer_details">
             <strong>Address: </strong>{" "}
-            {customerData?.customerAddress?.street+', '+customerData?.customerAddress?.unit}
-            <br/>
-            {customerData?.customerAddress?.city+', '+customerData?.customerAddress?.state+' '+customerData?.customerAddress?.zipCode}
+            {customerData.address.trim() !== "" ? customerData.address : customerData.address1.trim() !== "" ? "" : "N/A"}
+            {customerData.address.trim() !== "" && <br/>}
+            {customerData.address1.trim() !== "" ? customerData.address1 : ""}
           </div>
           <div className="customer_details">
             <strong>E-mail: </strong> {customerData.email}
