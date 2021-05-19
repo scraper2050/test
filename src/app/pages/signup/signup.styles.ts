@@ -2,6 +2,9 @@ import BackImg from '../../../assets/img/bg.png';
 import { Theme } from '@material-ui/core/styles';
 export default (theme: Theme): any => ({
   'AgreeTermDiv': {
+    '@media(max-width: 540px)': {
+      'marginLeft': '-11px'
+    },
     '& span': {
       '&:hover': {
         'textDecoration': 'underline'
@@ -126,7 +129,7 @@ export default (theme: Theme): any => ({
   },
   'signupTitle': {
     '@media(max-width: 540px)': {
-      'fontSize': '2rem'
+      'fontSize': '1.7rem'
     }
   }
 });
