@@ -38,6 +38,7 @@ const StyledToolbar = styled(Toolbar)`
   }
 
   @media (max-width: 600px) {
+    display: block !important;
     .title {
       font-size: 24px;
       margin-right: 20px

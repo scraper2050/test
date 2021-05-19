@@ -285,7 +285,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 <Grid
                   item
                   md={6}
-                  xs={6}>
+                  xs={12}>
                   <TextField
                     error={!formData.firstName.validate}
                     fullWidth
@@ -305,7 +305,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 <Grid
                   item
                   md={6}
-                  xs={6}>
+                  xs={12}>
                   <TextField
                     error={!formData.lastName.validate}
                     fullWidth
@@ -325,7 +325,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 <Grid
                   item
                   md={6}
-                  xs={6}>
+                  xs={12}>
                   <BCEmailValidateInputut
                     id={'email'}
                     inputData={formData.email}
@@ -344,7 +344,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   item
                   md={6}
                   style={{ 'position': 'relative' }}
-                  xs={6}>
+                  xs={12}>
                   <PassowrdInput
                     id={'password'}
                     inputData={formData.password}
@@ -362,7 +362,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 <Grid
                   item
                   md={6}
-                  xs={6}>
+                  xs={12}>
                   <BCPhoneNumberInputut
                     changeData={(data: FormDataModel) => {
                       setFormData({
@@ -379,7 +379,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 <Grid
                   item
                   md={6}
-                  xs={6}>
+                  xs={12}>
                   <FormControl
                     error={!formData.industry.validate}
                     fullWidth
@@ -425,7 +425,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 <Grid
                   item
                   md={6}
-                  xs={6}>
+                  xs={12}>
                   <TextField
                     error={!formData.company.validate}
                     fullWidth
@@ -449,7 +449,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                     'display': 'flex',
                     'flexDirection': 'column'
                   }}
-                  xs={6}>
+                  xs={12}>
                   <div className={classes.AgreeTermDiv}>
                     <Checkbox
                       checked={agreeTerm.value}

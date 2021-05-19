@@ -79,3 +79,10 @@
 #dueDate {
   text-align: right;
 }
+@media only screen and (max-width: 767px) {
+  .MuiPaper-root {
+    .MuiDialogActions-root {
+      align-items: baseline;
+    }
+  }
+}
