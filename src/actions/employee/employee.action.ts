@@ -35,7 +35,7 @@ export const createTechnician = (data: UserProfile) => {
 
 export const createAdministrator = (data: UserProfile) => {
   return async (dispatch: any) => {
-      const response: any = await addAdministrator(data);
+    return await addAdministrator(data);
   };
 }
 
