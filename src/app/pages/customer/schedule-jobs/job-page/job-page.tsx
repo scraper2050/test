@@ -210,7 +210,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             alignItems={'center'}
             container>
             <div className={'flex items-center'}>
-              {row.original.status === 0 && (!row.original.employeeType || row.original.createdBy.profile._id === _id)
+              {[0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)
                 ? <Fab
                   aria-label={'edit-job'}
                   classes={{

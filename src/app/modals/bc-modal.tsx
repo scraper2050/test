@@ -16,6 +16,7 @@ import BCMapFilterModal from './bc-map-filter/bc-map-filter-popup';
 import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-modal';
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
 import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
+import BCMakeAdminConfirmModal from './bc-make-admin-employee-modal/bc-make-admin-employee-confirm';
 import CloseIcon from '@material-ui/icons/Close';
 import {
   closeModalAction,
@@ -166,6 +167,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCDeleteBillingConfirmModal data={data.data} />);
+        break;
+      case modalTypes.MAKE_ADMIN_EMPLOYEE_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCMakeAdminConfirmModal data={data?.data} />);
         break;
       case modalTypes.DELETE_CONTACT_MODAL:
         setModalOptions({

@@ -53,6 +53,14 @@ export default (theme: Theme): any => ({
     'font-size': 16
   },
   'forgetremember': {
+    '@media(max-width: 479px)': {
+      'display': 'block'
+    },
+    '& .MuiFormControlLabel-root': {
+      '@media(max-width: 479px)': {
+        'marginLeft': '-15px',
+      }
+    },
     'alignItems': 'center',
     'display': 'flex',
     'justifyContent': 'space-between',
@@ -71,6 +79,12 @@ export default (theme: Theme): any => ({
     'width': '80%'
   },
   'register': {
+    '@media(max-width: 479px)': {
+      'display': 'block'
+    },
+    '& div': {
+      'marginBottom': '10px'
+    },
     'alignItems': 'center',
     'display': 'flex',
     'justifyContent': 'space-between',
@@ -109,6 +123,11 @@ export default (theme: Theme): any => ({
         'color': '#00aaff',
       },
       'cursor': 'pointer'
+    },
+    '@media(max-width: 479px)': {
+      'marginLeft': '-15px',
+      'display': 'inline-flex',
+      'alignItems': 'center',
     },
     'fontSize': 16
   },

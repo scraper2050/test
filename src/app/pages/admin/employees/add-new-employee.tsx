@@ -71,8 +71,14 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
       case RoleEnums.Administrator:
         try {
           response = await dispatch(createAdministrator(data));
+          if (response.message !== "Employee created successfully.") {
+            dispatch(info(response.message));
+          } else if (response.status) {
+            await renderGoBack(location.state)
+            dispatch(success("Employee created successfully."));
+          }
         } catch (err) {
-          dispatch(error('Something went wrong, pleas try other role'));
+          dispatch(error('Something went wrong, please try other role'));
         }
         break;
       case RoleEnums.Manager:

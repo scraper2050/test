@@ -12,6 +12,11 @@ export default (theme: Theme): any => ({
   'mapWrapper': {
     'height': '100%'
   },
+  'customLoc': {
+    '@media(max-width: 767px)': {
+      'padding': '4px 0px !important'
+    }
+  },
   'paper': {
     'color': theme.palette.text.secondary,
     'padding': '4px 8px'

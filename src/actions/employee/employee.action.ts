@@ -1,7 +1,7 @@
 
 import { createApiAction } from '../action.utils';
 import { UsersActionType, types, UserProfile } from './employee.types';
-import { getEmployees as fetchEmployees, addTechnician, addManager, addOfficeAdmin, getEmployeeDetail,addAdministrator } from 'api/employee.api';
+import { getEmployees as fetchEmployees, addTechnician, addManager, addOfficeAdmin, getEmployeeDetail,addAdministrator, updateAdminRole } from 'api/employee.api';
 
 export const loadAllEmployeesActions = createApiAction(types.EMPLOYEE_LOAD);
 export const newCustomerAction = createApiAction(types.EMPLOYEE_NEW);
@@ -35,7 +35,7 @@ export const createTechnician = (data: UserProfile) => {
 
 export const createAdministrator = (data: UserProfile) => {
   return async (dispatch: any) => {
-      const response: any = await addAdministrator(data);
+    return await addAdministrator(data);
   };
 }
 
@@ -51,6 +51,11 @@ export const createOfficeAdmin = (data: UserProfile) => {
   };
 }
 
+export const updateEmployeeRole = (data: UserProfile) => {
+  return async (dispatch: any) => {
+    return await updateAdminRole(data);
+  };
+}
 
 
 export const loadingSingleEmployee = () => {

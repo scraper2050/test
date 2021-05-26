@@ -55,4 +55,7 @@ const SubToolBarButton = styled(Button)`
     text-decoration: none !important;
     color: ${CONSTANTS.PRIMARY_DARK} !important;
   }
+  @media (max-width: 768px) {
+    display: none !important;
+  }
 `;
