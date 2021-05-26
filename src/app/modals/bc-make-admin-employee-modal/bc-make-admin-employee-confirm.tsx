@@ -55,9 +55,17 @@ function BCMakeAdminConfirmModal({classes, data}: Props):JSX.Element {
     try {
       response = await dispatch(updateEmployeeRole(data));
       if (response.message === "Employee Role Has Been Updated Successfully!") {
-        await renderGoBack(location.state)
-				dispatch(closeModalAction());
-        dispatch(success("Employee role updated successfully."));
+				await renderGoBack(location.state)
+				dispatch(success("Employee role updated successfully."));
+				setTimeout(() => {
+          dispatch(
+            setModalDataAction({
+              data: {},
+              type: "",
+            })
+          );
+        }, 200);
+        dispatch(closeModalAction());
       } else if (!!response?.message) {
         dispatch(info(response.message));
       }

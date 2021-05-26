@@ -138,9 +138,7 @@ function EmployeeProfilePage({ classes }: any) {
   }
 
   const updateEmployee = async () => {
-    const obj: any = location.state;
-    const employeeId = obj?.employeeId;
-
+    const employeeId = employeeDetails?._id;
     const data: any = {
       employeeId: employeeId,
       newRole: 4
