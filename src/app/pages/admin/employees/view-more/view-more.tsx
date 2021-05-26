@@ -15,14 +15,15 @@ import { uploadImage } from 'actions/image/image.action';
 import { updateCompanyProfileAction } from 'actions/user/user.action';
 import { updateEmployeeEmailPreferences } from 'api/email-preferences.api';
 import { useLocation, useHistory } from "react-router-dom";
-import { getEmployees, loadingEmployees, loadingSingleEmployee, getEmployeeDetailAction } from 'actions/employee/employee.action';
-import { Grid, withStyles } from '@material-ui/core';
+import { getEmployees, loadingEmployees, loadingSingleEmployee, getEmployeeDetailAction, updateEmployeeRole } from 'actions/employee/employee.action';
+import { Grid, withStyles, Fab } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
 import BCEmailPreference from '../../../../components/bc-email-preference/bc-email-preference';
 import { error, success, info } from 'actions/snackbar/snackbar.action'
-
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from "../../../../../constants";
 
 function EmployeeProfilePage({ classes }: any) {
   const dispatch = useDispatch();
@@ -71,7 +72,6 @@ function EmployeeProfilePage({ classes }: any) {
       const obj: any = location.state;
       const employeeId = obj.employeeId;
 
-      console.log(employeeId)
       dispatch(loadingSingleEmployee());
       dispatch(getEmployeeDetailAction(employeeId));
     }
@@ -137,7 +137,29 @@ function EmployeeProfilePage({ classes }: any) {
 
   }
 
-  console.log(employeeDetails)
+  const updateEmployee = async () => {
+    const obj: any = location.state;
+    const employeeId = obj?.employeeId;
+
+    const data: any = {
+      employeeId: employeeId,
+      newRole: 4
+    };
+
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'data': data,
+          'modalTitle': ' ',
+          'removeFooter': false
+        },
+        type: modalTypes.MAKE_ADMIN_EMPLOYEE_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
 
   return (
     <>
@@ -219,6 +241,19 @@ function EmployeeProfilePage({ classes }: any) {
                             }
                           }
                         ]} />
+                        {
+                          employeeDetails?.permissions?.role !== 4 &&
+                          <Fab
+                            aria-label={'new-ticket'}
+                            classes={{
+                              'root': classes.fabRoot
+                            }}
+                            color={'primary'}
+                            onClick={updateEmployee}
+                            variant={'extended'}>
+                            {'Make Admin'}
+                          </Fab>
+                        }
                     </PageContainer>
 
                   </MainContainer>
@@ -262,7 +297,13 @@ const PageContainer = styled.div`
   padding-right: 65px;
   margin: 0 auto;
   button  {
-    display: none;
+    // display: none;
+    width: 15%;
+    display: block;
+    float: right;
+    position: absolute;
+    right: 73px;
+    bottom: 58px;
   }
   input {
     color: black;

@@ -142,3 +142,14 @@ export const addAdministrator = async (data: UserProfile) => {
   }
   return responseData;
 }
+
+export const updateAdminRole = async (data: UserProfile) => {
+  let responseData;
+  try {
+    const response: any = await request("/updateEmployeeRole", "POST", data, false);
+    responseData = response.data;
+  } catch (err) {
+    if(err) throw new Error(`Something went wrong`);
+  }
+  return responseData;
+}
