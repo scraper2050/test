@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import {
   JobReportState
 } from './job-report.types';
-import { emailJobReportActions, loadJobReportActions, loadJobReportsActions, resetEmailState } from 'actions/customer/job-report/job-report.action';
+import { loadJobReportActions, loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import { types } from 'reducers/job-report.types';
 
 // I am to creat a job-report.reducer.ts in reducers/ folder for this:
@@ -124,11 +124,6 @@ const initialJobReport: JobReportState = {
       }
     },
     'emailHistory': []
-  },
-  'email': {
-    'error': '',
-    'sending': false,
-    'sent': false
   }
 };
 
@@ -145,7 +140,7 @@ export const JobReportReducer: Reducer<any> = (
     case loadJobReportsActions.success.toString():
       return {
         ...state,
-        'jobReports': action.payload.reports,
+        'jobReports': action.payload.reports.reverse(),
         'loading': false
       };
     case loadJobReportsActions.fault.toString():
@@ -184,47 +179,12 @@ export const JobReportReducer: Reducer<any> = (
         ...state,
         'loading': true
       };
-    case emailJobReportActions.cancelled.toString():
-      return {
-        ...state,
-        'email': {
-          ...state.email,
-          'sending': false
-        }
-      };
-    case emailJobReportActions.success.toString():
-      return {
-        ...state,
-        'email': {
-          ...state.email,
-          'sending': false,
-          'sent': true
-
-        }
-      };
-    case emailJobReportActions.fault.toString():
-      return {
-        ...state,
-        'email': {
-          ...state.email,
-          'error': action.payload,
-          'sending': false
-        }
-      };
-    case emailJobReportActions.fetch.toString():
-      return {
-        ...state,
-        'email': {
-          ...state.email,
-          'sending': true
-        }
-      };
 
     case types.UPDATE_EMAIL_HISTORY:
       return {
         ...state,
         'jobReports': state.jobReports.map((jobReport:any) => {
-          if (jobReport._id === action.payload.jobReportId) {
+          if (jobReport._id === action.payload.id) {
             return {
               ...jobReport,
               'emailHistory': [
@@ -251,15 +211,6 @@ export const JobReportReducer: Reducer<any> = (
         }
       };
 
-    case types.RESET_EMAIL_STATE:
-      return {
-        ...state,
-        'email': {
-          'error': '',
-          'sending': false,
-          'sent': false
-        }
-      };
 
     default:
       return state;

@@ -8,11 +8,15 @@ import customersSaga from './customer.saga';
  */
 import watchAllCompanyEquipmentsLoad from './company-equipment.saga';
 import watchAllEmployeesLoad from './employee.saga';
+import watchInvoiceItemsLoad from './items.saga';
 import watchJobReportLoad from './job-report.saga';
-import watchSubscription from './subscriptions.saga';
-import watchNotifications from './notification.saga';
 import watchLoadServiceTicket from './service-ticket.saga';
 import watchCompanyContractsLoad from './vendor.saga';
+import watchNotifications from './notification.saga';
+import watchSubscription from './subscriptions.saga';
+import watchLoadInvoiceDetail from './invoice.saga';
+import watchEmailSend from './bc-email.saga';
+import watchSalesTax from './sales-tax-saga';
 
 
 export default function *rootSaga() {
@@ -27,6 +31,10 @@ export default function *rootSaga() {
     watchSubscription(),
     watchNotifications(),
     watchLoadServiceTicket(),
+    watchInvoiceItemsLoad(),
+    watchLoadInvoiceDetail(),
+    watchEmailSend(),
+    watchSalesTax(),
     bcModalSaga()
   ]);
 }

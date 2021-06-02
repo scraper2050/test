@@ -1,6 +1,6 @@
 import { call, cancelled, put, takeLatest } from 'redux-saga/effects';
 import { emailJobReport, getJobReportDetail, getJobReports } from 'api/job-report.api';
-import { emailJobReportActions, loadJobReportActions, loadJobReportsActions, updateEmailHistory } from 'actions/customer/job-report/job-report.action';
+import { loadJobReportActions, loadJobReportsActions, updateEmailHistory } from 'actions/customer/job-report/job-report.action';
 
 
 export function *handleGetJobReport(action: { payload: any }) {
@@ -29,25 +29,10 @@ export function *handleGetJobReports(action: { payload: any }) {
   }
 }
 
-export function *handleEmailReport(action: { payload: any }) {
-  try {
-    const result = yield call(emailJobReport, action.payload.jobReportId);
-    yield put(emailJobReportActions.success(result));
-    yield put(updateEmailHistory(action.payload));
-  } catch (error) {
-    yield put(emailJobReportActions.fault(error.toString()));
-  } finally {
-    if (yield cancelled()) {
-      yield put(emailJobReportActions.cancelled());
-    }
-  }
-}
-
 
 export default function *watchJobReportLoad() {
   yield takeLatest(loadJobReportsActions.fetch, handleGetJobReports);
   yield takeLatest(loadJobReportActions.fetch, handleGetJobReport);
-  yield takeLatest(emailJobReportActions.fetch, handleEmailReport);
 }
 
 

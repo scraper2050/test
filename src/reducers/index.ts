@@ -28,6 +28,7 @@ import { InventoryReducer as inventory } from './inventory.reducer';
 import { PurchasedTagsReducer as purchasedTags } from './tags.reducer';
 import {
   InvoicingEstimatesReducer as estimates,
+  InvoiceDetailReducer as invoiceDetail,
   InvoicingListReducer as invoiceList,
   InvoicingTodoReducer as invoiceTodos,
   InvoicingPurchaseOrderReducer as purchaseOrder
@@ -44,6 +45,9 @@ import { NotificationsReducer as notifications } from './notifications.reducer';
 import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
 import { VendorsState } from 'actions/vendor/vendor.types';
+import { InvoiceItemsReducer as invoiceItems } from './items.reducer';
+import { InvoiceItemsState } from './items.types';
+import { EmailState, EmailReducer as email } from './email.reducer';
 
 
 export interface ReducerParamsInterface {
@@ -55,10 +59,14 @@ export interface RootState {
   jobState: JobsSate;
   snackbarState?: SnackbarState;
   customersState: CustomersState;
-  serviceTicket: any;
   notifications: NotificationState;
   vendors: VendorsState;
+  serviceTicket: any
+  invoiceItems: InvoiceItemsState;
+  email: EmailState;
 }
+
+
 export default combineReducers({
   auth,
   brands,
@@ -67,6 +75,7 @@ export default combineReducers({
   contacts,
   customerEquipments,
   customers,
+  email,
   employees,
   employeesForJob,
   equipmentType,
@@ -74,6 +83,8 @@ export default combineReducers({
   groups,
   image,
   inventory,
+  invoiceDetail,
+  invoiceItems,
   invoiceList,
   invoiceTodos,
   jobLocations,

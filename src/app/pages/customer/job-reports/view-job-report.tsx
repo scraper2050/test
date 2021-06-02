@@ -12,6 +12,7 @@ function ViewJobReportsPage() {
 
   const { loading, jobReportObj, error } = useSelector(({ jobReport }: any) =>
     jobReport);
+
   useEffect(() => {
     dispatch(loadJobReportActions.fetch({ jobReportId }));
   }, []);

@@ -31,3 +31,8 @@ export enum InvoicingEstimatesActionType {
     SUCCESS = 'getEstimatesSuccess',
     FAILED = 'getEstimatesFailed',
 }
+
+export enum InvoiceActionType{
+    LOAD_INVOICE_DETAIL = 'LOAD_INVOICE_DETAIL',
+    UPDATE_EMAIL_HISTORY = 'UPDATE_EMAIL_HISTORY'
+}

@@ -1,9 +1,11 @@
-import BCInvoiceForm from 'app/components/bc-invoice-form/bc-invoice-form';
+import BCInvoiceForm from 'app/components/bc-shared-form/bc-shared-form';
 import React from 'react';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import styles from '../invoices-list.styles';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
+import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-default-values';
+import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 
 function CreateInvoice({ classes }: any) {
   const history = useHistory();
@@ -15,7 +17,7 @@ function CreateInvoice({ classes }: any) {
       'Header': 'Item',
       'borderRight': true,
       'fieldName': 'name',
-      'fieldType': 'input',
+      'fieldType': 'jobType',
       'id': 'invoice-name',
       'inputType': 'text',
       'sortable': false,
@@ -48,11 +50,18 @@ function CreateInvoice({ classes }: any) {
       'width': 60
     },
     {
+
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {row.original.isFixed
+            ? 'Fixed'
+            : '/hr'}
+        </div>;
+      },
       'Header': 'Unit',
       'borderRight': true,
       'className': 'font-bold',
-      'fieldName': 'unit',
-      'fieldType': 'text',
+      'fieldName': 'isFixed',
       'id': 'invoice-unit',
       'inputType': null,
       'width': 60
@@ -101,44 +110,52 @@ function CreateInvoice({ classes }: any) {
       'inputType': null,
       'sortable': false,
       'width': 60
+    },
+    {
+      'Header': 'Action',
+      'fieldName': 'action',
+      'fieldType': 'action',
+      'id': 'invoice-action',
+      'inputType': null,
+      'sortable': false,
+      'width': 60
     }
   ];
   const item = {
     'description': '',
+    'isFixed': true,
     'name': '',
     'price': 0,
     'quantity': 1,
     'tax': 0,
     'taxAmount': 0,
-    'total': 0,
-    'unit': 'Fixed'
+    'total': 0
+
   };
 
   const redirectURL = '/main/invoicing/invoices-list';
 
   const handleFormSubmit = (data: any) => {
     return new Promise((resolve, reject) => {
+      data.charges = 0;
       data.items = JSON.stringify(data.items.map((o: any) => {
         o.description = o.name;
         o.price = parseFloat(o.price);
         o.quantity = parseInt(o.quantity);
         delete o.taxAmount;
         delete o.total;
-        delete o.unit;
         return o;
       }));
-      console.log(data);
       callCreateInvoiceAPI(data).then((response: any) => {
-        console.log(response);
         history.push(redirectURL);
-        return resolve();
+        return resolve(response);
       })
         .catch((err: any) => {
-          console.log(err);
           reject(err);
         });
     });
   };
+
 
   return (
     <div className={classes.pageMainContainer}>
@@ -146,6 +163,7 @@ function CreateInvoice({ classes }: any) {
         <div className={classes.pageContent}>
           <BCInvoiceForm
             columnSchema={columns}
+            formTypeValues={FormDefaultValues[FormTypes.INVOICE]}
             itemSchema={item}
             onFormSubmit={handleFormSubmit}
             pageTitle={'New Invoice'}

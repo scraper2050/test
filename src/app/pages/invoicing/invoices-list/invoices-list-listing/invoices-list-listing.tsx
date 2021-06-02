@@ -1,7 +1,7 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { Box, withStyles } from '@material-ui/core';
+import { Box, Chip, Typography, withStyles } from '@material-ui/core';
 import Fab from '@material-ui/core/Fab';
 import React, { useEffect } from 'react';
 import {
@@ -10,16 +10,36 @@ import {
 } from 'actions/invoicing/invoicing.action';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../../constants';
+import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-default-values';
+import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
+import EmailInvoiceButton from '../email.invoice';
+import { formatDatTimelll } from 'helpers/format';
 
 
 const getFilteredList = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList?.data);
-}
+};
 
-function InvoicingListListing({ classes }: any) {
+function InvoicingListListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceList = useSelector(getFilteredList);
   const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
+  const showInvoiceDetail = (id:string) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'detail': true,
+        'modalTitle': 'Invoice',
+        'formId': id,
+        'removeFooter': false
+      },
+      'type': modalTypes.SHARED_FORM_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 10);
+  };
 
   const columns: any = [
     {
@@ -30,7 +50,7 @@ function InvoicingListListing({ classes }: any) {
     },
     {
       'Header': 'Job ID',
-      'accessor': '',
+      'accessor': 'job.jobId',
       'className': 'font-bold',
       'sortable': true
     },
@@ -40,57 +60,104 @@ function InvoicingListListing({ classes }: any) {
       'className': 'font-bold',
       'sortable': true
     },
-    // {
-    //   'Header': 'Type',
-    //   'accessor': '',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
-    // {
-    //   Cell({ row }: any) {
-    //     return <div className={'flex items-center'}>
-    //       {`$${row.original.charges}` || 0}
-    //     </div>;
-    //   },
-    //   'Header': 'Amount',
-    //   'sortable': true,
-    //   'width': 60
-    // },
-    // {
-    //   Cell({ row }: any) {
-    //     return <div className={'flex items-center'}>
-    //       {`$${row.original.tax}` || 0}
-    //     </div>;
-    //   },
-    //   'Header': 'Tax',
-    //   'sortable': true,
-    //   'width': 60
-    // },
+    /*
+     * {
+     *   'Header': 'Type',
+     *   'accessor': '',
+     *   'className': 'font-bold',
+     *   'sortable': true
+     * },
+     * {
+     *   Cell({ row }: any) {
+     *     return <div className={'flex items-center'}>
+     *       {`$${row.original.charges}` || 0}
+     *     </div>;
+     *   },
+     *   'Header': 'Amount',
+     *   'sortable': true,
+     *   'width': 60
+     * },
+     * {
+     *   Cell({ row }: any) {
+     *     return <div className={'flex items-center'}>
+     *       {`$${row.original.tax}` || 0}
+     *     </div>;
+     *   },
+     *   'Header': 'Tax',
+     *   'sortable': true,
+     *   'width': 60
+     * },
+     */
     {
       Cell({ row }: any) {
         return <div className={classes.totalNumber}>
-        <span className={classes.currencySign}>$</span><span>{`${row.original.total}` || 0}</span>
+
+          <span>
+            {`$${row.original.total}` || 0}
+          </span>
         </div>;
       },
       'Header': 'Total',
       'sortable': true,
       'width': 20
     },
+    { Cell({ row }: any) {
+      return row.original.paid
+        ? <Chip
+          label={'Paid'}
+          style={{ 'backgroundColor': theme.palette.success.light,
+            'color': '#fff' }}
+        />
+        : <Chip
+          color={'secondary'}
+          label={'Unpaid'}
+        />;
+    },
+    'Header': 'Payment Status',
+    'accessor': 'paid',
+    'className': 'font-bold',
+    'sortable': true
+    },
+    { Cell({ row }: any) {
+      return row.original.lastEmailSent
+        ? formatDatTimelll(row.original.lastEmailSent)
+        : 'N/A';
+    },
+    'Header': 'Last Email Send Date ',
+    'accessor': 'lastEmailSent',
+    'className': 'font-bold',
+    'sortable': true
+    },
+    {
+      Cell({ row }: any) {
+        return row.original.createdAt
+          ? formatDatTimelll(row.original.createdAt)
+          : 'N/A';
+      },
+      'Header': 'Invoice Date',
+      'accessor': 'createdAt',
+      'className': 'font-bold',
+      'sortable': true
+    },
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <Box display="inline" pr={1}>
-            <Fab
-              aria-label={'send-email'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              variant={'extended'}
-              size={"medium"}
-            >
-              {'Email'}
-              </Fab>
+          <Box
+            display={'inline'}
+            pr={1}>
+            <EmailInvoiceButton
+              Component={<Fab
+                aria-label={'send-email'}
+                classes={{
+                  'root': classes.fabRoot
+                }}
+                color={'primary'}
+                size={'medium'}
+                variant={'extended'}>
+                {'Email'}
+              </Fab>}
+              invoice={row.original}
+            />
           </Box>
           <Fab
             aria-label={'view-more'}
@@ -98,9 +165,9 @@ function InvoicingListListing({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-            variant={'extended'}
-            size={"medium"}
-          >
+            onClick={() => showInvoiceDetail(row.original._id)}
+            size={'medium'}
+            variant={'extended'}>
             {'View More'}
 
           </Fab>
@@ -119,9 +186,8 @@ function InvoicingListListing({ classes }: any) {
   }, []);
 
   const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
   };
-  
+
   return (
     <DataContainer id={'0'}>
       <BCTableContainer
