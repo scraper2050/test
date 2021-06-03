@@ -38,7 +38,7 @@ import { success } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
-
+import { useLocation, useHistory } from "react-router-dom";
 
 const initialJobState = {
   'customer': {
@@ -103,6 +103,8 @@ function BCJobModal({
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
   const [thumb, setThumb] = useState<any>(null);
+  const history = useHistory();
+  const location = useLocation();
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -526,6 +528,11 @@ function BCJobModal({
       }));
     }, 200);
   };
+  
+	const goToJobs = () => {
+    closeModal();
+    history.push("/main/customers/schedule");
+  }
 
 
   useEffect(() => {
@@ -1328,7 +1335,17 @@ function BCJobModal({
                         : 'Submit'}
                     </Fab>
                   </>
-                  : <Fab
+                  : (<>
+                  <Fab
+                    aria-label={'create-job'}
+                    classes={{
+                      'root': classes.goToJobsButton
+                    }}
+                    onClick={() => goToJobs()}
+                    variant={'extended'}>
+                    {'Go to Jobs'}
+                  </Fab>
+                  <Fab
                     aria-label={'create-job'}
                     classes={{
                       'root': classes.fabRoot
@@ -1337,7 +1354,7 @@ function BCJobModal({
                     onClick={() => closeModal()}
                     variant={'extended'}>
                     {'Close'}
-                  </Fab>
+                  </Fab></>)
               }
             </DialogActions>
           </Grid>
