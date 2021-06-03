@@ -18,6 +18,17 @@ export default (theme: Theme): any => ({
     'textTransform': 'capitalize',
     'marginRight': '1.5rem',
   },
+  'goToJobsButton': {
+    'background': 'rgb(0, 170, 255) !important',
+    // 'borderRadius': '30px',
+    'minWidth': '130px !important',
+    'fontSize': '16px !important',
+    'padding': '0 12px',
+    'height': '34px',
+    'color': CONSTANTS.PRIMARY_WHITE,
+    'textTransform': 'capitalize',
+    'marginRight': '1.5rem',
+  },
   'fabRoot': {
     'color': '#fff',
     'width': '130px !important',
