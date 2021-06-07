@@ -6,30 +6,30 @@ import { fromNow } from 'helpers/format';
 import { modalTypes } from '../../../../constants';
 import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-
+import { getjobDetailAPI } from 'api/job.api';
 
 export default function JobRescheduledNotication(item :NotificationItem) {
   const { metadata, message, createdAt, readStatus, ...props } = item;
   const dispatch = useDispatch();
 
-  const openDetailTicketModal = () => {
+  const openDetailTicketModal = async () => {
+    const data = {
+      jobId: item?.metadata?._id
+    }
+    const job: any = await getjobDetailAPI(data);
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'ticketId': metadata._id,
-        'notificationId': props._id
+        'detail': true,
+        'job': job,
+        'modalTitle': 'View Job',
+        'removeFooter': false
       },
-      'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
+      'type': modalTypes.EDIT_JOB_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
   };
-
 
   return <MenuItem
     className={readStatus.isRead
