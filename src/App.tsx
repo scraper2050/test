@@ -4,6 +4,7 @@ import LogRocket from 'logrocket';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { Suspense, useEffect, useState } from 'react';
+import { getAllJobsAPI } from 'api/job.api';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { SocketMessage } from 'helpers/contants';
 import Config from './config';
@@ -88,6 +89,9 @@ function App() {
       });
       socket.on(SocketMessage.CREATENOTIFICATION, data => {
         dispatch(pushNotification(data));
+        if(data?.notificationType === "JobRescheduled") {
+          dispatch(getAllJobsAPI());
+        }
       });
 
       return () => {
