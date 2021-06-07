@@ -28,6 +28,7 @@ import { convertMilitaryTime, formatDate, formatISOToDateString, formatToMilitar
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import { getVendors } from 'actions/vendor/vendor.action';
+import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { clearJobSiteStore, getJobSites } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
@@ -70,7 +71,8 @@ const initialJobState = {
   },
   'jobSite': {
     '_id': ''
-  }
+  },
+  'jobRescheduled': false
 };
 
 
@@ -297,6 +299,13 @@ function BCJobModal({
       }
     }
   }, [contacts]);
+  
+  useEffect(() => {
+    if (!!job?.jobRescheduled) {
+      dispatch(markNotificationAsRead.fetch({ 'id': job?.jobRescheduled,
+        'isRead': true }));
+    }
+  }, [job?.jobRescheduled]);
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;

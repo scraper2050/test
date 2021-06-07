@@ -25,7 +25,8 @@ export const openDetailTicketModal = async (dispatch: (action:any)=>void, notifi
   const data = {
     jobId: notification?.metadata?._id
   }
-  const job: any = await getjobDetailAPI(data);
+  let job: any = await getjobDetailAPI(data);
+  job.jobRescheduled = notification?._id;
   dispatch(setModalDataAction({
     'data': {
       'detail': true,

@@ -16,7 +16,8 @@ export default function JobRescheduledNotication(item :NotificationItem) {
     const data = {
       jobId: item?.metadata?._id
     }
-    const job: any = await getjobDetailAPI(data);
+    let job: any = await getjobDetailAPI(data);
+    job.jobRescheduled = item?._id;
     dispatch(setModalDataAction({
       'data': {
         'detail': true,
