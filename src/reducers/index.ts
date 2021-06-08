@@ -67,7 +67,7 @@ export interface RootState {
 }
 
 
-export default combineReducers({
+const appReducer = combineReducers({
   auth,
   brands,
   companyCards,
@@ -109,3 +109,12 @@ export default combineReducers({
   technicians,
   vendors
 });
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'RESET_STORE') {
+    state = undefined;
+  }
+  return appReducer(state, action);
+}
+
+export default rootReducer;
