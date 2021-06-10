@@ -108,7 +108,9 @@ function BCTableContainer({
       <Grid
         className={'actions-container'}
         item
-        md={6}
+        md={toolbar
+          ? 12
+          : 6}
         xs={12}>
         {search
           ? <BCTableSearchContainer
@@ -117,7 +119,9 @@ function BCTableContainer({
             searchText={searchText}
           />
           : null}
-        {toolbar}
+        {toolbar && <BCTableToolBarContainer>
+          {toolbar}
+        </BCTableToolBarContainer>}
       </Grid>
       <Grid
         item
@@ -168,6 +172,18 @@ const TableContainer = styled(Grid)`
     margin-right: 20px;
   }
 }
+`;
+
+
+const BCTableToolBarContainer = styled.div`
+    margin-bottom: 10px;
+    display: flex;
+
+    flex: 1.66;
+    justify-content: flex-end;
+    button {
+      margin-left: 20px;
+    }
 `;
 
 

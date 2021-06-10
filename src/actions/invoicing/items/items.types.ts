@@ -1,6 +1,7 @@
 export enum ItemActionTypes {
     GET_ITEMS = 'GET_ITEMS',
-    UPDATE_ITEM = 'UPDATE_ITEM'
+    UPDATE_ITEM = 'UPDATE_ITEM',
+    UPDATE_TIER = 'LOAD_TIER',
 }
 
 

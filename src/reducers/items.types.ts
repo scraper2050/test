@@ -5,6 +5,7 @@ export interface Item {
     isActive: boolean,
     _id: string,
     name: string,
+    tiers: any[],
 }
 
 export interface InvoiceItemsState {

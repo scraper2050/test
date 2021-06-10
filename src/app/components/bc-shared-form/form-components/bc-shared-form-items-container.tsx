@@ -54,7 +54,6 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
             ? taxes[0].tax
             : 0;
         const taxAmount = invoiceItem.price * taxValue / 100;
-        console.log(taxAmount);
 
         return {
           name,

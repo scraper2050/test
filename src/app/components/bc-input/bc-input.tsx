@@ -1,6 +1,6 @@
 import FormControl from '@material-ui/core/FormControl';
 import MaskedInput from 'react-text-mask';
-import React from 'react';
+import React, { memo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, Typography } from '@material-ui/core';
 
@@ -90,4 +90,4 @@ function BCInput({
   );
 }
 
-export default BCInput;
+export default memo(BCInput);

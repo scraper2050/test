@@ -45,8 +45,9 @@ import { NotificationsReducer as notifications } from './notifications.reducer';
 import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
 import { VendorsState } from 'actions/vendor/vendor.types';
-import { InvoiceItemsReducer as invoiceItems } from './items.reducer';
-import { InvoiceItemsState } from './items.types';
+import { InvoiceItemsState
+  , InvoiceItemsReducer as invoiceItems
+  , InvoiceItemsTierList as invoiceItemsTiers } from './items.reducer';
 import { EmailState, EmailReducer as email } from './email.reducer';
 
 
@@ -85,6 +86,7 @@ const appReducer = combineReducers({
   inventory,
   invoiceDetail,
   invoiceItems,
+  invoiceItemsTiers,
   invoiceList,
   invoiceTodos,
   jobLocations,
