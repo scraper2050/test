@@ -1,8 +1,9 @@
 
 import { InvoiceItemsState, Item } from './items.types';
 import { Reducer } from 'redux';
-import { loadInvoiceItems, updateInvoiceItem } from 'actions/invoicing/items/items.action';
+import { loadInvoiceItems, loadTierListItems, updateInvoiceItem } from 'actions/invoicing/items/items.action';
 
+export type { InvoiceItemsState };
 
 const initialState: InvoiceItemsState = {
   'error': '',
@@ -12,12 +13,19 @@ const initialState: InvoiceItemsState = {
     'tax': 0,
     'isActive': false,
     '_id': '',
-    'name': ''
+    'name': '',
+    'tiers': []
   },
   'items': [],
   'loading': false,
   'loadingObj': false
+};
 
+
+const tierListInitialState: any = {
+  'error': '',
+  'loading': false,
+  'tiers': []
 };
 
 export const InvoiceItemsReducer: Reducer = (state = initialState, action) => {
@@ -52,6 +60,9 @@ export const InvoiceItemsReducer: Reducer = (state = initialState, action) => {
       };
 
     case updateInvoiceItem.success.toString():
+      if (action.payload.tiers) {
+        delete action.payload.tiers;
+      }
       return {
         ...state,
         'itemObj': { ...action.payload,
@@ -74,6 +85,34 @@ export const InvoiceItemsReducer: Reducer = (state = initialState, action) => {
         ...state,
         'itemObj': {},
         'loadingObj': false
+      };
+
+    default:
+      return state;
+  }
+};
+
+
+export const InvoiceItemsTierList: Reducer = (state = tierListInitialState, action) => {
+  switch (action.type) {
+    case loadTierListItems.success.toString():
+      return {
+        ...state,
+        'loading': false,
+        'tiers': action.payload
+      };
+
+    case loadTierListItems.fetch.toString():
+      return {
+        ...state,
+        'loading': true
+      };
+
+    case loadTierListItems.fault.toString():
+      return {
+        ...state,
+        'error': action.payload,
+        'loading': false
       };
 
     default:

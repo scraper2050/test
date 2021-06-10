@@ -42,5 +42,6 @@ export const modalTypes = {
   'CONTRACT_VIEW_MODAL': 'contract-view-modal',
   'SHARED_FORM_MODAL': 'shared-form-modal',
   'EDIT_ITEM_MODAL': 'edit-item-modal',
-  'SALES_TAX_MODAL': 'sales-tax-modal'
+  'SALES_TAX_MODAL': 'sales-tax-modal',
+  'EDIT_TIERS_MODAL': 'edit-tiers-modal'
 };
