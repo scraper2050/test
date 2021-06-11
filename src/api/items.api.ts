@@ -66,7 +66,7 @@ export const addTierApi = async () => {
 
 export const updateTier = async (data:any) => {
   try {
-    const response: any = await request('updateItemTier', 'PUT', data, false);
+    const response: any = await request('/updateItemTier', 'PUT', data, false);
     return response.data;
   } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {
