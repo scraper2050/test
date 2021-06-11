@@ -35,7 +35,8 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     const tempArray = [...items];
     if (fieldName === 'name') {
       const item = invoiceItems?.find((item:any) => item.name === value);
-      if (itemTier) {
+      console.log(itemTier);
+      if (itemTier?._id) {
         const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
         tempArray[index].price = customerTier.charge || 0;
       } else {
@@ -55,7 +56,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
 
 
   useEffect(() => {
-    if (invoiceItems.length && items && jobType) {
+    if (invoiceItems.length && items) {
       const newItems = items.map((invoiceItem:any) => {
         const { charges, name, isFixed, tax, tiers }:any = invoiceItems.find((item:any) => item.name === invoiceItem.name);
         const taxValue = invoiceItem.tax
@@ -65,24 +66,34 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
             : 0;
         const taxAmount = invoiceItem.price * taxValue / 100;
 
-        let price;
-        if (itemTier) {
+        let price = charges || 0;
+        if (itemTier?._id) {
           const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
           price = customerTier.charge || 0;
-        } else {
-          price = charges || 0;
         }
 
-
+        if (jobType) {
+          return {
+            name,
+            'price': price,
+            'total': price + taxAmount,
+            'unit': isFixed
+              ? 'Fixed'
+              : '/hr',
+            'taxAmount': parseFloat(taxAmount.toFixed(2)),
+            ...invoiceItem,
+            'tax': taxValue
+          };
+        }
         return {
           name,
+          ...invoiceItem,
           'price': price,
           'total': price + taxAmount,
           'unit': isFixed
             ? 'Fixed'
             : '/hr',
           'taxAmount': parseFloat(taxAmount.toFixed(2)),
-          ...invoiceItem,
           'tax': taxValue
         };
       });
@@ -91,12 +102,10 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     }
     if (invoiceItems.length && !items.length && jobType) {
       const { charges, name, isFixed, tax, tiers }:any = invoiceItems.find((item:any) => item.jobType === jobType);
-      let price;
-      if (itemTier) {
+      let price = charges || 0;
+      if (itemTier?._id) {
         const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
         price = customerTier.charge || 0;
-      } else {
-        price = charges || 0;
       }
 
       const taxValue = tax
@@ -119,8 +128,11 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
       };
       setItems([newItem]);
     }
+
+
     setRefreshColumns(true);
-  }, [invoiceItems, itemTier]);
+  }, [itemTier]);
+
 
   const addItem = () => {
     const newData = [{ ...itemSchema }];
