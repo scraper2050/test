@@ -336,7 +336,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
             xs={11}>
             <BCTableContainer
               columns={columns}
-              idLoading={loading || tiersLoading}
+              isLoading={loading || tiersLoading}
               isPageSaveEnabled
               search
               searchPlaceholder={'Search items'}

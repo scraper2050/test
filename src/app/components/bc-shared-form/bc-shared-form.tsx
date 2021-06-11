@@ -10,6 +10,7 @@ import BCSharedFormItemsContainer from './form-components/bc-shared-form-items-c
 import BCSharedFormHeaderContainer from './form-components/bc-shared-form-header-container';
 import BCSharedFormTitleBar from './form-components/bc-shared-form-title-bar';
 import EmailHistory from '../bc-job-report/email-history';
+import { useSelector } from 'react-redux';
 
 interface BCInvoiceFormProps {
   columnSchema: any;
@@ -47,6 +48,7 @@ function BCSharedForm({ classes,
   redirectUrl,
   onFormSubmit
 }: BCInvoiceFormProps) {
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
   const { state } = useLocation<any>();
   const reference = state
     ? state.purchaseOrderId || state.jobId || state.estimateId
@@ -158,6 +160,7 @@ function BCSharedForm({ classes,
               'padding': 20
             }}>
             <BCSharedFormHeaderContainer
+              customer={customer}
               formTypeValues={formTypeValues}
               handleChange={formikChange}
               invoiceDetail={state?.invoiceDetail}
@@ -173,6 +176,7 @@ function BCSharedForm({ classes,
               columnSchema={columnSchema}
               items={items}
               itemSchema={itemSchema}
+              itemTier={customer?.itemTier}
               jobType={state?.jobType}
               setItems={setItems}
             />

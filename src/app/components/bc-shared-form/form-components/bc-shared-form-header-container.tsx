@@ -16,12 +16,13 @@ interface Props {
     invoiceDetail: any;
     setFieldValue: any;
     jobId: any;
+    customer: any;
 }
 
-function SharedFormHeaderContainer({ classes, values, handleChange, setFieldValue, formTypeValues, invoiceDetail, jobId }:Props) {
+function SharedFormHeaderContainer({ classes, values, handleChange, setFieldValue, formTypeValues, invoiceDetail, jobId, customer }:Props) {
   const [canEditNote, setCanEditNote] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
-  const customer = useSelector(({ customers }:any) => customers.customerObj);
+
   const dispatch = useDispatch();
 
   const dateChangeHandler = (type:string, date: Date) => {

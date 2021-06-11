@@ -8,6 +8,7 @@ import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import { customer } from 'testData';
 
 
 interface Props {
@@ -19,9 +20,11 @@ interface Props {
     addItemText: string;
     jobType: string;
     calculateTotal: (array:any[])=> void;
+    itemTier: any;
 }
 
-function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSchema, jobType, calculateTotal, items, setItems }:Props) {
+
+function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSchema, jobType, calculateTotal, items, setItems, itemTier }:Props) {
   const dispatch = useDispatch();
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const [columns, setColumns] = useState([...columnSchema]);
@@ -32,7 +35,13 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     const tempArray = [...items];
     if (fieldName === 'name') {
       const item = invoiceItems?.find((item:any) => item.name === value);
-      tempArray[index].price = item?.charges || 0;
+      if (itemTier) {
+        const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
+        tempArray[index].price = customerTier.charge || 0;
+      } else {
+        tempArray[index].price = item?.charges || 0;
+      }
+
       tempArray[index].tax = item?.tax
         ? taxes[0].tax
         : 0;
@@ -44,10 +53,11 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     setItems(tempArray);
   };
 
+
   useEffect(() => {
     if (invoiceItems.length && items && jobType) {
       const newItems = items.map((invoiceItem:any) => {
-        const { charges, name, isFixed, tax }:any = invoiceItems.find((item:any) => item.name === invoiceItem.name);
+        const { charges, name, isFixed, tax, tiers }:any = invoiceItems.find((item:any) => item.name === invoiceItem.name);
         const taxValue = invoiceItem.tax
           ? invoiceItem.tax
           : tax
@@ -55,10 +65,19 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
             : 0;
         const taxAmount = invoiceItem.price * taxValue / 100;
 
+        let price;
+        if (itemTier) {
+          const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
+          price = customerTier.charge || 0;
+        } else {
+          price = charges || 0;
+        }
+
+
         return {
           name,
-          'price': charges,
-          'total': charges + taxAmount,
+          'price': price,
+          'total': price + taxAmount,
           'unit': isFixed
             ? 'Fixed'
             : '/hr',
@@ -71,7 +90,14 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
       setItems([...newItems]);
     }
     if (invoiceItems.length && !items.length && jobType) {
-      const { charges, name, isFixed, tax }:any = invoiceItems.find((item:any) => item.jobType === jobType);
+      const { charges, name, isFixed, tax, tiers }:any = invoiceItems.find((item:any) => item.jobType === jobType);
+      let price;
+      if (itemTier) {
+        const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
+        price = customerTier.charge || 0;
+      } else {
+        price = charges || 0;
+      }
 
       const taxValue = tax
 
@@ -82,7 +108,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
       const newItem = {
         ...itemSchema,
         name,
-        'price': charges,
+        'price': price,
         'tax': taxValue,
         'total': charges + taxAmount,
         'taxAmount': taxAmount,
@@ -94,7 +120,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
       setItems([newItem]);
     }
     setRefreshColumns(true);
-  }, [invoiceItems]);
+  }, [invoiceItems, itemTier]);
 
   const addItem = () => {
     const newData = [{ ...itemSchema }];

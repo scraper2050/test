@@ -18,12 +18,12 @@ import {
   TextField
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomerDetailAction,
   loadingSingleCustomers,
@@ -34,6 +34,7 @@ import { useHistory } from 'react-router-dom';
 import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-marker';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { error, success } from 'actions/snackbar/snackbar.action';
+import { loadTierListItems } from 'actions/invoicing/items/items.action';
 
 interface Props {
   classes: any;
@@ -46,6 +47,7 @@ interface AllStateTypes {
 
 function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const dispatch = useDispatch();
+  const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
   const [nameLabelState, setNameLabelState] = useState(false);
   const [positionValue, setPositionValue] = useState({
     'lang':
@@ -61,7 +63,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         ? customerInfo.location.coordinates[1]
         : 0
   });
-  const history = useHistory();
+
   const initialValues = {
     'name':
       customerInfo &&
@@ -142,6 +144,9 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   });
 
 
+  const defaultTier = tiers.findIndex(({ tier }:any) => tier._id === customerInfo.itemTierId);
+  const activeTiers = useMemo(() => tiers.filter(({ tier }:any) => tier.isActive), [tiers]);
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -209,6 +214,13 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
       });
     }
   };
+  useEffect(
+    () => {
+      dispatch(loadTierListItems.fetch());
+    }
+    , []
+  );
+
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -225,6 +237,10 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
     updateMap(values, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
+  };
+
+  const handleSelectTier = (val: any, setFieldValue: any) => {
+    setFieldValue('itemTierId', val.tier._id);
   };
 
   return (
@@ -488,21 +504,59 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           />
                         </FormGroup>
                       </Grid>
+                      <Grid container>
+                        <Grid
+                          className={classes.paper}
+                          item
+                          sm={activeTiers.length > 0
+                            ? 6
+                            : 12}>
+                          <FormGroup>
+                            <InputLabel className={classes.label}>
+                              {'Vendor Number'}
+                            </InputLabel>
+                            <BCTextField
+                              name={'vendorId'}
+                              onChange={handleChange}
+                              placeholder={'Vendor Number'}
+                            />
+                          </FormGroup>
+                        </Grid>
+                        {activeTiers.length > 0 && <Grid
+                          className={classes.paper}
+                          item
+                          sm={6}
+                          xs={12}>
+                          <FormGroup >
 
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={12}>
-                        <FormGroup>
-                          <InputLabel className={classes.label}>
-                            {'Vendor Number'}
-                          </InputLabel>
-                          <BCTextField
-                            name={'vendorId'}
-                            onChange={handleChange}
-                            placeholder={'Vendor Number'}
-                          />
-                        </FormGroup>
+                            <Autocomplete
+                              autoHighlight
+                              defaultValue={activeTiers[defaultTier]}
+                              getOptionLabel={option => `Tier ${option.tier.name}`}
+                              id={'tags-standard'}
+                              onChange={(ev: any, newValue: any) => handleSelectTier(newValue, setFieldValue)}
+                              options={activeTiers}
+                              renderInput={params =>
+                                <>
+                                  <InputLabel className={`${classes.label}`}>
+                                    {'Customer Tier'}
+                                  </InputLabel>
+                                  <TextField
+                                    name={'itemTierId'}
+                                    {...params}
+                                    variant={'standard'}
+                                  />
+                                </>
+                              }
+                              renderOption={option =>
+                                <span>
+                                  {'Tier '}
+                                  {option.tier.name}
+                                </span>
+                              }
+                            />
+                          </FormGroup>
+                        </Grid>}
                       </Grid>
 
 
