@@ -2,7 +2,7 @@ import { FormDefaultProps } from './bc-shared-form.types';
 import { modalTypes } from '../../../constants';
 import { useFormik } from 'formik';
 import { Box, Paper, withStyles } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './bc-shared-form.styles';
 import { useLocation } from 'react-router-dom';
 import BCSharedFormTotalContainer from './form-components/bc-shared-form-total-container';
@@ -10,6 +10,8 @@ import BCSharedFormItemsContainer from './form-components/bc-shared-form-items-c
 import BCSharedFormHeaderContainer from './form-components/bc-shared-form-header-container';
 import BCSharedFormTitleBar from './form-components/bc-shared-form-title-bar';
 import EmailHistory from '../bc-job-report/email-history';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCustomerDetailAction } from 'actions/customer/customer.action';
 
 interface BCInvoiceFormProps {
   columnSchema: any;
@@ -20,6 +22,7 @@ interface BCInvoiceFormProps {
   formTypeValues: FormDefaultProps;
   redirectUrl: string;
   onFormSubmit: (data: any)=> Promise<any>;
+  edit?: boolean;
 }
 
 interface FormProps {
@@ -31,6 +34,7 @@ interface FormProps {
   reference: string;
   jobId?:string;
   invoiceId?: string;
+
 }
 
 function BCSharedForm({ classes,
@@ -45,8 +49,11 @@ function BCSharedForm({ classes,
     'note': ''
   },
   redirectUrl,
-  onFormSubmit
+  onFormSubmit,
+  edit
 }: BCInvoiceFormProps) {
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
+  const dispatch = useDispatch();
   const { state } = useLocation<any>();
   const reference = state
     ? state.purchaseOrderId || state.jobId || state.estimateId
@@ -77,6 +84,11 @@ function BCSharedForm({ classes,
     }
   });
 
+  useEffect(() => {
+    if (customerId) {
+      dispatch(getCustomerDetailAction({ customerId }));
+    }
+  }, []);
 
   const handleSubmit = () => {
     const data = {
@@ -158,6 +170,7 @@ function BCSharedForm({ classes,
               'padding': 20
             }}>
             <BCSharedFormHeaderContainer
+              customer={customer}
               formTypeValues={formTypeValues}
               handleChange={formikChange}
               invoiceDetail={state?.invoiceDetail}
@@ -173,6 +186,7 @@ function BCSharedForm({ classes,
               columnSchema={columnSchema}
               items={items}
               itemSchema={itemSchema}
+              itemTier={customer?.itemTier}
               jobType={state?.jobType}
               setItems={setItems}
             />
