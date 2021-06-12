@@ -11,7 +11,8 @@ import BCSharedFormHeaderContainer from './form-components/bc-shared-form-header
 import BCSharedFormTitleBar from './form-components/bc-shared-form-title-bar';
 import EmailHistory from '../bc-job-report/email-history';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCustomerDetailAction } from 'actions/customer/customer.action';
+import { getCustomerDetailAction, resetCustomer } from 'actions/customer/customer.action';
+import { types } from 'reducers/customer.types';
 
 interface BCInvoiceFormProps {
   columnSchema: any;
@@ -87,6 +88,9 @@ function BCSharedForm({ classes,
   useEffect(() => {
     if (customerId) {
       dispatch(getCustomerDetailAction({ customerId }));
+      return () => {
+        dispatch(resetCustomer());
+      };
     }
   }, []);
 

@@ -44,8 +44,9 @@ function AdminInvoicingItemsPage({ classes }:Props) {
   const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
   const activeTiers = tiers.filter(({ tier }:any) => tier.isActive);
 
-  const handleTierChange = (index: number, value: string, tierId: string) => {
+  const handleTierChange = (id: number, value: string, tierId: string) => {
     const newItems:any = [...localItems];
+    const index = newItems.findIndex((item:any) => item._id === id);
     const currentTier:any = newItems[index].tiers[tierId];
     currentTier.charge = value;
     newItems[index].tiers[tierId] = currentTier;
@@ -285,7 +286,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
                 {!editMode
                   ? currentTier?.charge
                   : <BCDebouncedInput
-                    setValue={(val:string) => handleTierChange(row.index, val, currentTier?.tier._id)}
+                    setValue={(val:string) => handleTierChange(row.original._id, val, currentTier?.tier._id)}
                     value={currentTier?.charge}
                   />}
 

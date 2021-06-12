@@ -71,7 +71,6 @@ export const CustomersReducer: Reducer<any> = (
         'loading': false,
         'customerObj': action.payload
       };
-
     case types.GET_SINGLE_CUSTOMER:
       return {
         ...state,
