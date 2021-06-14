@@ -5,6 +5,7 @@ import { Button } from '@material-ui/core';
 import styled from 'styled-components';
 import { updateTier } from 'api/items.api';
 import { loadInvoiceItems, loadTierListItems } from 'actions/invoicing/items/items.action';
+import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 
 
 export default function BCEditTiersModal() {
@@ -21,12 +22,16 @@ export default function BCEditTiersModal() {
       'isActive': isActive
         ? '0'
         : '1',
-      name }).catch(err => console.log(err));
+      name }).catch(err => dispatch(SnackBarError(err.message)));
     if (result) {
+      dispatch(success(isActive
+        ? `Tier ${name} deactivated`
+        : `Tier ${name} activated`));
       dispatch(loadTierListItems.fetch());
       dispatch(loadInvoiceItems.fetch());
     }
   };
+
 
   return <EditItemTierContainer>
     {
