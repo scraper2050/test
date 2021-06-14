@@ -15,6 +15,7 @@ import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCInput from 'app/components/bc-input/bc-input';
 import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
 import { addTierApi, updateItems } from 'api/items.api';
+import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 
 
 interface Props {
@@ -56,8 +57,14 @@ function AdminInvoicingItemsPage({ classes }:Props) {
 
   const handleUpdateAllTiers = async () => {
     setUpdating(true);
+    let hasError:any = '';
     const payload = localItems.map((item:any) => {
       const tiers = Object.keys(item.tiers).map((tierId:any) => {
+        if (item.tiers[tierId].tier.isActive && item.tiers[tierId].charge === '') {
+          if (!hasError) {
+            hasError = tierId + item.tiers[tierId].tier.name;
+          }
+        }
         return {
           tierId,
           'charge': item.tiers[tierId].tier.isActive
@@ -73,18 +80,33 @@ function AdminInvoicingItemsPage({ classes }:Props) {
       };
     });
 
-
-    const response = await updateItems(payload).catch(err => setEditMode(false));
-    if (response) {
-      setEditMode(false);
+    if (hasError) {
       setUpdating(false);
+      dispatch(SnackBarError('Please fill in all tier prices'));
+    }
+
+    if (payload && !hasError) {
+      const response = await updateItems(payload).catch(err => {
+        dispatch(SnackBarError(err.message));
+        setEditMode(false);
+      });
+      if (response) {
+        dispatch(success('Tier pricing successfully updated'));
+        setEditMode(false);
+        setUpdating(false);
+      }
     }
   };
 
   const addTier = async () => {
     setUpdating(true);
-    const response = await addTierApi().catch(err => setUpdating(false));
+    const response = await addTierApi()
+      .catch(err => {
+        dispatch(SnackBarError(err.message));
+        setUpdating(false);
+      });
     if (response) {
+      dispatch(success(response.message));
       setUpdating(false);
       dispatch(loadInvoiceItems.fetch());
     }
@@ -286,6 +308,8 @@ function AdminInvoicingItemsPage({ classes }:Props) {
                 {!editMode
                   ? currentTier?.charge
                   : <BCDebouncedInput
+                    error={!currentTier?.charge}
+                    id={tier._id + tier.name}
                     setValue={(val:string) => handleTierChange(row.original._id, val, currentTier?.tier._id)}
                     value={currentTier?.charge}
                   />}

@@ -5,9 +5,11 @@ import { TextField } from '@material-ui/core';
 interface DebounceInputProps {
     value: string;
     setValue: (val:string)=>void
+    id: string;
+    error: boolean;
 }
 
-export default function BCDebouncedInput({ value, setValue }:DebounceInputProps) {
+export default function BCDebouncedInput({ value, setValue, id, error }:DebounceInputProps) {
   const [inputValue, setInputValue] = useState(value);
 
 
@@ -29,6 +31,8 @@ export default function BCDebouncedInput({ value, setValue }:DebounceInputProps)
 
 
   return <TextField
+    error={error}
+    id={id}
     onChange={debounceChange}
     type={'text'}
     value={inputValue}
