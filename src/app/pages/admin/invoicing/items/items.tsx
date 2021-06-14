@@ -60,7 +60,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
     let hasError:any = '';
     const payload = localItems.map((item:any) => {
       const tiers = Object.keys(item.tiers).map((tierId:any) => {
-        if (item.tiers[tierId].tier.isActive && item.tiers[tierId].charge === '') {
+        if (item.tiers[tierId].tier.isActive && !item.tiers[tierId].charge) {
           if (!hasError) {
             hasError = tierId + item.tiers[tierId].tier.name;
           }
