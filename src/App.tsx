@@ -73,15 +73,9 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      // This is an example script - don't forget to change it!
       LogRocket.identify(user._id, {
         'email': user.auth.email,
         'name': user.profile.displayName
-
-        /*
-         * Add your own custom user variables here, ie:
-         * 'subscriptionType': 'pro'
-         */
       });
 
       const socket = io(`${Config.socketSever}`, {
@@ -89,9 +83,6 @@ function App() {
       });
       socket.on(SocketMessage.CREATENOTIFICATION, data => {
         dispatch(pushNotification(data));
-        if(data?.notificationType === "JobRescheduled") {
-          dispatch(getAllJobsAPI());
-        }
       });
 
       return () => {

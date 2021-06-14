@@ -39,7 +39,7 @@ import { success } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
-import { useLocation, useHistory } from "react-router-dom";
+import { useHistory, useLocation } from 'react-router-dom';
 
 const initialJobState = {
   'customer': {
@@ -299,9 +299,9 @@ function BCJobModal({
       }
     }
   }, [contacts]);
-  
+
   useEffect(() => {
-    if (!!job?.jobRescheduled) {
+    if (job?.jobRescheduled) {
       dispatch(markNotificationAsRead.fetch({ 'id': job?.jobRescheduled,
         'isRead': true }));
     }
@@ -537,11 +537,11 @@ function BCJobModal({
       }));
     }, 200);
   };
-  
-	const goToJobs = () => {
+
+  const goToJobs = () => {
     closeModal();
-    history.push("/main/customers/schedule");
-  }
+    history.push('/main/customers/schedule');
+  };
 
 
   useEffect(() => {
@@ -1344,17 +1344,7 @@ function BCJobModal({
                         : 'Submit'}
                     </Fab>
                   </>
-                  : (<>
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      'root': classes.goToJobsButton
-                    }}
-                    onClick={() => goToJobs()}
-                    variant={'extended'}>
-                    {'Go to Jobs'}
-                  </Fab>
-                  <Fab
+                  : <Fab
                     aria-label={'create-job'}
                     classes={{
                       'root': classes.fabRoot
@@ -1363,7 +1353,7 @@ function BCJobModal({
                     onClick={() => closeModal()}
                     variant={'extended'}>
                     {'Close'}
-                  </Fab></>)
+                  </Fab>
               }
             </DialogActions>
           </Grid>

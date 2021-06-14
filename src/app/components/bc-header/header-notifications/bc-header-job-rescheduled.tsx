@@ -14,15 +14,14 @@ export default function JobRescheduledNotication(item :NotificationItem) {
 
   const openDetailTicketModal = async () => {
     const data = {
-      jobId: item?.metadata?._id
-    }
-    let job: any = await getjobDetailAPI(data);
+      'jobId': item?.metadata?._id
+    };
+    const job: any = await getjobDetailAPI(data);
     job.jobRescheduled = item?._id;
     dispatch(setModalDataAction({
       'data': {
-        'detail': true,
         'job': job,
-        'modalTitle': 'View Job',
+        'modalTitle': 'Edit Job - Rescheduled',
         'removeFooter': false
       },
       'type': modalTypes.EDIT_JOB_MODAL
@@ -40,7 +39,8 @@ export default function JobRescheduledNotication(item :NotificationItem) {
 
     <ReplayIcon color={'primary'} />
     <div className={'ticket-info'}>
-      {message?.title}{' - '}
+      {message?.title}
+      {' - '}
       <strong>
         {metadata.jobId}
       </strong>
