@@ -81,6 +81,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
     });
 
     if (hasError) {
+      setUpdating(false);
       dispatch(SnackBarError('Please fill in all tier prices'));
     }
 
