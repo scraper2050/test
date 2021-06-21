@@ -15,10 +15,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import CustomerInfoPage from './customer-info';
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../constants';
-import { loadingJobLocations, getJobLocationsAction } from 'actions/job-location/job-location.action';
+import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
@@ -35,7 +35,7 @@ function ViewMorePage({ classes }: any) {
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
   const location = useLocation<any>();
-  const [from, setFrom] = useState("");
+  const [from, setFrom] = useState('');
   const customerObj = location.state;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
@@ -43,32 +43,31 @@ function ViewMorePage({ classes }: any) {
   const prevPage = customerObj && customerObj.prevPage ? customerObj.prevPage : null;
 
   const [currentPage, setCurrentPage] = useState({
-    page: prevPage ? prevPage.page : 0,
-    pageSize: prevPage ? prevPage.pageSize : 10,
-    sortBy: prevPage ? prevPage.sortBy : [],
+    'page': prevPage ? prevPage.page : 0,
+    'pageSize': prevPage ? prevPage.pageSize : 10,
+    'sortBy': prevPage ? prevPage.sortBy : []
   });
 
   const renderJobSiteComponent = (jobLocation: any, customerState: any) => {
-
-    let baseObj = customerState;
+    const baseObj = customerState;
     let customerName =
-      baseObj["profile"] && baseObj["profile"] !== undefined
-        ? baseObj["profile"]["displayName"]
-        : "N/A";
+      baseObj.profile && baseObj.profile !== undefined
+        ? baseObj.profile.displayName
+        : 'N/A';
 
     customerName =
       customerName !== undefined
-        ? customerName.replace(/ /g, "")
-        : "customername";
+        ? customerName.replace(/ /g, '')
+        : 'customername';
 
-    let locationName = jobLocation.name;
-    let locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
-    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    const locationName = jobLocation.name;
+    const locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
+    const linkKey: any = localStorage.getItem('nestedRouteKey');
     localStorage.setItem('prevNestedRouteKey', linkKey);
     localStorage.setItem('nestedRouteKey', `location/${locationNameLink}`);
     history.push({
-      pathname: `/main/customers/location/${locationNameLink}`,
-      state: {
+      'pathname': `/main/customers/location/${locationNameLink}`,
+      'state': {
         ...jobLocation,
         currentPage,
         customerName
@@ -78,30 +77,30 @@ function ViewMorePage({ classes }: any) {
 
 
   const renderJobEquipmentButton = (customerState: any, link: string) => {
-    let baseObj = customerState;
+    const baseObj = customerState;
     let customerName =
-      baseObj["profile"] && baseObj["profile"] !== undefined
-        ? baseObj["profile"]["displayName"]
-        : "N/A";
-    let customerId =
-      baseObj["_id"] && baseObj["_id"] !== undefined
-        ? baseObj["_id"]
-        : "N/A";
-    let customerObj = {
+      baseObj.profile && baseObj.profile !== undefined
+        ? baseObj.profile.displayName
+        : 'N/A';
+    const customerId =
+      baseObj._id && baseObj._id !== undefined
+        ? baseObj._id
+        : 'N/A';
+    const customerObj = {
       customerName,
-      customerId,
+      customerId
     };
     customerName =
       customerName !== undefined
-        ? customerName.replace(/ /g, "")
-        : "customername";
+        ? customerName.replace(/ /g, '')
+        : 'customername';
 
-    let linkKey: any = localStorage.getItem('nestedRouteKey');
+    const linkKey: any = localStorage.getItem('nestedRouteKey');
     localStorage.setItem('prevNestedRouteKey', linkKey);
     localStorage.setItem('nestedRouteKey', `${customerName}/job-equipment-info/${link}`);
     history.push({
-      pathname: `/main/customers/${customerName}/job-equipment-info/${link}`,
-      state: customerObj,
+      'pathname': `/main/customers/${customerName}/job-equipment-info/${link}`,
+      'state': customerObj
     });
   };
 
@@ -116,15 +115,23 @@ function ViewMorePage({ classes }: any) {
     {
       'Header': 'Address',
       'accessor': 'address',
-      Cell: (row: any) => {
+      'Cell': function (row: any) {
         return (
           <div>
-            <span>{`${row.value && row.value.street ? row.value.street : ''}` + ' '}</span>
-            <span>{`${row.value && row.value.city ? row.value.city : ''}` + ' '}</span>
-            <span>{`${row.value && row.value.state !== 'none' ? row.value.state : ''}` + ' '}</span>
-            <span>{`${row.value && row.value.zipcode ? row.value.zipcode : ''}` + ' '}</span>
+            <span>
+              {`${row.value && row.value.street ? row.value.street : ''}` + ' '}
+            </span>
+            <span>
+              {`${row.value && row.value.city ? row.value.city : ''}` + ' '}
+            </span>
+            <span>
+              {`${row.value && row.value.state !== 'none' ? row.value.state : ''}` + ' '}
+            </span>
+            <span>
+              {`${row.value && row.value.zipcode ? row.value.zipcode : ''}` + ' '}
+            </span>
           </div>
-        )
+        );
       },
       'className': 'font-bold',
       'sortable': true
@@ -153,7 +160,9 @@ function ViewMorePage({ classes }: any) {
               'root': classes.fabRoot
             }}
             color={'primary'}
-            onClick={() => { renderJobSiteComponent(row.original, customerState.customerObj) }}
+            onClick={() => {
+              renderJobSiteComponent(row.original, customerState.customerObj);
+            }}
             variant={'extended'}>
             {'View More'}
           </Fab>
@@ -170,23 +179,19 @@ function ViewMorePage({ classes }: any) {
 
   useEffect(() => {
     if (jobLocations.refresh) {
-
       const obj: any = location.state;
-      const customerId = obj.customerId;
+      const { customerId } = obj;
       dispatch(loadingJobLocations());
       dispatch(getJobLocationsAction(customerId));
     }
   }, [jobLocations.refresh]);
 
   useEffect(() => {
-
     const obj: any = location.state;
-    const customerId = obj.customerId;
+    const { customerId } = obj;
     dispatch(loadingJobLocations());
     dispatch(getJobLocationsAction(customerId));
-
-
-  }, [location.pathname])
+  }, [location.pathname]);
 
   useEffect(() => {
     if (customerObj.from === 1) {
@@ -194,19 +199,18 @@ function ViewMorePage({ classes }: any) {
     } else if (customerObj.from === 2) {
       setCurTab(2);
     }
-
-  }, [customerObj])
+  }, [customerObj]);
 
   const handleTabChange = (newValue: number) => {
-    let state = {
+    const state = {
       ...customerObj,
-      from: newValue
+      'from': newValue
     };
 
-    history.replace({ ...history.location, state })
+    history.replace({ ...history.location,
+      state });
     setCurTab(newValue);
   };
-
 
 
   const openJobLocationModal = () => {
@@ -228,20 +232,19 @@ function ViewMorePage({ classes }: any) {
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
 
-          <Grid container
-          >
+          <Grid container>
             <BCBackButtonNoLink
               func={() => {
                 history.push({
-                  pathname: '/main/customers',
-                  state: {
-                    prevPage: location.state.currentPage
+                  'pathname': '/main/customers',
+                  'state': {
+                    'prevPage': location.state.currentPage
                   }
-                })
+                });
               }}
             />
 
-            <div className="tab_wrapper">
+            <div className={'tab_wrapper'}>
               <BCTabs
                 curTab={curTab}
                 indicatorColor={'primary'}
@@ -258,6 +261,10 @@ function ViewMorePage({ classes }: any) {
                   {
                     'label': 'CONTACTS',
                     'value': 2
+                  },
+                  {
+                    'label': 'PRICING',
+                    'value': 3
                   }
                 ]}
               />
@@ -265,54 +272,56 @@ function ViewMorePage({ classes }: any) {
           </Grid>
 
           {
-            customerState.loading ? <BCCircularLoader heightValue={'200px'} /> :
-              <SwipeableViews index={curTab} className={'swipe_wrapper'}>
+            customerState.loading ? <BCCircularLoader heightValue={'200px'} />
+              : <SwipeableViews
+                className={'swipe_wrapper'}
+                index={curTab}>
                 <div
                   className={`${classes.dataContainer} `}
                   hidden={curTab !== 0}
                   id={'0'}>
-                  <PageContainer className="info_wrapper alignAddJobLocation">
-                    < CustomerInfoPage customerObj={customerObj} />
+                  <PageContainer className={'info_wrapper alignAddJobLocation'}>
+                    <CustomerInfoPage customerObj={customerObj} />
                     <Fab
                       aria-label={'delete'}
                       classes={{
                         'root': classes.fabRoot
                       }}
-                      onClick={() => openJobLocationModal()}
                       color={'primary'}
+                      onClick={() => openJobLocationModal()}
                       variant={'extended'}>
                       {'Add Job Location'}
                     </Fab>
                   </PageContainer>
 
                   <BCTableContainer
-                    currentPage={currentPage}
-                    setPage={setCurrentPage}
                     columns={columns}
+                    currentPage={currentPage}
+                    initialMsg={'There are no job locations!'}
                     isLoading={jobLocations.loading}
                     search
-                    searchPlaceholder={"Search Job Locations..."}
+                    searchPlaceholder={'Search Job Locations...'}
+                    setPage={setCurrentPage}
                     tableData={jobLocations.data}
-                    initialMsg="There are no job locations!"
                   />
                 </div>
 
                 <div
                   hidden={curTab !== 1}
+                  id={'1'}
                   style={{
                     'padding': '40px'
-                  }}
-                  id={'1'}>
+                  }}>
 
-                  <Grid container
+                  <Grid
+                    container
                     spacing={5}>
                     <Grid
                       item>
                       <BCAdminCard
                         cardText={'Reports'}
                         color={'primary'}
-                        func={() => renderJobEquipmentButton(customerState.customerObj, 'reports')}
-                      >
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'reports')}>
                         <ReportsIcon />
                       </BCAdminCard>
                     </Grid>
@@ -322,8 +331,7 @@ function ViewMorePage({ classes }: any) {
                       <BCAdminCard
                         cardText={'Jobs'}
                         color={'secondary'}
-                        func={() => renderJobEquipmentButton(customerState.customerObj, 'jobs')}
-                      >
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'jobs')}>
                         <JobsIcon />
                       </BCAdminCard>
                     </Grid>
@@ -333,8 +341,7 @@ function ViewMorePage({ classes }: any) {
                       <BCAdminCard
                         cardText={'Tickets'}
                         color={'info'}
-                        func={() => renderJobEquipmentButton(customerState.customerObj, 'tickets')}
-                      >
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'tickets')}>
                         <TicketsIcon />
                       </BCAdminCard>
                     </Grid>
@@ -344,8 +351,7 @@ function ViewMorePage({ classes }: any) {
                       <BCAdminCard
                         cardText={'Equipment'}
                         color={'primary-red'}
-                        func={() => renderJobEquipmentButton(customerState.customerObj, 'equipment')}
-                      >
+                        func={() => renderJobEquipmentButton(customerState.customerObj, 'equipment')}>
                         <EquipmentIcon />
                       </BCAdminCard>
                     </Grid>
@@ -356,14 +362,27 @@ function ViewMorePage({ classes }: any) {
                 <div
                   className={`${classes.dataContainer} `}
                   hidden={curTab !== 2}
+                  id={'2'}
                   style={{
                     'marginTop': '20px'
-                  }}
-                  id={'2'}>
+                  }}>
 
                   <CustomerContactsPage
                     id={location.state.customerId}
-                    type="Customer"
+                    type={'Customer'}
+                  />
+                </div>
+                <div
+                  className={`${classes.dataContainer} `}
+                  hidden={curTab !== 3}
+                  id={'3'}
+                  style={{
+                    'marginTop': '20px'
+                  }}>
+
+                  <CustomerContactsPage
+                    id={location.state.customerId}
+                    type={'Customer'}
                   />
                 </div>
               </SwipeableViews>

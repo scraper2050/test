@@ -128,9 +128,15 @@ function BCServiceTicketModal({
     setJobSiteValue(newValue);
   };
 
-  const handleJobTypeChange = (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
-    const jobSiteId = newValue ? newValue._id : '';
-    setFieldValue(fieldName, jobSiteId);
+  const handleJobTypeChange = (event: any, setFieldValue: any, newValue: any) => {
+    let jobType = '';
+    const fieldName = newValue.length > 1 ? 'jobTypes' : 'jobTypeId';
+    if (newValue.length > 1) {
+      jobType = newValue.map((val:any) => ({ 'jobTypeId': val._id }));
+    } else {
+      jobType = newValue[0] || '';
+    }
+    setFieldValue(fieldName, jobType);
     setJobTypeValue(newValue);
   };
 
@@ -154,7 +160,6 @@ function BCServiceTicketModal({
     return rawReqObj;
   };
 
-
   const openCancelTicketModal = async (ticket: any) => {
     dispatch(setModalDataAction({
       'data': {
@@ -166,13 +171,13 @@ function BCServiceTicketModal({
     }));
   };
 
-
   useEffect(() => {
     if (!ticket.updateFlag) {
       dispatch(clearJobLocationStore());
       dispatch(clearJobSiteStore());
     }
   }, []);
+
 
   const {
     'values': FormikValues,
@@ -182,13 +187,13 @@ function BCServiceTicketModal({
     getFieldMeta,
     isSubmitting
   } = useFormik({
-    // 'enableReinitialize': true,
     'initialValues': {
       'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
       'jobTypeId': ticket.jobType ? ticket.jobType : '',
+      'jobTypes': ticket.jobTypes || [],
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
@@ -197,7 +202,13 @@ function BCServiceTicketModal({
       'image': ticket.image !== undefined ? ticket.image : ''
     },
     'onSubmit': (values, { setSubmitting }) => {
-      setSubmitting(true);
+      if (Array.isArray(jobTypeValue)) {
+        delete values.jobTypeId;
+        values.jobTypes = JSON.stringify(values.jobTypes);
+      } else {
+        delete values.jobTypes;
+      }
+
 
       const tempData = {
         ...ticket,
@@ -205,7 +216,6 @@ function BCServiceTicketModal({
       };
       const editTicketObj = { ...values,
         'ticketId': '' };
-      // TempData.dueDate = formatDateYMD(tempData.dueDate);
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         // Delete editTicketObj.customerId;
@@ -267,21 +277,11 @@ function BCServiceTicketModal({
           });
       }
     }
-
-    /*
-     * 'validationSchema': Yup.object({
-     *   'customer': Yup.string()
-     *     .required('Customer is required'),
-     *   'notes': Yup.string()
-     *   // 'dueDate': Yup.string().required('Schedule date is required')
-     * })
-     */
   });
 
   const customers = useSelector(({ customers }: any) => customers.data);
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
-  const isLoading = useSelector((state: any) => state.jobSites.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const { contacts } = useSelector((state: any) => state.contacts);
 
@@ -299,7 +299,6 @@ function BCServiceTicketModal({
       }));
     }, 200);
   };
-
 
   useEffect(() => {
     dispatch(getEmployeesForJobAction());
@@ -336,7 +335,6 @@ function BCServiceTicketModal({
     }
   }, [contacts]);
 
-
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (jobSites.length !== 0) {
@@ -345,11 +343,8 @@ function BCServiceTicketModal({
     }
   }, [jobSites]);
 
-
   useEffect(() => {
     const reader = new FileReader();
-
-
     if (FormikValues.image && FormikValues.image !== '' && FormikValues.image !== undefined) {
       if (typeof FormikValues.image === 'string') {
         setThumb(FormikValues.image);
@@ -361,11 +356,6 @@ function BCServiceTicketModal({
       }
     }
   }, [FormikValues.image]);
-
-  const detailCustomer = ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0];
-
-  console.log(ticket);
-
 
   const formatSchedulingTime = (time: string) => {
     const timeAr = time.split('T');
@@ -421,21 +411,31 @@ function BCServiceTicketModal({
         const splittedActions = row.original.action.split('|');
         const actions = splittedActions.filter((action: any) => action !== '');
         return (
-          <>
-            {
-              actions.length === 0 ? <div />
-                : <ul>
-                  {actions.map((action: any) => <li>
-                    {action}
-                  </li>)}
-                </ul>
-            }
-          </>
-
+          actions.length === 0 ? <div />
+            : <ul>
+              {actions.map((action: any) => <li>
+                {action}
+              </li>)}
+            </ul>
         );
       }
     }
   ];
+
+  const getJobType = () => {
+    if (jobTypes?.length !== 0) {
+      if (ticket?.jobTypes?.length) {
+        const ids = ticket.jobTypes.map((ticket:any) => ticket.jobType);
+        return jobTypes.filter((job:any) => ids.includes(job._id));
+      }
+      if (ticket?.jobType) {
+        return [jobTypes.filter((job:any) => job._id === ticket.jobType)[0]];
+      }
+    }
+    return [];
+  };
+
+  const defaultJobTypeValue = getJobType();
 
   if (error.status) {
     return (
@@ -460,7 +460,6 @@ function BCServiceTicketModal({
               xs={12}>
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
-
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
                     defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
@@ -492,28 +491,6 @@ function BCServiceTicketModal({
                   />
                 </div>
               </FormGroup>
-              {/* <BCSelectOutlined
-              items={{
-                'data': [
-                  ...customers.map((o: any) => {
-                    return {
-                      '_id': o._id,
-                      'displayName': o.profile.displayName
-                    };
-                  })
-                ],
-                'displayKey': 'displayName',
-                'valueKey': '_id',
-                'className': 'serviceTicketLabel',
-              }}
-              label={'Customer'}
-              name={'customerId'}
-              disabled={FormikValues.updateFlag === true}
-              required
-              value={FormikValues.customerId}
-              handleChange={(event: any) => handleCustomerChange(event, 'customerId', setFieldValue)}
-            /> */}
-
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
@@ -541,27 +518,6 @@ function BCServiceTicketModal({
                   />
                 </div>
               </FormGroup>
-
-
-              {/* <BCSelectOutlined
-                items={{
-                  'data': [
-                    ...jobLocations.map((o: any) => {
-                      return {
-                        '_id': o._id,
-                        'name': o.name,
-                      };
-                    })
-                  ],
-                  'displayKey': 'name',
-                  'valueKey': '_id',
-                  'className': 'serviceTicketLabel'
-                }}
-                label={'Job Location'}
-                name={'jobLocationId'}
-                value={FormikValues.jobLocationId}
-                handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue, getFieldMeta)}
-              /> */}
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
@@ -588,38 +544,16 @@ function BCServiceTicketModal({
                   />
                 </div>
               </FormGroup>
-
-              {/* {isLoading ? 'Loading Job Sites...' :
-                  <BCSelectOutlined
-                    handleChange={formikChange}
-                    items={{
-                      'data': [
-                        ...jobSites.map((o: any) => {
-                          return {
-                            '_id': o._id,
-                            'name': o.name,
-                          };
-                        })
-                      ],
-                      'displayKey': 'name',
-                      'valueKey': '_id',
-                      'className': 'serviceTicketLabel'
-                    }}
-                    label={'Job Site'}
-                    name={'jobSiteId'}
-                    value={FormikValues.jobSiteId}
-                  />} */}
-
-
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    defaultValue={ticket.jobType && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0]}
+                    defaultValue={defaultJobTypeValue}
                     disabled={detail}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, 'jobTypeId', setFieldValue, newValue)}
+                    multiple
+                    onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
                     options={jobTypes && jobTypes.length !== 0 ? jobTypes.sort((a: any, b: any) => a.title > b.title ? 1 : b.title > a.title ? -1 : 0) : []}
                     renderInput={params =>
                       <>
@@ -637,28 +571,6 @@ function BCServiceTicketModal({
                   />
                 </div>
               </FormGroup>
-
-
-              {/* <BCSelectOutlined
-                  handleChange={formikChange}
-                  items={{
-                    'data': [
-                      ...jobTypes.map((o: any) => {
-                        return {
-                          '_id': o._id,
-                          'title': o.title,
-                        };
-                      })
-                    ],
-                    'displayKey': 'title',
-                    'valueKey': '_id',
-                    'className': 'serviceTicketLabel'
-                  }}
-                  label={'Job Type'}
-                  name={'jobTypeId'}
-                  value={FormikValues.jobTypeId}
-                /> */}
-
               <div className={detail ? 'input-detail-only' : ''}>
                 <BCInput
                   className={'serviceTicketLabel'}
@@ -670,12 +582,9 @@ function BCServiceTicketModal({
                   value={FormikValues.note}
                 />
               </div>
-
               <Label>
                 {notesLabelState ? ' Notes are required while updating the ticket.' : null}
               </Label>
-
-
               <div className={detail ? 'input-detail-only' : ''}>
                 <BCDateTimePicker
                   className={'serviceTicketLabel'}
@@ -688,8 +597,6 @@ function BCServiceTicketModal({
                   value={FormikValues.dueDate}
                 />
               </div>
-
-
             </Grid>
             <Grid
               item
@@ -721,7 +628,6 @@ function BCServiceTicketModal({
                   />
                 </div>
               </FormGroup>
-
               <FormGroup>
                 <InputLabel className={classes.label}>
                   <strong>
@@ -740,7 +646,6 @@ function BCServiceTicketModal({
                   />
                 </div>
               </FormGroup>
-
               {
                 !detail
                   ? <FormGroup>
@@ -758,7 +663,6 @@ function BCServiceTicketModal({
                   </FormGroup>
                   : <div style={{ 'marginTop': '2rem' }} />
               }
-
               <Grid
                 alignItems={'center'}
                 container
@@ -776,9 +680,7 @@ function BCServiceTicketModal({
                   }}
                 />
               </Grid>
-
             </Grid>
-
             {
               detail &&
                 <Grid
@@ -840,11 +742,7 @@ function BCServiceTicketModal({
                       classes={{
                         'root': classes.deleteButton
                       }}
-                      /*
-                       * Classes={{
-                       *   'root': classes.fabRoot
-                       * }}
-                       */
+
                       disabled={isSubmitting || isLoadingDatas}
                       onClick={() => openCancelTicketModal(ticket)}
                       style={{
@@ -877,18 +775,7 @@ function BCServiceTicketModal({
                 variant={'extended'}>
                 {'Close'}
               </Fab>
-
           }
-          {/* <Fab
-            aria-label={'create-job'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            disabled={isSubmitting}
-            variant={'extended'}>
-            {'Generate Job'}
-          </Fab> */}
         </DialogActions>
       </form>
     </DataContainer >

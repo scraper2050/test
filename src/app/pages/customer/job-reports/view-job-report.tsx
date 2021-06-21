@@ -4,6 +4,7 @@ import { loadJobReportActions } from 'actions/customer/job-report/job-report.act
 import { useParams } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getAllJobTypesAPI } from 'api/job.api';
 
 
 function ViewJobReportsPage() {
@@ -12,16 +13,21 @@ function ViewJobReportsPage() {
 
   const { loading, jobReportObj, error } = useSelector(({ jobReport }: any) =>
     jobReport);
+  const { 'loading': jobTypesLoading, data } = useSelector(({ jobTypes }: any) => jobTypes);
 
   useEffect(() => {
+    dispatch(getAllJobTypesAPI());
     dispatch(loadJobReportActions.fetch({ jobReportId }));
   }, []);
 
-  if (loading) {
+  if (loading || jobTypesLoading) {
     return <BCCircularLoader heightValue={'200px'} />;
   }
 
-  return <BCJobReport jobReportData={jobReportObj} />;
+  return <BCJobReport
+    jobReportData={jobReportObj}
+    jobTypes={data}
+  />;
 }
 
 export default ViewJobReportsPage;

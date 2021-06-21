@@ -146,6 +146,7 @@ function BCSharedForm({ classes,
     formData.formNumber = state.invoiceDetail.invoiceId;
   }
 
+
   return (
     <form>
       <Paper
@@ -188,10 +189,11 @@ function BCSharedForm({ classes,
               }
               calculateTotal={calculateTotal}
               columnSchema={columnSchema}
+              isCustomPrice={customer?.isCustomPrice}
               items={items}
               itemSchema={itemSchema}
               itemTier={customer?.itemTier}
-              jobType={state?.jobType}
+              jobTypes={state?.jobTypes}
               setItems={setItems}
             />
             <BCSharedFormTotalContainer

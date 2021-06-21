@@ -18,13 +18,14 @@ interface Props {
     itemSchema: any;
     columnSchema: any;
     addItemText: string;
-    jobType: string;
+    jobTypes: any[];
     calculateTotal: (array:any[])=> void;
     itemTier: any;
+    isCustomPrice: boolean;
 }
 
 
-function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSchema, jobType, calculateTotal, items, setItems, itemTier }:Props) {
+function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSchema, jobTypes, calculateTotal, items, setItems, itemTier, isCustomPrice }:Props) {
   const dispatch = useDispatch();
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const [columns, setColumns] = useState([...columnSchema]);
@@ -35,7 +36,6 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     const tempArray = [...items];
     if (fieldName === 'name') {
       const item = invoiceItems?.find((item:any) => item.name === value);
-      console.log(itemTier);
       if (itemTier?._id) {
         const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
         tempArray[index].price = customerTier.charge || 0;
@@ -72,7 +72,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
           price = customerTier.charge || 0;
         }
 
-        if (jobType) {
+        if (jobTypes) {
           return {
             name,
             'price': price,
@@ -100,33 +100,41 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
 
       setItems([...newItems]);
     }
-    if (invoiceItems.length && !items.length && jobType) {
-      const { charges, name, isFixed, tax, tiers }:any = invoiceItems.find((item:any) => item.jobType === jobType);
-      let price = charges || 0;
-      if (itemTier?._id) {
-        const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
-        price = customerTier.charge || 0;
-      }
+    if (invoiceItems.length && jobTypes) {
+      const newItems = jobTypes.map(({ jobType }:any) => {
+        const jobTypeItem = invoiceItems.find((item:any) => item.jobType === jobType);
 
-      const taxValue = tax
+        if (jobTypeItem) {
+          const { charges, name, isFixed, tax, tiers }:any = jobTypeItem;
 
-        ? taxes[0].tax
-        : 0;
+          let price = charges || 0;
+          if (itemTier?._id) {
+            const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
+            price = customerTier.charge || 0;
+          }
 
-      const taxAmount = charges * taxValue / 100;
-      const newItem = {
-        ...itemSchema,
-        name,
-        'price': price,
-        'tax': taxValue,
-        'total': charges + taxAmount,
-        'taxAmount': taxAmount,
-        'unit': isFixed
-          ? 'Fixed'
-          : '/hr'
+          const taxValue = tax
 
-      };
-      setItems([newItem]);
+            ? taxes[0].tax
+            : 0;
+
+          const taxAmount = charges * taxValue / 100;
+          return {
+            ...itemSchema,
+            name,
+            'price': price,
+            'tax': taxValue,
+            'total': charges + taxAmount,
+            'taxAmount': taxAmount,
+            'unit': isFixed
+              ? 'Fixed'
+              : '/hr'
+
+          };
+        }
+      });
+
+      setItems([...newItems]);
     }
 
 
@@ -208,7 +216,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
               column.Cell = ({ row }: any) => { // eslint-disable-line
             return <div className={'flex items-center'}>
               <BCSelectOutlined
-                disabled={jobType && row.index === 0}
+                disabled={row.index <= jobTypes.length}
                 formStyles={{
                   'marginBottom': '0'
                 }}
@@ -245,7 +253,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
             return <div className={'flex items-center'}>
               <Button
                 color={'secondary'}
-                disabled={Boolean(jobType) && row.index === 0}
+                disabled={row.index <= jobTypes.length}
                 onClick={() => removeItem(row.index)}
                 variant={'contained'}>
                 {'Remove'}

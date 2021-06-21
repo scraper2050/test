@@ -76,6 +76,14 @@ const initialJobState = {
 };
 
 
+const getJobData = (ids:any, jobTypes:any) => {
+  if (!ids) {
+    return;
+  }
+  return jobTypes.filter((job:any) => ids.includes(job._id));
+};
+
+
 function BCJobModal({
   classes,
   job = initialJobState,
@@ -137,6 +145,17 @@ function BCJobModal({
       setFieldValue(fieldName, 1);
       setShowVendorFlag(true);
     }
+  };
+
+  const handleJobTypeChange = (newValue:any) => {
+    if (newValue.length > 1) {
+      const ids = newValue.map((jobType:any) => ({ 'jobTypeId': jobType._id }));
+      setFieldValue('jobTypes', ids);
+    } else {
+      setFieldValue('jobTypeId', newValue || []);
+    }
+
+    setJobTypeValue(newValue);
   };
 
 
@@ -252,12 +271,19 @@ function BCJobModal({
   }, [vendorsList]);
 
   useEffect(() => {
-    if (job._id) {
-      if (jobTypes.length !== 0) {
-        setJobTypeValue(jobTypes.filter((jobType: any) => jobType._id === job.type._id)[0]);
+    if (jobTypes.length !== 0) {
+      let tempJobValue = [];
+
+      if (job._id) {
+        tempJobValue = job.jobTypes.length > 0
+          ? getJobData(job.jobTypes.map((job:any) => job.jobType._id), jobTypes)
+          : getJobData([job.type._id], jobTypes);
+      } else {
+        tempJobValue = ticket.jobTypes.length > 0
+          ? getJobData(ticket.jobTypes.map((job:any) => job.jobType), jobTypes)
+          : getJobData([ticket.jobType], jobTypes);
       }
-    } else if (jobTypes.length !== 0) {
-      const tempJobValue = ticket.jobType !== '' && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0];
+
       setJobTypeValue(tempJobValue);
     }
   }, [jobTypes]);
@@ -371,6 +397,12 @@ function BCJobModal({
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
+
+      if (jobTypeValue.length > 1) {
+        delete values.jobTypeId;
+      } else {
+        delete values.jobTypes;
+      }
 
       const customerId = customer?._id;
       const jobFromMapFilter = job.jobFromMap;
@@ -847,15 +879,15 @@ function BCJobModal({
                   : null
               }
 
-
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={ticket.jobType || detail}
+                    disabled={ticket.jobType && detail}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id, () => setJobTypeValue(newValue))}
+                    multiple
+                    onChange={(ev: any, newValue: any) => handleJobTypeChange(newValue)}
                     options={jobTypes && jobTypes.length !== 0 ? jobTypes.sort((a: any, b: any) => a.title > b.title ? 1 : b.title > a.title ? -1 : 0) : []}
                     renderInput={params =>
                       <>
@@ -871,7 +903,6 @@ function BCJobModal({
                           </Typography>}
                         </InputLabel>
                         <TextField
-                          required
                           {...params}
                           variant={'standard'}
                         />

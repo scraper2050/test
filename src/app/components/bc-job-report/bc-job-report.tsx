@@ -26,15 +26,27 @@ const renderTime = (startTime:Date, endTime: Date) => {
   return start;
 };
 
+const getJobs = (jobs:any, jobTypes:any) => {
+  const ids = jobs.map((job:any) => job.jobType);
+  return jobTypes.filter((jobType:any) => ids.includes(jobType._id));
+};
 
-function BCJobReport({ classes, jobReportData }: any) {
+
+function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   const history = useHistory();
   const dispatch = useDispatch();
 
   const { job, invoiceCreated, invoice } = jobReportData;
+
+
   if (!jobReportData || !job) {
     return null;
   }
+
+  const jobs = job.jobTypes.length
+    ? getJobs(job.jobTypes, jobTypes)
+    : [job.type];
+
 
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
@@ -65,10 +77,13 @@ function BCJobReport({ classes, jobReportData }: any) {
         'customerId': job.customer._id,
         'customerName': job.customerName,
         'jobId': job._id,
-        'jobType': job.type?._id
+        'jobTypes': job.jobTypes.length
+          ? job.jobTypes
+          : [job.type]
       }
     });
   };
+
 
   const showInvoice = () => {
     dispatch(setModalDataAction({
@@ -248,11 +263,17 @@ function BCJobReport({ classes, jobReportData }: any) {
                       xs={12}>
                       <div className={classes.addMargin}>
                         <strong>
-                          {'Job Type'}
+                          {'Job Type(s)'}
                         </strong>
-                        <p className={classes.noMargin}>
-                          {job.type.title || 'N/A'}
-                        </p>
+                        {jobs.map((item :any) =>
+                          <p
+                            className={job.jobTypes.length
+                              ? classes.addMargin
+                              : classes.noMargin}
+                            key={item._id}>
+                            {item.title || 'N/A'}
+                          </p>)}
+
                       </div>
                     </Grid>
                   </Grid>
