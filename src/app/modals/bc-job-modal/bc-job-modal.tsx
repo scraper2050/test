@@ -879,7 +879,7 @@ function BCJobModal({
                 // />
                   : null
               }
-              {console.log(ticket.jobType || ticket.jobTypes.length)}
+
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
