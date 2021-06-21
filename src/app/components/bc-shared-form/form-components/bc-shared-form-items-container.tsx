@@ -216,7 +216,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
               column.Cell = ({ row }: any) => { // eslint-disable-line
             return <div className={'flex items-center'}>
               <BCSelectOutlined
-                disabled={row.index <= jobTypes.length}
+                disabled={row.index <= jobTypes?.length}
                 formStyles={{
                   'marginBottom': '0'
                 }}
@@ -253,7 +253,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
             return <div className={'flex items-center'}>
               <Button
                 color={'secondary'}
-                disabled={row.index <= jobTypes.length}
+                disabled={row.index <= jobTypes?.length}
                 onClick={() => removeItem(row.index)}
                 variant={'contained'}>
                 {'Remove'}

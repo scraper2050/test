@@ -381,6 +381,7 @@ function BCJobModal({
         ? job.equipment._id
         : '',
       'jobTypeId': job.ticket.jobType ? job.ticket.jobType : '',
+      'jobTypes': job.ticket.jobTypes ? job.ticket.jobTypes : [],
       'dueDate': job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
       'scheduleDate': job.scheduleDate,
       'scheduledStartTime': job?.scheduledStartTime ? formatISOToDateString(job.scheduledStartTime) : null,
@@ -401,7 +402,7 @@ function BCJobModal({
       if (jobTypeValue.length > 1) {
         delete values.jobTypeId;
       } else {
-        delete values.jobTypes;
+        values.jobTypes = [];
       }
 
       const customerId = customer?._id;
@@ -883,7 +884,7 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={ticket.jobType && detail}
+                    disabled={ticket.jobType || ticket.jobTypes.length || detail}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
                     multiple
