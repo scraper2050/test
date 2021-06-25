@@ -9,6 +9,7 @@ import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoadin
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import {
+  Chip,
   DialogActions,
   DialogContent,
   Fab,
@@ -570,6 +571,9 @@ function BCJobModal({
     }, 200);
   };
 
+
+  const disabledChips = job?._id ? job.tasks.map(({ jobType }:any) => jobType._id) : [];
+
   const goToJobs = () => {
     closeModal();
     history.push('/main/customers/schedule');
@@ -883,7 +887,8 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={ticket.jobType || ticket.tasks.length || detail}
+                    disabled={detail || !job._id}
+                    getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
                     multiple
@@ -907,6 +912,15 @@ function BCJobModal({
                           variant={'standard'}
                         />
                       </>
+                    }
+                    renderTags={(tagValue, getTagProps) =>
+                      tagValue.map((option, index) => {
+                        return <Chip
+                          label={option.title}
+                          {...getTagProps({ index })}
+                          disabled={disabledChips.includes(option._id) || !job._id}
+                        />;
+                      })
                     }
                     value={jobTypeValue}
                   />
