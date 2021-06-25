@@ -1,5 +1,5 @@
 import Card from '@material-ui/core/Card/Card';
-import { PRIMARY_GRAY } from '../../../../../constants';
+import { PRIMARY_BLUE, PRIMARY_GRAY } from '../../../../../constants';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -40,14 +40,12 @@ type CustomDiv = {
 }
 
 const StyledCard = styled(Card)<CustomDiv>`
-    border: ${props => props.active
-    ? `1px solid ${props.borderColor}`
-    : `1px solid ${PRIMARY_GRAY}`};
+   background: ${props => props.active ? PRIMARY_BLUE : ''};
     padding: 25px 20px 20px;
     margin-bottom: 16px;
     display: flex;
     &:hover {
-        background: #f6f6f6;
+        background:${props => props.active ? PRIMARY_BLUE : '#f6f6f6'} ;
     }
     .icon-container {
         border-radius: 100px;
@@ -59,11 +57,13 @@ const StyledCard = styled(Card)<CustomDiv>`
         background-color: ${props => props.iconBackground}
     }
 
+    color: ${props => props.active ? '#fff' : 'rgba(0, 0, 0, 0.87)'} ;
+
     h3,p {
         margin: 0;
     }
     p {
-        color: #3a3a44;
+        color:${props => props.active ? '#fff' : '#3a3a44'} ;
     }
     h3 {
         margin-bottom: 2px;

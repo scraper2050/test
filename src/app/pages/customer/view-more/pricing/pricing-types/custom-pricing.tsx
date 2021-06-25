@@ -64,7 +64,7 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
   };
 
   const handleAdd = () => {
-    if (parseInt(fieldData.quantity) - tableData[tableData.length - 1].quantity > 1) {
+    if (parseInt(fieldData.quantity) - tableData[tableData.length - 1]?.quantity > 1) {
       dispatch(error(`Missing quantity ${tableData[tableData.length - 1].quantity + 1}`));
       return;
     }

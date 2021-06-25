@@ -157,6 +157,15 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'sortable': true
     },
     {
+      Cell({ row }: any) {
+        return (
+          <div className={'flex items-center'}>
+            <p>
+              {row.original.tasks.length > 0 ? 'Multiple Jobs' : row.original.type?.title}
+            </p>
+          </div>
+        );
+      },
       'Header': 'Type',
       'accessor': 'type.title',
       'className': 'font-bold',

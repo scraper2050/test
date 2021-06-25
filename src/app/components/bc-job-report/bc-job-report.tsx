@@ -27,7 +27,7 @@ const renderTime = (startTime:Date, endTime: Date) => {
 };
 
 const getJobs = (jobs:any, jobTypes:any) => {
-  const ids = jobs.map((job:any) => job.jobType);
+  const ids = jobs.map((job:any) => job.jobType._id);
   return jobTypes.filter((jobType:any) => ids.includes(jobType._id));
 };
 
@@ -43,8 +43,8 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     return null;
   }
 
-  const jobs = job.jobTypes.length
-    ? getJobs(job.jobTypes, jobTypes)
+  const jobs = job.tasks.length
+    ? getJobs(job.tasks, jobTypes)
     : [job.type];
 
 
@@ -77,8 +77,8 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
         'customerId': job.customer._id,
         'customerName': job.customerName,
         'jobId': job._id,
-        'jobTypes': job.jobTypes.length
-          ? job.jobTypes
+        'jobTypes': job.tasks.length
+          ? job.tasks
           : [job.type]
       }
     });
@@ -267,7 +267,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                         </strong>
                         {jobs.map((item :any) =>
                           <p
-                            className={job.jobTypes.length
+                            className={job.tasks.length
                               ? classes.addMargin
                               : classes.noMargin}
                             key={item._id}>
