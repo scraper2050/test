@@ -59,20 +59,13 @@ function NewCustomerPage({ classes }: Props) {
     'vendorId': '',
     'itemTierId': ''
   };
-  const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
+
   const [positionValue, setPositionValue] = useState({
     'lang': 0.0,
     'lat': 0.0
   });
   const dispatch = useDispatch();
   const history = useHistory();
-  const activeTiers = useMemo(() => tiers.filter(({ tier }:any) => tier.isActive), [tiers]);
-  useEffect(
-    () => {
-      dispatch(loadTierListItems.fetch());
-    }
-    , []
-  );
 
   const filterOptions = createFilterOptions({
     'stringify': (option: AllStateTypes) => option.abbreviation + option.name
@@ -159,10 +152,6 @@ function NewCustomerPage({ classes }: Props) {
     setFieldValue('state.id', index);
   };
 
-
-  const handleSelectTier = (val: any, setFieldValue: any) => {
-    setFieldValue('itemTierId', val.tier._id);
-  };
 
   return (
     <MainContainer>
@@ -437,41 +426,6 @@ function NewCustomerPage({ classes }: Props) {
                           />
                         </FormGroup>
                       </Grid>
-                      {activeTiers.length > 0 && <Grid
-                        className={classes.paper}
-                        item
-                        sm={6}
-                        xs={12}>
-                        <FormGroup >
-
-                          <Autocomplete
-                            autoHighlight
-                            getOptionLabel={option => option.tier.name}
-                            id={'tags-standard'}
-                            onChange={(ev: any, newValue: any) => handleSelectTier(newValue, setFieldValue)}
-                            options={activeTiers}
-                            renderInput={params =>
-                              <>
-                                <InputLabel className={`${classes.label}`}>
-                                  {'Customer Tier'}
-                                </InputLabel>
-                                <TextField
-                                  name={'itemTierId'}
-                                  {...params}
-                                  variant={'standard'}
-                                />
-                              </>
-                            }
-                            renderOption={option =>
-                              <span>
-                                {'Tier '}
-                                {option.tier.name}
-                              </span>
-                            }
-                          />
-                        </FormGroup>
-                      </Grid>}
-
                     </Grid>
 
                     {/* <pre>
