@@ -1,30 +1,27 @@
-import request from "utils/http.service";
+import request from 'utils/http.service';
 
 export const getCustomers = async (param?: {}) => {
   const body = {
-    includeActive: "true",
-    includeNonActive: "false",
+    'includeActive': 'true',
+    'includeNonActive': 'false'
   };
   let responseData;
   try {
-    const response: any = await request("/getCustomers", "POST", body, false);
+    const response: any = await request('/getCustomers', 'POST', body, false);
 
     responseData = response.data;
     if (response.status === 200) {
-
       responseData = {
         ...response.data,
-        customers: response.data.customers.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))
-      }
+        'customers': response.data.customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0)
+      };
     }
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
-      throw new Error(
-        err.data.errors ||
+      throw new Error(err.data.errors ||
         err.data.message ||
-        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
-      );
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
     } else {
       throw new Error(`Something went wrong`);
     }
@@ -34,14 +31,14 @@ export const getCustomers = async (param?: {}) => {
 
 export const getCustomerDetail = async (data: any) => {
   const body = {
-    customerId: data.customerId,
-    companyId: data.companyId,
+    'customerId': data.customerId,
+    'companyId': data.companyId
   };
   let responseData;
   try {
     const response: any = await request(
-      "/getCustomerDetail",
-      "POST",
+      '/getCustomerDetail',
+      'POST',
       body,
       false
     );
@@ -49,11 +46,9 @@ export const getCustomerDetail = async (data: any) => {
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
-      throw new Error(
-        err.data.errors ||
+      throw new Error(err.data.errors ||
         err.data.message ||
-        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
-      );
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
     } else {
       throw new Error(`Something went wrong`);
     }
@@ -63,19 +58,19 @@ export const getCustomerDetail = async (data: any) => {
 
 export const updateCustomers = async (data: any) => {
   const body = {
-    includeActive: "true",
-    includeNonActive: "false",
+    'includeActive': 'true',
+    'includeNonActive': 'false'
   };
   let responseData;
   try {
-    const response: any = await request("/updateCustomer", "POST", data, false);
+    const response: any = await request('/updateCustomer', 'POST', data, false);
     responseData = response.data;
   } catch (err) {
-    responseData = { msg: "" };
+    responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
-      responseData.msg = "We are facing some issues, please try again.";
+      responseData.msg = 'We are facing some issues, please try again.';
     } else {
-      responseData.msg = "Something went wrong";
+      responseData.msg = 'Something went wrong';
     }
   }
   return responseData;
@@ -84,15 +79,35 @@ export const updateCustomers = async (data: any) => {
 export const createCustomer = async (data: any) => {
   let responseData;
   try {
-    const response: any = await request("/createCustomer", "POST", data, false);
+    const response: any = await request('/createCustomer', 'POST', data, false);
     responseData = response.data;
   } catch (err) {
-    responseData = { msg: "" };
+    responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
-      responseData.msg = "We are facing some issues, please try again.";
+      responseData.msg = 'We are facing some issues, please try again.';
     } else {
-      responseData.msg = "Something went wrong";
+      responseData.msg = 'Something went wrong';
     }
   }
   return responseData;
 };
+
+export const updateCustomPrices = async (customerId: string, customPrices:any) => {
+  try {
+    const response: any = await request('/updateCustomPrices', 'POST', { customerId,
+      'customPrices': JSON.stringify(customPrices) }, false);
+    if (response.data.status === 0) {
+      throw new Error('Quantity must be in sequence');
+    }
+    console.log(response.data);
+    return response.data;
+  } catch (err) {
+    if (err.response.status >= 400 || err.response.status === 0) {
+      throw err;
+    } else {
+      throw err;
+    }
+  }
+};
+
+
