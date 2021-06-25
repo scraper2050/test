@@ -130,7 +130,7 @@ function BCServiceTicketModal({
 
   const handleJobTypeChange = (event: any, setFieldValue: any, newValue: any) => {
     let jobType = '';
-    const fieldName = newValue.length > 1 ? 'jobTypes' : 'jobTypeId';
+    const fieldName = newValue.length > 1 ? 'tasks' : 'jobTypeId';
     if (newValue.length > 1) {
       jobType = newValue.map((val:any) => ({ 'jobTypeId': val._id }));
     } else {
@@ -193,7 +193,8 @@ function BCServiceTicketModal({
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
       'jobTypeId': ticket.jobType ? ticket.jobType : '',
-      'jobTypes': ticket.jobTypes || [],
+      'jobTypes': ticket.tasks ? ticket.tasks : '',
+      'tasks': ticket.tasks || [],
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
@@ -204,7 +205,7 @@ function BCServiceTicketModal({
     'onSubmit': (values, { setSubmitting }) => {
       if (Array.isArray(jobTypeValue)) {
         delete values.jobTypeId;
-        values.jobTypes = JSON.stringify(values.jobTypes);
+        values.jobTypes = JSON.stringify(values.tasks);
       } else {
         delete values.jobTypes;
       }
@@ -424,8 +425,8 @@ function BCServiceTicketModal({
 
   const getJobType = () => {
     if (jobTypes?.length !== 0) {
-      if (ticket?.jobTypes?.length) {
-        const ids = ticket.jobTypes.map((ticket:any) => ticket.jobType);
+      if (ticket?.tasks?.length) {
+        const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
         return jobTypes.filter((job:any) => ids.includes(job._id));
       }
       if (ticket?.jobType) {

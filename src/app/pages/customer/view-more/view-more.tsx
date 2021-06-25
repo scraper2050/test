@@ -23,6 +23,9 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
+import Pricing from './pricing/pricing';
+import { getItemTierList } from 'api/items.api';
+import { loadTierListItems } from 'actions/invoicing/items/items.action';
 
 interface LocationState {
   customerName?: string;
@@ -200,6 +203,10 @@ function ViewMorePage({ classes }: any) {
       setCurTab(2);
     }
   }, [customerObj]);
+
+  useEffect(() => {
+    dispatch(loadTierListItems.fetch());
+  }, []);
 
   const handleTabChange = (newValue: number) => {
     const state = {
@@ -380,10 +387,7 @@ function ViewMorePage({ classes }: any) {
                     'marginTop': '20px'
                   }}>
 
-                  <CustomerContactsPage
-                    id={location.state.customerId}
-                    type={'Customer'}
-                  />
+                  <Pricing customer={customerState.customerObj} />
                 </div>
               </SwipeableViews>
           }

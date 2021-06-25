@@ -1,12 +1,16 @@
 export const types = {
-    'CUSTOMER_LOAD': 'loadCustomersActions',
-    'CUSTOMER_NEW': 'newCustomerAction',
-    'CUSTOMER_REMOVE': 'deleteCustomerActions',
-    'SET_CUSTOMERS': 'setCustomer',
-    'SET_SINGLE_CUSTOMER': 'setSingleCustomer',
-    'GET_SINGLE_CUSTOMER': 'getSingleCustomer'
+  'CUSTOMER_LOAD': 'loadCustomersActions',
+  'CUSTOMER_NEW': 'newCustomerAction',
+  'CUSTOMER_REMOVE': 'deleteCustomerActions',
+  'SET_CUSTOMERS': 'setCustomer',
+  'SET_SINGLE_CUSTOMER': 'setSingleCustomer',
+  'GET_SINGLE_CUSTOMER': 'getSingleCustomer'
 };
 
+type CustomPrice = {
+    quantity: number;
+    price: number;
+}
 export interface Customer {
     _id: string
     info: {
@@ -30,6 +34,13 @@ export interface Customer {
         firstName: string
         lastName: string
         displayName: string
+    }
+    isCustomPrice: boolean;
+    customPrices: CustomPrice[]
+    itemTier: {
+        isActive: boolean;
+        _id: string;
+        name: string;
     }
 }
 

@@ -102,7 +102,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     }
     if (invoiceItems.length && jobTypes) {
       const newItems = jobTypes.map(({ jobType }:any) => {
-        const jobTypeItem = invoiceItems.find((item:any) => item.jobType === jobType);
+        const jobTypeItem = invoiceItems.find((item:any) => item.jobType === jobType._id);
 
         if (jobTypeItem) {
           const { charges, name, isFixed, tax, tiers }:any = jobTypeItem;

@@ -114,7 +114,6 @@ function BCJobModal({
   const [contactValue, setContactValue] = useState<any>([]);
   const [thumb, setThumb] = useState<any>(null);
   const history = useHistory();
-  const location = useLocation();
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -149,7 +148,7 @@ function BCJobModal({
 
   const handleJobTypeChange = (newValue:any) => {
     if (newValue.length > 1) {
-      const ids = newValue.map((jobType:any) => ({ 'jobTypeId': jobType._id }));
+      const ids = newValue.map((jobType:any) => ({ 'jobTypeId': jobType?._id }));
       setFieldValue('jobTypes', ids);
     } else {
       setFieldValue('jobTypeId', newValue || []);
@@ -275,12 +274,12 @@ function BCJobModal({
       let tempJobValue = [];
 
       if (job._id) {
-        tempJobValue = job.jobTypes.length > 0
-          ? getJobData(job.jobTypes.map((job:any) => job.jobType._id), jobTypes)
+        tempJobValue = job.tasks.length > 0
+          ? getJobData(job.tasks.map((job:any) => job.jobType._id), jobTypes)
           : getJobData([job.type._id], jobTypes);
       } else {
-        tempJobValue = ticket.jobTypes.length > 0
-          ? getJobData(ticket.jobTypes.map((job:any) => job.jobType), jobTypes)
+        tempJobValue = ticket.tasks.length > 0
+          ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
       }
 
@@ -381,7 +380,7 @@ function BCJobModal({
         ? job.equipment._id
         : '',
       'jobTypeId': job.ticket.jobType ? job.ticket.jobType : '',
-      'jobTypes': job.ticket.jobTypes ? job.ticket.jobTypes : [],
+      'jobTypes': job.ticket.tasks ? job.ticket.tasks : [],
       'dueDate': job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
       'scheduleDate': job.scheduleDate,
       'scheduledStartTime': job?.scheduledStartTime ? formatISOToDateString(job.scheduledStartTime) : null,
@@ -884,7 +883,7 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={ticket.jobType || ticket.jobTypes.length || detail}
+                    disabled={ticket.jobType || ticket.tasks.length || detail}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
                     multiple

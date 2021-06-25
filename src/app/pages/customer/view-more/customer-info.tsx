@@ -21,7 +21,7 @@ function CustomerInfoPage({ classes }: any) {
   const { customerObj, loading } = useSelector((state: any) => state.customers);
 
   useEffect(() => {
-    if (customerObj._id === '') {
+    if (customerObj?._id === '') {
       const obj: any = location.state;
       const { customerId } = obj;
       dispatch(loadingSingleCustomers());
