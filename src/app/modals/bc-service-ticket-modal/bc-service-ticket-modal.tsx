@@ -28,7 +28,7 @@ import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { getContacts } from 'api/contacts.api';
 import { convertMilitaryTime, formatDate, formatToMilitaryTime } from 'helpers/format';
-import { success } from 'actions/snackbar/snackbar.action';
+import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 import './bc-service-ticket.scss';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
@@ -227,6 +227,10 @@ function BCServiceTicketModal({
           }
 
           callEditTicketAPI(formatedRequest).then((response: any) => {
+            if (response.status === 0) {
+              dispatch(SnackBarError(response.message));
+              return;
+            }
             dispatch(refreshServiceTickets(true));
             dispatch(closeModalAction());
             setTimeout(() => {
@@ -258,6 +262,10 @@ function BCServiceTicketModal({
         delete tempData.customer;
         const formatedRequest = { ...formatRequestObj(tempData) };
         callCreateTicketAPI(formatedRequest).then((response: any) => {
+          if (response.status === 0) {
+            dispatch(SnackBarError(response.message));
+            return;
+          }
           dispatch(refreshServiceTickets(true));
           dispatch(closeModalAction());
           setTimeout(() => {

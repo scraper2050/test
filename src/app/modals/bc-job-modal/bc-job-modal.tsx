@@ -9,6 +9,7 @@ import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoadin
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import {
+  Chip,
   DialogActions,
   DialogContent,
   Fab,
@@ -35,7 +36,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import '../../../scss/job-poup.scss';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { success } from 'actions/snackbar/snackbar.action';
+import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
@@ -498,6 +499,10 @@ function BCJobModal({
         request(requestObj)
 
           .then(async (response: any) => {
+            if (response.status === 0) {
+              dispatch(SnackBarError(response.message));
+              return;
+            }
             if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
               await callEditTicketAPI(formatedTicketRequest);
             }
@@ -569,6 +574,9 @@ function BCJobModal({
       }));
     }, 200);
   };
+
+
+  const disabledChips = job?._id ? job.tasks.map(({ jobType }:any) => jobType._id) : [];
 
   const goToJobs = () => {
     closeModal();
@@ -883,7 +891,8 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={ticket.jobType || ticket.tasks.length || detail}
+                    disabled={detail || !job._id}
+                    getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
                     multiple
@@ -907,6 +916,15 @@ function BCJobModal({
                           variant={'standard'}
                         />
                       </>
+                    }
+                    renderTags={(tagValue, getTagProps) =>
+                      tagValue.map((option, index) => {
+                        return <Chip
+                          label={option.title}
+                          {...getTagProps({ index })}
+                          disabled={disabledChips.includes(option._id) || !job._id}
+                        />;
+                      })
                     }
                     value={jobTypeValue}
                   />
