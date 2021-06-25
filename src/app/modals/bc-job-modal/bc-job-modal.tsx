@@ -36,7 +36,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import '../../../scss/job-poup.scss';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { success } from 'actions/snackbar/snackbar.action';
+import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
@@ -499,6 +499,10 @@ function BCJobModal({
         request(requestObj)
 
           .then(async (response: any) => {
+            if (response.status === 0) {
+              dispatch(SnackBarError(response.message));
+              return;
+            }
             if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
               await callEditTicketAPI(formatedTicketRequest);
             }
