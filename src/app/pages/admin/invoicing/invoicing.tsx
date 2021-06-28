@@ -5,8 +5,26 @@ import MoneyIcon from '@material-ui/icons/Money';
 import React from 'react';
 import ReceiptIcon from '@material-ui/icons/Receipt';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../constants';
 
 function AdminInvoicingPage() {
+  const dispatch = useDispatch();
+  const addSalesTax = () => {
+    dispatch(setModalDataAction({
+
+      'data': {
+        'modalTitle': 'Sales Tax'
+      },
+      'type': modalTypes.SALES_TAX_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   return (
     <>
       {/* <BCSubHeader title={'Admin'}>
@@ -27,7 +45,7 @@ function AdminInvoicingPage() {
               <BCAdminCard
                 cardText={'Sales Tax'}
                 color={'primary'}
-                link={''}>
+                func={addSalesTax}>
                 <MoneyIcon />
               </BCAdminCard>
             </Grid>

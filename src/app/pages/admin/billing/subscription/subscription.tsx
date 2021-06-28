@@ -46,9 +46,10 @@ function BillingSubscriptionPage({ classes }:Props) {
                 'root': classes.fabRoot
               }}
               color={'primary'}
+              size={'small'}
               style={{
-                'width': 110,
-                'marginRight': 10
+                'width': 90,
+                'marginRight': 15
               }}
               // OnClick={() => renderViewMore(row)}
               variant={'extended'}>
@@ -61,7 +62,12 @@ function BillingSubscriptionPage({ classes }:Props) {
               }}
               color={'primary'}
               // OnClick={() => renderViewMore(row)}
+              size={'small'}
+              style={{
+                'width': 90
+              }}
               variant={'extended'}>
+
               {'View More'}
             </Fab>
           </div>

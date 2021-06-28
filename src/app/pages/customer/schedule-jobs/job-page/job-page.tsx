@@ -52,12 +52,20 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         'text': 'Canceled'
       },
       {
-        'class': classes.resheduledText,
+        'class': classes.statusResheduledText,
         'text': 'Rescheduled'
+      },
+      {
+        'class': classes.statusPausedText,
+        'text': 'Paused'
+      },
+      {
+        'class': classes.statusIncompleteText,
+        'text': 'Incomplete'
       }
     ];
-    const textStatus = statusArray[status].text;
-    return <div className={statusArray[status].class}>
+    const textStatus = statusArray[status]?.text;
+    return <div className={statusArray[status]?.class}>
       {textStatus}
     </div>;
   }
@@ -157,6 +165,15 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'sortable': true
     },
     {
+      Cell({ row }: any) {
+        return (
+          <div className={'flex items-center'}>
+            <p>
+              {row.original.tasks.length > 0 ? 'Multiple Jobs' : row.original.type?.title}
+            </p>
+          </div>
+        );
+      },
       'Header': 'Type',
       'accessor': 'type.title',
       'className': 'font-bold',

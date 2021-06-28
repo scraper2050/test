@@ -1,4 +1,6 @@
-import BCInvoiceForm from 'app/components/bc-invoice-form/bc-invoice-form';
+import BCInvoiceForm from 'app/components/bc-shared-form/bc-shared-form';
+import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-default-values';
+import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 import React from 'react';
 import { callCreatePurchaseOrderAPI } from 'api/invoicing.api';
 import styles from '../purchase-order.styles';
@@ -117,14 +119,11 @@ function CreatePurchaseOrder({ classes }: any) {
         delete o.unit;
         return o;
       }));
-      console.log(data);
       callCreatePurchaseOrderAPI(data).then((response: any) => {
-        console.log(response);
         history.push(redirectURL);
         return resolve();
       })
         .catch((err: any) => {
-          console.log(err);
           reject(err);
         });
     });
@@ -135,8 +134,8 @@ function CreatePurchaseOrder({ classes }: any) {
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
           <BCInvoiceForm
-            addItemText={'+  Service/Product'}
             columnSchema={columns}
+            formTypeValues={FormDefaultValues[FormTypes.PURCHASE_ORDER]}
             itemSchema={item}
             onFormSubmit={handleFormSubmit}
             pageTitle={'New Purchase Order'}

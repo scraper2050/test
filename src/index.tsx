@@ -1,6 +1,7 @@
 import * as CONSTANTS from './constants';
 import * as serviceWorker from './serviceWorker';
 import App from './App';
+import LogRocket from 'logrocket';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -9,13 +10,16 @@ import store from './store';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './scss/index.scss';
 
+
 const THEME = createMuiTheme({
-  palette: {
-    primary: {
-      main: CONSTANTS.PRIMARY_BLUE
+  'palette': {
+    'primary': {
+      'main': CONSTANTS.PRIMARY_BLUE
     }
   }
 });
+
+LogRocket.init('lt4dnt/blueclerk');
 
 ReactDOM.render(
   <MuiThemeProvider theme={THEME}>

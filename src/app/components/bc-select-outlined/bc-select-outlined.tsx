@@ -9,14 +9,19 @@ import { Theme, makeStyles, withStyles } from '@material-ui/core/styles';
 const commonStyles = (theme: Theme) => ({
   'input': {
     '&:hover': {
+      '&.Mui-disabled': {
+        'borderColor': 'rgb(206, 212, 218)'
+      },
       'borderColor': 'black'
+
     },
     '&:focus': {
       'borderColor': '#00aaff',
       'borderWidth': '2px',
-      'borderRadius': 4,
+      'borderRadius': 4
       // 'boxShadow': '0 0 0 0.2rem rgba(0,123,255,.25)'
     },
+
     'backgroundColor': theme.palette.background.paper,
     'borderRadius': 4,
     'fontFamily': [
@@ -91,18 +96,18 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
   const formControlStyles = {
     ...formStyles
   };
+
   return (
     <FormControl
       className={classes.fullWidth}
-      style={formControlStyles}
-    >
+      style={formControlStyles}>
       {!nakedSelect
         ? <Typography
+          className={items.className ? items.className : ''}
           style={{
             'marginRight': 10,
             'fontWeight': 600
           }}
-          className={items.className ? items.className : ''}
           variant={'subtitle1'}>
           {label}
           {required
@@ -114,22 +119,24 @@ function BCSelectOutlined({ handleChange, error, value, name = '', items = {
         : null}
 
       <Select
-        disabled={disabled}
         classes={{
           'root': nakedSelect
             ? classes.nakedSelectRoot
             : classes.selectRoot
         }}
+        disabled={disabled}
         id={'bc-select-outlined'}
         input={nakedSelect
           ? <NakedInput style={{
             'width': inputWidth,
             'color': 'black'
-          }} />
+          }}
+          />
           : <BootstrapInput style={{
             'width': inputWidth,
             'color': 'black'
-          }} />}
+          }}
+          />}
         labelId={'bc-select-outlined-label'}
         name={name}
         onChange={(e: any) => {

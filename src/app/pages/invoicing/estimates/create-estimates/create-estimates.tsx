@@ -1,9 +1,11 @@
-import BCInvoiceForm from 'app/components/bc-invoice-form/bc-invoice-form';
+import BCSharedForm from 'app/components/bc-shared-form/bc-shared-form';
 import React from 'react';
 import { callCreateEstimatesAPI } from 'api/invoicing.api';
 import styles from '../estimates.styles';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
+import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-default-values';
+import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 
 function CreateEstimates({ classes }: any) {
   const history = useHistory();
@@ -135,9 +137,9 @@ function CreateEstimates({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          <BCInvoiceForm
-            addItemText={'+  Service/Product'}
+          <BCSharedForm
             columnSchema={columns}
+            formTypeValues={FormDefaultValues[FormTypes.ESTIMATE]}
             itemSchema={item}
             onFormSubmit={handleFormSubmit}
             pageTitle={'New Estimate'}

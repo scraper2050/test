@@ -9,6 +9,9 @@ import styles, {
 } from './job-reports.styles';
 import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
 import EmailHistory from './email-history';
+import { modalTypes } from '../../../constants';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { useDispatch } from 'react-redux';
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -23,14 +26,26 @@ const renderTime = (startTime:Date, endTime: Date) => {
   return start;
 };
 
+const getJobs = (jobs:any, jobTypes:any) => {
+  const ids = jobs.map((job:any) => job.jobType._id);
+  return jobTypes.filter((jobType:any) => ids.includes(jobType._id));
+};
 
-function BCJobReport({ classes, jobReportData }: any) {
+
+function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   const history = useHistory();
+  const dispatch = useDispatch();
 
-  const { job } = jobReportData;
+  const { job, invoiceCreated, invoice } = jobReportData;
+
+
   if (!jobReportData || !job) {
     return null;
   }
+
+  const jobs = job.tasks.length
+    ? getJobs(job.tasks, jobTypes)
+    : [job.type];
 
 
   const goBack = () => {
@@ -53,6 +68,36 @@ function BCJobReport({ classes, jobReportData }: any) {
         'pathname': `/main/customers/job-reports`
       });
     }
+  };
+
+  const generateInvoice = () => {
+    history.push({
+      'pathname': `/main/invoicing/create-invoice`,
+      'state': {
+        'customerId': job.customer._id,
+        'customerName': job.customerName,
+        'jobId': job._id,
+        'jobTypes': job.tasks.length
+          ? job.tasks
+          : [job.type]
+      }
+    });
+  };
+
+
+  const showInvoice = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'detail': true,
+        'modalTitle': 'Invoice',
+        'formId': invoice._id,
+        'removeFooter': false
+      },
+      'type': modalTypes.SHARED_FORM_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 10);
   };
 
   return (
@@ -185,7 +230,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                   item
                   xs={6}>
                   <div className={classes.addMargin}>
-                    <p className={classes.noMargin}>
+                    <div className={classes.noMargin}>
                       {job.ticket.customerPO
                         ? <img
                           alt={'job report'}
@@ -194,7 +239,7 @@ function BCJobReport({ classes, jobReportData }: any) {
                         : <div className={'no-image'} >
                           {' No Image Available'}
                         </div>}
-                    </p>
+                    </div>
                   </div>
                 </Grid>
                 <Grid
@@ -218,11 +263,17 @@ function BCJobReport({ classes, jobReportData }: any) {
                       xs={12}>
                       <div className={classes.addMargin}>
                         <strong>
-                          {'Job Type'}
+                          {'Job Type(s)'}
                         </strong>
-                        <p className={classes.noMargin}>
-                          {job.type.title || 'N/A'}
-                        </p>
+                        {jobs.map((item :any) =>
+                          <p
+                            className={job.tasks.length
+                              ? classes.addMargin
+                              : classes.noMargin}
+                            key={item._id}>
+                            {item.title || 'N/A'}
+                          </p>)}
+
                       </div>
                     </Grid>
                   </Grid>
@@ -592,9 +643,20 @@ function BCJobReport({ classes, jobReportData }: any) {
             }
             jobReport={jobReportData}
           />
-          <Button className={classes.invoiceBtn}>
-            {'Generate Invoice'}
-          </Button>
+          {
+            invoiceCreated
+              ? <Button
+                className={classes.invoiceBtn}
+                onClick={showInvoice}>
+                {'View Invoice'}
+              </Button>
+              : <Button
+                className={classes.invoiceBtn}
+                onClick={generateInvoice}>
+                {'Generate Invoice'}
+              </Button>
+          }
+
         </Grid>
         <EmailHistory emailHistory={jobReportData.emailHistory} />
       </PageContainer>

@@ -1,5 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import { fabRoot } from 'app/pages/main/main.styles';
+import styled from 'styled-components';
 export default (theme: Theme): any => ({
   ...fabRoot,
   'actionBar': {
@@ -41,8 +42,32 @@ export default (theme: Theme): any => ({
     'marginLeft': 8
   },
   'totalContainer': {
+    '& div div': {
+      'display': 'flex',
+      'justifyContent': 'space-between',
+      'margin': '10px 0'
+    },
     'display': 'flex',
     'flexDirection': 'row-reverse',
     'marginTop': '35px'
   }
 });
+
+
+export const FormHeaderContainer = styled.div`
+  display: flex;
+
+  > div {
+    flex: 1;
+    margin-bottom: 3rem;
+  }
+  .formDetails {
+    input {
+      padding: 18.5px 14px;
+    }
+  }
+  .notes {
+    flex: 2;
+    margin-right: 2rem;
+  }
+`;

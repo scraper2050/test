@@ -1,8 +1,10 @@
 import BCCircularLoader from './app/components/bc-circular-loader/bc-circular-loader';
 import DateFnsUtils from '@date-io/date-fns';
+import LogRocket from 'logrocket';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { Suspense, useEffect, useState } from 'react';
+import { getAllJobsAPI } from 'api/job.api';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { SocketMessage } from 'helpers/contants';
 import Config from './config';
@@ -12,6 +14,8 @@ const LoginPage = React.lazy(() => import('./app/pages/login/login'));
 const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
 const MainPage = React.lazy(() => import('./app/pages/main/main'));
+
+LogRocket.init('lt4dnt/blueclerk');
 
 function App() {
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -69,6 +73,11 @@ function App() {
 
   useEffect(() => {
     if (token) {
+      LogRocket.identify(user._id, {
+        'email': user.auth.email,
+        'name': user.profile.displayName
+      });
+
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
       });

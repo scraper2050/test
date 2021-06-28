@@ -5,10 +5,11 @@ import BCModal from '../../modals/bc-modal';
 import BCSidebar from '../../components/bc-sidebar/bc-sidebar';
 import BCToolBar from '../../components/bc-toolbar-btn/bc-tool-bar';
 import BCSnackbar from '../../components/bc-snackbar/bc-snackbar';
-import {Grid, useMediaQuery, useTheme } from '@material-ui/core';
+import { Grid, useMediaQuery, useTheme } from '@material-ui/core';
 import 'scss/elevation.scss';
 import React, { Suspense, useState } from 'react';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
 const NewCustomerPage = React.lazy(() => import('../customer/new-customer/new-customer'));
@@ -77,7 +78,7 @@ function Main(): any {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
   return (
     <Router>
       <Switch>
@@ -98,9 +99,10 @@ function Main(): any {
               container
               spacing={0}>
               <BCSidebar
+                isMobile={isMobile}
                 setContentGrid={setContentGrid}
-                isMobile={isMobile} />
-              
+              />
+
               <Grid
                 id={'content-container'}
                 item
@@ -280,14 +282,14 @@ function Main(): any {
                   <Redirect
                     exact
                     from={`/main/invoicing`}
-                    to={`/main/invoicing/todos`}
+                    to={`/main/invoicing/invoices-list`}
                   />
 
-                  <AuthRoute
+                  {/* <AuthRoute
                     Component={InvoicingTodosPage}
                     path={'/main/invoicing/todos'}
                     title={'Invoicing'}
-                  />
+                  /> */}
 
                   <AuthRoute
                     Component={InvoicingListPage}
@@ -298,6 +300,12 @@ function Main(): any {
                   <AuthRoute
                     Component={CreateInvoicePage}
                     path={'/main/invoicing/create-invoice'}
+                    title={'Invoicing'}
+                  />
+
+                  <AuthRoute
+                    Component={UpdateInvoicePage}
+                    path={'/main/invoicing/update-invoice'}
                     title={'Invoicing'}
                   />
 

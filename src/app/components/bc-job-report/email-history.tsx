@@ -35,6 +35,9 @@ const columns: any = [
 ];
 
 const EmailHistoryContainer = styled.div`
+  @media print {
+      display: none;
+  }
 margin-bottom: 40px;`;
 export default function EmailHistory({ emailHistory }:EmailHistoryProps) {
   if (!emailHistory.length) {

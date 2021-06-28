@@ -1,18 +1,16 @@
-import request from "utils/http.service";
+import request from 'utils/http.service';
 
 export const getTodos = async (params = {}) => {
   let responseData;
   try {
-    const response: any = await request("/getJobs", "POST", params, false);
+    const response: any = await request('/getJobs', 'POST', params, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
-      throw new Error(
-        err.data.errors ||
+      throw new Error(err.data.errors ||
         err.data.message ||
-        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
-      );
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
     } else {
       throw new Error(`Something went wrong`);
     }
@@ -23,16 +21,14 @@ export const getTodos = async (params = {}) => {
 export const getInvoicingList = async (params = {}) => {
   let responseData;
   try {
-    const response: any = await request("/getInvoices", "POST", params, false);
+    const response: any = await request('/getInvoices', 'POST', params, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
-      throw new Error(
-        err.data.errors ||
+      throw new Error(err.data.errors ||
         err.data.message ||
-        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
-      );
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
     } else {
       throw new Error(`Something went wrong`);
     }
@@ -43,16 +39,14 @@ export const getInvoicingList = async (params = {}) => {
 export const getPurchaseOrder = async (params = {}) => {
   let responseData;
   try {
-    const response: any = await request("/getAllPurchaseOrder", "POST", params, false);
+    const response: any = await request('/getAllPurchaseOrder', 'POST', params, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
-      throw new Error(
-        err.data.errors ||
+      throw new Error(err.data.errors ||
         err.data.message ||
-        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
-      );
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
     } else {
       throw new Error(`Something went wrong`);
     }
@@ -63,21 +57,34 @@ export const getPurchaseOrder = async (params = {}) => {
 export const getInvoicingEstimates = async (params = {}) => {
   let responseData;
   try {
-    const response: any = await request("/getEstimate", "POST", params, false);
+    const response: any = await request('/getEstimate', 'POST', params, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
-      throw new Error(
-        err.data.errors ||
+      throw new Error(err.data.errors ||
         err.data.message ||
-        `${err.data["err.user.incorrect"]}\nYou have ${err.data.retry} attempts left`
-      );
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
     } else {
       throw new Error(`Something went wrong`);
     }
   }
   return responseData.estimates;
+};
+
+export const getInvoiceDetail = async (invoiceId:string) => {
+  try {
+    const response: any = await request('/getInvoiceDetail', 'POST', { invoiceId }, false);
+    return response.data;
+  } catch (err) {
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
 };
 
 export const callCreateInvoiceAPI = (data: any) => {
@@ -91,6 +98,31 @@ export const callCreateInvoiceAPI = (data: any) => {
       });
   });
 };
+
+export const updateInvoice = (data: any) => {
+  return new Promise((resolve, reject) => {
+    request(`/updateInvoice`, 'post', data)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+export const sendEmailInvoice = (id: any) => {
+  return new Promise((resolve, reject) => {
+    request(`/sendInvoice`, 'post', { 'invoiceId': id })
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 export const callCreatePurchaseOrderAPI = (data: any) => {
   return new Promise((resolve, reject) => {
     request(`/createPurchaseOrder`, 'post', data)

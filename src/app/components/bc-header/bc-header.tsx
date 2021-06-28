@@ -20,7 +20,7 @@ import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import LogoSvg from '../../../assets/img/Logo.svg';
 import MenuIcon from '@material-ui/icons/Menu';
 import classNames from 'classnames';
-import { logoutAction } from 'actions/auth/auth.action';
+import { logoutAction, resetStore } from 'actions/auth/auth.action';
 import { removeUserFromLocalStorage } from 'utils/local-storage.service';
 import styles from './bc-header.styles';
 import { withStyles } from '@material-ui/core/styles';
@@ -131,6 +131,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
   const handleClickLogout = (): void => {
     handleClose();
     dispatch(logoutAction());
+    dispatch(resetStore());
     removeUserFromLocalStorage();
     history.push('/');
   };

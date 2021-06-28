@@ -43,24 +43,21 @@ function BCTableContainer({
   cellSize,
   toolbar
 }: any) {
-  const dispatch = useDispatch();
   const location = useLocation<any>();
   const history = useHistory();
   const locationState = location.state;
 
-  const initialSearch =
-    locationState && locationState.prevPage && locationState.prevPage.search
-      ? locationState.prevPage.search
-      : '';
+  const initialSearch = locationState &&
+    locationState.prevPage &&
+    locationState.prevPage.search ? locationState.prevPage.search : '';
 
-  const onPageSearch =
-    locationState &&
+
+  const onPageSearch = locationState &&
     locationState.onUpdatePage &&
-    locationState.onUpdatePage.search
-      ? locationState.onUpdatePage.search
-      : null;
+    locationState.onUpdatePage.search ? locationState.onUpdatePage.search : null;
 
-  const [searchText, setSearchText] = useState(""); // eslint-disable-line
+  const [searchText, setSearchText] = useState(''); // eslint-disable-line
+  // Const [searchText, setSearchText] = useState(searchTerm || ''); // eslint-disable-line
 
   const [filteredData, setFilteredData] = useState([]);
 
@@ -105,12 +102,15 @@ function BCTableContainer({
     }
   }, [tableData, searchText]);
 
+
   return (
     <TableContainer container>
       <Grid
         className={'actions-container'}
         item
-        sm={6}
+        md={toolbar
+          ? 12
+          : 6}
         xs={12}>
         {search
           ? <BCTableSearchContainer
@@ -119,10 +119,13 @@ function BCTableContainer({
             searchText={searchText}
           />
           : null}
-        {toolbar}
+        {toolbar && <BCTableToolBarContainer>
+          {toolbar}
+        </BCTableToolBarContainer>}
       </Grid>
       <Grid
         item
+        md={12}
         xs={12}>
         {isLoading
           ? <Paper classes={{ 'root': classes.noDataPaper }}>
@@ -172,6 +175,18 @@ const TableContainer = styled(Grid)`
 `;
 
 
+const BCTableToolBarContainer = styled.div`
+    margin-bottom: 10px;
+    display: flex;
+
+    flex: 1.66;
+    justify-content: flex-end;
+    button {
+      margin-left: 20px;
+    }
+`;
+
+
 const mapStateToProps = (state: {
   searchTerm: {
     text: string;
@@ -185,4 +200,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   'setSearchTerm': (searchTerm: any) => dispatch(setSearchTerm(searchTerm))
 });
 
-export default withStyles(styles, { 'withTheme': true })(connect(mapStateToProps, mapDispatchToProps)(BCTableContainer));
+
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BCTableContainer));
+
+// Export default withStyles(styles, { withTheme: true })(BCTableContainer);

@@ -25,4 +25,16 @@ export default (theme: Theme): any => ({
     'color': '#0762a8',
     'fontWeight': 'bold'
   },
+  'statusResheduledText': {
+    'color': '#F76D2E',
+    'fontWeight': 'bold'
+  },
+  'statusPausedText': {
+    'color': '#FFE5B0',
+    'fontWeight': 'bold'
+  },
+  'statusIncompleteText': {
+    'color': '#E05E3A',
+    'fontWeight': 'bold'
+  }
 });

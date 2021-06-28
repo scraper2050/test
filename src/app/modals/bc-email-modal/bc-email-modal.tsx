@@ -38,8 +38,8 @@ p {
 }
 `;
 
-export default function EmailJobReportModal({ jobId, customerEmail, customer, onClick }:any) {
-  const { sent, sending, error } = useSelector(({ jobReport }:any) => jobReport.email);
+export default function EmailJobReportModal({ id, customerEmail, customer, onClick, typeText }:any) {
+  const { sent, loading, error } = useSelector(({ email }:any) => email);
   const dispatch = useDispatch();
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -57,10 +57,10 @@ export default function EmailJobReportModal({ jobId, customerEmail, customer, on
   function renderMessage() {
     if (!sent) {
       return <p>
-        {`Email Job Report for`}
+        {`Email ${typeText} for`}
         <br />
         <span>
-          {`${jobId}`}
+          {`${id}`}
         </span>
         <br />
         {`to ${customerEmail || customer}?`}
@@ -81,7 +81,7 @@ export default function EmailJobReportModal({ jobId, customerEmail, customer, on
       </Button>
       <Button
         color={'primary'}
-        disabled={sending}
+        disabled={loading}
         onClick={onClick}
         variant={variant}>
         {text}

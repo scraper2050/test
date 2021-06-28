@@ -1,4 +1,5 @@
 import { types } from './tax.types';
+import { createApiAction } from 'actions/action.utils';
 export const setSalesTax = (taxes: any) => {
   return {
     'payload': taxes,
@@ -17,3 +18,7 @@ export const refreshSalesTax = (refresh: any) => {
     'type': types.SET_REFRESH_SALES_TAX_STATUS
   };
 };
+
+
+export const createSalesTaxAction = createApiAction(types.CREATE_SALES_TAX);
+export const updateSalesTaxAction = createApiAction(types.UPDATE_SALES_TAX);

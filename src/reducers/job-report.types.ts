@@ -123,18 +123,11 @@ export interface JobReport {
   emailHistory: [];
 }
 
-export interface Email {
-  sending: boolean;
-  sent: boolean;
-  error: string;
-}
-
 export interface JobReportState {
   readonly loading: boolean;
   readonly jobReports?: JobReport[];
   readonly error?: string;
   readonly jobReportObj: JobReport;
-  readonly email: Email
 }
 
 

@@ -5,7 +5,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import styles from '../customer.styles';
-import { Grid, withStyles } from '@material-ui/core';
+import { Chip, Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -13,7 +13,7 @@ import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
 
 
-function JobReportsPage({ classes }: any) {
+function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
   const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
@@ -84,6 +84,23 @@ function JobReportsPage({ classes }: any) {
       },
       'Header': 'Last Email Send Date',
       'accessor': 'emailHistory.sentAt',
+      'className': 'font-bold'
+    },
+    {
+      'Cell'({ row }: any) {
+        return row.original.invoiceCreated
+          ? <Chip
+            label={'Yes'}
+            style={{ 'backgroundColor': theme.palette.success.light,
+              'color': '#fff' }}
+          />
+          : <Chip
+            color={'secondary'}
+            label={'No'}
+          />;
+      },
+      'Header': 'Invoiced',
+      'accessor': 'invoiceCreated',
       'className': 'font-bold'
     },
     {
@@ -170,7 +187,9 @@ function JobReportsPage({ classes }: any) {
                */
             ]}
           />
-          <SwipeableViews index={curTab} disabled>
+          <SwipeableViews
+            disabled
+            index={curTab}>
             <div
               className={classes.dataContainer}
               hidden={curTab !== 0}
@@ -183,7 +202,7 @@ function JobReportsPage({ classes }: any) {
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}
-                tableData={jobReports.reverse()}
+                tableData={jobReports}
               />
             </div>
             <div

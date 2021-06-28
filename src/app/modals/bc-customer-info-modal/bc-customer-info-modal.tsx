@@ -18,12 +18,12 @@ import {
   TextField
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   getCustomerDetailAction,
   loadingSingleCustomers,
@@ -34,6 +34,7 @@ import { useHistory } from 'react-router-dom';
 import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-marker';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { error, success } from 'actions/snackbar/snackbar.action';
+import { loadTierListItems } from 'actions/invoicing/items/items.action';
 
 interface Props {
   classes: any;
@@ -61,7 +62,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         ? customerInfo.location.coordinates[1]
         : 0
   });
-  const history = useHistory();
+
   const initialValues = {
     'name':
       customerInfo &&
@@ -209,6 +210,13 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
       });
     }
   };
+  useEffect(
+    () => {
+      dispatch(loadTierListItems.fetch());
+    }
+    , []
+  );
+
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -226,6 +234,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     updateMap(values, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
   };
+
 
   return (
     <MainContainer>
@@ -488,21 +497,22 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           />
                         </FormGroup>
                       </Grid>
-
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={12}>
-                        <FormGroup>
-                          <InputLabel className={classes.label}>
-                            {'Vendor Number'}
-                          </InputLabel>
-                          <BCTextField
-                            name={'vendorId'}
-                            onChange={handleChange}
-                            placeholder={'Vendor Number'}
-                          />
-                        </FormGroup>
+                      <Grid container>
+                        <Grid
+                          className={classes.paper}
+                          item
+                          sm={12}>
+                          <FormGroup>
+                            <InputLabel className={classes.label}>
+                              {'Vendor Number'}
+                            </InputLabel>
+                            <BCTextField
+                              name={'vendorId'}
+                              onChange={handleChange}
+                              placeholder={'Vendor Number'}
+                            />
+                          </FormGroup>
+                        </Grid>
                       </Grid>
 
 

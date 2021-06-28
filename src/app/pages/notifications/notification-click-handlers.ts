@@ -1,7 +1,7 @@
 import { Notification } from 'reducers/notifications.types';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-
+import { getjobDetailAPI } from 'api/job.api';
 
 export const openDetailJobModal = (dispatch: (action:any)=>void, notification:Notification) => {
   dispatch(setModalDataAction({
@@ -21,6 +21,25 @@ export const openDetailJobModal = (dispatch: (action:any)=>void, notification:No
   }, 200);
 };
 
+export const openDetailTicketModal = async (dispatch: (action:any)=>void, notification:Notification) => {
+  const data = {
+    jobId: notification?.metadata?._id
+  }
+  let job: any = await getjobDetailAPI(data);
+  job.jobRescheduled = notification?._id;
+  dispatch(setModalDataAction({
+    'data': {
+      'detail': true,
+      'job': job,
+      'modalTitle': 'View Job',
+      'removeFooter': false
+    },
+    'type': modalTypes.EDIT_JOB_MODAL
+  }));
+  setTimeout(() => {
+    dispatch(openModalAction());
+  }, 200);
+};
 
 export const openContractModal = (dispatch: (action:any)=>void, notification:Notification) => {
   dispatch(setModalDataAction({

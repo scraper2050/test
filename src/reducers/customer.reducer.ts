@@ -1,39 +1,39 @@
-import { Reducer } from "redux";
+import { Reducer } from 'redux';
 import {
-  CustomersState,
   CustomersActionType,
-  types,
-} from "./../actions/customer/customer.types";
+  CustomersState,
+  types
+} from './../actions/customer/customer.types';
 
 const initialCustomers: CustomersState = {
-  loading: false,
-  data: [],
-  customerObj: {
-    _id: "",
-    info: {
-      name: "",
-      email: "",
+  'loading': false,
+  'data': [],
+  'customerObj': {
+    '_id': '',
+    'info': {
+      'name': '',
+      'email': ''
     },
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      zipCode: "",
+    'address': {
+      'street': '',
+      'city': '',
+      'state': '',
+      'zipCode': ''
     },
-    contact: {
-      name: "",
-      phone: "",
+    'contact': {
+      'name': '',
+      'phone': ''
     },
-    isActive: false,
-    company: "",
-    contactname: "",
-    profile: {
-      firstName: "",
-      lastName: "",
-      displayName: "",
+    'isActive': false,
+    'company': '',
+    'contactname': '',
+    'profile': {
+      'firstName': '',
+      'lastName': '',
+      'displayName': ''
     },
-    vendorId: "",
-  },
+    'vendorId': ''
+  }
 };
 
 export const CustomersReducer: Reducer<any> = (
@@ -44,43 +44,43 @@ export const CustomersReducer: Reducer<any> = (
     case CustomersActionType.GET:
       return {
         ...state,
-        loading: true,
-        data: initialCustomers,
+        'loading': true,
+        'data': initialCustomers
       };
     case CustomersActionType.SUCCESS:
       return {
         ...state,
-        loading: false,
-        data: [...action.payload],
+        'loading': false,
+        'data': [...action.payload]
       };
     case types.SET_CUSTOMERS:
       return {
         ...state,
-        loading: false,
-        data: [...action.payload],
+        'loading': false,
+        'data': [...action.payload]
       };
     case CustomersActionType.FAILED:
       return {
         ...state,
-        loading: false,
-        error: action.payload,
+        'loading': false,
+        'error': action.payload
       };
     case types.SET_SINGLE_CUSTOMER:
       return {
         ...state,
-        loading: false,
-        customerObj: action.payload,
+        'loading': false,
+        'customerObj': action.payload
       };
     case types.GET_SINGLE_CUSTOMER:
       return {
         ...state,
-        loading: true,
+        'loading': true
       };
     case types.UPDATE_CUSTOMER_FAILED:
       return {
         ...state,
-        loading: false,
-        customerObj: state.customerObj,
+        'loading': false,
+        'customerObj': state.customerObj
       };
   }
   return state;

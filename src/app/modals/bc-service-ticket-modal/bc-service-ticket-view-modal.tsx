@@ -118,7 +118,7 @@ export default function BCViewServiceTicketModal({ ticketId, notificationId }:BC
     }
   }, [openTicketObj]);
 
-  if (loadingObj || !openTicketObj.track) {
+  if (loadingObj || !openTicketObj?.track) {
     return <BCCircularLoader />;
   }
 

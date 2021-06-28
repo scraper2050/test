@@ -9,6 +9,7 @@ import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoadin
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import {
+  Chip,
   DialogActions,
   DialogContent,
   Fab,
@@ -28,17 +29,18 @@ import { convertMilitaryTime, formatDate, formatISOToDateString, formatToMilitar
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import { getVendors } from 'actions/vendor/vendor.action';
+import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { clearJobSiteStore, getJobSites } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import '../../../scss/job-poup.scss';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { success } from 'actions/snackbar/snackbar.action';
+import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
-
+import { useHistory, useLocation } from 'react-router-dom';
 
 const initialJobState = {
   'customer': {
@@ -70,7 +72,16 @@ const initialJobState = {
   },
   'jobSite': {
     '_id': ''
+  },
+  'jobRescheduled': false
+};
+
+
+const getJobData = (ids:any, jobTypes:any) => {
+  if (!ids) {
+    return;
   }
+  return jobTypes.filter((job:any) => ids.includes(job._id));
 };
 
 
@@ -103,6 +114,7 @@ function BCJobModal({
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
   const [thumb, setThumb] = useState<any>(null);
+  const history = useHistory();
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -133,6 +145,17 @@ function BCJobModal({
       setFieldValue(fieldName, 1);
       setShowVendorFlag(true);
     }
+  };
+
+  const handleJobTypeChange = (newValue:any) => {
+    if (newValue.length > 1) {
+      const ids = newValue.map((jobType:any) => ({ 'jobTypeId': jobType?._id }));
+      setFieldValue('jobTypes', ids);
+    } else {
+      setFieldValue('jobTypeId', newValue || []);
+    }
+
+    setJobTypeValue(newValue);
   };
 
 
@@ -248,12 +271,19 @@ function BCJobModal({
   }, [vendorsList]);
 
   useEffect(() => {
-    if (job._id) {
-      if (jobTypes.length !== 0) {
-        setJobTypeValue(jobTypes.filter((jobType: any) => jobType._id === job.type._id)[0]);
+    if (jobTypes.length !== 0) {
+      let tempJobValue = [];
+
+      if (job._id) {
+        tempJobValue = job.tasks.length > 0
+          ? getJobData(job.tasks.map((job:any) => job.jobType._id), jobTypes)
+          : getJobData([job.type._id], jobTypes);
+      } else {
+        tempJobValue = ticket.tasks.length > 0
+          ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
+          : getJobData([ticket.jobType], jobTypes);
       }
-    } else if (jobTypes.length !== 0) {
-      const tempJobValue = ticket.jobType !== '' && jobTypes.length !== 0 && jobTypes.filter((jobType: any) => jobType._id === ticket.jobType)[0];
+
       setJobTypeValue(tempJobValue);
     }
   }, [jobTypes]);
@@ -295,6 +325,13 @@ function BCJobModal({
       }
     }
   }, [contacts]);
+
+  useEffect(() => {
+    if (job?.jobRescheduled) {
+      dispatch(markNotificationAsRead.fetch({ 'id': job?.jobRescheduled,
+        'isRead': true }));
+    }
+  }, [job?.jobRescheduled]);
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -344,6 +381,7 @@ function BCJobModal({
         ? job.equipment._id
         : '',
       'jobTypeId': job.ticket.jobType ? job.ticket.jobType : '',
+      'jobTypes': job.ticket.tasks ? job.ticket.tasks : [],
       'dueDate': job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
       'scheduleDate': job.scheduleDate,
       'scheduledStartTime': job?.scheduledStartTime ? formatISOToDateString(job.scheduledStartTime) : null,
@@ -360,6 +398,12 @@ function BCJobModal({
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
+
+      if (jobTypeValue.length > 1) {
+        delete values.jobTypeId;
+      } else {
+        values.jobTypes = [];
+      }
 
       const customerId = customer?._id;
       const jobFromMapFilter = job.jobFromMap;
@@ -455,6 +499,10 @@ function BCJobModal({
         request(requestObj)
 
           .then(async (response: any) => {
+            if (response.status === 0) {
+              dispatch(SnackBarError(response.message));
+              return;
+            }
             if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
               await callEditTicketAPI(formatedTicketRequest);
             }
@@ -525,6 +573,14 @@ function BCJobModal({
         'type': ''
       }));
     }, 200);
+  };
+
+
+  const disabledChips = job?._id ? job.tasks.map(({ jobType }:any) => jobType._id) : [];
+
+  const goToJobs = () => {
+    closeModal();
+    history.push('/main/customers/schedule');
   };
 
 
@@ -831,15 +887,16 @@ function BCJobModal({
                   : null
               }
 
-
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={ticket.jobType || detail}
+                    disabled={detail || !job._id}
+                    getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleSelectChange('jobTypeId', newValue?._id, () => setJobTypeValue(newValue))}
+                    multiple
+                    onChange={(ev: any, newValue: any) => handleJobTypeChange(newValue)}
                     options={jobTypes && jobTypes.length !== 0 ? jobTypes.sort((a: any, b: any) => a.title > b.title ? 1 : b.title > a.title ? -1 : 0) : []}
                     renderInput={params =>
                       <>
@@ -855,11 +912,19 @@ function BCJobModal({
                           </Typography>}
                         </InputLabel>
                         <TextField
-                          required
                           {...params}
                           variant={'standard'}
                         />
                       </>
+                    }
+                    renderTags={(tagValue, getTagProps) =>
+                      tagValue.map((option, index) => {
+                        return <Chip
+                          label={option.title}
+                          {...getTagProps({ index })}
+                          disabled={disabledChips.includes(option._id) || !job._id}
+                        />;
+                      })
                     }
                     value={jobTypeValue}
                   />

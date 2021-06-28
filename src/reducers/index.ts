@@ -28,6 +28,7 @@ import { InventoryReducer as inventory } from './inventory.reducer';
 import { PurchasedTagsReducer as purchasedTags } from './tags.reducer';
 import {
   InvoicingEstimatesReducer as estimates,
+  InvoiceDetailReducer as invoiceDetail,
   InvoicingListReducer as invoiceList,
   InvoicingTodoReducer as invoiceTodos,
   InvoicingPurchaseOrderReducer as purchaseOrder
@@ -44,6 +45,10 @@ import { NotificationsReducer as notifications } from './notifications.reducer';
 import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
 import { VendorsState } from 'actions/vendor/vendor.types';
+import { InvoiceItemsState
+  , InvoiceItemsReducer as invoiceItems
+  , InvoiceItemsTierList as invoiceItemsTiers } from './items.reducer';
+import { EmailState, EmailReducer as email } from './email.reducer';
 
 
 export interface ReducerParamsInterface {
@@ -55,11 +60,15 @@ export interface RootState {
   jobState: JobsSate;
   snackbarState?: SnackbarState;
   customersState: CustomersState;
-  serviceTicket: any;
   notifications: NotificationState;
   vendors: VendorsState;
+  serviceTicket: any
+  invoiceItems: InvoiceItemsState;
+  email: EmailState;
 }
-export default combineReducers({
+
+
+const appReducer = combineReducers({
   auth,
   brands,
   companyCards,
@@ -67,6 +76,7 @@ export default combineReducers({
   contacts,
   customerEquipments,
   customers,
+  email,
   employees,
   employeesForJob,
   equipmentType,
@@ -74,6 +84,9 @@ export default combineReducers({
   groups,
   image,
   inventory,
+  invoiceDetail,
+  invoiceItems,
+  invoiceItemsTiers,
   invoiceList,
   invoiceTodos,
   jobLocations,
@@ -98,3 +111,12 @@ export default combineReducers({
   technicians,
   vendors
 });
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'RESET_STORE') {
+    state = undefined;
+  }
+  return appReducer(state, action);
+}
+
+export default rootReducer;

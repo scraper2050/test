@@ -38,11 +38,10 @@ function BCAdminCard({ cardText, classes, color, link, children, func }: Props) 
     textClass = classNames(classes.cardText, classes.infoTextColor);
   }
   return (
-    link ?
-      <Link
+    link
+      ? <Link
         className={classes.link}
-        to={link}
-      >
+        to={link}>
         <Card className={classes.card}>
           <CardActionArea className={classes.cardActionArea}>
             <div className={circleClass}>
@@ -54,8 +53,10 @@ function BCAdminCard({ cardText, classes, color, link, children, func }: Props) 
           </CardActionArea>
         </Card>
       </Link>
-      : func ?
-        <Card className={classes.card} onClick={func} >
+      : func
+        ? <Card
+          className={classes.card}
+          onClick={func} >
           <CardActionArea className={classes.cardActionArea}>
             <div className={circleClass}>
               {children}

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { emailJobReportActions, resetEmailState } from 'actions/customer/job-report/job-report.action';
-import { modalTypes } from '../../../../constants';
+import React from 'react';
+
 import { useDispatch } from 'react-redux';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import EmailButton from '../../../components/bc-email-button/bc-email-button';
+import { sendEmailAction } from 'actions/email/email.action';
 
 
 interface EmailReportProps {
@@ -16,32 +16,28 @@ export default function EmailReportButton({ jobReport, Component }: EmailReportP
   const dispatch = useDispatch();
 
   const sendReport = () => {
-    dispatch(emailJobReportActions.fetch({ 'email': job.customer.info?.email,
-      'jobReportId': _id
+    dispatch(sendEmailAction.fetch({ 'email': job.customer.info?.email,
+      'id': _id,
+      'type': 'jobReport'
     }));
   };
 
-  const handleClick = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'customer': job.customer.profile
-          ? job.customer.profile.displayName
-          : jobReport.customerName,
-        'customerEmail': job.customer.info
-          ? job.customer.info.email
-          : '',
-        'handleClick': sendReport,
-        'jobId': job.jobId || job._id
-      },
-      'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-    }));
-    dispatch(resetEmailState());
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+  const data = {
+    'customer': job.customer.profile
+      ? job.customer.profile.displayName
+      : jobReport.customerName,
+    'customerEmail': job.customer.info
+      ? job.customer.info.email
+      : '',
+    'handleClick': sendReport,
+    'id': job.jobId || job._id,
+    'typeText': 'Job Report'
   };
 
-  return React.cloneElement(Component, { 'onClick': handleClick });
+  return <EmailButton
+    Component={Component}
+    data={data}
+  />;
 }
 
 

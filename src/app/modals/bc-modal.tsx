@@ -28,9 +28,13 @@ import '../../scss/index.scss';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewJobReportsPage from '../../app/pages/customer/job-reports/view-job-report';
-import EmailJobReportModal from './bc-email-job-report-modal/bc-email-job-report-modal';
+import EmailModal from './bc-email-modal/bc-email-modal';
 import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-view-modal';
 import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
+import BCSharedFormModal from './bc-shared-form-modal/bc-shared-form-modal';
+import BCInvoiceEditModal from './bc-invoice-item-modal/bc-invoice-item-modal';
+import BCSalesTaxModal from './bc-sales-tax-modal/bc-sales-tax-modal';
+import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -264,11 +268,12 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'xs'
         });
-        setComponent(<EmailJobReportModal
+        setComponent(<EmailModal
           customer={data.customer}
           customerEmail={data.customerEmail}
-          jobId={data.jobId}
+          id={data.id}
           onClick={data.handleClick}
+          typeText={data.typeText}
         />);
         break;
       case modalTypes.ADD_BILLING_MODAL:
@@ -279,6 +284,21 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCAddBillingModal error={data.error} />);
+        break;
+
+      case modalTypes.SHARED_FORM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCSharedFormModal
+          formData={data.formData}
+          formId={data.formId}
+          onClose={handleClose}
+          onSubmit={data.handleSubmit}
+        />);
         break;
       case modalTypes.CONTRACT_VIEW_MODAL:
         setModalOptions({
@@ -294,6 +314,37 @@ function BCModal() {
           notificationType={data.notificationType}
         />);
         break;
+      case modalTypes.EDIT_ITEM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCInvoiceEditModal
+          item={data.item}
+        />);
+        break;
+      case modalTypes.SALES_TAX_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCSalesTaxModal />);
+        break;
+      case modalTypes.EDIT_TIERS_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCEditTiersModal />);
+        break;
+
+
       default:
         setComponent(null);
     }
@@ -308,6 +359,7 @@ function BCModal() {
       }));
     }, 200);
   };
+
 
   return (
     <div className={'modal-wrapper'}>
