@@ -203,11 +203,12 @@ function BCServiceTicketModal({
       'image': ticket.image !== undefined ? ticket.image : ''
     },
     'onSubmit': (values, { setSubmitting }) => {
-      if (Array.isArray(jobTypeValue)) {
+      if (jobTypeValue.length > 1) {
         delete values.jobTypeId;
         values.jobTypes = JSON.stringify(values.tasks);
       } else {
         delete values.jobTypes;
+        values.jobTypeId = values.jobTypeId._id;
       }
 
 
