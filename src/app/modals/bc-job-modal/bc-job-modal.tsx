@@ -576,7 +576,12 @@ function BCJobModal({
   };
 
 
-  const disabledChips = job?._id ? job.tasks.map(({ jobType }:any) => jobType._id) : [];
+  const disabledChips = job?._id
+    ? job.tasks.length
+      ? job.tasks.map(({ jobType }:any) => jobType._id)
+      : [job.type._id]
+    : [];
+
 
   const goToJobs = () => {
     closeModal();
