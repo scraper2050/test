@@ -230,6 +230,7 @@ function BCServiceTicketModal({
           callEditTicketAPI(formatedRequest).then((response: any) => {
             if (response.status === 0) {
               dispatch(SnackBarError(response.message));
+              setSubmitting(false);
               return;
             }
             dispatch(refreshServiceTickets(true));

@@ -12,6 +12,7 @@ import EmailHistory from './email-history';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
+import { callCreateInvoiceAPI } from 'api/invoicing.api';
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -70,18 +71,24 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     }
   };
 
-  const generateInvoice = () => {
-    history.push({
-      'pathname': `/main/invoicing/create-invoice`,
-      'state': {
-        'customerId': job.customer._id,
-        'customerName': job.customerName,
-        'jobId': job._id,
-        'jobTypes': job.tasks.length
-          ? job.tasks
-          : [job.type]
-      }
-    });
+  const generateInvoice = async () => {
+    const result:any = await callCreateInvoiceAPI({ 'jobId': job._id,
+      'customerId': job.customer._id });
+    if (result && result?.status !== 0) {
+      const { 'invoice': newInvoice } = result;
+      dispatch(setModalDataAction({
+        'data': {
+          'detail': true,
+          'modalTitle': 'Invoice',
+          'formId': newInvoice._id,
+          'removeFooter': false
+        },
+        'type': modalTypes.SHARED_FORM_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 10);
+    }
   };
 
 

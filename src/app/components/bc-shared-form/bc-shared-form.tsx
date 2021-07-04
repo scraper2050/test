@@ -1,8 +1,8 @@
 import { FormDefaultProps } from './bc-shared-form.types';
 import { modalTypes } from '../../../constants';
 import { useFormik } from 'formik';
-import { Box, Paper, withStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { Box, IconButton, Paper, withStyles } from '@material-ui/core';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './bc-shared-form.styles';
 import { useLocation } from 'react-router-dom';
 import BCSharedFormTotalContainer from './form-components/bc-shared-form-total-container';
@@ -54,6 +54,9 @@ function BCSharedForm({ classes,
   edit
 }: BCInvoiceFormProps) {
   const customer = useSelector(({ customers }:any) => customers.customerObj);
+
+  const { itemTier, isCustomPrice } = useMemo(() => customer, [customer]);
+
   const dispatch = useDispatch();
   const { state } = useLocation<any>();
   const reference = state
@@ -111,25 +114,29 @@ function BCSharedForm({ classes,
     });
   };
 
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [subTotal, setSubTotal] = useState(0);
-  const [totalTax, setTotalTax] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(state?.invoiceDetail?.total || 0);
+  const [subTotal, setSubTotal] = useState(state?.invoiceDetail?.subTotal || 0);
+  const [totalTax, setTotalTax] = useState(state?.invoiceDetail?.taxAmount || 0);
   const [items, setItems] = useState<any>(state?.invoiceDetail?.items
     ? state.invoiceDetail.items
     : []);
 
   const calculateTotal = (itemsArray:any) => {
-    const subtotalAmount = itemsArray.map((item:any) => item.price * item.quantity).reduce((a: any, b: any) => {
-      return a + b;
-    }, 0);
+    if (isCustomPrice && state?.invoiceDetail) {
+      setTotalAmount(state.invoiceDetail.total);
+    } else {
+      const subtotalAmount = itemsArray.map((item:any) => item.price * item.quantity).reduce((a: any, b: any) => {
+        return a + b;
+      }, 0);
 
-    const totalTax = itemsArray.map((item:any) => item.taxAmount).reduce((a: any, b: any) => {
-      return a + b;
-    }, 0);
-    const amount = subtotalAmount + totalTax;
-    setSubTotal(Math.round((subtotalAmount + Number.EPSILON) * 100) / 100);
-    setTotalTax(Math.round((totalTax + Number.EPSILON) * 100) / 100);
-    setTotalAmount(Math.round((amount + Number.EPSILON) * 100) / 100);
+      const totalTax = itemsArray.map((item:any) => item.taxAmount).reduce((a: any, b: any) => {
+        return a + b;
+      }, 0);
+      const amount = subtotalAmount + totalTax;
+      setSubTotal(Math.round((subtotalAmount + Number.EPSILON) * 100) / 100);
+      setTotalTax(Math.round((totalTax + Number.EPSILON) * 100) / 100);
+      setTotalAmount(Math.round((amount + Number.EPSILON) * 100) / 100);
+    }
   };
 
 
@@ -189,12 +196,14 @@ function BCSharedForm({ classes,
               }
               calculateTotal={calculateTotal}
               columnSchema={columnSchema}
-              isCustomPrice={customer?.isCustomPrice}
+              edit={edit}
+              isCustomPrice={isCustomPrice}
               items={items}
               itemSchema={itemSchema}
-              itemTier={customer?.itemTier}
-              jobTypes={state?.jobTypes}
+              itemTier={itemTier}
+              jobTypes={state?.invoiceDetail.job.tasks}
               setItems={setItems}
+
             />
             <BCSharedFormTotalContainer
               subTotal={subTotal}

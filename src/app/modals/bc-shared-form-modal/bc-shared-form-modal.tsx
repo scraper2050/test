@@ -16,77 +16,6 @@ import RoomIcon from '@material-ui/icons/Room';
 import EmailHistory from 'app/components/bc-job-report/email-history';
 
 
-const columns = [
-  {
-    'Header': 'Service/Product',
-    'accessor': 'name',
-    'width': 450
-  },
-  {
-    'Header': 'Quantity',
-    'accessor': 'quantity',
-    'width': 60
-  },
-  {
-    'Cell'({ row }: any) {
-      return <div className={'flex items-center'}>
-        {'$'}
-        {row.original.price}
-      </div>;
-    },
-    'Header': 'Price',
-    'accessor': 'price',
-    'width': 60
-  },
-  {
-    'Cell'({ row }: any) {
-      return <div className={'flex items-center'}>
-        {row.original.isFixed
-          ? 'Fixed'
-          : '/hr'}
-      </div>;
-    },
-    'Header': 'Unit',
-    'accessor': 'isFixed',
-    'width': 60
-  },
-  {
-    'Cell'({ row }: any) {
-      return <div className={'flex items-center'}>
-        {row.original.tax
-          ? `${row.original.tax}%`
-          : 'N/A'}
-      </div>;
-    },
-    'Header': 'Tax',
-    'accessor': 'tax',
-    'width': 60
-  },
-  {
-    'Cell'({ row }: any) {
-      return <div className={'flex items-center'}>
-        {'$'}
-        {row.original.taxAmount}
-      </div>;
-    },
-    'Header': 'Tax Amount',
-    'accessor': 'taxAmount',
-    'width': 60
-  },
-  {
-    'Cell'({ row }: any) {
-      return <div className={'flex items-center'}>
-        {'$'}
-        {row.original.total}
-      </div>;
-    },
-    'Header': 'Total',
-    'accessor': 'total',
-    'width': 60
-  }
-];
-
-
 function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   const [data, setData] = useState(formData);
   const dispatch = useDispatch();
@@ -96,6 +25,77 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
   const { customerObj, loading } = useSelector(({ customers }:any) => customers);
   const { companyName, companyEmail, logoUrl, phone, city, state, street, zipCode } = useSelector(({ profile }:any) => profile);
+
+
+  const columns = [
+    {
+      'Header': 'Service/Product',
+      'accessor': formId ? 'item.name' : 'name',
+      'width': 450
+    },
+    {
+      'Header': 'Quantity',
+      'accessor': 'quantity',
+      'width': 60
+    },
+    {
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {'$'}
+          {row.original.price}
+        </div>;
+      },
+      'Header': 'Price',
+      'accessor': 'price',
+      'width': 60
+    },
+    {
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {row.original.isFixed
+            ? 'Fixed'
+            : '/hr'}
+        </div>;
+      },
+      'Header': 'Unit',
+      'accessor': 'isFixed',
+      'width': 60
+    },
+    {
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {row.original.tax
+            ? `${row.original.tax}%`
+            : 'N/A'}
+        </div>;
+      },
+      'Header': 'Tax',
+      'accessor': 'tax',
+      'width': 60
+    },
+    {
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {'$'}
+          {row.original.taxAmount}
+        </div>;
+      },
+      'Header': 'Tax Amount',
+      'accessor': 'taxAmount',
+      'width': 60
+    },
+    {
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {'$'}
+          {row.original.total}
+        </div>;
+      },
+      'Header': 'Total',
+      'accessor': 'total',
+      'width': 60
+    }
+  ];
 
   const handleSubmit = async () => {
     const response = await onSubmit();
@@ -128,9 +128,12 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   };
 
   useEffect(() => {
-    if (data) {
-      dispatch(loadingSingleCustomers());
-      dispatch(getCustomerDetailAction({ customerId }));
+    if (data && customerId) {
+      console.log(customerId, customerObj._id);
+      if (customerId !== customerObj._id || !customerObj._id) {
+        dispatch(loadingSingleCustomers());
+        dispatch(getCustomerDetailAction({ customerId }));
+      }
     }
 
     if (formId) {
@@ -172,8 +175,10 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   }, [invoiceDetail]);
 
   useEffect(() => {
-    if (data) {
-      dispatch(getCustomerDetailAction({ 'customerId': invoiceDetail.customer?._id }));
+    if (data && invoiceDetail.customer?._id) {
+      if (invoiceDetail.customer?._id !== customerObj._id) {
+        dispatch(getCustomerDetailAction({ 'customerId': invoiceDetail.customer?._id }));
+      }
     }
   }, [data]);
 
