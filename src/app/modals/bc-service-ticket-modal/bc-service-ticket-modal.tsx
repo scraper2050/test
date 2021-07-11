@@ -211,7 +211,6 @@ function BCServiceTicketModal({
         values.jobTypeId = values.jobTypeId._id;
       }
 
-
       const tempData = {
         ...ticket,
         ...values
@@ -575,6 +574,7 @@ function BCServiceTicketModal({
                         </InputLabel>
                         <TextField
                           {...params}
+                          required={!jobTypeValue.length}
                           variant={'standard'}
                         />
                       </>
