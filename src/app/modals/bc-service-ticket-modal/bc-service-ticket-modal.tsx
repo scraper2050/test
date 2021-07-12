@@ -204,12 +204,11 @@ function BCServiceTicketModal({
     },
     'onSubmit': (values, { setSubmitting }) => {
       if (jobTypeValue.length > 1) {
-        delete values.jobTypeId;
         values.jobTypes = JSON.stringify(values.tasks);
       } else {
-        delete values.jobTypes;
-        values.jobTypeId = values.jobTypeId._id;
+        values.jobTypes = JSON.stringify([values.jobTypeId._id]);
       }
+      delete values.jobTypeId;
 
       const tempData = {
         ...ticket,
