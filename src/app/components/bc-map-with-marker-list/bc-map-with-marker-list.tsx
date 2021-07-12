@@ -38,8 +38,10 @@ function createMapOptions() {
 
 
 function MakerPin({ ...props }) {
-  const { lat, lng } = props;
+  const { lat, lng, showPins } = props;
+  const [showInfo, setShowinfo] = useState(false);
   const dispatch = useDispatch();
+
 
   const openCreateJobModal = (ticketObj: any) => {
     const reqObj = {
@@ -64,6 +66,7 @@ function MakerPin({ ...props }) {
       'dueDate': ticketObj.dueDate ? ticketObj.dueDate : '',
       'description': ticketObj.note ? ticketObj.note : ''
     };
+
 
     dispatch(setModalDataAction({
       'data': {
@@ -187,7 +190,7 @@ function MakerPin({ ...props }) {
             }
           </Grid>
           <div
-            className={'flex items-center'}
+            className={'flex items-cjobSiteenter'}
             onClick={() => openDetailJobModal(props.ticket)}
             style={{
               'marginLeft': '.5rem',
@@ -297,12 +300,99 @@ function MakerPin({ ...props }) {
     );
   }
 
-  if (!props.showPins && !(props.openTicketObj._id === props.ticket._id)) {
+  if (!showPins && !(props.openTicketObj._id === props.ticket._id)) {
     return <></>;
   }
 
   return checkIfDefault(lat, lng)
-    ? <RoomIcon className={props.classes.marker} />
+    ? <div
+      onMouseLeave={() => setShowinfo(false)}>
+      <RoomIcon
+        className={props.classes.marker}
+        onMouseEnter={() => setShowinfo(true)}
+
+      />
+      {showInfo && <div
+        className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
+        style={{
+          'width': props.ticket.ticket.image ? '370px' : '200px'
+        }}>
+        <div className={'due_date'}>
+          <span>
+            {' '}
+            <i className={'material-icons'}>
+              {'access_time'}
+            </i>
+            {' '}
+            {props.ticket.scheduleDate ? new Date(props.ticket.scheduleDate).toString()
+              .substr(0, 15) : ''}
+          </span>
+        </div>
+        <Grid
+          alignItems={'center'}
+          container
+          justify={'space-between'}
+          spacing={3}>
+          <Grid
+            item
+            xs={6}>
+            <div className={'job-type'}>
+              <h3>
+                {'Job Type'}
+              </h3>
+              <span>
+                {props.ticket.type ? props.ticket.type.title : ''}
+              </span>
+            </div>
+            <div className={'job-type'}>
+              <h3>
+                {'Description'}
+              </h3>
+              <span>
+                {props.ticket.description ? props.ticket.description : ''}
+              </span>
+            </div>
+          </Grid>
+          {
+            props.ticket.ticket.image &&
+            <Grid
+              item
+              xs={6}>
+              <Grid
+                alignItems={'center'}
+                container
+                direction={'column'}
+                justify={'center'}
+                spacing={3}>
+                <div
+                  className={props.classes.uploadImageNoData}
+                  style={{
+                    'backgroundImage': `url(${props.ticket.ticket.image})`,
+                    'border': `2px solid #00aaff`,
+                    'backgroundSize': 'cover',
+                    'backgroundPosition': 'center',
+                    'backgroundRepeat': 'no-repeat'
+                  }}
+                />
+              </Grid>
+            </Grid>
+          }
+        </Grid>
+        <div
+          className={'flex items-cjobSiteenter'}
+          onClick={() => openDetailJobModal(props.ticket)}
+          style={{
+            'marginLeft': '.5rem',
+            'height': 34,
+            'display': 'flex',
+            'alignItems': 'center',
+            'justifyContent': 'center',
+            'cursor': 'pointer'
+          }}>
+          <InfoIcon style={{ 'margin': 'auto, 0' }} />
+        </div>
+      </div>}
+    </div>
     : null;
 }
 
@@ -336,6 +426,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
     }
   }, [list]);
 
+
   return (
     <GoogleMapReact
       bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
@@ -353,7 +444,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
         openTicketObj={openTicketObj}
       /> */}
       {
-        list.map((ticket: any, index: number) => {
+        tickets.map((ticket: any, index: number) => {
           let lat = DEFAULT_LAT;
           let lng = DEFAULT_LNG;
           if (ticket.jobSite) {
@@ -367,7 +458,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : DEFAULT_LNG;
           }
 
-          if (selected) {
+          if (selected.jobSite) {
             lat = centerLat;
             lng = centerLng;
           }
@@ -381,7 +472,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             openTicketObj={selected}
             showPins={showPins}
             ticket={ticket}
-            tickets={list}
+            tickets={tickets}
           />;
         })
       }

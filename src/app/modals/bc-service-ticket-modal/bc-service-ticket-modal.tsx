@@ -204,13 +204,11 @@ function BCServiceTicketModal({
     },
     'onSubmit': (values, { setSubmitting }) => {
       if (jobTypeValue.length > 1) {
-        delete values.jobTypeId;
         values.jobTypes = JSON.stringify(values.tasks);
       } else {
-        delete values.jobTypes;
-        values.jobTypeId = values.jobTypeId._id;
+        values.jobTypes = JSON.stringify([{ 'jobTypeId': values.jobTypeId._id }]);
       }
-
+      delete values.jobTypeId;
 
       const tempData = {
         ...ticket,
@@ -230,6 +228,7 @@ function BCServiceTicketModal({
           callEditTicketAPI(formatedRequest).then((response: any) => {
             if (response.status === 0) {
               dispatch(SnackBarError(response.message));
+              setSubmitting(false);
               return;
             }
             dispatch(refreshServiceTickets(true));
@@ -574,6 +573,7 @@ function BCServiceTicketModal({
                         </InputLabel>
                         <TextField
                           {...params}
+                          required={!jobTypeValue.length}
                           variant={'standard'}
                         />
                       </>

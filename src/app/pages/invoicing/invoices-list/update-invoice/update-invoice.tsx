@@ -163,6 +163,7 @@ function UpdateInvoice({ classes }: any) {
         <div className={classes.pageContent}>
           <BCInvoiceForm
             columnSchema={columns}
+            edit
             formTypeValues={FormDefaultValues[FormTypes.INVOICE]}
             itemSchema={item}
             onFormSubmit={handleFormSubmit}

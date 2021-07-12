@@ -22,10 +22,21 @@ interface Props {
     calculateTotal: (array:any[])=> void;
     itemTier: any;
     isCustomPrice: boolean;
+    edit?: boolean;
 }
 
 
-function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSchema, jobTypes, calculateTotal, items, setItems, itemTier, isCustomPrice }:Props) {
+function SharedFormItemsContainer({ classes,
+  edit,
+  columnSchema,
+  addItemText,
+  itemSchema,
+  jobTypes,
+  calculateTotal,
+  items,
+  setItems,
+  itemTier,
+  isCustomPrice }:Props) {
   const dispatch = useDispatch();
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const [columns, setColumns] = useState([...columnSchema]);
@@ -50,96 +61,34 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     tempArray[index][fieldName] = value;
     tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
     tempArray[index].total = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line
-
     setItems(tempArray);
   };
 
 
   useEffect(() => {
-    if (invoiceItems.length && items) {
+    if (items) {
       const newItems = items.map((invoiceItem:any) => {
-        const { charges, name, isFixed, tax, tiers }:any = invoiceItems.find((item:any) => item.name === invoiceItem.name);
-        const taxValue = invoiceItem.tax
-          ? invoiceItem.tax
-          : tax
-            ? taxes[0].tax
-            : 0;
-        const taxAmount = invoiceItem.price * taxValue / 100;
+        const { 'item': { name }, price, taxAmount, total, tax, isFixed }:any = invoiceItem;
 
-        let price = charges || 0;
-        if (itemTier?._id) {
-          const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
-          price = customerTier.charge || 0;
-        }
 
-        if (jobTypes) {
-          return {
-            name,
-            'price': price,
-            'total': price + taxAmount,
-            'unit': isFixed
-              ? 'Fixed'
-              : '/hr',
-            'taxAmount': parseFloat(taxAmount.toFixed(2)),
-            ...invoiceItem,
-            'tax': taxValue
-          };
-        }
         return {
-          name,
           ...invoiceItem,
-          'price': price,
-          'total': price + taxAmount,
+          name,
+          price,
+          total,
           'unit': isFixed
             ? 'Fixed'
             : '/hr',
           'taxAmount': parseFloat(taxAmount.toFixed(2)),
-          'tax': taxValue
+          tax
         };
       });
 
       setItems([...newItems]);
     }
-    if (invoiceItems.length && jobTypes) {
-      const newItems = jobTypes.map(({ jobType }:any) => {
-        const jobTypeItem = invoiceItems.find((item:any) => item.jobType === jobType._id);
-
-        if (jobTypeItem) {
-          const { charges, name, isFixed, tax, tiers }:any = jobTypeItem;
-
-          let price = charges || 0;
-          if (itemTier?._id) {
-            const customerTier = tiers.find(({ tier }:any) => tier._id === itemTier._id);
-            price = customerTier.charge || 0;
-          }
-
-          const taxValue = tax
-
-            ? taxes[0].tax
-            : 0;
-
-          const taxAmount = charges * taxValue / 100;
-          return {
-            ...itemSchema,
-            name,
-            'price': price,
-            'tax': taxValue,
-            'total': charges + taxAmount,
-            'taxAmount': taxAmount,
-            'unit': isFixed
-              ? 'Fixed'
-              : '/hr'
-
-          };
-        }
-      });
-
-      setItems([...newItems]);
-    }
-
 
     setRefreshColumns(true);
-  }, [itemTier]);
+  }, [itemTier, isCustomPrice]);
 
 
   const addItem = () => {
@@ -148,6 +97,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
       ...items,
       ...newData
     ];
+
     setItems(tempArray);
     setRefreshColumns(true);
   };
@@ -162,12 +112,11 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
 
   useEffect(() => {
     calculateTotal(items);
-  }, [items]);
+  }, [items, isCustomPrice]);
 
   useEffect(() => {
     setTimeout(() => setRefreshColumns(false), 100);
   }, [refereshColumns]);
-
 
   const taxFromItems = items.reduce((acc:any, item:any) => item.tax > 0
     ? item.tax
@@ -253,7 +202,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
             return <div className={'flex items-center'}>
               <Button
                 color={'secondary'}
-                disabled={row.index <= jobTypes?.length}
+                disabled={(row.index === 0 || row.index <= jobTypes?.length) && edit}
                 onClick={() => removeItem(row.index)}
                 variant={'contained'}>
                 {'Remove'}
@@ -281,6 +230,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
     }
   }, [refereshColumns, taxes]);
 
+
   useEffect(() => {
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllSalesTaxAPI());
@@ -294,6 +244,7 @@ function SharedFormItemsContainer({ classes, columnSchema, addItemText, itemSche
   return <>
     <BCTableContainer
       columns={columns}
+      initialMsg={'No Items'}
       pagination={false}
       search={false}
       tableData={items}
