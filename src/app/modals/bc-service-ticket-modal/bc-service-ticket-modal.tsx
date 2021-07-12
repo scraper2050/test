@@ -206,7 +206,7 @@ function BCServiceTicketModal({
       if (jobTypeValue.length > 1) {
         values.jobTypes = JSON.stringify(values.tasks);
       } else {
-        values.jobTypes = JSON.stringify([values.jobTypeId._id]);
+        values.jobTypes = JSON.stringify([{ 'jobTypeId': values.jobTypeId._id }]);
       }
       delete values.jobTypeId;
 
