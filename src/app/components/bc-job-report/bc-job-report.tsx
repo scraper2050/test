@@ -13,6 +13,7 @@ import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
+import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -76,6 +77,10 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       'customerId': job.customer._id });
     if (result && result?.status !== 0) {
       const { 'invoice': newInvoice } = result;
+      dispatch(loadJobReportActions.success({ ...jobReportData,
+        'invoiceCreated': true,
+        'invoice': newInvoice }));
+
       dispatch(setModalDataAction({
         'data': {
           'detail': true,
