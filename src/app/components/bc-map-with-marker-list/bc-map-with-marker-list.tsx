@@ -149,10 +149,12 @@ function MakerPin({ ...props }) {
               xs={6}>
               <div className={'job-type'}>
                 <h3>
-                  {'Job Type'}
+                  {'Job Type(s)'}
                 </h3>
                 <span>
-                  {props.ticket.type ? props.ticket.type.title : ''}
+                  {props.ticket.tasks.map(({ jobType }:any) => <p>
+                    {jobType.title}
+                  </p>)}
                 </span>
               </div>
               <div className={'job-type'}>
@@ -160,7 +162,7 @@ function MakerPin({ ...props }) {
                   {'Description'}
                 </h3>
                 <span>
-                  {props.ticket.description ? props.ticket.description : ''}
+                  {props.ticket.ticket.note ? props.ticket.ticket.note : ''}
                 </span>
               </div>
             </Grid>
@@ -208,10 +210,12 @@ function MakerPin({ ...props }) {
   }
 
 
+  console.log('ticket', props.ticket, 'openticket', props.openTicketObj, props.openTicketObj._id, props.ticket._id);
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
       <>
-        { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} /> }
+
+        <RoomIcon className={props.classes.marker} />
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -250,6 +254,7 @@ function MakerPin({ ...props }) {
                   {'Job Type'}
                 </h3>
                 <span>
+
                   {props.ticket.jobType ? props.ticket.jobType.title : ''}
                 </span>
               </div>
@@ -341,7 +346,9 @@ function MakerPin({ ...props }) {
                 {'Job Type'}
               </h3>
               <span>
-                {props.ticket.type ? props.ticket.type.title : ''}
+                {props.ticket.tasks.map(({ jobType }:any) => <p>
+                  {jobType.title}
+                </p>)}
               </span>
             </div>
             <div className={'job-type'}>
@@ -349,7 +356,7 @@ function MakerPin({ ...props }) {
                 {'Description'}
               </h3>
               <span>
-                {props.ticket.description ? props.ticket.description : ''}
+                {props.ticket.ticket.note ? props.ticket.ticket.note : ''}
               </span>
             </div>
           </Grid>
