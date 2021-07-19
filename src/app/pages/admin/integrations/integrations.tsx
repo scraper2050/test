@@ -51,11 +51,23 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
 
       let pollOAuth = window.setInterval(async function () {
         try {
-          if (win.document.URL.indexOf("code") != -1) {
+          const returnUrl = win.document.URL;
+          const index = returnUrl.indexOf("code");
+          const errorIndex = returnUrl.indexOf("error");
+          if (errorIndex != -1) {
+            const msg = returnUrl.substring(errorIndex + 6, returnUrl.indexOf("&"));
+            await window.clearInterval(pollOAuth);
+            await win.close();
+            dispatch(error(msg));
+            return;
+          }
+
+          if (index != -1) {
             const data = {
-              data: window.location.search.substring(1),
+              data: returnUrl.substring(index),
               redirectUri: encodeURIComponent(redirectUri)
             };
+            // console.log({data});
             await window.clearInterval(pollOAuth);
             await win.close();
             const response = await quickbooksAuthenticate(data);

@@ -29,4 +29,8 @@ export const setQBAuthStateToLocalStorage = (state: boolean) => {
   );
 }
 
+export const removeQBAuthStateLocalStorage = () => {
+  localStorage.removeItem('qb_auth');
+};
+
 

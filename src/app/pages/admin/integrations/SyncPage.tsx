@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SyncPage() {
   const classes = useStyles();
-  const [isChecked, setChecked] = React.useState({Customers: false, Items: false, Invoice: false});
+  const [isChecked, setChecked] = React.useState({Customers: false, Items: false, Invoices: false});
   const [isLoading, setLoading] = React.useState(false);
   const [serverResp, setServerResp] = React.useState("");
 
@@ -97,10 +97,10 @@ function SyncPage() {
     setLoading(true);
 
     const requests = [];
-    const { Customers, Items, Invoice } = isChecked;
+    const { Customers, Items, Invoices } = isChecked;
     if (Customers) requests.push(quickbooksCustomerSync())
     if (Items) requests.push(quickbooksItemsSync())
-    //if (Invoice) requests.push(quickbooksInvoiceSync)
+    //if (Invoices) requests.push(quickbooksInvoiceSync)
 
     Promise.all(requests).then((resp) => {
       console.log({resp});
