@@ -3,9 +3,11 @@ import { Grid, withStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import QbIcon from "assets/img/img/intuitt_green.png";
-import OAuthClient from "intuit-oauth";
-import config from "../../../../config";
+import { quickbooksGetUri, quickbooksAuthenticate } from "../../../../api/quickbooks.api";
 import SyncPage from "./SyncPage";
+import { success, error } from 'actions/snackbar/snackbar.action';
+import {setQBAuthStateToLocalStorage, getQBAuthStateFromLocalStorage} from "../../../../utils/local-storage.service";
+const redirectUri = `${window.location.origin}/main/admin/integrations/callback`;
 
 interface StatusTypes {
   status: number;
@@ -20,48 +22,72 @@ interface RowStatusTypes {
 }
 
 function AdminIntegrationsPage({ classes, callbackUrl }: any) {
-  const [showSyncInterface, setShowSyncInterface] = useState(false);
+  const dispatch = useDispatch();
+  const [showSyncInterface, setShowSyncInterface] = useState(getQBAuthStateFromLocalStorage());
 
-  const oauthClient = new OAuthClient({
-    clientId: config.quickbooks_clientId,
-    clientSecret: config.quickbooks_clientSecret,
-    environment: "sandbox",
-    redirectUri: `${window.location.origin}/main/admin/integrations/callback`,
-  });
-
-  const authUri = oauthClient.authorizeUri({
-    scope: [
-      OAuthClient.scopes.Accounting,
-      OAuthClient.scopes.OpenId,
-      OAuthClient.scopes.Profile,
-      OAuthClient.scopes.Email,
-      OAuthClient.scopes.Phone,
-      OAuthClient.scopes.Address,
-    ],
-  });
-
+  const parseURL = () => {
+    const res: any = {}
+    const query = window.location.search.substring(1);
+    const vars = query.split('&');
+    for (let i = 0; i < vars.length; i++) {
+      const pair: string[] = vars[i].split('=');
+      res[pair[0]] = pair[1];
+    }
+    return res;
+  }
   const togglePopUp = async () => {
-    let parameters = ` "location=1,width=800,height=650"`;
-    parameters +=
-      ",left=" +
-      (window.screen.width - 800) / 2 +
-      ",top=" +
-      (window.screen.height - 650) / 2;
+    const response = await quickbooksGetUri({ redirectUri });
+    const { data } = response;
+    if (data.status === 1) {
+      const {authUri} = data;
+      let parameters = ` "location=1,width=800,height=650"`;
+      parameters +=
+        ",left=" +
+        (window.screen.width - 800) / 2 +
+        ",top=" +
+        (window.screen.height - 650) / 2;
 
-    let win: any = window.open(authUri, "connectPopup", parameters);
+      let win: any = window.open(authUri, "connectPopup", parameters);
 
-    let pollOAuth = window.setInterval(async function () {
-      try {
-        if (win.document.URL.indexOf("code") != -1) {
-          setShowSyncInterface(true);
-          await window.clearInterval(pollOAuth);
-          await win.close();
-          // window.location.reload();
+      let pollOAuth = window.setInterval(async function () {
+        try {
+          const returnUrl = win.document.URL;
+          const index = returnUrl.indexOf("code");
+          const errorIndex = returnUrl.indexOf("error");
+          if (errorIndex != -1) {
+            const msg = returnUrl.substring(errorIndex + 6, returnUrl.indexOf("&"));
+            await window.clearInterval(pollOAuth);
+            await win.close();
+            dispatch(error(msg));
+            return;
+          }
+
+          if (index != -1) {
+            const data = {
+              data: returnUrl.substring(index),
+              redirectUri: encodeURIComponent(redirectUri)
+            };
+            // console.log({data});
+            await window.clearInterval(pollOAuth);
+            await win.close();
+            const response = await quickbooksAuthenticate(data);
+            if (response.data.status === 1) {
+              dispatch(success(response.data.message))
+              setShowSyncInterface(true);
+              setQBAuthStateToLocalStorage(true);
+            } else {
+              dispatch(error(response.data.message));
+              setQBAuthStateToLocalStorage(false);
+            }
+            // window.location.reload();
+          }
+        } catch (e) {
+          console.log(e);
         }
-      } catch (e) {
-        console.log(e);
-      }
-    }, 100);
+      }, 100);
+    } else {
+      console.log (data.message);
+    }
   };
 
   return showSyncInterface ? (
