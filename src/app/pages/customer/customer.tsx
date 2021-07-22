@@ -13,6 +13,7 @@ import {
 } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import qbLogo from 'assets/img/integration-bg/quickbooks.png'
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -71,6 +72,22 @@ function CustomersPage({ classes }: any) {
       'id': 'action',
       'sortable': false,
       'width': 60
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          row.original.quickbookId !== null ?
+            <img style={{width: '30px', height: '30px', verticalAlign: 'middle'}}
+              alt={'logo'}
+              title={'synced with QuickBooks'}
+              src={qbLogo}
+            /> :
+            null
+        );
+      },
+      'id': 'qbSync',
+      'sortable': false,
+      'width': 30
     }
   ];
 

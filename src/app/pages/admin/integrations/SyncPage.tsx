@@ -4,7 +4,7 @@ import { green, grey, orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 
 import QBIcon from "../../../../assets/img/qb.png";
-import { quickbooksCustomerSync, quickbooksItemsSync } from "../../../../api/quickbooks.api";
+import { quickbooksCustomerSync, quickbooksItemsSync, quickbooksInvoicesSync } from "../../../../api/quickbooks.api";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -100,10 +100,9 @@ function SyncPage() {
     const { Customers, Items, Invoices } = isChecked;
     if (Customers) requests.push(quickbooksCustomerSync())
     if (Items) requests.push(quickbooksItemsSync())
-    //if (Invoices) requests.push(quickbooksInvoiceSync)
+    if (Invoices) requests.push(quickbooksInvoicesSync())
 
     Promise.all(requests).then((resp) => {
-      console.log({resp});
       const message = resp.reduce((acc, res: any) =>  {
         const key = res.config.url.split('QB')[1];
         return acc += `${key.toUpperCase()}: ${res.data.message}\n`;
