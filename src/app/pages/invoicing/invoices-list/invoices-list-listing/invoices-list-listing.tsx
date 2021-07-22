@@ -16,7 +16,7 @@ import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-
 import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
-
+import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 
 const getFilteredList = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList?.data);
@@ -143,7 +143,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
           <Box
-            display={'inline'}
+            display={'block'}
             pr={1}>
             <EmailInvoiceButton
               Component={<Fab
@@ -151,6 +151,7 @@ function InvoicingListListing({ classes, theme }: any) {
                 classes={{
                   'root': classes.fabRoot
                 }}
+                style={{width: '100px'}}
                 color={'primary'}
                 size={'medium'}
                 variant={'extended'}>
@@ -167,6 +168,7 @@ function InvoicingListListing({ classes, theme }: any) {
             color={'primary'}
             onClick={() => showInvoiceDetail(row.original._id)}
             size={'medium'}
+            style={{marginTop: '5px', width: '100px'}}
             variant={'extended'}>
             {'View More'}
 
@@ -177,6 +179,16 @@ function InvoicingListListing({ classes, theme }: any) {
       'id': 'action-send-email',
       'sortable': false,
       'width': 60
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          <BCQbSyncStatus data={row.original} />
+        );
+      },
+      'id': 'qbSync',
+      'sortable': false,
+      'width': 30
     }
   ];
 

@@ -13,6 +13,7 @@ import {
 } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import BCQbSyncStatus from "../../components/bc-qb-sync-status/bc-qb-sync-status";
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -71,6 +72,16 @@ function CustomersPage({ classes }: any) {
       'id': 'action',
       'sortable': false,
       'width': 60
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          <BCQbSyncStatus data={row.original} />
+        );
+      },
+      'id': 'qbSync',
+      'sortable': false,
+      'width': 30
     }
   ];
 
