@@ -16,6 +16,7 @@ import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-
 import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
+import qbLogo from "../../../../../assets/img/integration-bg/quickbooks.png";
 
 
 const getFilteredList = (state: any) => {
@@ -143,7 +144,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
           <Box
-            display={'inline'}
+            display={'block'}
             pr={1}>
             <EmailInvoiceButton
               Component={<Fab
@@ -167,6 +168,7 @@ function InvoicingListListing({ classes, theme }: any) {
             color={'primary'}
             onClick={() => showInvoiceDetail(row.original._id)}
             size={'medium'}
+            style={{marginTop: '5px'}}
             variant={'extended'}>
             {'View More'}
 
@@ -177,6 +179,22 @@ function InvoicingListListing({ classes, theme }: any) {
       'id': 'action-send-email',
       'sortable': false,
       'width': 60
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          row.original.quickbookId !== null ?
+            <img style={{width: '30px', height: '30px', verticalAlign: 'middle'}}
+                 alt={'logo'}
+                 title={'synced with QuickBooks'}
+                 src={qbLogo}
+            /> :
+            null
+        );
+      },
+      'id': 'qbSync',
+      'sortable': false,
+      'width': 30
     }
   ];
 
