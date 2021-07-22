@@ -16,8 +16,7 @@ import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-
 import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
-import qbLogo from "../../../../../assets/img/integration-bg/quickbooks.png";
-
+import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 
 const getFilteredList = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList?.data);
@@ -152,6 +151,7 @@ function InvoicingListListing({ classes, theme }: any) {
                 classes={{
                   'root': classes.fabRoot
                 }}
+                style={{width: '100px'}}
                 color={'primary'}
                 size={'medium'}
                 variant={'extended'}>
@@ -168,7 +168,7 @@ function InvoicingListListing({ classes, theme }: any) {
             color={'primary'}
             onClick={() => showInvoiceDetail(row.original._id)}
             size={'medium'}
-            style={{marginTop: '5px'}}
+            style={{marginTop: '5px', width: '100px'}}
             variant={'extended'}>
             {'View More'}
 
@@ -183,13 +183,7 @@ function InvoicingListListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return (
-          row.original.quickbookId !== null ?
-            <img style={{width: '30px', height: '30px', verticalAlign: 'middle'}}
-                 alt={'logo'}
-                 title={'synced with QuickBooks'}
-                 src={qbLogo}
-            /> :
-            null
+          <BCQbSyncStatus data={row.original} />
         );
       },
       'id': 'qbSync',

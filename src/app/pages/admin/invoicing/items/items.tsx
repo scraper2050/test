@@ -16,6 +16,7 @@ import BCInput from 'app/components/bc-input/bc-input';
 import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
 import { addTierApi, updateItems } from 'api/items.api';
 import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
+import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 
 
 interface Props {
@@ -238,6 +239,18 @@ function AdminInvoicingItemsPage({ classes }:Props) {
           'width': 60
         }
       ];
+      const dbSync = [
+        {
+          Cell({ row }: any) {
+            return (
+              <BCQbSyncStatus data={row.original} />
+            );
+          },
+          'id': 'qbSync',
+          'sortable': false,
+          'width': 30
+        }
+      ];
 
 
       const columns: any = [
@@ -325,7 +338,8 @@ function AdminInvoicingItemsPage({ classes }:Props) {
       let constructedColumns:any = [
         ...columns,
         ...chargeColumn,
-        ...actions
+        ...actions,
+        ...dbSync,
       ];
 
 
@@ -333,7 +347,8 @@ function AdminInvoicingItemsPage({ classes }:Props) {
         constructedColumns = [
           ...columns,
           ...tierColumns,
-          ...actions
+          ...actions,
+          ...dbSync,
         ];
       }
       setColumns(constructedColumns);
