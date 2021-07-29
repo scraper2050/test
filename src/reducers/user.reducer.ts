@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { initialCompanyProfileState, CompanyProfileActonType } from './../actions/user/user.types';
+import { initialCompanyProfileState, CompanyProfileActonType } from "../actions/user/user.types";
 
 export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfileState, action) => {
   switch (action.type) {

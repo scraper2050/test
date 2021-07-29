@@ -10,7 +10,6 @@ import store from './store';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './scss/index.scss';
 
-
 const THEME = createMuiTheme({
   'palette': {
     'primary': {

@@ -22,7 +22,6 @@ export const quickbooksAuthenticate = async (data: any) => {
 };
 
 export const quickbooksCustomerSync = async () => {
-  console.log('ffffffffffffffffffff')
   try {
     const response: any = await request("/syncQBCustomers", "POST", null, false);
     return response;
@@ -31,12 +30,18 @@ export const quickbooksCustomerSync = async () => {
   }
 };
 
-
 export const quickbooksItemsSync = async () => {
-  console.log('ssssssssssssssssss')
   try {
     const response: any = await request("/syncQBItems", "POST", null, false);
-    console.log(response)
+    return response;
+  } catch (err) {
+    throw new Error(`Something went wrong`);
+  }
+};
+
+export const quickbooksInvoicesSync = async () => {
+  try {
+    const response: any = await request("/syncQBInvoices", "POST", null, false);
     return response;
   } catch (err) {
     throw new Error(`Something went wrong`);

@@ -27,7 +27,6 @@ const StyledToolbar = styled(Toolbar)`
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  margin-top: 77px;
   position: fixed !important;
   z-index: 100;
 
