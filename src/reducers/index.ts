@@ -116,7 +116,7 @@ const appReducer = combineReducers({
 const rootReducer = (state: any, action: any) => {
   if (action.type === 'RESET_STORE') {
     state = undefined;
-    removeQBAuthStateLocalStorage();
+    // removeQBAuthStateLocalStorage();
   }
   return appReducer(state, action);
 }
