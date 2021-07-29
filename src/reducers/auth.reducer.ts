@@ -14,7 +14,7 @@ const initialState = Record({
     'isLoading': false,
     'msg': ''
   })(),
-
+  'company': null,
   'token': null,
   'user': null
 })();
@@ -99,7 +99,18 @@ export default handleActions(
     },
 
     [loginActions.success.toString()]: (state, action) => {
-      const { token, user } = action.payload;
+      const { token, user, company } = action.payload;
+
+      let userData = {
+        // @ts-ignore
+        ...user,
+        ...{
+          companyInfo: {
+            name: company.info.companyName,
+            logoUrl: company.info.logoUrl
+          }
+        }
+      }
 
       return state
         .setIn(
@@ -108,7 +119,7 @@ export default handleActions(
         )
         .setIn(
           ['user'],
-          Record(user)()
+          Record(userData)()
         )
         .setIn(
           ['loginApi', 'isLoading'],

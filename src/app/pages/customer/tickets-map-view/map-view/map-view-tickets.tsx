@@ -25,7 +25,6 @@ import {
 import Pagination from "@material-ui/lab/Pagination";
 import { info, warning } from "actions/snackbar/snackbar.action";
 import "../ticket-map-view.scss";
-import "../../../../../scss/index.css";
 import styles from "../ticket-map-view.style";
 import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
@@ -66,7 +65,7 @@ function MapViewTicketsScreen({ classes }: any) {
   );
   const customers = useSelector(({ customers }: any) => customers.data);
   const open = useSelector(({ modal }: any) => modal.open);
-  const type = useSelector(({ modal }: any) => modal.type);  
+  const type = useSelector(({ modal }: any) => modal.type);
   const modalData = useSelector(({ modal }: any) => modal.data);
 
   useEffect(() => {

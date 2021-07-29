@@ -275,11 +275,11 @@ function BCJobModal({
       let tempJobValue = [];
 
       if (job._id) {
-        tempJobValue = job.tasks.length > 0
+        tempJobValue = job.tasks && job.tasks.length > 0
           ? getJobData(job.tasks.map((job:any) => job.jobType._id), jobTypes)
           : getJobData([job.type?._id], jobTypes);
       } else {
-        tempJobValue = ticket.tasks.length > 0
+        tempJobValue = ticket.tasks && ticket.tasks.length > 0
           ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
       }

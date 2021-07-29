@@ -15,7 +15,7 @@ const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
 const MainPage = React.lazy(() => import('./app/pages/main/main'));
 
-LogRocket.init('lt4dnt/blueclerk');
+// LogRocket.init('lt4dnt/blueclerk');
 
 function App() {
   const [isLoading, setLoading] = useState<boolean>(true);

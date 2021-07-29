@@ -15,7 +15,6 @@ import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.
 import Pagination from '@material-ui/lab/Pagination';
 import { info, warning } from 'actions/snackbar/snackbar.action';
 import '../ticket-map-view.scss';
-import '../../../../../scss/index.css';
 import styles from '../ticket-map-view.style';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { getAllJobsAPI, getSearchJobs } from 'api/job.api';
