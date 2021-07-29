@@ -14,10 +14,13 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import EmailIcon from '@material-ui/icons/Email';
 import RoomIcon from '@material-ui/icons/Room';
 import EmailHistory from 'app/components/bc-job-report/email-history';
+import { getContacts } from 'api/contacts.api';
 
 
 function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   const [data, setData] = useState(formData);
+  const [customerContact, setCustomerContact] = useState<any>(undefined);
+  const { contacts } = useSelector((state: any) => state.contacts);
   const dispatch = useDispatch();
   const history = useHistory();
   const { user } = useSelector(({ auth }:any) => auth);
@@ -129,7 +132,6 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
 
   useEffect(() => {
     if (data && customerId) {
-      console.log(customerId, customerObj._id);
       if (customerId !== customerObj._id || !customerObj._id) {
         dispatch(loadingSingleCustomers());
         dispatch(getCustomerDetailAction({ customerId }));
@@ -172,6 +174,11 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
 
       setData(dataObj);
     }
+
+    if (invoiceDetail._id) {
+      dispatch(getContacts({ 'type': 'Customer',
+        'referenceNumber': invoiceDetail.customer?._id }));
+    }
   }, [invoiceDetail]);
 
   useEffect(() => {
@@ -182,9 +189,18 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (invoiceDetail._id && contacts.length) {
+      const invoiceContact = contacts.find((contact:any) => contact._id === invoiceDetail.job.ticket.customerContactId);
+      setCustomerContact(invoiceContact);
+    }
+  //  SetCustomerContact()
+  }, [contacts]);
+
   if (loading || !data || loadingInvoiceDetail || !customerObj) {
     return <BCCircularLoader heightValue={'200px'} />;
   }
+
 
   const { customerId, items, issueDate, dueDate, formNumber, subTotal, totalAmount, totalTax, note } = data;
 
@@ -290,6 +306,10 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
             <li>
               {formNumber && `Invoice #: ${formNumber}`}
             </li>
+            {invoiceDetail.job?.ticket?.customerPO && <li>
+              {'Customer PO: '}
+              {invoiceDetail.job.ticket.customerPO}
+            </li>}
             <li>
               {`Invoice Date: ${formatDatTimell(issueDate)}`}
             </li>
@@ -311,36 +331,75 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
         </Grid>
       </Grid>
       <hr />
-      {
-        customerObj && <div className={'bill-details'}>
-          <p>
-            {'Bill To: '}
-          </p>
-          <h4>
-            {customerObj.profile.displayName}
-          </h4>
-          <div className={'customer-details'}>
-            {customerObj.contact?.phone && <p>
-              <PhoneIcon />
-              {customerObj.contact?.phone}
-            </p>}
+      <Grid container>
+        {
+          customerObj &&
+          <Grid
+            item
+            xs={4}>
+            <div className={'bill-details'}>
+              <p>
+                {'Bill To: '}
+              </p>
+              <h4>
+                {customerObj.profile.displayName}
+              </h4>
+              <div className={'customer-details'}>
+                {customerObj.contact?.phone && <p>
+                  <PhoneIcon />
+                  {customerObj.contact?.phone}
+                </p>}
 
-            {customerObj.info?.email && <p>
-              <span>
-                <EmailIcon />
-              </span>
-              {customerObj.info.email}
-            </p>}
-            {customerObj.address && <p>
-              <RoomIcon />
-              {customerObj.address?.street && `${customerObj.address?.street}, `}
-              {customerObj.address?.city && `${customerObj.address?.city}, `}
-              {customerObj.address?.state && `${customerObj.address?.state}, `}
-              {customerObj.address?.zipCode && `${customerObj.address?.zipCode}`}
-            </p>}
-          </div>
-        </div>
-      }
+                {customerObj.info?.email && <p>
+                  <span>
+                    <EmailIcon />
+                  </span>
+                  {customerObj.info.email}
+                </p>}
+                {customerObj.address && <p>
+                  <RoomIcon />
+                  {customerObj.address?.street && `${customerObj.address?.street}, `}
+                  {customerObj.address?.city && `${customerObj.address?.city}, `}
+                  {customerObj.address?.state && `${customerObj.address?.state}, `}
+                  {customerObj.address?.zipCode && `${customerObj.address?.zipCode}`}
+                </p>}
+
+
+              </div>
+            </div>
+          </Grid>
+        }
+        {
+          customerContact &&
+          <Grid
+            item
+            xs={4}>
+            <div className={'bill-details'}>
+              <p>
+                {console.log(customerContact)}
+                {'Contact Details '}
+              </p>
+              <h4>
+                {customerContact.name}
+              </h4>
+              <div className={'customer-details'}>
+                {customerContact.phone && <p>
+                  <PhoneIcon />
+                  {customerContact.phone}
+                </p>}
+
+                {customerContact.email && <p>
+                  <span>
+                    <EmailIcon />
+                  </span>
+                  {customerContact.email}
+                </p>}
+
+              </div>
+            </div>
+          </Grid>
+        }
+      </Grid>
       <BCTableContainer
         columns={columns}
         pagination={false}
@@ -381,9 +440,7 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
         {note}
       </p>}
     </FormContainer>
-    {invoiceDetail._id &&
-      <EmailHistory emailHistory={invoiceDetail.emailHistory} />
-    }
+    { }
   </BCSharedFormModalContainer>;
 }
 

@@ -49,6 +49,7 @@ import { InvoiceItemsState
   , InvoiceItemsReducer as invoiceItems
   , InvoiceItemsTierList as invoiceItemsTiers } from './items.reducer';
 import { EmailState, EmailReducer as email } from './email.reducer';
+import {removeQBAuthStateLocalStorage} from "../utils/local-storage.service";
 
 
 export interface ReducerParamsInterface {
@@ -115,6 +116,7 @@ const appReducer = combineReducers({
 const rootReducer = (state: any, action: any) => {
   if (action.type === 'RESET_STORE') {
     state = undefined;
+    // removeQBAuthStateLocalStorage();
   }
   return appReducer(state, action);
 }

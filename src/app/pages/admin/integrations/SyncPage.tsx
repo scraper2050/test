@@ -4,7 +4,11 @@ import { green, grey, orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 
 import QBIcon from "../../../../assets/img/qb.png";
-import { quickbooksQync } from "../../../../api/quickbooks.api";
+import { quickbooksCustomerSync, quickbooksItemsSync, quickbooksInvoicesSync } from "../../../../api/quickbooks.api";
+import { getCompanyProfile } from "../../../../api/user.api";
+import { useDispatch } from "react-redux";
+import {error, success} from "../../../../actions/snackbar/snackbar.action";
+
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -17,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexGrow: 0,
     width: "50%",
-    height: 320,
     borderTop: `5px solid ${green[600]}`,
     borderBottom: `5px solid ${green[600]}`,
     borderRadiusTopRight: "30px",
@@ -50,59 +53,95 @@ const useStyles = makeStyles((theme) => ({
   },
   serverRespText: {
     color: orange[800],
-    textAlign: "center" 
+    textAlign: "center"
   },
   titleDiv: {
     marginBottom: 10
   },
   title: {
     fontWeight: 500,
-    color: grey[600] 
+    color: grey[600]
   },
   subtitleDiv: {
     marginBottom: 20
   },
   subtitle: {
-    color: grey[500] 
+    color: grey[500]
   },
   subtitle1: {
     marginBottom: 10,
-    color: grey[600]  
+    color: grey[600]
   },
   checkboxContainer: {
-    marginBottom: 20,
     display: "flex",
-    alignItems: "center", 
+    alignItems: "center",
   }
 }));
 
 function SyncPage() {
   const classes = useStyles();
-  const [isChecked, setChecked] = React.useState(false);
+  const [isChecked, setChecked] = React.useState({Customers: false, Items: false, Invoices: false});
+  const [isSynced, setSynced] = React.useState({Customers: '', Items: '', Invoices: ''});
+  const [syncProfile, setSyncProfile] = React.useState('');
   const [isLoading, setLoading] = React.useState(false);
   const [serverResp, setServerResp] = React.useState("");
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
-      let interval: any;
+    let interval: any;
+    handleCompanyProfile();
+    if (serverResp) {
+      interval = setInterval(() => {
+        setServerResp('');
+      }, 3000)
+    }
 
-      if (serverResp) {
-          interval = setInterval(() => {
-              setServerResp('');
-          }, 3000)
-      }
-
-      return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, [serverResp])
 
-  const handleCustomerSync = async () => {
+  const handleSync = async () => {
     if (serverResp) setServerResp('');
     setLoading(true);
 
-    await quickbooksQync().then((resp) => {
+    const requests = [];
+    const { Customers, Items, Invoices } = isChecked;
+    if (Customers) requests.push(quickbooksCustomerSync())
+    if (Items) requests.push(quickbooksItemsSync())
+    if (Invoices) requests.push(quickbooksInvoicesSync())
+
+    Promise.all(requests).then((resp) => {
+      const message = resp.reduce((acc, res: any) =>  {
+        const key = res.config.url.split('QB')[1];
+        return acc += `${key.toUpperCase()}: ${res.data.message}\n`;
+      }, '');
       setLoading(false);
-      setServerResp(resp.data.message);
-    });
+      setServerResp(message);
+    }).catch(e => {
+      setLoading(false);
+      console.log(e);
+    })
+
   };
+
+  const handleCompanyProfile = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || "");
+      const companyProfile = await getCompanyProfile(user?.company as string);
+      const { qbSync, qbCompanyEmail = '', qbCompanyName = '' } = companyProfile.company;
+      const syncStatus: any = {};
+      Object.entries(isSynced).forEach(([key, status]) => {
+        const qbKey = `${key.toLowerCase()}Synced`;
+        const qbKeyAt = `${key.toLowerCase()}SyncedAt`;
+        syncStatus[key] = qbSync[qbKey]? new Date(qbSync[qbKeyAt]).toLocaleString('en-US') : '';
+      });
+      setSynced(syncStatus);
+      setSyncProfile(`${qbCompanyName}, ${qbCompanyEmail}`);
+    } catch (e) {
+      dispatch(error(e.message));
+    }
+  }
+
+  const enableButton = Object.values(isChecked).some(value => value);
 
   return (
     <div className={classes.container}>
@@ -123,6 +162,7 @@ function SyncPage() {
               >
                 QuickBooks Online Integration
               </Typography>
+              <span>{syncProfile}</span>
             </div>
             <div className={classes.subtitleDiv}>
               <Typography variant="subtitle1" className={classes.subtitle}>
@@ -136,30 +176,41 @@ function SyncPage() {
               >
                 Select what to sync
               </Typography>
-              <div className={classes.checkboxContainer}>
-                <Checkbox
-                  style={{
-                    color: isChecked ? green[600] : "none",
-                    cursor: "pointer",
-                  }}
-                  checked={isChecked}
-                  onChange={() => setChecked(!isChecked)}
-                />
-                <span style={{ color: isChecked ? "inherit" : grey[600] }}>
-                  Customers
-                </span>
-              </div>
+              {Object.entries(isChecked).map(([key, checked]) => {
+                // @ts-ignore
+                const syncStatus = isSynced[key];
+                return (
+                  <div key={key} className={classes.checkboxContainer}>
+                    <Checkbox
+                      style={{
+                        color: checked ? green[600] : "none",
+                        cursor: "pointer",
+                      }}
+                      checked={checked}
+                      onChange={() => setChecked({...isChecked, [key]: !checked})}
+                    />
+                    <span style={{ color: isChecked ? "inherit" : grey[600] }}>
+                      {key}
+                    </span>
+                    {syncStatus !== '' &&
+                    <span style={{color: grey[500], fontSize: 12, marginLeft: '10px'}}>
+                      {` synced on ${syncStatus}`}
+                    </span>
+                    }
+                  </div>
+                )
+              })}
               <div>
                 <Button
                   style={{
                     width: 300,
-                    background: isChecked ? green[600] : green[200],
+                    background: enableButton ? green[600] : green[200],
                     color: "#fff",
                     border: "transparent",
                   }}
                   variant="outlined"
-                  disabled={!isChecked}
-                  onClick={handleCustomerSync}
+                  disabled={!enableButton}
+                  onClick={handleSync}
                 >
                   {isLoading ? "......syncing......" : "Sync"}
                 </Button>

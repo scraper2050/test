@@ -18,3 +18,19 @@ export const removeUserFromLocalStorage = () => {
   localStorage.removeItem('user');
 };
 
+export const getQBAuthStateFromLocalStorage = () => {
+  return (localStorage.getItem('qb_auth') === 'true');
+}
+
+export const setQBAuthStateToLocalStorage = (state: boolean) => {
+  localStorage.setItem(
+    'qb_auth',
+    state.toString()
+  );
+}
+
+export const removeQBAuthStateLocalStorage = () => {
+  localStorage.removeItem('qb_auth');
+};
+
+
