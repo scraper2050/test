@@ -47,6 +47,7 @@ import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import ContactsIcon from '@material-ui/icons/Contacts';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
+import { CompanyProfileStateType } from "../../../actions/user/user.types";
 
 
 interface BCSidebarProps {
@@ -271,6 +272,7 @@ function BCAdminSidebar({ token, user, classes, drawerClasses, open }: BCSidebar
   const buttonStyles = useButtonStyles();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
 
@@ -334,7 +336,7 @@ function BCAdminSidebar({ token, user, classes, drawerClasses, open }: BCSidebar
           [classes.bcSideBarCompanyLogo]: true,
           [avatarStyles.companyLogo]: !open
         })}>
-          <img src={user?.companyInfo.logoUrl}/>
+          <img src={profileState?.logoUrl}/>
         </div>
 
         <ul>

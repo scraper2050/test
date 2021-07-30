@@ -32,15 +32,15 @@ export default (): any => ({
   },
   'avatarArea': {
     'flex': '25%',
-    'padding-right': '2rem',
-    'flex-shrink': '0',
+    'margin-right': '2rem',
     'cursor': 'pointer',
-    'align-self': 'center',
+    '&> img': {
+      'width': '100%',
+    }
   },
   'noUpdateAvatarArea': {
     'flex': '25%',
     'padding-right': '2rem',
-    'flex-shrink': '0',
     'align-self': 'center',
   },
   'infoArea': {
