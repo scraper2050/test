@@ -175,9 +175,18 @@ function BCServiceTicketModal({
     if (!ticket.updateFlag) {
       dispatch(clearJobLocationStore());
       dispatch(clearJobSiteStore());
+    } else {
+      const newValues = mapTask(ticket.tasks);
+      setJobTypeValue(newValues);
     }
   }, []);
 
+  const mapTask = (tasks: any) => {
+    if (tasks)
+      return tasks.map((t: any) => { return ({ jobTypeId: t.jobType }) })
+    else
+      return '';
+  }
 
   const {
     'values': FormikValues,
@@ -193,8 +202,8 @@ function BCServiceTicketModal({
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
       'jobTypeId': ticket.jobType ? ticket.jobType : '',
-      'jobTypes': ticket.tasks ? ticket.tasks : '',
-      'tasks': ticket.tasks || [],
+      'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : '',
+      'tasks': mapTask(ticket.tasks) || [],
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
@@ -206,7 +215,10 @@ function BCServiceTicketModal({
       if (jobTypeValue.length > 1) {
         values.jobTypes = JSON.stringify(values.tasks);
       } else {
-        values.jobTypes = JSON.stringify([{ 'jobTypeId': values.jobTypeId._id }]);
+        if (ticket.updateFlag)
+          values.jobTypes = JSON.stringify(values.tasks);
+        else
+          values.jobTypes = JSON.stringify([{ 'jobTypeId': values.jobTypeId._id }]);
       }
       delete values.jobTypeId;
 
