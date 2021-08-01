@@ -3,11 +3,18 @@ import { Theme } from '@material-ui/core/styles';
 import { PRIMARY_GRAY } from "../../../constants";
 export default (theme: Theme): any => ({
   'bcHeader': {
-    'zIndex': '1100',
-    'background-color': CONSTANTS.PRIMARY_WHITE,
-    'transition': 'width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
     'height': `${CONSTANTS.ADMIN_HEADER_HEIGHT}px`,
     'box-shadow': '0px 2px 2px rgba(0, 0, 0, 0.15)',
+    'justifyContent': 'center',
+    'alignItems': 'center',
+    'flex-direction': 'row',
+    'padding': '0 40px',
+    '& > .bcNavMenu': {
+      'flex': '0 0 auto',
+      'display': 'flex',
+      'align-items': 'center',
+      'justify-content': 'flex-start',
+    }
   },
   'bcTopBar': {
     'display': 'flex',

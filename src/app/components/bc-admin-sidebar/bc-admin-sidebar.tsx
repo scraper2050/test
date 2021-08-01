@@ -54,7 +54,6 @@ interface BCSidebarProps {
   token: string;
   user: any;
   classes: any;
-  drawerClasses: any;
   open: Boolean;
 }
 
@@ -94,15 +93,35 @@ const useAvatarStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const useButtonStyles = makeStyles((theme: Theme) =>
+const useSidebarStyles = makeStyles((theme: Theme) =>
   createStyles({
-    sidebarMenuButton: {
-      width: '100%',
+    drawer: {
+      height: '100vh',
+      zIndex: 1099,
+      width: CONSTANTS.ADMIN_SIDEBAR_WIDTH,
+    },
+    drawerOpen: {
+      width: CONSTANTS.ADMIN_SIDEBAR_WIDTH,
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    drawerClose: {
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      overflowX: 'hidden',
+      width: theme.spacing(7) + 1,
+      [theme.breakpoints.up('sm')]: {
+        width: theme.spacing(9) + 1,
+      },
     },
   }),
 );
 
-function BCAdminSidebar({ token, user, classes, drawerClasses, open }: BCSidebarProps) {
+function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
@@ -269,7 +288,7 @@ function BCAdminSidebar({ token, user, classes, drawerClasses, open }: BCSidebar
 
   const theme = useTheme();
   const avatarStyles = useAvatarStyles();
-  const buttonStyles = useButtonStyles();
+  const sidebarStyles = useSidebarStyles();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
@@ -319,15 +338,12 @@ function BCAdminSidebar({ token, user, classes, drawerClasses, open }: BCSidebar
   return (
     <Drawer
       variant="permanent"
-      className={classnames(drawerClasses.drawer, {
-        [drawerClasses.drawerOpen]: open,
-        [drawerClasses.drawerClose]: !open,
+      className={classnames(sidebarStyles.drawer, sidebarStyles.drawerOpen, {
+        [sidebarStyles.drawerClose]: !open,
       })}
       classes={{
-        paper: classnames({
-          [drawerClasses.drawerOpen]: open,
-          [drawerClasses.drawerClose]: !open,
-          [classes.bcSideBar]: true,
+        paper: classnames(classes.bcSideBar, sidebarStyles.drawerOpen, {
+          [sidebarStyles.drawerClose]: !open,
         }),
       }}
     >
@@ -362,29 +378,11 @@ function BCAdminSidebar({ token, user, classes, drawerClasses, open }: BCSidebar
               </li>
               : null;
           })}
-          <li key="search">
-            <StyledListItem
-              button
-              onClick={() => {}}>
-              <SearchIcon/>
-              <span className='menuLabel'>Search</span>
-            </StyledListItem>
-            <div className={classes.bcSidebarDivider} />
-
-          </li>
         </ul>
 
       </div>
       <div className={classes.bcSidebarFooter}>
         <ul>
-          <li key="settings">
-            <StyledListItem
-              button
-              onClick={() => {}}>
-              <SettingsIcon style={{color: CONSTANTS.SECONDARY_DARK_GREY}}/>
-              <span className='menuLabel'>Settings</span>
-            </StyledListItem>
-          </li>
           <li>
             <StyledFooterItem
               button

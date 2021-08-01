@@ -12,47 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      width: `calc(100% - ${theme.spacing(9) + 1}px)`,
-      transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      marginLeft: CONSTANTS.ADMIN_SIDEBAR_WIDTH,
-      width: `calc(100% - ${CONSTANTS.ADMIN_SIDEBAR_WIDTH}px)`,
-      transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    hide: {
-      display: 'none',
-    },
-    drawer: {
-      height: '100vh',
-      width: CONSTANTS.ADMIN_SIDEBAR_WIDTH,
-    },
-    drawerOpen: {
-      width: CONSTANTS.ADMIN_SIDEBAR_WIDTH,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    drawerClose: {
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      overflowX: 'hidden',
-      width: theme.spacing(7) + 1,
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9) + 1,
-      },
+      backgroundColor: CONSTANTS.PRIMARY_WHITE
     },
     toolbar: {
       display: 'flex',
@@ -63,10 +23,18 @@ const useStyles = makeStyles((theme: Theme) =>
       ...theme.mixins.toolbar,
     },
     content: {
+      minHeight: '100vh',
       flexGrow: 1,
       padding: theme.spacing(3),
       backgroundColor: CONSTANTS.PRIMARY_WHITE
     },
+    blankContainer: {
+      display: 'flex',
+      flex: '1 1 100%',
+      overflowX: 'hidden',
+      width: '100%',
+      backgroundColor: CONSTANTS.PRIMARY_WHITE
+    }
   }),
 );
 
@@ -88,19 +56,15 @@ function BCAdminLayout({classes, children}: Props) {
         drawerToggle={() => {
           setOpen(!open);
         }}
-        collapsedClasses={classnames(themClasses.appBar, {
-          [themClasses.appBarShift]: open,
-        })}
       />
 
       <BCAdminSidebar
         open={open}
-        drawerClasses={themClasses}
       />
 
       <main className={themClasses.content}>
         <div className={themClasses.toolbar} />
-        {children}
+        {children ? children : <div className={classes.blankContainer}/>}
       </main>
       <BCModal />
     </div>
