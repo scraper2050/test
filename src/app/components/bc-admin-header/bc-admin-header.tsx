@@ -4,7 +4,6 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import styles from "./bc-admin-header.style";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Grid from "@material-ui/core/Grid";
 import LogoSvg from "../../../assets/img/header-logo.svg";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import classNames from "classnames";
@@ -15,12 +14,9 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import HeaderNotifications, { NotificationItem } from "../bc-header/bc-header-notification";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { loadNotificationsActions } from "../../../actions/notifications/notifications.action";
-import AvatarImg from "../../../assets/img/user_avatar.png";
-import { logoutAction, resetStore } from "../../../actions/auth/auth.action";
-import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
 import * as CONSTANTS from "../../../constants";
 import classnames from "classnames";
-import IconButton from "@material-ui/core/IconButton";
+import SearchIcon from '@material-ui/icons/Search';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Fab from "@material-ui/core/Fab";
@@ -29,47 +25,60 @@ interface Props {
   token: string;
   user: any;
   classes: any;
-  collapsedClasses?: any;
-  drawerToggle(): void;
+  drawerToggle?(): void;
   drawerOpen: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
   fab: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
+    zIndex: 1101,
+    width: theme.spacing(3.5),
+    height: theme.spacing(3.5),
     minHeight: 'unset',
     backgroundColor: CONSTANTS.ADMIN_SIDEBAR_TOGGLE_BG
   },
 }));
 
-function BCAdminHeader({ token, user, classes, collapsedClasses, drawerToggle, drawerOpen }: Props): JSX.Element {
+const useHeaderStyles = makeStyles(theme => {
+  console.log("log-theme", theme.zIndex.drawer + 1);
+  return ({
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      width: `calc(100% - ${theme.spacing(9) + 1}px)`,
+      transition: theme.transitions.create(["width", "margin"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen
+      })
+    },
+    appBarShift: {
+      zIndex: theme.zIndex.drawer + 1,
+      marginLeft: CONSTANTS.ADMIN_SIDEBAR_WIDTH,
+      width: `calc(100% - ${CONSTANTS.ADMIN_SIDEBAR_WIDTH}px)`,
+      transition: theme.transitions.create(["width", "margin"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen
+      })
+    }
+  });
+});
+
+function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props): JSX.Element {
   const fabStyles = useStyles();
+  const headerStyles = useHeaderStyles();
 
   const { notifications, error, loading } = useSelector((state: any) => state.notifications);
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
-  const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const pathName = location.pathname;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     dispatch(loadNotificationsActions.fetch());
   }, []);
-
-  const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
-    ? AvatarImg
-    : user?.profile?.imageUrl;
-
-  const dropdownItem = classNames(
-    classes.dropdownItem,
-    classes.primaryHover
-  );
 
   const showNotificationDetails = () => {
     setShowNotification(!showNotification);
@@ -87,32 +96,11 @@ function BCAdminHeader({ token, user, classes, collapsedClasses, drawerToggle, d
     'sm': 12
   });
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleClick = () => {
-    setProfileOpen(!profileOpen);
-  };
   const handleClose = () => {
     setProfileOpen(false);
     setShowNotification(false);
     setAnchorEl(null);
   };
-
-  const handleViewProfile = (): void => {
-    handleClose();
-    history.push('/main/user/view-profile');
-  };
-
-
-  const handleClickLogout = (): void => {
-    handleClose();
-    dispatch(logoutAction());
-    dispatch(resetStore());
-    removeUserFromLocalStorage();
-    history.push('/');
-  };
-
 
   const NAV_DATA = [
     {
@@ -149,110 +137,113 @@ function BCAdminHeader({ token, user, classes, collapsedClasses, drawerToggle, d
 
   return (
     <>
-      <AppBar position="fixed" color={'inherit'} className={classnames(classes.bcHeader, collapsedClasses)}>
+      <AppBar
+        position="fixed" color={'inherit'}
+        className={classnames(
+          classes.bcHeader,
+          {
+            [headerStyles.appBarShift]: drawerOpen,
+            [headerStyles.appBar]: !drawerOpen,
+          })
+        }>
         <div className={classes.toolbarToggleButton}>
           <Fab size="small" onClick={drawerToggle} className={fabStyles.fab}>
-            {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {drawerOpen ? <ChevronLeftIcon style={{ fontSize: 20, color: CONSTANTS.SECONDARY_GREY }}/> : <ChevronRightIcon style={{ fontSize: 20, color: CONSTANTS.SECONDARY_GREY }} />}
           </Fab>
         </div>
 
-        <Grid
-          container
-          spacing={1}
-          alignItems="center"
-          justify="center"
-        >
-          <Grid item xs={1}>
-            <Link
-              className={classes.bcAdminHeaderLogo}
-              to={'/main/dashboard'}>
-              <img
-                alt={'logo'}
-                src={LogoSvg}
+        <div className="bcNavMenu">
+          <Link
+            className={classes.bcAdminHeaderLogo}
+            to={'/main/dashboard'}>
+            <img
+              alt={'logo'}
+              src={LogoSvg}
+            />
+          </Link>
+
+          <Toolbar className={classes.bcHeaderToolBar}>
+            <ul className={classes.bcAdminHeaderNav}>
+              {NAV_DATA.map((item, idx) => {
+                return (
+                  <li
+                    className={classNames({
+                      [classes.bcAdminHeaderNavItem]: true,
+                      [classes.bcAdminHeaderNavItemActive]: pathName.indexOf(item.link) === 0
+                    })}
+                    key={idx}
+                    tabIndex={0}>
+                    <Link to={item.link}>
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </Toolbar>
+
+        </div>
+
+        <div className={classes.bcAdminHeaderTools} >
+          <Button
+            className={classes.bcAdminHeaderToolsButton}>
+            <SearchIcon color={'action'} />
+          </Button>
+          <Button
+            className={classes.bcAdminHeaderToolsButton}
+            href={'http://blueclerk.com/support/'}
+            target={'_blank'}>
+            <ContactSupportIcon color={'action'} />
+          </Button>
+          <Button
+            aria-describedby={notificationPopover}
+            buttonRef={(node: any) => {
+              setNotificationEl(node);
+            }}
+            className={classes.bcAdminHeaderToolsButton}
+            color={'default'}
+            href={''}
+            onClick={showNotificationDetails}
+            target={'_blank'}>
+            <Badge
+              badgeContent={computeUnreadNotifications(notifications)}
+              color={'secondary'}
+              invisible={computeUnreadNotifications(notifications) === 0}>
+              <NotificationsIcon
+                color={computeUnreadNotifications(notifications) === 0 ? 'action' : 'primary'}
               />
-            </Link>
-          </Grid>
-          <Grid item xs>
-            <Toolbar className={classes.bcHeaderToolBar}>
-              <ul className={classes.bcAdminHeaderNav}>
-                {NAV_DATA.map((item, idx) => {
-                  return (
-                    <li
-                      className={classNames({
-                        [classes.bcAdminHeaderNavItem]: true,
-                        [classes.bcAdminHeaderNavItemActive]: pathName.indexOf(item.link) === 0
-                      })}
-                      key={idx}
-                      tabIndex={0}>
-                      <Link to={item.link}>
-                        {item.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Toolbar>
-          </Grid>
+            </Badge>
+          </Button>
 
-          <Grid item xs={1}>
-            <div className={classes.bcAdminHeaderTools} >
-              <Button
-                className={classes.bcAdminHeaderToolsButton}
-                href={'http://blueclerk.com/support/'}
-                target={'_blank'}>
-                <ContactSupportIcon color={'action'} />
-              </Button>
-              <Button
-                aria-describedby={notificationPopover}
-                buttonRef={(node: any) => {
-                  setNotificationEl(node);
-                }}
-                className={classes.bcAdminHeaderToolsButton}
-                color={'default'}
-                href={''}
-                onClick={showNotificationDetails}
-                target={'_blank'}>
-                <Badge
-                  badgeContent={computeUnreadNotifications(notifications)}
-                  color={'secondary'}
-                  invisible={computeUnreadNotifications(notifications) === 0}>
-                  <NotificationsIcon
-                    color={'action'}
-                  />
-                </Badge>
-              </Button>
-
-              <Popper
-                anchorEl={notificationEl}
-                className={classNames({
-                  [classes.bcAdminPopperClose]: !showNotification,
-                  [classes.bcAdminPopperResponsive]: true,
-                  [classes.bcAdminPopperNav]: true
-                })}
-                disablePortal
-                id={notificationPopover}
-                open={showNotification}
-                placement={'bottom'}
-                transition>
-                {({ TransitionProps, placement }) =>
-                  <Grow
-                    {...TransitionProps}
-                    style={{ 'transformOrigin': '0 0 0' }}>
-                    <ClickAwayListener onClickAway={handleClose}>
-                      <Paper className={classes.bcAdminDropdown}>
-                        <HeaderNotifications
-                          close={handleClose}
-                          items={activeNotifications}
-                          loading={loading}
-                        />
-                      </Paper>
-                    </ClickAwayListener>
-                  </Grow>
-                }
-              </Popper>
-            </div>
-          </Grid>
-        </Grid>
+          <Popper
+            anchorEl={notificationEl}
+            className={classNames({
+              [classes.bcAdminPopperClose]: !showNotification,
+              [classes.bcAdminPopperResponsive]: true,
+              [classes.bcAdminPopperNav]: true
+            })}
+            disablePortal
+            id={notificationPopover}
+            open={showNotification}
+            placement={'bottom'}
+            transition>
+            {({ TransitionProps, placement }) =>
+              <Grow
+                {...TransitionProps}
+                style={{ 'transformOrigin': '0 0 0' }}>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <Paper className={classes.bcAdminDropdown}>
+                    <HeaderNotifications
+                      close={handleClose}
+                      items={activeNotifications}
+                      loading={loading}
+                    />
+                  </Paper>
+                </ClickAwayListener>
+              </Grow>
+            }
+          </Popper>
+        </div>
 
       </AppBar>
     </>

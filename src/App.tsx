@@ -72,7 +72,7 @@ function App() {
   }, [user]);
 
   useEffect(() => {
-    if (token) {
+    if (token && user.auth) {
       LogRocket.identify(user._id, {
         'email': user.auth.email,
         'name': user.profile.displayName

@@ -1,13 +1,12 @@
 import AuthRoute from 'auth-route';
 import BCCircularLoader from '../../components/bc-circular-loader/bc-circular-loader';
-import BCHeader from '../../components/bc-header/bc-header';
-import BCToolBar from '../../components/bc-toolbar-btn/bc-tool-bar';
-import { Grid, useMediaQuery, useTheme } from '@material-ui/core';
 import 'scss/elevation.scss';
 import React, { Suspense, useState } from 'react';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import BCAdminLayout from "../../components/bc-admin-layout/bc-admin-layout";
 import BCAdminHeader from "../../components/bc-admin-header/bc-admin-header";
+import BCAdminSidebar from "../../components/bc-admin-sidebar/bc-admin-sidebar";
+import * as CONSTANTS from "../../../constants";
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
@@ -75,15 +74,21 @@ function Main(): any {
       <Switch>
         <Suspense
           fallback={
-            <>
+            <div style={{flex: 1}}>
               <BCAdminHeader
-                drawerToggle={() => {
-                  return true;
-                }}
                 drawerOpen={true}
               />
-              <BCCircularLoader heightValue={'100vh'} />
-            </>
+              <BCAdminSidebar
+                open={true}
+              />
+              <div style={{
+                flexGrow: 1,
+                padding: 20,
+                backgroundColor: CONSTANTS.PRIMARY_WHITE
+              }}>
+                <BCCircularLoader heightValue={'100vh'} />
+              </div>
+            </div>
           }>
           <Route>
             <BCAdminLayout>
