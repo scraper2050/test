@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, ClickAwayListener, Grow, Paper, Popper, useMediaQuery, useTheme } from "@material-ui/core";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { withStyles, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import styles from "./bc-admin-header.style";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -20,6 +20,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Fab from "@material-ui/core/Fab";
+import InputBase from '@material-ui/core/InputBase';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 interface Props {
   token: string;
@@ -40,11 +42,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const useHeaderStyles = makeStyles(theme => {
-  console.log("log-theme", theme.zIndex.drawer + 1);
   return ({
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
-      width: `calc(100% - ${theme.spacing(9) + 1}px)`,
+      width: `calc(100% - ${theme.spacing(10) + 1}px)`,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen
@@ -62,9 +63,71 @@ const useHeaderStyles = makeStyles(theme => {
   });
 });
 
+const useSearchStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    search: {
+      position: 'relative',
+      borderRadius: theme.shape.borderRadius+5,
+      border: '1px solid #E0E0E0',
+      marginLeft: 0,
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: 'auto',
+      },
+    },
+    searchIcon: {
+      padding: theme.spacing(0, 0, 0 , 1),
+      height: '100%',
+      position: 'absolute',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dropIcon: {
+      padding: theme.spacing(0, 0, 0 , 1),
+      height: '100%',
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(3)}px)`,
+      paddingRight: `calc(1em + ${theme.spacing(2)}px)`,
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('md')]: {
+        width: '15ch',
+      },
+    },
+    sectionDesktop: {
+      display: 'none',
+      [theme.breakpoints.up('md')]: {
+        display: 'flex',
+      },
+    },
+    sectionMobile: {
+      display: 'flex',
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
+  }),
+);
+
 function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props): JSX.Element {
   const fabStyles = useStyles();
   const headerStyles = useHeaderStyles();
+  const searchStyles = useSearchStyles();
 
   const { notifications, error, loading } = useSelector((state: any) => state.notifications);
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
@@ -185,10 +248,22 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
         </div>
 
         <div className={classes.bcAdminHeaderTools} >
-          <Button
-            className={classes.bcAdminHeaderToolsButton}>
-            <SearchIcon color={'action'} />
-          </Button>
+          <div className={searchStyles.search}>
+            <div className={searchStyles.searchIcon}>
+              <SearchIcon color={'action'}/>
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: searchStyles.inputRoot,
+                input: searchStyles.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+            />
+            <div className={searchStyles.dropIcon}>
+              <ArrowDropDownIcon color={'action'}/>
+            </div>
+          </div>
           <Button
             className={classes.bcAdminHeaderToolsButton}
             href={'http://blueclerk.com/support/'}

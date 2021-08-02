@@ -9,12 +9,12 @@ export default (theme: Theme): any => ({
   },
   'bcSideBarCompanyLogo': {
     'width': '100%',
-    'height': 50,
+    'height': 70,
     'display': 'flex',
     'justifyContent': 'center',
     'alignItems': 'center',
     'transition': 'all 0.3s 0s ease-in-out',
-    'margin': '30px 0',
+    'margin': '45px 0 15px',
     '& > img': {
       'height': '100%',
     }

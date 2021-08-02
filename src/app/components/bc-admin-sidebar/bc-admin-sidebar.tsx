@@ -83,12 +83,12 @@ const useAvatarStyles = makeStyles((theme: Theme) =>
       transition: 'all 0.3s 0s ease-in-out',
     },
     large: {
-      width: theme.spacing(7),
-      height: theme.spacing(7),
+      width: theme.spacing(5),
+      height: theme.spacing(5),
       transition: 'all 0.3s 0s ease-in-out',
     },
     companyLogo: {
-      height: '30px!important',
+      height: '50px!important',
     }
   }),
 );
@@ -115,7 +115,7 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
       overflowX: 'hidden',
       width: theme.spacing(7) + 1,
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9) + 1,
+        width: theme.spacing(10) + 1,
       },
     },
   }),
@@ -428,7 +428,7 @@ const StyledListItem = styled(ListItem)`
   color: #000;
   border-radius: 7px;
   & > .menuLabel {
-    padding-left: 25px;
+    padding-left: 35px;
   };
   &.Mui-selected {
     color: #fff;
@@ -441,9 +441,8 @@ const StyledFooterItem = styled(ListItem)`
   line-height: 20px;
   color: #000;
   border-radius: 7px;
-  padding-left: 10px;
   & > .menuLabel {
-    padding-left: 25px;
+    padding-left: 35px;
   };
 `;
 
