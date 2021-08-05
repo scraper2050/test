@@ -78,7 +78,16 @@ export const resetCustomer = () => {
           'lastName': '',
           'displayName': ''
         },
-        'vendorId': ''
+        'vendorId': '',
+        'paymentTerm': {
+          'createdAt': '',
+          'createdBy': '',
+          'dueDays': 0,
+          'isActive': false,
+          'name': '',
+          'updatedAt': '',
+          '_id': undefined,
+        }
       } });
   };
 };
