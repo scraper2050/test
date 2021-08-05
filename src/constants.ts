@@ -43,5 +43,7 @@ export const modalTypes = {
   'SHARED_FORM_MODAL': 'shared-form-modal',
   'EDIT_ITEM_MODAL': 'edit-item-modal',
   'SALES_TAX_MODAL': 'sales-tax-modal',
+  'PAYMENT_TERMS_MODAL': 'payment-terms-modal',
+  'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
   'EDIT_TIERS_MODAL': 'edit-tiers-modal'
 };

@@ -34,7 +34,9 @@ import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
 import BCSharedFormModal from './bc-shared-form-modal/bc-shared-form-modal';
 import BCInvoiceEditModal from './bc-invoice-item-modal/bc-invoice-item-modal';
 import BCSalesTaxModal from './bc-sales-tax-modal/bc-sales-tax-modal';
+import BcPaymentTermsModal from './bc-payment-terms-modal/bc-payment-terms-modal';
 import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
+import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update-payment-terms-modal";
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -333,6 +335,24 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCSalesTaxModal />);
+        break;
+      case modalTypes.PAYMENT_TERMS_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BcPaymentTermsModal />);
+        break;
+      case modalTypes.UPDATE_PAYMENT_TERMS_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BcUpdatePaymentTermsModal customerId={data.customerId}/>);
         break;
       case modalTypes.EDIT_TIERS_MODAL:
         setModalOptions({

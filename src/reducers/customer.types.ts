@@ -41,7 +41,16 @@ export interface Customer {
         isActive: boolean;
         _id: string;
         name: string;
-    }
+    },
+  paymentTerm: {
+    createdAt: string,
+    createdBy: string,
+    dueDays: number,
+    isActive: Boolean,
+    name: string,
+    updatedAt: string,
+    _id: string | undefined,
+  }
 }
 
 export interface CustomersState {
