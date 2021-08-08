@@ -1,5 +1,5 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { Button, Grid, withStyles } from '@material-ui/core';
 import { formatDatTimell, formatDatTimelll, formatTime } from 'helpers/format';
 import styles, {
@@ -96,20 +96,22 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     }
   };
 
-
   const showInvoice = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'detail': true,
-        'modalTitle': 'Invoice',
-        'formId': invoice._id,
-        'removeFooter': false
-      },
-      'type': modalTypes.SHARED_FORM_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 10);
+    // dispatch(setModalDataAction({
+    //   'data': {
+    //     'detail': true,
+    //     'modalTitle': 'Invoice',
+    //     'formId': invoice._id,
+    //     'removeFooter': false
+    //   },
+    //   'type': modalTypes.SHARED_FORM_MODAL
+    // }));
+    // setTimeout(() => {
+    //   dispatch(openModalAction());
+    // }, 10);
+    history.push({
+      'pathname': `view/${invoice._id}`,
+    });
   };
 
   return (
