@@ -13,6 +13,7 @@ import classNames from "classnames";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { RootState } from "../../../reducers";
 import { loadInvoiceItems } from "../../../actions/invoicing/items/items.action";
+import BcInvoiceTableRow from "./bc-invoice-table-row";
 
 interface Props {
   classes?: any;
@@ -239,7 +240,9 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
       borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`
     },
     addNew: {
-      marginTop: theme.spacing(2)
+      marginTop: theme.spacing(2),
+      display: 'flex',
+      justifyContent: 'center'
     }
   }),
 );
@@ -251,7 +254,17 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
 
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const [invoiceDetail, setInvoiceDetail] = useState(invoiceData);
-  console.log("log-invoiceItems", invoiceItems);
+  console.log("log-invoiceItems", invoiceDetail);
+
+  const [newItem, setNewItem] = useState({
+    isFixed: true,
+    taxAmount: 0,
+    subTotal: 2,
+    quantity: 1,
+    price: 2,
+    tax: 0,
+    item: ""
+  });
 
   useEffect(() => {
     dispatch(loadInvoiceItems.fetch());
@@ -259,7 +272,6 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
   }, [])
 
   const renderTableRow = (row: any) => {
-    console.log("log-row.item?._id", row.item?._id);
     return (
       <div>
         <Grid
@@ -269,16 +281,14 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
           <Grid item xs={12} lg={6}>
             <Autocomplete
               id={row.item?._id}
-              options={invoiceItems}
+              size="small"
+              value={row.item?._id}
+              options={invoiceItems.filter(invitem => invitem.name.length > 0)}
               getOptionLabel={(option: any) => option.name}
-              value={row.item ? row.item?._id : ''}
-              autoComplete
-              autoSelect
-              includeInputInList
               onChange={(e, value) => {
                 console.log("log-value", value);
               }}
-              renderInput={(params) => <TextField {...params} label="Select Item" margin="normal" />}
+              renderInput={(params) => <TextField {...params} label="Select Item" variant="outlined" />}
             />
           </Grid>
           <Grid item xs={12} lg={1}>
@@ -430,7 +440,7 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
         </div>
         <div className={invoiceTableStyle.itemsTableBody}>
           {invoiceDetail?.items && invoiceDetail?.items.map((row: any) => (
-            renderTableRow(row)
+            <BcInvoiceTableRow row={row}/>
           ))}
 
           <div className={invoiceTableStyle.addNew}>
