@@ -29,6 +29,7 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   const { customerObj, loading } = useSelector(({ customers }:any) => customers);
   const { companyName, companyEmail, logoUrl, phone, city, state, street, zipCode } = useSelector(({ profile }:any) => profile);
 
+  console.log("log-invoiceDetail", invoiceDetail);
 
   const columns = [
     {

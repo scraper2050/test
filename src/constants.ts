@@ -8,11 +8,18 @@ export const PRIMARY_DARK_GREY = 'rgba(0, 0, 0, 0.5)';
 export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 export const PRIMARY_ORANGE = '#FE5500';
 export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
-
 export const PRIMARY_CARD_BLUE = '#66B8F9';
+
 export const SECONDARY_CARD_BLUE = '#3582BE';
 export const PRIMARY_CARD_PURPLE = '#6846D3';
 export const SIDEBAR_WIDTH = '233';
+
+export const INVOICE_TOP = '#EAECF3';
+export const INVOICE_BORDER = '#BDBDBD';
+export const INVOICE_TOTAL_CONTAINER = '#D0D3DC';
+export const INVOICE_HEADING = '#4F4F4F';
+export const INVOICE_TABLE_HEADING = '#828282';
+
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',
   'CREATE_JOB_MODAL': 'create-job',

@@ -23,6 +23,8 @@ const ViewMoreLocationPage = React.lazy(() => import('../customer/view-more/view
 const TicketsMapViewPage = React.lazy(() => import('../customer/tickets-map-view/tickets-map-view'));
 
 const ViewJobReportsPage = React.lazy(() => import('../customer/job-reports/view-job-report'));
+const ViewInvoicePage = React.lazy(() => import('../customer/job-reports/view-invoice'));
+const EditInvoicePage = React.lazy(() => import('../customer/job-reports/view-invoice-edit'));
 
 const InvoicingTodosPage = React.lazy(() => import('../invoicing/todos/todos'));
 const InvoicingListPage = React.lazy(() => import('../invoicing/invoices-list/invoices-list'));
@@ -277,6 +279,20 @@ function Main(): any {
                     exact
                     path={'/main/customers/job-reports/:jobReportId'}
                     title={'Job Reports'}
+                  />
+
+                  <AuthRoute
+                    Component={ViewInvoicePage}
+                    exact
+                    path={'/main/customers/job-reports/view/:invoice'}
+                    title={'View Invoice'}
+                  />
+
+                  <AuthRoute
+                    Component={EditInvoicePage}
+                    exact
+                    path={'/main/customers/job-reports/edit/:invoice'}
+                    title={'Edit Invoice'}
                   />
 
                   <Redirect
