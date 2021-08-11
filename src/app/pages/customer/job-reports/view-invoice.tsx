@@ -17,6 +17,7 @@ import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.actio
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
+import { getContacts } from "../../../../api/contacts.api";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,9 +50,8 @@ function ViewInvoice({ classes, theme }: any) {
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
 
-  console.log("log-invoiceDetail", invoiceDetail);
-
   useEffect(() => {
+
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
     }

@@ -50,8 +50,6 @@ function ViewInvoice({ classes, theme }: any) {
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
 
-  console.log("log-invoiceDetail", invoiceDetail);
-
   useEffect(() => {
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));

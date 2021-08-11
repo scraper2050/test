@@ -20,6 +20,11 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
+import CloseIcon from '@material-ui/icons/Close';
+
+import {
+  DatePicker,
+} from '@material-ui/pickers';
 
 const useTableStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,7 +65,7 @@ const useTableStyles = makeStyles((theme: Theme) =>
     },
     actionsContainer: {
       position: 'absolute',
-      right: -40
+      right: -50
     },
   }),
 );
@@ -76,18 +81,20 @@ const TableSelect = withStyles((theme: Theme) =>
 interface Props {
   classes: any;
   row: any;
+  isEdit?: boolean;
 }
 
-function BcInvoiceTableRow({ classes, row }: Props) {
+function BcInvoiceTableRow({ classes, row, isEdit }: Props) {
   const invoiceTableStyle = useTableStyles();
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
-  const [item, setItem] = useState<Object>();
-  const [quantity, setQuantity] = useState<number>(0);
-  const [price, setPrice] = useState<number>(0);
-  const [unit, setUnit] = useState<number>(0);
-  const [tax, setTax] = useState<number>(0);
-  const [taxAmount, setTaxAmount] = useState<number>(0);
-  const [amount, setAmount] = useState<number>(0);
+
+  const [item, setItem] = useState(row?.item._id);
+  const [quantity, setQuantity] = useState(row?.quantity);
+  const [price, setPrice] = useState(row?.price);
+  const [unit, setUnit] = useState(0);
+  const [tax, setTax] = useState(0);
+  const [taxAmount, setTaxAmount] = useState(0);
+  const [amount, setAmount] = useState(0);
 
   return (
     <div>
@@ -124,8 +131,9 @@ function BcInvoiceTableRow({ classes, row }: Props) {
             <InputBase
               type="number"
               value={quantity}
+              inputProps={{ min: "0", max: "99", step: "1" }}
               onChange={(e) => {
-                console.log("log-e", e);
+                setQuantity(e.target.value);
               }}
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
             />
@@ -134,57 +142,49 @@ function BcInvoiceTableRow({ classes, row }: Props) {
             <InputBase
               value={price}
               type="number"
+              inputProps={{ min: "0", step: "0.1" }}
               onChange={(e) => {
-                console.log("log-e", e);
+                setPrice(parseFloat(e.target.value).toFixed(2));
               }}
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
             />
           </Grid>
           <Grid item xs={12} lg={1}>
-            <InputBase
-              type="number"
-              value={unit}
-              onChange={(e) => {
-                console.log("log-e", e);
-              }}
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            />
+                <span className={classNames(
+                  invoiceTableStyle.itemsTableBodyText,
+                  invoiceTableStyle.itemsTableHeaderTextCenter
+                )}>{row?.quantity}</span>
           </Grid>
           <Grid item xs={12} lg={1}>
-            <InputBase
-              type="number"
-              value={tax}
-              onChange={(e) => {
-                console.log("log-e", e);
-              }}
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            />
+                <span className={classNames(
+                  invoiceTableStyle.itemsTableBodyText,
+                  invoiceTableStyle.itemsTableHeaderTextCenter
+                )}>{row?.tax > 0 ? parseFloat(row?.tax).toFixed(2) : 'N/A'}</span>
           </Grid>
           <Grid item xs={12} lg={1}>
-            <InputBase
-              type="number"
-              value={taxAmount}
-              onChange={(e) => {
-                console.log("log-e", e);
-              }}
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            />
+                <span className={classNames(
+                  invoiceTableStyle.itemsTableBodyText,
+                  invoiceTableStyle.itemsTableHeaderTextCenter
+                )}>${parseFloat(row?.taxAmount).toFixed(2)}</span>
           </Grid>
           <Grid item xs={12} lg={1}>
-            <InputBase
-              type="number"
-              value={amount}
-              onChange={(e) => {
-                console.log("log-e", e);
-              }}
-              startAdornment={<InputAdornment position="start">$</InputAdornment>}
-            />
+                <span className={classNames(
+                  invoiceTableStyle.itemsTableBodyText,
+                  invoiceTableStyle.itemsTableHeaderTextRight
+                )}>${parseFloat(row?.subTotal).toFixed(2)}</span>
           </Grid>
         </Grid>
         <div className={invoiceTableStyle.actionsContainer}>
-          <IconButton aria-label="delete" color="secondary" size="small">
-            <SaveIcon fontSize="inherit" />
-          </IconButton>
+          {
+            isEdit ?
+              <IconButton aria-label="edit" color="primary" size="small">
+                <CloseIcon fontSize="inherit" />
+              </IconButton> :
+              <IconButton aria-label="save" color="primary" size="small">
+                <SaveIcon fontSize="inherit" />
+              </IconButton>
+          }
+
           <IconButton aria-label="delete" color="secondary" size="small">
             <DeleteIcon fontSize="inherit" />
           </IconButton>

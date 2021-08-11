@@ -3,7 +3,7 @@ import BCTabs from '../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './customer.styles';
-import { Grid, withStyles } from '@material-ui/core';
+import { Button, Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import {
   getCustomerDetailAction,
@@ -14,6 +14,31 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import BCQbSyncStatus from "../../components/bc-qb-sync-status/bc-qb-sync-status";
+import * as CONSTANTS from "../../../constants";
+
+const CSButton = withStyles({
+  root: {
+    textTransform: 'none',
+    fontSize: 13,
+    padding: '5px 5px',
+    lineHeight: 1.5,
+    minWidth: 40,
+    color: CONSTANTS.PRIMARY_WHITE,
+    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    '&:hover': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:active': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:focus': {
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    },
+  },
+})(Button);
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -56,16 +81,12 @@ function CustomersPage({ classes }: any) {
       Cell({ row }: any) {
         return (
           <div className={'flex items-center'}>
-            <Fab
-              aria-label={'delete'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => renderViewMore(row)}
-              variant={'extended'}>
-              {'View More'}
-            </Fab>
+            <CSButton
+              variant="contained"
+              color="primary"
+              onClick={() => renderViewMore(row)}>
+              View More
+            </CSButton>
           </div>
         );
       },

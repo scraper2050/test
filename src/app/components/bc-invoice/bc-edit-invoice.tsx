@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Chip, createStyles, Divider, Grid, MenuItem, Select, TextField, withStyles } from "@material-ui/core";
 import styles from "./bc-invoice.styles";
@@ -14,6 +14,14 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { RootState } from "../../../reducers";
 import { loadInvoiceItems } from "../../../actions/invoicing/items/items.action";
 import BcInvoiceTableRow from "./bc-invoice-table-row";
+import {
+  KeyboardDatePicker, DatePicker
+} from '@material-ui/pickers';
+import InputBase from '@material-ui/core/InputBase';
+import { TextFieldProps } from "@material-ui/core/TextField";
+import { openModalAction, setModalDataAction } from "../../../actions/bc-modal/bc-modal.action";
+import { modalTypes } from "../../../constants";
+import { addContact, getContacts } from "../../../api/contacts.api";
 
 interface Props {
   classes?: any;
@@ -197,7 +205,7 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
         fontSize: 11,
         fontWeight: 400,
       }
-    }
+    },
   }),
 );
 
@@ -252,24 +260,27 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
   const invoiceTableStyle = invoiceTableStyles();
   const dispatch = useDispatch();
 
+  const { isLoading, refresh, contacts } = useSelector((state: any) => state.contacts);
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const [invoiceDetail, setInvoiceDetail] = useState(invoiceData);
-  console.log("log-invoiceItems", invoiceDetail);
 
-  const [newItem, setNewItem] = useState({
-    isFixed: true,
-    taxAmount: 0,
-    subTotal: 2,
-    quantity: 1,
-    price: 2,
-    tax: 0,
-    item: ""
-  });
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+
+  console.log("log-invoiceItems", invoiceDetail);
 
   useEffect(() => {
     dispatch(loadInvoiceItems.fetch());
     setInvoiceDetail(invoiceData);
   }, [])
+
+  useEffect(() => {
+    let data: any = {
+      type: "Customer",
+      referenceNumber: invoiceDetail?.customer?._id
+    }
+
+    dispatch(getContacts(data));
+  }, [refresh])
 
   const renderTableRow = (row: any) => {
     return (
@@ -333,6 +344,50 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
     )
   }
 
+  const renderDatePickerInput = (props: TextFieldProps): any => {
+    return (
+      <>
+        INVOICE DATE #: <span onClick={() => setDatePickerOpen(true)}>{moment(invoiceDetail.createdAt).format('MMM. DD, YYYY')}</span>
+      </>
+    )
+  };
+
+  const handleAddContact = async (values: any) => {
+    console.log("log-values", values);
+    // try {
+    //   const response = await dispatch(addContact(values));
+    //   return response;
+    // } catch (err) {
+    //   throw new Error(err);
+    // }
+
+  }
+
+  const openAddContactModal = () => {
+
+    dispatch(setModalDataAction({
+      'data': {
+        'data': {
+          name: "",
+          email: "",
+          phone: "",
+          type: 'Customer',
+          referenceNumber: invoiceDetail?.customer?._id,
+          apply: (values: any) => handleAddContact(values),
+          newContact: true,
+          contacts,
+          customerId: invoiceDetail?.customer?._id,
+        },
+        'modalTitle': "Add Customer Contact",
+        'removeFooter': false
+      },
+      'type': modalTypes.ADD_CONTACT_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
@@ -364,9 +419,7 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
               </div>
               <div className={invoiceStyles.companyInfo}>
                 <small>CONTACT DETAILS</small>
-                <h4>{invoiceDetail?.createdBy?.profile?.displayName}</h4>
-                <span>{invoiceDetail?.createdBy?.contact?.phone}</span>
-                <span>{invoiceDetail?.createdBy?.auth?.email}</span>
+                <h4 data-edit='true' onClick={openAddContactModal}>{invoiceDetail?.customer?.contactName ? invoiceDetail?.customer?.contactName : 'no contact found'}</h4>
               </div>
             </div>
           </Grid>
@@ -394,7 +447,24 @@ function BCEditInvoice({ classes, invoiceData }: Props) {
                   </div>
                   <Divider className={invoiceStyles.divider} orientation="vertical" flexItem />
                   <div>
-                    <label>INVOICE DATE #: <span>{moment(invoiceDetail.createdAt).format('MMM. DD, YYYY')}</span></label>
+                    <label data-edit='true'>
+                      <KeyboardDatePicker
+                        open={datePickerOpen}
+                        margin="none"
+                        size="small"
+                        format="MMM. dd, yyyy"
+                        value={invoiceDetail.createdAt}
+                        autoOk
+                        onChange={(e) => {
+                          setDatePickerOpen(false);
+                          console.log("log-e", e);
+                        }}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                        TextFieldComponent={renderDatePickerInput}
+                      />
+                    </label>
                     <label>DUE DATE #: <span>{moment(invoiceDetail.dueDate).format('MMM. DD, YYYY')}</span></label>
                   </div>
                 </div>
@@ -493,6 +563,5 @@ export const DataContainer = styled.div`
   background-color: ${CONSTANTS.PRIMARY_WHITE};
   border: 1px solid ${CONSTANTS.INVOICE_BORDER};
 `;
-
 
 export default withStyles(styles)(BCEditInvoice);

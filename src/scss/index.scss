@@ -417,3 +417,10 @@ body {
   justify-content: space-between;
   margin: 10px;
 }
+
+[data-edit="true"] {
+  cursor: pointer;
+  border-bottom: 1px dashed #383838;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+}
