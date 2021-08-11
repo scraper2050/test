@@ -5,7 +5,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './schedule-jobs.styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Fab, useTheme, withStyles } from '@material-ui/core';
+import { Button, Fab, useTheme, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -13,6 +13,7 @@ import { info, error } from 'actions/snackbar/snackbar.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
 import { useLocation, useHistory } from 'react-router-dom';
+import * as CONSTANTS from "../../../../constants";
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -130,7 +131,7 @@ function ScheduleJobsPage({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-            
+
             <Fab
               aria-label={'new-ticket'}
               classes={{

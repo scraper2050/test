@@ -13,7 +13,7 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
     case CompanyProfileActonType.UPDATE_SUCCESS:
       return { ...state }
     case CompanyProfileActonType.FETCH_SUCCESS: {
-      const { address, contact, info } = action.payload;
+      const { address, contact, info, paymentTerm } = action.payload;
       const newState = {
         companyName: info.companyName,
         companyEmail: info.companyEmail,
@@ -23,7 +23,8 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
         city: address.city,
         state: address.state,
         street: address.street,
-        zipCode: address.zipCode
+        zipCode: address.zipCode,
+        paymentTerm: paymentTerm
       }
       return { ...newState, inputError: {}, serverError: null }
     }

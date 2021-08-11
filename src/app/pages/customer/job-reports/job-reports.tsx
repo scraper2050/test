@@ -5,16 +5,60 @@ import SwipeableViews from 'react-swipeable-views';
 import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import styles from '../customer.styles';
-import { Chip, Grid, withStyles } from '@material-ui/core';
+import { Button, Chip, createStyles, Grid, makeStyles, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
+import * as CONSTANTS from "../../../../constants";
+import { Theme } from "@material-ui/core/styles";
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
+const useCustomStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    // items table
+    centerContainer: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center'
+    },
+    iconBtn: {
+      fontSize: 14,
+      color: CONSTANTS.PRIMARY_WHITE
+    }
+  }),
+);
+
+
+const CSButton = withStyles({
+  root: {
+    textTransform: 'none',
+    fontSize: 13,
+    padding: '5px 5px',
+    lineHeight: 1.5,
+    minWidth: 40,
+    color: CONSTANTS.PRIMARY_WHITE,
+    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    '&:hover': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:active': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:focus': {
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    },
+  },
+})(Button);
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
+  const customStyles = useCustomStyles()
   const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
 
@@ -106,42 +150,34 @@ function JobReportsPage({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return (
-          <div className={'flex items-center'}>
+          <div className={customStyles.centerContainer}>
             <EmailReportButton
-              Component={<Fab
-                aria-label={'email'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                style={{ 'marginRight': 20 }}
-                variant={'extended'}>
+              Component={<CSButton
+                variant="contained"
+                color="primary"
+                size="small">
                 <MailOutlineOutlined
-                  fontSize={'default'}
-                  style={{ 'marginRight': 5 }}
+                  className={customStyles.iconBtn}
                 />
-                {' '}
-                {'Email'}
-              </Fab>}
+              </CSButton>}
               jobReport={row.original}
             />
 
-            <Fab
+            <CSButton
               aria-label={'view more'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => handleViewMore(row)}
-              variant={'extended'}>
-              {'View More'}
-            </Fab>
+              variant="contained"
+              color="primary"
+              onClick={() => handleViewMore(row)}>
+              <VisibilityIcon
+                className={customStyles.iconBtn}
+              />
+            </CSButton>
           </div>
         );
       },
       'id': 'action',
       'sortable': false,
-      'width': 60
+      'width': 100
     }
   ];
 

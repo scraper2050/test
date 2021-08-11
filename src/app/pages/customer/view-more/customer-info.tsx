@@ -14,11 +14,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import '../../../../scss/index.scss';
 import { modalTypes } from '../../../../constants';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
+import ReceiptIcon from "@material-ui/icons/Receipt";
+import BCAdminCard from "../../../components/bc-admin-card/bc-admin-card";
+import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 
 function CustomerInfoPage({ classes }: any) {
   const dispatch = useDispatch();
   const location = useLocation();
   const { customerObj, loading } = useSelector((state: any) => state.customers);
+  const { 'data': paymentTerms, isLoading, done, updating, error } = useSelector(({ paymentTerms }: any) => paymentTerms);
 
   useEffect(() => {
     if (customerObj?._id === '') {
@@ -27,6 +33,7 @@ function CustomerInfoPage({ classes }: any) {
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction({ customerId }));
     }
+    dispatch(getAllPaymentTermsAPI());
   }, []);
 
   const renderCustomerInfo = (row: any) => {
@@ -106,6 +113,7 @@ function CustomerInfoPage({ classes }: any) {
     };
     return customerObj;
   };
+
   const handleEditClick = (customer: any) => {
     dispatch(setModalDataAction({
       'data': {
@@ -120,77 +128,102 @@ function CustomerInfoPage({ classes }: any) {
     }, 200);
   };
 
+  const viewPaymentTerms = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Payment Terms',
+        'customerId': customerObj?._id
+      },
+      'type': modalTypes.UPDATE_PAYMENT_TERMS_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   if (loading) {
     return <BCCircularLoader heightValue={'200px'} />;
   }
   const customerData = renderCustomerInfo(customerObj);
   return (
-    <div className={'customer_info_wrapper'}>
-      <div className={'customer_container'}>
-        <div className={'name_wrapper customer_details'}>
-          <strong>
-            {'Name:'}
-            {' '}
-          </strong>
-          {' '}
-          {customerData.customerName}
-        </div>
-        <div className={'customer_details'}>
-          <strong>
-            {'Contact Name:'}
-            {' '}
-          </strong>
-          {' '}
-          {customerData.contactName}
-        </div>
-        <div className={'customer_details'}>
-          <strong>
-            {'Address:'}
-            {' '}
-          </strong>
-          {' '}
-          {customerData.address.trim() !== '' ? customerData.address : customerData.address1.trim() !== '' ? '' : 'N/A'}
-          {customerData.address.trim() !== '' && <br />}
-          {customerData.address1.trim() !== '' ? customerData.address1 : ''}
-        </div>
-        <div className={'customer_details'}>
-          <strong>
-            {'E-mail:'}
-            {' '}
-          </strong>
-          {' '}
-          {customerData.email}
-        </div>
-        <div className={'customer_details'}>
-          {customerData.vendorId !== '' ? <>
-            {' '}
+    <div className={'customer_info_container'}>
+      <div className={'customer_info_wrapper'}>
+        <div className={'customer_container'}>
+          <div className={'name_wrapper customer_details'}>
             <strong>
-              {'Vendor Number:'}
+              {'Name:'}
               {' '}
             </strong>
             {' '}
-            {customerData.vendorId}
+            {customerData.customerName}
+          </div>
+          <div className={'customer_details'}>
+            <strong>
+              {'Contact Name:'}
+              {' '}
+            </strong>
             {' '}
-          </> : null}
+            {customerData.contactName}
+          </div>
+          <div className={'customer_details'}>
+            <strong>
+              {'Address:'}
+              {' '}
+            </strong>
+            {' '}
+            {customerData.address.trim() !== '' ? customerData.address : customerData.address1.trim() !== '' ? '' : 'N/A'}
+            {customerData.address.trim() !== '' && <br />}
+            {customerData.address1.trim() !== '' ? customerData.address1 : ''}
+          </div>
+          <div className={'customer_details'}>
+            <strong>
+              {'E-mail:'}
+              {' '}
+            </strong>
+            {' '}
+            {customerData.email}
+          </div>
+          <div className={'customer_details'}>
+            {customerData.vendorId !== '' ? <>
+              {' '}
+              <strong>
+                {'Vendor Number:'}
+                {' '}
+              </strong>
+              {' '}
+              {customerData.vendorId}
+              {' '}
+            </> : null}
+          </div>
+          <div className={'customer_details'}>
+            <strong>
+              {'Phone:'}
+              {' '}
+            </strong>
+            {' '}
+            {customerData.phone}
+          </div>
         </div>
-        <div className={'customer_details'}>
-          <strong>
-            {'Phone:'}
-            {' '}
-          </strong>
-          {' '}
-          {customerData.phone}
+        <div
+          className={'edit_button'}
+          onClick={() => handleEditClick(customerData)}>
+          <button className={'MuiFab-primary'}>
+            <i className={'material-icons'}>
+              {'edit'}
+            </i>
+          </button>
         </div>
       </div>
-      <div
-        className={'edit_button'}
-        onClick={() => handleEditClick(customerData)}>
-        <button className={'MuiFab-primary'}>
-          <i className={'material-icons'}>
-            {'edit'}
-          </i>
-        </button>
+      <div className='custom-action-button'>
+        <BCAdminCard
+          cardText={'Payment Terms'}
+          color={'success'}
+          func={viewPaymentTerms}>
+          <MonetizationOnIcon />
+        </BCAdminCard>
       </div>
+
     </div>
   );
 }

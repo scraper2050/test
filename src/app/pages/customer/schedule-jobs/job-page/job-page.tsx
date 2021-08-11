@@ -2,10 +2,10 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
 import { getAllJobsAPI } from 'api/job.api';
-import { modalTypes } from '../../../../../constants';
+import { modalTypes, TABLE_ACTION_BUTTON, TABLE_ACTION_BUTTON_HOVER } from "../../../../../constants";
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { Grid, withStyles } from '@material-ui/core';
+import { Button, createStyles, Grid, makeStyles, withStyles } from "@material-ui/core";
 import React, { useEffect } from 'react';
 import { convertMilitaryTime, formatDate } from 'helpers/format';
 import {
@@ -13,12 +13,55 @@ import {
   openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
+import IconButton from '@material-ui/core/IconButton';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
+import { Theme } from "@material-ui/core/styles";
+import * as CONSTANTS from "../../../../../constants";
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 // Import { VendorsReducer } from 'reducers/vendor.reducer';
 
+const useCustomStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    // items table
+    centerContainer: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center'
+    },
+    iconBtn: {
+      fontSize: 14,
+      color: CONSTANTS.PRIMARY_WHITE
+    }
+  }),
+);
+
+const CSButton = withStyles({
+  root: {
+    textTransform: 'none',
+    fontSize: 13,
+    padding: '5px 5px',
+    lineHeight: 1.5,
+    minWidth: 40,
+    color: CONSTANTS.PRIMARY_WHITE,
+    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    '&:hover': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:active': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:focus': {
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    },
+  },
+})(Button);
 
 interface StatusTypes {
   status: number;
@@ -32,6 +75,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     'jobs': jobState.data,
     'refresh': jobState.refresh
   }));
+  const customStyles = useCustomStyles();
 
   function RenderStatus({ status }: StatusTypes) {
     const statusArray = [
@@ -156,7 +200,8 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'Header': 'Technician',
       'accessor': 'contractor.info.companyName',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'width': 100
     },
     {
       'Header': 'Customer',
@@ -223,44 +268,34 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     {
       Cell({ row }: any) {
         return (
-          <Grid
-            alignItems={'center'}
-            container>
-            <div className={'flex items-center'}>
-              {[0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)
-                ? <Fab
-                  aria-label={'edit-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  color={'primary'}
-                  onClick={() => openEditJobModal(row.original)}
-                  variant={'extended'}>
-                  {'Edit'}
-                </Fab>
-                : <div style={{
-                  'height': 34,
-                  'width': 48 }}
-                />}
-            </div>
-            <div
-              className={'flex items-center'}
-              onClick={() => openDetailJobModal(row.original)}
-              style={{
-                'alignItems': 'center',
-                'display': 'flex',
+          <div className={customStyles.centerContainer}>
+            {[0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)
+              ? <CSButton
+                variant="contained"
+                color="primary"
+                size="small"
+                aria-label={'edit-job'}
+                onClick={() => openEditJobModal(row.original)}>
+                <VisibilityIcon className={customStyles.iconBtn} />
+              </CSButton>
+              : <div style={{
                 'height': 34,
-                'marginLeft': '.5rem'
-
-              }}>
-              <InfoIcon style={{ 'margin': 'auto, 0' }} />
-            </div>
-          </Grid>
+                'width': 40 }}
+              />}
+            <IconButton
+              aria-label="info"
+              size="small"
+              onClick={() => openDetailJobModal(row.original)}
+            >
+              <InfoIcon />
+            </IconButton>
+          </div>
         );
       },
       'Header': 'Options',
       'id': 'action-options',
-      'sortable': false
+      'sortable': false,
+      'width': 80
     }
   ];
 
