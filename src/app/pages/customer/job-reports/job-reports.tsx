@@ -14,51 +14,11 @@ import { MailOutlineOutlined } from '@material-ui/icons';
 import * as CONSTANTS from "../../../../constants";
 import { Theme } from "@material-ui/core/styles";
 import VisibilityIcon from '@material-ui/icons/Visibility';
-
-const useCustomStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    // items table
-    centerContainer: {
-      flex: 1,
-      display: 'flex',
-      justifyContent: 'space-around',
-      alignItems: 'center'
-    },
-    iconBtn: {
-      fontSize: 14,
-      color: CONSTANTS.PRIMARY_WHITE
-    }
-  }),
-);
-
-
-const CSButton = withStyles({
-  root: {
-    textTransform: 'none',
-    fontSize: 13,
-    padding: '5px 5px',
-    lineHeight: 1.5,
-    minWidth: 40,
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    '&:hover': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:active': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
+import { CSButton, CSChip, useCustomStyles } from "../../../../helpers/custom";
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
-  const customStyles = useCustomStyles()
+  const customStyles = useCustomStyles();
   const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
 
@@ -133,19 +93,20 @@ function JobReportsPage({ classes, theme }: any) {
     {
       'Cell'({ row }: any) {
         return row.original.invoiceCreated
-          ? <Chip
+          ? <CSChip
             label={'Yes'}
             style={{ 'backgroundColor': theme.palette.success.light,
               'color': '#fff' }}
           />
-          : <Chip
+          : <CSChip
             color={'secondary'}
             label={'No'}
           />;
       },
       'Header': 'Invoiced',
       'accessor': 'invoiceCreated',
-      'className': 'font-bold'
+      'className': 'font-bold',
+      'width': 60
     },
     {
       Cell({ row }: any) {
@@ -162,16 +123,6 @@ function JobReportsPage({ classes, theme }: any) {
               </CSButton>}
               jobReport={row.original}
             />
-
-            <CSButton
-              aria-label={'view more'}
-              variant="contained"
-              color="primary"
-              onClick={() => handleViewMore(row)}>
-              <VisibilityIcon
-                className={customStyles.iconBtn}
-              />
-            </CSButton>
           </div>
         );
       },
@@ -201,6 +152,8 @@ function JobReportsPage({ classes, theme }: any) {
       }
     });
   };
+
+  const handleRowClick = (event: any, row: any) => handleViewMore(row);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -235,6 +188,7 @@ function JobReportsPage({ classes, theme }: any) {
                 currentPage={currentPage}
                 initialMsg={'There are no Job Report List'}
                 isLoading={loading}
+                onRowClick={handleRowClick}
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}

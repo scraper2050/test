@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getEmployeeDetailAction, getEmployees, loadingEmployees, loadingSingleEmployee } from 'actions/employee/employee.action';
 import { EmployeeRoles, UserProfile } from 'actions/employee/employee.types';
 import { useHistory, useLocation } from 'react-router-dom';
+import { CSButton } from "../../../../helpers/custom";
 
 interface Props {
   classes: any;
@@ -62,25 +63,6 @@ function AdminEmployeesPage({ classes, children }: Props) {
       'className': 'font-bold',
       'sortable': true
     },
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          <Fab
-            aria-label={'delete'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            onClick={() => renderViewMore(row)}
-            variant={'extended'}>
-            {'View More'}
-          </Fab>
-        </div>;
-      },
-      'id': 'action',
-      'sortable': false,
-      'width': 60
-    }
   ];
 
   useEffect(() => {
@@ -113,15 +95,14 @@ function AdminEmployeesPage({ classes, children }: Props) {
     });
   };
 
+  const handleRowClick = (event: any, row: any) => renderViewMore(row);
+
   return (
     <MainContainer>
       <PageContainer>
         <div className={classes.addButtonArea}>
-          <Fab
+          <CSButton
             aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => {
               localStorage.setItem('nestedRouteKey', `add-new-employee`);
@@ -135,14 +116,15 @@ function AdminEmployeesPage({ classes, children }: Props) {
             style={{
               'float': 'right'
             }}
-            variant={'extended'}>
+            variant="contained">
             {'Add New'}
-          </Fab>
+          </CSButton>
         </div>
         <BCTableContainer
           columns={columns}
           currentPage={currentPage}
           isLoading={employees.loading}
+          onRowClick={handleRowClick}
           search
           setPage={setCurrentPage}
           tableData={employees.data}

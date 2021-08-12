@@ -20,48 +20,10 @@ import { RootState } from 'reducers';
 import { Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../../../constants";
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import { useCustomStyles } from "../../../../../helpers/custom";
+import { info } from "../../../../../actions/snackbar/snackbar.action";
 
 // Import { VendorsReducer } from 'reducers/vendor.reducer';
-
-const useCustomStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    // items table
-    centerContainer: {
-      flex: 1,
-      display: 'flex',
-      justifyContent: 'space-around',
-      alignItems: 'center'
-    },
-    iconBtn: {
-      fontSize: 14,
-      color: CONSTANTS.PRIMARY_WHITE
-    }
-  }),
-);
-
-const CSButton = withStyles({
-  root: {
-    textTransform: 'none',
-    fontSize: 13,
-    padding: '5px 5px',
-    lineHeight: 1.5,
-    minWidth: 40,
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    '&:hover': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:active': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
 
 interface StatusTypes {
   status: number;
@@ -265,38 +227,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'sortable': true,
       'width': 40
     },
-    {
-      Cell({ row }: any) {
-        return (
-          <div className={customStyles.centerContainer}>
-            {[0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)
-              ? <CSButton
-                variant="contained"
-                color="primary"
-                size="small"
-                aria-label={'edit-job'}
-                onClick={() => openEditJobModal(row.original)}>
-                <VisibilityIcon className={customStyles.iconBtn} />
-              </CSButton>
-              : <div style={{
-                'height': 34,
-                'width': 40 }}
-              />}
-            <IconButton
-              aria-label="info"
-              size="small"
-              onClick={() => openDetailJobModal(row.original)}
-            >
-              <InfoIcon />
-            </IconButton>
-          </div>
-        );
-      },
-      'Header': 'Options',
-      'id': 'action-options',
-      'sortable': false,
-      'width': 80
-    }
   ];
 
   useEffect(() => {
@@ -305,7 +235,13 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     }
   }, [refresh]);
 
-  const handleRowClick = (event: any, row: any) => { };
+  const handleRowClick = (event: any, row: any) => {
+    if ([0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)){
+      openEditJobModal(row.original)
+    } else {
+      openDetailJobModal(row.original)
+    }
+  };
 
   return (
     <DataContainer id={'0'}>
