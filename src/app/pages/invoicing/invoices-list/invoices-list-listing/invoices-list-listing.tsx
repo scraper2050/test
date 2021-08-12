@@ -19,54 +19,11 @@ import { formatDatTimelll } from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import { Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../../../constants";
+import { CSButton, useCustomStyles, CSChip } from "../../../../../helpers/custom";
 
 const getFilteredList = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList?.data);
 };
-
-const useCustomStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    // items table
-    centerContainer: {
-      flex: 1,
-      display: 'flex',
-      justifyContent: 'space-around',
-      alignItems: 'center'
-    },
-    iconBtn: {
-      fontSize: 14,
-      color: CONSTANTS.PRIMARY_WHITE
-    },
-    csChip: {
-      borderRadius: 2
-    }
-  }),
-);
-
-
-const CSButton = withStyles({
-  root: {
-    textTransform: 'none',
-    fontSize: 13,
-    padding: '5px 5px',
-    lineHeight: 1.5,
-    minWidth: 40,
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    '&:hover': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:active': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
 
 function InvoicingListListing({ classes, theme }: any) {
   const dispatch = useDispatch();
@@ -149,26 +106,29 @@ function InvoicingListListing({ classes, theme }: any) {
       'width': 20
     },
     { Cell({ row }: any) {
-      return row.original.paid
-        ? <Chip
-          label={'Paid'}
-          size="small"
-          className={customStyles.csChip}
-          style={{ 'backgroundColor': theme.palette.success.light,
-            'color': '#fff' }}
-        />
-        : <Chip
-          className={customStyles.csChip}
-          color={'secondary'}
-          size="small"
-          label={'Unpaid'}
-        />;
+      return (
+        <div className={customStyles.centerContainer}>
+          {
+            row.original.paid
+              ? <CSChip
+                label={'Paid'}
+                style={{ 'backgroundColor': theme.palette.success.light,
+                  'color': '#fff' }}
+              />
+              : <CSChip
+              className="block"
+                color={'secondary'}
+                label={'Unpaid'}
+              />
+          }
+        </div>
+      )
     },
     'Header': 'Payment Status',
     'accessor': 'paid',
     'className': 'font-bold',
     'sortable': true,
-      'width': 20
+      'width': 10
     },
     { Cell({ row }: any) {
       return row.original.lastEmailSent
@@ -192,7 +152,18 @@ function InvoicingListListing({ classes, theme }: any) {
       'sortable': true
     },
     {
-      'Cell'({ row }: any) {
+      Cell({ row }: any) {
+        return (
+          <BCQbSyncStatus data={row.original} />
+        );
+      },
+      'Header': 'Integrations',
+      'id': 'qbSync',
+      'sortable': false,
+      'width': 30
+    },
+    {
+      Cell({ row }: any) {
         return <div className={customStyles.centerContainer}>
           <EmailInvoiceButton
             Component={<CSButton
@@ -205,15 +176,6 @@ function InvoicingListListing({ classes, theme }: any) {
             </CSButton>}
             invoice={row.original}
           />
-          <CSButton
-            aria-label={'view more'}
-            variant="contained"
-            color="primary"
-            onClick={() => showInvoiceDetail(row.original._id)}>
-            <VisibilityIcon
-              className={customStyles.iconBtn}
-            />
-          </CSButton>
         </div>;
       },
       'Header': 'Actions',
@@ -221,16 +183,6 @@ function InvoicingListListing({ classes, theme }: any) {
       'sortable': false,
       'width': 120
     },
-    {
-      Cell({ row }: any) {
-        return (
-          <BCQbSyncStatus data={row.original} />
-        );
-      },
-      'id': 'qbSync',
-      'sortable': false,
-      'width': 30
-    }
   ];
 
   useEffect(() => {
@@ -238,8 +190,7 @@ function InvoicingListListing({ classes, theme }: any) {
     dispatch(loadingInvoicingList());
   }, []);
 
-  const handleRowClick = (event: any, row: any) => {
-  };
+  const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
   return (
     <DataContainer id={'0'}>

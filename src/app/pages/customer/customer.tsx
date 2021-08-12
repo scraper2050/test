@@ -16,30 +16,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 import BCQbSyncStatus from "../../components/bc-qb-sync-status/bc-qb-sync-status";
 import * as CONSTANTS from "../../../constants";
 
-const CSButton = withStyles({
-  root: {
-    textTransform: 'none',
-    fontSize: 13,
-    padding: '5px 5px',
-    lineHeight: 1.5,
-    minWidth: 40,
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    '&:hover': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:active': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
-
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
@@ -80,23 +56,6 @@ function CustomersPage({ classes }: any) {
     {
       Cell({ row }: any) {
         return (
-          <div className={'flex items-center'}>
-            <CSButton
-              variant="contained"
-              color="primary"
-              onClick={() => renderViewMore(row)}>
-              View More
-            </CSButton>
-          </div>
-        );
-      },
-      'id': 'action',
-      'sortable': false,
-      'width': 60
-    },
-    {
-      Cell({ row }: any) {
-        return (
           <BCQbSyncStatus data={row.original} />
         );
       },
@@ -115,9 +74,7 @@ function CustomersPage({ classes }: any) {
     setCurTab(newValue);
   };
 
-  const handleRowClick = (event: any, row: any) => {
-    // Console.log(event, row);
-  };
+  const handleRowClick = (event: any, row: any) => renderViewMore(row);
 
   const renderViewMore = (row: any) => {
     const baseObj = row.original;

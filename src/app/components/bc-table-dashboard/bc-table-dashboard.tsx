@@ -1,7 +1,9 @@
 import React from "react";
 import styles from "./bc-table-dashboard.style";
-import { Grid, withStyles } from "@material-ui/core";
+import { Button, Grid, withStyles } from "@material-ui/core";
 import BCTableContainer from "app/components/bc-table-container/bc-table-container";
+import { CSButton } from "../../../helpers/custom";
+import AddCircleSharpIcon from '@material-ui/icons/AddCircleSharp';
 
 interface Props {
   classes: any;
@@ -31,25 +33,18 @@ function BCTableDashboard(props: Props) {
       direction="column"
       className={`${classes.tableContainer} elevation-1`}
     >
-      <Grid item className={classes.header} xs={12}>
-        <Grid container>
-          <Grid item xs={8}>
-            <Grid container className={classes.headerText} alignItems="center">
-              {text}
-            </Grid>
-          </Grid>
-          <Grid item xs={4} md={3} lg={3} className={classes.buttonGrid}>
-            <Grid
-              container
-              justify="center"
-              alignItems="center"
-              className={`${classes.buttonContainer}`}
-              onClick={click}
-            >
-              <Grid item>{textButton}</Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+
+      <Grid item xs={12}>
+        <div className={classes.header}>
+          <div>
+            <h3 className={classes.headerText}>{text}</h3>
+          </div>
+          <div>
+            <CSButton onClick={click}>
+              <AddCircleSharpIcon style={{color: '#fff'}}/> {textButton}
+            </CSButton>
+          </div>
+        </div>
       </Grid>
 
       <Grid item className={classes.tableList} xs={12}>

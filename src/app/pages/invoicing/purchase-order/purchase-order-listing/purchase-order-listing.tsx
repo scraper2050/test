@@ -2,16 +2,20 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import Fab from '@material-ui/core/Fab';
 import styled from 'styled-components';
 import styles from './../purchase-order.styles';
-import { withStyles } from '@material-ui/core';
+import { Button, createStyles, makeStyles, withStyles } from "@material-ui/core";
 import React, { useEffect } from 'react';
 import {
   getPurchaseOrder,
   loadingPurchaseOrder
 } from 'actions/invoicing/invoicing.action';
 import { useDispatch, useSelector } from 'react-redux';
+import { Theme } from "@material-ui/core/styles";
+import * as CONSTANTS from "../../../../../constants";
+import { CSButton, useCustomStyles } from "../../../../../helpers/custom";
 
 function PurchaseOrderListing({ classes }: any) {
   const dispatch = useDispatch();
+  const customStyles = useCustomStyles();
   const purchaseOrder = useSelector((state: any) => state.purchaseOrder);
   const columns: any = [
     {
@@ -58,16 +62,13 @@ function PurchaseOrderListing({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          <Fab
+        return <div className={customStyles.centerContainer}>
+          <CSButton
             aria-label={'create-job'}
-            classes={{
-              'root': classes.fabRoot
-            }}
-            color={'primary'}
-            variant={'extended'}>
-            {'Create Estimates'}
-          </Fab>
+            variant="contained"
+            color="primary">
+            Create Estimates
+          </CSButton>
         </div>;
       },
       'Header': 'Option',

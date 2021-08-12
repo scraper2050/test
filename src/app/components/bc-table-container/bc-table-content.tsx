@@ -30,7 +30,8 @@ const useTableStyles = makeStyles((theme: Theme) =>
     },
     tableRow: {
       '&:hover': {
-        backgroundColor: `${CONSTANTS.TABLE_HOVER}!important`
+        backgroundColor: `${CONSTANTS.TABLE_HOVER}!important`,
+        cursor: 'pointer'
       }
     }
   }),
@@ -253,7 +254,7 @@ function BCTableContent({
 
   const useStyles = makeStyles({
     'cellMd': {
-      'padding': '0 5px 5px 5px;'
+      'padding': '6px 24px 6px 16px!important'
     },
     'table': {
       'width': '95%',

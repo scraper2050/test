@@ -15,35 +15,13 @@ import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-sit
 import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import "../../../../../scss/popup.scss";
-import IconButton from "@material-ui/core/IconButton";
+import EditIcon from '@material-ui/icons/Edit';
 import * as CONSTANTS from "../../../../../constants";
-
-const CSButton = withStyles({
-  root: {
-    textTransform: 'none',
-    fontSize: 13,
-    padding: '5px 5px',
-    lineHeight: 1.5,
-    minWidth: 40,
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
-    '&:hover': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:active': {
-      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
-    },
-    '&:focus': {
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-    },
-  },
-})(Button);
+import { CSButton, useCustomStyles } from "../../../../../helpers/custom";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
+  const customStyles = useCustomStyles();
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
@@ -219,15 +197,17 @@ function ServiceTicket({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return row.original && row.original.status !== 1
-          ? <CSButton
-            variant="contained"
-            color="primary"
+          ? <Button
+            variant="outlined"
             size="small"
             aria-label={'edit-ticket'}
-            onClick={() => openEditTicketModal(row.original)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditTicketModal(row.original);
+            }}
           >
-            Edit Ticket
-          </CSButton>
+            <EditIcon className={customStyles.iconBtnGray}/>
+          </Button>
           : '-';
       },
       'Header': 'Edit Ticket',
@@ -235,21 +215,6 @@ function ServiceTicket({ classes }: any) {
       'sortable': false,
       'width': 60
     },
-    {
-      'Cell'({ row }: any) {
-        return <IconButton
-          aria-label="info"
-          size="small"
-          onClick={() => openDetailTicketModal(row.original)}
-        >
-          <InfoIcon />
-        </IconButton>;
-      },
-      'Header': 'Ticket Details',
-      'id': 'action-detail',
-      'sortable': false,
-      'width': 60
-    }
   ];
 
   useEffect(() => {
@@ -258,7 +223,8 @@ function ServiceTicket({ classes }: any) {
     }
   }, [refresh]);
 
-  const handleRowClick = (event: any, row: any) => {
+  const handleRowClick = (event: any, row: any, column: any) => {
+    openDetailTicketModal(row.original);
   };
 
   return (

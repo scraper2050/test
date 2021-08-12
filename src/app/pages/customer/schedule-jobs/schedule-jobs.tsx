@@ -14,6 +14,7 @@ import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
 import { useLocation, useHistory } from 'react-router-dom';
 import * as CONSTANTS from "../../../../constants";
+import { CSButton } from "../../../../helpers/custom";
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -132,16 +133,14 @@ function ScheduleJobsPage({ classes }: any) {
           />
           <div className={classes.addButtonArea}>
 
-            <Fab
+            <CSButton
               aria-label={'new-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => openCreateTicketModal()}
-              variant={'extended'}>
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => openCreateTicketModal()}>
               {'New Ticket'}
-            </Fab>
+            </CSButton>
           </div>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
