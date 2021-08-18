@@ -12,6 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { Form, Formik } from "formik";
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import {CSButton} from "../../../helpers/custom";
 
 
 function BCAdminProfile({ classes, initialValues, apply }: any) {
@@ -113,10 +114,10 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
                         Email Preferences
                       </strong>
                     </Typography>
-                    <Grid item className={classes.contentContainer} >
-                      <Grid container direction="column" justify="space-around" style={{ height: '100%' }}>
 
-                        <Grid container spacing={5} alignItems="flex-start" className={classes.checkboxContainer}>
+                    <Grid item className={classes.contentContainer} >
+                      <Grid container direction="column" spacing={5} justify="space-around">
+                        <Grid container alignItems="flex-start" className={classes.checkboxContainer}>
                           <Checkbox
                             color="primary"
                             onChange={() => handleCheckbox(setFieldValue, 0)}
@@ -129,7 +130,7 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
                           </Box>
                         </Grid>
 
-                        <Grid container spacing={5} alignItems="flex-start" className={classes.checkboxContainer}>
+                        <Grid container  alignItems="flex-start" className={classes.checkboxContainer}>
                           <Checkbox
                             color="primary"
                             onChange={() => handleCheckbox(setFieldValue, 1)}
@@ -139,44 +140,37 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
                           <Box className={classes.boxContainer}>
                             <strong style={{ fontSize: '18px' }}>Once Daily</strong>
                             <p style={{ marginTop: '.4rem' }}>Email updates once daily with a summary of assigned jobs.</p>
+                            <Grid container className={classes.timePicker}>
+                              <InputLabel className={classes.label} style={{ marginRight: '1rem', alignSelf: "flex-end" }}>
+                                <strong>{"Email Time"}</strong>
+                              </InputLabel>
+                              <Autocomplete
+                                className={classes.autoComplete}
+                                disabled={!daily}
+                                value={time}
+                                id="tags-standard"
+                                options={hours}
+                                disableClearable
+                                onChange={(ev: any, newValue: any) => { setDisabled(false); setTime(newValue) }}
+                                renderInput={(params) => (
+                                  <>
+                                    <TextField
+                                      required
+                                      placeholder={"HH:MM"}
+                                      {...params}
+                                      variant="standard"
+                                    />
+                                  </>
+                                )}
+                              />
+                              <InputLabel className={classes.label} style={{ marginLeft: '1rem', alignSelf: "flex-end" }}>
+                                {"PM"}
+                              </InputLabel>
+                            </Grid>
                           </Box>
-
                         </Grid>
 
-                        <Box className={classes.timePicker}>
-
-                          <Grid container>
-                            <InputLabel className={classes.label} style={{ marginRight: '1rem', alignSelf: "center" }}>
-                              <strong>{"Email Time"}</strong>
-                            </InputLabel>
-
-                            <Autocomplete
-                              className={classes.autoComplete}
-                              disabled={!daily}
-                              value={time}
-                              id="tags-standard"
-                              options={hours}
-                              disableClearable
-                              onChange={(ev: any, newValue: any) => { setDisabled(false); setTime(newValue) }}
-                              renderInput={(params) => (
-                                <>
-                                  <TextField
-                                    required
-                                    placeholder={"HH:MM"}
-                                    {...params}
-                                    variant="standard"
-                                  />
-                                </>
-                              )}
-                            />
-                            <InputLabel className={classes.label} style={{ marginLeft: '1rem', alignSelf: "flex-end" }}>
-                              {"PM"}
-                            </InputLabel>
-
-                          </Grid>
-                        </Box>
-
-                        <Grid container spacing={5} alignItems="flex-start" className={classes.checkboxContainer}>
+                        <Grid container  alignItems="flex-start" className={classes.checkboxContainer}>
                           <Checkbox
                             color="primary"
                             onChange={() => handleCheckbox(setFieldValue, 2)}
@@ -191,18 +185,18 @@ function BCAdminProfile({ classes, initialValues, apply }: any) {
 
                       </Grid>
                     </Grid>
+
                     <Grid item className={classes.contentAction}>
-                      <Fab
+                      <CSButton
                         aria-label={'create-job'}
-                        classes={{
-                          'root': classes.fabRoot
-                        }}
+                        style={{alignSelf: 'flex-end'}}
                         color={'primary'}
                         disabled={isSubmitting || disabled}
+                        size="small"
                         type={'submit'}
-                        variant={'extended'}>
+                        variant={'contained'}>
                         {'Submit'}
-                      </Fab>
+                      </CSButton>
                     </Grid>
                   </Grid>
                 </div>
