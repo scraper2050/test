@@ -215,6 +215,19 @@ function ServiceTicket({ classes }: any) {
       'sortable': false,
       'width': 60
     },
+    {
+      'Cell'({ row }: any) {
+        return <div
+          onClick={() => openDetailTicketModal(row.original)}
+          className={'flex items-center'}>
+          <InfoIcon />
+        </div>;
+      },
+      'Header': 'Ticket Details',
+      'id': 'action-detail',
+      'sortable': false,
+      'width': 60
+    }
   ];
 
   useEffect(() => {
@@ -223,8 +236,7 @@ function ServiceTicket({ classes }: any) {
     }
   }, [refresh]);
 
-  const handleRowClick = (event: any, row: any, column: any) => {
-    openDetailTicketModal(row.original);
+  const handleRowClick = (event: any, row: any) => {
   };
 
   return (
