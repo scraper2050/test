@@ -26,8 +26,8 @@ export const CSButton = withStyles({
   root: {
     textTransform: 'none',
     fontSize: 13,
-    padding: '5px 5px',
-    lineHeight: 1.5,
+    padding: '5px 15px',
+    //lineHeight: 1.5,
     minWidth: 40,
     margin: '0 5px',
     color: CONSTANTS.PRIMARY_WHITE,

@@ -254,6 +254,14 @@ function AdminVendorsPage({ classes }: any) {
               }
             ]}
           />
+          <div className={classes.addButtonArea} style={{top: 0}}>
+            {
+              <ToolBar
+                handleChange={handleFilterChange}
+                menuItems={status}
+              />
+            }
+          </div>
           <div className={classes.addButtonArea}>
             {
               curTab === 0
@@ -278,13 +286,9 @@ function AdminVendorsPage({ classes }: any) {
                 isLoading={vendors.loading}
                 onRowClick={handleRowClick}
                 search
+                searchPlaceholder = 'Search Vendors...'
                 setPage={setCurrentPage}
                 tableData={tableData.reverse()}
-                toolbar={
-                  <ToolBar
-                    handleChange={handleFilterChange}
-                    menuItems={status}
-                  />}
               />
             </div>
 
