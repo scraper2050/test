@@ -12,6 +12,7 @@ export const emailButton = {
   'emailButton': {
     'width':'40px',
     'minWidth':'40px',
+    'margin': '0'
   }
 };
 
