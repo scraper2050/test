@@ -24,6 +24,7 @@ import BCEmailPreference from '../../../../components/bc-email-preference/bc-ema
 import { error, success, info } from 'actions/snackbar/snackbar.action'
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from "../../../../../constants";
+import {CSButton} from "../../../../../helpers/custom";
 
 function EmployeeProfilePage({ classes }: any) {
   const dispatch = useDispatch();
@@ -239,19 +240,16 @@ function EmployeeProfilePage({ classes }: any) {
                             }
                           }
                         ]} />
-                        {
-                          employeeDetails?.permissions?.role !== 4 &&
-                          <Fab
-                            aria-label={'new-ticket'}
-                            classes={{
-                              'root': classes.fabRoot
-                            }}
-                            color={'primary'}
-                            onClick={updateEmployee}
-                            variant={'extended'}>
-                            {'Make Admin'}
-                          </Fab>
-                        }
+                      {
+                        employeeDetails?.permissions?.role !== 4 &&
+                        <CSButton
+                          aria-label={'new-ticket'}
+                          color={'primary'}
+                          onClick={updateEmployee}
+                          variant={'contained'}>
+                          {'Make Admin'}
+                        </CSButton>
+                      }
                     </PageContainer>
 
                   </MainContainer>
@@ -297,6 +295,7 @@ const PageContainer = styled.div`
   button  {
     // display: none;
     width: 15%;
+    padding-top: 7px;
     display: block;
     float: right;
     position: absolute;
