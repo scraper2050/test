@@ -110,6 +110,9 @@ function EstimatesListing({ classes }: any) {
           <Box display="inline" pr={1}>
             <CSButton
               aria-label={'create-invoice'}
+              classes={{
+                'root': classes.fabRoot
+              }}
               variant="contained"
               color="primary"
               size="small">

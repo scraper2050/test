@@ -1,6 +1,5 @@
 import BCTableContainer from '../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../components/bc-tab/bc-tab';
-import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './customer.styles';
 import { Button, Grid, withStyles } from "@material-ui/core";
