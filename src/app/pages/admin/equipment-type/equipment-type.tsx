@@ -8,6 +8,7 @@ import { Fab, useTheme, withStyles } from "@material-ui/core";
 import { modalTypes } from '../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
+import { CSButton } from "../../../../helpers/custom";
 
 function EquipmentType({ classes }: any) {
   const dispatch = useDispatch();
@@ -47,18 +48,15 @@ function EquipmentType({ classes }: any) {
                 value: 0,
               }
             ]}
-          />          
+          />
           <div className={classes.addButtonArea}>
-            <Fab
+            <CSButton
               aria-label={'new-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
               color={'primary'}
               onClick={() => openAddEquipmentTypeModal()}
-              variant={'extended'}>
-              {'New Equipment Type'}
-            </Fab>
+              variant="contained">
+              New Equipment Type
+            </CSButton>
           </div>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}

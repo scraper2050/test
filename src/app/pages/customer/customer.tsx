@@ -1,9 +1,8 @@
 import BCTableContainer from '../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../components/bc-tab/bc-tab';
-import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './customer.styles';
-import { Grid, withStyles } from '@material-ui/core';
+import { Button, Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import {
   getCustomerDetailAction,
@@ -14,6 +13,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import BCQbSyncStatus from "../../components/bc-qb-sync-status/bc-qb-sync-status";
+import * as CONSTANTS from "../../../constants";
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -55,27 +55,6 @@ function CustomersPage({ classes }: any) {
     {
       Cell({ row }: any) {
         return (
-          <div className={'flex items-center'}>
-            <Fab
-              aria-label={'delete'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => renderViewMore(row)}
-              variant={'extended'}>
-              {'View More'}
-            </Fab>
-          </div>
-        );
-      },
-      'id': 'action',
-      'sortable': false,
-      'width': 60
-    },
-    {
-      Cell({ row }: any) {
-        return (
           <BCQbSyncStatus data={row.original} />
         );
       },
@@ -94,9 +73,7 @@ function CustomersPage({ classes }: any) {
     setCurTab(newValue);
   };
 
-  const handleRowClick = (event: any, row: any) => {
-    // Console.log(event, row);
-  };
+  const handleRowClick = (event: any, row: any) => renderViewMore(row);
 
   const renderViewMore = (row: any) => {
     const baseObj = row.original;

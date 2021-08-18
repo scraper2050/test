@@ -5,6 +5,7 @@ import styles from './purchase-order.styles';
 import { useHistory } from 'react-router-dom';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { CSButton } from "../../../../helpers/custom";
 
 function PurchaseOrder({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
@@ -41,16 +42,13 @@ function PurchaseOrder({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-            <Fab
+            <CSButton
               aria-label={'new-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
+              color="primary"
               onClick={() => openCreatePurchaseOrderPage()}
-              variant={'extended'}>
+              variant="contained">
               {'Create Purchase Order'}
-            </Fab>
+            </CSButton>
           </div>
           <SwipeableViews
             axis={theme.direction === 'rtl'

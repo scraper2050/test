@@ -10,6 +10,12 @@ export const PRIMARY_ORANGE = '#FE5500';
 export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
 export const PRIMARY_CARD_BLUE = '#66B8F9';
 
+export const ADMIN_SIDEBAR_WIDTH = 240;
+export const ADMIN_SIDEBAR_WIDTH_MINI = 76;
+export const ADMIN_HEADER_HEIGHT = 58;
+export const ADMIN_SIDEBAR_BG = '#D0D3DC';
+export const ADMIN_SIDEBAR_TOGGLE_BG = '#f2f2f2';
+
 export const SECONDARY_CARD_BLUE = '#3582BE';
 export const PRIMARY_CARD_PURPLE = '#6846D3';
 export const SIDEBAR_WIDTH = '233';
@@ -19,6 +25,10 @@ export const INVOICE_BORDER = '#BDBDBD';
 export const INVOICE_TOTAL_CONTAINER = '#D0D3DC';
 export const INVOICE_HEADING = '#4F4F4F';
 export const INVOICE_TABLE_HEADING = '#828282';
+
+export const TABLE_HOVER = 'rgba(0,170,255,0.34)';
+export const TABLE_ACTION_BUTTON = '#00AAFF';
+export const TABLE_ACTION_BUTTON_HOVER = '#45bfff';
 
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',

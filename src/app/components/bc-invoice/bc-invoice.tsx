@@ -9,6 +9,7 @@ import { getCustomerDetailAction } from "../../../actions/customer/customer.acti
 import moment from "moment";
 
 import classNames from "classnames";
+import { getContacts } from "../../../api/contacts.api";
 
 interface Props {
   classes?: any;
@@ -241,6 +242,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = invoiceTableStyles();
   const dispatch = useDispatch();
+  console.log("log-invoiceDetail", invoiceDetail);
 
   return (
     <DataContainer>
@@ -273,9 +275,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
               </div>
               <div className={invoiceStyles.companyInfo}>
                 <small>CONTACT DETAILS</small>
-                <h4>{invoiceDetail?.createdBy?.profile?.displayName}</h4>
-                <span>{invoiceDetail?.createdBy?.contact?.phone}</span>
-                <span>{invoiceDetail?.createdBy?.auth?.email}</span>
+                <h4>{invoiceDetail?.customer?.contactName ? invoiceDetail?.customer?.contactName : 'no contact found'}</h4>
               </div>
             </div>
           </Grid>

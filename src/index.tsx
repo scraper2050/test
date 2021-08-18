@@ -9,7 +9,9 @@ import { SnackbarProvider } from 'notistack';
 import store from './store';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './scss/index.scss';
+import clearCache from 'utils/cachecleaner';
 
+clearCache(false);
 
 const THEME = createMuiTheme({
   'palette': {

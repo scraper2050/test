@@ -14,6 +14,7 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { useDispatch } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
+import {CSButton} from "../../../helpers/custom";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -651,24 +652,28 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
           </Button>
           <EmailReportButton
             Component={
-              <Button className={classes.invoiceBtn}>
+              <CSButton
+                variant="contained"
+                color="primary">
                 {'Email Report'}
-              </Button>
+              </CSButton>
             }
             jobReport={jobReportData}
           />
           {
             invoiceCreated
-              ? <Button
-                className={classes.invoiceBtn}
-                onClick={showInvoice}>
+              ? <CSButton
+                variant="contained"
+                onClick={showInvoice}
+                color="primary">
                 {'View Invoice'}
-              </Button>
-              : <Button
-                className={classes.invoiceBtn}
-                onClick={generateInvoice}>
+              </CSButton>
+              : <CSButton
+                variant="contained"
+                onClick={generateInvoice}
+                color="primary">
                 {'Generate Invoice'}
-              </Button>
+              </CSButton>
           }
 
         </Grid>

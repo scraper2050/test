@@ -5,16 +5,20 @@ import SwipeableViews from 'react-swipeable-views';
 import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import styles from '../customer.styles';
-import { Chip, Grid, withStyles } from '@material-ui/core';
+import { Button, Chip, createStyles, Grid, makeStyles, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
-
+import * as CONSTANTS from "../../../../constants";
+import { Theme } from "@material-ui/core/styles";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import { CSButton, CSChip, useCustomStyles } from "../../../../helpers/custom";
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
+  const customStyles = useCustomStyles();
   const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
 
@@ -89,59 +93,45 @@ function JobReportsPage({ classes, theme }: any) {
     {
       'Cell'({ row }: any) {
         return row.original.invoiceCreated
-          ? <Chip
+          ? <CSChip
             label={'Yes'}
             style={{ 'backgroundColor': theme.palette.success.light,
               'color': '#fff' }}
           />
-          : <Chip
+          : <CSChip
             color={'secondary'}
             label={'No'}
           />;
       },
       'Header': 'Invoiced',
       'accessor': 'invoiceCreated',
-      'className': 'font-bold'
+      'className': 'font-bold',
+      'width': 60
     },
     {
       Cell({ row }: any) {
         return (
-          <div className={'flex items-center'}>
+          <div className={customStyles.centerContainer}>
             <EmailReportButton
-              Component={<Fab
-                aria-label={'email'}
+              Component={<CSButton
+                variant="contained"
                 classes={{
-                  'root': classes.fabRoot
+                  'root': classes.emailButton
                 }}
-                color={'primary'}
-                style={{ 'marginRight': 20 }}
-                variant={'extended'}>
+                color="primary"
+                size="small">
                 <MailOutlineOutlined
-                  fontSize={'default'}
-                  style={{ 'marginRight': 5 }}
+                  className={customStyles.iconBtn}
                 />
-                {' '}
-                {'Email'}
-              </Fab>}
+              </CSButton>}
               jobReport={row.original}
             />
-
-            <Fab
-              aria-label={'view more'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => handleViewMore(row)}
-              variant={'extended'}>
-              {'View More'}
-            </Fab>
           </div>
         );
       },
       'id': 'action',
       'sortable': false,
-      'width': 60
+      'width': 100
     }
   ];
 
@@ -165,6 +155,8 @@ function JobReportsPage({ classes, theme }: any) {
       }
     });
   };
+
+  const handleRowClick = (event: any, row: any) => handleViewMore(row);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -199,6 +191,7 @@ function JobReportsPage({ classes, theme }: any) {
                 currentPage={currentPage}
                 initialMsg={'There are no Job Report List'}
                 isLoading={loading}
+                onRowClick={handleRowClick}
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}

@@ -88,12 +88,7 @@ function BCAdminProfile(props: Props) {
         {
           avatar.isEmpty === 'NO' &&
           <div className={avatar.noUpdate ? classes.noUpdateAvatarArea : classes.avatarArea}>
-            <div
-              className={classes.imgArea}
-              style={{
-                'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`
-              }}
-            />
+            {avatar.url === '' ? NoLogoImage : <img src={avatar.url}/>}
           </div>
         }
 

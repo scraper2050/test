@@ -2,10 +2,10 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
 import { getAllJobsAPI } from 'api/job.api';
-import { modalTypes } from '../../../../../constants';
+import { modalTypes, TABLE_ACTION_BUTTON, TABLE_ACTION_BUTTON_HOVER } from "../../../../../constants";
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { Grid, withStyles } from '@material-ui/core';
+import { Button, createStyles, Grid, makeStyles, withStyles } from "@material-ui/core";
 import React, { useEffect } from 'react';
 import { convertMilitaryTime, formatDate } from 'helpers/format';
 import {
@@ -13,12 +13,17 @@ import {
   openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
+import IconButton from '@material-ui/core/IconButton';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
+import { Theme } from "@material-ui/core/styles";
+import * as CONSTANTS from "../../../../../constants";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import { useCustomStyles } from "../../../../../helpers/custom";
+import { info } from "../../../../../actions/snackbar/snackbar.action";
 
 // Import { VendorsReducer } from 'reducers/vendor.reducer';
-
 
 interface StatusTypes {
   status: number;
@@ -32,6 +37,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     'jobs': jobState.data,
     'refresh': jobState.refresh
   }));
+  const customStyles = useCustomStyles();
 
   function RenderStatus({ status }: StatusTypes) {
     const statusArray = [
@@ -156,7 +162,8 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'Header': 'Technician',
       'accessor': 'contractor.info.companyName',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'width': 100
     },
     {
       'Header': 'Customer',
@@ -220,48 +227,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'sortable': true,
       'width': 40
     },
-    {
-      Cell({ row }: any) {
-        return (
-          <Grid
-            alignItems={'center'}
-            container>
-            <div className={'flex items-center'}>
-              {[0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)
-                ? <Fab
-                  aria-label={'edit-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  color={'primary'}
-                  onClick={() => openEditJobModal(row.original)}
-                  variant={'extended'}>
-                  {'Edit'}
-                </Fab>
-                : <div style={{
-                  'height': 34,
-                  'width': 48 }}
-                />}
-            </div>
-            <div
-              className={'flex items-center'}
-              onClick={() => openDetailJobModal(row.original)}
-              style={{
-                'alignItems': 'center',
-                'display': 'flex',
-                'height': 34,
-                'marginLeft': '.5rem'
-
-              }}>
-              <InfoIcon style={{ 'margin': 'auto, 0' }} />
-            </div>
-          </Grid>
-        );
-      },
-      'Header': 'Options',
-      'id': 'action-options',
-      'sortable': false
-    }
   ];
 
   useEffect(() => {
@@ -270,7 +235,13 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     }
   }, [refresh]);
 
-  const handleRowClick = (event: any, row: any) => { };
+  const handleRowClick = (event: any, row: any) => {
+    if ([0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)){
+      openEditJobModal(row.original)
+    } else {
+      openDetailJobModal(row.original)
+    }
+  };
 
   return (
     <DataContainer id={'0'}>
