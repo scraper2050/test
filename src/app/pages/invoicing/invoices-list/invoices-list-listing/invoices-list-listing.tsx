@@ -157,15 +157,15 @@ function InvoicingListListing({ classes, theme }: any) {
           <BCQbSyncStatus data={row.original} />
         );
       },
-      'Header': 'Integrations',
+      'Header': '',
       'id': 'qbSync',
       'sortable': false,
       'width': 30
     },
     {
       Cell({ row }: any) {
-        return <div className={customStyles.centerContainer}>
-          <EmailInvoiceButton
+        // return <div className={customStyles.centerContainer}>
+        return <EmailInvoiceButton
             Component={<CSButton
               variant="contained"
               classes={{
@@ -178,13 +178,13 @@ function InvoicingListListing({ classes, theme }: any) {
               />
             </CSButton>}
             invoice={row.original}
-          />
-        </div>;
+          />;
+        // </div>;
       },
       'Header': 'Actions',
       'id': 'action-send-email',
       'sortable': false,
-      'width': 120
+      'width': 60
     },
   ];
 
