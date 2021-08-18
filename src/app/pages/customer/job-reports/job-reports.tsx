@@ -115,6 +115,9 @@ function JobReportsPage({ classes, theme }: any) {
             <EmailReportButton
               Component={<CSButton
                 variant="contained"
+                classes={{
+                  'root': classes.emailButton
+                }}
                 color="primary"
                 size="small">
                 <MailOutlineOutlined

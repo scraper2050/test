@@ -8,6 +8,13 @@ export const fabRoot = {
   }
 };
 
+export const emailButton = {
+  'emailButton': {
+    'width':'40px',
+    'minWidth':'40px',
+  }
+};
+
 export const pageContent = {
   'pageContent': {
     '@media(min-width: 1909px)': {

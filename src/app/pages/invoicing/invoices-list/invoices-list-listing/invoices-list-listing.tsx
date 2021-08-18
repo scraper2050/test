@@ -168,6 +168,9 @@ function InvoicingListListing({ classes, theme }: any) {
           <EmailInvoiceButton
             Component={<CSButton
               variant="contained"
+              classes={{
+                'root': classes.emailButton
+              }}
               color="primary"
               size="small">
               <MailOutlineOutlined
