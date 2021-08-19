@@ -1,8 +1,8 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
+import { useHistory } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { Box, Button, Chip, createStyles, makeStyles, Typography, withStyles } from "@material-ui/core";
-import Fab from '@material-ui/core/Fab';
+import { withStyles } from "@material-ui/core";
 import React, { useEffect } from 'react';
 import {
   getInvoicingList,
@@ -10,15 +10,10 @@ import {
 } from 'actions/invoicing/invoicing.action';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { modalTypes } from '../../../../../constants';
 import { MailOutlineOutlined } from '@material-ui/icons';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { Theme } from "@material-ui/core/styles";
-import * as CONSTANTS from "../../../../../constants";
 import { CSButton, useCustomStyles, CSChip } from "../../../../../helpers/custom";
 
 const getFilteredList = (state: any) => {
@@ -27,11 +22,12 @@ const getFilteredList = (state: any) => {
 
 function InvoicingListListing({ classes, theme }: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
   const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
   const showInvoiceDetail = (id:string) => {
-    dispatch(setModalDataAction({
+/*    dispatch(setModalDataAction({
       'data': {
         'detail': true,
         'modalTitle': 'Invoice',
@@ -42,7 +38,10 @@ function InvoicingListListing({ classes, theme }: any) {
     }));
     setTimeout(() => {
       dispatch(openModalAction());
-    }, 10);
+    }, 10);*/
+    history.push({
+      'pathname': `view/${id}`,
+    });
   };
 
   const columns: any = [
