@@ -1,4 +1,3 @@
-import * as CONSTANTS from "../../../constants";
 import { fabRoot } from 'app/pages/main/main.styles';
 
 export default (): any => ({
@@ -32,8 +31,10 @@ export default (): any => ({
   },
   'avatarArea': {
     'flex': '25%',
-    'margin-right': '2rem',
+    'padding-right': '2rem',
+    'flex-shrink': '0',
     'cursor': 'pointer',
+    'align-self': 'center',
     '&> img': {
       'width': '100%',
     }
@@ -41,6 +42,7 @@ export default (): any => ({
   'noUpdateAvatarArea': {
     'flex': '25%',
     'padding-right': '2rem',
+    'flex-shrink': '0',
     'align-self': 'center',
   },
   'infoArea': {
@@ -69,8 +71,10 @@ export default (): any => ({
   'imgArea': {
     'margin': 'auto',
     'height': '150px',
-    'width': 'auto',
-    'border': `2px solid ${CONSTANTS.SECONDARY_GREY}`,
+    'width': '150px',
+    'borderRadius': '50%',
+    'border': '5px solid #00aaff',
+    'background': 'grey',
     'display': 'flex',
     'justify-content': 'center',
     'align-items': 'center',
