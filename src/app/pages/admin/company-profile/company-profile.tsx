@@ -108,6 +108,7 @@ function CompanyProfilePage() {
           ) : (
               <BCAdminProfile
                 title="Edit Company Profile"
+                userProfile={false}
                 avatar={{
                   isEmpty: 'NO',
                   url: imageUrl === "" ? initialValues.logoUrl : imageUrl,

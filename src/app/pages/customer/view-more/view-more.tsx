@@ -158,18 +158,15 @@ function ViewMorePage({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <Fab
+          <CSButton
             aria-label={'delete'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => {
               renderJobSiteComponent(row.original, customerState.customerObj);
             }}
-            variant={'extended'}>
+            variant={'contained'}>
             {'View More'}
-          </Fab>
+          </CSButton>
 
         </div>;
       },

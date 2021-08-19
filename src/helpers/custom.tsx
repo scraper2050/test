@@ -30,7 +30,7 @@ export const CSButton = withStyles({
     //lineHeight: 1.5,
     minWidth: '136px',
     height: '34px',
-    margin: '0 5px',
+    margin: '0 5px 0 0',
     color: CONSTANTS.PRIMARY_WHITE,
     backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
     borderColor: CONSTANTS.TABLE_ACTION_BUTTON,

@@ -62,14 +62,12 @@ function PurchaseOrderListing({ classes }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return <div className={customStyles.centerContainer}>
-          <CSButton
+        return <CSButton
             aria-label={'create-job'}
             variant="contained"
             color="primary">
             Create Estimates
-          </CSButton>
-        </div>;
+          </CSButton>;
       },
       'Header': 'Option',
       'id': 'action-create-job',

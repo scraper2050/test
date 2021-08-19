@@ -39,7 +39,7 @@ const CSButton = withStyles({
     padding: '5px 5px',
     lineHeight: 1.5,
     minWidth: 40,
-    margin: '0 5px',
+    margin: '0 5px 0 0',
     color: CONSTANTS.PRIMARY_WHITE,
     backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
     borderColor: CONSTANTS.TABLE_ACTION_BUTTON,

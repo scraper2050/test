@@ -8,10 +8,11 @@ export default (theme: Theme): any => ({
     'marginLeft': theme.spacing(1)
   },
   'searchContainer': {
-    'borderRadius': '2px',
+    'borderRadius': '5px',
     'display': 'flex',
     'height': '38px',
     'marginBottom': '10px',
-    'position': 'relative'
+    'position': 'relative',
+    'box-shadow': '0 3px 10px rgb(0 0 0 / 0.2)',
   }
 });
