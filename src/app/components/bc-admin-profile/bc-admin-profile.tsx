@@ -49,7 +49,8 @@ function BCAdminProfile(props: Props) {
     avatar,
     fields,
     classes,
-    title
+    title,
+    userProfile = true,
   } = props;
 
   const dispatch = useDispatch();
@@ -88,7 +89,15 @@ function BCAdminProfile(props: Props) {
         {
           avatar.isEmpty === 'NO' &&
           <div className={avatar.noUpdate ? classes.noUpdateAvatarArea : classes.avatarArea}>
-            {avatar.url === '' ? NoLogoImage : <img src={avatar.url}/>}
+            {userProfile ?
+              <div
+                className={classes.imgArea}
+                style={{
+                  'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`
+                }}
+              /> :
+              <img src={avatar.url}/>
+            }
           </div>
         }
 

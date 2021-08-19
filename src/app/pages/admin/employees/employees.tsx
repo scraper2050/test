@@ -126,6 +126,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
           isLoading={employees.loading}
           onRowClick={handleRowClick}
           search
+          searchPlaceholder={'Search Employees....'}
           setPage={setCurrentPage}
           tableData={employees.data}
         />
