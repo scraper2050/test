@@ -1,3 +1,5 @@
+import { fromLatLng } from "react-geocode";
+
 export interface CompanyProfile {
   companyName: string;
   companyEmail: string;
@@ -8,6 +10,15 @@ export interface CompanyProfile {
   zipCode?: string;
   phone: string;
   fax?: string;
+  paymentTerm?: {
+    createdAt: string,
+    createdBy: string,
+    dueDays: number,
+    isActive: Boolean,
+    name: string,
+    updatedAt: string,
+    _id: string | undefined,
+  }
 }
 
 export interface CompanyProfileOtherState {
@@ -28,8 +39,17 @@ export const companyProfileState: CompanyProfile = {
   city: '',
   state: '',
   zipCode: '',
-  logoUrl: '',
+  logoUrl: undefined,
   street: '',
+  paymentTerm: {
+    createdAt: '',
+    createdBy: '',
+    dueDays: 0,
+    isActive: false,
+    name: '',
+    updatedAt: '',
+    _id: '',
+  }
 }
 
 export type CompanyProfileStateType = CompanyProfile & CompanyProfileOtherState

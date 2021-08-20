@@ -5,12 +5,20 @@ export default (): any => ({
   tableContainer: {
     borderRadius: "10px",
     background: "#fff",
-    
+    padding: 0,
+  },
+  tableList: {
+    padding: 0,
   },
   header: {
     height: "50px",
-    borderRadius: "10px",
+    borderTopRightRadius: "10px",
+    borderTopLeftRadius: "10px",
     background: "#40454E",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0 10px'
   },
   headerText: {
     height: "100%",
@@ -26,7 +34,7 @@ export default (): any => ({
   },
   buttonContainer: {
     borderRadius: "10px",
-    height: "50px",
+    height: "40px",
     background: "#00AAFF",
     fontFamily: "Roboto",
     fontSize: "15px",
@@ -39,7 +47,7 @@ export default (): any => ({
   },
   table: {
     maxHeight: "350px !important",
-    borderRadius: "0 0 10px 10px",
+    borderRadius: "0 0 10px 10px !important",
   },
   buttonGrid: {
     marginLeft: 'auto'

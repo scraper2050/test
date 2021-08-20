@@ -7,6 +7,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { modalTypes } from '../../../../../constants';
 import { getContacts, addContact, updateContact, removeContact } from 'api/contacts.api';
 import { useLocation, useHistory } from 'react-router-dom';
+import {CSButton} from "../../../../../helpers/custom";
 
 function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const dispatch = useDispatch();
@@ -63,17 +64,17 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <Fab
+          <CSButton
             aria-label={'edit-contact'}
             classes={{
               'root': classes.fabRoot
             }}
             color={'primary'}
             onClick={() => openEditContactModal(row)}
-            variant={'extended'}>
+            variant={'contained'}>
             {'Edit'}
-          </Fab>
-          <Fab
+          </CSButton>
+          <CSButton
             aria-label={'edit-contact'}
             classes={{
               'root': classes.fabRoot
@@ -81,9 +82,9 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
             style={{ marginLeft: 15 }}
             color={'secondary'}
             onClick={() => openDeleteContactModal(row)}
-            variant={'extended'}>
+            variant={'contained'}>
             {'Delete'}
-          </Fab>
+          </CSButton>
         </div>
       },
       'Header': 'Actions',
@@ -223,16 +224,13 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
   return (
     <>
       <div className={classes.addButtonArea}>
-        <Fab
+        <CSButton
           aria-label={'add-new-contact'}
-          classes={{
-            'root': classes.fabRoot
-          }}
           color={'primary'}
           onClick={() => openAddContactModal()}
-          variant={'extended'}>
+          variant={'contained'}>
           {'Add New Contact'}
-        </Fab>
+        </CSButton>
       </div>
 
       <BCTableContainer

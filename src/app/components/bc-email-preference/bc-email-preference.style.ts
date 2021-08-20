@@ -25,7 +25,7 @@ export default (): any => ({
     'align-items': 'center',
   },
   'container': {
-    height: '100%'
+    //height: '100%'
   },
   'contentContainer': {
     'marginTop': '2rem',
@@ -45,8 +45,8 @@ export default (): any => ({
   },
   'timePicker': {
     'textAlign': 'left',
-    'marginLeft': '10rem',
-    'marginTop': '-2rem'
+    'marginBottom': '1rem',
+    'marginTop': '-1.3rem'
   },
   'autoComplete': {
     'width': '8rem'

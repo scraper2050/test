@@ -26,6 +26,7 @@ import CustomerContactsPage from './contacts/contacts';
 import Pricing from './pricing/pricing';
 import { getItemTierList } from 'api/items.api';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
+import {CSButton} from "../../../../helpers/custom";
 
 interface LocationState {
   customerName?: string;
@@ -157,18 +158,15 @@ function ViewMorePage({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <Fab
+          <CSButton
             aria-label={'delete'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => {
               renderJobSiteComponent(row.original, customerState.customerObj);
             }}
-            variant={'extended'}>
+            variant={'contained'}>
             {'View More'}
-          </Fab>
+          </CSButton>
 
         </div>;
       },
@@ -289,16 +287,13 @@ function ViewMorePage({ classes }: any) {
                   id={'0'}>
                   <PageContainer className={'info_wrapper alignAddJobLocation'}>
                     <CustomerInfoPage customerObj={customerObj} />
-                    <Fab
+                    <CSButton
                       aria-label={'delete'}
-                      classes={{
-                        'root': classes.fabRoot
-                      }}
                       color={'primary'}
                       onClick={() => openJobLocationModal()}
-                      variant={'extended'}>
+                      variant={'contained'}>
                       {'Add Job Location'}
-                    </Fab>
+                    </CSButton>
                   </PageContainer>
 
                   <BCTableContainer

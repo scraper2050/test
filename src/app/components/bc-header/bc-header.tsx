@@ -214,6 +214,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                 );
               })}
             </ul>
+
             <div className={classes.headerTools} >
               <Button
                 className={classes.headerToolsButton}
@@ -270,6 +271,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                 }
               </Popper>
             </div>
+
             <div className={classes.profile}>
               <Button
                 aria-describedby={popperId}

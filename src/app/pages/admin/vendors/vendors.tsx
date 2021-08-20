@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { editableStatus } from 'app/models/contract';
 import styled from 'styled-components';
+import {CSButton} from "../../../../helpers/custom";
 
 interface StatusTypes {
   status: number;
@@ -117,31 +118,24 @@ function AdminVendorsPage({ classes }: any) {
       'sortable': true
     },
     {
-
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          {editableStatus.includes(row.original.status) && <Fab
+          {editableStatus.includes(row.original.status) && <CSButton
             aria-label={'change-status'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => editVendor(row.original)}
             style={{ 'marginRight': '15px' }}
-            variant={'extended'}>
+            variant={'contained'}>
             {'Change Status'}
-          </Fab>}
+          </CSButton>}
 
-          <Fab
+          <CSButton
             aria-label={'view more'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => renderViewMore(row)}
-            variant={'extended'}>
+            variant={'contained'}>
             {'View More'}
-          </Fab>
+          </CSButton>
         </div>;
       },
       'Header': 'Action',
@@ -260,19 +254,24 @@ function AdminVendorsPage({ classes }: any) {
               }
             ]}
           />
+          <div className={classes.addButtonArea} style={{top: 0}}>
+            {
+              <ToolBar
+                handleChange={handleFilterChange}
+                menuItems={status}
+              />
+            }
+          </div>
           <div className={classes.addButtonArea}>
             {
               curTab === 0
-                ? <Fab
+                ? <CSButton
                   aria-label={'new-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
                   color={'primary'}
                   onClick={() => openVendorModal()}
-                  variant={'extended'}>
+                  variant={'contained'}>
                   {'Invite Vendor'}
-                </Fab>
+                </CSButton>
                 : null
             }
           </div>
@@ -287,13 +286,9 @@ function AdminVendorsPage({ classes }: any) {
                 isLoading={vendors.loading}
                 onRowClick={handleRowClick}
                 search
+                searchPlaceholder = 'Search Vendors...'
                 setPage={setCurrentPage}
                 tableData={tableData.reverse()}
-                toolbar={
-                  <ToolBar
-                    handleChange={handleFilterChange}
-                    menuItems={status}
-                  />}
               />
             </div>
 

@@ -13,10 +13,29 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { useHistory, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './bc-table.styles';
-import { makeStyles, withStyles } from '@material-ui/core';
+import { createStyles, makeStyles, withStyles } from "@material-ui/core";
 import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
 import { boolean } from 'yup';
+import styled from "styled-components";
+import * as CONSTANTS from "../../../constants";
+import { Theme } from "@material-ui/core/styles";
 
+const useTableStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    // items table
+    tableHeader: {
+      '& > .MuiTableCell-sizeSmall': {
+        padding: '0 16px'
+      }
+    },
+    tableRow: {
+      '&:hover': {
+        backgroundColor: `${CONSTANTS.TABLE_HOVER}!important`,
+        cursor: 'pointer'
+      }
+    }
+  }),
+);
 
 function BCTableContent({
   noHeader,
@@ -34,6 +53,7 @@ function BCTableContent({
   const location = useLocation<any>();
   const history = useHistory();
   const locationState = location.state;
+  const tableStyles = useTableStyles();
 
 
   const curTab = locationState && locationState?.curTab;
@@ -234,7 +254,7 @@ function BCTableContent({
 
   const useStyles = makeStyles({
     'cellMd': {
-      'padding': '13px 24px 13px 16px;'
+      'padding': '6px 24px 6px 16px!important'
     },
     'table': {
       'width': '95%',
@@ -242,24 +262,25 @@ function BCTableContent({
     }
   });
 
-  
+
   const tableClass = useStyles();
 
   // Render the UI for your table
   return (
     <TableContainer
-      className={`min-h-full sm:border-1 sm:rounded-16 ${invoiceTable
+      className={`min-h-full rounded ${invoiceTable
         ? `invoice-paper`
         : ''} ${className} `}
-      component={Paper}>
+      component={StyledPaperContainer}>
       <MaUTable
-        size={'small'}
+        size="small"
         stickyHeader={stickyHeader}
         {...getTableProps()}>
         <TableHead style={{ 'display': noHeader ? 'none' : 'table-header-group' }}>
           {headerGroups.map((headerGroup: any, gindex: number) =>
             <TableRow
               key={`table-${gindex}`}
+              className={tableStyles.tableHeader}
               {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column: any, hindex: number) =>
                 <TableCell
@@ -296,7 +317,7 @@ function BCTableContent({
                 {...row.getRowProps()}
                 className={`truncate${row.original.readStatus?.isRead
                   ? ''
-                  : ' unread'}`}
+                  : ' unread'} ${tableStyles.tableRow}`}
                 hover={!invoiceTable}
                 onClick={(ev: any) => onRowClick(ev, row)}>
                 {row.cells.map((cell: any, cindex: number) => {
@@ -355,6 +376,12 @@ function BCTableContent({
     </TableContainer >
   );
 }
+
+const StyledPaperContainer = styled(Paper)`
+  border-radius: 10px;
+  width: 100%;
+`;
+
 
 export default withStyles(
   styles,

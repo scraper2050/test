@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import { modalTypes } from '../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { CSButton } from "../../../../helpers/custom";
 
 function JobTypesPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -49,16 +50,13 @@ function JobTypesPage({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea} >
-            <Fab
+            <CSButton
               aria-label={'new-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
               color={'primary'}
               onClick={() => openAddJobTypeModal()}
-              variant={'extended'}>
-              {'New Job Type'}
-            </Fab>
+              variant="contained">
+              New Job Type
+            </CSButton>
           </div>
           <SwipeableViews
             axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}

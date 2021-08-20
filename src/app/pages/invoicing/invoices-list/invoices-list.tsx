@@ -5,6 +5,7 @@ import styles from './invoices-list.styles';
 import { useHistory } from 'react-router-dom';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { CSButton } from "../../../../helpers/custom";
 
 function InvoiceList({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
@@ -40,16 +41,13 @@ function InvoiceList({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-          <Fab
+          <CSButton
             aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => openCreateInvoicePage()}
-            variant={'extended'}>
+            variant={'contained'}>
             {'Custom Invoice'}
-          </Fab>
+          </CSButton>
           </div>
           <SwipeableViews
             axis={

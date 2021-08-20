@@ -99,7 +99,6 @@ export const updateCustomPrices = async (customerId: string, customPrices:any) =
     if (response.data.status === 0) {
       throw new Error('Quantity must be in sequence');
     }
-    console.log(response.data);
     return response.data;
   } catch (err) {
     if (err.response.status >= 400 || err.response.status === 0) {

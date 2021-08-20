@@ -1,5 +1,5 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { Button, Grid, withStyles } from '@material-ui/core';
 import { formatDatTimell, formatDatTimelll, formatTime } from 'helpers/format';
 import styles, {
@@ -14,6 +14,7 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { useDispatch } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
+import {CSButton} from "../../../helpers/custom";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -96,20 +97,22 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     }
   };
 
-
   const showInvoice = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'detail': true,
-        'modalTitle': 'Invoice',
-        'formId': invoice._id,
-        'removeFooter': false
-      },
-      'type': modalTypes.SHARED_FORM_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 10);
+    // dispatch(setModalDataAction({
+    //   'data': {
+    //     'detail': true,
+    //     'modalTitle': 'Invoice',
+    //     'formId': invoice._id,
+    //     'removeFooter': false
+    //   },
+    //   'type': modalTypes.SHARED_FORM_MODAL
+    // }));
+    // setTimeout(() => {
+    //   dispatch(openModalAction());
+    // }, 10);
+    history.push({
+      'pathname': `view/${invoice._id}`,
+    });
   };
 
   return (
@@ -649,24 +652,28 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
           </Button>
           <EmailReportButton
             Component={
-              <Button className={classes.invoiceBtn}>
+              <CSButton
+                variant="contained"
+                color="primary">
                 {'Email Report'}
-              </Button>
+              </CSButton>
             }
             jobReport={jobReportData}
           />
           {
             invoiceCreated
-              ? <Button
-                className={classes.invoiceBtn}
-                onClick={showInvoice}>
+              ? <CSButton
+                variant="contained"
+                onClick={showInvoice}
+                color="primary">
                 {'View Invoice'}
-              </Button>
-              : <Button
-                className={classes.invoiceBtn}
-                onClick={generateInvoice}>
+              </CSButton>
+              : <CSButton
+                variant="contained"
+                onClick={generateInvoice}
+                color="primary">
                 {'Generate Invoice'}
-              </Button>
+              </CSButton>
           }
 
         </Grid>

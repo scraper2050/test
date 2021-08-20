@@ -15,7 +15,8 @@ export default function EmailButton({ data, Component }: EmailButtonProps) {
   const dispatch = useDispatch();
 
 
-  const handleClick = () => {
+  const handleClick = (e: any) => {
+    e.stopPropagation();
     dispatch(setModalDataAction({
       data,
       'type': modalTypes.EMAIL_JOB_REPORT_MODAL

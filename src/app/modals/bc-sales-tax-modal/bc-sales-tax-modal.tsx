@@ -79,7 +79,7 @@ function BCSalesTaxModal() {
 
   useEffect(() => {
     if (done) {
-      dispatch(success('Taxes succesfully updated'));
+      dispatch(success('Taxes successfully updated'));
       setTimeout(() => dispatch(closeModalAction()), 500);
     }
     if (error) {

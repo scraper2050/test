@@ -35,6 +35,9 @@ export default (): any => ({
     'flex-shrink': '0',
     'cursor': 'pointer',
     'align-self': 'center',
+    '&> img': {
+      'width': '100%',
+    }
   },
   'noUpdateAvatarArea': {
     'flex': '25%',

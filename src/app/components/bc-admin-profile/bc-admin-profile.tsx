@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './bc-admin-profile.style';
 import { Grid, Typography, withStyles } from '@material-ui/core';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
+import NoCompanyLogo from 'assets/img/avatars/NoCompanyLogo.png';
 import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../constants';
@@ -49,7 +50,8 @@ function BCAdminProfile(props: Props) {
     avatar,
     fields,
     classes,
-    title
+    title,
+    userProfile = true,
   } = props;
 
   const dispatch = useDispatch();
@@ -88,12 +90,15 @@ function BCAdminProfile(props: Props) {
         {
           avatar.isEmpty === 'NO' &&
           <div className={avatar.noUpdate ? classes.noUpdateAvatarArea : classes.avatarArea}>
-            <div
-              className={classes.imgArea}
-              style={{
-                'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`
-              }}
-            />
+            {userProfile ?
+              <div
+                className={classes.imgArea}
+                style={{
+                  'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`
+                }}
+              /> :
+              <img src={avatar.url === '' ? NoCompanyLogo : avatar.url}/>
+            }
           </div>
         }
 

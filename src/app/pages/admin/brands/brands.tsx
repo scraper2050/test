@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { Fab, useTheme, withStyles } from "@material-ui/core";
 import { modalTypes } from '../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import {CSButton} from "../../../../helpers/custom";
 
 function Brands({ classes }: any) {
   const dispatch = useDispatch();
@@ -46,16 +47,13 @@ function Brands({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-            <Fab
+            <CSButton
               aria-label={'new-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
               color={'primary'}
               onClick={() => openAddBrandTypeModal()}
-              variant={'extended'}>
+              variant={'contained'}>
               {'New Brand Type'}
-            </Fab>
+            </CSButton>
           </div>
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}

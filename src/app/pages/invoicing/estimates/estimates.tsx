@@ -5,6 +5,7 @@ import styles from './estimates.styles';
 import { useHistory } from 'react-router-dom';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import { CSButton } from "../../../../helpers/custom";
 
 function Estimates({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
@@ -36,16 +37,13 @@ function Estimates({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-          <Fab
+          <CSButton
             aria-label={'new-ticket'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => openCreateEstimatesPage()}
-            variant={'extended'}>
+            variant={'contained'}>
             {'Create Estimate'}
-          </Fab>
+          </CSButton>
         </div>
           <SwipeableViews
             axis={theme.direction === 'rtl'
@@ -55,9 +53,9 @@ function Estimates({ classes }: any) {
             <EstimatesListing hidden={curTab !== 0} />
           </SwipeableViews>
         </div>
-        
-        
-        
+
+
+
       </div>
     </div>
   );

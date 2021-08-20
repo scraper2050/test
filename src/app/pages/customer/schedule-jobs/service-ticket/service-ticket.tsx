@@ -6,7 +6,7 @@ import { modalTypes } from '../../../../../constants';
 import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { withStyles } from '@material-ui/core';
+import { Button, withStyles } from "@material-ui/core";
 import React, { useEffect } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getCustomers } from 'actions/customer/customer.action';
@@ -15,9 +15,13 @@ import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-sit
 import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import "../../../../../scss/popup.scss";
+import EditIcon from '@material-ui/icons/Edit';
+import * as CONSTANTS from "../../../../../constants";
+import { CSButton, useCustomStyles } from "../../../../../helpers/custom";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
+  const customStyles = useCustomStyles();
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
@@ -171,16 +175,15 @@ function ServiceTicket({ classes }: any) {
           {
             !row.original.jobCreated
               ? row.original.status !== 2
-                ? <Fab
-                  aria-label={'create-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  color={'primary'}
+                ? <CSButton
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  aria-label={'edit-ticket'}
                   onClick={() => openCreateJobModal(row.original)}
-                  variant={'extended'}>
-                  {'Create Job'}
-                </Fab>
+                >
+                  Create Job
+                </CSButton>
                 : null
               : null
           }
@@ -194,18 +197,17 @@ function ServiceTicket({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return row.original && row.original.status !== 1
-          ? <div className={'flex items-center'}>
-            <Fab
-              aria-label={'edit-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
-              color={'primary'}
-              onClick={() => openEditTicketModal(row.original)}
-              variant={'extended'}>
-              {'Edit Ticket'}
-            </Fab>
-          </div>
+          ? <Button
+            variant="outlined"
+            size="small"
+            aria-label={'edit-ticket'}
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditTicketModal(row.original);
+            }}
+          >
+            <EditIcon className={customStyles.iconBtnGray}/>
+          </Button>
           : '-';
       },
       'Header': 'Edit Ticket',
@@ -256,7 +258,6 @@ function ServiceTicket({ classes }: any) {
 const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
   overflow: hidden;
 `;
 

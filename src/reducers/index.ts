@@ -16,6 +16,7 @@ import routeReducer from './route.reducer';
 import serviceTicket from './service-ticket.reducer';
 import { SnackbarReducer as snackbar } from './snackbar.reducer';
 import tax from './tax.reduxer';
+import paymentTerms from './payment-terms.reduer';
 import { JobSiteReducer as jobSites } from './job-site.reducer';
 import { JobLocationReducer as jobLocations } from './job-location.reducer';
 import { EmployeesForJobReducer as employeesForJob } from './employees-for-job.reducer';
@@ -109,6 +110,7 @@ const appReducer = combineReducers({
   subscriptions,
   tableState,
   tax,
+  paymentTerms,
   technicians,
   vendors
 });

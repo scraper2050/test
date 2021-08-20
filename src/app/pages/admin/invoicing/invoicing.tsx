@@ -2,22 +2,46 @@ import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import { Grid } from '@material-ui/core';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import MoneyIcon from '@material-ui/icons/Money';
-import React from 'react';
+import React, { useEffect } from "react";
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from "react-redux";
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../constants';
+import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 
-function AdminInvoicingPage() {
+interface BCSidebarProps {
+  token: string;
+  user: any;
+}
+
+function AdminInvoicingPage({ token, user }: any) {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCompanyProfileAction(user?.company as string));
+  }, [])
+
   const addSalesTax = () => {
     dispatch(setModalDataAction({
-
       'data': {
         'modalTitle': 'Sales Tax'
       },
       'type': modalTypes.SALES_TAX_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const viewPaymentTerms = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Payment Terms'
+      },
+      'type': modalTypes.PAYMENT_TERMS_MODAL
     }));
 
     setTimeout(() => {
@@ -61,6 +85,15 @@ function AdminInvoicingPage() {
             <Grid
               item>
               <BCAdminCard
+                cardText={'Payment Terms'}
+                color={'success'}
+                func={viewPaymentTerms}>
+                <MonetizationOnIcon />
+              </BCAdminCard>
+            </Grid>
+            <Grid
+              item>
+              <BCAdminCard
                 cardText={'Invoice Number'}
                 color={'info'}
                 link={''}>
@@ -92,4 +125,14 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default AdminInvoicingPage;
+const mapStateToProps = (state: {
+  auth: {
+    token: string;
+    user: any;
+  };
+}) => ({
+  'token': state.auth.token,
+  'user': state.auth.user
+});
+
+export default (connect(mapStateToProps)(AdminInvoicingPage));

@@ -3,7 +3,6 @@ import SwipeableViews from 'react-swipeable-views';
 import styles from './ticket-map-view.style';
 import { Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import '../../../../scss/index.css';
 import './ticket-map-view.scss';
 import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';

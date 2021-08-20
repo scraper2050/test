@@ -41,7 +41,8 @@ function BCTableContainer({
   stickyHeader = false,
   noHeader = false,
   cellSize,
-  toolbar
+  toolbar,
+  noPadding = false,
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -104,7 +105,7 @@ function BCTableContainer({
 
 
   return (
-    <TableContainer container>
+    <TableContainer noPadding={noPadding} container>
       <Grid
         className={'actions-container'}
         item
@@ -164,7 +165,8 @@ function BCTableContainer({
   );
 }
 
-const TableContainer = styled(Grid)`
+const TableContainer = styled(Grid)<{noPadding: boolean}>`
+padding: ${props => props.noPadding ? '0' : '5px'};
 .actions-container {
   display:flex;
   > .MuiPaper-root {

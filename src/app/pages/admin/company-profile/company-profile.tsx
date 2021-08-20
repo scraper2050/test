@@ -71,7 +71,8 @@ function CompanyProfilePage() {
       city,
       state,
       zipCode,
-      street
+      street,
+      paymentTerm
     } = values
 
 
@@ -84,7 +85,8 @@ function CompanyProfilePage() {
       city,
       state,
       zipCode,
-      street
+      street,
+      paymentTerm
     }
 
     await dispatch(updateCompanyProfileAction(data));
@@ -106,6 +108,7 @@ function CompanyProfilePage() {
           ) : (
               <BCAdminProfile
                 title="Edit Company Profile"
+                userProfile={false}
                 avatar={{
                   isEmpty: 'NO',
                   url: imageUrl === "" ? initialValues.logoUrl : imageUrl,
