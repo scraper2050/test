@@ -48,6 +48,7 @@ import ContactsIcon from '@material-ui/icons/Contacts';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
 import { CompanyProfileStateType } from "../../../actions/user/user.types";
+import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
 
 
 interface BCSidebarProps {
@@ -352,7 +353,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
           [classes.bcSideBarCompanyLogo]: true,
           [avatarStyles.companyLogo]: !open
         })}>
-          <img src={profileState?.logoUrl}/>
+          <img src={profileState?.logoUrl ? profileState.logoUrl : NoCompanyLogo}/>
         </div>
 
         <ul>
