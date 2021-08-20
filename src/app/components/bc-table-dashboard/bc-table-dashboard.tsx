@@ -52,6 +52,7 @@ function BCTableDashboard(props: Props) {
           noHeader={true}
           className={classes.table}
           columns={columns}
+          noPadding={true}
           isLoading={isLoading}
           tableData={tableData}
           pagination={false}

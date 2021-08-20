@@ -5,7 +5,10 @@ export default (): any => ({
   tableContainer: {
     borderRadius: "10px",
     background: "#fff",
-
+    padding: 0,
+  },
+  tableList: {
+    padding: 0,
   },
   header: {
     height: "50px",

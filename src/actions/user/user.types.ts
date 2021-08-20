@@ -39,7 +39,7 @@ export const companyProfileState: CompanyProfile = {
   city: '',
   state: '',
   zipCode: '',
-  logoUrl: '',
+  logoUrl: undefined,
   street: '',
   paymentTerm: {
     createdAt: '',
