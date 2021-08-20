@@ -102,25 +102,23 @@ function CustomersPage({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          <Grid container>
-            <BCTabs
-              curTab={curTab}
-              indicatorColor={'primary'}
-              onChangeTab={handleTabChange}
-              tabsData={[
-                {
-                  'label': 'Customer List',
-                  'value': 0
-                }
-                /*
-                 * {
-                 *   label: "Recent Activities",
-                 *   value: 1,
-                 * },
-                 */
-              ]}
-            />
-          </Grid>
+          <BCTabs
+            curTab={curTab}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Customer List',
+                'value': 0
+              }
+              /*
+               * {
+               *   label: "Recent Activities",
+               *   value: 1,
+               * },
+               */
+            ]}
+          />
           <SwipeableViews index={curTab}>
             <div
               className={classes.dataContainer}
@@ -140,12 +138,10 @@ function CustomersPage({ classes }: any) {
             <div
               hidden={curTab !== 1}
               id={'1'}>
-              <Grid container>
                 <Grid
                   item
                   xs={12}
                 />
-              </Grid>
             </div>
           </SwipeableViews>
         </div>
