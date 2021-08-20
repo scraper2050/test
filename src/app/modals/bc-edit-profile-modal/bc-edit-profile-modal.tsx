@@ -51,6 +51,7 @@ function BCEditProfileModal({
     userProfile
   } = props
 
+
   const [image, setImage] = useState<any>("")
   const [thumb, setThumb] = useState<any>("")
 
@@ -84,7 +85,7 @@ function BCEditProfileModal({
 
   const imageSelected = async (f: File) => {
 
-    if (userProfile === undefined) {
+    if (!userProfile) {
 
       if (!f) return;
       const formData = new FormData();
