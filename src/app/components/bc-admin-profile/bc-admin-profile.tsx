@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './bc-admin-profile.style';
 import { Grid, Typography, withStyles } from '@material-ui/core';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
+import NoCompanyLogo from 'assets/img/avatars/NoCompanyLogo.png';
 import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../constants';
@@ -96,7 +97,7 @@ function BCAdminProfile(props: Props) {
                   'backgroundImage': `url(${avatar.url === '' ? NoLogoImage : avatar.url})`
                 }}
               /> :
-              <img src={avatar.url}/>
+              <img src={avatar.url === '' ? NoCompanyLogo : avatar.url}/>
             }
           </div>
         }
