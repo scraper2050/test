@@ -353,7 +353,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
           [classes.bcSideBarCompanyLogo]: true,
           [avatarStyles.companyLogo]: !open
         })}>
-          <img src={profileState?.logoUrl ? profileState.logoUrl : NoCompanyLogo}/>
+          <img src={profileState?.logoUrl === '' ?  NoCompanyLogo : profileState.logoUrl}/>
         </div>
 
         <ul>
