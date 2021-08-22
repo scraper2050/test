@@ -50,6 +50,7 @@ export const modalTypes = {
   'JOB_REPORTS_MODAL': 'job-reports-modal',
   'ADD_BILLING_MODAL': 'add-billing-modal',
   'QUICKBOOKS_LOGIN_MODAL': 'quickbook-login-modal',
+  'QUICKBOOKS_DISCONNECT_MODAL': 'quickbook-disconnect-modal',
   'ADD_CONTACT_MODAL': 'add-contact-modal',
   'DELETE_CONTACT_MODAL': 'delete-contact-modal',
   'EDIT_PROFILE': 'edit-profile-modal',

@@ -7,6 +7,7 @@ import { quickbooksGetUri, quickbooksAuthenticate } from "../../../../api/quickb
 import SyncPage from "./SyncPage";
 import { success, error } from 'actions/snackbar/snackbar.action';
 import {setQBAuthStateToLocalStorage, getQBAuthStateFromLocalStorage} from "../../../../utils/local-storage.service";
+import {setQuickbooksConnection} from "../../../../actions/quickbooks/quickbooks.actions";
 const redirectUri = `${window.location.origin}/main/admin/integrations/callback`;
 
 interface StatusTypes {
@@ -23,7 +24,7 @@ interface RowStatusTypes {
 
 function AdminIntegrationsPage({ classes, callbackUrl }: any) {
   const dispatch = useDispatch();
-  const [showSyncInterface, setShowSyncInterface] = useState(getQBAuthStateFromLocalStorage());
+  const showSyncInterface = useSelector((state:any) => state.quickbooks.connectionState);
 
   const parseURL = () => {
     const res: any = {}
@@ -73,11 +74,10 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
             const response = await quickbooksAuthenticate(data);
             if (response.data.status === 1) {
               dispatch(success(response.data.message))
-              setShowSyncInterface(true);
-              setQBAuthStateToLocalStorage(true);
+              dispatch(setQuickbooksConnection(true));
             } else {
               dispatch(error(response.data.message));
-              setQBAuthStateToLocalStorage(false);
+              dispatch(setQuickbooksConnection(false));
             }
             // window.location.reload();
           }
