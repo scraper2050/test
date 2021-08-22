@@ -46,6 +46,8 @@ import { NotificationsReducer as notifications } from './notifications.reducer';
 import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
 import { VendorsState } from 'actions/vendor/vendor.types';
+import { QuickbooksState, quickbooksReducer as quickbooks } from './quickbooks.reducer';
+
 import { InvoiceItemsState
   , InvoiceItemsReducer as invoiceItems
   , InvoiceItemsTierList as invoiceItemsTiers } from './items.reducer';
@@ -67,6 +69,7 @@ export interface RootState {
   serviceTicket: any
   invoiceItems: InvoiceItemsState;
   email: EmailState;
+  quickbooks: QuickbooksState,
 }
 
 
@@ -105,6 +108,7 @@ const appReducer = combineReducers({
   purchasedTags,
   'routeData': routeReducer,
   searchTerm,
+  quickbooks,
   serviceTicket,
   snackbar,
   subscriptions,
