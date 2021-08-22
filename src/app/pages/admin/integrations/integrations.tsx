@@ -97,15 +97,11 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
       <div className={classes.pageMainContainer}>
         <div className={classes.pageContainer}>
           <div className={classes.pageContent}>
-            <Grid container direction="column" spacing={5}>
-              <Grid item onClick={togglePopUp}>
-                <img
-                  className={classes.buttonImage}
-                  alt={"logo"}
-                  src={QbIcon}
-                />
-              </Grid>
-            </Grid>
+            <img
+              className={classes.buttonImage}
+              alt={"logo"}
+              src={QbIcon}
+            />
           </div>
         </div>
       </div>
