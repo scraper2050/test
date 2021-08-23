@@ -556,6 +556,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                           <InputBase
                             id="invoice-title"
                             name="invoice_title"
+                            disabled
                             defaultValue="INVOICE"
                             error={!!errors.invoice_title}
                             onChange={handleChange('invoice_title')}
@@ -736,9 +737,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                 })
                               
                             }
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                    
                           </Select>
                         </FormControl>
 
@@ -761,6 +760,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                 </InputLabel> 
                                 <Select
                                   id="company"
+                                  disabled
                                   onChange={handleChange('company')}
                                   value={invoiceDetail?.customer?.profile?.displayName}
                                   input={<InputBase
