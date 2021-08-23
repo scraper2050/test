@@ -18,6 +18,7 @@ import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import BCEditInvoice from "../../../components/bc-invoice/bc-edit-invoice";
+import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,6 +59,7 @@ function ViewInvoice({ classes, theme }: any) {
     if (user) {
       dispatch(getCompanyProfileAction(user.company as string));
     }
+    dispatch(getAllPaymentTermsAPI());
   }, []);
 
   if (loadingInvoiceDetail) {
@@ -73,30 +75,7 @@ function ViewInvoice({ classes, theme }: any) {
   return (
     <MainContainer>
       <PageContainer>
-        <PageHeader>
-          <div>
-            <IconButton
-              color="default"
-              size="small"
-              className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
-              onClick={() => {
-                history.goBack();
-              }}
-            >
-              <ArrowBackIcon/>
-            </IconButton>
-          </div>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classNames(invoiceStyles.margin, invoiceStyles.white)}
-            >
-              Save
-            </Button>
-          </div>
-        </PageHeader>
-        <BCEditInvoice invoiceData={invoiceDetail}/>
+        <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/>
       </PageContainer>
     </MainContainer>
   )
