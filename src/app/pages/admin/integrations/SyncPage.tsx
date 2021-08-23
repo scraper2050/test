@@ -2,7 +2,6 @@ import React from "react";
 import {Paper, Typography, Grid, Button, Checkbox, IconButton} from "@material-ui/core";
 import { green, grey, orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
-import CloseIcon from '@material-ui/icons/Cancel';
 import QBIcon from "../../../../assets/img/qb.png";
 import { quickbooksCustomerSync, quickbooksItemsSync, quickbooksInvoicesSync } from "../../../../api/quickbooks.api";
 import { getCompanyProfile } from "../../../../api/user.api";
@@ -48,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
   },
   closeImageIconContainer: {
     position: "absolute",
-    right: 0,
+    top: 10,
+    right: 10,
   },
   closeImageIcon: {
     fontSize: 28,
@@ -247,14 +247,14 @@ function SyncPage() {
             </div>
           </Grid>
           <Grid item xs={2} className={classes.grid2}>
-            <IconButton
-              aria-label={'Open drawer'}
-              color={'inherit'}
+            <Button
               className={classes.closeImageIconContainer}
-              onClick={askToDisconnect}>
-              <CloseIcon className={classes.closeImageIcon}></CloseIcon>
-            </IconButton>
-
+              aria-label={'disconnect'}
+              color={'secondary'}
+              onClick={askToDisconnect}
+              variant={'contained'}>
+              {'Disconnect'}
+            </Button>
             <div className={classes.imageIconContainer}>
               <img
                 src={QBIcon}
