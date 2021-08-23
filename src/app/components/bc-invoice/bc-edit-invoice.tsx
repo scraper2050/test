@@ -558,12 +558,8 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             name="invoice_title"
                             disabled
                             defaultValue="INVOICE"
-                            error={!!errors.invoice_title}
-                            onChange={handleChange('invoice_title')}
                             classes={{
-                              root: classNames(invoiceStyles.bootstrapRoot, {
-                                [invoiceStyles.bootstrapRootError]: !!errors.invoice_title
-                              }),
+                              root: classNames(invoiceStyles.bootstrapRoot),
                               input: classNames(invoiceStyles.bootstrapInputLarge, invoiceStyles.bootstrapTextTitle, invoiceStyles.textRight),
                             }}
                           />
@@ -627,6 +623,8 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             KeyboardButtonProps={{
                               'aria-label': 'change date',
                             }}
+                            onClick={() => setDatePickerOpen(true)}
+                            onClose={() => setDatePickerOpen(false)}
                             TextFieldComponent={(props: TextFieldProps) => {
                               return (
                                 <InputBase
@@ -667,7 +665,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             InputAdornmentProps={{ position: 'end' }}
                             margin="none"
                             size="small"
-                            id="due-date"
+                            id="due_date"
                             name="due_date"
                             format="MMM. dd, yyyy"
                             value={values.due_date}
@@ -676,13 +674,13 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                               setDueDatePickerOpen(false);
                               setFieldValue('due_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
                             }}
-                            KeyboardButtonProps={{
-                              'aria-label': 'change date',
-                            }}
+                            onClick={() => setDueDatePickerOpen(true)}
+                            onClose={() => setDueDatePickerOpen(false)}
+                           
                             TextFieldComponent={(props: TextFieldProps) => {
                               return (
                                 <InputBase
-                                  id="due-date"
+                                  id="due_date"
                                   name="due_date"
                                   error={!!errors.due_date}
                                   onClick={(e) => {
@@ -765,9 +763,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                   value={invoiceDetail?.customer?.profile?.displayName}
                                   input={<InputBase
                                     classes={{
-                                      root: classNames(invoiceStyles.bootstrapRoot, {
-                                        [invoiceStyles.bootstrapRootError]: !!errors.company
-                                      }),
+                                      root: classNames(invoiceStyles.bootstrapRoot),
                                       input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textBold),
                                     }}
                                     error={!!errors.company} />}
