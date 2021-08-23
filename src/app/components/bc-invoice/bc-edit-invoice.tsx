@@ -64,6 +64,27 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
         width: '100%',
       }
     },
+    customerBox:{
+      marginTop: '10px',
+      fontSize: '12px',
+      lineHeight: '14px',
+      color: '#4F4F4F',
+      '& > div': {
+        fontSize: 12,
+        display: 'flex',
+        '& > span': {
+          display: 'flex',
+          marginLeft: 5,
+          color: CONSTANTS.PRIMARY_DARK_GREY,
+        }
+      }
+    },
+    serviceAdd:{
+  fontSize: '10px',
+lineHeight: '12px',
+textTransform: 'uppercase',
+color: '#828282',
+    },
     infoBox: {
       display: 'flex',
       flexDirection: 'column',
@@ -247,7 +268,7 @@ color: '#4F4F4F',
       fontWeight: 'bold',
       textTransform: 'uppercase',
       transform: 'none',
-      marginRight: 20,
+      marginRight: 60,
       color: CONSTANTS.PRIMARY_DARK_GREY,
       paddingTop: '15px',
     },
@@ -262,7 +283,7 @@ color: '#4F4F4F',
     totalContainer: {
       display: 'flex',
       justifyContent: 'space-between',
-      minHeight: 130,
+      minHeight: 195,
       fontWeight: 500,
 fontSize: '20px',
 lineHeight: '23px',
@@ -547,7 +568,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                           <div><MailOutlineIcon className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.info?.companyEmail}</span></div>
                           <div><StorefrontIcon className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.address?.street}, {invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span></div>
                           <h5>VENDOR NUMBER</h5>
-                          <div className={invoiceStyles.paddingContent}>12345</div>
+                          <div className={invoiceStyles.paddingContent}>{invoiceDetail?.customer?.vendorId}</div>
                         </div>
                       </Grid>
                       <Grid item xs>
@@ -665,7 +686,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             InputAdornmentProps={{ position: 'end' }}
                             margin="none"
                             size="small"
-                            id="due_date"
+                            id="due-date"
                             name="due_date"
                             format="MMM. dd, yyyy"
                             value={values.due_date}
@@ -680,7 +701,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             TextFieldComponent={(props: TextFieldProps) => {
                               return (
                                 <InputBase
-                                  id="due_date"
+                                  id="due-date"
                                   name="due_date"
                                   error={!!errors.due_date}
                                   onClick={(e) => {
@@ -748,7 +769,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                   <Grid item xs={8}>
                     <Card elevation={2}>
                       <CardHeader title="BILL TO"/>
-                      <CardContent>
+                      <CardContent style={{minHeight: '190px'}}>
                         <FormControl className={invoiceStyles.formFieldRow}>
                           {
                             isOld ?
@@ -800,6 +821,27 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                           }
 
                         </FormControl>
+                        <Grid container spacing={1} className={invoiceStyles.customerBox}>
+                  <Grid item xs={3} justify="flex-end">
+                  <div >
+                    <div><span><PhoneIcon className={invoiceStyles.storeIcons}/></span></div>
+                  <div><span><MailOutlineIcon className={invoiceStyles.storeIcons}/></span></div>
+                  <div>  <span><StorefrontIcon className={invoiceStyles.storeIcons}/></span></div>
+                  </div>
+                  </Grid>
+                  <Grid item xs={4}>
+                  <div >
+                  <div> <span>{invoiceDetail?.customer?.contact?.phone}</span></div>
+                    <div><span>{invoiceDetail?.customer?.info?.email}</span></div>
+                 <div><span>{invoiceDetail?.customer?.address?.street}, {invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode}</span></div>
+                
+                 </div>
+            
+             </Grid>
+                  <Grid item xs={5}>
+                    <div className={invoiceStyles.serviceAdd}>service address</div>
+                    </Grid>
+                  </Grid>
                       </CardContent>
                     </Card>
                   </Grid>
