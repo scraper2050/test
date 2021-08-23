@@ -97,7 +97,7 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
       <div className={classes.pageMainContainer}>
         <div className={classes.pageContainer}>
           <div className={classes.pageContent}>
-            <img
+            <img onClick={togglePopUp}
               className={classes.buttonImage}
               alt={"logo"}
               src={QbIcon}
