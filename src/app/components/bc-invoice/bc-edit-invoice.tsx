@@ -219,6 +219,9 @@ color: '#4F4F4F',
         boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
       },
     },
+    noBorder: {
+      border:'none'
+    },
     bootstrapInput: {
       color: '#4F4F4F!important',
       fontWeight: 'normal',
@@ -581,8 +584,9 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             defaultValue="INVOICE"
                             classes={{
                               root: classNames(invoiceStyles.bootstrapRoot),
-                              input: classNames(invoiceStyles.bootstrapInputLarge, invoiceStyles.bootstrapTextTitle, invoiceStyles.textRight),
+                              input: classNames(invoiceStyles.bootstrapInputLarge, invoiceStyles.bootstrapTextTitle, invoiceStyles.textRight, invoiceStyles.noBorder),
                             }}
+                            
                           />
                         </FormControl>
 
