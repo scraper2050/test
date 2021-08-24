@@ -63,5 +63,6 @@ export const modalTypes = {
   'SALES_TAX_MODAL': 'sales-tax-modal',
   'PAYMENT_TERMS_MODAL': 'payment-terms-modal',
   'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
+  'PAYMENT_RECORD_MODAL': 'payment_record_modal',
   'EDIT_TIERS_MODAL': 'edit-tiers-modal'
 };

@@ -221,7 +221,6 @@ function DashboardPage({ classes }: any): JSX.Element {
         </div>
       </div>
     </div>
-
   );
 }
 
