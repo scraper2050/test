@@ -254,7 +254,7 @@ function BCTableContent({
 
   const useStyles = makeStyles({
     'cellMd': {
-      'padding': '6px 24px 6px 16px!important'
+      'padding': '6px 16px 6px 8px!important'
     },
     'table': {
       'width': '95%',

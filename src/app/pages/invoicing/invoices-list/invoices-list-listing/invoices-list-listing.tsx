@@ -108,6 +108,8 @@ function InvoicingListListing({ classes, theme }: any) {
       'width': 20
     },
     { Cell({ row }: any) {
+      const { status = '' } = row.original;
+      const textStatus = status.split('_').join(' ').toLowerCase();
       return (
         <div className={customStyles.centerContainer} onClick={() => console.log('hello')}>
           {
@@ -125,7 +127,7 @@ function InvoicingListListing({ classes, theme }: any) {
                 onClick={(e) => recordPayment(e, row.original)}
                 size="small">
               <div>
-                <span>Unpaid</span>
+                <span style={{textTransform: 'capitalize'}}>{textStatus}</span>
                 <ExpandMore style={{position: 'absolute', right: 3}}/>
               </div>
               </CSButtonSmall>
@@ -175,7 +177,7 @@ function InvoicingListListing({ classes, theme }: any) {
       Cell({ row }: any) {
         // return <div className={customStyles.centerContainer}>
         return <EmailInvoiceButton
-            Component={<CSButton
+            Component={<Button
               variant="contained"
               classes={{
                 'root': classes.emailButton
@@ -185,7 +187,7 @@ function InvoicingListListing({ classes, theme }: any) {
               <MailOutlineOutlined
                 className={customStyles.iconBtn}
               />
-            </CSButton>}
+            </Button>}
             invoice={row.original}
           />;
         // </div>;
@@ -224,6 +226,7 @@ function InvoicingListListing({ classes, theme }: any) {
   return (
     <DataContainer id={'0'}>
       <BCTableContainer
+        cellSize={'sm'}
         columns={columns}
         isLoading={isLoading}
         onRowClick={handleRowClick}
