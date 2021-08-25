@@ -72,7 +72,11 @@ function ViewInvoice({ classes, theme }: any) {
     });
   }
 
-  
+  const goToEditNew = () => {
+    history.push({
+      'pathname': `edit-new/${invoice._id}`,
+    });
+  }
 
   return (
     <MainContainer>

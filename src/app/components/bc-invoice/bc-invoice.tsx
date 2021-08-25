@@ -243,7 +243,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceTableStyle = invoiceTableStyles();
   const dispatch = useDispatch();
   console.log("log-invoiceDetail", invoiceDetail);
-
+  console.log('invoiceDetail?.items: '+JSON.stringify( invoiceDetail?.items, null, 4));
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
@@ -320,6 +320,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           </Grid>
         </Grid>
       </div>
+   
       <div className={invoiceTableStyle.itemsTable}>
 
         <div className={invoiceTableStyle.itemsTableHeader}>
