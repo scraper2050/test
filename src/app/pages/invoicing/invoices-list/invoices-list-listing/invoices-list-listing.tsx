@@ -226,7 +226,6 @@ function InvoicingListListing({ classes, theme }: any) {
   return (
     <DataContainer id={'0'}>
       <BCTableContainer
-        cellSize={'sm'}
         columns={columns}
         isLoading={isLoading}
         onRowClick={handleRowClick}
