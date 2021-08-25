@@ -351,7 +351,7 @@ function BCTableContent({
                     'root': 'overflow-hidden',
                     'spacer': 'w-0 max-w-0'
                   }}
-                  colSpan={5}
+                  //colSpan={5}
                   count={data.length}
                   onChangePage={handleChangePage}
                   onChangeRowsPerPage={handleChangeRowsPerPage}
