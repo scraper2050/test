@@ -15,13 +15,13 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import {error} from "../../../actions/snackbar/snackbar.action";
+import {setInvoicingList} from "../../../actions/invoicing/invoicing.action";
 
 
 function BcPaymentRecordModal({
@@ -30,7 +30,7 @@ function BcPaymentRecordModal({
   detail = false
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state: any) => state.jobLocations.loading);
+  // const invoiceList = useSelector((state: any) => state.invoiceList);
 
   const paymentTypes = [
     {
@@ -88,7 +88,14 @@ function BcPaymentRecordModal({
       }
       dispatch(recordPayment(params)).then((response: any) => {
         if (response.status === 1) {
+/*          console.log({invoiceList})
+          const currentInvoiceIndex = invoiceList.data.findIndex((item: any) => item._id === invoice._id);
+          invoiceList.data[currentInvoiceIndex].balanceDue = response.invoice.balanceDue;
+          invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
+          invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
+          dispatch(setInvoicingList(invoiceList.data));*/
           setTimeout(() => closeModal(), 500);
+          //closeModal()
         } else {
           console.log(response.message);
           dispatch(error(response.message))
@@ -121,10 +128,6 @@ function BcPaymentRecordModal({
       }));
     }, 200);
   };
-
-  if (isLoading) {
-    return <BCCircularLoader />;
-  }
 
   const {customer, dueDate} = invoice;
   const formatedDueDate = (new Date(dueDate)).toLocaleDateString('en-us',{ year: 'numeric', month: 'short', day: 'numeric' })
