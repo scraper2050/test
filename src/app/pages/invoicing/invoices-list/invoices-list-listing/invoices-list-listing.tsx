@@ -2,7 +2,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { withStyles } from "@material-ui/core";
+import { withStyles, Button } from "@material-ui/core";
 import React, { useEffect } from 'react';
 import {
   getInvoicingList,
@@ -14,7 +14,10 @@ import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { CSButton, useCustomStyles, CSChip } from "../../../../../helpers/custom";
+import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers/custom";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../../constants";
 
 const getFilteredList = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList?.data);
@@ -106,19 +109,26 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     { Cell({ row }: any) {
       return (
-        <div className={customStyles.centerContainer}>
+        <div className={customStyles.centerContainer} onClick={() => console.log('hello')}>
           {
             row.original.paid
-              ? <CSChip
-                label={'Paid'}
+              ? <CSButtonSmall
+                variant="contained"
                 style={{ 'backgroundColor': theme.palette.success.light,
                   'color': '#fff' }}
-              />
-              : <CSChip
-              className="block"
-                color={'secondary'}
-                label={'Unpaid'}
-              />
+              >Paid</CSButtonSmall>
+              : <CSButtonSmall
+                variant="contained"
+                style={{ 'backgroundColor': theme.palette.secondary.light,
+                  'color': '#fff' }}
+                color="secondary"
+                onClick={(e) => recordPayment(e, row.original)}
+                size="small">
+              <div>
+                <span>Unpaid</span>
+                <ExpandMore style={{position: 'absolute', right: 3}}/>
+              </div>
+              </CSButtonSmall>
           }
         </div>
       )
@@ -191,6 +201,23 @@ function InvoicingListListing({ classes, theme }: any) {
     dispatch(getInvoicingList());
     dispatch(loadingInvoicingList());
   }, []);
+
+  const recordPayment = (event: any, row: any) => {
+    console.log({row})
+    event.stopPropagation();
+    dispatch(setModalDataAction({
+      'data': {
+        invoice: row,
+        modalTitle: 'Record a Payment',
+        removeFooter: false,
+      },
+      'type': modalTypes.PAYMENT_RECORD_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+
+  }
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 

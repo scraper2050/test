@@ -96,7 +96,7 @@ function BCJobModal({
   // Const employeesForJob = useSelector(({ employeesForJob }: any) => employeesForJob.data);
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = useMemo(() => [...data], [data]);
-  const vendorsList = useSelector(({ vendors }: any) => vendors.data);
+  const vendorsList = useSelector(({ vendors }: any) => vendors.data.filter((vendor: any) => vendor.status <= 1));
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
