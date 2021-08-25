@@ -15,13 +15,13 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import {error} from "../../../actions/snackbar/snackbar.action";
+import {setInvoicingList} from "../../../actions/invoicing/invoicing.action";
 
 
 function BcPaymentRecordModal({
@@ -30,7 +30,7 @@ function BcPaymentRecordModal({
   detail = false
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  const isLoading = useSelector((state: any) => state.jobLocations.loading);
+  // const invoiceList = useSelector((state: any) => state.invoiceList);
 
   const paymentTypes = [
     {
@@ -66,16 +66,6 @@ function BcPaymentRecordModal({
     return (FormikValues.paymentMethod >= 0 && FormikValues.amount > 0);
   };
 
-  const formatSchedulingTime = (time: string) => {
-    const timeAr = time.split('T');
-    const timeWithSeconds = timeAr[1].substr(0, 5);
-    const hours = timeWithSeconds.substr(0, 2);
-    const minutes = timeWithSeconds.substr(3, 5);
-
-    return { hours,
-      minutes };
-  };
-
 
   const form = useFormik({
     initialValues: {
@@ -98,16 +88,23 @@ function BcPaymentRecordModal({
       }
       dispatch(recordPayment(params)).then((response: any) => {
         if (response.status === 1) {
-          closeModal();
+/*          console.log({invoiceList})
+          const currentInvoiceIndex = invoiceList.data.findIndex((item: any) => item._id === invoice._id);
+          invoiceList.data[currentInvoiceIndex].balanceDue = response.invoice.balanceDue;
+          invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
+          invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
+          dispatch(setInvoicingList(invoiceList.data));*/
+          setTimeout(() => closeModal(), 500);
+          //closeModal()
         } else {
           console.log(response.message);
           dispatch(error(response.message))
         }
       }).catch((e: any) => {
         console.log(e.message);
-        dispatch(error(e.message))
+        dispatch(error(e.message));
+        setSubmitting(false);
       })
-      setSubmitting(false);
     }
   });
 
@@ -132,12 +129,10 @@ function BcPaymentRecordModal({
     }, 200);
   };
 
-  if (isLoading) {
-    return <BCCircularLoader />;
-  }
-
   const {customer, dueDate} = invoice;
   const formatedDueDate = (new Date(dueDate)).toLocaleDateString('en-us',{ year: 'numeric', month: 'short', day: 'numeric' })
+  const customerPO = invoice.customerPO ? invoice.customerPO : '\u00A0';
+
   return (
     <DataContainer >
       <Grid container className={classes.modalPreview} justify={'space-around'}>
@@ -159,7 +154,7 @@ function BcPaymentRecordModal({
         <Grid item>
           <Grid container direction={'column'}>
             <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{invoice.invoiceId}</Typography>
-            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{customer.address.zipCode}</Typography>
+            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{customerPO}</Typography>
             <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{formatedDueDate}</Typography>
           </Grid>
         </Grid>
@@ -199,7 +194,7 @@ function BcPaymentRecordModal({
                     label={''}
                     name={'amount'}
                     onChange={(e: any) => formikChange(e)}
-                    type={'text'}
+                    type={'number'}
                     value={FormikValues.amount}
                     variant={'outlined'}
                     InputProps={{
@@ -279,7 +274,6 @@ function BcPaymentRecordModal({
                     name={'notes'}
                     multiline={true}
                     onChange={(e: any) => formikChange(e)}
-
                     type={'text'}
                     value={FormikValues.notes}
                     variant={'outlined'}
@@ -290,7 +284,7 @@ function BcPaymentRecordModal({
           </Grid>
         </DialogContent>
 
-        <hr/>
+        <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
 
         <Grid
           alignItems={'center'}
@@ -303,18 +297,18 @@ function BcPaymentRecordModal({
               'root': classes.dialogActions
             }}>
               <Button
-                aria-label={'create-job'}
+                aria-label={'record-payment'}
                 classes={{
                   'root': classes.closeButton
                 }}
                 disabled={isSubmitting}
                 onClick={() => closeModal()}
                 variant={'outlined'}>
-                {'Close'}
+                Close
               </Button>
 
               <Button
-                disabled={!isValidate()|| isSubmitting}
+                disabled={!isValidate() || isSubmitting}
                 aria-label={'create-job'}
                 classes={{
                   root: classes.submitButton,

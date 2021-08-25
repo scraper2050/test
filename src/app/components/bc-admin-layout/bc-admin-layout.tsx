@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       minHeight: '100vh',
       flexGrow: 1,
-      padding: theme.spacing(3),
+      padding: theme.spacing(0),
       backgroundColor: CONSTANTS.PRIMARY_WHITE,
       overflow: 'hidden',
     },
