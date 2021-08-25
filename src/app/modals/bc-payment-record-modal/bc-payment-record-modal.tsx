@@ -152,7 +152,7 @@ function BcPaymentRecordModal({
   const form = useFormik({
     initialValues: {
       paymentDate: new Date(),
-      amount: invoice.balanceDue,
+      amount: invoice.total,
       paymentMethod: -1,
       referenceNumber: '',
       notes: ''
@@ -189,11 +189,39 @@ function BcPaymentRecordModal({
     return <BCCircularLoader />;
   }
 
+  const {customer, dueDate} = invoice;
+  const formatedDueDate = (new Date(dueDate)).toLocaleDateString('en-us',{ year: 'numeric', month: 'short', day: 'numeric' })
   return (
-
     <DataContainer >
+      <Grid container className={classes.modalPreview} justify={'space-around'}>
+        <Grid item xs={4}>
+          <Typography variant={'caption'} className={classes.previewCaption}>BILL TO</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>{customer.profile.displayName}</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT DUE</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${invoice.total}</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Grid container direction={'column'}>
+            <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>INVOICE #:</Typography>
+            <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>CUSTOMER P.O.:</Typography>
+            <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>DUE DATE:</Typography>
+          </Grid>
+        </Grid>
+        <Grid item xs={2}>
+          <Grid container direction={'column'}>
+            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{invoice.invoiceId}</Typography>
+            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{customer.address.zipCode}</Typography>
+            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{formatedDueDate}</Typography>
+          </Grid>
+        </Grid>
+
+      </Grid>
       <form  onSubmit={FormikSubmit} >
         <DialogContent classes={{ 'root': classes.dialogContent }}>
+
+
           <Grid container direction={'column'} spacing ={1}>
 
             <Grid item xs={12}>

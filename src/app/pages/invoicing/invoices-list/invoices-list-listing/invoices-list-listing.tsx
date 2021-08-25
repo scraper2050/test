@@ -203,6 +203,7 @@ function InvoicingListListing({ classes, theme }: any) {
   }, []);
 
   const recordPayment = (event: any, row: any) => {
+    console.log({row})
     event.stopPropagation();
     dispatch(setModalDataAction({
       'data': {

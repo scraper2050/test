@@ -2,34 +2,32 @@ import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
 
 export default (theme: Theme): any => ({
-  'dialogActions': {
-    'padding': '15px  24px 15px 0 !important',
+  dialogActions: {
+    padding: '15px  24px 15px 0 !important',
     backgroundColor: 'auto'
   },
-  'dialogContent': {
-    'padding': '8px 75px !important',
+  dialogContent: {
+    padding: '8px 75px !important',
   },
-  'deleteButton': {
-    'background': '#C00707 !important',
-    // 'borderRadius': '30px',
-    'minWidth': '130px !important',
-    'fontSize': '16px !important',
-    'padding': '0 12px',
-    'height': '34px',
-    'color': CONSTANTS.PRIMARY_WHITE,
-    'textTransform': 'capitalize',
-    'marginRight': '1.5rem',
+  modalPreview: {
+    backgroundColor: '#EAECF3',
+    padding: '35px 50px',
+    margin: '15px 0',
   },
-  'goToJobsButton': {
-    'background': 'rgb(0, 170, 255) !important',
-    // 'borderRadius': '30px',
-    'minWidth': '130px !important',
-    'fontSize': '16px !important',
-    'padding': '0 12px',
-    'height': '34px',
-    'color': CONSTANTS.PRIMARY_WHITE,
-    'textTransform': 'capitalize',
-    'marginRight': '1.5rem',
+  previewCaption: {
+    color: '#828282',
+    marginBottom: '10px',
+  },
+  previewCaption2: {
+    color: '#828282',
+    marginBottom: '5px',
+  },
+  previewText: {
+    color: '#4F4F4F',
+  },
+  previewTextSm: {
+    color: '#4F4F4F',
+    marginBottom: '5px',
   },
   closeButton: {
     color: '#4F4F4F',
