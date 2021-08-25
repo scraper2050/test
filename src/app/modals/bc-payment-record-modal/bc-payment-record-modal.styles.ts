@@ -52,6 +52,10 @@ export default (theme: Theme): any => ({
     padding: '0 12px',
     textTransform:'none',
   },
+  submitButtonDisabled : {
+    color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
+    backgroundColor: `${CONSTANTS.TABLE_HOVER} !important`,
+  },
   'dialogDescription': {
     'padding': '0 24px'
   },

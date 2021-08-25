@@ -14,7 +14,7 @@ import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { CSButton, useCustomStyles, CSChip } from "../../../../../helpers/custom";
+import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers/custom";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../../constants";
@@ -112,12 +112,12 @@ function InvoicingListListing({ classes, theme }: any) {
         <div className={customStyles.centerContainer} onClick={() => console.log('hello')}>
           {
             row.original.paid
-              ? <CSChip
-                label={'Paid'}
+              ? <CSButtonSmall
+                variant="contained"
                 style={{ 'backgroundColor': theme.palette.success.light,
                   'color': '#fff' }}
-              />
-              : <CSButton
+              >Paid</CSButtonSmall>
+              : <CSButtonSmall
                 variant="contained"
                 style={{ 'backgroundColor': theme.palette.secondary.light,
                   'color': '#fff' }}
@@ -128,7 +128,7 @@ function InvoicingListListing({ classes, theme }: any) {
                 <span>Unpaid</span>
                 <ExpandMore style={{position: 'absolute', right: 3}}/>
               </div>
-              </CSButton>
+              </CSButtonSmall>
           }
         </div>
       )
