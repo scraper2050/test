@@ -95,15 +95,18 @@ function BcPaymentRecordModal({
         referenceNumber: FormikValues.referenceNumber,
         paymentType: paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name,
         paidAt: FormikValues.paymentDate,
-    }
-    dispatch(recordPayment(params)).then((response: any) => {
-      if (response.status === 1) {
-        closeModal();
-      } else {
-        console.log(response.message);
-        dispatch(error(response.message))
       }
-    })
+      dispatch(recordPayment(params)).then((response: any) => {
+        if (response.status === 1) {
+          closeModal();
+        } else {
+          console.log(response.message);
+          dispatch(error(response.message))
+        }
+      }).catch((e: any) => {
+        console.log(e.message);
+        dispatch(error(e.message))
+      })
       setSubmitting(false);
     }
   });

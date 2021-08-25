@@ -32,7 +32,7 @@ export default (theme: Theme): any => ({
   closeButton: {
     color: '#4F4F4F',
     borderColor: '#4F4F4F',
-    width: '130px !important',
+    width: '110px !important',
     height: '34px',
     fontSize: '16px !important',
     padding: '0 12px',
@@ -46,7 +46,7 @@ export default (theme: Theme): any => ({
       backgroundColor: `${CONSTANTS.TABLE_ACTION_BUTTON_HOVER} !important`,
       borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
     },
-    width: '130px !important',
+    width: '110px !important',
     height: '34px',
     fontSize: '16px !important',
     padding: '0 12px',
