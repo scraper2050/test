@@ -230,7 +230,7 @@ function InvoicingListListing({ classes, theme }: any) {
         isLoading={isLoading}
         onRowClick={handleRowClick}
         search
-        searchPlaceholder={'Search invoices...'}
+        searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
       />
     </DataContainer>
