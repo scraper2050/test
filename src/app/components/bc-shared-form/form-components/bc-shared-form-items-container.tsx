@@ -64,14 +64,16 @@ function SharedFormItemsContainer({ classes,
     tempArray[index].total = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line
     setItems(tempArray);
     //console.log('tempArray: '+JSON.stringify(tempArray, null, 4));
-    
+
   };
 
 
   useEffect(() => {
     if (items) {
-      const newItems = items.map((invoiceItem:any) => {
-        const { 'item': { name }, price, taxAmount, total, quantity, tax, isFixed }:any = invoiceItem;
+
+      const goodItems = items.filter((item: any) => !!item.item);
+      const newItems = goodItems.map((invoiceItem:any) => {
+        const { item: { name }, price, taxAmount, total, quantity, tax, isFixed }:any = invoiceItem;
 
 
         return {
@@ -95,7 +97,7 @@ function SharedFormItemsContainer({ classes,
 
 
   const addItem = () => {
-    
+
     const newData = [{ ...itemSchema }];
     console.log('items before tempArray: '+JSON.stringify(items, null, 4));
     const tempArray = [
@@ -103,7 +105,7 @@ function SharedFormItemsContainer({ classes,
       ...newData
     ];
    //console.log('addItem: '+JSON.stringify(newData, null, 4));
-   
+
     setItems(tempArray);
     console.log('tempArray: '+JSON.stringify(tempArray, null, 4));
     setRefreshColumns(true);
@@ -253,7 +255,7 @@ function SharedFormItemsContainer({ classes,
   //console.log('invoiceItems: '+JSON.stringify(invoiceItems, null, 4));
 
   //console.log('log-items tableData: '+JSON.stringify(items, null, 4));
- 
+
   return <>
     <BCTableContainer
       columns={columns}

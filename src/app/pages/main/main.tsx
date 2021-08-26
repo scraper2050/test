@@ -282,6 +282,12 @@ function Main(): any {
                     path={'/main/customers/job-reports/edit/:invoice'}
                     title={'Edit Invoice'}
                   />
+                  <AuthRoute
+                    Component={EditInvoicePage}
+                    exact
+                    path={'/main/invoicing/edit/:invoice'}
+                    title={'Edit Invoice'}
+                  />
 
                   <Redirect
                     exact

@@ -11,13 +11,14 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PrintIcon from '@material-ui/icons/Print';
 import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
-import { useHistory, useParams } from "react-router-dom";
+import {useHistory, useLocation, useParams} from "react-router-dom";
 import { getCustomerDetailAction, loadingSingleCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import { getContacts } from "../../../../api/contacts.api";
+import {getAllSalesTaxAPI} from "../../../../api/tax.api";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,15 +68,15 @@ function ViewInvoice({ classes, theme }: any) {
 
   const goToEdit = () => {
     history.push({
-      'pathname': `/main/customers/job-reports/edit/${invoice}`,
+      'pathname': `/main/invoicing/edit/${invoice}`,
     });
   }
 
-  console.log('customerId: '+ invoiceDetail.customer?._id);
+/*  console.log('customerId: '+ invoiceDetail.customer?._id);
   console.log('customerName: '+ invoiceDetail.customer?.profile?.displayName);
   console.log('jobId: '+ invoiceDetail?._id);
-  console.log('jobType: '+ invoiceDetail.job?.type?._id);
-  console.log('invoiceDetail:'+ invoiceDetail);
+  console.log('jobType: '+ invoiceDetail.job?.type?._id);*/
+  //console.log('invoiceDetail:'+ invoiceDetail);
 
   const goToEditNew = () => {
     history.push({

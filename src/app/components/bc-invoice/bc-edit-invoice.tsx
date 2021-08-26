@@ -1,55 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useEffect, useMemo, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
-  Accordion, AccordionActions, AccordionDetails,
+  Accordion,
+  AccordionDetails,
   AccordionSummary,
   Button,
   ButtonGroup,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
-  Chip,
-  Divider, Grid, InputLabel, MenuItem, Paper,
-  Select,
   createStyles,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   withStyles
 } from '@material-ui/core';
 import styles from './bc-invoice.styles';
-import { MuiThemeProvider, Theme, createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import {createMuiTheme, makeStyles, MuiThemeProvider, Theme} from '@material-ui/core/styles';
 import * as CONSTANTS from '../../../constants';
 import styled from 'styled-components';
 import InputBase from '@material-ui/core/InputBase';
 import FormControl from '@material-ui/core/FormControl';
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
-
-
-
-import { getCustomerDetailAction } from '../../../actions/customer/customer.action';
 import moment from 'moment';
 
-import { getContacts } from '../../../api/contacts.api';
-import { RootState } from '../../../reducers';
-import { loadInvoiceItems } from '../../../actions/invoicing/items/items.action';
+import {getContacts} from '../../../api/contacts.api';
+import {loadInvoiceItems} from '../../../actions/invoicing/items/items.action';
 import PhoneIcon from '@material-ui/icons/Phone';
-import DeleteIcon from '@material-ui/icons/Delete';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import IconButton from '@material-ui/core/IconButton';
 import classNames from 'classnames';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { PageHeader } from '../../pages/customer/job-reports/view-invoice-edit';
-import { useHistory } from 'react-router-dom';
-import { blue } from '@material-ui/core/colors';
+import {PageHeader} from '../../pages/customer/job-reports/view-invoice-edit';
+import {useHistory} from 'react-router-dom';
+import {blue} from '@material-ui/core/colors';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import Box from '@material-ui/core/Box';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+import {KeyboardDatePicker} from '@material-ui/pickers';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import EventIcon from '@material-ui/icons/Event';
-import { TextFieldProps } from '@material-ui/core/TextField';
+import {TextFieldProps} from '@material-ui/core/TextField';
 import BCInvoiceItemsTableRow from './bc-invoice-table-row';
 import AddIcon from '@material-ui/icons/Add';
+import {getCustomerDetailAction} from "../../../actions/customer/customer.action";
 
 interface Props {
   classes?: any;
@@ -64,7 +59,7 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
         width: '100%',
       }
     },
-    customerBox:{
+    customerBox: {
       marginTop: '10px',
       fontSize: '12px',
       lineHeight: '14px',
@@ -79,11 +74,11 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
         }
       }
     },
-    serviceAdd:{
-  fontSize: '10px',
-lineHeight: '12px',
-textTransform: 'uppercase',
-color: '#828282',
+    serviceAdd: {
+      fontSize: '10px',
+      lineHeight: '12px',
+      textTransform: 'uppercase',
+      color: '#828282',
     },
     infoBox: {
       display: 'flex',
@@ -104,8 +99,8 @@ color: '#828282',
       '& > h5': {
         fontSize: 10,
         fontWeight: 300,
-lineHeight: '12px',
-textTransform: 'uppercase',
+        lineHeight: '12px',
+        textTransform: 'uppercase',
         marginBottom: 0,
         paddingLeft: 20,
         /* color: CONSTANTS.PRIMARY_DARK_GREY,*/
@@ -114,11 +109,11 @@ textTransform: 'uppercase',
     },
     paddingContent: {
       paddingLeft: 20,
-     /* color: CONSTANTS.PRIMARY_DARK_GREY,*/
-fontWeight: 500,
-fontSize: '12px',
-lineHeight: '14px',
-color: '#4F4F4F',
+      /* color: CONSTANTS.PRIMARY_DARK_GREY,*/
+      fontWeight: 500,
+      fontSize: '12px',
+      lineHeight: '14px',
+      color: '#4F4F4F',
 
     },
     storeIcons: {
@@ -136,24 +131,24 @@ color: '#4F4F4F',
     bgDark: {
       backgroundColor: '#D0D3DC',
     },
-    bcButton:{
+    bcButton: {
       border: '1px solid #4F4F4F',
       borderRadius: '8px',
-fontStyle: 'normal',
-fontWeight: 'normal',
-fontSize: '14px',
-color: '#4F4F4F',
-padding: '8px 16px',
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+      fontSize: '14px',
+      color: '#4F4F4F',
+      padding: '8px 16px',
     },
-    bcBlueBt:{
+    bcBlueBt: {
       border: '1px solid #00AAFF',
       background: '#00AAFF',
-color: 'white',
+      color: 'white',
     },
-    bcBorderW:{
+    bcBorderW: {
       borderLeftColor: '#FFF',
     },
-    bcRMargin:{
+    bcRMargin: {
       marginRight: '11px',
     },
     // custom input
@@ -173,12 +168,12 @@ color: 'white',
       display: 'flex',
       flexDirection: 'row',
       fontStyle: 'normal',
-fontWeight: 500,
-fontSize: '14px',
-lineHeight: '16px',
-textTransform: 'uppercase',
-color: '#4F4F4F',
-      
+      fontWeight: 500,
+      fontSize: '14px',
+      lineHeight: '16px',
+      textTransform: 'uppercase',
+      color: '#4F4F4F',
+
     },
     bootstrapRoot: {
       'label + &': {
@@ -220,7 +215,7 @@ color: '#4F4F4F',
       },
     },
     noBorder: {
-      border:'none'
+      border: 'none'
     },
     bootstrapInput: {
       color: '#4F4F4F!important',
@@ -257,14 +252,14 @@ color: '#4F4F4F',
       },
     },
     bootstrapTextTitle: {
-      
+
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: 28,
       lineHeight: 35,
       textTransform: 'uppercase',
       color: '#4F4F4F',
-      
+
     },
     bootstrapFormLabel15: {
       fontSize: 14,
@@ -288,10 +283,10 @@ color: '#4F4F4F',
       justifyContent: 'space-between',
       minHeight: 195,
       fontWeight: 500,
-fontSize: '20px',
-lineHeight: '23px',
-textTransform: 'uppercase',
-color: '#828282',
+      fontSize: '20px',
+      lineHeight: '23px',
+      textTransform: 'uppercase',
+      color: '#828282',
 
       '& > div': {
         '& > small': {
@@ -306,10 +301,10 @@ color: '#828282',
       justifyContent: 'flex-end',
       alignItems: 'flex-end',
       fontWeight: 500,
-fontSize: '48px',
-lineHeight: '56px',
-textAlign: 'right',
-color: '#4F4F4F',
+      fontSize: '48px',
+      lineHeight: '56px',
+      textAlign: 'right',
+      color: '#4F4F4F',
       '& > h1': {
         margin: 0,
         padding: 0
@@ -371,8 +366,8 @@ const theme = createMuiTheme({
     MuiCard: {
       root: {
         margin: 10,
-  boxShadow: '0px 0px 5px 2px rgba(0, 0, 0, 0.1)',
-borderRadius: 4,
+        boxShadow: '0px 0px 5px 2px rgba(0, 0, 0, 0.1)',
+        borderRadius: 4,
       },
     },
     MuiCardHeader: {
@@ -383,16 +378,16 @@ borderRadius: 4,
         borderRadius: '4px 4px 0px 0px',
       },
       title: {
-fontStyle: 'normal',
-fontWeight: 500,
-fontSize: '14px',
-lineHeight: '16px',
-textTransform: 'uppercase',
-color: '#828282',
+        fontStyle: 'normal',
+        fontWeight: 500,
+        fontSize: '14px',
+        lineHeight: '16px',
+        textTransform: 'uppercase',
+        color: '#828282',
       }
     },
-    MuiCardContent:{
-      root:{
+    MuiCardContent: {
+      root: {
         padding: '35px 20px',
       }
     },
@@ -458,21 +453,67 @@ const InvoiceValidationSchema = Yup.object().shape({
     .required('Required'),
 });
 
-function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
+function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = useInvoiceTableStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { isLoading, refresh, contacts } = useSelector((state: any) => state.contacts);
+  const {isLoading, refresh, contacts} = useSelector((state: any) => state.contacts);
   const [invoiceDetail, setInvoiceDetail] = useState(invoiceData);
+
   const [invoiceItems, setInvoiceItems] = useState(invoiceData.items);
-  const { 'data': paymentTerms, isLoading: loadingPaymentTerms, done, updating, error } = useSelector(({ paymentTerms }: any) => paymentTerms);
 
-
+  const {'data': paymentTerms, isLoading: loadingPaymentTerms, done, updating, error} = useSelector(({paymentTerms}: any) => paymentTerms);
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
+  //console.log({customer});
+  const { itemTier, isCustomPrice } = useMemo(() => customer, [customer]);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [duedatePickerOpen, setDueDatePickerOpen] = useState(false);
+  const [subTotal, setSubTotal] = useState(invoiceData?.subTotal || 0);
+  const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
+  const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
+  //console.log({invoiceItems});
+  //console.log('log-invoiceItems', invoiceDetail);
 
-  console.log('log-invoiceItems', invoiceDetail);
+  const calculateTotal = (itemsArray:any) => {
+    if (isCustomPrice && invoiceDetail) {
+      setTotalAmount(invoiceDetail.total);
+    } else {
+      const subtotalAmount = itemsArray.map((item:any) => item.price * item.quantity).reduce((a: any, b: any) => {
+        return a + b;
+      }, 0);
+
+      const totalTax = itemsArray.map((item:any) => item.taxAmount).reduce((a: any, b: any) => {
+        return a + b;
+      }, 0);
+      const amount = subtotalAmount + totalTax;
+      setSubTotal(Math.round((subtotalAmount + Number.EPSILON) * 100) / 100);
+      setTotalTax(Math.round((totalTax + Number.EPSILON) * 100) / 100);
+      setTotalAmount(Math.round((amount + Number.EPSILON) * 100) / 100);
+    }
+    setInvoiceItems(itemsArray);
+  };
+
+  const addItem = () => {
+    const item = {
+      'description': '',
+      'isFixed': true,
+      'name': '',
+      'price': 0,
+      'quantity': 1,
+      'tax': 0,
+      'taxAmount': 0,
+      'total': 0
+    };
+
+    const tempArray = [
+      ...invoiceItems,
+      item
+    ];
+    //console.log('addItem: '+JSON.stringify(newData, null, 4));
+
+    setInvoiceItems(tempArray);
+  };
 
   useEffect(() => {
     dispatch(loadInvoiceItems.fetch());
@@ -514,46 +555,46 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
 
 
           return (
-            <Form> 
+            <Form>
               <PageHeader style={{padding: '0 10px'}}>
-  <div>
-    <IconButton
-      color="default"
-      size="small"
-      className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
-      onClick={() => {
-        history.goBack();
-      }}
-    >
-      <ArrowBackIcon/>
-    </IconButton>
-  </div>
-  <div>
-    <Button
-      variant="outlined"
-      color="default"
-      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcRMargin)}
-    >
-      Preview
-    </Button>
-    <ButtonGroup disableElevation>
-    <Button
-      variant="contained"
-      color="primary"
-      disabled={isSubmitting}
-      onClick={submitForm}
-      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
-    >
-      Save and Continue
-    </Button>
-    <Button variant="contained"
-      color="primary"
-      className={classNames(invoiceStyles.bcButton,invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
-    <ArrowDropDownIcon />
-   </Button>
-    </ButtonGroup>
-  </div>
-</PageHeader>
+                <div>
+                  <IconButton
+                    color="default"
+                    size="small"
+                    className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                    onClick={() => {
+                      history.goBack();
+                    }}
+                  >
+                    <ArrowBackIcon/>
+                  </IconButton>
+                </div>
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="default"
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcRMargin)}
+                  >
+                    Preview
+                  </Button>
+                  <ButtonGroup disableElevation>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={isSubmitting}
+                      onClick={submitForm}
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
+                    >
+                      Save and Continue
+                    </Button>
+                    <Button variant="contained"
+                            color="primary"
+                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
+                      <ArrowDropDownIcon/>
+                    </Button>
+                  </ButtonGroup>
+                </div>
+              </PageHeader>
               <DataContainer>
                 <Card elevation={2}>
                   <CardHeader title={invoiceDetail?.company?.info?.companyName + ' INVOICE DETAILS'}/>
@@ -567,9 +608,15 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                       <Grid item xs={3}>
                         <div className={invoiceStyles.infoBox}>
                           <h4>{invoiceDetail?.company?.info?.companyName}</h4>
-                          <div><PhoneIcon className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.contact?.phone}</span></div>
-                          <div><MailOutlineIcon className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.info?.companyEmail}</span></div>
-                          <div><StorefrontIcon className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.address?.street}, {invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span></div>
+                          <div><PhoneIcon
+                            className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.contact?.phone}</span>
+                          </div>
+                          <div><MailOutlineIcon
+                            className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.info?.companyEmail}</span>
+                          </div>
+                          <div><StorefrontIcon
+                            className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.address?.street}, {invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span>
+                          </div>
                           <h5>VENDOR NUMBER</h5>
                           <div className={invoiceStyles.paddingContent}>{invoiceDetail?.customer?.vendorId}</div>
                         </div>
@@ -586,12 +633,13 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                               root: classNames(invoiceStyles.bootstrapRoot),
                               input: classNames(invoiceStyles.bootstrapInputLarge, invoiceStyles.bootstrapTextTitle, invoiceStyles.textRight, invoiceStyles.noBorder),
                             }}
-                            
+
                           />
                         </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
-                          <InputLabel disableAnimation htmlFor="invoice-id" className={invoiceStyles.bootstrapFormLabel}>
+                          <InputLabel disableAnimation htmlFor="invoice-id"
+                                      className={invoiceStyles.bootstrapFormLabel}>
                             Invoice #
                           </InputLabel>
                           <InputBase
@@ -610,7 +658,8 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                         </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
-                          <InputLabel disableAnimation htmlFor="customer-po" className={invoiceStyles.bootstrapFormLabel}>
+                          <InputLabel disableAnimation htmlFor="customer-po"
+                                      className={invoiceStyles.bootstrapFormLabel}>
                             CUSTOMER PO
                           </InputLabel>
                           <InputBase
@@ -629,11 +678,12 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                         </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
-                          <InputLabel disableAnimation htmlFor="invoice-date" className={invoiceStyles.bootstrapFormLabel}>
+                          <InputLabel disableAnimation htmlFor="invoice-date"
+                                      className={invoiceStyles.bootstrapFormLabel}>
                             INVOICE DATE
                           </InputLabel>
                           <KeyboardDatePicker
-                          open={datePickerOpen}
+                            open={datePickerOpen}
                             margin="none"
                             size="small"
                             id="invoice-date"
@@ -663,11 +713,11 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                   endAdornment={
                                     <InputAdornment position="end">
                                       <IconButton>
-                                        <EventIcon />
-                                        </IconButton>
+                                        <EventIcon/>
+                                      </IconButton>
                                     </InputAdornment>
                                   }
-                        
+
                                   onChange={props.onChange}
                                   classes={{
                                     root: classNames(invoiceStyles.bootstrapRoot, {
@@ -687,7 +737,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                           </InputLabel>
                           <KeyboardDatePicker
                             open={duedatePickerOpen}
-                            InputAdornmentProps={{ position: 'end' }}
+                            InputAdornmentProps={{position: 'end'}}
                             margin="none"
                             size="small"
                             id="due-date"
@@ -701,7 +751,7 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                             }}
                             onClick={() => setDueDatePickerOpen(true)}
                             onClose={() => setDueDatePickerOpen(false)}
-                           
+
                             TextFieldComponent={(props: TextFieldProps) => {
                               return (
                                 <InputBase
@@ -712,12 +762,12 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                     setDueDatePickerOpen(true);
                                   }}
                                   value={props.value}
-                                 
+
                                   endAdornment={
                                     <InputAdornment position="end">
                                       <IconButton>
-                                        <EventIcon />
-                                        </IconButton>
+                                        <EventIcon/>
+                                      </IconButton>
                                     </InputAdornment>
                                   }
                                   onChange={props.onChange}
@@ -747,20 +797,20 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                 }),
                                 input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textRight),
                               }}
-                              error={!!errors.paymentTerm} />}
+                              error={!!errors.paymentTerm}/>}
                           >
                             <MenuItem value={''}>
                               <em>None</em>
                             </MenuItem>
                             {
-                                paymentTerms.map((pitem: any, pindex: number) => {
-                                  return (
-                                    <MenuItem key={pitem._id} value={pitem._id}>{pitem.name}</MenuItem>
-                                  )
-                                })
-                              
+                              paymentTerms.map((pitem: any, pindex: number) => {
+                                return (
+                                  <MenuItem key={pitem._id} value={pitem._id}>{pitem.name}</MenuItem>
+                                )
+                              })
+
                             }
-                    
+
                           </Select>
                         </FormControl>
 
@@ -777,10 +827,11 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                         <FormControl className={invoiceStyles.formFieldRow}>
                           {
                             isOld ?
-                            <>
-                             <InputLabel disableAnimation htmlFor="company" className={invoiceStyles.bootstrapFormLabel15}>
+                              <>
+                                <InputLabel disableAnimation htmlFor="company"
+                                            className={invoiceStyles.bootstrapFormLabel15}>
                                   COMPANY NAME
-                                </InputLabel> 
+                                </InputLabel>
                                 <Select
                                   id="company"
                                   disabled
@@ -791,17 +842,18 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                       root: classNames(invoiceStyles.bootstrapRoot),
                                       input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textBold),
                                     }}
-                                    error={!!errors.company} />}
+                                    error={!!errors.company}/>}
                                 >
-                                  
+
                                   <MenuItem value={invoiceDetail?.customer?.profile?.displayName} selected>
                                     {invoiceDetail?.customer?.profile?.displayName}</MenuItem>
-                                  
+
                                 </Select>
-                                                        
-                            </> :
+
+                              </> :
                               <>
-                                <InputLabel disableAnimation htmlFor="company" className={invoiceStyles.bootstrapFormLabel15}>
+                                <InputLabel disableAnimation htmlFor="company"
+                                            className={invoiceStyles.bootstrapFormLabel15}>
                                   COMPANY NAME
                                 </InputLabel>
                                 <Select
@@ -814,53 +866,57 @@ function BCEditInvoice({ classes, invoiceData, isOld }: Props) {
                                       }),
                                       input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textBold),
                                     }}
-                                    error={!!errors.company} />}
+                                    error={!!errors.company}/>}
                                 >
                                   <MenuItem value="">
                                     <em>None</em>
                                   </MenuItem>
-                                 
+
                                 </Select>
                               </>
                           }
 
                         </FormControl>
                         <Grid container spacing={1} className={invoiceStyles.customerBox}>
-                  <Grid item xs={3} justify="flex-end">
-                  <div >
-                    <div><span><PhoneIcon className={invoiceStyles.storeIcons}/></span></div>
-                  <div><span><MailOutlineIcon className={invoiceStyles.storeIcons}/></span></div>
-                  <div>  <span><StorefrontIcon className={invoiceStyles.storeIcons}/></span></div>
-                  </div>
-                  </Grid>
-                  <Grid item xs={4}>
-                  <div >
-                  <div> <span>{invoiceDetail?.customer?.contact?.phone}</span></div>
-                    <div><span>{invoiceDetail?.customer?.info?.email}</span></div>
-                 <div><span>{invoiceDetail?.customer?.address?.street}, {invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode}</span></div>
-                
-                 </div>
-            
-             </Grid>
-                  <Grid item xs={5}>
-                    <div className={invoiceStyles.serviceAdd}>service address</div>
-                    </Grid>
-                  </Grid>
+                          <Grid item xs={3} justify="flex-end">
+                            <div>
+                              <div><span><PhoneIcon className={invoiceStyles.storeIcons}/></span></div>
+                              <div><span><MailOutlineIcon className={invoiceStyles.storeIcons}/></span></div>
+                              <div><span><StorefrontIcon className={invoiceStyles.storeIcons}/></span></div>
+                            </div>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <div>
+                              <div><span>{invoiceDetail?.customer?.contact?.phone}</span></div>
+                              <div><span>{invoiceDetail?.customer?.info?.email}</span></div>
+                              <div>
+                                <span>{invoiceDetail?.customer?.address?.street}, {invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode}</span>
+                              </div>
+
+                            </div>
+
+                          </Grid>
+                          <Grid item xs={5}>
+                            <div className={invoiceStyles.serviceAdd}>service address</div>
+                          </Grid>
+                        </Grid>
                       </CardContent>
                     </Card>
                   </Grid>
                   <Grid item xs>
-                    <Card elevation={2} style={{border: '2px solid #D0D3DC',
-boxSizing: 'border-box',
-boxShadow: '0px 0px 5px 2px rgba(0, 0, 0, 0.1)',
-borderRadius: '4px'}}>
+                    <Card elevation={2} style={{
+                      border: '2px solid #D0D3DC',
+                      boxSizing: 'border-box',
+                      boxShadow: '0px 0px 5px 2px rgba(0, 0, 0, 0.1)',
+                      borderRadius: '4px'
+                    }}>
                       <CardContent style={{padding: '20px'}}>
                         <div className={invoiceStyles.totalContainer}>
                           <div>
-                           TOTAL
+                            TOTAL
                           </div>
                           <div className={invoiceStyles.totalEnd}>
-                            ${invoiceDetail.total}
+                            ${totalAmount}
                           </div>
                         </div>
                       </CardContent>
@@ -869,22 +925,37 @@ borderRadius: '4px'}}>
                 </Grid>
 
                 <Card elevation={2}>
-                  <BCInvoiceItemsTableRow rowDatas={values.items} handleChange={() => 'test'} values={values} errors={errors}/>
+                  <BCInvoiceItemsTableRow
+                    invoiceItems={invoiceItems}
+                    itemTier={itemTier}
+                    handleChange={() => 'test'}
+                    setItems={calculateTotal}
+                    values={values}
+                    errors={errors}
+                  />
 
                   <div className={invoiceTableStyle.itemsTableActions}>
                     <Grid container spacing={1} alignItems="center">
                       <Grid item xs={7}>
-                        <Button color="primary"><AddIcon color="inherit"/> Add item or service</Button>
+                        <Button color="primary" onClick={addItem}>
+                          <AddIcon color="inherit" /> Add item or service
+                        </Button>
                       </Grid>
                       <Grid item xs={2} className={invoiceStyles.textRight}>
                         SUBTOTAL
                       </Grid>
-                      <Grid item xs={2} className={invoiceStyles.textRight}>
+                      <Grid item xs={1}>
                         <span>
-                          $ {invoiceDetail.subTotal}
+                          $ {subTotal}
                         </span>
                       </Grid>
+                      <Grid item xs={1} className={invoiceStyles.textRight}>
+                        TAXES
+                      </Grid>
                       <Grid item xs={1}>
+                        <span>
+                          $ {totalTax}
+                        </span>
                       </Grid>
                     </Grid>
                   </div>
@@ -893,8 +964,8 @@ borderRadius: '4px'}}>
                 <Card elevation={2}>
                   <Accordion defaultExpanded>
                     <AccordionSummary
-                       className={invoiceStyles.bgGray25}
-                      expandIcon={<ArrowDropDownIcon />}
+                      className={invoiceStyles.bgGray25}
+                      expandIcon={<ArrowDropDownIcon/>}
                       aria-controls="message-to-customer"
                     >
                       MESSAGE TO CUSTOMER
@@ -919,11 +990,11 @@ borderRadius: '4px'}}>
                 </Card>
 
                 <Card elevation={2}>
-                  <Accordion defaultExpanded >
+                  <Accordion defaultExpanded>
                     <AccordionSummary
-                   
+
                       className={invoiceStyles.bgGray25}
-                      expandIcon={<ArrowDropDownIcon />}
+                      expandIcon={<ArrowDropDownIcon/>}
                       aria-controls="invoice-footer"
                     >
                       FOOTER
@@ -936,7 +1007,7 @@ borderRadius: '4px'}}>
                           defaultValue=""
                           multiline
                           placeholder="ldiservices.net"
-                          onChange={handleChange('message_to_customer')}
+                          onChange={handleChange('invoice_footer')}
                           classes={{
                             root: invoiceStyles.bootstrapTextAreaRoot,
                             input: invoiceStyles.bootstrapTextAreaInput,
@@ -949,44 +1020,44 @@ borderRadius: '4px'}}>
 
               </DataContainer>
               <PageHeader style={{padding: '0 10px', marginTop: '25px',}}>
-  <div>
-    <IconButton
-      color="default"
-      size="small"
-      className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
-      onClick={() => {
-        history.goBack();
-      }}
-    >
-      <ArrowBackIcon/>
-    </IconButton>
-  </div>
-  <div>
-    <Button
-      variant="outlined"
-      color="default"
-      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcRMargin)}
-    >
-      Preview
-    </Button>
-    <ButtonGroup disableElevation>
-    <Button
-      variant="contained"
-      color="primary"
-      disabled={isSubmitting}
-      onClick={submitForm}
-      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
-    >
-      Save and Continue
-    </Button>
-    <Button variant="contained"
-      color="primary"
-      className={classNames(invoiceStyles.bcButton,invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
-    <ArrowDropDownIcon />
-   </Button>
-    </ButtonGroup>
-  </div>
-</PageHeader>
+                <div>
+                  <IconButton
+                    color="default"
+                    size="small"
+                    className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                    onClick={() => {
+                      history.goBack();
+                    }}
+                  >
+                    <ArrowBackIcon/>
+                  </IconButton>
+                </div>
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="default"
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcRMargin)}
+                  >
+                    Preview
+                  </Button>
+                  <ButtonGroup disableElevation>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={isSubmitting}
+                      onClick={submitForm}
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
+                    >
+                      Save and Continue
+                    </Button>
+                    <Button variant="contained"
+                            color="primary"
+                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
+                      <ArrowDropDownIcon/>
+                    </Button>
+                  </ButtonGroup>
+                </div>
+              </PageHeader>
             </Form>
           )
         }}

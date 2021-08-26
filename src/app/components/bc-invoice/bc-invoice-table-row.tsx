@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Dispatch} from 'react';
 import { createMuiTheme, makeStyles, MuiThemeProvider, Theme } from "@material-ui/core/styles";
 import {
   Card,
@@ -126,17 +126,54 @@ const theme = createMuiTheme({
 
 interface Props {
   classes?: any;
-  rowDatas?: any;
+  invoiceItems: any;
   values?: any;
-  handleChange(fieldName: string): any
+  itemTier: any,
+  handleChange(fieldName: string): any,
+  setItems: Dispatch<any>,
   errors?: any;
 }
 
-function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, errors }: Props) {
-  const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, setItems, itemTier, errors }: Props) {
+  const { 'items': serviceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  const taxes = useSelector(({ tax }: any) => tax.data);
+  console.log({values});
 
   const invoiceTableStyle = useInvoiceTableStyles();
-  console.log("log-rowData?.item?._id", rowDatas?.item?._id);
+  console.log({invoiceItems, serviceItems});
+
+  const handleItemChange = (value: string, index:number, fieldName:string) => {
+    const tempArray = [...invoiceItems];
+    //console.log({value, index, fieldName})
+    if (fieldName === 'name') {
+      const item = serviceItems?.find((item:any) => item.name === value);
+      console.log({item})
+      if (itemTier?._id) {
+        const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
+        tempArray[index].price = customerTier.charge || 0;
+      } else {
+        tempArray[index].price = item?.charges || 0;
+      }
+      console.log(item, tempArray[index].tax);
+      tempArray[index].tax = item?.tax
+        ? taxes[0].tax
+        : 0;
+      //tempArray[index].item.name = value;
+      tempArray[index].isFixed = item?.isFixed ?? true;
+    }
+    tempArray[index][fieldName] = value;
+
+    tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
+    tempArray[index].subTotal = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line
+    console.log({tempArray})
+    setItems(tempArray);
+  };
+
+  const removeItem = (rowIndex:number) => {
+    const newItems = [...invoiceItems];
+    newItems.splice(rowIndex, 1);
+    setItems(newItems);
+  };
 
   return (
     <>
@@ -150,7 +187,8 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
         <Grid item xs={1} className={invoiceTableStyle.textCenter}></Grid>
       </Grid>
       {
-        rowDatas.map((rowData: any, rowIndex: number) => {
+        invoiceItems.map((rowData: any, rowIndex: number) => {
+          // console.log(rowData)
           return (
             <div className={invoiceTableStyle.itemsTableRoot}>
               <Grid container spacing={1} alignItems="center">
@@ -158,8 +196,8 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
                     <Select
                       placeholder="Select Service/Product"
-                      onChange={handleChange('company')}
-                      value={rowData?.item?._id}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'name')}
+                      value={rowData?.name ?? rowData.item?.name}
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
@@ -173,9 +211,9 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                         <em>None</em>
                       </MenuItem>
                       {
-                        invoiceItems.map((invitem, invindex) => {
+                        serviceItems.map((invitem, invindex) => {
                           return (
-                            <MenuItem key={invindex} value={invitem?._id}>{invitem?.name}</MenuItem>
+                            <MenuItem key={invindex} value={invitem?.name}>{invitem?.name}</MenuItem>
                           )
                         })
                       }
@@ -190,7 +228,7 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                       type="number"
                       value={rowData?.quantity}
                       error={!!errors.quantity}
-                      onChange={handleChange('quantity')}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'quantity')}
                       classes={{
                         root: classNames(invoiceTableStyle.bootstrapRoot, {
                           [invoiceTableStyle.bootstrapRootError]: !!errors.quantity
@@ -208,7 +246,7 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                       type="number"
                       value={rowData?.price}
                       error={!!errors.price}
-                      onChange={handleChange('price')}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'price')}
                       classes={{
                         root: classNames(invoiceTableStyle.bootstrapRoot, {
                           [invoiceTableStyle.bootstrapRootError]: !!errors.price
@@ -222,8 +260,8 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                 <Grid item xs={1}>
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
                     <Select
-                      onChange={handleChange('unit')}
-                      value={values.unit}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'isFixed')}
+                      value={rowData.isFixed ?? rowData.item?.isFixed}
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
@@ -233,8 +271,11 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                         }}
                         error={!!errors.unit} />}
                     >
-                      <MenuItem value={"fixed"}>
+                      <MenuItem value={"true"}>
                         Fixed
+                      </MenuItem>
+                      <MenuItem value={"false"}>
+                        Hourly
                       </MenuItem>
                     </Select>
                   </FormControl>
@@ -242,8 +283,8 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                 <Grid item xs={1}>
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
                     <Select
-                      onChange={handleChange('tax')}
-                      value={values.tax}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'tax')}
+                      value={rowData.tax ?? rowData.item?.tax}
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
@@ -253,12 +294,15 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                         }}
                         error={!!errors.tax} />}
                     >
-                      <MenuItem value={"8.25"}>
-                        8.25 %
+                      <MenuItem value={"0"}>
+                        N/A
                       </MenuItem>
-                      <MenuItem value={"10.25"}>
-                        10.25 %
-                      </MenuItem>
+                      {taxes.map((tax: any) =>
+                        <MenuItem value={tax.tax}>
+                          {tax.tax} %
+                        </MenuItem>
+                      )}
+
                     </Select>
                   </FormControl>
                 </Grid>
@@ -269,7 +313,7 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                 </Grid>
                 <Grid item xs={1} className={invoiceTableStyle.textCenter}>
                   <IconButton aria-label="delete" color="primary" size="small">
-                    <DeleteIcon fontSize="small" />
+                    <DeleteIcon fontSize="small" onClick={() => removeItem(rowIndex)}/>
                   </IconButton>
                 </Grid>
               </Grid>
@@ -280,9 +324,9 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                     <InputBase
                       id="one"
                       name="message"
-                      value={values.message}
+                      value={rowData.message}
                       error={!!errors.message}
-                      onChange={handleChange('message')}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'message')}
                       classes={{
                         root: classNames(invoiceTableStyle.bootstrapRoot, {
                           [invoiceTableStyle.bootstrapRootError]: !!errors.message
@@ -297,7 +341,7 @@ function BCInvoiceItemsTableRow({ classes, rowDatas, values, handleChange, error
                 </Grid>
               </Grid>
 
-              
+
 
             </div>
           )
