@@ -62,15 +62,16 @@ function BcPaymentRecordModal({
 
 
   const isValidate = () => {
-    console.log(FormikValues.amount);
     return (FormikValues.paymentMethod >= 0 && FormikValues.amount > 0);
   };
+
+  const currentBalanceDue = invoice.balanceDue ?? invoice.total;
 
 
   const form = useFormik({
     initialValues: {
       paymentDate: new Date(),
-      amount: invoice.balanceDue,
+      amount: currentBalanceDue,
       paymentMethod: -1,
       referenceNumber: '',
       notes: ''
@@ -86,6 +87,7 @@ function BcPaymentRecordModal({
         paymentType: paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name,
         paidAt: FormikValues.paymentDate,
       }
+
       dispatch(recordPayment(params)).then((response: any) => {
         if (response.status === 1) {
 /*          console.log({invoiceList})
@@ -141,35 +143,44 @@ function BcPaymentRecordModal({
           <Typography variant={'h6'} className={classes.previewText}>{customer.profile.displayName}</Typography>
         </Grid>
         <Grid item>
+          <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${invoice.total}</Typography>
+        </Grid>
+        <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT DUE</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${invoice.balanceDue}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${currentBalanceDue}</Typography>
         </Grid>
         <Grid item>
-          <Grid container direction={'column'}>
-            <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>INVOICE #:</Typography>
-            <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>CUSTOMER P.O.:</Typography>
-            <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>DUE DATE:</Typography>
-          </Grid>
-        </Grid>
-        <Grid item>
-          <Grid container direction={'column'}>
-            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{invoice.invoiceId}</Typography>
-            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{customerPO}</Typography>
-            <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{formatedDueDate}</Typography>
+          <Grid container direction={'row'} spacing={2}>
+            <Grid item>
+              <Grid container direction={'column'}>
+                <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>INVOICE #:</Typography>
+                <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>CUSTOMER P.O.:</Typography>
+                <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>DUE DATE:</Typography>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Grid container direction={'column'}>
+                <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{invoice.invoiceId}</Typography>
+                <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{customerPO}</Typography>
+                <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{formatedDueDate}</Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
 
       </Grid>
+
       <form  onSubmit={FormikSubmit} >
         <DialogContent classes={{ 'root': classes.dialogContent }}>
           <Grid container direction={'column'} spacing ={1}>
 
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={4}>
+                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
                   <Typography variant={'button'}>PAYMENT DATE</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                   <div style={{width: '70%'}}>
                     <BCDateTimePicker
                       handleChange={(e: any) => setFieldValue('paymentDate', e)}
@@ -183,10 +194,10 @@ function BcPaymentRecordModal({
 
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={4}>
+                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
                   <Typography variant={'button'}>AMOUNT</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                   <TextField
                     autoComplete={'off'}
                     className={classes.fullWidth}
@@ -211,10 +222,10 @@ function BcPaymentRecordModal({
 
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={4}>
+                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
                   <Typography variant={'button'}>PAYMENT METHOD</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                   <TextField
                     autoComplete={'off'}
                     className={classes.fullWidth}
@@ -241,10 +252,10 @@ function BcPaymentRecordModal({
 
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={4}>
+                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
                   <Typography variant={'button'}>REFERENCE NO.</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                   <TextField
                     autoComplete={'off'}
                     className={classes.fullWidth}
@@ -262,10 +273,10 @@ function BcPaymentRecordModal({
 
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={4}>
+                <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={3}>
                   <Typography variant={'button'} style={{marginTop: '10px'}}>NOTES</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                   <TextField
                     autoComplete={'off'}
                     className={classes.fullWidth}
@@ -356,6 +367,12 @@ const DataContainer = styled.div`
     font-size: 16px;
     padding: 12px 14px;
   }
+  .MuiInputAdornment-positionStart {
+    margin-right: 0;
+  }
+  .MuiInputAdornment-root + .MuiInputBase-input {
+    padding: 12px 14px 12px 0;
+  }
   .required > label:after {
     margin-left: 3px;
     content: "*";
@@ -363,6 +380,18 @@ const DataContainer = styled.div`
   }
   .save-customer-button {
     color: ${CONSTANTS.PRIMARY_WHITE};
+  }
+  
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
   }
 `;
 

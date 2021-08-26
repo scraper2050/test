@@ -7,7 +7,7 @@ export default (theme: Theme): any => ({
     backgroundColor: 'auto'
   },
   dialogContent: {
-    padding: '8px 75px !important',
+    padding: '8px 200px !important',
   },
   modalPreview: {
     backgroundColor: '#EAECF3',
@@ -17,6 +17,7 @@ export default (theme: Theme): any => ({
   previewCaption: {
     color: '#828282',
     marginBottom: '10px',
+    textTransform:'uppercase',
   },
   previewCaption2: {
     color: '#828282',
