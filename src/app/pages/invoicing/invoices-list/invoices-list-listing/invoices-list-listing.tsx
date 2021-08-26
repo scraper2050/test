@@ -111,7 +111,7 @@ function InvoicingListListing({ classes, theme }: any) {
       const { status = '' } = row.original;
       const textStatus = status.split('_').join(' ').toLowerCase();
       return (
-        <div className={customStyles.centerContainer} onClick={() => console.log('hello')}>
+        <div className={customStyles.centerContainer}>
           {
             row.original.paid
               ? <CSButtonSmall
@@ -126,10 +126,10 @@ function InvoicingListListing({ classes, theme }: any) {
                 color="secondary"
                 onClick={(e) => recordPayment(e, row.original)}
                 size="small">
-              <div>
-                <span style={{textTransform: 'capitalize'}}>{textStatus}</span>
-                <ExpandMore style={{position: 'absolute', right: 3}}/>
-              </div>
+                <div>
+                  <span style={{textTransform: 'capitalize'}}>{textStatus}</span>
+                  <ExpandMore style={{position: 'absolute', right: 3}}/>
+                </div>
               </CSButtonSmall>
           }
         </div>
@@ -205,7 +205,6 @@ function InvoicingListListing({ classes, theme }: any) {
   }, []);
 
   const recordPayment = (event: any, row: any) => {
-    console.log({row})
     event.stopPropagation();
     dispatch(setModalDataAction({
       'data': {

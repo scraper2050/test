@@ -62,15 +62,16 @@ function BcPaymentRecordModal({
 
 
   const isValidate = () => {
-    console.log(FormikValues.amount);
     return (FormikValues.paymentMethod >= 0 && FormikValues.amount > 0);
   };
+
+  const currentBalanceDue = invoice.balanceDue ?? invoice.total;
 
 
   const form = useFormik({
     initialValues: {
       paymentDate: new Date(),
-      amount: invoice.balanceDue || invoice.total,
+      amount: currentBalanceDue,
       paymentMethod: -1,
       referenceNumber: '',
       notes: ''
@@ -86,6 +87,7 @@ function BcPaymentRecordModal({
         paymentType: paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name,
         paidAt: FormikValues.paymentDate,
       }
+
       dispatch(recordPayment(params)).then((response: any) => {
         if (response.status === 1) {
 /*          console.log({invoiceList})
@@ -146,7 +148,7 @@ function BcPaymentRecordModal({
         </Grid>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT DUE</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${invoice.balanceDue || invoice.total}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${currentBalanceDue}</Typography>
         </Grid>
         <Grid item>
           <Grid container direction={'row'} spacing={2}>
