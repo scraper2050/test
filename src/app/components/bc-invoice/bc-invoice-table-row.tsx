@@ -135,16 +135,14 @@ interface Props {
 
 function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, itemTier, errors }: Props) {
   const { 'items': serviceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
-  serviceItems.sort((a, b) => a.name > b.name ? 1 : a.name <b.name ? -1 : 0);
+  serviceItems.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : a.name.toLowerCase() <b.name.toLowerCase() ? -1 : 0);
   const taxes = useSelector(({ tax }: any) => tax.data);
-
   const invoiceTableStyle = useInvoiceTableStyles();
-  console.log({errors})
+
   const handleItemChange = (value: string, index:number, fieldName:string) => {
     const tempArray = [...invoiceItems];
     if (fieldName === 'name') {
       const item = serviceItems?.find((item:any) => item.name === value);
-      //console.log({item})
       if (itemTier?._id) {
         const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
         tempArray[index].price = customerTier.charge || 0;
@@ -169,7 +167,6 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
   const removeItem = (rowIndex:number) => {
     const newItems = [...invoiceItems];
     newItems.splice(rowIndex, 1);
-    //setItems(newItems);
     handleChange(newItems);
   };
 

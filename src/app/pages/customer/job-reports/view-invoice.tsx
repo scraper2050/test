@@ -72,13 +72,7 @@ function ViewInvoice({ classes, theme }: any) {
     });
   }
 
-/*  console.log('customerId: '+ invoiceDetail.customer?._id);
-  console.log('customerName: '+ invoiceDetail.customer?.profile?.displayName);
-  console.log('jobId: '+ invoiceDetail?._id);
-  console.log('jobType: '+ invoiceDetail.job?.type?._id);*/
-  //console.log('invoiceDetail:'+ invoiceDetail);
-
-  const goToEditNew = () => {
+/*  const goToEditNew = () => {
     history.push({
       'pathname': `/main/invoicing/update-invoice/${invoice}`,
       'state': {
@@ -89,7 +83,7 @@ function ViewInvoice({ classes, theme }: any) {
         'invoiceDetail': invoiceDetail
       }
     });
-  }
+  }*/
 
   return (
     <MainContainer>
@@ -127,19 +121,11 @@ function ViewInvoice({ classes, theme }: any) {
             <Button
               variant="contained"
               color="primary"
+              disabled={invoiceDetail.paid}
               className={classNames(invoiceStyles.margin, invoiceStyles.white)}
               onClick={goToEdit}
             >
               Edit
-            </Button>
-
-            <Button
-              variant="contained"
-              color="primary"
-              className={classNames(invoiceStyles.margin, invoiceStyles.white)}
-              onClick={goToEditNew}
-            >
-              Edit 2
             </Button>
           </div>
         </PageHeader>

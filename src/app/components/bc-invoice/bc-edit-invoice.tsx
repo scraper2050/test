@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {
   Accordion,
   AccordionDetails,
@@ -26,8 +26,6 @@ import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import moment from 'moment';
 
-import {getContacts} from '../../../api/contacts.api';
-import {loadInvoiceItems} from '../../../actions/invoicing/items/items.action';
 import PhoneIcon from '@material-ui/icons/Phone';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import StorefrontIcon from '@material-ui/icons/Storefront';
@@ -44,7 +42,6 @@ import EventIcon from '@material-ui/icons/Event';
 import {TextFieldProps} from '@material-ui/core/TextField';
 import BCInvoiceItemsTableRow from './bc-invoice-table-row';
 import AddIcon from '@material-ui/icons/Add';
-import {getCustomerDetailAction} from "../../../actions/customer/customer.action";
 import {updateInvoice} from "../../../api/invoicing.api";
 
 interface Props {
@@ -457,48 +454,26 @@ const InvoiceValidationSchema = Yup.object().shape({
 function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = useInvoiceTableStyles();
-  const dispatch = useDispatch();
   const history = useHistory();
-  const {isLoading, refresh, contacts} = useSelector((state: any) => state.contacts);
-  const [invoiceDetail, setInvoiceDetail] = useState(invoiceData);
-
-  const [invoiceItems, setInvoiceItems] = useState([] as any);
+  const simplifiedItems = invoiceData.items.map((item: any) => {
+    const newItem = {...item, ...item.item};
+    delete newItem.item;
+    delete newItem.jobType;
+    return newItem;
+  })
+  const [invoiceItems, setInvoiceItems] = useState(simplifiedItems);
+  console.log({invoiceData});
 
   const {'data': paymentTerms, isLoading: loadingPaymentTerms, done, updating, error} = useSelector(({paymentTerms}: any) => paymentTerms);
   const customer = useSelector(({ customers }:any) => customers.customerObj);
-  const { itemTier, isCustomPrice } = useMemo(() => customer, [customer]);
+  const { itemTier, isCustomPrice, paymentTerm: customerPaymentTerm } = useMemo(() => customer, [customer]);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [duedatePickerOpen, setDueDatePickerOpen] = useState(false);
   const [subTotal, setSubTotal] = useState(invoiceData?.subTotal || 0);
   const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
   const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
 
-
-  useEffect(() => {
-    dispatch(loadInvoiceItems.fetch());
-    setInvoiceDetail(invoiceData);
-    if (invoiceData?.items) {
-      const simplifiedItems = invoiceData.items.map((item: any) => {
-        const newItem = {...item, ...item.item};
-        delete newItem.item;
-        delete newItem.jobType;
-        return newItem;
-      })
-      setInvoiceItems(simplifiedItems);
-    }
-  }, []);
-
-  useEffect(() => {
-    const data: any = {
-      type: 'Customer',
-      referenceNumber: invoiceDetail?.customer?._id
-    }
-
-    dispatch(getContacts(data));
-  }, [refresh]);
-
   const handleFormSubmit = (data: any) => {
-    console.log({data})
     return new Promise((resolve, reject) => {
       const params: any = {
         invoiceId: data.invoice_id,
@@ -511,7 +486,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
             description: o.description ?? '',
             price: parseFloat(o.price),
             quantity: parseInt(o.quantity),
-            tax: parseInt(o.tax) ?? 0,
+            tax: parseFloat(o.tax) ?? 0,
             isFixed: o.isFixed,
           }
           if (o._id)
@@ -526,7 +501,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
       console.log({params});
 
       updateInvoice(params).then((response: any) => {
-        //history.push(redirectURL);
+        history.push('/main/invoicing/invoices-list');
         return resolve(response);
       })
         .catch((err: any) => {
@@ -536,8 +511,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   };
 
   const calculateTotal = (itemsArray:any) => {
-    if (isCustomPrice && invoiceDetail) {
-      setTotalAmount(invoiceDetail.total);
+    if (isCustomPrice && invoiceData) {
+      setTotalAmount(invoiceData.total);
     } else {
       const subtotalAmount = itemsArray.map((item:any) => item.price * item.quantity).reduce((a: any, b: any) => {
         return a + b;
@@ -570,8 +545,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
       ...invoiceItems,
       item
     ];
-    //console.log('addItem: '+JSON.stringify(newData, null, 4));
-
     setInvoiceItems(tempArray);
   };
 
@@ -597,16 +570,15 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
     <MuiThemeProvider theme={theme}>
       <Formik
         initialValues={{
-          invoice_id: invoiceDetail?._id,
+          invoice_id: invoiceData?._id,
           invoice_title: 'INVOICE',
-          invoiceId: invoiceDetail?.invoiceId ? invoiceDetail?.invoiceId : 'Invoice 1',
-          customer_po: invoiceDetail?.customerPO || '',
-          invoice_date: invoiceDetail.createdAt,
-          due_date: invoiceDetail.dueDate,
-          paymentTerm: invoiceDetail?.paymentTerm ? invoiceDetail?.paymentTerm?._id : '',
-          //terms: '',
-          note: invoiceDetail?.note,
-          company: invoiceDetail?.customer?.profile?.displayName,
+          invoiceId: invoiceData?.invoiceId ? invoiceData?.invoiceId : 'Invoice 1',
+          customer_po: invoiceData?.customerPO || '',
+          invoice_date: invoiceData.createdAt,
+          due_date: invoiceData.dueDate,
+          paymentTerm: invoiceData?.paymentTerm ? invoiceData?.paymentTerm?._id : customerPaymentTerm._id,
+          note: invoiceData?.note,
+          company: invoiceData?.customer?.profile?.displayName,
           items: invoiceItems,
         }}
         validationSchema={InvoiceValidationSchema}
@@ -658,7 +630,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
               </PageHeader>
               <DataContainer>
                 <Card elevation={2}>
-                  <CardHeader title={invoiceDetail?.company?.info?.companyName + ' INVOICE DETAILS'}/>
+                  <CardHeader title={invoiceData?.company?.info?.companyName + ' INVOICE DETAILS'}/>
                   <CardContent>
                     <Grid container spacing={5}>
                       <Grid item xs={2}>
@@ -668,18 +640,18 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                       </Grid>
                       <Grid item xs={3}>
                         <div className={invoiceStyles.infoBox}>
-                          <h4>{invoiceDetail?.company?.info?.companyName}</h4>
+                          <h4>{invoiceData?.company?.info?.companyName}</h4>
                           <div><PhoneIcon
-                            className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.contact?.phone}</span>
+                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.contact?.phone}</span>
                           </div>
                           <div><MailOutlineIcon
-                            className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.info?.companyEmail}</span>
+                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.info?.companyEmail}</span>
                           </div>
                           <div><StorefrontIcon
-                            className={invoiceStyles.storeIcons}/><span>{invoiceDetail?.company?.address?.street}, {invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span>
+                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.address?.street}, {invoiceData?.company?.address?.city}, {invoiceData?.company?.address?.state} {invoiceData?.company?.address?.zipCode}</span>
                           </div>
                           <h5>VENDOR NUMBER</h5>
-                          <div className={invoiceStyles.paddingContent}>{invoiceDetail?.customer?.vendorId}</div>
+                          <div className={invoiceStyles.paddingContent}>{invoiceData?.customer?.vendorId}</div>
                         </div>
                       </Grid>
                       <Grid item xs>
@@ -813,7 +785,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                               setFieldValue('due_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
                             }}
                             onClick={() => {
-                              if (values.paymentTerm === '') setDueDatePickerOpen(true)}
+                                if (values.paymentTerm === '') setDueDatePickerOpen(true)
+                              }
                             }
                             onClose={() => setDueDatePickerOpen(false)}
 
@@ -902,7 +875,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                                   id="company"
                                   disabled
                                   onChange={handleChange('company')}
-                                  value={invoiceDetail?.customer?.profile?.displayName}
+                                  value={invoiceData?.customer?.profile?.displayName}
                                   input={<InputBase
                                     classes={{
                                       root: classNames(invoiceStyles.bootstrapRoot),
@@ -911,8 +884,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                                     error={!!errors.company}/>}
                                 >
 
-                                  <MenuItem value={invoiceDetail?.customer?.profile?.displayName} selected>
-                                    {invoiceDetail?.customer?.profile?.displayName}</MenuItem>
+                                  <MenuItem value={invoiceData?.customer?.profile?.displayName} selected>
+                                    {invoiceData?.customer?.profile?.displayName}</MenuItem>
 
                                 </Select>
 
@@ -953,10 +926,10 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                           </Grid>
                           <Grid item xs={4}>
                             <div>
-                              <div><span>{invoiceDetail?.customer?.contact?.phone}</span></div>
-                              <div><span>{invoiceDetail?.customer?.info?.email}</span></div>
+                              <div><span>{invoiceData?.customer?.contact?.phone}</span></div>
+                              <div><span>{invoiceData?.customer?.info?.email}</span></div>
                               <div>
-                                <span>{invoiceDetail?.customer?.address?.street}, {invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode}</span>
+                                <span>{invoiceData?.customer?.address?.street}, {invoiceData?.customer?.address?.city}, {invoiceData?.customer?.address?.state} {invoiceData?.customer?.address?.zipCode}</span>
                               </div>
 
                             </div>
@@ -994,7 +967,10 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   <BCInvoiceItemsTableRow
                     invoiceItems={invoiceItems}
                     itemTier={itemTier}
-                    handleChange={(items) => {setFieldValue('items', items); calculateTotal(items)}}
+                    handleChange={(items) => {
+                      setFieldValue('items', items);
+                      calculateTotal(items)
+                    }}
                     values={values}
                     errors={errors}
                   />
@@ -1003,7 +979,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                     <Grid container spacing={1} alignItems="center">
                       <Grid item xs={7}>
                         <Button color={!errors.items ? 'primary' : 'secondary'} onClick={addItem}>
-                          <AddIcon color="inherit" /> Add item or service
+                          <AddIcon color="inherit"/> Add item or service
                         </Button>
                       </Grid>
                       <Grid item xs={2} className={invoiceStyles.textRight}>
@@ -1054,7 +1030,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   </Accordion>
                 </Card>
 
-{/*                <Card elevation={2}>
+                {/*                <Card elevation={2}>
                   <Accordion defaultExpanded>
                     <AccordionSummary
 
