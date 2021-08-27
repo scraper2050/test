@@ -1,6 +1,6 @@
 export interface InvoicingState {
     readonly loading: boolean
-    readonly data?: any[]
+    readonly data?: any
     readonly error?: string
 }
 

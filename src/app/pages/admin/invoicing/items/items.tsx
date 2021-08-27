@@ -379,7 +379,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
               isLoading={loading || tiersLoading}
               isPageSaveEnabled
               search
-              searchPlaceholder={'Search items'}
+              searchPlaceholder={'Search Items'}
               tableData={localItems}
               toolbar={Toolbar()}
             />

@@ -10,6 +10,7 @@ import moment from "moment";
 
 import classNames from "classnames";
 import { getContacts } from "../../../api/contacts.api";
+import {getAllSalesTaxAPI} from "../../../api/tax.api";
 
 interface Props {
   classes?: any;
@@ -241,8 +242,11 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
 function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = invoiceTableStyles();
-  const dispatch = useDispatch();
-  console.log("log-invoiceDetail", invoiceDetail);
+/*  const dispatch = useDispatch();
+  if (invoiceDetail.customer) {
+    dispatch(getCustomerDetailAction({customerId: invoiceDetail.customer._id}));
+  }
+  dispatch(getAllSalesTaxAPI());*/
 
   return (
     <DataContainer>
@@ -290,7 +294,8 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   />
                   : <Chip
                     color={'secondary'}
-                    label={'Unpaid'}
+                    style = {{textTransform: 'capitalize'}}
+                    label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
                   />}
               </div>
               <div>
@@ -320,6 +325,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           </Grid>
         </Grid>
       </div>
+
       <div className={invoiceTableStyle.itemsTable}>
 
         <div className={invoiceTableStyle.itemsTableHeader}>
