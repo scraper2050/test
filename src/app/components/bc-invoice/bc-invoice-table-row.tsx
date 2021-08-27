@@ -129,50 +129,48 @@ interface Props {
   invoiceItems: any;
   values?: any;
   itemTier: any,
-  handleChange(fieldName: string): any,
-  setItems: Dispatch<any>,
+  handleChange(items: any[]): any,
   errors?: any;
 }
 
-function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, setItems, itemTier, errors }: Props) {
+function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, itemTier, errors }: Props) {
   const { 'items': serviceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  serviceItems.sort((a, b) => a.name > b.name ? 1 : a.name <b.name ? -1 : 0);
   const taxes = useSelector(({ tax }: any) => tax.data);
-  console.log({values});
 
   const invoiceTableStyle = useInvoiceTableStyles();
-  console.log({invoiceItems, serviceItems});
-
+  console.log({errors})
   const handleItemChange = (value: string, index:number, fieldName:string) => {
     const tempArray = [...invoiceItems];
-    //console.log({value, index, fieldName})
     if (fieldName === 'name') {
       const item = serviceItems?.find((item:any) => item.name === value);
-      console.log({item})
+      //console.log({item})
       if (itemTier?._id) {
         const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
         tempArray[index].price = customerTier.charge || 0;
       } else {
         tempArray[index].price = item?.charges || 0;
       }
-      console.log(item, tempArray[index].tax);
       tempArray[index].tax = item?.tax
         ? taxes[0].tax
         : 0;
-      //tempArray[index].item.name = value;
       tempArray[index].isFixed = item?.isFixed ?? true;
+      tempArray[index]._id = item?._id;
     }
     tempArray[index][fieldName] = value;
 
     tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
     tempArray[index].subTotal = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line
-    console.log({tempArray})
-    setItems(tempArray);
+    //console.log({tempArray})
+    //setItems(tempArray);
+    handleChange(tempArray);
   };
 
   const removeItem = (rowIndex:number) => {
     const newItems = [...invoiceItems];
     newItems.splice(rowIndex, 1);
-    setItems(newItems);
+    //setItems(newItems);
+    handleChange(newItems);
   };
 
   return (
@@ -188,7 +186,6 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
       </Grid>
       {
         invoiceItems.map((rowData: any, rowIndex: number) => {
-          // console.log(rowData)
           return (
             <div className={invoiceTableStyle.itemsTableRoot}>
               <Grid container spacing={1} alignItems="center">
@@ -197,7 +194,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                     <Select
                       placeholder="Select Service/Product"
                       onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'name')}
-                      value={rowData?.name ?? rowData.item?.name}
+                      value={rowData?.name.trim()}
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
@@ -207,13 +204,10 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                         }}
                         error={!!errors.terms} />}
                     >
-                      <MenuItem value={""}>
-                        <em>None</em>
-                      </MenuItem>
                       {
                         serviceItems.map((invitem, invindex) => {
                           return (
-                            <MenuItem key={invindex} value={invitem?.name}>{invitem?.name}</MenuItem>
+                            <MenuItem key={invindex} value={invitem?.name.trim()}>{invitem?.name}</MenuItem>
                           )
                         })
                       }
@@ -226,6 +220,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                       id="one"
                       name="quantity"
                       type="number"
+                      inputProps={{ min: 1, max: 100 }}
                       value={rowData?.quantity}
                       error={!!errors.quantity}
                       onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'quantity')}
@@ -244,6 +239,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                       id="one"
                       name="price"
                       type="number"
+                      inputProps={{ min: 0 }}
                       value={rowData?.price}
                       error={!!errors.price}
                       onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'price')}
@@ -261,7 +257,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
                     <Select
                       onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'isFixed')}
-                      value={rowData.isFixed ?? rowData.item?.isFixed}
+                      value={rowData.isFixed}
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
@@ -284,7 +280,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
                     <Select
                       onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'tax')}
-                      value={rowData.tax ?? rowData.item?.tax}
+                      value={rowData.tax}
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
@@ -324,9 +320,9 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                     <InputBase
                       id="one"
                       name="message"
-                      value={rowData.message}
+                      value={rowData.description}
                       error={!!errors.message}
-                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'message')}
+                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'description')}
                       classes={{
                         root: classNames(invoiceTableStyle.bootstrapRoot, {
                           [invoiceTableStyle.bootstrapRootError]: !!errors.message
