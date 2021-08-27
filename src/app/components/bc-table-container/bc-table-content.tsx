@@ -254,7 +254,7 @@ function BCTableContent({
 
   const useStyles = makeStyles({
     'cellMd': {
-      'padding': '6px 24px 6px 16px!important'
+      'padding': '6px 16px 6px 8px!important'
     },
     'table': {
       'width': '95%',
@@ -351,7 +351,7 @@ function BCTableContent({
                     'root': 'overflow-hidden',
                     'spacer': 'w-0 max-w-0'
                   }}
-                  colSpan={5}
+                  //colSpan={5}
                   count={data.length}
                   onChangePage={handleChangePage}
                   onChangeRowsPerPage={handleChangeRowsPerPage}
