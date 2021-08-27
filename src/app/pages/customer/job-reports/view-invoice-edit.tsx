@@ -12,6 +12,7 @@ import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular
 import BCEditInvoice from "../../../components/bc-invoice/bc-edit-invoice";
 import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
 import {loadInvoiceItems} from "../../../../actions/invoicing/items/items.action";
+import {getAllSalesTaxAPI} from "../../../../api/tax.api";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,6 +52,7 @@ function ViewInvoice({ classes, theme }: any) {
     }
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllPaymentTermsAPI());
+    dispatch(getAllSalesTaxAPI());
   }, []);
 
   return (

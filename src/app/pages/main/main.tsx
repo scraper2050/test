@@ -276,12 +276,12 @@ function Main(): any {
                     title={'View Invoice'}
                   />
 
-                  <AuthRoute
+{/*                  <AuthRoute
                     Component={EditInvoicePage}
                     exact
                     path={'/main/customers/job-reports/edit/:invoice'}
                     title={'Edit Invoice'}
-                  />
+                  />*/}
                   <AuthRoute
                     Component={EditInvoicePage}
                     exact

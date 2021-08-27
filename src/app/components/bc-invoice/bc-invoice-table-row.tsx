@@ -1,4 +1,4 @@
-import React, {Dispatch} from 'react';
+import React, {Dispatch, useEffect} from 'react';
 import { createMuiTheme, makeStyles, MuiThemeProvider, Theme } from "@material-ui/core/styles";
 import {
   Card,
@@ -170,6 +170,10 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
     handleChange(newItems);
   };
 
+  useEffect(() => {
+    handleChange(invoiceItems);
+  }, [invoiceItems])
+  console.log(errors);
   return (
     <>
       <Grid container spacing={1} className={invoiceTableStyle.itemsTableHeader}>
@@ -195,11 +199,12 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                       input={<InputBase
                         classes={{
                           root: classNames(invoiceTableStyle.bootstrapRoot, {
-                            [invoiceTableStyle.bootstrapRootError]: !!errors.terms
+                            [invoiceTableStyle.bootstrapRootError]: errors?.itemsNames?.indexOf(rowIndex) >=0
                           }),
                           input: invoiceTableStyle.bootstrapInput,
                         }}
-                        error={!!errors.terms} />}
+                        //error={errors?.itemNames?.indexOf(rowIndex) >=0}
+                      />}
                     >
                       {
                         serviceItems.map((invitem, invindex) => {

@@ -481,7 +481,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         dueDate: data.due_date,
         paymentTermId: data.paymentTerm,
         note: data.note,
-        items: JSON.stringify(invoiceItems.map((o: any) => {
+        items: JSON.stringify(data.items.map((o: any) => {
           const item: any ={
             description: o.description ?? '',
             price: parseFloat(o.price),
@@ -582,6 +582,16 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           items: invoiceItems,
         }}
         validationSchema={InvoiceValidationSchema}
+        validate ={(values: any) => {
+            const errors: any = {};
+            const indices = values.items.reduce((acc: any[], item:any, index:number) => {
+              if (item.name === '') acc.push(index)
+              return acc;
+            },[]);
+            if (indices.length > 0) errors.itemsNames = indices;
+            return errors;
+          }
+        }
         onSubmit={(values) => {
           handleFormSubmit(values);
         }}

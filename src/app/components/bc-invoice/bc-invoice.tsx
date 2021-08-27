@@ -242,13 +242,12 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
 function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = invoiceTableStyles();
-  const dispatch = useDispatch();
+/*  const dispatch = useDispatch();
   if (invoiceDetail.customer) {
     dispatch(getCustomerDetailAction({customerId: invoiceDetail.customer._id}));
   }
-  dispatch(getAllSalesTaxAPI());
-  //console.log("log-invoiceDetail", invoiceDetail);
-  //console.log('invoiceDetail?.items: '+JSON.stringify( invoiceDetail?.items, null, 4));
+  dispatch(getAllSalesTaxAPI());*/
+
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
