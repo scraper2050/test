@@ -286,7 +286,12 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                           input: invoiceTableStyle.bootstrapInput,
                         }}
                         error={!!errors.tax} />}
-                    >
+                    > {rowData.tax !== 0 && !taxes.find((tax:any) => tax.tax === rowData.tax) &&
+                    <MenuItem value={rowData.tax} disabled>
+                      {rowData.tax}
+                    </MenuItem>
+
+                    }
                       <MenuItem value={"0"}>
                         N/A
                       </MenuItem>

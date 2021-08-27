@@ -456,7 +456,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   const invoiceTableStyle = useInvoiceTableStyles();
   const history = useHistory();
   const simplifiedItems = invoiceData.items.map((item: any) => {
-    const newItem = {...item, ...item.item};
+    const newItem = {...item.item, ...item};
     delete newItem.item;
     delete newItem.jobType;
     return newItem;
