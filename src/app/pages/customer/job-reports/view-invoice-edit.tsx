@@ -5,7 +5,7 @@ import styles from "../customer.styles";
 import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import { useHistory, useParams } from "react-router-dom";
+import {useHistory, useLocation, useParams} from "react-router-dom";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
@@ -13,6 +13,7 @@ import BCEditInvoice from "../../../components/bc-invoice/bc-edit-invoice";
 import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
 import {loadInvoiceItems} from "../../../../actions/invoicing/items/items.action";
 import {getAllSalesTaxAPI} from "../../../../api/tax.api";
+import {getCustomerDetailAction} from "../../../../actions/customer/customer.action";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,11 +42,21 @@ function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   let { invoice } = useParams();
   const { user } = useSelector(({ auth }:any) => auth);
-  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
+  const { state } = useLocation<any>();
 
+  const customerId = state ? state.customerId : '';
+  const invoiceDetail = state ? state.invoiceDetail : '';
+
+  //const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
   useEffect(() => {
-    if (invoice) {
+/*    if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
+      //dispatch(getCustomerDetailAction({ 'customerId': values.customerId }));
+    }*/
+
+    if (customerId) {
+      dispatch(getCustomerDetailAction({customerId}));
     }
     if (user) {
       dispatch(getCompanyProfileAction(user.company as string));
@@ -58,7 +69,7 @@ function ViewInvoice({ classes, theme }: any) {
   return (
     <MainContainer>
       <PageContainer>
-        {loadingInvoiceDetail || Object.keys(invoiceDetail).length === 0?
+        {!customer._id?
           <BCCircularLoader heightValue={'200px'} /> :
           <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/>
         }
