@@ -69,6 +69,13 @@ function ViewInvoice({ classes, theme }: any) {
   const goToEdit = () => {
     history.push({
       'pathname': `/main/invoicing/edit/${invoice}`,
+      'state': {
+        'customerId': invoiceDetail.customer?._id,
+        'customerName': invoiceDetail.customer?.profile?.displayName,
+        'invoiceId': invoiceDetail?._id,
+        'jobType': invoiceDetail.job?.type?._id,
+        'invoiceDetail': invoiceDetail
+      }
     });
   }
 
