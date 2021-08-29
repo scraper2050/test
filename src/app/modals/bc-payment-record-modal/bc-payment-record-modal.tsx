@@ -77,6 +77,13 @@ function BcPaymentRecordModal({
 
   const currentBalanceDue = invoice.balanceDue ?? invoice.total;
 
+  const formatNumber = (number: number) => {
+    return number.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: true
+    })
+  }
 
   const form = useFormik({
     initialValues: {
@@ -160,11 +167,11 @@ function BcPaymentRecordModal({
         </Grid>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${invoice.total}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
         </Grid>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT DUE</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${currentBalanceDue}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
         </Grid>
         <Grid item>
           <Grid container direction={'row'} spacing={2}>
