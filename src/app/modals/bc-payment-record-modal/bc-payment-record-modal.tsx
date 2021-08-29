@@ -23,6 +23,15 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import {error} from "../../../actions/snackbar/snackbar.action";
 import {setInvoicingList} from "../../../actions/invoicing/invoicing.action";
 
+interface ApiProps {
+  customerId: string,
+  invoiceId:string,
+  amount: number,
+  paidAt: Date,
+  referenceNumber?: string,
+  paymentType?: string,
+  notes?: string
+}
 
 function BcPaymentRecordModal({
   classes,
@@ -62,16 +71,24 @@ function BcPaymentRecordModal({
 
 
   const isValidate = () => {
-    return (FormikValues.paymentMethod >= 0 && FormikValues.amount > 0);
+    const amount = FormikValues.amount ?? 0;
+    return (amount > 0);
   };
 
   const currentBalanceDue = invoice.balanceDue ?? invoice.total;
 
+  const formatNumber = (number: number) => {
+    return number.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: true
+    })
+  }
 
   const form = useFormik({
     initialValues: {
       paymentDate: new Date(),
-      amount: currentBalanceDue,
+      amount: undefined,
       paymentMethod: -1,
       referenceNumber: '',
       notes: ''
@@ -79,14 +96,20 @@ function BcPaymentRecordModal({
     onSubmit: (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
 
-      const params = {
+      const params: ApiProps = {
         customerId: invoice.customer._id,
         invoiceId:invoice._id,
-        amount:FormikValues.amount,
-        referenceNumber: FormikValues.referenceNumber,
-        paymentType: paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name,
+        amount: FormikValues.amount ?? 0,
         paidAt: FormikValues.paymentDate,
+        notes: FormikValues.notes,
       }
+
+      if (FormikValues.referenceNumber)
+        params.referenceNumber = FormikValues.referenceNumber;
+
+      if (FormikValues.paymentMethod >= 0)
+        params.paymentType = paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name;
+
 
       dispatch(recordPayment(params)).then((response: any) => {
         if (response.status === 1) {
@@ -144,11 +167,11 @@ function BcPaymentRecordModal({
         </Grid>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${invoice.total}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
         </Grid>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT DUE</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${currentBalanceDue}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
         </Grid>
         <Grid item>
           <Grid container direction={'row'} spacing={2}>
@@ -171,7 +194,7 @@ function BcPaymentRecordModal({
 
       </Grid>
 
-      <form  onSubmit={FormikSubmit} >
+      <form onSubmit={FormikSubmit} >
         <DialogContent classes={{ 'root': classes.dialogContent }}>
           <Grid container direction={'column'} spacing ={1}>
 
@@ -199,6 +222,7 @@ function BcPaymentRecordModal({
                 </Grid>
                 <Grid item xs={9}>
                   <TextField
+                    autoFocus
                     autoComplete={'off'}
                     className={classes.fullWidth}
                     id={'outlined-textarea'}
