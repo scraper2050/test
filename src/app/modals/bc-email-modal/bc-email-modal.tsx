@@ -53,14 +53,13 @@ p {
 }
 `;
 
-function EmailJobReportModal({ classes, id, customerEmail, customer, onClick, typeText }:any) {
+function EmailJobReportModal({ classes, data: {id, customerEmail, customer, onClick, typeText, emailDefault} }:any) {
   const { sent, loading, error } = useSelector(({ email }:any) => email);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const dispatch = useDispatch();
   const closeModal = () => {
     dispatch(closeModalAction());
   };
-  console.log({profileState})
 
   const variant = sent
     ? 'outlined'
@@ -74,8 +73,8 @@ function EmailJobReportModal({ classes, id, customerEmail, customer, onClick, ty
     initialValues: {
       from: profileState.companyEmail,
       to: customerEmail,
-      subject: typeText,
-      message: '',
+      subject: emailDefault.subject,
+      message: emailDefault.message,
       sendToMe: false,
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
@@ -210,11 +209,22 @@ function EmailJobReportModal({ classes, id, customerEmail, customer, onClick, ty
                     id={'outlined-textarea'}
                     name={'message'}
                     multiline={true}
+                    rows={10}
                     onChange={(e: any) => formikChange(e)}
                     type={'text'}
                     value={FormikValues.message}
                     variant={'outlined'}
                   />
+{/*                  <div
+                    style={{
+                      maxHeight:200,
+                      overflow: 'scroll',
+                      borderWidth: 1,
+                      borderColor: '#ccc',
+                      borderStyle: 'solid',
+                      borderRadius: 10
+                    }}
+                    dangerouslySetInnerHTML={{ __html: FormikValues.message }} />*/}
                 </Grid>
               </Grid>
             </Grid>
@@ -333,7 +343,6 @@ const DataContainer = styled.div`
   }
   .MuiOutlinedInput-multiline {
     padding: 5px 14px;
-    height: 200px;
     align-items: flex-start;
   }
   .required > label:after {

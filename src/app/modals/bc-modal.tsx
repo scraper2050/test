@@ -282,11 +282,7 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<EmailModal
-          customer={data.customer}
-          customerEmail={data.customerEmail}
-          id={data.id}
-          onClick={data.handleClick}
-          typeText={data.typeText}
+          data = {data}
         />);
         break;
       case modalTypes.ADD_BILLING_MODAL:
