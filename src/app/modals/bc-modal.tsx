@@ -279,7 +279,7 @@ function BCModal() {
         setModalOptions({
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'xs'
+          'maxWidth': 'sm'
         });
         setComponent(<EmailModal
           customer={data.customer}
