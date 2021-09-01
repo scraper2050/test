@@ -121,8 +121,8 @@ function InvoicingListListing({ classes, theme }: any) {
               >Paid</CSButtonSmall>
               : <CSButtonSmall
                 variant="contained"
-                style={{ 'backgroundColor': theme.palette.secondary.light,
-                  'color': '#fff' }}
+                style={{ backgroundColor: status === 'UNPAID'? '#F50057': '#FA8029',
+                  color: '#fff' }}
                 color="secondary"
                 onClick={(e) => recordPayment(e, row.original)}
                 size="small">

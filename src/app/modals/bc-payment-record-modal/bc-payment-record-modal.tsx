@@ -170,7 +170,7 @@ function BcPaymentRecordModal({
           <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
         </Grid>
         <Grid item>
-          <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT DUE</Typography>
+          <Typography variant={'caption'} className={classes.previewCaption}>BALANCE DUE</Typography>
           <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
         </Grid>
         <Grid item>
