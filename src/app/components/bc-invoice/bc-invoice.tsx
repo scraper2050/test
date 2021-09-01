@@ -293,8 +293,10 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                       'color': '#fff' }}
                   />
                   : <Chip
-                    color={'secondary'}
-                    style = {{textTransform: 'capitalize'}}
+                    style = {{
+                      textTransform: 'capitalize',
+                      backgroundColor: invoiceDetail?.status === 'UNPAID'? '#F50057': '#FA8029',
+                      color: '#fff'}}
                     label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
                   />}
               </div>
