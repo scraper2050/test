@@ -7,6 +7,7 @@ import * as CONSTANTS from "../../../constants";
 import BCAdminHeader from "../bc-admin-header/bc-admin-header";
 import BCAdminSidebar from "../bc-admin-sidebar/bc-admin-sidebar";
 import BCModal from "../../modals/bc-modal";
+import BCSnackbar from "../bc-snackbar/bc-snackbar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,6 +52,7 @@ function BCAdminLayout({classes, children}: Props) {
 
   return (
     <div className={themClasses.root}>
+      <BCSnackbar />
       <CssBaseline />
       <BCAdminHeader
         drawerOpen={open}

@@ -27,7 +27,7 @@ export default function EmailInvoiceButton({ invoice, Component }: EmailReportPr
     'customer': customer?.profile?.displayName,
     'customerEmail': customer?.info?.email,
     'handleClick': sendInvoice,
-    'id': invoiceId,
+    'id': _id,
     'typeText': 'Invoice',
     'className': 'wideModalTitle',
   };

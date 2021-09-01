@@ -29,6 +29,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewJobReportsPage from '../../app/pages/customer/job-reports/view-job-report';
 import EmailModal from './bc-email-modal/bc-email-modal';
+import EmailModalOld from './bc-email-modal/bc-email-modal_old';
 import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-view-modal';
 import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
 import BCSharedFormModal from './bc-shared-form-modal/bc-shared-form-modal';
@@ -283,6 +284,20 @@ function BCModal() {
         });
         setComponent(<EmailModal
           data = {data}
+        />);
+        break;
+      case modalTypes.EMAIL_JOB_REPORT_MODAL_OLD:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<EmailModalOld
+          customer={data.customer}
+          customerEmail={data.customerEmail}
+          id={data.id}
+          onClick={data.handleClick}
+          typeText={data.typeText}
         />);
         break;
       case modalTypes.ADD_BILLING_MODAL:

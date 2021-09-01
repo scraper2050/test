@@ -16,8 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as CONSTANTS from "../../../constants";
 import {useFormik} from "formik";
 import {CompanyProfileStateType} from "../../../actions/user/user.types";
-
-//import {error} from "../../../actions/snackbar/snackbar.action";
+import {sendEmailAction} from "../../../actions/email/email.action";
 
 
 const EmailJobReportModalContainer = styled.div`
@@ -80,40 +79,19 @@ function EmailJobReportModal({ classes, data: {id, customerEmail, customer, onCl
     onSubmit: (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
 
-/*      const params: ApiProps = {
-        customerId: invoice.customer._id,
-        invoiceId:invoice._id,
-        amount: FormikValues.amount ?? 0,
-        paidAt: FormikValues.paymentDate,
-        notes: FormikValues.notes,
-      }*/
+      const params: any = {
+        id: id,
+        invoiceId : id,
+        subject: values.subject,
+        message: values.message,
+        //invoicePdf
+      }
 
-      /*if (FormikValues.referenceNumber)
-        params.referenceNumber = FormikValues.referenceNumber;
-
-      if (FormikValues.paymentMethod >= 0)
-        params.paymentType = paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name;
-*/
-
-/*      dispatch(recordPayment(params)).then((response: any) => {
-        if (response.status === 1) {
-          /!*          console.log({invoiceList})
-                    const currentInvoiceIndex = invoiceList.data.findIndex((item: any) => item._id === invoice._id);
-                    invoiceList.data[currentInvoiceIndex].balanceDue = response.invoice.balanceDue;
-                    invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
-                    invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
-                    dispatch(setInvoicingList(invoiceList.data));*!/
-          setTimeout(() => closeModal(), 500);
-          //closeModal()
-        } else {
-          console.log(response.message);
-          dispatch(error(response.message))
-        }
-      }).catch((e: any) => {
-        console.log(e.message);
-        dispatch(error(e.message));
-        setSubmitting(false);
-      })*/
+      dispatch(sendEmailAction.fetch({ 'email': customer?.info?.email,
+        data: params,
+        type: 'invoice'
+      }));
+      closeModal();
     }
   });
 
@@ -134,7 +112,6 @@ function EmailJobReportModal({ classes, data: {id, customerEmail, customer, onCl
       <form onSubmit={FormikSubmit} >
         <DialogContent classes={{ 'root': classes.dialogContent }}>
           <Grid container direction={'column'} spacing ={1}>
-
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
                 <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
