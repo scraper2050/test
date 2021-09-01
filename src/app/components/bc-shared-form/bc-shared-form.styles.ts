@@ -27,9 +27,11 @@ export default (theme: Theme): any => ({
   },
   'invoiceInputBaseRoot': {
     '& input': {
-      'width': '100%'
+      'width': '50px',
+      'fontSize': '14px',
     },
-    'width': '100%'
+    'width': '100%',
+    'fontSize': '14px',
   },
   'titleBar': {
     'alignItems': 'center',
@@ -63,11 +65,12 @@ export const FormHeaderContainer = styled.div`
   }
   .formDetails {
     input {
-      padding: 18.5px 14px;
+      /*padding: 18.5px 14px;*/
     }
   }
   .notes {
     flex: 2;
     margin-right: 2rem;
   }
+  
 `;

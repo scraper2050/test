@@ -15,9 +15,9 @@ export const getJobReports = async (data: any) => {
   }
 };
 
-export const emailJobReport = async (id: string) => {
+export const emailJobReport = async (data: any) => {
   try {
-    const response: any = await request(`/sendJobReportEmail`, 'POST', { 'jobReportId': id }, false);
+    const response: any = await request(`/sendJobReportEmail`, 'POST', { 'jobReportId': data.id }, false);
     return response.data.report;
   } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {

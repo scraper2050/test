@@ -1,19 +1,24 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createStyles, withStyles } from "@material-ui/core";
+import { Button, createStyles, withStyles, Grid, Paper } from "@material-ui/core";
 import styles from "../customer.styles";
+import BCInvoice from "../../../components/bc-invoice/bc-invoice";
+import IconButton from '@material-ui/core/IconButton';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import {useHistory, useLocation, useParams} from "react-router-dom";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import PrintIcon from '@material-ui/icons/Print';
+import EmailIcon from '@material-ui/icons/Email';
+import classNames from "classnames";
+import { useHistory, useParams } from "react-router-dom";
+import { getCustomerDetailAction, loadingSingleCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
+import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import BCEditInvoice from "../../../components/bc-invoice/bc-edit-invoice";
 import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
-import {loadInvoiceItems} from "../../../../actions/invoicing/items/items.action";
-import {getAllSalesTaxAPI} from "../../../../api/tax.api";
-import {getCustomerDetailAction} from "../../../../actions/customer/customer.action";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,39 +45,43 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
 
 function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
+  const invoiceStyles = invoicePageStyles();
+  let history = useHistory();
   let { invoice } = useParams();
   const { user } = useSelector(({ auth }:any) => auth);
-  const { state } = useLocation<any>();
+  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
 
-  const customerId = state ? state.customerId : '';
-  const invoiceDetail = state ? state.invoiceDetail : '';
-
-  //const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
-  const customer = useSelector(({ customers }:any) => customers.customerObj);
   useEffect(() => {
-/*    if (invoice) {
+    if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
-      //dispatch(getCustomerDetailAction({ 'customerId': values.customerId }));
-    }*/
-
-    if (customerId) {
-      dispatch(getCustomerDetailAction({customerId}));
     }
+
     if (user) {
       dispatch(getCompanyProfileAction(user.company as string));
     }
-    dispatch(loadInvoiceItems.fetch());
     dispatch(getAllPaymentTermsAPI());
-    dispatch(getAllSalesTaxAPI());
   }, []);
+
+  if (loadingInvoiceDetail) {
+    return <BCCircularLoader heightValue={'200px'} />;
+  }
+
+  const goToEdit = () => {
+    history.push({
+      'pathname': `edit/${invoice._id}`,
+    });
+  }
+
+  const goToEditNew = () => {
+    history.push({
+      'pathname': `edit-new/${invoice._id}`,
+    });
+  }
 
   return (
     <MainContainer>
       <PageContainer>
-        {!customer._id?
-          <BCCircularLoader heightValue={'200px'} /> :
-          <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/>
-        }
+        <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/>
       </PageContainer>
     </MainContainer>
   )

@@ -29,14 +29,17 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewJobReportsPage from '../../app/pages/customer/job-reports/view-job-report';
 import EmailModal from './bc-email-modal/bc-email-modal';
+import EmailModalOld from './bc-email-modal/bc-email-modal_old';
 import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-view-modal';
 import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
 import BCSharedFormModal from './bc-shared-form-modal/bc-shared-form-modal';
 import BCInvoiceEditModal from './bc-invoice-item-modal/bc-invoice-item-modal';
 import BCSalesTaxModal from './bc-sales-tax-modal/bc-sales-tax-modal';
 import BcPaymentTermsModal from './bc-payment-terms-modal/bc-payment-terms-modal';
+import BcPaymentRecordModal from "./bc-payment-record-modal/bc-payment-record-modal";
 import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
 import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update-payment-terms-modal";
+import BCQbDisconnectModal from "./bc-integration-modal/bc-disconnect-modal";
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -107,6 +110,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCCancelTicketModal props={data} />);
+        break;
+      case modalTypes.QUICKBOOKS_DISCONNECT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCQbDisconnectModal props={data} />);
         break;
       case modalTypes.CREATE_JOB_MODAL:
         setModalOptions({
@@ -268,9 +280,19 @@ function BCModal() {
         setModalOptions({
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'xs'
+          'maxWidth': 'sm'
         });
         setComponent(<EmailModal
+          data = {data}
+        />);
+        break;
+      case modalTypes.EMAIL_JOB_REPORT_MODAL_OLD:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<EmailModalOld
           customer={data.customer}
           customerEmail={data.customerEmail}
           id={data.id}
@@ -344,6 +366,17 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BcPaymentTermsModal />);
+        break;
+      case modalTypes.PAYMENT_RECORD_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BcPaymentRecordModal
+          invoice={data.invoice}
+        />);
         break;
       case modalTypes.UPDATE_PAYMENT_TERMS_MODAL:
         setModalOptions({

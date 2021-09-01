@@ -17,8 +17,8 @@ export default function EmailReportButton({ jobReport, Component }: EmailReportP
 
   const sendReport = () => {
     dispatch(sendEmailAction.fetch({ 'email': job.customer.info?.email,
-      'id': _id,
-      'type': 'jobReport'
+      data: {id: _id},
+      type: 'jobReport'
     }));
   };
 

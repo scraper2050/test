@@ -1,13 +1,15 @@
 import React from "react";
-import { Paper, Typography, Grid, Button, Checkbox } from "@material-ui/core";
+import {Paper, Typography, Grid, Button, Checkbox, IconButton} from "@material-ui/core";
 import { green, grey, orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
-
 import QBIcon from "../../../../assets/img/qb.png";
 import { quickbooksCustomerSync, quickbooksItemsSync, quickbooksInvoicesSync } from "../../../../api/quickbooks.api";
 import { getCompanyProfile } from "../../../../api/user.api";
 import { useDispatch } from "react-redux";
 import {error, success} from "../../../../actions/snackbar/snackbar.action";
+import {openModalAction, setModalDataAction} from "../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../constants";
+import {setQuickbooksConnection} from "../../../../actions/quickbooks/quickbooks.actions";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +45,14 @@ const useStyles = makeStyles((theme) => ({
     bottom: 0,
     right: 0,
   },
+  closeImageIconContainer: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+  },
+  closeImageIcon: {
+    fontSize: 28,
+  },
   serverRespContainer: {
     display: "flex",
     justifyContent: "center",
@@ -56,7 +66,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center"
   },
   titleDiv: {
-    marginBottom: 10
+    marginBottom: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontWeight: 500,
@@ -128,6 +140,9 @@ function SyncPage() {
       const user = JSON.parse(localStorage.getItem('user') || "");
       const companyProfile = await getCompanyProfile(user?.company as string);
       const { qbSync, qbCompanyEmail = '', qbCompanyName = '' } = companyProfile.company;
+      if (qbCompanyEmail === null && qbCompanyName === null) {
+        dispatch(setQuickbooksConnection(false));
+      }
       const syncStatus: any = {};
       Object.entries(isSynced).forEach(([key, status]) => {
         const qbKey = `${key.toLowerCase()}Synced`;
@@ -139,6 +154,20 @@ function SyncPage() {
     } catch (e) {
       dispatch(error(e.message));
     }
+  }
+
+  const askToDisconnect = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Disconnect from QuickBooks',
+        'removeFooter': false,
+        'className': 'serviceTicketTitle',
+      },
+      'type': modalTypes.QUICKBOOKS_DISCONNECT_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
   const enableButton = Object.values(isChecked).some(value => value);
@@ -218,6 +247,14 @@ function SyncPage() {
             </div>
           </Grid>
           <Grid item xs={2} className={classes.grid2}>
+            <Button
+              className={classes.closeImageIconContainer}
+              aria-label={'disconnect'}
+              color={'secondary'}
+              onClick={askToDisconnect}
+              variant={'contained'}>
+              {'Disconnect'}
+            </Button>
             <div className={classes.imageIconContainer}>
               <img
                 src={QBIcon}

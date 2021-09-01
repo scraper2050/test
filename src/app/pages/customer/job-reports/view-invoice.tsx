@@ -11,13 +11,14 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PrintIcon from '@material-ui/icons/Print';
 import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
-import { useHistory, useParams } from "react-router-dom";
+import {useHistory, useLocation, useParams} from "react-router-dom";
 import { getCustomerDetailAction, loadingSingleCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import { getContacts } from "../../../../api/contacts.api";
+import {getAllSalesTaxAPI} from "../../../../api/tax.api";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,9 +68,29 @@ function ViewInvoice({ classes, theme }: any) {
 
   const goToEdit = () => {
     history.push({
-      'pathname': `/main/customers/job-reports/edit/${invoice}`,
+      'pathname': `/main/invoicing/edit/${invoice}`,
+      'state': {
+        'customerId': invoiceDetail.customer?._id,
+        'customerName': invoiceDetail.customer?.profile?.displayName,
+        'invoiceId': invoiceDetail?._id,
+        'jobType': invoiceDetail.job?.type?._id,
+        'invoiceDetail': invoiceDetail
+      }
     });
   }
+
+/*  const goToEditNew = () => {
+    history.push({
+      'pathname': `/main/invoicing/update-invoice/${invoice}`,
+      'state': {
+        'customerId': invoiceDetail.customer?._id,
+        'customerName': invoiceDetail.customer?.profile?.displayName,
+        'jobId': invoiceDetail?._id,
+        'jobType': invoiceDetail.job?.type?._id,
+        'invoiceDetail': invoiceDetail
+      }
+    });
+  }*/
 
   return (
     <MainContainer>
@@ -107,6 +128,7 @@ function ViewInvoice({ classes, theme }: any) {
             <Button
               variant="contained"
               color="primary"
+              disabled={invoiceDetail.paid}
               className={classNames(invoiceStyles.margin, invoiceStyles.white)}
               onClick={goToEdit}
             >

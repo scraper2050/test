@@ -209,7 +209,7 @@ function DashboardPage({ classes }: any): JSX.Element {
                     columns={columns}
                     isLoading={vendors.loading}
                     onRowClick={(row: any) => renderViewMore(row)}
-                    tableData={vendors.data}
+                    tableData={vendors.data.filter((vendor: any) => vendor.status <= 1)}
                     text={'Vendors'}
                     textButton={'Invite Vendor'}
                   />
@@ -221,7 +221,6 @@ function DashboardPage({ classes }: any): JSX.Element {
         </div>
       </div>
     </div>
-
   );
 }
 

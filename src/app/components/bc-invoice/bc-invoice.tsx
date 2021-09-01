@@ -10,6 +10,7 @@ import moment from "moment";
 
 import classNames from "classnames";
 import { getContacts } from "../../../api/contacts.api";
+import {getAllSalesTaxAPI} from "../../../api/tax.api";
 
 interface Props {
   classes?: any;
@@ -241,8 +242,11 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
 function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = invoiceTableStyles();
-  const dispatch = useDispatch();
-  console.log("log-invoiceDetail", invoiceDetail);
+/*  const dispatch = useDispatch();
+  if (invoiceDetail.customer) {
+    dispatch(getCustomerDetailAction({customerId: invoiceDetail.customer._id}));
+  }
+  dispatch(getAllSalesTaxAPI());*/
 
   return (
     <DataContainer>
@@ -289,17 +293,20 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                       'color': '#fff' }}
                   />
                   : <Chip
-                    color={'secondary'}
-                    label={'Unpaid'}
+                    style = {{
+                      textTransform: 'capitalize',
+                      backgroundColor: invoiceDetail?.status === 'UNPAID'? '#F50057': '#FA8029',
+                      color: '#fff'}}
+                    label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
                   />}
               </div>
               <div>
                 <h2>INVOICE</h2>
                 <div className={invoiceStyles.dateContainer}>
                   <div>
-                    <label>INVOICE #: <span>{invoiceDetail.invoiceId}</span></label>
-                    <label>CUSTOMER P.O. : <span>{invoiceDetail.invoiceId}</span></label>
-                    <label>Payment Terms : <span>{invoiceDetail?.paymentTerm?.name}</span></label>
+                    <label>INVOICE #: <span style={{display: 'inline-block', width: 100}}>{invoiceDetail.invoiceId}</span></label>
+                    <label>CUSTOMER P.O. : <span style={{display: 'inline-block', width: 100}}>{invoiceDetail.customerPO}</span></label>
+                    <label>Payment Terms : <span style={{display: 'inline-block', width: 100}}>{invoiceDetail?.paymentTerm?.name}</span></label>
                   </div>
                   <Divider className={invoiceStyles.divider} orientation="vertical" flexItem />
                   <div>
@@ -320,6 +327,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           </Grid>
         </Grid>
       </div>
+
       <div className={invoiceTableStyle.itemsTable}>
 
         <div className={invoiceTableStyle.itemsTableHeader}>

@@ -48,3 +48,12 @@ export const quickbooksInvoicesSync = async () => {
   }
 };
 
+export const quickbooksDisconnect = async () => {
+  try {
+    const response: any = await request("/disconnectQB", "POST", null, false);
+    return response;
+  } catch (err) {
+    throw new Error(`Something went wrong`);
+  }
+};
+

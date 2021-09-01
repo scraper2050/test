@@ -27,7 +27,7 @@ export default (theme: Theme): any => ({
     'borderRadius': '50px',
     'padding': '0.5rem 1rem',
     'margin': '0.5rem 1rem',
-    'maxWidth': '100px',
+    'maxWidth': '120px',
     'display': 'flex',
     'alignItems': 'center',
     'marginLeft': 'auto'

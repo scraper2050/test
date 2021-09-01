@@ -7,6 +7,7 @@ import * as CONSTANTS from "../../../constants";
 import BCAdminHeader from "../bc-admin-header/bc-admin-header";
 import BCAdminSidebar from "../bc-admin-sidebar/bc-admin-sidebar";
 import BCModal from "../../modals/bc-modal";
+import BCSnackbar from "../bc-snackbar/bc-snackbar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       minHeight: '100vh',
       flexGrow: 1,
-      padding: theme.spacing(3),
+      padding: theme.spacing(0),
       backgroundColor: CONSTANTS.PRIMARY_WHITE,
       overflow: 'hidden',
     },
@@ -51,6 +52,7 @@ function BCAdminLayout({classes, children}: Props) {
 
   return (
     <div className={themClasses.root}>
+      <BCSnackbar />
       <CssBaseline />
       <BCAdminHeader
         drawerOpen={open}

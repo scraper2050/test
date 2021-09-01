@@ -1,7 +1,7 @@
 import { CircularProgress } from '@material-ui/core';
 import React from 'react';
 
-function BCCircularLoader({ heightValue = '100vh' }: any): JSX.Element {
+function BCCircularLoader({ heightValue = '100vh', size= 50 }: any): JSX.Element {
   return (
     <div style={{
       'alignItems': 'center',
@@ -9,7 +9,7 @@ function BCCircularLoader({ heightValue = '100vh' }: any): JSX.Element {
       'height': heightValue,
       'justifyContent': 'center'
     }}>
-      <CircularProgress size={50} />
+      <CircularProgress size={size} />
     </div>
   );
 }

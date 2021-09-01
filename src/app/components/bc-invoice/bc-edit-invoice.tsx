@@ -1,122 +1,295 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Button, Chip, createStyles, Divider, Grid, MenuItem, Select, TextField, withStyles } from "@material-ui/core";
-import styles from "./bc-invoice.styles";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import * as CONSTANTS from "../../../constants";
-import styled from "styled-components";
-import { getCustomerDetailAction } from "../../../actions/customer/customer.action";
-import moment from "moment";
-import AddIcon from '@material-ui/icons/Add';
-
-import classNames from "classnames";
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { RootState } from "../../../reducers";
-import { loadInvoiceItems } from "../../../actions/invoicing/items/items.action";
-import BcInvoiceTableRow from "./bc-invoice-table-row";
+import React, {useEffect, useMemo, useState} from 'react';
+import {useSelector} from 'react-redux';
 import {
-  KeyboardDatePicker, DatePicker
-} from '@material-ui/pickers';
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  ButtonGroup,
+  Card,
+  CardContent,
+  CardHeader,
+  createStyles,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  withStyles
+} from '@material-ui/core';
+import styles from './bc-invoice.styles';
+import {createMuiTheme, makeStyles, MuiThemeProvider, Theme} from '@material-ui/core/styles';
+import * as CONSTANTS from '../../../constants';
+import styled from 'styled-components';
 import InputBase from '@material-ui/core/InputBase';
-import { TextFieldProps } from "@material-ui/core/TextField";
-import { openModalAction, setModalDataAction } from "../../../actions/bc-modal/bc-modal.action";
-import { modalTypes } from "../../../constants";
-import { addContact, getContacts } from "../../../api/contacts.api";
+import FormControl from '@material-ui/core/FormControl';
+import {Form, Formik} from 'formik';
+import * as Yup from 'yup';
+import moment from 'moment';
+
+import PhoneIcon from '@material-ui/icons/Phone';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import StorefrontIcon from '@material-ui/icons/Storefront';
+import IconButton from '@material-ui/core/IconButton';
+import classNames from 'classnames';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {PageHeader} from '../../pages/customer/job-reports/view-invoice-edit';
+import {useHistory} from 'react-router-dom';
+import {blue} from '@material-ui/core/colors';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import {KeyboardDatePicker} from '@material-ui/pickers';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import EventIcon from '@material-ui/icons/Event';
+import {TextFieldProps} from '@material-ui/core/TextField';
+import BCInvoiceItemsTableRow from './bc-invoice-table-row';
+import AddIcon from '@material-ui/icons/Add';
+import {updateInvoice} from "../../../api/invoicing.api";
 
 interface Props {
   classes?: any;
-  invoiceData?: any;
+  invoiceDetail?: any;
 }
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
-    invoiceTop: {
-      backgroundColor: CONSTANTS.INVOICE_TOP,
-      paddingTop: theme.spacing(8),
-      paddingLeft: theme.spacing(10),
-      paddingRight: theme.spacing(10),
-    },
-    companyDetails: {
-      display: 'flex',
-      flex: '1 1 0%',
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      minHeight: 350,
-    },
     companyLogo: {
-      width: '40%',
+      width: '100%',
       '& > img': {
         width: '100%',
       }
     },
-    companyInfo: {
-      '& > span': {
-        color: CONSTANTS.PRIMARY_DARK_GREY,
-        display: 'flex',
-      },
-      '& > small': {
-        color: CONSTANTS.PRIMARY_DARK_GREY,
-        display: 'flex',
-        fontSize: 10,
-        marginBottom: 5
-      },
-      '& > h4': {
-        marginTop: 0
-      }
-    },
-    invoiceDetails: {
-      display: 'flex',
-      flex: '1 1 0%',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      alignItems: 'flex-end',
-      minHeight: 350,
+    customerBox: {
+      marginTop: '10px',
+      fontSize: '12px',
+      lineHeight: '14px',
+      color: '#4F4F4F',
       '& > div': {
-        '& > h2': {
-          color: CONSTANTS.INVOICE_HEADING,
-          textAlign: 'right'
-        },
-      },
-    },
-    dateContainer: {
-      display: 'flex',
-      flex: '1 1 0%',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      '& > div': {
-        '& > label': {
-          fontSize: 10,
-          display: 'block',
-          textAlign: 'right',
+        fontSize: 12,
+        display: 'flex',
+        '& > span': {
+          display: 'flex',
+          marginLeft: 5,
           color: CONSTANTS.PRIMARY_DARK_GREY,
-          '& > span': {
-            fontSize: 14,
-            color: CONSTANTS.INVOICE_HEADING,
-            marginLeft: 20,
-            fontWeight: 200
-          },
         }
       }
     },
-    divider: {
-      margin: '0 20px',
+    serviceAdd: {
+      fontSize: '10px',
+      lineHeight: '12px',
+      textTransform: 'uppercase',
+      color: '#828282',
     },
-    totalContainer: {
-      backgroundColor: CONSTANTS.INVOICE_TOTAL_CONTAINER,
-      width: '100%',
-      padding: 10,
+    infoBox: {
+      display: 'flex',
+      flexDirection: 'column',
+      '& > div': {
+        fontSize: 12,
+        marginTop: 5,
+        display: 'flex',
+        '& > span': {
+          marginLeft: 5,
+          color: CONSTANTS.PRIMARY_DARK_GREY,
+        }
+      },
+      '& > h4': {
+        paddingLeft: 20,
+        color: CONSTANTS.PRIMARY_DARK_GREY
+      },
+      '& > h5': {
+        fontSize: 10,
+        fontWeight: 300,
+        lineHeight: '12px',
+        textTransform: 'uppercase',
+        marginBottom: 0,
+        paddingLeft: 20,
+        /* color: CONSTANTS.PRIMARY_DARK_GREY,*/
+        color: '#828282',
+      },
+    },
+    paddingContent: {
+      paddingLeft: 20,
+      /* color: CONSTANTS.PRIMARY_DARK_GREY,*/
+      fontWeight: 500,
+      fontSize: '12px',
+      lineHeight: '14px',
+      color: '#4F4F4F',
+
+    },
+    storeIcons: {
+      fontSize: 12,
+      /* color: CONSTANTS.PRIMARY_DARK_GREY*/
+      color: '#D0D3DC',
+    },
+
+    margin: {
+      margin: theme.spacing(1),
+    },
+    white: {
+      color: '#fff',
+    },
+    bgDark: {
+      backgroundColor: '#D0D3DC',
+    },
+    bcButton: {
+      border: '1px solid #4F4F4F',
+      borderRadius: '8px',
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+      fontSize: '14px',
+      color: '#4F4F4F',
+      padding: '8px 16px',
+    },
+    bcBlueBt: {
+      border: '1px solid #00AAFF',
+      background: '#00AAFF',
+      color: 'white',
+    },
+    bcBorderW: {
+      borderLeftColor: '#FFF',
+    },
+    bcRMargin: {
+      marginRight: '11px',
+    },
+    // custom input
+    formField: {
+      margin: theme.spacing(1),
       display: 'flex',
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
+      alignItems: 'center',
+      justifyContent: 'flex-end'
+    },
+    formFieldFullWidth: {
+      margin: theme.spacing(1),
+      width: '100%'
+    },
+    formFieldRow: {
+      margin: theme.spacing(1),
+      display: 'flex',
+      flexDirection: 'row',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '14px',
+      lineHeight: '16px',
+      textTransform: 'uppercase',
+      color: '#4F4F4F',
+
+    },
+    bootstrapRoot: {
+      'label + &': {
+        marginTop: 0,
+        display: 'flex',
+        minWidth: '50%'
+      },
+      '&': {
+        marginTop: 0,
+        display: 'flex',
+        minWidth: '50%'
+      },
+    },
+    bootstrapTextAreaRoot: {
+      'label + &': {
+        marginTop: 0,
+        display: 'flex',
+        minWidth: '100%'
+      },
+    },
+    bootstrapRootError: {
+      borderRadius: 8,
+      border: `1px solid ${CONSTANTS.PRIMARY_ORANGE}`,
+    },
+    bootstrapInputLarge: {
+      borderRadius: 8,
+      position: 'relative',
+      backgroundColor: theme.palette.common.white,
+      border: '1px solid #E0E0E0',
+      fontSize: 20,
+      fontWeight: 'bold',
+      width: '100%',
+      padding: '5px',
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      '&:focus': {
+        borderRadius: 8,
+        borderColor: '#80bdff',
+        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      },
+    },
+    noBorder: {
+      border: 'none'
+    },
+    bootstrapInput: {
+      color: '#4F4F4F!important',
+      fontWeight: 'normal',
+      borderRadius: 8,
+      position: 'relative',
+      backgroundColor: theme.palette.common.white,
+      border: '1px solid #E0E0E0',
+      fontSize: 14,
+      width: '100%',
+      padding: '12px',
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      '&:focus': {
+        borderRadius: 8,
+        borderColor: '#80bdff',
+        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      },
+    },
+    bootstrapTextAreaInput: {
+      color: '#4F4F4F!important',
+      borderRadius: 8,
+      position: 'relative',
+      backgroundColor: theme.palette.common.white,
+      border: '1px solid #E0E0E0',
+      fontSize: 14,
+      width: '100%',
       minHeight: 100,
+      padding: '11px 12px',
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      '&:focus': {
+        borderRadius: 8,
+        borderColor: '#80bdff',
+        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      },
+    },
+    bootstrapTextTitle: {
+
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+      fontSize: 28,
+      lineHeight: 35,
+      textTransform: 'uppercase',
+      color: '#4F4F4F',
+
+    },
+    bootstrapFormLabel15: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      transform: 'none',
+      marginRight: 60,
+      color: CONSTANTS.PRIMARY_DARK_GREY,
+      paddingTop: '15px',
+    },
+    bootstrapFormLabel: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      transform: 'none',
+      marginRight: 20,
+      color: CONSTANTS.PRIMARY_DARK_GREY
+    },
+    totalContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      minHeight: 195,
+      fontWeight: 500,
+      fontSize: '20px',
+      lineHeight: '23px',
+      textTransform: 'uppercase',
+      color: '#828282',
+
       '& > div': {
         '& > small': {
-          color: CONSTANTS.PRIMARY_DARK_GREY,
-          fontSize: 10,
+          color: CONSTANTS.INVOICE_HEADING,
+          fontSize: 14,
           marginBottom: 5
         },
       },
@@ -125,434 +298,821 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent: 'flex-end',
       alignItems: 'flex-end',
+      fontWeight: 500,
+      fontSize: '48px',
+      lineHeight: '56px',
+      textAlign: 'right',
+      color: '#4F4F4F',
       '& > h1': {
         margin: 0,
         padding: 0
       }
     },
-    invoiceBottom: {
-      backgroundColor: CONSTANTS.PRIMARY_WHITE,
-      marginTop: theme.spacing(6),
-      paddingLeft: theme.spacing(10),
-      paddingRight: theme.spacing(10),
-      paddingBottom: theme.spacing(10),
-    },
-    invoiceBottomInner: {
+
+    bgGray: {
       backgroundColor: CONSTANTS.INVOICE_TOP,
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      '& > div': {
-        '&:first-child': {
-          width: '60%'
-        },
-        '&:last-child': {
-          width: '40%'
-        },
-        '& > div > span': {
-          color: CONSTANTS.PRIMARY_DARK_GREY,
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          fontSize: 10,
-          marginBottom: 5
-        },
-        '& > div > h3': {
-          margin: 0,
-          fontWeight: 400,
-          color: CONSTANTS.PRIMARY_DARK_GREY,
-        },
-        '& > div > h2': {
-          margin: 0,
-          fontWeight: 400,
-          color: CONSTANTS.PRIMARY_DARK_GREY,
-        },
-      }
     },
-    invoiceBottomSubTotal: {
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-start',
-      '& > div': {
-        display: 'flex',
-        flexDirection: 'column',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        padding: '15px 10px',
-      }
+    bgGray25: {
+      backgroundColor: CONSTANTS.INVOICE_TOP,
+      paddingRight: 25,
     },
-    invoiceBottomTotal: {
-      backgroundColor: CONSTANTS.INVOICE_TOTAL_CONTAINER,
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-end',
-      alignItems: 'flex-end',
-      '& > div': {
-        paddingRight: 10,
-        '& > span': {
-          justifyContent: 'flex-end!important'
-        }
-      }
+    textCenter: {
+      textAlign: 'center'
     },
-    invoiceBottomInfo: {
-      '& > p': {
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(2),
-        fontSize: 11,
-        fontWeight: 400,
-      }
+    textRight: {
+      textAlign: 'right'
     },
+    textBold: {
+      fontWeight: 'bold',
+    },
+
   }),
 );
 
-const invoiceTableStyles = makeStyles((theme: Theme) =>
+
+const useInvoiceTableStyles = makeStyles((theme: Theme) =>
   createStyles({
     // items table
-    itemsTable: {
-      backgroundColor: CONSTANTS.PRIMARY_WHITE,
-    },
     itemsTableHeader: {
+      padding: '15px 10px',
       backgroundColor: CONSTANTS.INVOICE_TOP,
-      paddingLeft: theme.spacing(10),
-      paddingRight: theme.spacing(10),
-    },
-    itemsTableHeaderText: {
-      fontSize: 10,
-      fontWeight: 200,
       color: CONSTANTS.INVOICE_TABLE_HEADING,
-      display: 'block',
-      padding: '20px 0',
-      borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`
     },
-    itemsTableHeaderTextCenter: {
-      textAlign: 'center',
+    itemsTableRoot: {
+      padding: '15px 0'
     },
-    itemsTableHeaderTextRight: {
-      textAlign: 'right',
-      paddingRight: '10px!important'
+    itemsTableActions: {
+      padding: '0 5px',
+      marginBottom: 20,
+      marginTop: 20,
     },
-    itemsTableBody: {
-      paddingLeft: theme.spacing(10),
-      paddingRight: theme.spacing(10),
-    },
-    itemsTableBodyText: {
-      fontSize: 14,
-      fontWeight: 600,
-      color: CONSTANTS.INVOICE_TABLE_HEADING,
-      display: 'block',
-      padding: '20px 0',
-      borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`
-    },
-    addNew: {
-      marginTop: theme.spacing(2),
-      display: 'flex',
-      justifyContent: 'center'
-    }
   }),
 );
 
-function BCEditInvoice({ classes, invoiceData }: Props) {
-  const invoiceStyles = invoicePageStyles();
-  const invoiceTableStyle = invoiceTableStyles();
-  const dispatch = useDispatch();
-
-  const { isLoading, refresh, contacts } = useSelector((state: any) => state.contacts);
-  const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
-  const [invoiceDetail, setInvoiceDetail] = useState(invoiceData);
-
-  const [datePickerOpen, setDatePickerOpen] = useState(false);
-
-  console.log("log-invoiceItems", invoiceDetail);
-
-  useEffect(() => {
-    dispatch(loadInvoiceItems.fetch());
-    setInvoiceDetail(invoiceData);
-  }, [])
-
-  useEffect(() => {
-    let data: any = {
-      type: "Customer",
-      referenceNumber: invoiceDetail?.customer?._id
-    }
-
-    dispatch(getContacts(data));
-  }, [refresh])
-
-  const renderTableRow = (row: any) => {
-    return (
-      <div>
-        <Grid
-          container
-          direction="row"
-          alignItems="center">
-          <Grid item xs={12} lg={6}>
-            <Autocomplete
-              id={row.item?._id}
-              size="small"
-              value={row.item?._id}
-              options={invoiceItems.filter(invitem => invitem.name.length > 0)}
-              getOptionLabel={(option: any) => option.name}
-              onChange={(e, value) => {
-                console.log("log-value", value);
-              }}
-              renderInput={(params) => <TextField {...params} label="Select Item" variant="outlined" />}
-            />
-          </Grid>
-          <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>{row?.quantity}</span>
-          </Grid>
-          <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>${parseFloat(row?.price).toFixed(2)}</span>
-          </Grid>
-          <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>{row?.quantity}</span>
-          </Grid>
-          <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>{row?.tax > 0 ? parseFloat(row?.tax).toFixed(2) : 'N/A'}</span>
-          </Grid>
-          <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>${parseFloat(row?.taxAmount).toFixed(2)}</span>
-          </Grid>
-          <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextRight
-                )}>${parseFloat(row?.subTotal).toFixed(2)}</span>
-          </Grid>
-        </Grid>
-        <Divider/>
-      </div>
-    )
-  }
-
-  const renderDatePickerInput = (props: TextFieldProps): any => {
-    return (
-      <>
-        INVOICE DATE #: <span onClick={() => setDatePickerOpen(true)}>{moment(invoiceDetail.createdAt).format('MMM. DD, YYYY')}</span>
-      </>
-    )
-  };
-
-  const handleAddContact = async (values: any) => {
-    console.log("log-values", values);
-    // try {
-    //   const response = await dispatch(addContact(values));
-    //   return response;
-    // } catch (err) {
-    //   throw new Error(err);
-    // }
-
-  }
-
-  const openAddContactModal = () => {
-
-    dispatch(setModalDataAction({
-      'data': {
-        'data': {
-          name: "",
-          email: "",
-          phone: "",
-          type: 'Customer',
-          referenceNumber: invoiceDetail?.customer?._id,
-          apply: (values: any) => handleAddContact(values),
-          newContact: true,
-          contacts,
-          customerId: invoiceDetail?.customer?._id,
-        },
-        'modalTitle': "Add Customer Contact",
-        'removeFooter': false
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: blue[500],
+    },
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        textTransform: 'inherit'
+      }
+    },
+    MuiCard: {
+      root: {
+        margin: 10,
+        boxShadow: '0px 0px 5px 2px rgba(0, 0, 0, 0.1)',
+        borderRadius: 4,
       },
-      'type': modalTypes.ADD_CONTACT_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    },
+    MuiCardHeader: {
+      root: {
+        padding: '18px 20px',
+        backgroundColor: CONSTANTS.INVOICE_TOP,
+        mixBlendMode: 'multiply',
+        borderRadius: '4px 4px 0px 0px',
+      },
+      title: {
+        fontStyle: 'normal',
+        fontWeight: 500,
+        fontSize: '14px',
+        lineHeight: '16px',
+        textTransform: 'uppercase',
+        color: '#828282',
+      }
+    },
+    MuiCardContent: {
+      root: {
+        padding: '35px 20px',
+      }
+    },
+    MuiFormControl: {
+      root: {
+        margin: 0
+      }
+    },
+    MuiInputLabel: {
+      formControl: {
+        position: 'relative'
+      }
+    },
+    MuiAccordionSummary: {
+      root: {
+        backgroundColor: CONSTANTS.SECONDARY_GREY,
+        '&$expanded': {
+          minHeight: 48
+        },
+      },
+      content: {
+        color: CONSTANTS.INVOICE_HEADING,
+        '&$expanded': {
+          margin: 0,
+          color: CONSTANTS.INVOICE_HEADING,
+        },
+      },
+      expandIcon: {
+        padding: 0
+      },
+      expanded: {
+        minHeight: 48
+      }
+    },
+    MuiDivider: {
+      root: {
+        margin: '10px 0'
+      }
+    }
+  },
+});
+
+interface Props {
+  classes?: any;
+  invoiceData?: any;
+  isOld?: false;
+}
+
+const InvoiceValidationSchema = Yup.object().shape({
+  invoice_id: Yup.string()
+    .required('Required'),
+  invoice_title: Yup.string()
+    .required('Required'),
+/*  customer_po: Yup.string()
+    .required('Required'),*/
+  invoice_date: Yup.string()
+    .required('Required'),
+  due_date: Yup.string()
+    .required('Required'),
+  items: Yup.array()
+    .required('Please add at least one item'),
+  company: Yup.string()
+    .required('Required'),
+});
+
+function BCEditInvoice({classes, invoiceData, isOld}: Props) {
+  const invoiceStyles = invoicePageStyles();
+  const invoiceTableStyle = useInvoiceTableStyles();
+  const history = useHistory();
+  const simplifiedItems = invoiceData.items.map((item: any) => {
+    const newItem = {...item.item, ...item};
+    delete newItem.item;
+    delete newItem.jobType;
+    return newItem;
+  })
+  const [invoiceItems, setInvoiceItems] = useState(simplifiedItems);
+
+  const {'data': paymentTerms, isLoading: loadingPaymentTerms, done, updating, error} = useSelector(({paymentTerms}: any) => paymentTerms);
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
+  const { itemTier, isCustomPrice, paymentTerm: customerPaymentTerm } = useMemo(() => customer, [customer]);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [duedatePickerOpen, setDueDatePickerOpen] = useState(false);
+  const [subTotal, setSubTotal] = useState(invoiceData?.subTotal || 0);
+  const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
+  const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
+
+  const handleFormSubmit = (data: any) => {
+    return new Promise((resolve, reject) => {
+      const params: any = {
+        invoiceId: data.invoice_id,
+        issueDate: data.invoice_date,
+        dueDate: data.due_date,
+        paymentTermId: data.paymentTerm,
+        note: data.note,
+        items: JSON.stringify(data.items.map((o: any) => {
+          const item: any ={
+            description: o.description ?? '',
+            price: parseFloat(o.price),
+            quantity: parseInt(o.quantity),
+            tax: parseFloat(o.tax) ?? 0,
+            isFixed: o.isFixed,
+          }
+          if (o._id)
+            item.item = o._id;
+          else
+            item.name = o.name;
+          return item;
+        })),
+        charges: 0,
+      }
+      if (data.customer_po) params.customerPO = data.customer_po;
+
+      updateInvoice(params).then((response: any) => {
+        history.push('/main/invoicing/invoices-list');
+        return resolve(response);
+      })
+        .catch((err: any) => {
+          reject(err);
+        });
+    });
   };
+
+  const calculateTotal = (itemsArray:any) => {
+    if (isCustomPrice && invoiceData) {
+      setTotalAmount(invoiceData.total);
+    } else {
+      const subtotalAmount = itemsArray.map((item:any) => item.price * item.quantity).reduce((a: any, b: any) => {
+        return a + b;
+      }, 0);
+
+      const totalTax = itemsArray.map((item:any) => item.taxAmount).reduce((a: any, b: any) => {
+        return a + b;
+      }, 0);
+      const amount = subtotalAmount + totalTax;
+      setSubTotal(Math.round((subtotalAmount + Number.EPSILON) * 100) / 100);
+      setTotalTax(Math.round((totalTax + Number.EPSILON) * 100) / 100);
+      setTotalAmount(Math.round((amount + Number.EPSILON) * 100) / 100);
+    }
+    setInvoiceItems(itemsArray);
+  };
+
+  const addItem = () => {
+    const item = {
+      'description': '',
+      'isFixed': true,
+      'name': '',
+      'price': 0,
+      'quantity': 1,
+      'tax': 0,
+      'taxAmount': 0,
+      'total': 0
+    };
+
+    const tempArray = [
+      ...invoiceItems,
+      item
+    ];
+    setInvoiceItems(tempArray);
+  };
+
+  const calculateDueDate = (setFieldValue: any, values: any, newTerm: any) => {
+    if (newTerm !== '') {
+      const paymentTerm = paymentTerms.find((term:any) => term._id === newTerm);
+      setFieldValue('due_date', moment(values.invoice_date).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
+    }
+    setFieldValue('paymentTerm', newTerm);
+  }
+
+  const calculateDueDate2 = (setFieldValue: any, values: any, newInvoiceDate: any) => {
+    if (values.paymentTerm === '') {
+      if (newInvoiceDate > new Date(values.due_date))
+        setFieldValue('due_date', moment(newInvoiceDate).format('MMM. DD, YYYY'));
+    } else {
+      const paymentTerm = paymentTerms.find((term:any) => term._id === values.paymentTerm);
+      setFieldValue('due_date', moment(newInvoiceDate).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
+    }
+  }
 
   return (
-    <DataContainer>
-      <div className={invoiceStyles.invoiceTop}>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={3}>
-            <div className={invoiceStyles.companyDetails}>
-              <div className={invoiceStyles.companyLogo}>
-                <img src={invoiceDetail?.company?.info?.logoUrl}/>
-              </div>
-              <div></div>
-              <div className={invoiceStyles.companyInfo}>
-                <small>BILL TO</small>
-                <h4>{invoiceDetail?.customer?.profile?.lastName} {invoiceDetail?.customer?.profile?.firstName}</h4>
-                <span>{invoiceDetail?.customer?.contact?.phone}</span>
-                <span>{invoiceDetail?.customer?.info?.email}</span>
-                <span>{invoiceDetail?.customer?.address?.street}</span>
-                <span>{invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode}</span>
-              </div>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <div className={invoiceStyles.companyDetails}>
-              <div className={invoiceStyles.companyInfo}>
-                <h4>{invoiceDetail?.company?.info?.companyName}</h4>
-                <span>{invoiceDetail?.company?.contact?.phone}</span>
-                <span>{invoiceDetail?.company?.info?.companyEmail}</span>
-                <span>{invoiceDetail?.company?.address?.street}</span>
-                <span>{invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span>
-              </div>
-              <div className={invoiceStyles.companyInfo}>
-                <small>CONTACT DETAILS</small>
-                <h4 data-edit='true' onClick={openAddContactModal}>{invoiceDetail?.customer?.contactName ? invoiceDetail?.customer?.contactName : 'no contact found'}</h4>
-              </div>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <div className={invoiceStyles.invoiceDetails}>
-              <div>
-                { invoiceDetail.paid
-                  ? <Chip
-                    label={'Paid'}
-                    style={{ 'backgroundColor': CONSTANTS.PRIMARY_GREEN,
-                      'color': '#fff' }}
-                  />
-                  : <Chip
-                    color={'secondary'}
-                    label={'Unpaid'}
-                  />}
-              </div>
-              <div>
-                <h2>INVOICE</h2>
-                <div className={invoiceStyles.dateContainer}>
-                  <div>
-                    <label>INVOICE #: <span>{invoiceDetail.invoiceId}</span></label>
-                    <label>CUSTOMER P.O. : <span>{invoiceDetail.invoiceId}</span></label>
-                    <label>Payment Terms : <span>{invoiceDetail?.paymentTerm?.name}</span></label>
-                  </div>
-                  <Divider className={invoiceStyles.divider} orientation="vertical" flexItem />
-                  <div>
-                    <label data-edit='true'>
-                      <KeyboardDatePicker
-                        open={datePickerOpen}
-                        margin="none"
-                        size="small"
-                        format="MMM. dd, yyyy"
-                        value={invoiceDetail.createdAt}
-                        autoOk
-                        onChange={(e) => {
-                          setDatePickerOpen(false);
-                          console.log("log-e", e);
-                        }}
-                        KeyboardButtonProps={{
-                          'aria-label': 'change date',
-                        }}
-                        TextFieldComponent={renderDatePickerInput}
-                      />
-                    </label>
-                    <label>DUE DATE #: <span>{moment(invoiceDetail.dueDate).format('MMM. DD, YYYY')}</span></label>
-                  </div>
-                </div>
-              </div>
-              <div className={invoiceStyles.totalContainer}>
+    <MuiThemeProvider theme={theme}>
+      <Formik
+        initialValues={{
+          invoice_id: invoiceData?._id,
+          invoice_title: 'INVOICE',
+          invoiceId: invoiceData?.invoiceId ? invoiceData?.invoiceId : 'Invoice 1',
+          customer_po: invoiceData?.customerPO || '',
+          invoice_date: invoiceData.createdAt,
+          due_date: invoiceData.dueDate,
+          paymentTerm: invoiceData?.paymentTerm ? invoiceData?.paymentTerm?._id : customerPaymentTerm._id,
+          note: invoiceData?.note,
+          company: invoiceData?.customer?.profile?.displayName,
+          items: invoiceItems,
+        }}
+        validationSchema={InvoiceValidationSchema}
+        validate ={(values: any) => {
+            const errors: any = {};
+            const indices = values.items.reduce((acc: any[], item:any, index:number) => {
+              if (item.name === '') acc.push(index)
+              return acc;
+            },[]);
+            if (indices.length > 0) errors.itemsNames = indices;
+            return errors;
+          }
+        }
+        onSubmit={(values) => {
+          handleFormSubmit(values);
+        }}
+      >
+        {({submitForm, handleChange, setFieldValue, values, isSubmitting, touched, errors}) => {
+          return (
+            <Form>
+              <PageHeader style={{padding: '0 10px'}}>
                 <div>
-                  <small>Total</small>
+                  <IconButton
+                    color="default"
+                    size="small"
+                    className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                    onClick={() => {
+                      history.goBack();
+                    }}
+                  >
+                    <ArrowBackIcon/>
+                  </IconButton>
                 </div>
-                <div className={invoiceStyles.totalEnd}>
-                  <h1>${invoiceDetail.total}</h1>
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="default"
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcRMargin)}
+                  >
+                    Preview
+                  </Button>
+                  <ButtonGroup disableElevation>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={isSubmitting}
+                      onClick={submitForm}
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
+                    >
+                      Save and Continue
+                    </Button>
+                    <Button variant="contained"
+                            color="primary"
+                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
+                      <ArrowDropDownIcon/>
+                    </Button>
+                  </ButtonGroup>
                 </div>
-              </div>
-            </div>
-          </Grid>
-        </Grid>
-      </div>
-      <div className={invoiceTableStyle.itemsTable}>
+              </PageHeader>
+              <DataContainer>
+                <Card elevation={2}>
+                  <CardHeader title={invoiceData?.company?.info?.companyName + ' INVOICE DETAILS'}/>
+                  <CardContent>
+                    <Grid container spacing={5}>
+                      <Grid item xs={2}>
+                        <div className={invoiceStyles.companyLogo}>
+                          <img src={invoiceData?.company?.info?.logoUrl}/>
+                        </div>
+                      </Grid>
+                      <Grid item xs={3}>
+                        <div className={invoiceStyles.infoBox}>
+                          <h4>{invoiceData?.company?.info?.companyName}</h4>
+                          <div><PhoneIcon
+                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.contact?.phone}</span>
+                          </div>
+                          <div><MailOutlineIcon
+                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.info?.companyEmail}</span>
+                          </div>
+                          <div><StorefrontIcon
+                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.address?.street}, {invoiceData?.company?.address?.city}, {invoiceData?.company?.address?.state} {invoiceData?.company?.address?.zipCode}</span>
+                          </div>
+                          <h5>VENDOR NUMBER</h5>
+                          <div className={invoiceStyles.paddingContent}>{invoiceData?.customer?.vendorId}</div>
+                        </div>
+                      </Grid>
+                      <Grid item xs>
 
-        <div className={invoiceTableStyle.itemsTableHeader}>
-          <Grid container>
-            <Grid item xs={12} lg={6}>
-              <span className={invoiceTableStyle.itemsTableHeaderText}>SERVICE / PRODUCT</span>
-            </Grid>
-            <Grid item xs={12} lg={1}>
-              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>QUANTITY</span>
-            </Grid>
-            <Grid item xs={12} lg={1}>
-              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>PRICE</span>
-            </Grid>
-            <Grid item xs={12} lg={1}>
-              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>UNIT</span>
-            </Grid>
-            <Grid item xs={12} lg={1}>
-              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX</span>
-            </Grid>
-            <Grid item xs={12} lg={1}>
-              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX AMOUNT</span>
-            </Grid>
-            <Grid item xs={12} lg={1}>
-              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextRight)}>AMOUNT</span>
-            </Grid>
-          </Grid>
-        </div>
-        <div className={invoiceTableStyle.itemsTableBody}>
-          {invoiceDetail?.items && invoiceDetail?.items.map((row: any) => (
-            <BcInvoiceTableRow row={row}/>
-          ))}
+                        <FormControl className={invoiceStyles.formField}>
+                          <InputBase
+                            id="invoice-title"
+                            name="invoice_title"
+                            disabled
+                            defaultValue="INVOICE"
+                            classes={{
+                              root: classNames(invoiceStyles.bootstrapRoot),
+                              input: classNames(invoiceStyles.bootstrapInputLarge, invoiceStyles.bootstrapTextTitle, invoiceStyles.textRight, invoiceStyles.noBorder),
+                            }}
 
-          <div className={invoiceTableStyle.addNew}>
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<AddIcon />}>
-              Add New Item
-            </Button>
-          </div>
-        </div>
+                          />
+                        </FormControl>
 
-      </div>
-      <div className={invoiceStyles.invoiceBottom}>
-        <div className={invoiceStyles.invoiceBottomInner}>
-          <div className={invoiceStyles.invoiceBottomSubTotal}>
-            <div>
-              <span>SUBTOTAL</span>
-              <h3>${parseFloat(invoiceDetail.subTotal).toFixed(2)}</h3>
-            </div>
-            <div>
-              <h3>+</h3>
-            </div>
-            <div>
-              <span>TAX</span>
-              <h3>${parseFloat(invoiceDetail.taxAmount).toFixed(2)}</h3>
-            </div>
-          </div>
-          <div className={invoiceStyles.invoiceBottomTotal}>
-            <div>
-              <span>TOTAL</span>
-              <h2>${parseFloat(invoiceDetail.total).toFixed(2)}</h2>
-            </div>
-          </div>
-        </div>
-        <div className={invoiceStyles.invoiceBottomInfo}>
-          <p>Please pay within 15 days.</p>
-        </div>
-        <Divider/>
-        <h3>idiservice.net</h3>
-      </div>
-    </DataContainer>
+                        <FormControl className={invoiceStyles.formField}>
+                          <InputLabel disableAnimation htmlFor="invoice-id"
+                                      className={invoiceStyles.bootstrapFormLabel}>
+                            Invoice #
+                          </InputLabel>
+                          <InputBase
+                            id="invoice-id"
+                            name="invoiceId"
+                            disabled
+                            value={values.invoiceId}
+                            error={!!errors.invoiceId}
+                            onChange={handleChange('invoiceId')}
+                            classes={{
+                              root: classNames(invoiceStyles.bootstrapRoot, {
+                                [invoiceStyles.bootstrapRootError]: !!errors.invoiceId
+                              }),
+                              input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textRight),
+                            }}
+                          />
+                        </FormControl>
+
+                        <FormControl className={invoiceStyles.formField}>
+                          <InputLabel disableAnimation htmlFor="customer-po"
+                                      className={invoiceStyles.bootstrapFormLabel}>
+                            PO / SALES ORDER #
+                          </InputLabel>
+                          <InputBase
+                            id="customer-po"
+                            name="customer_po"
+                            value={values.customer_po}
+                            error={!!errors.customer_po}
+                            onChange={handleChange}
+                            classes={{
+                              root: classNames(invoiceStyles.bootstrapRoot, {
+                                [invoiceStyles.bootstrapRootError]: !!errors.customer_po
+                              }),
+                              input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textRight),
+                            }}
+                          />
+                        </FormControl>
+
+                        <FormControl className={invoiceStyles.formField}>
+                          <InputLabel disableAnimation htmlFor="invoice-date"
+                                      className={invoiceStyles.bootstrapFormLabel}>
+                            INVOICE DATE
+                          </InputLabel>
+                          <KeyboardDatePicker
+                            open={datePickerOpen}
+                            margin="none"
+                            size="small"
+                            id="invoice-date"
+                            name="invoice_date"
+                            format="MMM. dd, yyyy"
+                            value={values.invoice_date}
+                            autoOk
+                            onChange={(selectedInvoiceDate) => {
+                              setDatePickerOpen(false);
+                              calculateDueDate2(setFieldValue, values, selectedInvoiceDate);
+                              setFieldValue('invoice_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
+                            }}
+                            KeyboardButtonProps={{
+                              'aria-label': 'change date',
+                            }}
+                            onClick={() => setDatePickerOpen(true)}
+                            onClose={() => setDatePickerOpen(false)}
+                            TextFieldComponent={(props: TextFieldProps) => {
+                              return (
+                                <InputBase
+                                  id="invoice-date"
+                                  name="invoice_date"
+                                  error={!!errors.invoice_date}
+                                  onClick={(e) => {
+                                    setDatePickerOpen(true);
+                                  }}
+                                  value={props.value}
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                      <IconButton>
+                                        <EventIcon/>
+                                      </IconButton>
+                                    </InputAdornment>
+                                  }
+
+                                  onChange={props.onChange}
+                                  classes={{
+                                    root: classNames(invoiceStyles.bootstrapRoot, {
+                                      [invoiceStyles.bootstrapRootError]: !!errors.invoice_date
+                                    }),
+                                    input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textRight),
+                                  }}
+                                />
+                              )
+                            }}
+                          />
+                        </FormControl>
+
+                        <FormControl className={invoiceStyles.formField}>
+                          <InputLabel disableAnimation htmlFor="due-date" className={invoiceStyles.bootstrapFormLabel}>
+                            DUE DATE
+                          </InputLabel>
+                          <KeyboardDatePicker
+                            open={duedatePickerOpen}
+                            InputAdornmentProps={{position: 'end'}}
+                            margin="none"
+                            size="small"
+                            id="due-date"
+                            name="due_date"
+                            format="MMM. dd, yyyy"
+                            value={values.due_date}
+                            minDate={values.invoice_date}
+                            autoOk
+                            onChange={(selectedInvoiceDate) => {
+                              setDueDatePickerOpen(false);
+                              setFieldValue('due_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
+                            }}
+                            onClick={() => {
+                                if (values.paymentTerm === '') setDueDatePickerOpen(true)
+                              }
+                            }
+                            onClose={() => setDueDatePickerOpen(false)}
+
+                            TextFieldComponent={(props: TextFieldProps) => {
+                              return (
+                                <InputBase
+                                  id="due-date"
+                                  name="due_date"
+                                  error={!!errors.due_date}
+                                  onClick={(e) => {
+                                    if (values.paymentTerm === '')
+                                      setDueDatePickerOpen(true);
+                                  }}
+                                  value={props.value}
+
+                                  endAdornment={
+                                    <InputAdornment position="end">
+                                      <IconButton>
+                                        <EventIcon/>
+                                      </IconButton>
+                                    </InputAdornment>
+                                  }
+                                  onChange={props.onChange}
+                                  classes={{
+                                    root: classNames(invoiceStyles.bootstrapRoot, {
+                                      [invoiceStyles.bootstrapRootError]: !!errors.due_date
+                                    }),
+                                    input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textRight),
+                                  }}
+                                />
+                              )
+                            }}
+                          />
+                        </FormControl>
+
+                        <FormControl className={invoiceStyles.formField}>
+                          <InputLabel disableAnimation htmlFor="terms" className={invoiceStyles.bootstrapFormLabel}>
+                            TERMS
+                          </InputLabel>
+                          <Select
+                            onChange={(e) => calculateDueDate(setFieldValue, values, e.target.value)}
+                            value={values.paymentTerm}
+                            input={<InputBase
+                              classes={{
+                                root: classNames(invoiceStyles.bootstrapRoot, {
+                                  [invoiceStyles.bootstrapRootError]: !!errors.paymentTerm
+                                }),
+                                input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textRight),
+                              }}
+                              error={!!errors.paymentTerm}/>}
+                          >
+                            <MenuItem value={''}>
+                              <em>None</em>
+                            </MenuItem>
+                            {
+                              paymentTerms.map((pitem: any, pindex: number) => {
+                                return (
+                                  <MenuItem key={pitem._id} value={pitem._id}>{pitem.name}</MenuItem>
+                                )
+                              })
+
+                            }
+
+                          </Select>
+                        </FormControl>
+
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+
+                <Grid container spacing={1}>
+                  <Grid item xs={8}>
+                    <Card elevation={2}>
+                      <CardHeader title="BILL TO"/>
+                      <CardContent style={{minHeight: '190px'}}>
+                        <FormControl className={invoiceStyles.formFieldRow}>
+                          {
+                            isOld ?
+                              <>
+                                <InputLabel disableAnimation htmlFor="company"
+                                            className={invoiceStyles.bootstrapFormLabel15}>
+                                  COMPANY NAME
+                                </InputLabel>
+                                <Select
+                                  id="company"
+                                  disabled
+                                  onChange={handleChange('company')}
+                                  value={invoiceData?.customer?.profile?.displayName}
+                                  input={<InputBase
+                                    classes={{
+                                      root: classNames(invoiceStyles.bootstrapRoot),
+                                      input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textBold),
+                                    }}
+                                    error={!!errors.company}/>}
+                                >
+
+                                  <MenuItem value={invoiceData?.customer?.profile?.displayName} selected>
+                                    {invoiceData?.customer?.profile?.displayName}</MenuItem>
+
+                                </Select>
+
+                              </> :
+                              <>
+                                <InputLabel disableAnimation htmlFor="company"
+                                            className={invoiceStyles.bootstrapFormLabel15}>
+                                  COMPANY NAME
+                                </InputLabel>
+                                <Select
+                                  id="company"
+                                  onChange={handleChange('company')}
+                                  input={<InputBase
+                                    classes={{
+                                      root: classNames(invoiceStyles.bootstrapRoot, {
+                                        [invoiceStyles.bootstrapRootError]: !!errors.company
+                                      }),
+                                      input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textBold),
+                                    }}
+                                    error={!!errors.company}/>}
+                                >
+                                  <MenuItem value="">
+                                    <em>None</em>
+                                  </MenuItem>
+
+                                </Select>
+                              </>
+                          }
+
+                        </FormControl>
+                        <Grid container spacing={1} className={invoiceStyles.customerBox}>
+                          <Grid item xs={3} justify="flex-end">
+                            <div>
+                              <div><span><PhoneIcon className={invoiceStyles.storeIcons}/></span></div>
+                              <div><span><MailOutlineIcon className={invoiceStyles.storeIcons}/></span></div>
+                              <div><span><StorefrontIcon className={invoiceStyles.storeIcons}/></span></div>
+                            </div>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <div>
+                              <div><span>{invoiceData?.customer?.contact?.phone}</span></div>
+                              <div><span>{invoiceData?.customer?.info?.email}</span></div>
+                              <div>
+                                <span>{invoiceData?.customer?.address?.street}, {invoiceData?.customer?.address?.city}, {invoiceData?.customer?.address?.state} {invoiceData?.customer?.address?.zipCode}</span>
+                              </div>
+
+                            </div>
+
+                          </Grid>
+                          <Grid item xs={5}>
+                            <div className={invoiceStyles.serviceAdd}>service address</div>
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                  <Grid item xs>
+                    <Card elevation={2} style={{
+                      border: '2px solid #D0D3DC',
+                      boxSizing: 'border-box',
+                      boxShadow: '0px 0px 5px 2px rgba(0, 0, 0, 0.1)',
+                      borderRadius: '4px'
+                    }}>
+                      <CardContent style={{padding: '20px'}}>
+                        <div className={invoiceStyles.totalContainer}>
+                          <div>
+                            TOTAL
+                          </div>
+                          <div className={invoiceStyles.totalEnd}>
+                            ${totalAmount}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                </Grid>
+
+                <Card elevation={2}>
+                  <BCInvoiceItemsTableRow
+                    invoiceItems={invoiceItems}
+                    itemTier={itemTier}
+                    handleChange={(items) => {
+                      setFieldValue('items', items);
+                      calculateTotal(items)
+                    }}
+                    values={values}
+                    errors={errors}
+                  />
+
+                  <div className={invoiceTableStyle.itemsTableActions}>
+                    <Grid container spacing={1} alignItems="center">
+                      <Grid item xs={7}>
+                        <Button color={!errors.items ? 'primary' : 'secondary'} onClick={addItem}>
+                          <AddIcon color="inherit"/> Add item or service
+                        </Button>
+                      </Grid>
+                      <Grid item xs={2} className={invoiceStyles.textRight}>
+                        SUBTOTAL
+                      </Grid>
+                      <Grid item xs={1}>
+                        <span>
+                          $ {subTotal}
+                        </span>
+                      </Grid>
+                      <Grid item xs={1} className={invoiceStyles.textRight}>
+                        TAXES
+                      </Grid>
+                      <Grid item xs={1}>
+                        <span>
+                          $ {totalTax}
+                        </span>
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Card>
+
+                <Card elevation={2}>
+                  <Accordion defaultExpanded>
+                    <AccordionSummary
+                      className={invoiceStyles.bgGray25}
+                      expandIcon={<ArrowDropDownIcon/>}
+                      aria-controls="message-to-customer"
+                    >
+                      MESSAGE TO CUSTOMER
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <FormControl className={invoiceStyles.formFieldFullWidth}>
+                        <InputBase
+                          id="note"
+                          name="note"
+                          multiline
+                          value={values.note}
+                          placeholder="NOTE TO CUSTOMER"
+                          onChange={(e) => setFieldValue('note', e.target.value)}
+                          classes={{
+                            root: invoiceStyles.bootstrapTextAreaRoot,
+                            input: invoiceStyles.bootstrapTextAreaInput,
+                          }}
+                        />
+                      </FormControl>
+                    </AccordionDetails>
+                  </Accordion>
+                </Card>
+
+                {/*                <Card elevation={2}>
+                  <Accordion defaultExpanded>
+                    <AccordionSummary
+
+                      className={invoiceStyles.bgGray25}
+                      expandIcon={<ArrowDropDownIcon/>}
+                      aria-controls="invoice-footer"
+                    >
+                      FOOTER
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <FormControl className={invoiceStyles.formFieldFullWidth}>
+                        <InputBase
+                          id="invoice-footer"
+                          name="invoice_footer"
+                          defaultValue=""
+                          multiline
+                          placeholder="ldiservices.net"
+                          onChange={handleChange('invoice_footer')}
+                          classes={{
+                            root: invoiceStyles.bootstrapTextAreaRoot,
+                            input: invoiceStyles.bootstrapTextAreaInput,
+                          }}
+                        />
+                      </FormControl>
+                    </AccordionDetails>
+                  </Accordion>
+                </Card>*/}
+
+              </DataContainer>
+              <PageHeader style={{padding: '0 10px', marginTop: '25px',}}>
+                <div>
+                  <IconButton
+                    color="default"
+                    size="small"
+                    className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                    onClick={() => {
+                      history.goBack();
+                    }}
+                  >
+                    <ArrowBackIcon/>
+                  </IconButton>
+                </div>
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="default"
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcRMargin)}
+                  >
+                    Preview
+                  </Button>
+                  <ButtonGroup disableElevation>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={isSubmitting}
+                      onClick={submitForm}
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
+                    >
+                      Save and Continue
+                    </Button>
+                    <Button variant="contained"
+                            color="primary"
+                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
+                      <ArrowDropDownIcon/>
+                    </Button>
+                  </ButtonGroup>
+                </div>
+              </PageHeader>
+            </Form>
+          )
+        }}
+      </Formik>
+    </MuiThemeProvider>
   )
 }
 
@@ -560,8 +1120,7 @@ export const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 12px;
-  background-color: ${CONSTANTS.PRIMARY_WHITE};
-  border: 1px solid ${CONSTANTS.INVOICE_BORDER};
 `;
+
 
 export default withStyles(styles)(BCEditInvoice);
