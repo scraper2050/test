@@ -1,14 +1,11 @@
-import React, {Dispatch, useEffect} from 'react';
-import { createMuiTheme, makeStyles, MuiThemeProvider, Theme } from "@material-ui/core/styles";
+import React, { useEffect } from 'react';
+import { createMuiTheme, makeStyles, Theme } from "@material-ui/core/styles";
 import {
-  Card,
-  CardContent,
-  createStyles, Divider,
+  createStyles,
   Grid,
   InputAdornment,
-  InputLabel,
   MenuItem,
-  Select,
+  Select, TextField,
   withStyles
 } from "@material-ui/core";
 import * as CONSTANTS from "../../../constants";
@@ -21,6 +18,7 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../reducers";
+import {Autocomplete} from "@material-ui/lab";
 
 
 const useInvoiceTableStyles = makeStyles((theme: Theme) =>
@@ -31,11 +29,11 @@ const useInvoiceTableStyles = makeStyles((theme: Theme) =>
       backgroundColor: CONSTANTS.INVOICE_TOP,
      /* color: CONSTANTS.INVOICE_TABLE_HEADING,*/
       fontStyle: 'normal',
-fontWeight: 500,
-fontSize: '14px',
-lineHeight: '16px',
-textTransform: 'uppercase',
-color: '#828282',
+      fontWeight: 500,
+      fontSize: '14px',
+      lineHeight: '16px',
+      textTransform: 'uppercase',
+      color: '#828282',
     },
     itemsTableRoot: {
       padding: '35px 20px',
@@ -105,6 +103,27 @@ color: '#828282',
       marginRight: 20,
       color: CONSTANTS.PRIMARY_DARK_GREY
     },
+    autocomplete: {
+      width: '97%',
+    },
+    autocompleteInput: {
+      padding: '0 5px !important',
+      fontSize: 14,
+      transition: theme.transitions.create(['border-color', 'box-shadow']),
+      '& fieldset': {
+        borderRadius: 8,
+        border: '1px solid #E0E0E0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#E0E0E0 !important',
+      },
+      '&.Mui-focused fieldset': {
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#80bdff !important',
+        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      },
+    },
   }),
 );
 
@@ -139,12 +158,24 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
   const taxes = useSelector(({ tax }: any) => tax.data);
   const invoiceTableStyle = useInvoiceTableStyles();
 
-  const handleItemChange = (value: string, index:number, fieldName:string) => {
+  const handleServiceChange = (item: any, index: number) => {
     const tempArray = [...invoiceItems];
-    if (fieldName === 'name') {
-      const item = serviceItems?.find((item:any) => item.name === value);
+    if (item === null) {
+      const newItem = {
+        'description': '',
+        'isFixed': true,
+        'name': '',
+        'price': 0,
+        'quantity': 1,
+        'tax': 0,
+        'taxAmount': 0,
+        'total': 0
+      };
+      tempArray[index] = newItem;
+    } else {
       if (itemTier?._id) {
-        const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
+        // @ts-ignore
+        const customerTier = item?.tiers.find(({tier}) => tier._id === itemTier._id);
         tempArray[index].price = customerTier.charge || 0;
       } else {
         tempArray[index].price = item?.charges || 0;
@@ -154,13 +185,21 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
         : 0;
       tempArray[index].isFixed = item?.isFixed ?? true;
       tempArray[index]._id = item?._id;
+
+      tempArray[index]['name'] = item.name;
+
+      tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
+      tempArray[index].subTotal = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount;
     }
+    handleChange(tempArray);
+  }
+
+  const handleItemChange = (value: string | null, index:number, fieldName:string) => {
+    const tempArray = [...invoiceItems];
     tempArray[index][fieldName] = value;
 
     tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
     tempArray[index].subTotal = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line
-    //console.log({tempArray})
-    //setItems(tempArray);
     handleChange(tempArray);
   };
 
@@ -192,28 +231,24 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
               <Grid container spacing={1} alignItems="center">
                 <Grid item xs={5}>
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
-                    <Select
-                      placeholder="Select Service/Product"
-                      onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'name')}
-                      value={rowData?.name.trim()}
-                      input={<InputBase
-                        classes={{
-                          root: classNames(invoiceTableStyle.bootstrapRoot, {
-                            [invoiceTableStyle.bootstrapRootError]: errors?.itemsNames?.indexOf(rowIndex) >=0
-                          }),
-                          input: invoiceTableStyle.bootstrapInput,
-                        }}
-                        //error={errors?.itemNames?.indexOf(rowIndex) >=0}
-                      />}
-                    >
-                      {
-                        serviceItems.map((invitem, invindex) => {
-                          return (
-                            <MenuItem key={invindex} value={invitem?.name.trim()}>{invitem?.name}</MenuItem>
-                          )
-                        })
+                    <Autocomplete
+                      id="combo-box-demo"
+                      options={serviceItems}
+                      onChange={(e, newValue) => handleServiceChange(newValue, rowIndex)}
+                      value={rowData}
+                      getOptionLabel={(option) => option.name}
+                      classes= {{
+                        root: classNames(invoiceTableStyle.autocomplete, {
+                        [invoiceTableStyle.bootstrapRootError]: errors?.itemsNames?.indexOf(rowIndex) >=0
+                      }),
+                        inputRoot: invoiceTableStyle.autocompleteInput,
+                      }}
+                      renderInput={(params) =>
+                        <TextField
+                          {...params}
+                          variant="outlined" />
                       }
-                    </Select>
+                    />
                   </FormControl>
                 </Grid>
                 <Grid item xs={1}>

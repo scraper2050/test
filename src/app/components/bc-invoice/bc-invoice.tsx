@@ -304,9 +304,9 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                 <h2>INVOICE</h2>
                 <div className={invoiceStyles.dateContainer}>
                   <div>
-                    <label>INVOICE #: <span>{invoiceDetail.invoiceId}</span></label>
-                    <label>CUSTOMER P.O. : <span>{invoiceDetail.invoiceId}</span></label>
-                    <label>Payment Terms : <span>{invoiceDetail?.paymentTerm?.name}</span></label>
+                    <label>INVOICE #: <span style={{display: 'inline-block', width: 100}}>{invoiceDetail.invoiceId}</span></label>
+                    <label>CUSTOMER P.O. : <span style={{display: 'inline-block', width: 100}}>{invoiceDetail.customerPO}</span></label>
+                    <label>Payment Terms : <span style={{display: 'inline-block', width: 100}}>{invoiceDetail?.paymentTerm?.name}</span></label>
                   </div>
                   <Divider className={invoiceStyles.divider} orientation="vertical" flexItem />
                   <div>

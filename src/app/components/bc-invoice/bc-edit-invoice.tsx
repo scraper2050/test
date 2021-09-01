@@ -462,7 +462,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
     return newItem;
   })
   const [invoiceItems, setInvoiceItems] = useState(simplifiedItems);
-  console.log({invoiceData});
 
   const {'data': paymentTerms, isLoading: loadingPaymentTerms, done, updating, error} = useSelector(({paymentTerms}: any) => paymentTerms);
   const customer = useSelector(({ customers }:any) => customers.customerObj);
@@ -498,7 +497,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         charges: 0,
       }
       if (data.customer_po) params.customerPO = data.customer_po;
-      console.log({params});
 
       updateInvoice(params).then((response: any) => {
         history.push('/main/invoicing/invoices-list');
@@ -709,6 +707,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                           <InputBase
                             id="customer-po"
                             name="customer_po"
+                            value={values.customer_po}
                             error={!!errors.customer_po}
                             onChange={handleChange}
                             classes={{
