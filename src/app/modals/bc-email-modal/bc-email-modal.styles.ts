@@ -59,6 +59,9 @@ export default (theme: Theme): any => ({
   fullWidth: {
     width: '100%',
     marginBottom: '3px',
+    '& .MuiOutlinedInput-multiline' : {
+      padding: '0 !important',
+    }
   },
   grey4 : {
     color: '#BDBDBD',
