@@ -111,9 +111,9 @@ export const updateInvoice = (data: any) => {
   });
 };
 
-export const sendEmailInvoice = (id: any) => {
+export const sendEmailInvoice = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/sendInvoice`, 'post', { 'invoiceId': id })
+    request(`/sendInvoice`, 'post', data)
       .then((res: any) => {
         return resolve(res.data);
       })

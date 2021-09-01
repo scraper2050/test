@@ -8,7 +8,7 @@ import { updateInvoiceEmailHistory } from 'actions/invoicing/invoicing.action';
 
 interface handleEmailProps {
     payload: {
-        id: string;
+        data: any;
         type: string;
         email: string;
     }
@@ -26,13 +26,12 @@ const emailTypes:any = {
 };
 
 
-export function *handleEmail({ 'payload': { id, email, type } }:handleEmailProps) {
+export function *handleEmail({ 'payload': { email, type, data } }:handleEmailProps) {
   try {
-    const result = yield call(emailTypes[type].api, id);
+    const result = yield call(emailTypes[type].api, data);
+    const id: string = data.id;
     yield put(sendEmailAction.success(result));
-    yield put(updateEmailHistory({ email,
-      id
-    }));
+    yield put(updateEmailHistory({ email, id }));
   } catch (error) {
     yield put(sendEmailAction.fault(error.toString()));
   } finally {
