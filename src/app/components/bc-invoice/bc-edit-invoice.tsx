@@ -618,6 +618,12 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   >
                     <ArrowBackIcon/>
                   </IconButton>
+                  {invoiceData?.isDraft &&
+                  <CSChip
+                    label={'Draft'}
+                    className={invoiceStyles.draftChip}
+                  />
+                  }
                 </div>
                 <div>
                   <Button
@@ -627,12 +633,23 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   >
                     Preview
                   </Button>
+                  {invoiceData?.isDraft &&
+                  <Button disableElevation
+                          variant="contained"
+                          color="primary"
+                          disabled={isSubmitting}
+                          onClick={() => {setFieldValue('isDraft', true); submitForm()}}
+                          className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt, invoiceStyles.bcRMargin)}
+                  >
+                    Save as Draft
+                  </Button>
+                  }
                   <ButtonGroup disableElevation>
                     <Button
                       variant="contained"
                       color="primary"
                       disabled={isSubmitting}
-                      onClick={submitForm}
+                      onClick={() => {setFieldValue('isDraft', false); submitForm()}}
                       className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
                     >
                       Save and Continue
