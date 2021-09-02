@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import {CSButton} from "../../../helpers/custom";
+import {error} from "../../../actions/snackbar/snackbar.action";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -97,6 +98,8 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       setTimeout(() => {
         dispatch(openModalAction());
       }, 10);*/
+    } else {
+      dispatch(error(result.message));
     }
   };
 
