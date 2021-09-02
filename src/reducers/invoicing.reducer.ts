@@ -11,7 +11,7 @@ import { loadInvoiceDetail } from 'actions/invoicing/invoicing.action';
 
 const initialState: InvoicingState = {
   'loading': false,
-  'data': {}
+  'data': []
 };
 
 export const InvoicingTodoReducer: Reducer<any> = (state = initialState, action) => {

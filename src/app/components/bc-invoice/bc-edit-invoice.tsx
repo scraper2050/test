@@ -43,6 +43,7 @@ import {TextFieldProps} from '@material-ui/core/TextField';
 import BCInvoiceItemsTableRow from './bc-invoice-table-row';
 import AddIcon from '@material-ui/icons/Add';
 import {updateInvoice} from "../../../api/invoicing.api";
+import {CSChip} from "../../../helpers/custom";
 
 interface Props {
   classes?: any;
@@ -325,7 +326,13 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     textBold: {
       fontWeight: 'bold',
     },
-
+    draftChip: {
+      background: 'repeating-linear-gradient(-55deg,#EAECF3,#EAECF3 10px,#F4F5F9 10px,#F4F5F9 20px)',
+      color: 'black',
+      fontWeight: 700,
+      fontSize: 14,
+      marginLeft: 20,
+    }
   }),
 );
 
@@ -480,6 +487,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         dueDate: data.due_date,
         paymentTermId: data.paymentTerm,
         note: data.note,
+        isDraft: data.isDraft,
         items: JSON.stringify(data.items.map((o: any) => {
           const item: any ={
             description: o.description ?? '',
@@ -578,6 +586,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           note: invoiceData?.note,
           company: invoiceData?.customer?.profile?.displayName,
           items: invoiceItems,
+          isDraft: invoiceData?.isDraft,
         }}
         validationSchema={InvoiceValidationSchema}
         validate ={(values: any) => {
@@ -598,7 +607,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           return (
             <Form>
               <PageHeader style={{padding: '0 10px'}}>
-                <div>
+                <div style={{display: 'flex'}}>
                   <IconButton
                     color="default"
                     size="small"
@@ -1081,6 +1090,12 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   >
                     <ArrowBackIcon/>
                   </IconButton>
+                  {invoiceData?.isDraft &&
+                  <CSChip
+                    label={'Draft'}
+                    className={invoiceStyles.draftChip}
+                  />
+                  }
                 </div>
                 <div>
                   <Button
@@ -1090,12 +1105,23 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   >
                     Preview
                   </Button>
+                  {invoiceData?.isDraft &&
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={isSubmitting}
+                    onClick={() => {setFieldValue('isDraft', true); submitForm()}}
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt, invoiceStyles.bcRMargin)}
+                  >
+                    Save as Draft
+                  </Button>
+                  }
                   <ButtonGroup disableElevation>
                     <Button
                       variant="contained"
                       color="primary"
                       disabled={isSubmitting}
-                      onClick={submitForm}
+                      onClick={() => {setFieldValue('isDraft', false); submitForm()}}
                       className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
                     >
                       Save and Continue

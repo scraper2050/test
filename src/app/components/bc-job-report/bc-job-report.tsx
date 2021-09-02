@@ -81,8 +81,11 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       dispatch(loadJobReportActions.success({ ...jobReportData,
         'invoiceCreated': true,
         'invoice': newInvoice }));
+      history.push({
+        'pathname': `view/${newInvoice._id}`,
+      });
 
-      dispatch(setModalDataAction({
+/*      dispatch(setModalDataAction({
         'data': {
           'detail': true,
           'modalTitle': 'Invoice',
@@ -93,7 +96,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       }));
       setTimeout(() => {
         dispatch(openModalAction());
-      }, 10);
+      }, 10);*/
     }
   };
 
