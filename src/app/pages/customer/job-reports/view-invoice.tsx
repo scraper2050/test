@@ -19,6 +19,7 @@ import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import { getContacts } from "../../../../api/contacts.api";
 import {getAllSalesTaxAPI} from "../../../../api/tax.api";
+import {CSChip} from "../../../../helpers/custom";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,6 +41,13 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     extendedIcon: {
       marginRight: theme.spacing(1),
     },
+    draftChip: {
+      background: 'repeating-linear-gradient(-55deg,#EAECF3,#EAECF3 10px,#F4F5F9 10px,#F4F5F9 20px)',
+      color: 'black',
+      fontWeight: 700,
+      fontSize: 14,
+      marginLeft: 20,
+    }
   }),
 );
 
@@ -96,7 +104,7 @@ function ViewInvoice({ classes, theme }: any) {
     <MainContainer>
       <PageContainer>
         <PageHeader>
-          <div>
+          <div style={{display: 'flex'}}>
             <IconButton
               color="default"
               size="small"
@@ -107,6 +115,12 @@ function ViewInvoice({ classes, theme }: any) {
             >
               <ArrowBackIcon/>
             </IconButton>
+            {invoiceDetail.isDraft &&
+            <CSChip
+              label={'Draft'}
+              className={invoiceStyles.draftChip}
+            />
+            }
           </div>
           <div>
             <Button
