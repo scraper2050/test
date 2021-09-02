@@ -1,5 +1,6 @@
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import InvoicingListListing from './invoices-list-listing/invoices-list-listing';
+import InvoicingDraftListing from './invoices-list-listing/invoices-draft-listing';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './invoices-list.styles';
 import { useHistory } from 'react-router-dom';
@@ -32,12 +33,11 @@ function InvoiceList({ classes }: any) {
               {
                 'label': 'Invoices',
                 'value': 0
+              },
+              {
+                'label': 'Drafts',
+                'value': 1
               }
-              // {
-              //   'label': 'Recent Activities',
-
-              //   'value': 1
-              // }
             ]}
           />
           <div className={classes.addButtonArea}>
@@ -55,7 +55,8 @@ function InvoiceList({ classes }: any) {
                 ? 'x-reverse'
                 : 'x'}
             index={curTab}>
-            <InvoicingListListing hidden={curTab !== 0} />
+            <InvoicingListListing hidden={curTab !== 0} id={"0"} />
+            <InvoicingDraftListing hidden={curTab !== 1} id={"1"} />
           </SwipeableViews>
         </div>
       </div>

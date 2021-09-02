@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import {CSButton} from "../../../helpers/custom";
+import {error} from "../../../actions/snackbar/snackbar.action";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -81,8 +82,11 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       dispatch(loadJobReportActions.success({ ...jobReportData,
         'invoiceCreated': true,
         'invoice': newInvoice }));
+      history.push({
+        'pathname': `view/${newInvoice._id}`,
+      });
 
-      dispatch(setModalDataAction({
+/*      dispatch(setModalDataAction({
         'data': {
           'detail': true,
           'modalTitle': 'Invoice',
@@ -93,7 +97,9 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       }));
       setTimeout(() => {
         dispatch(openModalAction());
-      }, 10);
+      }, 10);*/
+    } else {
+      dispatch(error(result.message));
     }
   };
 

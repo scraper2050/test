@@ -20,7 +20,8 @@ import {openModalAction, setModalDataAction} from "../../../../../actions/bc-mod
 import {modalTypes} from "../../../../../constants";
 
 const getFilteredList = (state: any) => {
-  return TableFilterService.filterByDateDesc(state?.invoiceList?.data);
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
 };
 
 function InvoicingListListing({ classes, theme }: any) {
