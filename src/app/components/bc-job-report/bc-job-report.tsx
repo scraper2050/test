@@ -672,7 +672,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                 variant="contained"
                 onClick={showInvoice}
                 color="primary">
-                {'View Invoice'}
+                {invoice?.isDraft ? 'View Draft' : 'View Invoice'}
               </CSButton>
               : <CSButton
                 variant="contained"
