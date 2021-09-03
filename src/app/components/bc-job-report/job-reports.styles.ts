@@ -121,6 +121,10 @@ export default (theme: Theme): any => ({
     'justifyContent': 'center',
     'alignItems': 'center',
     'backgroundSize': '100% 100%'
+  },
+  'backButton': {
+    backgroundColor: '#D0D3DC',
+    color: '#fff',
   }
 });
 

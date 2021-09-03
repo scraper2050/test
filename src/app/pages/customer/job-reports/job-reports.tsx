@@ -93,11 +93,17 @@ function JobReportsPage({ classes, theme }: any) {
     {
       'Cell'({ row }: any) {
         return row.original.invoiceCreated
-          ? <CSChip
-            label={'Yes'}
-            style={{ 'backgroundColor': theme.palette.success.light,
-              'color': '#fff' }}
-          />
+          ? row.original.invoice?.isDraft ?
+            <CSChip
+              label={'Draft'}
+              style={{ 'backgroundColor': '#FA8029',
+                'color': '#fff' }}
+            />
+            : <CSChip
+              label={'Yes'}
+              style={{ 'backgroundColor': theme.palette.success.light,
+                'color': '#fff' }}
+            />
           : <CSChip
             color={'secondary'}
             label={'No'}
