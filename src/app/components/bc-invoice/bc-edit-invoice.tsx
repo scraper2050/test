@@ -1096,7 +1096,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
 
               </DataContainer>
               <PageHeader style={{padding: '0 10px', marginTop: '25px',}}>
-                <div>
+                <div style={{display: 'flex'}}>
                   <IconButton
                     color="default"
                     size="small"
