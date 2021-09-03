@@ -176,7 +176,7 @@ function ViewInvoice({ classes, theme }: any) {
               className={classNames(invoiceStyles.margin, invoiceStyles.white)}
               onClick={saveInvoice}
             >
-              Save
+              Save as Invoice
             </Button>
             }
           </div>

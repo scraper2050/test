@@ -285,21 +285,26 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <div className={invoiceStyles.invoiceDetails}>
+              {!invoiceDetail.isDraft &&
               <div>
-                { invoiceDetail.paid
+                {invoiceDetail.paid
                   ? <Chip
                     label={'Paid'}
-                    style={{ 'backgroundColor': CONSTANTS.PRIMARY_GREEN,
-                      'color': '#fff' }}
+                    style={{
+                      'backgroundColor': CONSTANTS.PRIMARY_GREEN,
+                      'color': '#fff'
+                    }}
                   />
                   : <Chip
-                    style = {{
+                    style={{
                       textTransform: 'capitalize',
-                      backgroundColor: invoiceDetail?.status === 'UNPAID'? '#F50057': '#FA8029',
-                      color: '#fff'}}
+                      backgroundColor: invoiceDetail?.status === 'UNPAID' ? '#F50057' : '#FA8029',
+                      color: '#fff'
+                    }}
                     label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
                   />}
               </div>
+              }
               <div>
                 <h2>INVOICE</h2>
                 <div className={invoiceStyles.dateContainer}>
