@@ -1,9 +1,9 @@
 // Import * as Yup from 'yup';
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
-import {recordPayment} from '../../../api/payment.api';
+import { recordPayment } from '../../../api/payment.api';
 import styles from './bc-payment-record-modal.styles';
-import {Form, useFormik} from 'formik';
+import { useFormik } from 'formik';
 import AttachMoney from '@material-ui/icons/AttachMoney';
 import {
   DialogActions,
@@ -17,11 +17,10 @@ import {
 } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import InputAdornment from "@material-ui/core/InputAdornment";
-import {error} from "../../../actions/snackbar/snackbar.action";
-import {setInvoicingList} from "../../../actions/invoicing/invoicing.action";
+import { error } from "../../../actions/snackbar/snackbar.action";
 
 interface ApiProps {
   customerId: string,
@@ -30,7 +29,7 @@ interface ApiProps {
   paidAt: Date,
   referenceNumber?: string,
   paymentType?: string,
-  notes?: string
+  note?: string
 }
 
 function BcPaymentRecordModal({
@@ -39,7 +38,6 @@ function BcPaymentRecordModal({
   detail = false
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  // const invoiceList = useSelector((state: any) => state.invoiceList);
 
   const paymentTypes = [
     {
@@ -101,7 +99,7 @@ function BcPaymentRecordModal({
         invoiceId:invoice._id,
         amount: FormikValues.amount ?? 0,
         paidAt: FormikValues.paymentDate,
-        notes: FormikValues.notes,
+        note: FormikValues.notes,
       }
 
       if (FormikValues.referenceNumber)

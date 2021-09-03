@@ -20,6 +20,8 @@ import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular
 import { getContacts } from "../../../../api/contacts.api";
 import {getAllSalesTaxAPI} from "../../../../api/tax.api";
 import {CSChip} from "../../../../helpers/custom";
+import {updateInvoice} from "../../../../api/invoicing.api";
+import {error} from "../../../../actions/snackbar/snackbar.action";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -87,6 +89,24 @@ function ViewInvoice({ classes, theme }: any) {
     });
   }
 
+  const saveInvoice = () => {
+    const params ={
+      invoiceId: invoiceDetail._id,
+      isDraft: false,
+      charges: 0,
+      items: JSON.stringify(invoiceDetail.items),
+    }
+
+    updateInvoice(params).then((response: any) => {
+      if (response.status === 1)
+        history.goBack();
+      else
+        dispatch(error(response.message));
+    }).catch((err: any) => {
+      dispatch(error(err));
+    });
+  }
+
 /*  const goToEditNew = () => {
     history.push({
       'pathname': `/main/invoicing/update-invoice/${invoice}`,
@@ -148,6 +168,17 @@ function ViewInvoice({ classes, theme }: any) {
             >
               Edit
             </Button>
+            {invoiceDetail.isDraft &&
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={invoiceDetail.paid}
+              className={classNames(invoiceStyles.margin, invoiceStyles.white)}
+              onClick={saveInvoice}
+            >
+              Save as Invoice
+            </Button>
+            }
           </div>
         </PageHeader>
         <BCInvoice invoiceDetail={invoiceDetail}/>

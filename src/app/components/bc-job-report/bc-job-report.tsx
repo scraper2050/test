@@ -9,13 +9,14 @@ import styles, {
 } from './job-reports.styles';
 import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
 import EmailHistory from './email-history';
-import { modalTypes } from '../../../constants';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import {CSButton} from "../../../helpers/custom";
-import {error} from "../../../actions/snackbar/snackbar.action";
+import {error, success} from "../../../actions/snackbar/snackbar.action";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import {PageHeader} from "../../pages/customer/job-reports/view-invoice";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -85,7 +86,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       history.push({
         'pathname': `view/${newInvoice._id}`,
       });
-
+      dispatch(success(`Draft ${newInvoice.invoiceId} Created`));
 /*      dispatch(setModalDataAction({
         'data': {
           'detail': true,
@@ -124,6 +125,18 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   return (
     <MainContainer>
       <PageContainer>
+        <div style={{display: 'flex'}}>
+          <IconButton
+            color="default"
+            size="small"
+            className={classes.backButton}
+            onClick={() => {
+              history.goBack();
+            }}
+          >
+            <ArrowBackIcon/>
+          </IconButton>
+        </div>
         <DataContainer>
           <Grid container>
             <Grid
@@ -672,7 +685,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                 variant="contained"
                 onClick={showInvoice}
                 color="primary">
-                {'View Invoice'}
+                {invoice?.isDraft ? 'View Draft' : 'View Invoice'}
               </CSButton>
               : <CSButton
                 variant="contained"
