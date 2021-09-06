@@ -19,6 +19,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../reducers";
 import {Autocomplete} from "@material-ui/lab";
+import {useLocation} from "react-router-dom";
 
 
 const useInvoiceTableStyles = makeStyles((theme: Theme) =>
@@ -157,6 +158,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
   serviceItems.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : a.name.toLowerCase() <b.name.toLowerCase() ? -1 : 0);
   const taxes = useSelector(({ tax }: any) => tax.data);
   const invoiceTableStyle = useInvoiceTableStyles();
+  const { state } = useLocation<any>();
 
   const handleServiceChange = (item: any, index: number) => {
     const tempArray = [...invoiceItems];
@@ -176,7 +178,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
       if (itemTier?._id) {
         // @ts-ignore
         const customerTier = item?.tiers.find(({tier}) => tier._id === itemTier._id);
-        tempArray[index].price = customerTier.charge || 0;
+        tempArray[index].price = customerTier?.charge || 0;
       } else {
         tempArray[index].price = item?.charges || 0;
       }
@@ -212,7 +214,16 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
   useEffect(() => {
     handleChange(invoiceItems);
   }, [invoiceItems])
-  console.log(errors);
+
+  useEffect(() => {
+    if (!state?.invoiceDetail) {
+      invoiceItems.forEach((invoiceItem: any, index: number) => {
+        const fullItem = serviceItems.find((serviceItem: any) => serviceItem._id === invoiceItem._id)
+        handleServiceChange(fullItem, index)
+      })
+    }
+  }, [itemTier])
+
   return (
     <>
       <Grid container spacing={1} className={invoiceTableStyle.itemsTableHeader}>
