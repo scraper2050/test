@@ -308,7 +308,7 @@ function Main(): any {
                 />
 
                 <AuthRoute
-                  Component={CreateInvoicePage}
+                  Component={EditInvoicePage}
                   path={'/main/invoicing/create-invoice'}
                   title={'Invoicing'}
                 />
