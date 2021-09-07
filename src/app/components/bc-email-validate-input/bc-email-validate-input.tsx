@@ -11,6 +11,7 @@ interface BCEmailValidateInputProps {
   variant?: 'outlined' | 'filled';
   inputData: FormDataModel;
   onChange: Function;
+  disabled?: boolean;
 }
 
 function BCEmailValidateInput({
@@ -19,6 +20,7 @@ function BCEmailValidateInput({
   variant = 'outlined',
   size = 'small',
   inputData,
+  disabled = false,
   onChange
 }: BCEmailValidateInputProps) {
   const handleChangeEmail = (e: any) => {
@@ -48,6 +50,7 @@ function BCEmailValidateInput({
     <TextField
       error={!inputData.validate}
       fullWidth
+      disabled={disabled}
       helperText={inputData.errorMsg}
       id={id}
       label={label}
