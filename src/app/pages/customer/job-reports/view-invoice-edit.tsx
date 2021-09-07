@@ -1,78 +1,65 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createStyles, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 import styles from "../customer.styles";
 import styled from "styled-components";
-import * as CONSTANTS from "../../../../constants";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import {useHistory, useLocation, useParams} from "react-router-dom";
-import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
-import { getCompanyProfileAction } from "../../../../actions/user/user.action";
+import {useLocation, useParams} from "react-router-dom";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import BCEditInvoice from "../../../components/bc-invoice/bc-edit-invoice";
 import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
 import {loadInvoiceItems} from "../../../../actions/invoicing/items/items.action";
 import {getAllSalesTaxAPI} from "../../../../api/tax.api";
-import {getCustomerDetailAction} from "../../../../actions/customer/customer.action";
+import {getCustomerDetailAction, getCustomers, resetCustomer} from "../../../../actions/customer/customer.action";
+import {getCompanyProfile} from "../../../../api/user.api";
 
-const invoicePageStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    white: {
-      color: '#fff',
-    },
-    invoiceTop: {
-      backgroundColor: CONSTANTS.PRIMARY_GRAY,
-    },
-    bgDark: {
-      backgroundColor: '#D0D3DC',
-    },
-    extendedIcon: {
-      marginRight: theme.spacing(1),
-    },
-  }),
-);
+const newInvoice = {
+  createdAt: new Date(),
+  items:[],
+  isDraft: true,
+}
 
-function ViewInvoice({ classes, theme }: any) {
+function ViewInvoice() {
   const dispatch = useDispatch();
   let { invoice } = useParams();
   const { user } = useSelector(({ auth }:any) => auth);
   const { state } = useLocation<any>();
+  const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
 
   const customerId = state ? state.customerId : '';
-  const invoiceDetail = state ? state.invoiceDetail : '';
 
   //const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
-  const customer = useSelector(({ customers }:any) => customers.customerObj);
+  const {customerObj: customer, customers} = useSelector(({ customers }:any) => customers);
   useEffect(() => {
-/*    if (invoice) {
-      dispatch(loadInvoiceDetail.fetch(invoice));
-      //dispatch(getCustomerDetailAction({ 'customerId': values.customerId }));
-    }*/
+    async function getCompany (company: string) {
+      const res = await getCompanyProfile(user.company as string);
+      setInvoiceDetail({...invoiceDetail, company: res.company});
+
+    }
+    if (user && !invoice) {
+      getCompany(user.company as string);
+      //dispatch(getCompanyProfileAction(user.company as string));
+    }
 
     if (customerId) {
       dispatch(getCustomerDetailAction({customerId}));
+    } else {
+      dispatch(resetCustomer());
+      dispatch(getCustomers());
     }
-    if (user) {
-      dispatch(getCompanyProfileAction(user.company as string));
-    }
+
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllPaymentTermsAPI());
     dispatch(getAllSalesTaxAPI());
+
   }, []);
+
+  if ((customerId && !customer._id) || (!customerId && customers?.length === 0) || !invoiceDetail.company)
+    return<BCCircularLoader heightValue={'200px'} />
 
   return (
     <MainContainer>
       <PageContainer>
-        {!customer._id?
-          <BCCircularLoader heightValue={'200px'} /> :
-          <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/>
-        }
+        <BCEditInvoice invoiceData={invoiceDetail} isOld={!!invoice}/>
       </PageContainer>
     </MainContainer>
   )

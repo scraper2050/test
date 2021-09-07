@@ -19,6 +19,16 @@ function InvoiceList({ classes }: any) {
 
   const openCreateInvoicePage = () => {
     history.push('/main/invoicing/create-invoice');
+/*    history.push({
+      'pathname': `/main/invoicing/edit/0`,
+/!*      'state': {
+        'customerId': invoiceDetail.customer?._id,
+        'customerName': invoiceDetail.customer?.profile?.displayName,
+        'invoiceId': invoiceDetail?._id,
+        'jobType': invoiceDetail.job?.type?._id,
+        'invoiceDetail': invoiceDetail
+      }*!/
+    });*/
   };
 
   return (
