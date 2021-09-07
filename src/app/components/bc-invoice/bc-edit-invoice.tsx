@@ -465,11 +465,6 @@ const InvoiceValidationSchema = Yup.object().shape({
       is: false,
       then: Yup.string().required('Required')
     }),
-  note: Yup.string()
-    .when("newInvoice", {
-      is: true,
-      then: Yup.string().required('Please add note')
-    }),
   invoice_title: Yup.string()
     .required('Required'),
 /*  customer_po: Yup.string()
