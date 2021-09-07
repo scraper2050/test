@@ -739,7 +739,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                     Save as Draft
                   </Button>
                   }
-                  {isOld &&
                   <ButtonGroup disableElevation>
                     <Button
                       variant="contained"
@@ -759,7 +758,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                       <ArrowDropDownIcon/>
                     </Button>
                   </ButtonGroup>
-                  }
                 </div>
               </PageHeader>
               <DataContainer>
@@ -1220,7 +1218,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                     Save as Draft
                   </Button>
                   }
-                  {isOld &&
                   <ButtonGroup disableElevation>
                     <Button
                       variant="contained"
@@ -1240,7 +1237,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                       <ArrowDropDownIcon/>
                     </Button>
                   </ButtonGroup>
-                  }
                 </div>
               </PageHeader>
             </Form>
