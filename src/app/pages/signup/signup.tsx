@@ -60,7 +60,15 @@ function SignUpPage({ classes }: Props): JSX.Element {
     return {
       'errorMsg': '',
       'validate': true,
-      'value': ''
+      'value': '',
+    };
+  };
+
+  const initHiddenData = (): FormDataModel => {
+    return {
+      'errorMsg': '',
+      'validate': true,
+      'value': null
     };
   };
   const [isLoading, setLoading] = useState(false);
@@ -78,7 +86,9 @@ function SignUpPage({ classes }: Props): JSX.Element {
       ...initFormData(),
       'showPassword': false
     },
-    'phone_number': initFormData()
+    'phone_number': initFormData(),
+    'isci': initHiddenData(),
+    'cid': initHiddenData(),
   });
 
   const [agreeTerm, setAgreeTerm] = useState({
@@ -111,10 +121,28 @@ function SignUpPage({ classes }: Props): JSX.Element {
         setIndustries(data.industries);
       });
       if (location.search) {
+        const items = location.search.substr(1).split('&')
+        const data = items.reduce((acc: any, item) => {
+          const keyValue = item.split('=');
+          if (keyValue.length === 2) {
+            acc[keyValue[0]] = keyValue[1];
+          }
+          return acc;
+        }, {})
         setFormData({ ...formData,
           'email': { 'errorMsg': '',
             'validate': true,
-            'value': location.search.split('email=')[1] } });
+            'value': data.email
+          },
+          'isci': { 'errorMsg': '',
+            'validate': true,
+            'value': data.isci
+          },
+          'cid': { 'errorMsg': '',
+            'validate': true,
+            'value': data.cid
+          },
+        });
       }
     },
 
@@ -149,10 +177,12 @@ function SignUpPage({ classes }: Props): JSX.Element {
     let isValidate = true;
     Object.keys(formData).forEach(item => {
       const dataValue = formDataTemp[item];
-      if (dataValue.value.length === 0) {
-        formDataTemp[item].validate = false;
-        formDataTemp[item].errorMsg = 'This field is required';
-        isValidate = false;
+      if (item !== 'cid' && item !== 'isci') {
+        if (dataValue.value.length === 0) {
+          formDataTemp[item].validate = false;
+          formDataTemp[item].errorMsg = 'This field is required';
+          isValidate = false;
+        }
       }
       if (!dataValue.validate) {
         isValidate = false;
@@ -187,18 +217,22 @@ function SignUpPage({ classes }: Props): JSX.Element {
     const params = new URLSearchParams();
     params.append('agreedStatus', 'true');
 
-    Api.post(
-      '/signUp',
-      {
-        'companyName': formData.company.value,
-        'email': formData.email.value,
-        'firstName': formData.firstName.value,
-        'industryId': formData.industry.value,
-        'lastName': formData.lastName.value,
-        'password': formData.password.value,
-        'phone': formData.phone_number.value
-      }
-    )
+    const signupParams:any = {
+      'companyName': formData.company.value,
+      'email': formData.email.value,
+      'firstName': formData.firstName.value,
+      'industryId': formData.industry.value,
+      'lastName': formData.lastName.value,
+      'password': formData.password.value,
+      'phone': formData.phone_number.value
+    }
+    if (formData.isci.value)
+      signupParams.isci = formData.isci.value
+
+    if (formData.cid.value)
+      signupParams.cid = formData.cid.value
+
+    Api.post('/signUp', signupParams)
       .then(async res => {
         if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
           setLoading(false);
@@ -329,6 +363,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   <BCEmailValidateInputut
                     id={'email'}
                     inputData={formData.email}
+                    disabled={formData.isci.value}
                     label={'Email'}
                     onChange={(newEmail: FormDataModel) => {
                       setFormData({
