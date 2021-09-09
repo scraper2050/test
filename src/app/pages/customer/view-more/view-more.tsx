@@ -26,7 +26,7 @@ import CustomerContactsPage from './contacts/contacts';
 import Pricing from './pricing/pricing';
 import { getItemTierList } from 'api/items.api';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
-import {CSButton} from "../../../../helpers/custom";
+import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 
 interface LocationState {
   customerName?: string;
@@ -158,7 +158,7 @@ function ViewMorePage({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <CSButton
+          <CSButtonSmall
             aria-label={'delete'}
             color={'primary'}
             onClick={() => {
@@ -166,7 +166,7 @@ function ViewMorePage({ classes }: any) {
             }}
             variant={'contained'}>
             {'View More'}
-          </CSButton>
+          </CSButtonSmall>
 
         </div>;
       },
@@ -298,6 +298,7 @@ function ViewMorePage({ classes }: any) {
 
                   <BCTableContainer
                     columns={columns}
+                    cellSize={"medium"}
                     currentPage={currentPage}
                     initialMsg={'There are no job locations!'}
                     isLoading={jobLocations.loading}
