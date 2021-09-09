@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { editableStatus } from 'app/models/contract';
 import styled from 'styled-components';
-import {CSButton} from "../../../../helpers/custom";
+import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 
 interface StatusTypes {
   status: number;
@@ -120,22 +120,22 @@ function AdminVendorsPage({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          {editableStatus.includes(row.original.status) && <CSButton
+          {editableStatus.includes(row.original.status) && <CSButtonSmall
             aria-label={'change-status'}
             color={'primary'}
             onClick={() => editVendor(row.original)}
             style={{ 'marginRight': '15px' }}
             variant={'contained'}>
             {'Change Status'}
-          </CSButton>}
+          </CSButtonSmall>}
 
-          <CSButton
+          <CSButtonSmall
             aria-label={'view more'}
             color={'primary'}
             onClick={() => renderViewMore(row)}
             variant={'contained'}>
             {'View More'}
-          </CSButton>
+          </CSButtonSmall>
         </div>;
       },
       'Header': 'Action',
