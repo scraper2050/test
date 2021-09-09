@@ -29,11 +29,17 @@ const useTableStyles = makeStyles((theme: Theme) =>
       }
     },
     tableRow: {
+      '& > .MuiTableCell-root': {
+        lineHeight: '30px',
+      },
       '&:hover': {
         backgroundColor: `${CONSTANTS.TABLE_HOVER}!important`,
         cursor: 'pointer'
       }
-    }
+    },
+/*    tableCell: {
+      lineHeight: '30px',
+    }*/
   }),
 );
 

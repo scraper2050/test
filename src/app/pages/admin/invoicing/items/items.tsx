@@ -17,6 +17,7 @@ import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
 import { addTierApi, updateItems } from 'api/items.api';
 import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
+import {CSButton, CSButtonSmall} from "../../../../../helpers/custom";
 
 
 interface Props {
@@ -129,15 +130,15 @@ function AdminInvoicingItemsPage({ classes }:Props) {
   function Toolbar() {
     return editMode
       ? <>
-        <Button
+        <CSButton
           disabled={updating}
           disableElevation
           onClick={() => setEditMode(false)}
           size={'small'}
           variant={'contained'}>
           {'Cancel'}
-        </Button>
-        <Button
+        </CSButton>
+        <CSButton
           disabled={updating}
           disableElevation
           onClick={handleUpdateAllTiers}
@@ -146,10 +147,10 @@ function AdminInvoicingItemsPage({ classes }:Props) {
             'color': 'white' }}
           variant={'contained'}>
           {'Submit'}
-        </Button>
+        </CSButton>
       </>
       : <>
-        <Button
+        <CSButton
           disabled={updating}
           disableElevation
           onClick={editTiers}
@@ -159,8 +160,8 @@ function AdminInvoicingItemsPage({ classes }:Props) {
             'backgroundColor': PRIMARY_ORANGE }}
           variant={'contained'}>
           {'Edit Tiers'}
-        </Button>
-        <Button
+        </CSButton>
+        <CSButton
           color={'primary'}
           disabled={updating}
           disableElevation
@@ -170,8 +171,8 @@ function AdminInvoicingItemsPage({ classes }:Props) {
             'color': 'white' }}
           variant={'contained'}>
           {'Add Tier'}
-        </Button>
-        <Button
+        </CSButton>
+        <CSButton
           disabled={updating}
           disableElevation
           onClick={() => setEditMode(true)}
@@ -180,7 +181,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
             'color': 'white' }}
           variant={'contained'}>
           {'Edit Prices'}
-        </Button>
+        </CSButton>
       </>;
   }
 
@@ -216,21 +217,17 @@ function AdminInvoicingItemsPage({ classes }:Props) {
           Cell({ row }: any) {
             return (
               <div className={'flex items-center'}>
-                <Fab
+                <CSButtonSmall
                   aria-label={'edit'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
                   color={'primary'}
                   onClick={() => renderEdit(row.original)}
                   size={'small'}
                   style={{
                     'marginRight': 10,
                     'width': 60
-                  }}
-                  variant={'extended'}>
+                  }}>
                   {'Edit'}
-                </Fab>
+                </CSButtonSmall>
               </div>
             );
           },
@@ -263,11 +260,11 @@ function AdminInvoicingItemsPage({ classes }:Props) {
         {
           Cell({ row }: any) {
             return (
-              <p>
+              <div className={'flex items-center'}>
                 {row.original.isFixed
                   ? 'Fixed'
                   : 'Hourly'}
-              </p>
+              </div>
             );
           },
           'Header': 'Charge Type',
@@ -278,11 +275,11 @@ function AdminInvoicingItemsPage({ classes }:Props) {
         {
           Cell({ row }: any) {
             return (
-              <p>
+              <div className={'flex items-center'}>
                 {row.original.tax
                   ? 'Yes'
                   : 'No'}
-              </p>
+              </div>
             );
           },
           'Header': 'Taxable',
@@ -368,23 +365,15 @@ function AdminInvoicingItemsPage({ classes }:Props) {
         link={'/main/admin/invoicing'}
       />
       <PageContainer>
-        <Grid
-          container
-          spacing={4}>
-          <Grid
-            item
-            xs={11}>
-            <BCTableContainer
-              columns={columns}
-              isLoading={loading || tiersLoading}
-              isPageSaveEnabled
-              search
-              searchPlaceholder={'Search Items'}
-              tableData={localItems}
-              toolbar={Toolbar()}
-            />
-          </Grid>
-        </Grid>
+        <BCTableContainer
+          columns={columns}
+          isLoading={loading || tiersLoading}
+          isPageSaveEnabled
+          search
+          searchPlaceholder={'Search Items'}
+          tableData={localItems}
+          toolbar={Toolbar()}
+        />
       </PageContainer>
     </MainContainer>
   );
@@ -397,9 +386,9 @@ const MainContainer = styled.div`
   overflow-x: hidden;
   flex-direction: column;
   a {
-     position: absolute;
      width: 30px;
      margin-top: 30px;
+     margin-left: 30px;
    }
 `;
 
@@ -409,9 +398,6 @@ const PageContainer = styled.div`
   flex: 1 1 100%;
   padding: 30px;
   width: 100%;
-  padding-left: 65px;
-  padding-right: 65px;
-  margin: 0 auto;
 `;
 
 
