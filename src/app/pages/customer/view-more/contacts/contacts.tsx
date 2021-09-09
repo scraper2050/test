@@ -7,7 +7,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { modalTypes } from '../../../../../constants';
 import { getContacts, addContact, updateContact, removeContact } from 'api/contacts.api';
 import { useLocation, useHistory } from 'react-router-dom';
-import {CSButton} from "../../../../../helpers/custom";
+import {CSButton, CSButtonSmall} from "../../../../../helpers/custom";
 
 function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const dispatch = useDispatch();
@@ -64,27 +64,21 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <CSButton
+          <CSButtonSmall
             aria-label={'edit-contact'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => openEditContactModal(row)}
             variant={'contained'}>
             {'Edit'}
-          </CSButton>
-          <CSButton
+          </CSButtonSmall>
+          <CSButtonSmall
             aria-label={'edit-contact'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             style={{ marginLeft: 15 }}
             color={'secondary'}
             onClick={() => openDeleteContactModal(row)}
             variant={'contained'}>
             {'Delete'}
-          </CSButton>
+          </CSButtonSmall>
         </div>
       },
       'Header': 'Actions',
