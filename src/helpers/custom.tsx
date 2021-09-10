@@ -79,6 +79,7 @@ export const CSChip = withStyles({
     textTransform: 'none',
     fontSize: 13,
     borderRadius: 4,
-    width: '100%'
+    width: '100%',
+    height: '30px',
   },
 })(Chip);
