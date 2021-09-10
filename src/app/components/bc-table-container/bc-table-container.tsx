@@ -43,6 +43,7 @@ function BCTableContainer({
   cellSize,
   toolbar,
   noPadding = false,
+  toolbarPositionLeft = false,
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -120,7 +121,7 @@ function BCTableContainer({
             searchText={searchText}
           />
           : null}
-        {toolbar && <BCTableToolBarContainer>
+        {toolbar && <BCTableToolBarContainer left={toolbarPositionLeft}>
           {toolbar}
         </BCTableToolBarContainer>}
       </Grid>
@@ -177,12 +178,11 @@ padding: ${props => props.noPadding ? '0' : '5px'};
 `;
 
 
-const BCTableToolBarContainer = styled.div`
+const BCTableToolBarContainer = styled.div<{ left: boolean }>`
     margin-bottom: 10px;
     display: flex;
-
     flex: 1.66;
-    justify-content: flex-end;
+    justify-content: ${props => props.left ? 'flex-start' : 'flex-end'};
     button {
       margin-left: 20px;
     }

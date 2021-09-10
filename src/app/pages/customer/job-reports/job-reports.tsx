@@ -1,20 +1,16 @@
 import BCTableContainer from '../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../components/bc-tab/bc-tab';
-import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import { formatDatTimelll, formatDate } from 'helpers/format';
 import { loadJobReportsActions } from 'actions/customer/job-report/job-report.action';
 import styles from '../customer.styles';
-import { Button, Chip, createStyles, Grid, makeStyles, withStyles } from "@material-ui/core";
+import { Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
-import * as CONSTANTS from "../../../../constants";
-import { Theme } from "@material-ui/core/styles";
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import { CSButton, CSChip, useCustomStyles } from "../../../../helpers/custom";
+import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
@@ -64,9 +60,7 @@ function JobReportsPage({ classes, theme }: any) {
         const Date = formatDate(row.original.jobDate);
         return (
           <div className={'flex items-center'}>
-            <p>
-              {Date}
-            </p>
+            {Date}
           </div>
         );
       },
@@ -119,7 +113,7 @@ function JobReportsPage({ classes, theme }: any) {
         return (
           <div className={customStyles.centerContainer}>
             <EmailReportButton
-              Component={<CSButton
+              Component={<CSButtonSmall
                 variant="contained"
                 classes={{
                   'root': classes.emailButton
@@ -129,7 +123,7 @@ function JobReportsPage({ classes, theme }: any) {
                 <MailOutlineOutlined
                   className={customStyles.iconBtn}
                 />
-              </CSButton>}
+              </CSButtonSmall>}
               jobReport={row.original}
             />
           </div>
