@@ -8,8 +8,6 @@ import { DatePicker } from "@material-ui/pickers";
 import {
   refreshServiceTickets,
   setOpenServiceTicket,
-  setOpenServiceTicketObject,
-  setClearOpenServiceTicketObject,
   setClearOpenTicketFilterState,
   setOpenServiceTicketLoading,
   setOpenTicketFilterState,
@@ -40,6 +38,7 @@ import {
 import { getAllJobTypesAPI } from "api/job.api";
 import { modalTypes } from "../../../../../constants";
 import { getCustomers } from "actions/customer/customer.action";
+const PAGE_SIZE = 4;
 
 function MapViewTicketsScreen({ classes }: any) {
   const dispatch = useDispatch();
@@ -76,7 +75,7 @@ function MapViewTicketsScreen({ classes }: any) {
       ticketId: "",
       contactName: "",
     };
-    const requestObj = { ...rawData, pageNo: 1, pageSize: 6 };
+    const requestObj = { ...rawData, pageNo: 1, pageSize: PAGE_SIZE };
     dispatch(getCustomers());
     resetDateFilter();
     getOpenTickets(requestObj);
@@ -133,7 +132,7 @@ function MapViewTicketsScreen({ classes }: any) {
     const requestObj = {
       ...openServiceTicketFIlter,
       pageNo: 1,
-      pageSize: 6,
+      pageSize: PAGE_SIZE,
       dueDate: formattedDate,
     };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
@@ -160,7 +159,7 @@ function MapViewTicketsScreen({ classes }: any) {
     const requestObj = {
       ...openServiceTicketFIlter,
       pageNo: 1,
-      pageSize: 6,
+      pageSize: PAGE_SIZE,
       dueDate: formattedDate,
     };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
@@ -220,7 +219,7 @@ function MapViewTicketsScreen({ classes }: any) {
     const requestObj = {
       ...rawData,
       pageNo: 1,
-      pageSize: 6,
+      pageSize: PAGE_SIZE,
       dueDate: formattedDate,
     };
     dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
@@ -241,7 +240,7 @@ function MapViewTicketsScreen({ classes }: any) {
         contactName: "",
       })
     );
-    getOpenTickets({ pageNo: 1, pageSize: 6 });
+    getOpenTickets({ pageNo: 1, pageSize: PAGE_SIZE });
     dispatch(setSelectedCustomers([]));
     setShowFilterModal(false);
   };
@@ -252,7 +251,7 @@ function MapViewTicketsScreen({ classes }: any) {
     const requestObj = {
       ...openServiceTicketFIlter,
       pageNo: page,
-      pageSize: 6,
+      pageSize: PAGE_SIZE,
     };
 
     getOpenTickets(requestObj);
@@ -266,7 +265,7 @@ function MapViewTicketsScreen({ classes }: any) {
     const requestObj = {
       ...openServiceTicketFIlter,
       pageNo: value,
-      pageSize: 6,
+      pageSize: PAGE_SIZE,
     };
     getOpenTickets(requestObj);
   };
@@ -497,7 +496,7 @@ function MapViewTicketsScreen({ classes }: any) {
           ))}
         </div>
         <Pagination
-          count={Math.ceil(totalOpenTickets / 6)}
+          count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
           color="primary"
           onClick={() => setSelectedTicket({})}
           onChange={handleChange}
