@@ -132,7 +132,6 @@ function ScheduleJobsPage({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-
             <CSButton
               aria-label={'new-ticket'}
               variant="contained"

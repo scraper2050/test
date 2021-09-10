@@ -1,29 +1,21 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import Fab from '@material-ui/core/Fab';
-import InfoIcon from '@material-ui/icons/Info';
 import { getAllJobsAPI } from 'api/job.api';
-import { modalTypes, TABLE_ACTION_BUTTON, TABLE_ACTION_BUTTON_HOVER } from "../../../../../constants";
+import {
+  modalTypes
+} from "../../../../../constants";
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { Button, createStyles, Grid, makeStyles, withStyles } from "@material-ui/core";
-import React, { useEffect } from 'react';
+import {Checkbox, FormControlLabel, withStyles} from "@material-ui/core";
+import React, {useEffect, useState} from 'react';
 import { convertMilitaryTime, formatDate } from 'helpers/format';
 import {
-  // CloseModalAction,
   openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import IconButton from '@material-ui/core/IconButton';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import { Theme } from "@material-ui/core/styles";
-import * as CONSTANTS from "../../../../../constants";
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import { useCustomStyles } from "../../../../../helpers/custom";
-import { info } from "../../../../../actions/snackbar/snackbar.action";
-
-// Import { VendorsReducer } from 'reducers/vendor.reducer';
+import {useCustomStyles} from "../../../../../helpers/custom";
 
 interface StatusTypes {
   status: number;
@@ -31,12 +23,17 @@ interface StatusTypes {
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
+  const [showAllJobs, toggleShowAllJobs] = useState(false);
   const { _id } = useSelector(({ auth }:RootState) => auth);
   const { isLoading = true, jobs, refresh = true } = useSelector(({ jobState }: any) => ({
     'isLoading': jobState.isLoading,
     'jobs': jobState.data,
     'refresh': jobState.refresh
   }));
+
+  const filteredJobs = jobs.filter ((job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0 );
+
+  console.log(filteredJobs);
   const customStyles = useCustomStyles();
 
   function RenderStatus({ status }: StatusTypes) {
@@ -175,9 +172,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       Cell({ row }: any) {
         return (
           <div className={'flex items-center'}>
-            <p>
-              {row.original.tasks.length > 0 ? 'Multiple Jobs' : row.original.type?.title}
-            </p>
+            {row.original.tasks.length > 0 ? 'Multiple Jobs' : row.original.type?.title}
           </div>
         );
       },
@@ -191,9 +186,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         const scheduleDate = formatDate(row.original.scheduleDate);
         return (
           <div className={'flex items-center'}>
-            <p>
-              {scheduleDate}
-            </p>
+            {scheduleDate}
           </div>
         );
       },
@@ -216,9 +209,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         }
         return (
           <div className={'flex items-center'} >
-            <p>
-              {`${startTime} - ${endTime}`}
-            </p>
+            {`${startTime} - ${endTime}`}
           </div>
         );
       },
@@ -228,6 +219,22 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       'width': 40
     },
   ];
+
+  function Toolbar() {
+    return <>
+    <FormControlLabel
+      control={
+        <Checkbox
+          checked={showAllJobs}
+          onChange={() => toggleShowAllJobs(!showAllJobs)}
+          name="checkedB"
+          color="primary"
+        />
+      }
+      label="Display All Jobs"
+    />
+    </>
+  }
 
   useEffect(() => {
     if (refresh) {
@@ -251,7 +258,9 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Jobs...'}
-        tableData={jobs}
+        tableData={showAllJobs ? jobs : filteredJobs}
+        toolbarPositionLeft={true}
+        toolbar={Toolbar()}
       />
     </DataContainer>
   );

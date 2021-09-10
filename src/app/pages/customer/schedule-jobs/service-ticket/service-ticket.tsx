@@ -1,34 +1,31 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
 import { getAllServiceTicketAPI } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
 import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { Button, withStyles } from "@material-ui/core";
-import React, { useEffect } from 'react';
+import {Button, Checkbox, FormControlLabel, withStyles} from "@material-ui/core";
+import React, {useEffect, useState} from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import "../../../../../scss/popup.scss";
 import EditIcon from '@material-ui/icons/Edit';
-import * as CONSTANTS from "../../../../../constants";
-import { CSButton, useCustomStyles } from "../../../../../helpers/custom";
+import {CSButtonSmall, useCustomStyles} from "../../../../../helpers/custom";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
+  const [showAllTickets, toggleShowAllTickets] = useState(false);
   const customStyles = useCustomStyles();
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
     'tickets': serviceTicket.tickets
   }));
-
-
+  const filteredTickets = tickets.filter((ticket: any) => ticket.status !== 2 && !ticket.jobCreated)
 
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
@@ -60,6 +57,22 @@ function ServiceTicket({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  function Toolbar() {
+    return <>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={showAllTickets}
+            onChange={() => toggleShowAllTickets(!showAllTickets)}
+            name="checkedB"
+            color="primary"
+          />
+        }
+        label="Display All Tickets"
+      />
+    </>
+  }
 
   const openDetailTicketModal = (ticket: any) => {
 
@@ -175,7 +188,7 @@ function ServiceTicket({ classes }: any) {
           {
             !row.original.jobCreated
               ? row.original.status !== 2
-                ? <CSButton
+                ? <CSButtonSmall
                   variant="contained"
                   color="primary"
                   size="small"
@@ -183,7 +196,7 @@ function ServiceTicket({ classes }: any) {
                   onClick={() => openCreateJobModal(row.original)}
                 >
                   Create Job
-                </CSButton>
+                </CSButtonSmall>
                 : null
               : null
           }
@@ -205,6 +218,7 @@ function ServiceTicket({ classes }: any) {
               e.stopPropagation();
               openEditTicketModal(row.original);
             }}
+            style={{height: 30}}
           >
             <EditIcon className={customStyles.iconBtnGray}/>
           </Button>
@@ -220,7 +234,7 @@ function ServiceTicket({ classes }: any) {
         return <div
           onClick={() => openDetailTicketModal(row.original)}
           className={'flex items-center'}>
-          <InfoIcon />
+          <InfoIcon style={{display: 'block'}} />
         </div>;
       },
       'Header': 'Ticket Details',
@@ -249,7 +263,9 @@ function ServiceTicket({ classes }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Tickets...'}
-        tableData={tickets}
+        tableData={showAllTickets ? tickets : filteredTickets}
+        toolbarPositionLeft={true}
+        toolbar={Toolbar()}
       />
     </DataContainer>
   );
