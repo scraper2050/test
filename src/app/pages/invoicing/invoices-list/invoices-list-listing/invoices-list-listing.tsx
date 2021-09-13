@@ -18,6 +18,8 @@ import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../../constants";
+import BCMenuButton from "../../../../components/bc-menu-button";
+import {info} from "../../../../../actions/snackbar/snackbar.action";
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -113,26 +115,7 @@ function InvoicingListListing({ classes, theme }: any) {
       const textStatus = status.split('_').join(' ').toLowerCase();
       return (
         <div className={customStyles.centerContainer}>
-          {
-            row.original.paid
-              ? <CSButtonSmall
-                variant="contained"
-                style={{ 'backgroundColor': theme.palette.success.light,
-                  'color': '#fff' }}
-              >Paid</CSButtonSmall>
-              : <CSButtonSmall
-                variant="contained"
-                style={{ backgroundColor: status === 'UNPAID'? '#F50057': '#FA8029',
-                  color: '#fff' }}
-                color="secondary"
-                onClick={(e) => recordPayment(e, row.original)}
-                size="small">
-                <div>
-                  <span style={{textTransform: 'capitalize'}}>{textStatus}</span>
-                  <ExpandMore style={{position: 'absolute', right: 3}}/>
-                </div>
-              </CSButtonSmall>
-          }
+          <BCMenuButton status={status}  handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)}/>
         </div>
       )
     },
@@ -205,8 +188,19 @@ function InvoicingListListing({ classes, theme }: any) {
     dispatch(loadingInvoicingList());
   }, []);
 
-  const recordPayment = (event: any, row: any) => {
+  const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
+    switch (id) {
+      case 0:
+        recordPayment(row);
+        break;
+      default:
+        dispatch(info('This feature is still under development!'));
+    }
+  }
+
+  const recordPayment = (row: any) => {
+
     dispatch(setModalDataAction({
       'data': {
         invoice: row,
