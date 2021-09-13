@@ -33,7 +33,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   const filteredJobs = jobs.filter ((job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0 );
 
-  console.log(filteredJobs);
   const customStyles = useCustomStyles();
 
   function RenderStatus({ status }: StatusTypes) {

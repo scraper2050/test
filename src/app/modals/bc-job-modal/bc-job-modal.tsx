@@ -369,11 +369,11 @@ function BCJobModal({
       minutes };
   };
 
-
   const form = useFormik({
     'initialValues': {
       'customerId': job.customer?._id,
-      'description': job.ticket.note ? job.ticket.note : '',
+      //'description': job.ticket.note ? job.ticket.note : '',
+      'description': job.description ? job.description : '',
       'employeeType': !job.employeeType
         ? 0
         : 1,
@@ -495,7 +495,20 @@ function BCJobModal({
           delete requestObj.technician;
           delete requestObj.ticket;
           delete requestObj.type;
+        } else {
+          if (requestObj.jobTypeId) {
+            requestObj.jobTypes = requestObj.jobTypeId.map((type: any) => ({jobTypeId: type._id}));
+            delete requestObj.jobTypeId;
+          } else if (requestObj.jobTypes){
+            requestObj.jobTypes = requestObj.jobTypes.map((type: any) => {
+              if (type.jobType?._id) return ({jobTypeId: type.jobType._id});
+              else return type;
+            })
+          } else {
+            requestObj.jobTypes = [];
+          }
         }
+
         request(requestObj)
 
           .then(async (response: any) => {
