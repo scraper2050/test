@@ -529,7 +529,7 @@ function BCJobModal({
               dispatch(setOpenServiceTicketLoading(true));
               getOpenServiceTickets({ ...openServiceTicketFilter,
                 'pageNo': 1,
-                'pageSize': 6 }).then((response: any) => {
+                'pageSize': 4 }).then((response: any) => {
                 dispatch(setOpenServiceTicketLoading(false));
                 dispatch(setOpenServiceTicket(response));
                 dispatch(refreshServiceTickets(true));
@@ -834,6 +834,7 @@ function BCJobModal({
                           </InputLabel>
                           <TextField
                             {...params}
+                            required
                             variant={'standard'}
                           />
                         </>
@@ -926,8 +927,8 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={detail || !job._id}
-                    getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
+                    disabled={detail}
+                    // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
                     multiple
@@ -961,7 +962,7 @@ function BCJobModal({
                         return <Chip
                           label={option.title}
                           {...getTagProps({ index })}
-                          disabled={disabledChips.includes(option._id) || !job._id}
+                          // disabled={disabledChips.includes(option._id) || !job._id}
                         />;
                       })
                     }
