@@ -926,8 +926,8 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={detail || !job._id}
-                    getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
+                    disabled={detail}
+                    // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
                     getOptionLabel={option => option.title ? option.title : ''}
                     id={'tags-standard'}
                     multiple
@@ -961,7 +961,7 @@ function BCJobModal({
                         return <Chip
                           label={option.title}
                           {...getTagProps({ index })}
-                          disabled={disabledChips.includes(option._id) || !job._id}
+                          // disabled={disabledChips.includes(option._id) || !job._id}
                         />;
                       })
                     }
