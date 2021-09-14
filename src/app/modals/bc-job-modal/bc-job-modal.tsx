@@ -20,7 +20,7 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import { callCreateJobAPI, callEditJobAPI, getAllJobTypesAPI } from 'api/job.api';
 import { callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -115,6 +115,7 @@ function BCJobModal({
   const [contactValue, setContactValue] = useState<any>([]);
   const [thumb, setThumb] = useState<any>(null);
   const history = useHistory();
+  const jobTypesInput = useRef<HTMLInputElement>(null);
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -564,6 +565,23 @@ function BCJobModal({
       } else {
         setSubmitting(false);
       }
+    },
+    'validate':  (values: any) => {
+      const errors: any = {};
+
+      if (values.jobTypeId && values.jobTypeId.length === 0) {
+      // if (!jobTypeValue.length) {
+        errors.jobTypes = 'Select at least one (1) job';
+        if (jobTypesInput.current !== null) {
+          jobTypesInput.current.setCustomValidity("Select at least one (1) job");
+        }
+      } else {
+        if (jobTypesInput.current !== null) {
+          jobTypesInput.current.setCustomValidity("");
+        }
+      }
+
+      return errors;
     }
   });
 
@@ -815,7 +833,6 @@ function BCJobModal({
                             </Typography>}
                           </InputLabel>
                           <TextField
-                            required
                             {...params}
                             variant={'standard'}
                           />
@@ -857,7 +874,7 @@ function BCJobModal({
                         disabled={detail}
                         getOptionLabel={option => option?.contractor?.info?.companyName ? option.contractor.info.companyName : ''}
                         id={'tags-standard'}
-                        onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue.contractor._id, () => setContractorValue(newValue))}
+                        onChange={(ev: any, newValue: any) => handleSelectChange('contractorId', newValue?.contractor?._id, () => setContractorValue(newValue))}
                         options={vendorsList && vendorsList.length !== 0 ? vendorsList.sort((a: any, b: any) => a.contractor.info.companyName > b.contractor.info.companyName ? 1 : b.contractor.info.companyName > a.contractor.info.companyName ? -1 : 0) : []}
                         renderInput={params =>
                           <>
@@ -932,6 +949,10 @@ function BCJobModal({
                         <TextField
                           {...params}
                           variant={'standard'}
+                          inputRef={jobTypesInput}
+                          // required={!jobTypeValue.length}
+                          // error= {!!FormikErrors.jobTypes}
+                          // helperText={FormikErrors.jobTypes}
                         />
                       </>
                     }

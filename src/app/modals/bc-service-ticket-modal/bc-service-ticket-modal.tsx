@@ -582,6 +582,12 @@ function BCServiceTicketModal({
                           <strong>
                             {'Job Type '}
                           </strong>
+                          <Typography
+                            color={'error'}
+                            display={'inline'}
+                            style={{ 'lineHeight': '1' }}>
+                            {'*'}
+                          </Typography>
                         </InputLabel>
                         <TextField
                           {...params}
