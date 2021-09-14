@@ -5,7 +5,7 @@ import Menu, {MenuProps} from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import ArrowDropDown from "@material-ui/icons/ArrowDropDown";
 import {CSButtonSmall} from "../../helpers/custom";
 
 const STATUS_ITEMS = {
@@ -104,7 +104,7 @@ export default function CustomizedMenus({status, handleClick}:ButtonProps) {
         >
         <div>
           <span style={{textTransform: 'capitalize'}}>{textStatus}</span>
-          <ExpandMore style={{position: 'absolute', right: 3}}/>
+          <ArrowDropDown style={{position: 'absolute', right: 3}}/>
         </div>
       </CSButtonSmall>
       <StyledMenu
