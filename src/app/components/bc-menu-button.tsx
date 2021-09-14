@@ -26,10 +26,12 @@ const bgColors: {[index: string]:string}={PAID: '#81c784', UNPAID: '#F50057', PA
 const StyledMenu = withStyles({
   list: {
     padding: 0,
-    //borderRadius: '5px',
+    minWidth: '134px',
   },
   paper: {
-    border: '1px solid #d3d4d5',
+    border: '0 solid #d3d4d5',
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
 })((props: MenuProps) => (
   <Menu
@@ -38,17 +40,18 @@ const StyledMenu = withStyles({
     anchorOrigin={{
     vertical: 'bottom',
     horizontal: 'center',
-}}
-transformOrigin={{
-  vertical: 'top',
-    horizontal: 'center',
-}}
-{...props}
-/>
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
 ));
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
+    height: 32,
     '& span': {
       fontSize: 13,
     },
@@ -99,7 +102,12 @@ export default function CustomizedMenus({status, handleClick}:ButtonProps) {
     <div>
       <CSButtonSmall
         variant="contained"
-        style={{ backgroundColor: bgColors[status], color: '#fff' }}
+        style={{
+          backgroundColor: bgColors[status],
+          color: '#fff',
+          borderBottomLeftRadius: anchorEl ? 0 : 4,
+          borderBottomRightRadius: anchorEl ? 0 : 4,
+        }}
         onClick={_handleButtonClick}
         >
         <div>
