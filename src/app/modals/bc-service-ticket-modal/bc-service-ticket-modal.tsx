@@ -34,6 +34,7 @@ import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-fo
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { modalTypes } from '../../../constants';
+import {refreshJobs} from "../../../actions/job/job.action";
 
 
 function BCServiceTicketModal({
@@ -229,6 +230,7 @@ function BCServiceTicketModal({
               return;
             }
             dispatch(refreshServiceTickets(true));
+            dispatch(refreshJobs(true));
             dispatch(closeModalAction());
             setTimeout(() => {
               dispatch(setModalDataAction({

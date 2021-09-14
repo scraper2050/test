@@ -529,7 +529,7 @@ function BCJobModal({
               dispatch(setOpenServiceTicketLoading(true));
               getOpenServiceTickets({ ...openServiceTicketFilter,
                 'pageNo': 1,
-                'pageSize': 6 }).then((response: any) => {
+                'pageSize': 4 }).then((response: any) => {
                 dispatch(setOpenServiceTicketLoading(false));
                 dispatch(setOpenServiceTicket(response));
                 dispatch(refreshServiceTickets(true));
@@ -834,6 +834,7 @@ function BCJobModal({
                           </InputLabel>
                           <TextField
                             {...params}
+                            required
                             variant={'standard'}
                           />
                         </>
