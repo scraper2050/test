@@ -34,8 +34,8 @@ function BCMapFilterModal({
   const loading = useSelector(({ customers }: any) => customers.loading);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const loadingTypes = useSelector((state: any) => state.jobTypes.isLoading);
-  const ticketFilterObject = useSelector(({serviceTicket}: any) => serviceTicket?.filterTicketState); 
-  const selectedCustomers =  useSelector(({serviceTicket}: any) => serviceTicket?.selectedCustomers); 
+  const ticketFilterObject = useSelector(({serviceTicket}: any) => serviceTicket?.filterTicketState);
+  const selectedCustomers =  useSelector(({serviceTicket}: any) => serviceTicket?.selectedCustomers);
   const [customerOptions, setCustomerOptions] = useState([]);
 
   useEffect(() => {
@@ -54,12 +54,12 @@ function BCMapFilterModal({
   }
 
   const onSubmit = (values: any, { setSubmitting }: any) => {
-    const { dueDate } = ticketFilterObject; 
+    const { dueDate } = ticketFilterObject;
     setSubmitting(true);
     // resetDate();
     const rawData = {
       pageNo: 1,
-      pageSize: 6,
+      pageSize: 4,
       jobTypeTitle: values.jobType,
       dueDate: dueDate || '',
       customerNames: values.customer,

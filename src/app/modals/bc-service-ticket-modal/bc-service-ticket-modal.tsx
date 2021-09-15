@@ -34,6 +34,7 @@ import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-fo
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { modalTypes } from '../../../constants';
+import {refreshJobs} from "../../../actions/job/job.action";
 
 
 function BCServiceTicketModal({
@@ -130,13 +131,8 @@ function BCServiceTicketModal({
 
   const handleJobTypeChange = (event: any, setFieldValue: any, newValue: any) => {
     let jobType = '';
-    const fieldName = newValue.length > 1 ? 'tasks' : 'jobTypeId';
-    if (newValue.length > 1) {
-      jobType = newValue.map((val:any) => ({ 'jobTypeId': val._id }));
-    } else {
-      jobType = newValue[0] || '';
-    }
-    setFieldValue(fieldName, jobType);
+    jobType = newValue.map((val:any) => ({ 'jobTypeId': val._id }));
+    setFieldValue('jobTypes', jobType);
     setJobTypeValue(newValue);
   };
 
@@ -201,9 +197,7 @@ function BCServiceTicketModal({
       'source': 'blueclerk',
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
-      'jobTypeId': ticket.jobType ? ticket.jobType : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : '',
-      'tasks': mapTask(ticket.tasks) || [],
       'note': ticket.note,
       'dueDate': ticket.dueDate,
       'updateFlag': ticket.updateFlag,
@@ -212,15 +206,7 @@ function BCServiceTicketModal({
       'image': ticket.image !== undefined ? ticket.image : ''
     },
     'onSubmit': (values, { setSubmitting }) => {
-      if (jobTypeValue.length > 1) {
-        values.jobTypes = JSON.stringify(values.tasks);
-      } else {
-        if (ticket.updateFlag)
-          values.jobTypes = JSON.stringify(values.tasks);
-        else
-          values.jobTypes = JSON.stringify([{ 'jobTypeId': values.jobTypeId._id }]);
-      }
-      delete values.jobTypeId;
+      values.jobTypes = JSON.stringify(values.jobTypes);
 
       const tempData = {
         ...ticket,
@@ -244,6 +230,7 @@ function BCServiceTicketModal({
               return;
             }
             dispatch(refreshServiceTickets(true));
+            dispatch(refreshJobs(true));
             dispatch(closeModalAction());
             setTimeout(() => {
               dispatch(setModalDataAction({
@@ -582,6 +569,12 @@ function BCServiceTicketModal({
                           <strong>
                             {'Job Type '}
                           </strong>
+                          <Typography
+                            color={'error'}
+                            display={'inline'}
+                            style={{ 'lineHeight': '1' }}>
+                            {'*'}
+                          </Typography>
                         </InputLabel>
                         <TextField
                           {...params}

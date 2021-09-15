@@ -210,7 +210,7 @@ function MakerPin({ ...props }) {
   }
 
 
-  console.log('ticket', props.ticket, 'openticket', props.openTicketObj, props.openTicketObj._id, props.ticket._id);
+  //console.log('ticket', props.ticket, 'openticket', props.openTicketObj, props.openTicketObj._id, props.ticket._id);
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
       <>

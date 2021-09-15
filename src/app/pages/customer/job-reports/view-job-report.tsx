@@ -15,7 +15,7 @@ function ViewJobReportsPage() {
     jobReport);
   const { 'loading': jobTypesLoading, data } = useSelector(({ jobTypes }: any) => jobTypes);
 
-  console.log("log-jobReportObj", jobReportObj);
+  // console.log("log-jobReportObj", jobReportObj);
 
   useEffect(() => {
     dispatch(getAllJobTypesAPI());
