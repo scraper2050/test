@@ -322,7 +322,7 @@ function BCJobModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
-        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0]);
+        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId._id)[0]);
       }
     }
   }, [contacts]);
