@@ -1222,7 +1222,7 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={detail}
+                    disabled={true}
                     getOptionLabel={option => option.name ? option.name : ''}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleSelectChange('customerContactId', newValue?._id, setContactValue(newValue))}
