@@ -20,6 +20,7 @@ import {error, info} from "../../../actions/snackbar/snackbar.action";
 import {getInvoiceDetail} from "../../../api/invoicing.api";
 import BCCircularLoader from "../../components/bc-circular-loader/bc-circular-loader";
 import {modalTypes} from "../../../constants";
+import CSInvoiceStatus from "../../components/bc-invoice-status";
 const TABLE_PADDING = 75;
 
 function BcPaymentHistoryModal({
@@ -92,7 +93,7 @@ function BcPaymentHistoryModal({
   return (
     <DataContainer >
       {loading ?
-        <BCCircularLoader heightValue={'20vh'}/> :
+        <BCCircularLoader heightValue={'60vh'}/> :
         <>
           <Grid container className={classes.modalPreview} justify={'space-around'}>
             <Grid item>
@@ -173,18 +174,25 @@ function BcPaymentHistoryModal({
           <DialogActions classes={{
             'root': classes.dialogActions
           }}>
-            <Button
-              aria-label={'create-job'}
-              classes={{
-                root: classes.submitButton,
-                disabled: classes.submitButtonDisabled
-              }}
-              onClick={recordPayment}
-              color="primary"
-              type={'submit'}
-              variant={'contained'}>
-              Record Payment
-            </Button>
+
+            {invoice?.status === 'PAID' ?
+              <CSInvoiceStatus status={invoice.status} />
+
+              :
+
+              <Button
+                aria-label={'create-job'}
+                classes={{
+                  root: classes.submitButton,
+                  disabled: classes.submitButtonDisabled
+                }}
+                onClick={recordPayment}
+                color="primary"
+                type={'submit'}
+                variant={'contained'}>
+                Record Payment
+              </Button>
+            }
 
           </DialogActions>
         </>
