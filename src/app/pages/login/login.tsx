@@ -29,13 +29,14 @@ import {
 } from 'actions/bc-modal/bc-modal.action';
 import BCModal from '../../modals/bc-modal';
 import BCSnackbar from '../../components/bc-snackbar/bc-snackbar';
-import { error } from 'actions/snackbar/snackbar.action';
+import {error, info} from 'actions/snackbar/snackbar.action';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
 
 interface Props {
   loginAction: (loginInfo: Auth) => Action<any>;
+  loginActionClear: (message: string) => Action<any>;
   setAuthAction: (authInfo: AuthInfo) => Action<any>;
   isLoading: boolean;
   token: string;
@@ -50,6 +51,7 @@ interface LocationState {
 
 function LoginPage({
   loginAction,
+  loginActionClear,
   setAuthAction,
   isLoading,
   token,
@@ -141,6 +143,10 @@ function LoginPage({
 
   useEffect(() => {
     loginFromStorage && setAuthAction(storageAuth);
+    return () => {
+      dispatch(info(''));
+      loginActionClear('');
+    }
   }, []);
 
   useEffect(() => {
@@ -513,6 +519,7 @@ const mapStateToProps = (state: {
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   'loginAction': (loginInfo: Auth) => dispatch(loginActions.fetch(loginInfo)),
+  'loginActionClear': (message: string) => dispatch(loginActions.fault(message)),
   'setAuthAction': (authInfo: AuthInfo) => dispatch(setAuthAction(authInfo))
 });
 
