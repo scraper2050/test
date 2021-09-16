@@ -37,6 +37,7 @@ import BCInvoiceEditModal from './bc-invoice-item-modal/bc-invoice-item-modal';
 import BCSalesTaxModal from './bc-sales-tax-modal/bc-sales-tax-modal';
 import BcPaymentTermsModal from './bc-payment-terms-modal/bc-payment-terms-modal';
 import BcPaymentRecordModal from "./bc-payment-record-modal/bc-payment-record-modal";
+import BcPaymentHistoryModal from "./bc-payment-record-modal/bc-payment-history-modal";
 import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
 import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update-payment-terms-modal";
 import BCQbDisconnectModal from "./bc-integration-modal/bc-disconnect-modal";
@@ -376,6 +377,17 @@ function BCModal() {
         });
         setComponent(<BcPaymentRecordModal
           invoice={data.invoice}
+        />);
+        break;
+      case modalTypes.PAYMENT_HISTORY_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BcPaymentHistoryModal
+          invoiceID={data.invoiceID}
         />);
         break;
       case modalTypes.UPDATE_PAYMENT_TERMS_MODAL:

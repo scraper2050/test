@@ -14,8 +14,7 @@ import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers/custom";
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../../constants";
 import BCMenuButton from "../../../../components/bc-menu-button";
@@ -194,13 +193,15 @@ function InvoicingListListing({ classes, theme }: any) {
       case 0:
         recordPayment(row);
         break;
+      case 1:
+        historyPayment(row);
+        break;
       default:
         dispatch(info('This feature is still under development!'));
     }
   }
 
   const recordPayment = (row: any) => {
-
     dispatch(setModalDataAction({
       'data': {
         invoice: row,
@@ -212,7 +213,20 @@ function InvoicingListListing({ classes, theme }: any) {
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
+  }
 
+  const historyPayment = (row: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        invoiceID: row._id,
+        modalTitle: 'Payment History',
+        removeFooter: false,
+      },
+      'type': modalTypes.PAYMENT_HISTORY_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
