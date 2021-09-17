@@ -444,6 +444,7 @@ function BCJobModal({
       /*setSubmitting(false);
       return;*/
 
+
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
         return callEditJobAPI(tempData);
