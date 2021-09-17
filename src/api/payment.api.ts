@@ -5,10 +5,24 @@ import {
 } from 'actions/invoicing/invoicing.action';
 
 export const recordPayment: any = (params = {}) => {
-  console.log({params});
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
       const response: any = await request('/recordPayment', 'POST', params, false)
+        .then((res: any) => {
+          dispatch(getInvoicingList());
+          return resolve(res.data);
+        })
+        .catch(err => {
+          return reject(err);
+        });
+    });
+  }
+};
+
+export const updatePayment: any = (params = {}) => {
+  return (dispatch: any) => {
+    return new Promise(async (resolve, reject) => {
+      const response: any = await request('/updatePayment', 'PUT', params, false)
         .then((res: any) => {
           dispatch(getInvoicingList());
           return resolve(res.data);

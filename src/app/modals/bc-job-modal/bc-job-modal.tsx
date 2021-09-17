@@ -93,7 +93,6 @@ function BCJobModal({
   const dispatch = useDispatch();
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
-  // Const employeesForJob = useSelector(({ employeesForJob }: any) => employeesForJob.data);
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = useMemo(() => [...data], [data]);
   const vendorsList = useSelector(({ vendors }: any) => vendors.data.filter((vendor: any) => vendor.status <= 1));
@@ -149,13 +148,8 @@ function BCJobModal({
   };
 
   const handleJobTypeChange = (newValue:any) => {
-    if (newValue.length > 1) {
-      const ids = newValue.map((jobType:any) => ({ 'jobTypeId': jobType?._id }));
-      setFieldValue('jobTypes', ids);
-    } else {
-      setFieldValue('jobTypeId', newValue || []);
-    }
-
+    const ids = newValue.map((jobType:any) => ({ 'jobTypeId': jobType?._id }));
+    setFieldValue('jobTypes', ids);
     setJobTypeValue(newValue);
   };
 
@@ -167,7 +161,6 @@ function BCJobModal({
     if (fieldName === 'technicianId') {
       setFieldValue('contractorId', '');
     }
-
 
     if (setState !== undefined) {
       setState();
@@ -274,17 +267,19 @@ function BCJobModal({
   useEffect(() => {
     if (jobTypes.length !== 0) {
       let tempJobValue = [];
-
+      let ids = [];
       if (job._id) {
         tempJobValue = job.tasks && job.tasks.length > 0
           ? getJobData(job.tasks.map((job:any) => job.jobType._id), jobTypes)
           : getJobData([job.type?._id], jobTypes);
+        ids = job.tasks.map((job:any) => ({ jobTypeId: job.jobType._id }));
       } else {
         tempJobValue = ticket.tasks && ticket.tasks.length > 0
           ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
+        ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
       }
-
+      setFieldValue('jobTypes', ids);
       setJobTypeValue(tempJobValue);
     }
   }, [jobTypes]);
@@ -373,7 +368,6 @@ function BCJobModal({
   const form = useFormik({
     'initialValues': {
       'customerId': job.customer?._id,
-      //'description': job.ticket.note ? job.ticket.note : '',
       'description': job.description ? job.description : '',
       'employeeType': !job.employeeType
         ? 0
@@ -381,8 +375,7 @@ function BCJobModal({
       'equipmentId': job.equipment && job.equipment._id
         ? job.equipment._id
         : '',
-      'jobTypeId': job.ticket.jobType ? job.ticket.jobType : '',
-      'jobTypes': job.ticket.tasks ? job.ticket.tasks : [],
+      'jobTypes': [],
       'dueDate': job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
       'scheduleDate': job.scheduleDate,
       'scheduledStartTime': job?.scheduledStartTime ? formatISOToDateString(job.scheduledStartTime) : null,
@@ -392,19 +385,15 @@ function BCJobModal({
       'ticketId': job.ticket._id,
       'jobLocationId': job.jobLocation ? job.jobLocation._id : job.ticket.jobLocation ? job.ticket.jobLocation : '',
       'jobSiteId': job.jobSite ? job.jobSite._id : job.ticket.jobSite ? job.ticket.jobSite : '',
-      'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
-      'customerPO': ticket.customerPO !== undefined ? ticket.customerPO : '',
+      //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
+      'customerContactId': job.customerContactId ? job.customerContactId._id : ticket.customerContactId || '',
+      'customerPO': job.customerPO || ticket.customerPO,
       'image': ticket.image !== undefined ? ticket.image : ''
 
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
-
-      if (jobTypeValue.length > 1) {
-        delete values.jobTypeId;
-      } else {
-        values.jobTypes = [];
-      }
+      //console.log({values, job})
 
       const customerId = customer?._id;
       const jobFromMapFilter = job.jobFromMap;
@@ -413,7 +402,7 @@ function BCJobModal({
       const { note, _id } = ticket;
 
       const tempJobValues = { ...values };
-
+      //console.log({tempJobValues});
       delete tempJobValues.customerContactId;
       delete tempJobValues.customerPO;
       delete tempJobValues.image;
@@ -451,6 +440,9 @@ function BCJobModal({
         tempData.technicianId = values.technicianId;
         tempData.employeeType = 0;
       }
+      //console.log({tempData});
+      /*setSubmitting(false);
+      return;*/
 
 
       const editJob = (tempData: any) => {
@@ -496,30 +488,17 @@ function BCJobModal({
           delete requestObj.technician;
           delete requestObj.ticket;
           delete requestObj.type;
-        } else {
-          if (requestObj.jobTypeId) {
-            requestObj.jobTypes = requestObj.jobTypeId.map((type: any) => ({jobTypeId: type._id}));
-            delete requestObj.jobTypeId;
-          } else if (requestObj.jobTypes){
-            requestObj.jobTypes = requestObj.jobTypes.map((type: any) => {
-              if (type.jobType?._id) return ({jobTypeId: type.jobType._id});
-              else return type;
-            })
-          } else {
-            requestObj.jobTypes = [];
-          }
         }
 
         request(requestObj)
-
           .then(async (response: any) => {
             if (response.status === 0) {
               dispatch(SnackBarError(response.message));
               return;
             }
-            if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
+            /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
               await callEditTicketAPI(formatedTicketRequest);
-            }
+            }*/
             await dispatch(refreshServiceTickets(true));
             await dispatch(refreshJobs(true));
             dispatch(closeModalAction());
@@ -569,8 +548,7 @@ function BCJobModal({
     'validate':  (values: any) => {
       const errors: any = {};
 
-      if (values.jobTypeId && values.jobTypeId.length === 0) {
-      // if (!jobTypeValue.length) {
+      if (values.jobTypes.length === 0) {
         errors.jobTypes = 'Select at least one (1) job';
         if (jobTypesInput.current !== null) {
           jobTypesInput.current.setCustomValidity("Select at least one (1) job");
@@ -971,35 +949,12 @@ function BCJobModal({
                 </div>
               </FormGroup>
 
-
-              {/* <BCSelectOutlined
-                  handleChange={formikChange}
-                  items={{
-                    'data': [
-                      ...jobTypes.map((o: any) => {
-                        return {
-                          '_id': o._id,
-                          'title': o.title
-                        };
-                      })
-                    ],
-                    'displayKey': 'title',
-                    'valueKey': '_id'
-                  }}
-                  label={'Select Job Type'}
-                  name={'jobTypeId'}
-                  required
-                  disabled={job.ticket.jobType ? true : false}
-                  value={FormikValues.jobTypeId}
-                /> */}
-
-
               <FormGroup className={`required ${classes.formGroup}`}>
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
                     defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
-                    disabled={ticket.jobLocation || detail}
+                    disabled={ticket.jobLocation}
                     getOptionLabel={option => option.name ? option.name : ''}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
@@ -1222,7 +1177,7 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={true}
+                    disabled={ticket.customerContactId}
                     getOptionLabel={option => option.name ? option.name : ''}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleSelectChange('customerContactId', newValue?._id, setContactValue(newValue))}
@@ -1257,7 +1212,7 @@ function BCJobModal({
 
                   <BCInput
                     className={'serviceTicketLabel'}
-                    disabled={detail}
+                    disabled={ticket.customerPO}
                     handleChange={formikChange}
                     name={'customerPO'}
                     placeholder={'Customer PO / Sales Order #'}
