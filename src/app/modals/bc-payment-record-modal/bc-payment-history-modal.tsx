@@ -83,7 +83,16 @@ function BcPaymentHistoryModal({
   }
 
   const editPayment = (payment: any) => {
-    dispatch(info('This feature is under development'));
+    dispatch(setModalDataAction({
+      'data': {
+        invoice,
+        payment,
+        fromHistory: true,
+        modalTitle: 'Record a Payment',
+        removeFooter: false,
+      },
+      'type': modalTypes.PAYMENT_RECORD_MODAL
+    }));
   }
 
   const {customer, dueDate} = invoice;
@@ -148,7 +157,7 @@ function BcPaymentHistoryModal({
               </TableHead>
               <TableBody>
                 {payments.map((payment: any) => {
-                  const paymentDate = moment(payment.paitAt);
+                  const paymentDate = moment(payment.paidAt);
                   return <TableRow
                     key={payment._id}
                     // sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

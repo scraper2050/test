@@ -377,6 +377,8 @@ function BCModal() {
         });
         setComponent(<BcPaymentRecordModal
           invoice={data.invoice}
+          payment={data.payment}
+          fromHistory={!!data.fromHistory}
         />);
         break;
       case modalTypes.PAYMENT_HISTORY_MODAL:

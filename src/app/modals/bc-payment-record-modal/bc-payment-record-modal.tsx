@@ -2,7 +2,7 @@
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCSent from '../../components/bc-sent';
-import { recordPayment } from '../../../api/payment.api';
+import { recordPayment, updatePayment } from '../../../api/payment.api';
 import styles from './bc-payment-record-modal.styles';
 import { useFormik } from 'formik';
 import AttachMoney from '@material-ui/icons/AttachMoney';
@@ -22,10 +22,12 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
+import {modalTypes} from "../../../constants";
 
 interface ApiProps {
   customerId: string,
-  invoiceId:string,
+  invoiceId?:string,
+  paymentId?:string,
   amount: number,
   paidAt: Date,
   referenceNumber?: string,
@@ -36,6 +38,8 @@ interface ApiProps {
 function BcPaymentRecordModal({
   classes,
   invoice,
+  payment,
+  fromHistory,
 }: any): JSX.Element {
   const [sent, setSent] = useState(false);
   const dispatch = useDispatch();
@@ -78,23 +82,34 @@ function BcPaymentRecordModal({
     })
   }
 
+  const findPaymentTypeIndex = (paymentType: string) => {
+    if (paymentType === undefined) return -1;
+    const i = paymentTypes.findIndex((type) => type.name === paymentType);
+    return i;
+  }
+
   const form = useFormik({
     initialValues: {
-      paymentDate: new Date(),
-      amount: undefined,
-      paymentMethod: -1,
-      referenceNumber: '',
-      notes: ''
+      paymentDate: payment ? new Date(payment.paidAt) : new Date(),
+      amount: payment?.amountPaid,
+      paymentMethod: findPaymentTypeIndex(payment?.paymentType),
+      referenceNumber: payment?.referenceNumber || '',
+      notes: payment?.note || ''
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
 
       const params: ApiProps = {
         customerId: invoice.customer._id,
-        invoiceId:invoice._id,
         amount: FormikValues.amount ?? 0,
         paidAt: FormikValues.paymentDate,
         note: FormikValues.notes,
+      }
+
+      if (payment) {
+        params.paymentId = payment._id;
+      } else {
+        params.invoiceId= invoice._id;
       }
 
       if (FormikValues.referenceNumber)
@@ -103,16 +118,16 @@ function BcPaymentRecordModal({
       if (FormikValues.paymentMethod >= 0)
         params.paymentType = paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name;
 
+      let request;
 
-      dispatch(recordPayment(params)).then((response: any) => {
+      if (payment) {
+        request = updatePayment;
+      } else {
+        request = recordPayment;
+      }
+
+      dispatch(request(params)).then((response: any) => {
         if (response.status === 1) {
-/*          console.log({invoiceList})
-          const currentInvoiceIndex = invoiceList.data.findIndex((item: any) => item._id === invoice._id);
-          invoiceList.data[currentInvoiceIndex].balanceDue = response.invoice.balanceDue;
-          invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
-          invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
-          dispatch(setInvoicingList(invoiceList.data));*/
-          //setTimeout(() => closeModal(), 500);
           setSent(true);
           setSubmitting(false);
           //closeModal()
@@ -140,13 +155,24 @@ function BcPaymentRecordModal({
   } = form;
 
   const closeModal = () => {
-    dispatch(closeModalAction());
-    setTimeout(() => {
+    if (fromHistory) {
       dispatch(setModalDataAction({
-        'data': {},
-        'type': ''
+        'data': {
+          invoiceID: invoice._id,
+          modalTitle: 'Payment History',
+          removeFooter: false,
+        },
+        'type': modalTypes.PAYMENT_HISTORY_MODAL
       }));
-    }, 200);
+    } else {
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    }
   };
 
   const {customer, dueDate} = invoice;
@@ -156,7 +182,7 @@ function BcPaymentRecordModal({
   return (
     <DataContainer >
       {sent ?
-        <BCSent title={'The payment was recorded.'}/>
+        <BCSent title={payment ? 'The payment was updated.' : 'The payment was recorded.'}/>
         :
         <Grid container className={classes.modalPreview} justify={'space-around'}>
           <Grid item>
