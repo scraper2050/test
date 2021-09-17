@@ -1,6 +1,7 @@
 // Import * as Yup from 'yup';
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
+import BCSent from '../../components/bc-sent';
 import { recordPayment } from '../../../api/payment.api';
 import styles from './bc-payment-record-modal.styles';
 import { useFormik } from 'formik';
@@ -15,7 +16,7 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -35,8 +36,8 @@ interface ApiProps {
 function BcPaymentRecordModal({
   classes,
   invoice,
-  detail = false
 }: any): JSX.Element {
+  const [sent, setSent] = useState(false);
   const dispatch = useDispatch();
 
   const paymentTypes = [
@@ -61,12 +62,6 @@ function BcPaymentRecordModal({
       'name': 'Cash'
     }
   ];
-
-
-  useEffect(() => {
-
-  }, []);
-
 
   const isValidate = () => {
     const amount = FormikValues.amount ?? 0;
@@ -117,7 +112,9 @@ function BcPaymentRecordModal({
           invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
           invoiceList.data[currentInvoiceIndex].status = response.invoice.status;
           dispatch(setInvoicingList(invoiceList.data));*/
-          setTimeout(() => closeModal(), 500);
+          //setTimeout(() => closeModal(), 500);
+          setSent(true);
+          setSubmitting(false);
           //closeModal()
         } else {
           console.log(response.message);
@@ -158,166 +155,179 @@ function BcPaymentRecordModal({
 
   return (
     <DataContainer >
-      <Grid container className={classes.modalPreview} justify={'space-around'}>
-        <Grid item>
-          <Typography variant={'caption'} className={classes.previewCaption}>BILL TO</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{customer.profile.displayName}</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant={'caption'} className={classes.previewCaption}>BALANCE DUE</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
-        </Grid>
-        <Grid item>
-          <Grid container direction={'row'} spacing={2}>
-            <Grid item>
-              <Grid container direction={'column'}>
-                <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>INVOICE #:</Typography>
-                <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>CUSTOMER P.O.:</Typography>
-                <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>DUE DATE:</Typography>
+      {sent ?
+        <BCSent title={'The payment was recorded.'}/>
+        :
+        <Grid container className={classes.modalPreview} justify={'space-around'}>
+          <Grid item>
+            <Typography variant={'caption'} className={classes.previewCaption}>BILL TO</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>{customer.profile.displayName}</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant={'caption'} className={classes.previewCaption}>BALANCE DUE</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
+          </Grid>
+          <Grid item>
+            <Grid container direction={'row'} spacing={2}>
+              <Grid item>
+                <Grid container direction={'column'}>
+                  <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>INVOICE
+                    #:</Typography>
+                  <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>CUSTOMER
+                    P.O.:</Typography>
+                  <Typography variant={'caption'} align={'right'} className={classes.previewCaption2}>DUE
+                    DATE:</Typography>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid item>
-              <Grid container direction={'column'}>
-                <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{invoice.invoiceId}</Typography>
-                <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{customerPO}</Typography>
-                <Typography variant={'caption'} align={'right'} className={classes.previewTextSm}>{formatedDueDate}</Typography>
+              <Grid item>
+                <Grid container direction={'column'}>
+                  <Typography variant={'caption'} align={'right'}
+                              className={classes.previewTextSm}>{invoice.invoiceId}</Typography>
+                  <Typography variant={'caption'} align={'right'}
+                              className={classes.previewTextSm}>{customerPO}</Typography>
+                  <Typography variant={'caption'} align={'right'}
+                              className={classes.previewTextSm}>{formatedDueDate}</Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
+
         </Grid>
+      }
 
-      </Grid>
+      <form onSubmit={FormikSubmit}>
+        {!sent &&
+          <>
+            <DialogContent classes={{'root': classes.dialogContent}}>
+            <Grid container direction={'column'} spacing={1}>
 
-      <form onSubmit={FormikSubmit} >
-        <DialogContent classes={{ 'root': classes.dialogContent }}>
-          <Grid container direction={'column'} spacing ={1}>
-
-            <Grid item xs={12}>
-              <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                  <Typography variant={'button'}>PAYMENT DATE</Typography>
+              <Grid item xs={12}>
+                <Grid container direction={'row'} spacing={1}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                    <Typography variant={'button'}>PAYMENT DATE</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <div style={{width: '70%'}}>
+                      <BCDateTimePicker
+                        handleChange={(e: any) => setFieldValue('paymentDate', e)}
+                        name={'paymentDate'}
+                        value={FormikValues.paymentDate}
+                      />
+                    </div>
+                  </Grid>
                 </Grid>
-                <Grid item xs={9}>
-                  <div style={{width: '70%'}}>
-                    <BCDateTimePicker
-                      handleChange={(e: any) => setFieldValue('paymentDate', e)}
-                      name={'paymentDate'}
-                      value={FormikValues.paymentDate}
+              </Grid>
+
+              <Grid item xs={12}>
+                <Grid container direction={'row'} spacing={1}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                    <Typography variant={'button'}>AMOUNT</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <TextField
+                      autoFocus
+                      autoComplete={'off'}
+                      className={classes.fullWidth}
+                      id={'outlined-textarea'}
+                      label={''}
+                      name={'amount'}
+                      onChange={(e: any) => formikChange(e)}
+                      type={'number'}
+                      value={FormikValues.amount}
+                      variant={'outlined'}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AttachMoney style={{color: '#BDBDBD'}}/>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
-                  </div>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
 
-            <Grid item xs={12}>
-              <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                  <Typography variant={'button'}>AMOUNT</Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <TextField
-                    autoFocus
-                    autoComplete={'off'}
-                    className={classes.fullWidth}
-                    id={'outlined-textarea'}
-                    label={''}
-                    name={'amount'}
-                    onChange={(e: any) => formikChange(e)}
-                    type={'number'}
-                    value={FormikValues.amount}
-                    variant={'outlined'}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AttachMoney style={{ color: '#BDBDBD' }}/>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                  <Typography variant={'button'}>PAYMENT METHOD</Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <TextField
-                    autoComplete={'off'}
-                    className={classes.fullWidth}
-                    id={'outlined-textarea'}
-                    name={'paymentMethod'}
-                    onChange={(e: any) => formikChange(e)}
-                    select
-                    value={FormikValues.paymentMethod}
-                    variant={'outlined'}
-                    placeholder='Select payment method'
-                  >
-                    <MenuItem value='-1' disabled>
-                      Select payment method
-                    </MenuItem>
-                    {paymentTypes.map((option) => (
-                      <MenuItem key={option._id} value={option._id}>
-                        {option.name}
+              <Grid item xs={12}>
+                <Grid container direction={'row'} spacing={1}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                    <Typography variant={'button'}>PAYMENT METHOD</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <TextField
+                      autoComplete={'off'}
+                      className={classes.fullWidth}
+                      id={'outlined-textarea'}
+                      name={'paymentMethod'}
+                      onChange={(e: any) => formikChange(e)}
+                      select
+                      value={FormikValues.paymentMethod}
+                      variant={'outlined'}
+                      placeholder='Select payment method'
+                    >
+                      <MenuItem value='-1' disabled>
+                        Select payment method
                       </MenuItem>
-                    ))}
-                  </TextField>
+                      {paymentTypes.map((option) => (
+                        <MenuItem key={option._id} value={option._id}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Grid container direction={'row'} spacing={1}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                    <Typography variant={'button'}>REFERENCE NO.</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <TextField
+                      autoComplete={'off'}
+                      className={classes.fullWidth}
+                      id={'outlined-textarea'}
+                      label={''}
+                      name={'referenceNumber'}
+                      onChange={formikChange}
+                      type={'text'}
+                      value={FormikValues.referenceNumber}
+                      variant={'outlined'}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Grid container direction={'row'} spacing={1}>
+                  <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={3}>
+                    <Typography variant={'button'} style={{marginTop: '10px'}}>NOTES</Typography>
+                  </Grid>
+                  <Grid item xs={9}>
+                    <TextField
+                      autoComplete={'off'}
+                      className={classes.fullWidth}
+                      id={'outlined-textarea'}
+                      label={''}
+                      name={'notes'}
+                      multiline={true}
+                      onChange={(e: any) => formikChange(e)}
+                      type={'text'}
+                      value={FormikValues.notes}
+                      variant={'outlined'}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-
-            <Grid item xs={12}>
-              <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                  <Typography variant={'button'}>REFERENCE NO.</Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <TextField
-                    autoComplete={'off'}
-                    className={classes.fullWidth}
-                    id={'outlined-textarea'}
-                    label={''}
-                    name={'referenceNumber'}
-                    onChange={formikChange}
-                    type={'text'}
-                    value={FormikValues.referenceNumber}
-                    variant={'outlined'}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={3}>
-                  <Typography variant={'button'} style={{marginTop: '10px'}}>NOTES</Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <TextField
-                    autoComplete={'off'}
-                    className={classes.fullWidth}
-                    id={'outlined-textarea'}
-                    label={''}
-                    name={'notes'}
-                    multiline={true}
-                    onChange={(e: any) => formikChange(e)}
-                    type={'text'}
-                    value={FormikValues.notes}
-                    variant={'outlined'}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </DialogContent>
-
-        <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
+          </DialogContent>
+            <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
+          </>
+        }
 
         <Grid
           alignItems={'center'}
@@ -340,6 +350,7 @@ function BcPaymentRecordModal({
                 Close
               </Button>
 
+              {!sent &&
               <Button
                 disabled={!isValidate() || isSubmitting}
                 aria-label={'create-job'}
@@ -350,8 +361,9 @@ function BcPaymentRecordModal({
                 color="primary"
                 type={'submit'}
                 variant={'contained'}>
-                  Submit
+                Submit
               </Button>
+              }
 
             </DialogActions>
           </Grid>

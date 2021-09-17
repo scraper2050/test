@@ -322,7 +322,7 @@ function BCJobModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
-        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0]);
+        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId?._id || ticket.customerContactId)[0]);
       }
     }
   }, [contacts]);
@@ -1222,7 +1222,7 @@ function BCJobModal({
                 <div className={'search_form_wrapper'}>
                   <Autocomplete
                     className={detail ? 'detail-only' : ''}
-                    disabled={detail}
+                    disabled={true}
                     getOptionLabel={option => option.name ? option.name : ''}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleSelectChange('customerContactId', newValue?._id, setContactValue(newValue))}

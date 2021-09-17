@@ -3,7 +3,7 @@ import * as CONSTANTS from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
-    padding: '15px  24px 15px 0 !important',
+    padding: '36px  40px 36px 0 !important',
     backgroundColor: 'auto'
   },
   dialogContent: {
@@ -47,7 +47,7 @@ export default (theme: Theme): any => ({
       backgroundColor: `${CONSTANTS.TABLE_ACTION_BUTTON_HOVER} !important`,
       borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
     },
-    width: '110px !important',
+    minWidth: '110px !important',
     height: '34px',
     fontSize: '16px !important',
     padding: '0 12px',
