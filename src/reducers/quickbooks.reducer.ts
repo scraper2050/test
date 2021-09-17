@@ -3,7 +3,9 @@ import {Reducer} from "redux";
 import {getQBAuthStateFromLocalStorage, setQBAuthStateToLocalStorage} from "../utils/local-storage.service";
 
 export interface QuickbooksState {
-  connectionState: boolean;
+  qbAuthorized: boolean;
+  qbCompanyEmail?: string;
+  qbCompanyName?: string;
 }
 
 const initialQBState = {

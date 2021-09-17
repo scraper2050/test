@@ -139,9 +139,9 @@ function SyncPage() {
     try {
       const user = JSON.parse(localStorage.getItem('user') || "");
       const companyProfile = await getCompanyProfile(user?.company as string);
-      const { qbSync, qbCompanyEmail = '', qbCompanyName = '' } = companyProfile.company;
+      const { qbSync, qbCompanyEmail = '', qbCompanyName = '', qbAuthorized = false } = companyProfile.company;
       if (qbCompanyEmail === null && qbCompanyName === null) {
-        dispatch(setQuickbooksConnection(false));
+        dispatch(setQuickbooksConnection({qbAuthorized}));
       }
       const syncStatus: any = {};
       Object.entries(isSynced).forEach(([key, status]) => {
@@ -151,6 +151,7 @@ function SyncPage() {
       });
       setSynced(syncStatus);
       setSyncProfile(`${qbCompanyName}, ${qbCompanyEmail}`);
+      dispatch(setQuickbooksConnection({qbAuthorized, qbCompanyName, qbCompanyEmail}));
     } catch (e) {
       dispatch(error(e.message));
     }

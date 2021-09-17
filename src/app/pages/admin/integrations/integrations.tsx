@@ -6,21 +6,9 @@ import QbIcon from "assets/img/img/intuitt_green.png";
 import { quickbooksGetUri, quickbooksAuthenticate } from "../../../../api/quickbooks.api";
 import SyncPage from "./SyncPage";
 import { success, error } from 'actions/snackbar/snackbar.action';
-import {setQBAuthStateToLocalStorage, getQBAuthStateFromLocalStorage} from "../../../../utils/local-storage.service";
 import {setQuickbooksConnection} from "../../../../actions/quickbooks/quickbooks.actions";
 const redirectUri = `${window.location.origin}/main/admin/integrations/callback`;
 
-interface StatusTypes {
-  status: number;
-}
-
-interface RowStatusTypes {
-  row: {
-    original: {
-      status: number;
-    };
-  };
-}
 
 function AdminIntegrationsPage({ classes, callbackUrl }: any) {
   const dispatch = useDispatch();
@@ -74,10 +62,10 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
             const response = await quickbooksAuthenticate(data);
             if (response.data.status === 1) {
               dispatch(success(response.data.message))
-              dispatch(setQuickbooksConnection(true));
+              dispatch(setQuickbooksConnection({qbAuthorized: true}));
             } else {
               dispatch(error(response.data.message));
-              dispatch(setQuickbooksConnection(false));
+              dispatch(setQuickbooksConnection({qbAuthorized: false}));
             }
             // window.location.reload();
           }
@@ -90,7 +78,7 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
     }
   };
 
-  return showSyncInterface ? (
+  return showSyncInterface?.qbAuthorized ? (
     <SyncPage />
   ) : (
     <>
