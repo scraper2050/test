@@ -1,3 +1,5 @@
+import {QuickbooksState} from "../reducers/quickbooks.reducer";
+
 export const getLocalStorageToken = () => {
   return localStorage.getItem('token') || '';
 };
@@ -19,13 +21,21 @@ export const removeUserFromLocalStorage = () => {
 };
 
 export const getQBAuthStateFromLocalStorage = () => {
-  return (localStorage.getItem('qb_auth') === 'true');
+  const qb_auth = localStorage.getItem('qb_auth');
+  if (qb_auth === 'true'){
+    return {qbAuthorized: true};
+  }
+  if (qb_auth) {
+    return JSON.parse(qb_auth);
+  } else {
+    return null;
+  }
 }
 
-export const setQBAuthStateToLocalStorage = (state: boolean) => {
+export const setQBAuthStateToLocalStorage = (state: QuickbooksState) => {
   localStorage.setItem(
     'qb_auth',
-    state.toString()
+    JSON.stringify(state),
   );
 }
 

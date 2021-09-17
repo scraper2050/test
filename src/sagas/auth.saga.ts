@@ -2,6 +2,7 @@ import { Auth, ChangePassword } from 'app/models/user';
 import { changePassword, login } from 'api/auth.api';
 import { call, cancel, cancelled, fork, put, take, takeLatest } from 'redux-saga/effects';
 import { changePasswordAction, loginActions, logoutAction } from 'actions/auth/auth.action';
+import {setQuickbooksConnection} from "../actions/quickbooks/quickbooks.actions";
 
 export function *handleLogin(action: { payload: Auth }) {
   yield put(loginActions.fetching());
@@ -14,6 +15,8 @@ export function *handleLogin(action: { payload: Auth }) {
       yield put(loginActions.fault('Incorrect Email / Password'));
     } else {
       yield put(loginActions.success(result));
+      const {qbAuthorized, qbCompanyName, qbCompanyEmail} = result.company;
+      yield put (setQuickbooksConnection({qbAuthorized, qbCompanyName, qbCompanyEmail}))
     }
   } catch (error) {
     yield put(loginActions.fault(error.toString()));

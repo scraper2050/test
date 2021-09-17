@@ -34,7 +34,7 @@ function BCQbDisconnectModal({
   const disconnect = async() => {
     const response = await quickbooksDisconnect();
     if (response.data.status === 1) {
-      dispatch(setQuickbooksConnection(false));
+      dispatch(setQuickbooksConnection({qbAuthorized:false}));
     } else {
       console.log(response.data.message)
       dispatch(error(response.data.message));
