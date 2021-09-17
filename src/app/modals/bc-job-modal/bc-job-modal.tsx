@@ -491,15 +491,14 @@ function BCJobModal({
         }
 
         request(requestObj)
-
           .then(async (response: any) => {
             if (response.status === 0) {
               dispatch(SnackBarError(response.message));
               return;
             }
-            if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
+            /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
               await callEditTicketAPI(formatedTicketRequest);
-            }
+            }*/
             await dispatch(refreshServiceTickets(true));
             await dispatch(refreshJobs(true));
             dispatch(closeModalAction());
