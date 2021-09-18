@@ -13,7 +13,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import BCQbSyncStatus from "../../components/bc-qb-sync-status/bc-qb-sync-status";
-import {loadJobReportsActions} from "../../../actions/customer/job-report/job-report.action";
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -92,7 +91,6 @@ function CustomersPage({ classes }: any) {
     localStorage.setItem('nestedRouteKey', `${customerName}`);
     dispatch(loadingSingleCustomers());
     dispatch(getCustomerDetailAction(customerObj));
-    dispatch(loadJobReportsActions.fetch());
     history.push({
       'pathname': `customers/${customerName}`,
       'state': customerObj
