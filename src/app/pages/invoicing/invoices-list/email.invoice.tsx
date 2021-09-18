@@ -7,11 +7,12 @@ import { sendEmailAction } from 'actions/email/email.action';
 
 interface EmailReportProps {
     invoice: any,
-    Component: any
+    Component: any,
+    showLoader?: boolean,
 }
 
 
-export default function EmailInvoiceButton({ invoice, Component }: EmailReportProps) {
+export default function EmailInvoiceButton({ invoice, Component, showLoader = true }: EmailReportProps) {
   const { customer, _id, invoiceId } = invoice;
   const dispatch = useDispatch();
 
@@ -35,6 +36,7 @@ export default function EmailInvoiceButton({ invoice, Component }: EmailReportPr
   return <EmailButton
     Component={Component}
     data={data}
+    showLoader={showLoader}
   />;
 }
 
