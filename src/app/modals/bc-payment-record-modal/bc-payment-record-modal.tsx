@@ -341,6 +341,7 @@ function BcPaymentRecordModal({
                       label={''}
                       name={'notes'}
                       multiline={true}
+                      rows={3}
                       onChange={(e: any) => formikChange(e)}
                       type={'text'}
                       value={FormikValues.notes}
@@ -432,6 +433,9 @@ const DataContainer = styled.div`
   }
   .MuiInputAdornment-root + .MuiInputBase-input {
     padding: 12px 14px 12px 0;
+  }
+  .MuiOutlinedInput-multiline {
+    padding: 0;
   }
   .required > label:after {
     margin-left: 3px;
