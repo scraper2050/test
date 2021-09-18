@@ -1,8 +1,7 @@
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
-import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { formatDateYMD } from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
@@ -67,14 +66,13 @@ function BCServiceTicketModal({
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
-  const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumb, setThumb] = useState<any>(null);
 
 
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = [...data];
-
+  const jobTypesInput = useRef<HTMLInputElement>(null);
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
     const customerId = newValue ? newValue._id : '';
@@ -133,7 +131,6 @@ function BCServiceTicketModal({
     let jobType = '';
     jobType = newValue.map((val:any) => ({ 'jobTypeId': val._id }));
     setFieldValue('jobTypes', jobType);
-    setJobTypeValue(newValue);
   };
 
   const isValidate = (requestObj: any) => {
@@ -171,9 +168,6 @@ function BCServiceTicketModal({
     if (!ticket.updateFlag) {
       dispatch(clearJobLocationStore());
       dispatch(clearJobSiteStore());
-    } else {
-      const newValues = mapTask(ticket.tasks);
-      setJobTypeValue(newValues);
     }
   }, []);
 
@@ -263,6 +257,7 @@ function BCServiceTicketModal({
         callCreateTicketAPI(formatedRequest).then((response: any) => {
           if (response.status === 0) {
             dispatch(SnackBarError(response.message));
+            setSubmitting(false);
             return;
           }
           dispatch(refreshServiceTickets(true));
@@ -284,6 +279,22 @@ function BCServiceTicketModal({
             throw err;
           });
       }
+    },
+    'validate':  (values: any) => {
+      const errors: any = {};
+
+      if (values.jobTypes.length === 0) {
+        errors.jobTypes = 'Select at least one (1) job';
+        if (jobTypesInput.current !== null) {
+          jobTypesInput.current.setCustomValidity("Select at least one (1) job");
+        }
+      } else {
+        if (jobTypesInput.current !== null) {
+          jobTypesInput.current.setCustomValidity("");
+        }
+      }
+
+      return errors;
     }
   });
 
@@ -578,7 +589,7 @@ function BCServiceTicketModal({
                         </InputLabel>
                         <TextField
                           {...params}
-                          required={!jobTypeValue.length}
+                          inputRef={jobTypesInput}
                           variant={'standard'}
                         />
                       </>
