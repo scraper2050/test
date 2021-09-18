@@ -12,8 +12,11 @@ const useStyles = makeStyles(theme => ({
     'width': '100%'
   },
   'inputBox': {
-    'marginTop': '0px'
-  }
+    'marginTop': '0px',
+    '& .MuiOutlinedInput-multiline': {
+      padding: 0,
+    }
+  },
 }));
 
 function BCInput({
