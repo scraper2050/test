@@ -8,6 +8,7 @@ import BCTableContainer from 'app/components/bc-table-container/bc-table-contain
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import { error, success } from 'actions/snackbar/snackbar.action';
 import { updateCustomPrices } from 'api/customer.api';
+import classNames from "classnames";
 
 
 interface CustomPricingProps {
@@ -23,6 +24,8 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
     'quantity': '',
     'price': ''
   });
+  const [priceError, setPriceError] = useState(false);
+  const [quantityError, setQuantityError] = useState(false);
 
   const [addMode, setAddMode] = useState(false);
 
@@ -60,6 +63,14 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
       const data = { ...fieldData,
         [e.target.name]: parseInt(e.target.value) };
       setFieldData(data);
+      switch(e.target.name) {
+        case 'price':
+          setPriceError(false);
+          break;
+        case 'quantity':
+          setQuantityError(false);
+          break;
+      }
     }
   };
 
@@ -68,22 +79,32 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
       dispatch(error(`Missing quantity ${tableData[tableData.length - 1].quantity + 1}`));
       return;
     }
-    if (fieldData.quantity !== '' && fieldData.price !== '') {
-      const present = tableData.find((data:any) => data.quantity === fieldData.quantity);
-      if (present) {
-        const newData = tableData.map((data:any) => {
-          if (data.quantity === fieldData.quantity) {
-            return fieldData;
-          }
-          return data;
-        });
-        const sorted = newData.sort((a, b) => a.quantity - b.quantity);
 
-        setTableData([...sorted]);
-      } else {
-        const newData = [...tableData, fieldData].sort((a, b) => parseInt(a.quantity) - parseInt(b.quantity));
-        setTableData([...newData]);
-      }
+    if (!fieldData.quantity) {
+      setQuantityError(true);
+      return;
+    }
+
+    if (!fieldData.price && fieldData.price !== 0) {
+      setPriceError(true);
+      return;
+    }
+
+
+    const present = tableData.find((data:any) => data.quantity === fieldData.quantity);
+    if (present) {
+      const newData = tableData.map((data:any) => {
+        if (data.quantity === fieldData.quantity) {
+          return fieldData;
+        }
+        return data;
+      });
+      const sorted = newData.sort((a, b) => a.quantity - b.quantity);
+
+      setTableData([...sorted]);
+    } else {
+      const newData = [...tableData, fieldData].sort((a, b) => parseInt(a.quantity) - parseInt(b.quantity));
+      setTableData([...newData]);
     }
   };
 
@@ -162,6 +183,7 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
             name={'quantity'}
             onChange={handleChange}
             variant={'outlined'}
+            className={classNames({'alerts-border': quantityError})}
           />
           <TextField
             id={'outlined-basic'}
@@ -169,6 +191,7 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
             name={'price'}
             onChange={handleChange}
             variant={'outlined'}
+            classes={{root: classNames({'alerts-border': priceError})}}
           />
           <Fab
             color={'primary'}
@@ -195,7 +218,7 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
 
 
 const CustomPricingContainer = styled.div`
-text-align: center;
+    text-align: center;
     h3 {
         font-weight: 400;
         max-width: 400px;
@@ -237,4 +260,14 @@ text-align: center;
         }
 
     }
+      .alerts-border {
+      & fieldset {
+          border: 1px #ff0000 solid;
+         
+          animation: blink 1s;
+          animation-iteration-count: 2;
+        }
+    }
+    
+    @keyframes blink { 50% { border-color:#fff ; }  }
 `;
