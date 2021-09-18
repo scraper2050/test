@@ -10,11 +10,12 @@ import {error as errorSnackBar, error} from "../../../actions/snackbar/snackbar.
 
 interface EmailButtonProps {
     data: any,
-    Component: any
+    Component: any,
+    showLoader?: boolean,
 }
 
 
-export default function EmailButton({ data, Component }: EmailButtonProps) {
+export default function EmailButton({ data, Component, showLoader = true }: EmailButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
@@ -56,7 +57,7 @@ export default function EmailButton({ data, Component }: EmailButtonProps) {
     }
   };
 
-  return isLoading? <BCCircularLoader heightValue={'10px'} size={20}/> :
+  return isLoading && showLoader? <BCCircularLoader heightValue={'10px'} size={20}/> :
     React.cloneElement(Component, { 'onClick': handleClick });
 }
 
