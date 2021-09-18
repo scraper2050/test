@@ -18,6 +18,7 @@ import { getAllServiceTicketAPI } from 'api/service-tickets.api';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
+import {CSButtonSmall} from "../../../../../../helpers/custom";
 
 interface LocationStateTypes {
   customerName: string;
@@ -155,7 +156,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     let filteredTickets = oldJobs;
 
     filteredTickets = filteredTickets.filter((resticket: any) =>
-      resticket.customer._id === location.customerId);
+      resticket.customer?._id === location.customerId);
 
     setFilteredTickets(filteredTickets);
   }
@@ -185,16 +186,13 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
           {
             !row.original.jobCreated
               ? row.original.status !== 2
-                ? <Fab
+                ? <CSButtonSmall
                   aria-label={'create-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
                   color={'primary'}
                   onClick={() => openCreateJobModal(row.original)}
-                  variant={'extended'}>
+                  variant={'contained'}>
                   {'Create Job'}
-                </Fab>
+                </CSButtonSmall>
                 : null
               : null
           }
@@ -209,16 +207,13 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       Cell({ row }: any) {
         return row.original && row.original.status === 0
           ? <div className={'flex items-center'}>
-            <Fab
+            <CSButtonSmall
               aria-label={'edit-ticket'}
-              classes={{
-                'root': classes.fabRoot
-              }}
               color={'primary'}
               onClick={() => openEditTicketModal(row.original)}
-              variant={'extended'}>
+              variant={'contained'}>
               {'Edit Ticket'}
-            </Fab>
+            </CSButtonSmall>
           </div>
           : '-';
       },
@@ -231,7 +226,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       Cell({ row }: any) {
         return <div
           aria-label={'detail'} className={'flex items-center'}>
-          <InfoIcon />
+          <InfoIcon style={{display: 'block'}} />
         </div>;
       },
       Header: 'Ticket Details',

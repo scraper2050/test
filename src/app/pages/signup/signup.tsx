@@ -441,7 +441,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                             'color': 'rgba(0, 0, 0, 0.5)',
                             'fontSize': '14px'
                           }}>
-                          {'Select a industry'}
+                          {'Select an industry'}
                         </em>
                       </MenuItem>
                       {industries.map(item => {

@@ -2,20 +2,19 @@ import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back
 import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../../components/bc-tab/bc-tab';
 import { Grid } from '@material-ui/core';
-import Fab from "@material-ui/core/Fab";
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
-import { DUMMY_DATA, DUMMY_COLUMN } from '../dummy-data';
 import { formatDate, convertMilitaryTime } from "helpers/format";
 import { openModalAction, setModalDataAction, } from "actions/bc-modal/bc-modal.action";
 import { modalTypes } from "../../../../../../constants";
 import { getAllJobsAPI } from "api/job.api";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { Job } from 'actions/job/job.types';
+import {CSButtonSmall} from "../../../../../../helpers/custom";
 
 interface LocationStateTypes {
   customerName: string;
@@ -140,7 +139,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         const scheduleDate = formatDate(row.original.scheduleDate);
         return (
           <div className={"flex items-center"}>
-            <p>{scheduleDate}</p>
+            {scheduleDate}
           </div>
         );
       },
@@ -170,7 +169,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         }
         return (
           <div className={"flex items-center"}>
-            <p>{`${startTime} - ${endTime}`}</p>
+            {`${startTime} - ${endTime}`}
           </div>
         );
       },
@@ -183,17 +182,14 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         return (
           <div className={"flex items-center"}>
             {row.original.status === "0" || row.original.status === "1" ? (
-              <Fab
+              <CSButtonSmall
                 aria-label={"edit-job"}
-                classes={{
-                  root: classes.fabRoot,
-                }}
                 color={"primary"}
                 onClick={() => openEditJobModal(row.original)}
-                variant={"extended"}
+                variant={"contained"}
               >
                 {"Edit"}
-              </Fab>
+              </CSButtonSmall>
             ) : null}
           </div>
         );

@@ -13,7 +13,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import BCQbSyncStatus from "../../components/bc-qb-sync-status/bc-qb-sync-status";
-import * as CONSTANTS from "../../../constants";
 
 function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
