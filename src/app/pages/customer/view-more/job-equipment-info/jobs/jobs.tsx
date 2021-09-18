@@ -16,6 +16,7 @@ import { modalTypes } from "../../../../../../constants";
 import { getAllJobsAPI } from "api/job.api";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { Job } from 'actions/job/job.types';
+import {CSButtonSmall} from "../../../../../../helpers/custom";
 
 interface LocationStateTypes {
   customerName: string;
@@ -140,7 +141,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         const scheduleDate = formatDate(row.original.scheduleDate);
         return (
           <div className={"flex items-center"}>
-            <p>{scheduleDate}</p>
+            {scheduleDate}
           </div>
         );
       },
@@ -170,7 +171,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         }
         return (
           <div className={"flex items-center"}>
-            <p>{`${startTime} - ${endTime}`}</p>
+            {`${startTime} - ${endTime}`}
           </div>
         );
       },
@@ -183,17 +184,14 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         return (
           <div className={"flex items-center"}>
             {row.original.status === "0" || row.original.status === "1" ? (
-              <Fab
+              <CSButtonSmall
                 aria-label={"edit-job"}
-                classes={{
-                  root: classes.fabRoot,
-                }}
                 color={"primary"}
                 onClick={() => openEditJobModal(row.original)}
-                variant={"extended"}
+                variant={"contained"}
               >
                 {"Edit"}
-              </Fab>
+              </CSButtonSmall>
             ) : null}
           </div>
         );

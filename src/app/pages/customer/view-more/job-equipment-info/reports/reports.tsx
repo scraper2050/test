@@ -1,7 +1,6 @@
 import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
 import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../../components/bc-tab/bc-tab';
-import Fab from "@material-ui/core/Fab";
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -14,6 +13,7 @@ import { loadSingleJob, getJobDetailAction } from "actions/job/job.action";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { getAllJobsAPI } from "api/job.api";
 import { Job } from 'actions/job/job.types';
+import {CSButtonSmall} from "../../../../../../helpers/custom";
 
 interface LocationStateTypes {
   customerName: string;
@@ -119,7 +119,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
         const Date = formatDate(row.original.scheduleDate);
         return (
           <div className={"flex items-center"}>
-            <p>{Date}</p>
+            {Date}
           </div>
         );
       },
@@ -137,17 +137,14 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
       Cell({ row }: any) {
         return (
           <div className={"flex items-center"}>
-            <Fab
+            <CSButtonSmall
               aria-label={"delete"}
-              classes={{
-                root: classes.fabRoot,
-              }}
               color={"primary"}
               onClick={() => renderViewMore(row)}
-              variant={"extended"}
+              variant={"contained"}
             >
               {"View More"}
-            </Fab>
+            </CSButtonSmall>
           </div>
         );
       },
@@ -321,8 +318,6 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
       },
     });
   };
-
-
 
   useEffect(() => {
     if (refresh) {
