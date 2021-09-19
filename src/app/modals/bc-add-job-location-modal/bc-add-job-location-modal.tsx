@@ -25,7 +25,7 @@ import { useDispatch } from 'react-redux';
 import { createJobLocationAction } from 'actions/job-location/job-location.action';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { refreshJobLocation } from 'actions/job-location/job-location.action';
-import { success } from 'actions/snackbar/snackbar.action';
+import { success, error } from 'actions/snackbar/snackbar.action';
 
 import '../../../scss/index.scss';
 
@@ -69,11 +69,9 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
     "customerId": jobLocationInfo && jobLocationInfo.customerId ? jobLocationInfo.customerId : '',
   }
 
-
   const filterOptions = createFilterOptions({
     stringify: (option: AllStateTypes) => option.abbreviation + option.name,
   });
-
 
   const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
     let stateVal: any = '';
@@ -165,18 +163,13 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
         <PageContainer className="map_modal__wrapper">
           <DataContainer
             id={'0'}>
-            <Grid container>
-              <Grid
-                item
-                sm={12}
-                lg={6}>
                 <Formik
                   initialValues={initialValues}
                   onSubmit={async (values, { setSubmitting }) => {
                     let state = values.address.state.id;
                     values.locationLat = positionValue.lat;
                     values.locationLong = positionValue.long;
-                    const requestObj = {
+                    const requestObj: any = {
                       ...values,
                       city: '',
                       state: '',
@@ -188,342 +181,317 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                     requestObj.state = allStates[state].name;
                     requestObj.street = values.address.street;
                     requestObj.zipcode = values.address.zipcode;
+                    requestObj.contact = JSON.stringify(values.contact);
+                    delete requestObj.address;
+
                     if (isValidate(requestObj)) {
                       if (jobLocationInfo.update) {
                       } else {
-
-
-                        await dispatch(createJobLocationAction(requestObj, () => {
-                          closeModal();
+                        await dispatch(createJobLocationAction(requestObj,
+                          ({status, message}: {status: number, message: string}) => {
+                          if (status === 1) {
+                            dispatch(success(message));
+                            dispatch(refreshJobLocation(true));
+                            closeModal();
+                          } else {
+                            setSubmitting(false);
+                            dispatch(error(message));
+                          }
                         }))
-
-                        dispatch(success("Creating Job Location Successful!"));
-                        dispatch(refreshJobLocation(true));
                       }
                     }
-
-                    setTimeout(() => {
-                      setSubmitting(false);
-                    }, 400);
                   }}
                   validateOnChange>
                   {({ handleChange, values, errors, isSubmitting, setFieldValue }) =>
-                    <Form >
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={12}>
+                    <Form>
+                      <Grid container spacing={2}>
+                        <Grid container item xs={6}>
+                          <Grid
+                            className={classes.paper}
+                            item
+                            sm={12}>
+                            <FormGroup className={'required'}>
+                              <InputLabel className={classes.label}>
+                                {'Job Location Name'}
+                              </InputLabel>
 
-                      </Grid>
-
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={12}>
-                        <FormGroup className={'required'}>
-                          <InputLabel className={classes.label}>
-                            {'Job Location Name'}
-                          </InputLabel>
-
-                          <BCTextField
-                            name={'name'}
-                            placeholder={'Job Location Name'}
-                            required={true}
-                            onChange={(e: any) => {
-                              setFieldValue('name', e.target.value)
-                            }}
-                          />
-                          {nameLabelState ? <label>Required</label> : ''}
-                        </FormGroup>
-                      </Grid>
-
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={12}>
-                        <FormGroup >
-                          <InputLabel className={classes.label}>
-                            {'Email'}
-                          </InputLabel>
-                          <BCTextField
-                            name={'contact.email'}
-                            placeholder={'Email'}
-                            type={'email'}
-                            onChange={(e: any) => {
-                              setFieldValue('contact.email', e.target.value)
-                            }}
-
-                          />
-                        </FormGroup>
-                      </Grid>
-
-                      <Grid container>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Contact Name'}
-                            </InputLabel>
-                            <BCTextField
-                              name={'contact.name'}
-                              placeholder={'Contact Name'}
-                              onChange={(e: any) => {
-                                setFieldValue('contact.name', e.target.value)
-                              }}
-                            />
-                          </FormGroup>
-                        </Grid>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Phone Number'}
-                            </InputLabel>
-                            <BCTextField
-                              name={'contact.phone'}
-                              placeholder={'Phone Number'}
-                              type={'number'}
-                              onChange={(e: any) => {
-                                setFieldValue('contact.phone', e.target.value)
-                              }}
-                            />
-                          </FormGroup>
-                        </Grid>
-                      </Grid>
-
-                      <Grid container>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Street'}
-                            </InputLabel>
-                            <BCTextField
-                              onChange={(e: any) => {
-                                setFieldValue('address.street', e.target.value)
-                                updateMap(values, e.target.value);
-                              }}
-                              name={'address.street'}
-                              placeholder={'Street'}
-                            />
-                          </FormGroup>
-                        </Grid>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'City'}
-                            </InputLabel>
-                            <BCTextField
-                              onChange={(e: any) => {
-                                setFieldValue('address.city', e.target.value)
-                                updateMap(values, undefined, e.target.value)
-                              }}
-                              name={'address.city'}
-                              placeholder={'City'}
-                            />
-                          </FormGroup>
-                        </Grid>
-                      </Grid>
-
-                      <Grid container>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            {/* <InputLabel className={classes.label}>
-                              {'State'}
-                            </InputLabel>
-                            <Field
-                              as={Select}
-                              enableReinitialize
-                              name={'address.state.id'}
-                              onChange={(e: any) => {
-                                updateMap(values, undefined, undefined, undefined, e.target.value);
-                                handleChange(e);
-                              }}
-                              type={'select'}
-                              variant={'outlined'}>
-                              {allStates.map((state, id) =>
-                                <MenuItem
-                                  key={id}
-                                  value={id}>
-                                  {state.name}
-                                </MenuItem>)
-                              }
-                            </Field> */}
-
-
-                            <div className="search_form_wrapper">
-
-                              <Autocomplete
-                                id="tags-standard"
-                                options={allStates}
-                                getOptionLabel={(option) => option.name}
-                                autoHighlight
-                                filterOptions={filterOptions}
-                                onChange={(ev: any, newValue: any) => handleSelectState(
-                                  newValue,
-                                  updateMap,
-                                  setFieldValue,
-                                  values
-                                )}
-                                renderInput={(params) => (
-                                  <>
-                                    <InputLabel className={`${classes.label} state-label`}>
-                                      {"State"}
-                                    </InputLabel>
-                                    <TextField
-                                      {...params}
-                                      variant="standard"
-                                    />
-                                  </>
-                                )}
+                              <BCTextField
+                                name={'name'}
+                                placeholder={'Job Location Name'}
+                                required={true}
+                                onChange={(e: any) => {
+                                  setFieldValue('name', e.target.value)
+                                }}
                               />
+                              {nameLabelState ? <label>Required</label> : ''}
+                            </FormGroup>
+                          </Grid>
+
+                          <Grid
+                            className={classes.paper}
+                            item
+                            sm={12}>
+                            <FormGroup>
+                              <InputLabel className={classes.label}>
+                                {'Email'}
+                              </InputLabel>
+                              <BCTextField
+                                name={'contact.email'}
+                                placeholder={'Email'}
+                                type={'email'}
+                                onChange={(e: any) => {
+                                  setFieldValue('contact.email', e.target.value)
+                                }}
+
+                              />
+                            </FormGroup>
+                          </Grid>
+
+                          <Grid container>
+                            <Grid
+                              className={classes.paper}
+                              item
+                              sm={6}>
+                              <FormGroup>
+                                <InputLabel className={classes.label}>
+                                  {'Contact Name'}
+                                </InputLabel>
+                                <BCTextField
+                                  name={'contact.name'}
+                                  placeholder={'Contact Name'}
+                                  onChange={(e: any) => {
+                                    setFieldValue('contact.name', e.target.value)
+                                  }}
+                                />
+                              </FormGroup>
+                            </Grid>
+                            <Grid
+                              className={classes.paper}
+                              item
+                              sm={6}>
+                              <FormGroup>
+                                <InputLabel className={classes.label}>
+                                  {'Phone Number'}
+                                </InputLabel>
+                                <BCTextField
+                                  name={'contact.phone'}
+                                  placeholder={'Phone Number'}
+                                  type={'number'}
+                                  onChange={(e: any) => {
+                                    setFieldValue('contact.phone', e.target.value)
+                                  }}
+                                />
+                              </FormGroup>
+                            </Grid>
+                          </Grid>
+
+                          <Grid container>
+                            <Grid
+                              className={classes.paper}
+                              item
+                              sm={6}>
+                              <FormGroup>
+                                <InputLabel className={classes.label}>
+                                  {'Street'}
+                                </InputLabel>
+                                <BCTextField
+                                  onChange={(e: any) => {
+                                    setFieldValue('address.street', e.target.value)
+                                    updateMap(values, e.target.value);
+                                  }}
+                                  name={'address.street'}
+                                  placeholder={'Street'}
+                                />
+                              </FormGroup>
+                            </Grid>
+                            <Grid
+                              className={classes.paper}
+                              item
+                              sm={6}>
+                              <FormGroup>
+                                <InputLabel className={classes.label}>
+                                  {'City'}
+                                </InputLabel>
+                                <BCTextField
+                                  onChange={(e: any) => {
+                                    setFieldValue('address.city', e.target.value)
+                                    updateMap(values, undefined, e.target.value)
+                                  }}
+                                  name={'address.city'}
+                                  placeholder={'City'}
+                                />
+                              </FormGroup>
+                            </Grid>
+                          </Grid>
+
+                          <Grid container>
+                            <Grid
+                              className={classes.paper}
+                              item
+                              sm={6}>
+                              <FormGroup>
+                                {/* <InputLabel className={classes.label}>
+                                  {'State'}
+                                </InputLabel>
+                                <Field
+                                  as={Select}
+                                  enableReinitialize
+                                  name={'address.state.id'}
+                                  onChange={(e: any) => {
+                                    updateMap(values, undefined, undefined, undefined, e.target.value);
+                                    handleChange(e);
+                                  }}
+                                  type={'select'}
+                                  variant={'outlined'}>
+                                  {allStates.map((state, id) =>
+                                    <MenuItem
+                                      key={id}
+                                      value={id}>
+                                      {state.name}
+                                    </MenuItem>)
+                                  }
+                                </Field> */}
+
+
+                                <div className="search_form_wrapper">
+
+                                  <Autocomplete
+                                    id="tags-standard"
+                                    options={allStates}
+                                    getOptionLabel={(option) => option.name}
+                                    autoHighlight
+                                    filterOptions={filterOptions}
+                                    onChange={(ev: any, newValue: any) => handleSelectState(
+                                      newValue,
+                                      updateMap,
+                                      setFieldValue,
+                                      values
+                                    )}
+                                    renderInput={(params) => (
+                                      <>
+                                        <InputLabel className={`${classes.label} state-label`}>
+                                          {"State"}
+                                        </InputLabel>
+                                        <TextField
+                                          {...params}
+                                          variant="standard"
+                                        />
+                                      </>
+                                    )}
+                                  />
+                                </div>
+                              </FormGroup>
+                            </Grid>
+                            <Grid
+                              className={classes.paper}
+                              item
+                              sm={6}>
+                              <FormGroup>
+                                <InputLabel className={classes.label}>
+                                  {'Zip Code'}
+                                </InputLabel>
+                                <BCTextField
+                                  onChange={(e: any) => {
+                                    setFieldValue('address.zipcode', e.target.value)
+                                    updateMap(values, '', '', e.target.value)
+                                  }}
+                                  name={'address.zipcode'}
+                                  placeholder={'Zip Code'}
+                                  type={'number'}
+                                />
+                              </FormGroup>
+                            </Grid>
+                          </Grid>
+
+                          <Grid
+                            className={classNames(classes.paper, 'form_button_wrapper-desktop')}
+                            item
+                            md={12}>
+                            <Box mt={2}>
+                              <Button
+                                className={'save-customer-button'}
+                                disabled={isSubmitting}
+                                color={'primary'}
+                                type={'submit'}
+                                variant={'contained'}>
+                                {jobLocationInfo && jobLocationInfo.update ? 'Update' : 'Save'}
+                              </Button>
+                              <Button
+                                className={'cancel-customer-button'}
+                                disabled={isSubmitting}
+                                onClick={() => closeModal()}
+                                color={'secondary'}
+                                variant={'contained'}>
+                                {'Cancel'}
+                              </Button>
+                            </Box>
+                          </Grid>
+                        </Grid>
+                        <Grid container item xs={6}>
+                          <Grid
+                            className={classNames(classes.paper, classes.mapLocation)}
+                            item>
+                            <Grid container>
+                              <Grid
+                                className={classes.paper}
+                                item
+                                sm={6}>
+                                <FormGroup className={'required'}>
+                                  <InputLabel className={classes.label}>
+                                    {'Latitude'}
+                                  </InputLabel>
+                                  <TextField
+                                    name={'location.lat'}
+                                    required
+                                    onChange={(e: any) => updateMapFromLatLng('lat', e.target.value)}
+                                    placeholder={'Latitude'}
+                                    variant={'outlined'}
+                                    type={'number'}
+                                    value={positionValue.lat}
+                                  />
+                                  {latLabelState ? <label>Required</label> : ''}
+                                </FormGroup>
+                              </Grid>
+                              <Grid
+                                className={classes.paper}
+                                item
+                                sm={6}>
+                                <FormGroup className={'required'}>
+                                  <InputLabel className={classes.label}>
+                                    {'Longitude'}
+                                  </InputLabel>
+                                  <TextField
+                                    name={'location.long'}
+                                    onChange={(e: any) => {
+                                      updateMapFromLatLng('lng', e.target.value)
+                                    }}
+                                    type={'number'}
+                                    required
+                                    placeholder={'Longitude'}
+                                    variant={'outlined'}
+                                    value={positionValue.long}
+                                  />
+                                  {longLabelState ? <label>Required</label> : ''}
+                                </FormGroup>
+
+                              </Grid>
+                            </Grid>
+
+                            <div className="modal_map__wrapper">
+                              <div className={classNames(classes.paper, classes.mapWrapper)}>
+                                <BCMapWithMarker
+                                  lang={positionValue.long}
+                                  lat={positionValue.lat}
+                                />
+                              </div>
                             </div>
-                          </FormGroup>
-                        </Grid>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={6}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Zip Code'}
-                            </InputLabel>
-                            <BCTextField
-                              onChange={(e: any) => {
-                                setFieldValue('address.zipcode', e.target.value)
-                                updateMap(values, '', '', e.target.value)
-                              }}
-                              name={'address.zipcode'}
-                              placeholder={'Zip Code'}
-                              type={'number'}
-                            />
-                          </FormGroup>
+                          </Grid>
+
                         </Grid>
                       </Grid>
-
-                      <Grid
-                        className={classNames(classes.paper, 'form_button_wrapper-desktop')}
-                        item
-                        md={12}>
-                        <Box mt={2}>
-                          <Button
-                            className={'save-customer-button'}
-                            color={'primary'}
-                            type={'submit'}
-                            variant={'contained'}>
-                            {jobLocationInfo && jobLocationInfo.update ? 'Update' : 'Save'}
-                          </Button>
-                          <Button
-                            className={'cancel-customer-button'}
-                            onClick={() => closeModal()}
-                            color={'secondary'}
-                            variant={'contained'}>
-                            {'Cancel'}
-                          </Button>
-                        </Box>
-                      </Grid>
-
                     </Form>
                   }
                 </Formik>
-              </Grid>
-
-              <Grid
-                className={classNames(classes.paper, classes.mapLocation)}
-                item
-                sm={12}
-                lg={6}>
-                <Grid container>
-                  <Grid
-                    className={classes.paper}
-                    item
-                    sm={6}>
-                    <FormGroup className={'required'}>
-                      <InputLabel className={classes.label}>
-                        {'Latitude'}
-                      </InputLabel>
-                      <TextField
-                        name={'location.lat'}
-                        onChange={(e: any) => updateMapFromLatLng('lat', e.target.value)}
-                        placeholder={'Latitude'}
-                        variant={'outlined'}
-                        type={'number'}
-                        value={positionValue.lat}
-                      />
-                      {latLabelState ? <label>Required</label> : ''}
-                    </FormGroup>
-                  </Grid>
-                  <Grid
-                    className={classes.paper}
-                    item
-                    sm={6}>
-                    <FormGroup className={'required'}>
-                      <InputLabel className={classes.label}>
-                        {'Longitude'}
-                      </InputLabel>
-                      <TextField
-                        name={'location.long'}
-                        onChange={(e: any) => {
-                          updateMapFromLatLng('lng', e.target.value)
-                        }}
-                        type={'number'}
-                        required
-                        placeholder={'Longitude'}
-                        variant={'outlined'}
-                        value={positionValue.long}
-                      />
-                      {longLabelState ? <label>Required</label> : ''}
-                    </FormGroup>
-
-                  </Grid>
-                </Grid>
-
-                <div className="modal_map__wrapper">
-                  <div className={classNames(classes.paper, classes.mapWrapper)}>
-                    <BCMapWithMarker
-                      lang={positionValue.long}
-                      lat={positionValue.lat}
-                    />
-                  </div>
-                </div>
-
-
-                <Grid
-                  className={classNames(classes.paper, 'form_button_wrapper-mobile')}
-                  item
-                  md={12}>
-                  <Box mt={2}>
-                    <Button
-                      className={'save-customer-button'}
-                      color={'primary'}
-                      type={'submit'}
-                      variant={'contained'}>
-                      {jobLocationInfo && jobLocationInfo.update ? 'Update' : 'Save'}
-                    </Button>
-                    <Button
-                      className={'cancel-customer-button'}
-                      onClick={() => closeModal()}
-                      color={'secondary'}
-                      variant={'contained'}>
-                      {'Cancel'}
-                    </Button>
-                  </Box>
-                </Grid>
-
-              </Grid>
-            </Grid>
           </DataContainer>
         </PageContainer>
       </MainContainer>
