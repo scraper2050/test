@@ -30,6 +30,7 @@ import Api, { setToken, setUser } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import {setQuickbooksConnection} from "../../../actions/quickbooks/quickbooks.actions";
 
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
@@ -240,6 +241,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
         } else {
           setToken(res.data.token);
           setUser(JSON.stringify(res.data.user));
+          dispatch(setQuickbooksConnection({qbAuthorized: false}));
           axios.create({
             'baseURL': Config.apiBaseURL,
             'headers': {
@@ -439,7 +441,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                             'color': 'rgba(0, 0, 0, 0.5)',
                             'fontSize': '14px'
                           }}>
-                          {'Select a industry'}
+                          {'Select an industry'}
                         </em>
                       </MenuItem>
                       {industries.map(item => {

@@ -175,7 +175,6 @@ body {
   float: right;
   .MuiFab-primary {
     box-shadow: none;
-    border-radius: 0;
     background: #e5e5e5;
     border: 1px solid #c4c4c4;
     box-sizing: border-box;
@@ -184,10 +183,10 @@ body {
     height: 30px;
     text-align: center;
     line-height: 30px;
-    min-width: none;
+/*    min-width: none;
     max-width: auto;
     min-height: none;
-    max-height: auto;
+    max-height: auto;*/
     color: #707070;
     display: flex;
     justify-content: center;

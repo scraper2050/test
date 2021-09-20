@@ -22,6 +22,7 @@ import {getAllSalesTaxAPI} from "../../../../api/tax.api";
 import {CSChip} from "../../../../helpers/custom";
 import {updateInvoice} from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
+import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -143,18 +144,23 @@ function ViewInvoice({ classes, theme }: any) {
             }
           </div>
           <div>
+            <EmailInvoiceButton
+              showLoader={false}
+              Component={<Button
+                variant="outlined"
+                color="default"
+                className={invoiceStyles.margin}
+                startIcon={<EmailIcon />}
+              >
+                Email
+              </Button>}
+              invoice={invoiceDetail}
+            />
             <Button
               variant="outlined"
               color="default"
               className={invoiceStyles.margin}
-              startIcon={<EmailIcon />}
-            >
-              Email
-            </Button>
-            <Button
-              variant="outlined"
-              color="default"
-              className={invoiceStyles.margin}
+              onClick={() => window.print()}
               startIcon={<PrintIcon />}
             >
               Print

@@ -1,19 +1,15 @@
 import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
 import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../../components/bc-tab/bc-tab';
-import Fab from "@material-ui/core/Fab";
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useLocation, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { formatDate, formatTime, phoneNumberFormatter } from "helpers/format";
-import { loadSingleJob, getJobDetailAction } from "actions/job/job.action";
-import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
-import { getAllJobsAPI } from "api/job.api";
-import { Job } from 'actions/job/job.types';
+import { formatDate } from "helpers/format";
+import {CSButtonSmall} from "../../../../../../helpers/custom";
+import {loadJobReportsActions} from "../../../../../../actions/customer/job-report/job-report.action";
 
 interface LocationStateTypes {
   customerName: string;
@@ -23,28 +19,19 @@ interface LocationStateTypes {
 function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   const dispatch = useDispatch();
 
-  const { isLoading = true, jobs, refresh = true } = useSelector(
-    ({ jobState }: any) => ({
-      'isLoading': jobState.isLoading,
-      'jobs': jobState.data,
-      'refresh': jobState.refresh,
-    })
-  );
-
-  const { customerObj } = useSelector((state: any) => state.customers);
+  const { loading: isLoading = true, jobReports, error } = useSelector(({ jobReport }: any) =>
+    jobReport);
 
   const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-  const [filteredJobs, setFilterJobs] = useState<Job[] | []>([]);
+  const [filteredJobs, setFilterJobs] = useState<any[]>([]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
 
-
   const locationState = location.state;
-
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
   const [currentPage, setCurrentPage] = useState({
@@ -54,17 +41,8 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   });
 
   const handleFilterData = (jobs: any, location: LocationStateTypes) => {
-    const oldJobs = jobs;
-    let filteredJobs = oldJobs;
-
-    filteredJobs = filteredJobs.filter((resJob: any) =>
-      resJob.customer._id === location.customerId);
-
-
-    filteredJobs
-      .filter((x: any) => x.status !== 2)
-      .forEach((x: any) => filteredJobs.splice(filteredJobs.indexOf(x), 1));
-
+    const filteredJobs = jobs.filter((resJob: any) =>
+      resJob.job.customer === location.customerId);
     setFilterJobs(filteredJobs);
   }
 
@@ -104,7 +82,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     },
     {
       Header: "Job ID",
-      accessor: "jobId",
+      accessor: "job.jobId",
       className: "font-bold",
       sortable: true,
     },
@@ -116,10 +94,10 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     // },
     {
       Cell({ row }: any) {
-        const Date = formatDate(row.original.scheduleDate);
+        const Date = formatDate(row.original.jobDate);
         return (
           <div className={"flex items-center"}>
-            <p>{Date}</p>
+            {Date}
           </div>
         );
       },
@@ -129,7 +107,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     },
     {
       Header: "Technician",
-      accessor: "technician.profile.displayName",
+      accessor: "technicianName",
       className: "font-bold",
       sortable: true,
     },
@@ -137,17 +115,14 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
       Cell({ row }: any) {
         return (
           <div className={"flex items-center"}>
-            <Fab
+            <CSButtonSmall
               aria-label={"delete"}
-              classes={{
-                root: classes.fabRoot,
-              }}
               color={"primary"}
-              onClick={() => renderViewMore(row)}
-              variant={"extended"}
+              onClick={() => handleViewMore(row)}
+              variant={"contained"}
             >
               {"View More"}
-            </Fab>
+            </CSButtonSmall>
           </div>
         );
       },
@@ -157,189 +132,27 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     },
   ];
 
-  const renderViewMore = (row: any) => {
-
-    let baseObj = row["original"];
-    let jobId = row["original"]["_id"];
-    let status =
-      baseObj && baseObj["status"] === undefined ? baseObj["status"] : "N/A";
-    let customerName =
-      baseObj && baseObj["customer"]["profile"] !== undefined
-        ? baseObj["customer"]["profile"]["displayName"]
-        : "N/A";
-    let customerId =
-      baseObj && baseObj["customer"]["_id"] !== undefined
-        ? baseObj["customer"]["_id"]
-        : "N/A";
-    let customerPhone =
-      baseObj && baseObj["customer"]["contact"] !== undefined
-        ? baseObj["customer"]["contact"]["phone"]
-        : "N/A";
-    let phoneFormat = phoneNumberFormatter(customerPhone);
-    let workReport =
-      baseObj && baseObj["jobId"] !== undefined ? baseObj["jobId"] : "N/A";
-    let customerEmail =
-      baseObj && baseObj["customer"]["info"] !== undefined
-        ? baseObj["customer"]["info"]["email"]
-        : "N/A";
-    let customerAddress = baseObj && baseObj["customer"]["address"];
-    let address: any = "";
-    if (customerAddress && customerAddress !== undefined) {
-      address = `${customerAddress["street"] !== undefined &&
-        customerAddress["street"] !== null
-        ? customerAddress["street"]
-        : ""
-        } 
-      ${customerAddress["city"] !== undefined &&
-          customerAddress["city"] !== null
-          ? customerAddress["city"]
-          : ""
-        } ${customerAddress["state"] !== undefined &&
-          customerAddress["state"] !== null &&
-          customerAddress["state"] !== "none"
-          ? customerAddress["state"]
-          : ""
-        } ${customerAddress["zipCode"] !== undefined &&
-          customerAddress["zipCode"] !== null
-          ? customerAddress["zipCode"]
-          : ""
-        }`;
-    } else {
-      address = "N/A";
-    }
-
-    let jobType =
-      baseObj && baseObj["type"] !== undefined
-        ? baseObj["type"]["title"]
-        : "N/A";
-    let jobDate =
-      baseObj && baseObj["createdAt"] !== undefined
-        ? baseObj["createdAt"]
-        : "N/A";
-    let formatJobDate = formatDate(jobDate);
-
-    let jobTime =
-      baseObj && baseObj["createdAt"] !== undefined
-        ? baseObj["createdAt"]
-        : "N/A";
-    let formatJobTime = formatTime(jobTime);
-    let technicianName =
-      baseObj && baseObj["technician"]["profile"] !== undefined
-        ? baseObj["technician"]["profile"]["displayName"]
-        : "N/A";
-    let recordNote =
-      baseObj && baseObj["description"] !== undefined
-        ? baseObj["description"]
-        : "N/A";
-
-    let purchaseOrderCreated =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["jobCreated"]
-        : "N/A";
-
-    let purchaseOrder = purchaseOrderCreated ? "Yes" : "No";
-
-    let companyName =
-      baseObj && baseObj["company"]["info"] !== undefined
-        ? baseObj["company"]["info"]["companyName"]
-        : "N/A";
-    let companyEmail =
-      baseObj && baseObj["company"]["info"] !== undefined
-        ? baseObj["company"]["info"]["companyEmail"]
-        : "N/A";
-    let companyPhone =
-      baseObj && baseObj["company"]["contact"] !== undefined
-        ? baseObj["company"]["contact"]["phone"]
-        : "N/A";
-
-    let workPerformedLocation =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["jobLocation"]
-        : "N/A";
-
-    let location =
-      workPerformedLocation === "" || null || undefined
-        ? "None Found"
-        : workPerformedLocation;
-
-    let workPerformedDate =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["createdAt"]
-        : "N/A";
-
-    let formatworkPerformedDate = formatDate(workPerformedDate);
-
-    let workPerformedTimeScan =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["createdAt"]
-        : "N/A";
-
-    let workPerformedNote =
-      baseObj && baseObj["ticket"] !== undefined
-        ? baseObj["ticket"]["note"]
-        : "N/A";
-
-    let formatworkPerformedTimeScan = formatTime(workPerformedTimeScan);
-
-    let jobReportObj = {
-      jobId: jobId,
-      customerId,
-      customerName,
-      phoneFormat,
-      workReport,
-      customerEmail,
-      address,
-      jobType,
-      formatJobDate,
-      formatJobTime,
-      technicianName,
-      recordNote,
-      purchaseOrder,
-      companyName,
-      companyEmail,
-      companyPhone,
-      location,
-      formatworkPerformedDate,
-      formatworkPerformedTimeScan,
-      workPerformedNote,
-      status,
-    };
-
-    jobId = jobId !== undefined ? jobId.replace(/ /g, "") : "jobid";
-
-    let linkKey: any = localStorage.getItem('nestedRouteKey');
-    localStorage.setItem('prevNestedRouteKey', linkKey);
-    localStorage.setItem('nestedRouteKey', `${customerName}/job-equipment-info/jobs/${jobId}`);
-
-    dispatch(loadSingleJob());
-    dispatch(getJobDetailAction(jobReportObj));
+  const handleViewMore = (row: any) => {
+    const jobReportId = row.original._id;
+    localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
-      pathname: `/main/customers/${customerName}/job-equipment-info/jobs/${jobId}`,
-      state: {
-        ...jobReportObj,
-        currentPage,
-      },
+      'pathname': `job-report/${jobReportId}`,
+      'state': {
+        currentPage
+      }
     });
+
   };
 
-
+  useEffect(() => {
+    dispatch(loadJobReportsActions.fetch());
+  }, []);
 
   useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
+    if (jobReports) {
+      handleFilterData(jobReports, location.state);
     }
-
-    if (jobs) {
-      handleFilterData(jobs, location.state);
-    }
-
-    if (customerObj._id === '') {
-      const obj: any = location.state;
-      const customerId = obj.customerId;
-      dispatch(loadingSingleCustomers());
-      dispatch(getCustomerDetailAction({ customerId }));
-    }
-  }, [refresh]);
+  }, [jobReports]);
 
   return (
     <>
@@ -395,24 +208,6 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
     </>
   );
 }
-
-const MainContainer = styled.div`
-  display: flex;
-  flex: 1 1 100%;
-  width: 100%;
-  overflow-x: hidden;
-`;
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 100%;
-  padding: 30px;
-  width: 100%;
-  padding-left: 65px;
-  padding-right: 65px;
-  margin: 0 auto;
-`;
 
 export default withStyles(
   styles,

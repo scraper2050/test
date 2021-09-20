@@ -45,8 +45,9 @@ export const createJobLocationAction = (data: any, callback: any) => {
     if (jobLocation.hasOwnProperty('msg')) {
       dispatch({ type: JobLocationActionType.ADD_NEW_JOB_LOCATION_FAILED, payload: jobLocation.msg });
     } else {
+      const {status, message} = jobLocation;
       dispatch(setJobLocationNew(jobLocation));
-      callback();
+      callback({status, message});
     }
 
   }

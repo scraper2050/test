@@ -17,6 +17,7 @@ import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
+import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 
 
 function ViewMoreLocationPage({ classes }: any) {
@@ -116,16 +117,13 @@ function ViewMoreLocationPage({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          <Fab
+          <CSButtonSmall
             aria-label={'delete'}
-            classes={{
-              'root': classes.fabRoot
-            }}
             color={'primary'}
             onClick={() => { openEditJobSiteModal(row.original) }}
-            variant={'extended'}>
+            variant={'contained'}>
             {'View More'}
-          </Fab>
+          </CSButtonSmall>
 
         </div>;
       },
@@ -222,16 +220,13 @@ function ViewMoreLocationPage({ classes }: any) {
                 }}
                 id={'0'}>
                 <div className={classes.addButtonArea}>
-                  <Fab
+                  <CSButton
                     aria-label={'delete'}
-                    classes={{
-                      'root': classes.fabRoot
-                    }}
                     color={'primary'}
                     onClick={() => openJobLocationModal()}
-                    variant={'extended'}>
+                    variant={'contained'}>
                     {'Add Job Site'}
-                  </Fab>
+                  </CSButton>
                 </div>
 
                 <BCTableContainer

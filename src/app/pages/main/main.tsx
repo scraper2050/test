@@ -216,7 +216,7 @@ function Main(): any {
                   }}
                   Component={ViewJobReportsPage}
                   exact
-                  path={'/main/customers/:customername/job-equipment-info/jobs/:jobId'}
+                  path={'/main/customers/:customername/job-equipment-info/job-report/:jobReportId'}
                   title={'Customers'}
                 />
                 <AuthRoute
