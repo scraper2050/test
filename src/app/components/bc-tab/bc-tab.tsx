@@ -19,7 +19,10 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData }: BCTabsProps):
     <StyledTabs
       indicatorColor={indicatorColor}
       onChange={handleTabChange}
-      value={curTab}>
+      value={curTab}
+      variant="scrollable"
+      scrollButtons="on"
+    >
       {tabsData.map((item: any, idx: number) => {
         return <Tab
           key={idx}
