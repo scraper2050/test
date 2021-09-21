@@ -3,6 +3,10 @@ import { Theme } from '@material-ui/core/styles';
 import { PRIMARY_GRAY } from "../../../constants";
 export default (theme: Theme): any => ({
   'bcHeader': {
+    [theme.breakpoints.down('md')]: {
+      'padding': '0 20px',
+      'justifyContent': 'space-between'
+    },
     'height': `${CONSTANTS.ADMIN_HEADER_HEIGHT}px`,
     'box-shadow': '0px 2px 2px rgba(0, 0, 0, 0.15)',
     'justifyContent': 'center',
@@ -14,7 +18,13 @@ export default (theme: Theme): any => ({
       'display': 'flex',
       'align-items': 'center',
       'justify-content': 'flex-start',
-    }
+    },
+    '& .bcAdminHeaderPopup': {
+      [theme.breakpoints.down('md')]: {
+        'display': 'block'
+      },
+      'display': 'none',
+    },
   },
   'bcTopBar': {
     'display': 'flex',
@@ -24,6 +34,9 @@ export default (theme: Theme): any => ({
     'width': '100%'
   },
   'bcHeaderToolBar': {
+    [theme.breakpoints.down('md')]: {
+      'display': 'none'
+    },
     'min-height': `${CONSTANTS.ADMIN_HEADER_HEIGHT}px`
   },
   'bcAdminHeaderLogo': {
@@ -35,16 +48,20 @@ export default (theme: Theme): any => ({
     }
   },
   'bcAdminHeaderNav': {
-    '@media(min-width: 1280px)': {
-      'display': 'flex'
-    },
+    'display': 'flex',
     'height': '100%',
     'listStyle': 'none',
     'padding': '0',
     'margin': '0',
   },
   'bcAdminHeaderNavItem': {
+    [theme.breakpoints.down('md')]: {
+      'marginRight': 0
+    },
     '& > a': {
+      [theme.breakpoints.down('md')]: {
+        'padding': '5px'
+      },
       'color': `${CONSTANTS.PRIMARY_DARK}`,
       'fontStyle': 'normal',
       'fontSize': '14px',
@@ -66,8 +83,19 @@ export default (theme: Theme): any => ({
     },
     'marginRight': '10px'
   },
+  'bcAdminHeaderPopupItem': {
+    'border': 'none',
+    '&:hover': {
+      'border': 'none',
+    },
+  },
   'bcAdminHeaderNavItemActive': {
     'border': `2px solid ${CONSTANTS.PRIMARY_BLUE}`,
+    '& > a': {
+      'color': `${CONSTANTS.PRIMARY_BLUE}`,
+    }
+  },
+  'bcAdminHeaderPopupItemActive': {
     '& > a': {
       'color': `${CONSTANTS.PRIMARY_BLUE}`,
     }

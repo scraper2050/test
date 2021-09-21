@@ -22,6 +22,10 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Fab from "@material-ui/core/Fab";
 import InputBase from '@material-ui/core/InputBase';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 interface Props {
   token: string;
@@ -138,6 +142,8 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
+  const isMenuOpen = Boolean(menuAnchorEl);
 
   useEffect(() => {
     dispatch(loadNotificationsActions.fetch());
@@ -163,6 +169,14 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
     setProfileOpen(false);
     setShowNotification(false);
     setAnchorEl(null);
+  };
+
+  const showMenu = (event: any) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const closeMenu = () => {
+    setMenuAnchorEl(null);
   };
 
   const NAV_DATA = [
@@ -244,6 +258,38 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
               })}
             </ul>
           </Toolbar>
+
+          <div className="bcAdminHeaderPopup">
+            <IconButton
+              aria-label="more"
+              aria-controls="long-menu"
+              aria-haspopup="true"
+              onClick={showMenu}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="long-menu"
+              anchorEl={menuAnchorEl}
+              keepMounted
+              open={isMenuOpen}
+              onClose={closeMenu}
+            >
+              {NAV_DATA.map((item, idx) => {
+                return (
+                  <MenuItem key={idx} onClick={closeMenu} className={classNames({
+                    [classes.bcAdminHeaderNavItem]: true,
+                    [classes.bcAdminHeaderPopupItem]: true,
+                    [classes.bcAdminHeaderPopupItemActive]: pathName.indexOf(item.link) === 0
+                  })}>
+                    <Link to={item.link} >
+                      {item.label}
+                    </Link>
+                  </MenuItem>
+                );
+              })}
+            </Menu>
+          </div>
 
         </div>
 
