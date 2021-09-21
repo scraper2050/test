@@ -6,7 +6,11 @@ export default (theme: Theme): any => ({
     'borderRadius': '50%',
     'color': 'white',
     'height': '28px',
-    'width': '28px'
+    'width': '28px',
+    '&:hover': {
+      'opacity': '0.7',
+      'backgroundColor': CONSTANTS.PRIMARY_BLUE
+    }
   },
   'centerIcon': {
     'display': 'flex',
