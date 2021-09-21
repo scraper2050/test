@@ -4,7 +4,7 @@ import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
 import BCTabs from '../../../../../components/bc-tab/bc-tab';
 import { formatDate } from 'helpers/format';
-import { Grid } from '@material-ui/core';
+import {Grid, Typography} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from '../job-equipment-info.style';
@@ -161,6 +161,41 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     setFilteredTickets(filteredTickets);
   }
 
+
+  const openDetailTicketModal = (ticket: any) => {
+
+    const reqObj = {
+      customerId: ticket.customer?._id,
+      locationId: ticket.jobLocation
+    }
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(reqObj.customerId));
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    } else {
+      dispatch(clearJobSiteStore());
+    }
+    dispatch(getAllJobTypesAPI());
+    ticket.updateFlag = true;
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Service Ticket Details',
+        'removeFooter': false,
+        'ticketData': ticket,
+        'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+        'height': '100%',
+        'detail': true,
+
+      },
+      'type': modalTypes.EDIT_TICKET_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   const columns: any = [
     {
       Header: 'Ticket ID',
@@ -225,7 +260,9 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     {
       Cell({ row }: any) {
         return <div
-          aria-label={'detail'} className={'flex items-center'}>
+          aria-label={'detail'}
+          onClick={() => openDetailTicketModal(row.original)}
+          className={'flex items-center'}>
           <InfoIcon style={{display: 'block'}} />
         </div>;
       },
@@ -279,6 +316,12 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
                   ]}
                 />
               </div>
+              <div style={{ flexGrow: 1 }}></div>
+
+              <div className={classes.customerNameLocation}>
+                <Typography><strong>Customer Name: </strong>{location?.state?.customerName}</Typography>
+              </div>
+
             </Grid>
 
             <div

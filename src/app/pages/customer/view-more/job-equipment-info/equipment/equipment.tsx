@@ -1,7 +1,7 @@
 import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
 import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../../components/bc-tab/bc-tab';
-import { Grid } from '@material-ui/core';
+import {Grid, Typography} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './equipment.style';
@@ -132,6 +132,11 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
                     },
                   ]}
                 />
+              </div>
+              <div style={{ flexGrow: 1 }}></div>
+
+              <div className={classes.customerNameLocation}>
+                <Typography><strong>Customer Name: </strong>{location?.state?.customerName}</Typography>
               </div>
             </Grid>
 
