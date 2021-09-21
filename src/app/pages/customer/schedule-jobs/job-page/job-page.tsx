@@ -15,11 +15,7 @@ import {
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import {useCustomStyles} from "../../../../../helpers/custom";
-
-interface StatusTypes {
-  status: number;
-}
+import BCJobStatus from "../../../../components/bc-job-status";
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
@@ -32,45 +28,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   }));
 
   const filteredJobs = jobs.filter ((job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0 );
-
-  const customStyles = useCustomStyles();
-
-  function RenderStatus({ status }: StatusTypes) {
-    const statusArray = [
-      {
-        'class': classes.statusPendingText,
-        'text': 'Scheduled'
-      },
-      {
-        'class': classes.statusStartedText,
-        'text': 'Started'
-      },
-      {
-        'class': classes.statusFinishedText,
-        'text': 'Finished'
-      },
-      {
-        'class': classes.statusCanceledText,
-        'text': 'Canceled'
-      },
-      {
-        'class': classes.statusResheduledText,
-        'text': 'Rescheduled'
-      },
-      {
-        'class': classes.statusPausedText,
-        'text': 'Paused'
-      },
-      {
-        'class': classes.statusIncompleteText,
-        'text': 'Incomplete'
-      }
-    ];
-    const textStatus = statusArray[status]?.text;
-    return <div className={statusArray[status]?.class}>
-      {textStatus}
-    </div>;
-  }
 
   function RenderVendor({ vendor }:any) {
     if (vendor) {
@@ -143,7 +100,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     },
     {
       Cell({ row }: any) {
-        return <RenderStatus status={row.original.status} />;
+        return <BCJobStatus status={row.original.status} />;
       },
       'Header': 'Status',
       'accessor': 'status',

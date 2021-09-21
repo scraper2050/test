@@ -1,7 +1,7 @@
 import BCBackButtonNoLink from '../../../../../components/bc-back-button/bc-back-button-no-link';
 import BCTableContainer from '../../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../../components/bc-tab/bc-tab';
-import { Grid } from '@material-ui/core';
+import {Grid, Typography} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from '../job-equipment-info.style';
@@ -15,6 +15,7 @@ import { getAllJobsAPI } from "api/job.api";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { Job } from 'actions/job/job.types';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
+import BCJobStatus from "../../../../../components/bc-job-status";
 
 interface LocationStateTypes {
   customerName: string;
@@ -68,6 +69,14 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
     });
   }
 
+  const handleButtonClick = (row: any) => {
+    if ([0, 4].includes(row.original.status)){
+      openEditJobModal(row.original)
+    } else {
+      openDetailJobModal(row.original)
+    }
+  };
+
   const openEditJobModal = (job: any) => {
     dispatch(
       setModalDataAction({
@@ -79,6 +88,21 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         type: modalTypes.EDIT_JOB_MODAL,
       })
     );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const openDetailJobModal = (job: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'detail': true,
+        'job': job,
+        'modalTitle': 'View Job',
+        'removeFooter': false
+      },
+      'type': modalTypes.EDIT_JOB_MODAL
+    }));
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
@@ -111,6 +135,9 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       sortable: true,
     },
     {
+      Cell({ row }: any) {
+        return <BCJobStatus status={row.original.status} />;
+      },
       Header: "Status",
       accessor: "status",
       className: "font-bold",
@@ -181,16 +208,14 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       Cell({ row }: any) {
         return (
           <div className={"flex items-center"}>
-            {row.original.status === "0" || row.original.status === "1" ? (
-              <CSButtonSmall
-                aria-label={"edit-job"}
-                color={"primary"}
-                onClick={() => openEditJobModal(row.original)}
-                variant={"contained"}
-              >
-                {"Edit"}
-              </CSButtonSmall>
-            ) : null}
+            <CSButtonSmall
+              aria-label={"edit-job"}
+              color={"primary"}
+              onClick={() => handleButtonClick(row)}
+              variant={"contained"}
+            >
+              {[0, 4].includes(row.original.status) ? "Edit" : "View"}
+            </CSButtonSmall>
           </div>
         );
       },
@@ -220,7 +245,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
 
 
 
-  const handleRowClick = (event: any, row: any) => { };
+  // const handleRowClick = (event: any, row: any) => { };
 
   return (
     <>
@@ -245,6 +270,11 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
                     },
                   ]}
                 />
+              </div>
+              <div style={{ flexGrow: 1 }}></div>
+
+              <div className={classes.customerNameLocation}>
+                <Typography><strong>Customer Name: </strong>{location?.state?.customerName}</Typography>
               </div>
             </Grid>
 
