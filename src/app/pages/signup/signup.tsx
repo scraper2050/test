@@ -152,7 +152,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   );
   const handleChangeIndustry = (e: any) => {
     const selectedValue = e.target.value;
-    if (selectedValue === 0) {
+    if (selectedValue === '0') {
       setFormData({
         ...formData,
         'industry': {
