@@ -48,7 +48,8 @@ interface Props {
 function BCAdminLayout({classes, children}: Props) {
   const themClasses = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const sidebarCollapse = localStorage.getItem('sidebarCollapse');
+  const [open, setOpen] = React.useState(sidebarCollapse === 'false' ? false : true);
 
   return (
     <div className={themClasses.root}>
@@ -57,6 +58,7 @@ function BCAdminLayout({classes, children}: Props) {
       <BCAdminHeader
         drawerOpen={open}
         drawerToggle={() => {
+          localStorage.setItem('sidebarCollapse', new Boolean(!open).toString());
           setOpen(!open);
         }}
       />

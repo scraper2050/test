@@ -8,6 +8,7 @@ import Drawer from "@material-ui/core/Drawer";
 import AvatarImg from "../../../assets/img/user_avatar.png";
 import { connect, useDispatch, useSelector } from "react-redux";
 import Avatar from '@material-ui/core/Avatar';
+import Tooltip from '@material-ui/core/Tooltip';
 import styled from "styled-components";
 import * as CONSTANTS from '../../../constants';
 import ListIcon from '@material-ui/icons/List';
@@ -55,7 +56,7 @@ interface BCSidebarProps {
   token: string;
   user: any;
   classes: any;
-  open: Boolean;
+  open: boolean;
 }
 
 function a11yProps(index: any) {
@@ -114,10 +115,7 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.leavingScreen,
       }),
       overflowX: 'hidden',
-      width: theme.spacing(7) + 1,
-      [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(10) + 1,
-      },
+      width: theme.spacing(10) + 1,
     },
   }),
 );
@@ -366,16 +364,22 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
             }
             return item.link.startsWith(`/main/${mainPath}`)
               ? <li key={idx}>
-                <StyledListItem
-                  button
-                  onClick={() => onClickLink(item.link)}
-                  selected={
-                    pathName === item.link ||
-                    pathName === `${item.link}/${nestedRouteKey}`
-                  }>
-                  {item.icon && item.icon}
-                  <span className='menuLabel'>{item.label}</span>
-                </StyledListItem>
+                <Tooltip
+                  arrow
+                  title={item.label}
+                  disableHoverListener={open}
+                >
+                  <StyledListItem
+                    button
+                    onClick={() => onClickLink(item.link)}
+                    selected={
+                      pathName === item.link ||
+                      pathName === `${item.link}/${nestedRouteKey}`
+                    }>
+                    {item.icon && item.icon}
+                    <span className='menuLabel'>{item.label}</span>
+                  </StyledListItem>
+                </Tooltip>
               </li>
               : null;
           })}
