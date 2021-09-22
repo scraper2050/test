@@ -435,7 +435,9 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       value={formData.industry.value}>
                       <MenuItem
                         key={'-1'}
-                        value={'0'}>
+                        value={'0'}
+                        disabled
+                      >
                         <em
                           style={{
                             'color': 'rgba(0, 0, 0, 0.5)',
