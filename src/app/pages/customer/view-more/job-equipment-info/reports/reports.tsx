@@ -111,28 +111,9 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
       className: "font-bold",
       sortable: true,
     },
-    {
-      Cell({ row }: any) {
-        return (
-          <div className={"flex items-center"}>
-            <CSButtonSmall
-              aria-label={"delete"}
-              color={"primary"}
-              onClick={() => handleViewMore(row)}
-              variant={"contained"}
-            >
-              {"View More"}
-            </CSButtonSmall>
-          </div>
-        );
-      },
-      id: "action",
-      sortable: false,
-      width: 60,
-    },
   ];
 
-  const handleViewMore = (row: any) => {
+  const handleRowClick = (event: any, row: any) => {
     const jobReportId = row.original._id;
     localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
@@ -200,6 +181,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
                 setPage={setCurrentPage}
                 columns={columns}
                 isLoading={isLoading}
+                onRowClick={handleRowClick}
                 search
                 searchPlaceholder={"Search...(Keyword, Date, Tag, etc.)"}
                 tableData={filteredJobs}
