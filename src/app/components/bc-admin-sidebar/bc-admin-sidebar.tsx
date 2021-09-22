@@ -21,6 +21,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { logoutAction, resetStore } from "../../../actions/auth/auth.action";
 import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ReceiptIcon from '@material-ui/icons/Receipt';
@@ -41,6 +42,8 @@ import ReportIcon from '@material-ui/icons/Report';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import LockIcon from '@material-ui/icons/Lock';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
@@ -414,8 +417,18 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
               open={Boolean(anchorEl)}
               onClose={handleCloseProfileMenu}
             >
-              <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
-              <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
+              <MenuItem onClick={handleViewProfile}>
+                <ListItemIcon>
+                  <AccountCircleIcon fontSize="small" />
+                </ListItemIcon>
+                View Profile
+              </MenuItem>
+              <MenuItem onClick={handleClickLogout}>
+                <ListItemIcon>
+                  <ExitToAppIcon fontSize="small" />
+                </ListItemIcon>
+                Logout
+              </MenuItem>
             </Menu>
           </li>
         </ul>
