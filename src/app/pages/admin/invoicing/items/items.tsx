@@ -18,6 +18,7 @@ import { addTierApi, updateItems } from 'api/items.api';
 import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import {CSButton, CSButtonSmall} from "../../../../../helpers/custom";
+import {stringSortCaseInsensitive} from "../../../../../helpers/sort";
 
 
 interface Props {
@@ -38,7 +39,7 @@ const normalizeTiers = (tiers:any) => {
 function AdminInvoicingItemsPage({ classes }:Props) {
   const dispatch = useDispatch();
   const { loading, error, items } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
-  const [localItems, setLocalItems] = useState(items);
+  const [localItems, setLocalItems] = useState(stringSortCaseInsensitive(items, 'name'));
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -256,6 +257,12 @@ function AdminInvoicingItemsPage({ classes }:Props) {
           'accessor': 'name',
           'sortable': true,
           'width': 60
+        },
+        {
+          'Header': 'Description',
+          'accessor': 'description',
+          'sortable': false,
+          'width': 100
         },
         {
           Cell({ row }: any) {

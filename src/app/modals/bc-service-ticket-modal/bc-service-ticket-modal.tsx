@@ -7,6 +7,7 @@ import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.act
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
 import {
+  Chip,
   DialogActions,
   DialogContent,
   Fab,
@@ -34,6 +35,7 @@ import BCTableContainer from 'app/components/bc-table-container/bc-table-contain
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { modalTypes } from '../../../constants';
 import {refreshJobs} from "../../../actions/job/job.action";
+import {stringSortCaseInsensitive} from "../../../helpers/sort";
 
 
 function BCServiceTicketModal({
@@ -569,11 +571,14 @@ function BCServiceTicketModal({
                     className={detail ? 'detail-only' : ''}
                     defaultValue={defaultJobTypeValue}
                     disabled={detail}
-                    getOptionLabel={option => option.title ? option.title : ''}
+                    getOptionLabel={option => {
+                      const {title, description} = option;
+                      return `${title}${description ? ' - '+description: ''}`
+                    }}
                     id={'tags-standard'}
                     multiple
                     onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
-                    options={jobTypes && jobTypes.length !== 0 ? jobTypes.sort((a: any, b: any) => a.title > b.title ? 1 : b.title > a.title ? -1 : 0) : []}
+                    options={jobTypes && jobTypes.length !== 0 ? stringSortCaseInsensitive(jobTypes, 'title') : []}
                     renderInput={params =>
                       <>
                         <InputLabel className={classes.label}>
@@ -649,6 +654,15 @@ function BCServiceTicketModal({
                           variant={'standard'}
                         />
                       </>
+                    }
+                    renderTags={(tagValue, getTagProps) =>
+                      tagValue.map((option, index) => {
+                        return <Chip
+                          label={`${option.title}${option.description ? ' - ' + option.description : ''}`}
+                          {...getTagProps({index})}
+                          // disabled={disabledChips.includes(option._id) || !job._id}
+                        />;
+                      })
                     }
                     value={contactValue}
                   />

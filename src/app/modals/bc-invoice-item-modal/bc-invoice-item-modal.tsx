@@ -56,7 +56,7 @@ interface ModalProps {
 }
 
 export default function BCInvoiceEditModal({ item }:ModalProps) {
-  const { _id, name, isFixed, charges, tax } = item;
+  const { _id, name, isFixed, charges, description, tax } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const dispatch = useDispatch();
@@ -65,6 +65,7 @@ export default function BCInvoiceEditModal({ item }:ModalProps) {
     'initialValues': {
       'itemId': _id,
       'name': name,
+      'description': description,
       'isFixed': isFixed,
       'charges': charges,
       'tax': tax
@@ -121,6 +122,15 @@ export default function BCInvoiceEditModal({ item }:ModalProps) {
         label={'Name'}
         name={'name'}
         value={formik.values.name}
+      />
+      <BCInput
+        disabled
+        error={formik.touched.description && Boolean(formik.errors.description)}
+        handleChange={formik.handleChange}
+        helperText={formik.touched.description && formik.errors.description}
+        label={'Description'}
+        name={'description'}
+        value={formik.values.description}
       />
       <FormControl
         fullWidth

@@ -19,6 +19,7 @@ import { boolean } from 'yup';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../constants";
 import { Theme } from "@material-ui/core/styles";
+import scrollTop from 'utils/scroll-top';
 
 const useTableStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -144,6 +145,11 @@ function BCTableContent({
   };
 
   const handleChangeRowsPerPage = (event: any) => {
+    const delay = 100;
+    setTimeout(function() {
+        scrollTop();
+      }, delay);
+
     if (setPage !== undefined) {
       setPage({
         ...location.state,
