@@ -8,6 +8,7 @@ export enum ItemActionTypes {
 export interface Item {
     _id: string;
     name: string;
+    description: string;
     isFixed: boolean;
     charges: number;
     tax: number;

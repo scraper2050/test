@@ -137,10 +137,28 @@ export const callUpdateJobAPI = (data: any) => {
   });
 };
 
-export const saveJobType = async (body: { title: string }) => {
+export const saveJobType = async (body: { title: string, description?: string }) => {
   let responseData;
   try {
     const response: any = await request('/createJobType', 'POST', body, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = err.data;
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+  return responseData;
+};
+
+export const editJobType = async (body: { jobTypeId: string, title: string, description?: string }) => {
+  let responseData;
+  try {
+    const response: any = await request('/editJobType', 'POST', body, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;

@@ -31,6 +31,7 @@ function BCInput({
   className = '',
   margin = 'normal',
   type = 'text',
+  required=false,
   ...props
 }: any) {
   const classes = useStyles();
@@ -65,11 +66,20 @@ function BCInput({
       : <FormControl className={classes.fullWidth}>
         {
           label !== '' &&
-            <Typography
-              className={className}
-              variant={'subtitle1'}>
-              {label}
-            </Typography>
+            <>
+              <Typography
+                className={className}
+                variant={'subtitle1'}>
+                {label}
+                {required && <Typography
+                  color={'error'}
+                  display={'inline'}
+                  style={{ 'lineHeight': '1' }}>
+                  {' *'}
+                </Typography>}
+              </Typography>
+
+            </>
         }
 
         <TextField
@@ -84,6 +94,7 @@ function BCInput({
           placeholder={placeholder}
           rows={rows}
           type={type}
+          required={required}
           value={value}
           variant={variant}
           {...props}
