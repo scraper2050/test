@@ -221,7 +221,7 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'xs'
         });
-        setComponent(<BCAddJobTypeModal />);
+        setComponent(<BCAddJobTypeModal jobType={data.jobType}/>);
         break;
       case modalTypes.ADD_EQIPMENT_TYPE:
         setModalOptions({

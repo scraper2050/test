@@ -41,6 +41,7 @@ import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
 import { useHistory, useLocation } from 'react-router-dom';
+import {stringSortCaseInsensitive} from "../../../helpers/sort";
 
 const initialJobState = {
   'customer': {
@@ -907,11 +908,14 @@ function BCJobModal({
                     className={detail ? 'detail-only' : ''}
                     disabled={detail}
                     // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
-                    getOptionLabel={option => option.title ? option.title : ''}
+                    getOptionLabel={option => {
+                      const {title, description} = option;
+                      return `${title}${description ? ' - '+description: ''}`
+                    }}
                     id={'tags-standard'}
                     multiple
                     onChange={(ev: any, newValue: any) => handleJobTypeChange(newValue)}
-                    options={jobTypes && jobTypes.length !== 0 ? jobTypes.sort((a: any, b: any) => a.title > b.title ? 1 : b.title > a.title ? -1 : 0) : []}
+                    options={jobTypes && jobTypes.length !== 0 ? stringSortCaseInsensitive(jobTypes, 'title') : []}
                     renderInput={params =>
                       <>
                         <InputLabel className={classes.label}>
@@ -938,7 +942,7 @@ function BCJobModal({
                     renderTags={(tagValue, getTagProps) =>
                       tagValue.map((option, index) => {
                         return <Chip
-                          label={option.title}
+                          label={`${option.title}${option.description ? ' - '+option.description: ''}`}
                           {...getTagProps({ index })}
                           // disabled={disabledChips.includes(option._id) || !job._id}
                         />;

@@ -6,6 +6,9 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllJobTypesAPI } from "api/job.api";
 import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-loader";
+import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../../constants";
+import {stringSortCaseInsensitive} from "../../../../../helpers/sort";
 
 function JobTypesListing({ classes }: any) {
   const dispatch = useDispatch();
@@ -24,7 +27,13 @@ function JobTypesListing({ classes }: any) {
       accessor: "title",
       className: "font-bold",
       sortable: true,
-    }
+    },
+    {
+      'Header': 'Description',
+      'accessor': 'description',
+      'sortable': false,
+      'width': 100
+    },
   ];
 
   useEffect(() => {
@@ -32,7 +41,17 @@ function JobTypesListing({ classes }: any) {
   }, []);
 
   const handleRowClick = (event: any, row: any) => {
-    console.log(event, row);
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'Edit Job Type',
+          'removeFooter': false,
+          'jobType': row.original,
+        },
+        'type': modalTypes.ADD_JOB_TYPE
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
   };
 
   return (
@@ -41,12 +60,12 @@ function JobTypesListing({ classes }: any) {
         <BCCircularLoader heightValue={'200px'} />
       ) : (
         <BCTableContainer
-          cellSize={"medium"}    
+          cellSize={"medium"}
           columns={columns}
           onRowClick={handleRowClick}
           search
           searchPlaceholder={"Search Job Types..."}
-          tableData={jobTypes.data}
+          tableData={stringSortCaseInsensitive(jobTypes.data, 'title')}
         />
       )}
     </DataContainer>
