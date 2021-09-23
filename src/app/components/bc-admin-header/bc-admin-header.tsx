@@ -312,7 +312,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
           </div>
           <Button
             className={classes.bcAdminHeaderToolsButton}
-            href={'http://blueclerk.com/support/'}
+            href={'https://help.blueclerk.com/docs/'}
             target={'_blank'}>
             <ContactSupportIcon color={'action'} />
           </Button>

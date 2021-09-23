@@ -218,7 +218,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
             <div className={classes.headerTools} >
               <Button
                 className={classes.headerToolsButton}
-                href={'http://blueclerk.com/support/'}
+                href={'https://help.blueclerk.com/docs/'}
                 target={'_blank'}>
                 <ContactSupportIcon color={'primary'} />
               </Button>
