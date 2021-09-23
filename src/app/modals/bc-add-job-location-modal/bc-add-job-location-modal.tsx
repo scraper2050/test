@@ -194,9 +194,9 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                             dispatch(refreshJobLocation(true));
                             closeModal();
                           } else {
-                            setSubmitting(false);
                             dispatch(error(message));
                           }
+                          setSubmitting(false);
                         }))
                       }
                     }
