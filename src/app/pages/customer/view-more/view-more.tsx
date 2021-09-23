@@ -154,27 +154,6 @@ function ViewMorePage({ classes }: any) {
       'className': 'font-bold',
       'sortable': false,
       'width': 40
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          <CSButtonSmall
-            aria-label={'delete'}
-            color={'primary'}
-            onClick={() => {
-              renderJobSiteComponent(row.original, customerState.customerObj);
-            }}
-            variant={'contained'}>
-            {'View More'}
-          </CSButtonSmall>
-
-        </div>;
-      },
-
-      'Header': 'Actions',
-      'id': 'action',
-      'sortable': false,
-      'width': 40
     }
   ];
 
@@ -231,6 +210,9 @@ function ViewMorePage({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  const handleRowClick = (event: any, row: any) =>
+    renderJobSiteComponent(row.original, customerState.customerObj);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -302,6 +284,7 @@ function ViewMorePage({ classes }: any) {
                     currentPage={currentPage}
                     initialMsg={'There are no job locations!'}
                     isLoading={jobLocations.loading}
+                    onRowClick={handleRowClick}
                     search
                     searchPlaceholder={'Search Job Locations...'}
                     setPage={setCurrentPage}

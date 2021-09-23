@@ -26,6 +26,7 @@ import { createJobLocationAction } from 'actions/job-location/job-location.actio
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { refreshJobLocation } from 'actions/job-location/job-location.action';
 import { success, error } from 'actions/snackbar/snackbar.action';
+import debounce from 'lodash.debounce';
 
 import '../../../scss/index.scss';
 
@@ -165,7 +166,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
             id={'0'}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={async (values, { setSubmitting }) => {
+                  onSubmit={debounce(async (values, { setSubmitting }) => {
                     let state = values.address.state.id;
                     values.locationLat = positionValue.lat;
                     values.locationLong = positionValue.long;
@@ -200,7 +201,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                         }))
                       }
                     }
-                  }}
+                  }, 400)}
                   validateOnChange>
                   {({ handleChange, values, errors, isSubmitting, setFieldValue }) =>
                     <Form>

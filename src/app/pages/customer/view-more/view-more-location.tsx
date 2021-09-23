@@ -113,24 +113,6 @@ function ViewMoreLocationPage({ classes }: any) {
       'className': 'font-bold',
       'sortable': false,
       'width': 40
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          <CSButtonSmall
-            aria-label={'delete'}
-            color={'primary'}
-            onClick={() => { openEditJobSiteModal(row.original) }}
-            variant={'contained'}>
-            {'View More'}
-          </CSButtonSmall>
-
-        </div>;
-      },
-      'Header': 'Actions',
-      'id': 'action',
-      'sortable': false,
-      'width': 60
     }
   ];
 
@@ -173,6 +155,8 @@ function ViewMoreLocationPage({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  const handleRowClick = (event: any, row: any) => openEditJobSiteModal(row.original);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -232,6 +216,7 @@ function ViewMoreLocationPage({ classes }: any) {
                 <BCTableContainer
                   columns={columns}
                   isLoading={jobSites.loading}
+                  onRowClick={handleRowClick}
                   search
                   searchPlaceholder={"Search Job Sites..."}
                   tableData={jobSites.data}
