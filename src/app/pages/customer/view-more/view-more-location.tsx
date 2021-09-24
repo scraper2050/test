@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
+import LocationInfoPage from "./location-info";
 
 
 function ViewMoreLocationPage({ classes }: any) {
@@ -140,7 +141,7 @@ function ViewMoreLocationPage({ classes }: any) {
     }
   }, []);
 
-  const openJobLocationModal = () => {
+  const openJobSiteModal = () => {
     const obj: any = location.state;
     const locationId = obj._id;
     dispatch(setModalDataAction({
@@ -186,12 +187,12 @@ function ViewMoreLocationPage({ classes }: any) {
                 ]}
               />
             </div>
-            <div style={{ flexGrow: 1 }}></div>
+{/*            <div style={{ flexGrow: 1 }}></div>
 
             <div className={classes.customerNameLocation}>
               <Typography><strong>Customer Name: </strong>{customerName}</Typography>
               <Typography><strong>Job Location: </strong>{locationName}</Typography>
-            </div>
+            </div>*/}
           </Grid>
 
           {loading ? <BCCircularLoader heightValue={'200px'} /> :
@@ -199,19 +200,17 @@ function ViewMoreLocationPage({ classes }: any) {
               <div
                 className={`${classes.dataContainer} `}
                 hidden={curTab !== 0}
-                style={{
-                  'marginTop': '20px'
-                }}
                 id={'0'}>
-                <div className={classes.addButtonArea}>
+                <PageContainer className={'info_wrapper alignAddJobLocation'}>
+                  <LocationInfoPage customerObj={customerObj} data={location.state}/>
                   <CSButton
                     aria-label={'delete'}
                     color={'primary'}
-                    onClick={() => openJobLocationModal()}
+                    onClick={() => openJobSiteModal()}
                     variant={'contained'}>
                     {'Add Job Site'}
                   </CSButton>
-                </div>
+                </PageContainer>
 
                 <BCTableContainer
                   columns={columns}
@@ -250,7 +249,7 @@ function ViewMoreLocationPage({ classes }: any) {
 const PageContainer = styled.div`
   display: flex;
   flex: 1 1 100%;
-  padding: 30px;
+  padding: 15px;
   width: 100%;
   padding-left: 0px;
   padding-right: 65px;

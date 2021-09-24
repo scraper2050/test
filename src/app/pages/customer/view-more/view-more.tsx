@@ -143,18 +143,33 @@ function ViewMorePage({ classes }: any) {
 
     {
       'Header': 'Latitude',
-      'accessor': 'location.coordinates[0]',
+      'accessor': 'location.coordinates[1]',
       'className': 'font-bold',
       'sortable': false,
       'width': 40
     },
     {
       'Header': 'Longitude',
-      'accessor': 'location.coordinates[1]',
+      'accessor': 'location.coordinates[0]',
       'className': 'font-bold',
       'sortable': false,
       'width': 40
-    }
+    },
+    {
+      'Header': 'Active',
+      'accessor': 'isActive',
+      'Cell': function (row: any) {
+        return (
+          <div>
+                <span>
+                  {`${row.value ? 'Yes' : 'No'}`}
+                </span>
+          </div>
+        );
+       },
+      'className': 'font-bold',
+      'sortable': true
+    },
   ];
 
   useEffect(() => {

@@ -14,15 +14,13 @@ import {
   FormGroup,
   Grid,
   InputLabel,
-  MenuItem,
-  Select,
   TextField
 } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
-import { createJobLocationAction } from 'actions/job-location/job-location.action';
+import {createJobLocationAction, updateJobLocationAction} from 'actions/job-location/job-location.action';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { refreshJobLocation } from 'actions/job-location/job-location.action';
 import { success, error } from 'actions/snackbar/snackbar.action';
@@ -44,30 +42,31 @@ interface AllStateTypes {
 function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
   const dispatch = useDispatch();
   const [positionValue, setPositionValue] = useState({
-    'long': jobLocationInfo && jobLocationInfo.location && jobLocationInfo.location.long ? jobLocationInfo.location.long : 0,
-    'lat': jobLocationInfo && jobLocationInfo.location && jobLocationInfo.location.lat ? jobLocationInfo.location.lat : 0
+    'long': jobLocationInfo?.location?.coordinates?.[0] ?? 0,
+    'lat': jobLocationInfo.location?.coordinates?.[1] ?? 0
   });
   const [nameLabelState, setNameLabelState] = useState(false);
   const [latLabelState, setLatLabelState] = useState(false);
   const [longLabelState, setLongLabelState] = useState(false);
   const initialValues = {
-    "name": '',
+    "name": jobLocationInfo?.name,
     "contact": {
-      "name": '',
-      "phone": '',
-      "email": ''
+      "name": jobLocationInfo?.contact?.name,
+      "phone": jobLocationInfo?.contact?.phone,
+      "email": jobLocationInfo?.contact?.email
     },
     "locationLat": 0,
     "locationLong": 0,
     "address": {
-      "city": '',
+      "city": jobLocationInfo?.address?.city,
       'state': {
-        'id': 0
+        'id': jobLocationInfo?.address?.state ? allStates.findIndex(x => x.name === jobLocationInfo.address.state || x.abbreviation === jobLocationInfo.address.state) : -1
       },
-      "street": '',
-      "zipcode": ''
+      "street": jobLocationInfo?.address?.street,
+      "zipcode": jobLocationInfo?.address?.zipcode,
     },
-    "customerId": jobLocationInfo && jobLocationInfo.customerId ? jobLocationInfo.customerId : '',
+    "customerId": jobLocationInfo?.customerId ?? '',
+    "jobLocationId": jobLocationInfo?._id,
   }
 
   const filterOptions = createFilterOptions({
@@ -179,15 +178,28 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
 
                     };
                     requestObj.city = values.address.city;
-                    requestObj.state = allStates[state].name;
+                    requestObj.state = state >= 0 ? allStates[state].name : '';
                     requestObj.street = values.address.street;
                     requestObj.zipcode = values.address.zipcode;
                     requestObj.contact = JSON.stringify(values.contact);
                     delete requestObj.address;
 
                     if (isValidate(requestObj)) {
-                      if (jobLocationInfo.update) {
+                      if (jobLocationInfo._id) {
+                        await dispatch(updateJobLocationAction(requestObj,
+                          ({status, message}: {status: number, message: string}) => {
+                            if (status === 1) {
+                              dispatch(success(message));
+                              dispatch(refreshJobLocation(true));
+                              closeModal();
+                            } else {
+                              dispatch(error(message));
+                            }
+                            setSubmitting(false);
+                          }
+                        ));
                       } else {
+                        delete requestObj.jobLocationId;
                         await dispatch(createJobLocationAction(requestObj,
                           ({status, message}: {status: number, message: string}) => {
                           if (status === 1) {
@@ -358,6 +370,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
 
                                   <Autocomplete
                                     id="tags-standard"
+                                    defaultValue={jobLocationInfo?._id && allStates[values.address.state.id]}
                                     options={allStates}
                                     getOptionLabel={(option) => option.name}
                                     autoHighlight
