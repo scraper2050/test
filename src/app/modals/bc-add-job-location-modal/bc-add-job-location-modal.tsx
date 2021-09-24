@@ -50,7 +50,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
-  console.log(jobLocationInfo.isActive)
+
   const [positionValue, setPositionValue] = useState({
     'long': jobLocationInfo?.location?.coordinates?.[0] ?? 0,
     'lat': jobLocationInfo.location?.coordinates?.[1] ?? 0
@@ -61,9 +61,9 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const initialValues = {
     "name": jobLocationInfo?.name,
     "contact": {
-      "name": jobLocationInfo?.contact?.name,
-      "phone": jobLocationInfo?.contact?.phone,
-      "email": jobLocationInfo?.contact?.email
+      "name": jobLocationInfo?.contacts?.[0]?.name,
+      "phone": jobLocationInfo?.contacts?.[0]?.phone,
+      "email": jobLocationInfo?.contacts?.[0]?.email,
     },
     "locationLat": 0,
     "locationLong": 0,
@@ -80,7 +80,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
     "isActive": jobLocationInfo?.isActive ?? true,
   }
 
-  const inActiveMessage= jobLocationInfo?.isActive ? 'Your are about to make this customer inactive' : 'This customer is inactive';
+  const inActiveMessage= jobLocationInfo?.isActive ? 'Your are about to make this location inactive' : 'This location is inactive';
 
   const filterOptions = createFilterOptions({
     stringify: (option: AllStateTypes) => option.abbreviation + option.name,
@@ -89,7 +89,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
     let stateVal: any = '';
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if (state) {
+    if (state !== undefined && state >=0 ) {
       stateVal = allStates[state].name;
     }
 
@@ -209,6 +209,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
 
                 if (isValidate(requestObj)) {
                   if (jobLocationInfo._id) {
+                    delete requestObj.contact;
                     await dispatch(updateJobLocationAction(requestObj,
                       ({status, message, jobLocation}: { status: number, message: string, jobLocation: any }) => {
                         if (status === 1) {
@@ -263,7 +264,6 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           {nameLabelState ? <label>Required</label> : ''}
                         </FormGroup>
                       </Grid>
-                      {!jobLocationInfo?._id &&
                       <>
                         <Grid
                           className={classes.paper}
@@ -276,6 +276,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             <BCTextField
                               name={'contact.email'}
                               placeholder={'Email'}
+                              disabled={jobLocationInfo?._id}
                               type={'email'}
                               onChange={(e: any) => {
                                 setFieldValue('contact.email', e.target.value)
@@ -297,6 +298,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                               <BCTextField
                                 name={'contact.name'}
                                 placeholder={'Contact Name'}
+                                disabled={jobLocationInfo?._id}
                                 onChange={(e: any) => {
                                   setFieldValue('contact.name', e.target.value)
                                 }}
@@ -314,6 +316,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                               <BCTextField
                                 name={'contact.phone'}
                                 placeholder={'Phone Number'}
+                                disabled={jobLocationInfo?._id}
                                 type={'number'}
                                 onChange={(e: any) => {
                                   setFieldValue('contact.phone', e.target.value)
@@ -323,7 +326,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           </Grid>
                         </Grid>
                       </>
-                      }
+
                       <Grid container>
                         <Grid
                           className={classes.paper}

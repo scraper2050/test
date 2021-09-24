@@ -29,5 +29,10 @@ export default (theme: Theme): any => ({
     right: 0,
     // alignItems: 'flex-end',
     alignText: 'left'
+  },
+  'inactiveStyle': {
+    fontWeight: 'bold',
+    color: '#f50057',
+    //fontSize: '1rem',
   }
 });
