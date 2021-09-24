@@ -18,6 +18,7 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
+import moment from 'moment';
 import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
@@ -285,6 +286,9 @@ function BCServiceTicketModal({
     'validate':  (values: any) => {
       const errors: any = {};
 
+      if (moment().isAfter(values.dueDate, 'day')) {
+        errors.dueDate = 'Cannot select a date that has already passed';
+      }
       if (values.jobTypes.length === 0) {
         errors.jobTypes = 'Select at least one (1) job';
         if (jobTypesInput.current !== null) {

@@ -32,7 +32,8 @@ function BCDateTimePicker({
   dateFormat = 'MM/dd/yyyy',
   pickerType = 'date',
   className = '',
-  required = false }: any) {
+  required = false,
+  minDateMessage = 'Cannot select a date that has already passed' }: any) {
   const classes = useStyles();
   return (
     <FormControl className={classes.fullWidth}>
@@ -71,6 +72,7 @@ function BCDateTimePicker({
               required={required}
               value={value}
               variant={variant}
+              minDateMessage={minDateMessage}
             />
             : <KeyboardTimePicker
               ampm={ampm}
