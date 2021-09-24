@@ -24,6 +24,7 @@ import {createJobLocationAction, updateJobLocationAction} from 'actions/job-loca
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { refreshJobLocation } from 'actions/job-location/job-location.action';
 import { success, error } from 'actions/snackbar/snackbar.action';
+import { useHistory, useLocation } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 
 import '../../../scss/index.scss';
@@ -41,6 +42,9 @@ interface AllStateTypes {
 
 function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation<any>();
+
   const [positionValue, setPositionValue] = useState({
     'long': jobLocationInfo?.location?.coordinates?.[0] ?? 0,
     'lat': jobLocationInfo.location?.coordinates?.[1] ?? 0
@@ -156,7 +160,17 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
     setFieldValue("address.state.id", index);
   }
 
-
+  const refreshPage = (jobLocationUpdated: any) => {
+    const obj = {...jobLocationUpdated, customerId: jobLocationInfo.customerId}
+    const {name: locationName} = jobLocationUpdated;
+    const locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
+    const { currentPage, customerName } = location.state;
+    const state = {...obj, currentPage, customerName};
+    history.replace({
+      'pathname': `/main/customers/location/${locationNameLink}`,
+      'state': state,
+    });
+  }
   return (
     <>
       <MainContainer>
@@ -187,8 +201,9 @@ function BCAddJobLocationModal({ classes, jobLocationInfo }: any) {
                     if (isValidate(requestObj)) {
                       if (jobLocationInfo._id) {
                         await dispatch(updateJobLocationAction(requestObj,
-                          ({status, message}: {status: number, message: string}) => {
+                          ({status, message, jobLocation}: {status: number, message: string, jobLocation: any}) => {
                             if (status === 1) {
+                              refreshPage(jobLocation);
                               dispatch(success(message));
                               dispatch(refreshJobLocation(true));
                               closeModal();

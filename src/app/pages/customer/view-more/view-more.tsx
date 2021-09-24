@@ -59,10 +59,10 @@ function ViewMorePage({ classes }: any) {
         ? baseObj.profile.displayName
         : 'N/A';
 
-    customerName =
+/*    customerName =
       customerName !== undefined
         ? customerName.replace(/ /g, '')
-        : 'customername';
+        : 'customername';*/
 
     const locationName = jobLocation.name;
     const locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';

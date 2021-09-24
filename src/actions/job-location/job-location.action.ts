@@ -54,13 +54,13 @@ export const createJobLocationAction = (data: any, callback: any) => {
 
 export const updateJobLocationAction = (data: any, callback: any) => {
   return async (dispatch: any) => {
-    const jobLocation: any = await updateJobLocation(data);
-    if (jobLocation.hasOwnProperty('msg')) {
-      dispatch({ type: JobLocationActionType.UPDATE_JOB_LOCATION_FAILED, payload: jobLocation.msg });
+    const jobLocationUpdated: any = await updateJobLocation(data);
+    if (jobLocationUpdated.hasOwnProperty('msg')) {
+      dispatch({ type: JobLocationActionType.UPDATE_JOB_LOCATION_FAILED, payload: jobLocationUpdated.msg });
     } else {
-      const {status, message} = jobLocation;
-      dispatch(updateJobLocationOld(jobLocation));
-      callback({status, message});
+      const {status, message, jobLocation} = jobLocationUpdated;
+      dispatch(updateJobLocationOld(jobLocationUpdated));
+      callback({status, message, jobLocation});
     }
   }
 }
