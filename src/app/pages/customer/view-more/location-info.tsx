@@ -100,11 +100,13 @@ function LocationInfoPage({ classes }: any) {
           </div>
           <div className={'customer_details'}>
             <strong>
-              {'Active:'}
+              {'Status:'}
               {' '}
             </strong>
             {' '}
-            {locationData.isActive ? 'Yes' : 'No'}
+            <span className={`${locationData.isActive ? '' : classes.inactiveStyle}`}>
+              {locationData.isActive ? 'Active' : 'Inactive'}
+            </span>
           </div>
         </div>
         <div

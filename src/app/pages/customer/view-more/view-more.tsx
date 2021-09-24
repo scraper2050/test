@@ -156,14 +156,12 @@ function ViewMorePage({ classes }: any) {
       'width': 40
     },
     {
-      'Header': 'Active',
+      'Header': 'Status',
       'accessor': 'isActive',
       'Cell': function (row: any) {
         return (
-          <div>
-                <span>
-                  {`${row.value ? 'Yes' : 'No'}`}
-                </span>
+          <div className={`${row.value ? '' : classes.inactiveStyle}`}>
+            {`${row.value ? 'Active' : 'Inactive'}`}
           </div>
         );
        },

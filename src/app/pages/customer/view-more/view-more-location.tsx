@@ -219,7 +219,7 @@ function ViewMoreLocationPage({ classes }: any) {
                   search
                   searchPlaceholder={"Search Job Sites..."}
                   tableData={jobSites.data}
-                  initialMsg="There are no job sites!"
+                  initialMsg="There are no job sites"
                 />
               </div>
 
