@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
+import LocationInfoPage from "./location-info";
 
 
 function ViewMoreLocationPage({ classes }: any) {
@@ -113,24 +114,6 @@ function ViewMoreLocationPage({ classes }: any) {
       'className': 'font-bold',
       'sortable': false,
       'width': 40
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          <CSButtonSmall
-            aria-label={'delete'}
-            color={'primary'}
-            onClick={() => { openEditJobSiteModal(row.original) }}
-            variant={'contained'}>
-            {'View More'}
-          </CSButtonSmall>
-
-        </div>;
-      },
-      'Header': 'Actions',
-      'id': 'action',
-      'sortable': false,
-      'width': 60
     }
   ];
 
@@ -158,7 +141,7 @@ function ViewMoreLocationPage({ classes }: any) {
     }
   }, []);
 
-  const openJobLocationModal = () => {
+  const openJobSiteModal = () => {
     const obj: any = location.state;
     const locationId = obj._id;
     dispatch(setModalDataAction({
@@ -173,6 +156,8 @@ function ViewMoreLocationPage({ classes }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+
+  const handleRowClick = (event: any, row: any) => openEditJobSiteModal(row.original);
 
   return (
     <div className={classes.pageMainContainer}>
@@ -202,12 +187,12 @@ function ViewMoreLocationPage({ classes }: any) {
                 ]}
               />
             </div>
-            <div style={{ flexGrow: 1 }}></div>
+{/*            <div style={{ flexGrow: 1 }}></div>
 
             <div className={classes.customerNameLocation}>
               <Typography><strong>Customer Name: </strong>{customerName}</Typography>
               <Typography><strong>Job Location: </strong>{locationName}</Typography>
-            </div>
+            </div>*/}
           </Grid>
 
           {loading ? <BCCircularLoader heightValue={'200px'} /> :
@@ -215,27 +200,26 @@ function ViewMoreLocationPage({ classes }: any) {
               <div
                 className={`${classes.dataContainer} `}
                 hidden={curTab !== 0}
-                style={{
-                  'marginTop': '20px'
-                }}
                 id={'0'}>
-                <div className={classes.addButtonArea}>
+                <PageContainer className={'info_wrapper alignAddJobLocation'}>
+                  <LocationInfoPage customerObj={customerObj} data={location.state}/>
                   <CSButton
                     aria-label={'delete'}
                     color={'primary'}
-                    onClick={() => openJobLocationModal()}
+                    onClick={() => openJobSiteModal()}
                     variant={'contained'}>
                     {'Add Job Site'}
                   </CSButton>
-                </div>
+                </PageContainer>
 
                 <BCTableContainer
                   columns={columns}
                   isLoading={jobSites.loading}
+                  onRowClick={handleRowClick}
                   search
                   searchPlaceholder={"Search Job Sites..."}
                   tableData={jobSites.data}
-                  initialMsg="There are no job sites!"
+                  initialMsg="There are no job sites"
                 />
               </div>
 
@@ -265,7 +249,7 @@ function ViewMoreLocationPage({ classes }: any) {
 const PageContainer = styled.div`
   display: flex;
   flex: 1 1 100%;
-  padding: 30px;
+  padding: 15px;
   width: 100%;
   padding-left: 0px;
   padding-right: 65px;

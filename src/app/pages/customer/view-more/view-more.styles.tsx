@@ -16,11 +16,23 @@ export default (theme: Theme): any => ({
     'right': '0',
     'zIndex': '120',
   },
+  'customerName': {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: 10,
+    fontSize: 20,
+  },
   'customerNameLocation': {
     display: 'flex',
     flexDirection: 'column',
     right: 0,
     // alignItems: 'flex-end',
     alignText: 'left'
+  },
+  'inactiveStyle': {
+    fontWeight: 'bold',
+    color: '#f50057',
+    //fontSize: '1rem',
   }
 });

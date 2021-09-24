@@ -26,6 +26,7 @@ import { createJobSiteAction, getJobSites, updateJobSiteAction } from 'actions/j
 import { useHistory } from 'react-router-dom';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { success } from 'actions/snackbar/snackbar.action';
+import debounce from 'lodash.debounce';
 
 import '../../../scss/index.scss';
 
@@ -82,7 +83,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
     let stateVal: any = '';
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if (state) {
+    if (state !== undefined && state >= 0) {
       stateVal = allStates[state].name;
     }
 
@@ -177,7 +178,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                 lg={6}>
                 <Formik
                   initialValues={initialValues}
-                  onSubmit={async (values, { setSubmitting }) => {
+                  onSubmit={debounce(async (values, { setSubmitting }) => {
                     let state = values.address.state.id;
                     values.location.lat = positionValue.lat;
                     values.location.long = positionValue.long;
@@ -203,11 +204,9 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         }))
                         dispatch(success("Creating Job Site Successful!"));
                       }
-                    }
-                    setTimeout(() => {
                       setSubmitting(false);
-                    }, 400);
-                  }}
+                    }
+                  }, 400)}
                   validateOnChange>
                   {({ handleChange, values, errors, isSubmitting, setFieldValue }) =>
                     <Form >
@@ -365,13 +364,16 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         <Box mt={2}>
                           <Button
                             className={'save-customer-button'}
+                            disabled={isSubmitting}
                             color={'primary'}
                             type={'submit'}
-                            variant={'contained'}>
+                            variant={'contained'}
+                          >
                             {jobSiteInfo && jobSiteInfo.update ? 'Update' : 'Save'}
                           </Button>
                           <Button
                             className={'cancel-customer-button'}
+                            disabled={isSubmitting}
                             onClick={() => closeModal()}
                             color={'secondary'}
                             variant={'contained'}>
