@@ -1,5 +1,5 @@
 import { createApiAction } from '../action.utils';
-import { getJobLocations, createJobLocation, } from 'api/job-location.api';
+import { getJobLocations, createJobLocation, updateJobLocation, } from 'api/job-location.api';
 import { JobLocationActionType, types } from './job-location.types';
 
 
@@ -49,13 +49,32 @@ export const createJobLocationAction = (data: any, callback: any) => {
       dispatch(setJobLocationNew(jobLocation));
       callback({status, message});
     }
+  }
+}
 
+export const updateJobLocationAction = (data: any, callback: any) => {
+  return async (dispatch: any) => {
+    const jobLocationUpdated: any = await updateJobLocation(data);
+    if (jobLocationUpdated.hasOwnProperty('msg')) {
+      dispatch({ type: JobLocationActionType.UPDATE_JOB_LOCATION_FAILED, payload: jobLocationUpdated.msg });
+    } else {
+      const {status, message, jobLocation} = jobLocationUpdated;
+      dispatch(updateJobLocationOld(jobLocationUpdated));
+      callback({status, message, jobLocation});
+    }
   }
 }
 
 export const setJobLocationNew = (jobLocation: any) => {
   return {
     type: JobLocationActionType.ADD_NEW_JOB_LOCATION,
+    payload: jobLocation
+  }
+}
+
+export const updateJobLocationOld = (jobLocation: any) => {
+  return {
+    type: JobLocationActionType.UPDATE_JOB_LOCATION,
     payload: jobLocation
   }
 }
