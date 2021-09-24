@@ -2,15 +2,13 @@ import BCTableContainer from '../../../components/bc-table-container/bc-table-co
 import BCBackButtonNoLink from '../../../components/bc-back-button/bc-back-button-no-link';
 import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import BCTabs from '../../../components/bc-tab/bc-tab';
-import BCBackButton from '../../../components/bc-back-button/bc-back-button';
 import ReportsIcon from 'assets/img/icons/customers/Reports';
 import JobsIcon from 'assets/img/icons/customers/Jobs';
 import TicketsIcon from 'assets/img/icons/customers/Tickets';
 import EquipmentIcon from 'assets/img/icons/customers/Equipment';
-import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
-import { Grid, withStyles } from '@material-ui/core';
+import {FormControl, Grid, MenuItem, Select, withStyles} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -24,27 +22,22 @@ import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
 import Pricing from './pricing/pricing';
-import { getItemTierList } from 'api/items.api';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
-import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
-
-interface LocationState {
-  customerName?: string;
-  customerId?: string;
-  from?: number;
-}
+import {CSButton} from "../../../../helpers/custom";
 
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
   const location = useLocation<any>();
-  const [from, setFrom] = useState('');
+  const [showLocation, setShowLocation] = useState('active');
   const customerObj = location.state;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
 
   const prevPage = customerObj && customerObj.prevPage ? customerObj.prevPage : null;
+  const filteredJobLocations = showLocation === 'all' ? jobLocations.data :
+    jobLocations.data.filter((location: any) => showLocation === 'active' ? location.isActive : !location.isActive)
 
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
@@ -227,6 +220,25 @@ function ViewMorePage({ classes }: any) {
   const handleRowClick = (event: any, row: any) =>
     renderJobSiteComponent(row.original, customerState.customerObj);
 
+  function Toolbar() {
+    return <div style={{display: 'flex', alignItems: 'center'}}>
+      <strong style={{fontSize: 16}}>{'Show:'}&nbsp;</strong>
+      <FormControl variant="standard" style={{minWidth: 80}}>
+        <Select
+          labelId="location-status-label"
+          id="location-status-select"
+          value={showLocation}
+          label="Age"
+          onChange={(event: any) => setShowLocation(event.target.value)}
+        >
+          <MenuItem value={'active'}>Active Locations</MenuItem>
+          <MenuItem value={'inactive'}>Inactive Locations</MenuItem>
+          <MenuItem value={'all'}>All Locations</MenuItem>
+        </Select>
+      </FormControl>
+    </div>
+  }
+
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -301,7 +313,9 @@ function ViewMorePage({ classes }: any) {
                     search
                     searchPlaceholder={'Search Job Locations...'}
                     setPage={setCurrentPage}
-                    tableData={jobLocations.data}
+                    tableData={filteredJobLocations}
+                    toolbarPositionLeft={true}
+                    toolbar={Toolbar()}
                   />
                 </div>
 
