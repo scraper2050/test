@@ -22,13 +22,15 @@ function LocationInfoPage({ classes }: any) {
     const long = baseObj.location.coordinates[0];
 
     const {street = '', city = '', state = '', zipcode = ''} = baseObj.address;
-    const address =`${street ? street+'\n' : ''}${city}${city && state ? ', ' : ''}${state} ${zipcode}`;
+    const address =street;
+    const address1 =`${city}${city && state ? ', ' : ''}${state} ${zipcode}`;
 
 
     const locationObj = {
       customerName: baseObj.customerName,
       locationName,
       address,
+      address1,
       lat,
       long,
       isActive: baseObj.isActive,
@@ -66,10 +68,8 @@ function LocationInfoPage({ classes }: any) {
           </div>
           <div className={'name_wrapper customer_details'}>
             <strong>
-              {'Location Name: '}
-              {' '}
+              {'Location Name: '}&nbsp;
             </strong>
-            {' '}
             {locationData.locationName}
           </div>
           <div className={'customer_details'}>
@@ -86,7 +86,9 @@ function LocationInfoPage({ classes }: any) {
               {' '}
             </strong>
             {' '}
-            {locationData.address}
+            {locationData.address ? locationData.address : locationData.address1 ? '' : 'N/A'}
+            {locationData.address && <br/>}
+            {locationData.address1}
           </div>
           <div className={'customer_details'}>
             <strong>
