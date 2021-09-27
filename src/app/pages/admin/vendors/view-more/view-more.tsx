@@ -20,6 +20,9 @@ import { Grid, withStyles } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../../constants';
+import { CSButton } from "../../../../../helpers/custom";
 
 
 function CompanyProfilePage({ classes }: any) {
@@ -118,6 +121,25 @@ function CompanyProfilePage({ classes }: any) {
     });
 
   }
+
+  const editVendor = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'removeFooter': false,
+        'maxHeight': '450px',
+        'height': '100%',
+        'message': {
+          'title': `Finish contract with ${companyName}`
+        },
+        'contractId': vendorObj._id,
+        'notificationType': 'ContractInvitation'
+      },
+      'type': modalTypes.CONTRACT_VIEW_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   return (
     <>
@@ -235,6 +257,24 @@ function CompanyProfilePage({ classes }: any) {
                             }
                           },
                         ]} />
+                        <Grid
+                          container
+                          spacing={0}
+                          alignItems="center"
+                          justify="center"
+                        >
+                          <Grid item>
+                            <CSButton
+                              aria-label={'make-inactive'}
+                              className={'make-inactive'}
+                              variant="contained"
+                              color="primary"
+                              onClick={editVendor}
+                            >
+                              {'Make Inactive'}
+                            </CSButton>
+                          </Grid>
+                        </Grid>
                     </PageContainer>
 
                   </MainContainer>
@@ -317,7 +357,7 @@ const PageContainer = styled.div`
   /* padding-left: 65px; */
   padding-right: 65px;
   margin: 0 auto;
-  button  {
+  button:not(.make-inactive) {  {
     display: none;
   }
   input {

@@ -34,8 +34,8 @@ const status = [
     'value': 'active'
   },
   {
-    'label': 'Archive',
-    'value': 'archive'
+    'label': 'Inactive',
+    'value': 'inactive'
   }
 ];
 
@@ -71,8 +71,8 @@ function AdminVendorsPage({ classes }: any) {
   const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1].includes(vendor.status)), [vendors]);
 
   function RenderStatus({ status }: StatusTypes) {
-    const statusValues = ['Pending', 'Accepted', 'Cancelled', 'Rejected', 'Finished'];
-    const classNames = [classes.statusPendingText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.finishedText];
+    const statusValues = ['Active', 'Active', 'Cancelled', 'Rejected', 'Finished'];
+    const classNames = [classes.statusConfirmedText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.finishedText];
     const textStatus = statusValues[status];
     return <div className={`${classes.Text} ${classNames[status]}`}>
       {textStatus}
@@ -116,32 +116,6 @@ function AdminVendorsPage({ classes }: any) {
       'accessor': 'status',
       'className': 'font-bold',
       'sortable': true
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {editableStatus.includes(row.original.status) && <CSButtonSmall
-            aria-label={'change-status'}
-            color={'primary'}
-            onClick={() => editVendor(row.original)}
-            style={{ 'marginRight': '15px' }}
-            variant={'contained'}>
-            {'Change Status'}
-          </CSButtonSmall>}
-
-          <CSButtonSmall
-            aria-label={'view more'}
-            color={'primary'}
-            onClick={() => renderViewMore(row)}
-            variant={'contained'}>
-            {'View More'}
-          </CSButtonSmall>
-        </div>;
-      },
-      'Header': 'Action',
-      'id': 'action',
-      'sortable': false,
-      'width': 60
     }
   ];
 
@@ -160,10 +134,7 @@ function AdminVendorsPage({ classes }: any) {
     setCurTab(newValue);
   };
 
-  const handleRowClick = (event: any, row: any) => {
-    // Console.log(event, row);
-
-  };
+  const handleRowClick = (event: any, row: any) => renderViewMore(row);
 
   const openVendorModal = () => {
     dispatch(setModalDataAction({
