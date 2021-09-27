@@ -19,37 +19,37 @@ interface PricingProps {
 }
 
 const PricingTypes = [
-  {
+/*  {
     'color': green,
     'icon': MoneyIcon,
     'subtitle': 'Use default pricing for all invoice items',
     'title': 'Default Pricing'
 
-  },
+  },*/
   {
     'color': orange,
     'icon': SignalCellularAltIcon,
     'subtitle': 'Assign a Tier Pricing level',
     'title': 'Tier Pricing'
   },
-  {
+/*  {
     'color': yellow,
     'icon': BuildIcon,
     'subtitle': 'Create custom prices for customer',
     'title': 'Custom Pricing'
-  }
+  }*/
 ];
 
 
 export default function Pricing({ customer }:PricingProps) {
   const dispatch = useDispatch();
-  const currentActive = customer?.isCustomPrice
+/*  const currentActive = customer?.isCustomPrice
     ? 2
     : customer?.itemTier?.isActive
       ? 1
-      : 0;
+      : 0;*/
 
-  const [active, setActive] = useState(currentActive);
+  const [active, setActive] = useState(0);
 
   const handleClick = (index:number) => {
     setActive(index);
@@ -70,21 +70,21 @@ export default function Pricing({ customer }:PricingProps) {
         />
       </div>
       <Card className={'pricing-detail'}>
-        {active === 0 && <DefaultPricing
+{/*        {active === 0 && <DefaultPricing
+          customer={customer}
+          dispatch={dispatch}
+          header={PricingTypes[active]}
+        />}*/}
+        {active === 0 && <TierPricing
           customer={customer}
           dispatch={dispatch}
           header={PricingTypes[active]}
         />}
-        {active === 1 && <TierPricing
+{/*        {active === 2 && <CustomPricing
           customer={customer}
           dispatch={dispatch}
           header={PricingTypes[active]}
-        />}
-        {active === 2 && <CustomPricing
-          customer={customer}
-          dispatch={dispatch}
-          header={PricingTypes[active]}
-        />}
+        />}*/}
       </Card>
     </PricingContainer>
   );
