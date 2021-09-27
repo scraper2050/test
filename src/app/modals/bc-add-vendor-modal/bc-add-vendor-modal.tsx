@@ -3,8 +3,9 @@ import SearchIcon from '@material-ui/icons/Search';
 import styles from './bc-add-vendor-modal.styles';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
+import debounce from 'lodash.debounce';
 import { Avatar, Card, CardHeader, DialogActions, DialogContent, Divider, Fab, IconButton, InputBase, Paper, Typography, withStyles } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { callAddVendorAPI, callInviteVendarAPI, callSearchVendorAPI } from 'api/vendor.api';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { info, error } from 'actions/snackbar/snackbar.action';
@@ -84,9 +85,20 @@ function BCAddVendorModal({
     }
   });
 
-  const searchVendor = () => {
+  useEffect(() => {
+    if (FormikValues.email !== "") {
+      debouncedSearchVendor(FormikValues.email);
+    }
+  }, [FormikValues.email]);
+
+  const debouncedSearchVendor = useCallback(
+    debounce(email => searchVendor(email), 300),
+    []
+  );
+
+  const searchVendor = (email: any = FormikValues.email) => {
     setLoading(true);
-    callSearchVendorAPI({ 'email': FormikValues.email }).then((response: any) => {
+    callSearchVendorAPI({ 'email': email }).then((response: any) => {
       setContractors(response.contractors);
       setResStatus(response.status)
       setLoading(false);
