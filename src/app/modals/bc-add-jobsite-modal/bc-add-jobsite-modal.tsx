@@ -83,7 +83,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
     let stateVal: any = '';
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if (state) {
+    if (state !== undefined && state >= 0) {
       stateVal = allStates[state].name;
     }
 

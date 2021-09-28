@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import Button from '@material-ui/core/Button/Button';
@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import PricingHeader from '../pricing-header';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
-import { success } from 'actions/snackbar/snackbar.action';
+import {info, success} from 'actions/snackbar/snackbar.action';
 
 
 interface TierPricingProps {
@@ -28,9 +28,9 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
 
   const isTier = !customer.isCustomPrice && customer.itemTier?.isActive;
 
-  if (loading) {
+/*  if (loading) {
     return <BCCircularLoader heightValue={'100px'} />;
-  }
+  }*/
 
   const handleChange = (e:any) => {
     setTier(e.target.value);
@@ -46,8 +46,16 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerUpdate));
     }));
-    dispatch(success('Update Customer Pricing Successful!'));
+    //dispatch(success('Update Customer Pricing Successful!'));
   };
+
+  useEffect(() => {
+    //if customer on Custom Pricing revert to Tier Pricing
+    if (customer?.isCustomPrice) {
+      dispatch(info('Default and Custom Pricing are no longer available, customer is reverted to Tier Pricing'))
+      handleSubmit();
+    }
+  }, []);
 
 
   return <TierPricingContainer>

@@ -49,3 +49,20 @@ export const getJobLocation = async (id: string) => {
     return responseData;
   }
 };
+
+export const updateJobLocation = async (data: any) => {
+  const {jobLocationId: id} = data;
+  delete data.id;
+  try {
+    const response: any = await request(`/jobLocation/${id}`, 'PUT', data, false);
+    return response.data;
+  } catch (err) {
+    const responseData = { 'msg': '' };
+    if (err.response.status >= 400 || err.response.status === 0) {
+      responseData.msg = 'We are facing some issues, please try again.';
+    } else {
+      responseData.msg = 'Something went wrong';
+    }
+    return responseData;
+  }
+};
