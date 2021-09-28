@@ -404,8 +404,6 @@ function MakerPin({ ...props }) {
 }
 
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false, showPins = false }: BCMapWithMarkerListProps) {
-  const [tickets, setTickets] = useState<any>(list);
-
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
 
@@ -427,13 +425,6 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
     centerLng += hasPhoto ? 0.006 : 0.002;
   }
 
-  useEffect(() => {
-    if (tickets.length === 0) {
-      setTickets(list);
-    }
-  }, [list]);
-
-
   return (
     <GoogleMapReact
       bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
@@ -451,7 +442,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
         openTicketObj={openTicketObj}
       /> */}
       {
-        tickets.map((ticket: any, index: number) => {
+        list.map((ticket: any, index: number) => {
           let lat = DEFAULT_LAT;
           let lng = DEFAULT_LNG;
           if (ticket.jobSite) {
@@ -479,7 +470,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             openTicketObj={selected}
             showPins={showPins}
             ticket={ticket}
-            tickets={tickets}
+            tickets={list}
           />;
         })
       }
