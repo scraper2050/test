@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { editableStatus } from 'app/models/contract';
 import styled from 'styled-components';
+import Tooltip from '@material-ui/core/Tooltip';
 import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 
 interface StatusTypes {
@@ -34,8 +35,8 @@ const status = [
     'value': 'active'
   },
   {
-    'label': 'Archive',
-    'value': 'archive'
+    'label': 'Inactive',
+    'value': 'inactive'
   }
 ];
 
@@ -64,15 +65,16 @@ function AdminVendorsPage({ classes }: any) {
   const vendors = useSelector((state: any) => state.vendors);
   const [curTab, setCurTab] = useState(0);
   const [tableData, setTableData] = useState([]);
+  const [vendorStatus, setVendorStatus] = useState(true);
   const history = useHistory();
   const location = useLocation<any>();
 
-  const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1].includes(vendor.status)), [vendors]);
-  const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1].includes(vendor.status)), [vendors]);
+  const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1, 5].includes(vendor.status)), [vendors]);
+  const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1, 5].includes(vendor.status)), [vendors]);
 
   function RenderStatus({ status }: StatusTypes) {
-    const statusValues = ['Pending', 'Accepted', 'Cancelled', 'Rejected', 'Finished'];
-    const classNames = [classes.statusPendingText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.finishedText];
+    const statusValues = ['Active', 'Active', 'Cancelled', 'Rejected', 'Inactive'];
+    const classNames = [classes.statusConfirmedText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.cancelledText];
     const textStatus = statusValues[status];
     return <div className={`${classes.Text} ${classNames[status]}`}>
       {textStatus}
@@ -106,42 +108,28 @@ function AdminVendorsPage({ classes }: any) {
       'Header': 'Company Name',
       'accessor': 'contractor.info.companyName',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      Cell({ row }: any) {
+        return <span>{row.original?.contractor?.info?.companyName || row.original?.contractorEmail}</span>;
+      }
     },
     {
-      'Cell'({ row }: RowStatusTypes) {
-        return <RenderStatus status={row.original.status} />;
+      'Cell'({ row }: any) {
+        return row.original?.contractor?.info?.companyName
+          ? <RenderStatus status={row.original.status} />
+          : <Tooltip arrow title='Account not created'>
+              <CSButtonSmall
+                aria-label={'remind'}
+                color={'primary'}
+                variant={'contained'}>
+                {'Remind'}
+              </CSButtonSmall>
+          </Tooltip>;
       },
       'Header': 'Status',
       'accessor': 'status',
       'className': 'font-bold',
       'sortable': true
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {editableStatus.includes(row.original.status) && <CSButtonSmall
-            aria-label={'change-status'}
-            color={'primary'}
-            onClick={() => editVendor(row.original)}
-            style={{ 'marginRight': '15px' }}
-            variant={'contained'}>
-            {'Change Status'}
-          </CSButtonSmall>}
-
-          <CSButtonSmall
-            aria-label={'view more'}
-            color={'primary'}
-            onClick={() => renderViewMore(row)}
-            variant={'contained'}>
-            {'View More'}
-          </CSButtonSmall>
-        </div>;
-      },
-      'Header': 'Action',
-      'id': 'action',
-      'sortable': false,
-      'width': 60
     }
   ];
 
@@ -161,8 +149,14 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const handleRowClick = (event: any, row: any) => {
-    // Console.log(event, row);
-
+    if (row.original?.contractor?.info?.companyName) {
+      localStorage.setItem('companyContractId', row.original._id);
+      localStorage.setItem('companyContractStatus', vendorStatus.toString());
+      renderViewMore(row);
+    } else {
+      // TODO: add action
+      console.log(`Remind ${row.original?.contractorEmail}`);
+    }
   };
 
   const openVendorModal = () => {
@@ -178,26 +172,8 @@ function AdminVendorsPage({ classes }: any) {
     }, 200);
   };
 
-  const editVendor = (vendor:any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'removeFooter': false,
-        'maxHeight': '450px',
-        'height': '100%',
-        'message': {
-          'title': `Finish contract with ${vendor.contractor.info.companyName}`
-        },
-        'contractId': vendor._id,
-        'notificationType': 'ContractInvitation'
-      },
-      'type': modalTypes.CONTRACT_VIEW_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
   const handleFilterChange = (e:any) => {
+    setVendorStatus(!vendorStatus);
     if (e.target.value === 'active') {
       setTableData(activeVendors);
     } else {

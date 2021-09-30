@@ -38,6 +38,7 @@ import {
 import { getAllJobTypesAPI } from "api/job.api";
 import { modalTypes } from "../../../../../constants";
 import { getCustomers } from "actions/customer/customer.action";
+
 const PAGE_SIZE = 4;
 
 function MapViewTicketsScreen({ classes }: any) {
@@ -362,13 +363,11 @@ function MapViewTicketsScreen({ classes }: any) {
   return (
     <Grid container item lg={12}>
       <Grid container item lg={6} className="ticketsMapContainer">
-        {
-          <MemoizedMap
-            list={openTicketsClone}
-            selected={selectedTicket}
-            hasPhoto={hasPhoto}
-          />
-        }
+        <MemoizedMap
+          list={openTicketsClone}
+          selected={selectedTicket}
+          hasPhoto={hasPhoto}
+        />
       </Grid>
       <Grid container item lg={6}>
         <div className="ticketsFilterContainer">

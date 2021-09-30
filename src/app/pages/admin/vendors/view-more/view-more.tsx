@@ -20,12 +20,15 @@ import { Grid, withStyles } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../../constants';
+import { CSButton } from "../../../../../helpers/custom";
 
 
 function CompanyProfilePage({ classes }: any) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
-  const { vendorObj, loading = true } = useSelector((state: any) => state.vendors);
+  const { vendorObj, response, loading = true } = useSelector((state: any) => state.vendors);
   const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
@@ -48,6 +51,7 @@ function CompanyProfilePage({ classes }: any) {
   const [stateValid] = useState(true);
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
+  const [vendorStatus, setVendorStatus] = useState(localStorage.getItem('companyContractStatus') === 'true');
 
   const cancel = () => { }
   const apply = () => { }
@@ -73,10 +77,14 @@ function CompanyProfilePage({ classes }: any) {
     }
   }, []);
 
+  useEffect(() => {
+    if (response === 'Contract finished successfully.') {
+      setTimeout(() => renderGoBack(location.state), 2000);
+    }
+  }, [response]);
 
   useEffect(() => {
     if (vendorObj) {
-      console.log(vendorObj, 'vendorObj')
       if (vendorObj.info.companyName) {
         setCompanyName(vendorObj.info.companyName);
       }
@@ -118,6 +126,26 @@ function CompanyProfilePage({ classes }: any) {
     });
 
   }
+
+  const editVendor = () => {
+    const companyContractId = localStorage.getItem('companyContractId');
+    dispatch(setModalDataAction({
+      'data': {
+        'removeFooter': false,
+        'maxHeight': '450px',
+        'height': '100%',
+        'message': {
+          'title': `Finish contract with ${companyName}`
+        },
+        'contractId': companyContractId,
+        'notificationType': 'ContractInvitation'
+      },
+      'type': modalTypes.CONTRACT_VIEW_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   return (
     <>
@@ -235,6 +263,26 @@ function CompanyProfilePage({ classes }: any) {
                             }
                           },
                         ]} />
+                        {vendorStatus && (
+                          <Grid
+                            container
+                            spacing={0}
+                            alignItems="center"
+                            justify="center"
+                          >
+                            <Grid item>
+                              <CSButton
+                                aria-label={'make-inactive'}
+                                className={'make-inactive'}
+                                variant="contained"
+                                color="primary"
+                                onClick={editVendor}
+                              >
+                                {'Make Inactive'}
+                              </CSButton>
+                            </Grid>
+                          </Grid>
+                        )}
                     </PageContainer>
 
                   </MainContainer>
@@ -317,7 +365,7 @@ const PageContainer = styled.div`
   /* padding-left: 65px; */
   padding-right: 65px;
   margin: 0 auto;
-  button  {
+  button:not(.make-inactive) {  {
     display: none;
   }
   input {
