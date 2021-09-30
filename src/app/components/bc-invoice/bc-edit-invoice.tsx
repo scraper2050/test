@@ -5,7 +5,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
-  ButtonGroup,
   Card,
   CardContent,
   CardHeader,
@@ -34,6 +33,7 @@ import classNames from 'classnames';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {PageHeader} from '../../pages/customer/job-reports/view-invoice-edit';
 import {useHistory} from 'react-router-dom';
+import {useDispatch} from "react-redux";
 import {blue} from '@material-ui/core/colors';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import {KeyboardDatePicker} from '@material-ui/pickers';
@@ -44,6 +44,12 @@ import BCInvoiceItemsTableRow from './bc-invoice-table-row';
 import AddIcon from '@material-ui/icons/Add';
 import {callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI} from "../../../api/invoicing.api";
 import {CSChip} from "../../../helpers/custom";
+import {resetEmailState, sendEmailAction} from "../../../actions/email/email.action";
+import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
+import {openModalAction, setModalDataAction} from "../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../constants";
+import {error as errorSnackBar, error} from "../../../actions/snackbar/snackbar.action";
+import BCButtonGroup from "../bc-button-group";
 
 interface Props {
   classes?: any;
@@ -353,7 +359,6 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
 const useInvoiceTableStyles = makeStyles((theme: Theme) =>
   createStyles({
     // items table
@@ -484,7 +489,9 @@ const InvoiceValidationSchema = Yup.object().shape({
 function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = useInvoiceTableStyles();
+
   const history = useHistory();
+  const dispatch = useDispatch();
   const simplifiedItems = invoiceData.items.map((item: any) => {
     const newItem = {...item.item, ...item};
     delete newItem.item;
@@ -501,6 +508,47 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   const [subTotal, setSubTotal] = useState(invoiceData?.subTotal || 0);
   const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
   const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
+
+  const [options, setOptions] =  React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
+
+  const sendInvoice = () => {
+    dispatch(sendEmailAction.fetch({ 'email': customer?.info?.email,
+      'id': invoiceData._id,
+      'type': 'invoice'
+    }));
+  };
+
+  const showSendInvoiceModal = async() => {
+    try {
+      const response = await getInvoiceEmailTemplate(invoiceData._id);
+      const {emailTemplate: emailDefault, status, message} = response.data;
+      console.log({emailDefault})
+      if (status === 1) {
+        dispatch(setModalDataAction({
+          data: {
+              'modalTitle': 'Send this invoice',
+              'customer': customer?.profile?.displayName,
+              'customerEmail': customer?.info?.email,
+              'handleClick': sendInvoice,
+              'id': invoiceData._id,
+              'typeText': 'Invoice',
+              'className': 'wideModalTitle',
+              emailDefault
+          },
+          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+        }));
+        dispatch(resetEmailState());
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      } else {
+        dispatch(error(message));
+      }
+    } catch (e) {
+      dispatch(errorSnackBar(e));
+      console.log(e);
+    }
+  }
 
   const updateInvoice = (data: any) => {
     return new Promise((resolve, reject) => {
@@ -577,11 +625,10 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   };
 
   const handleFormSubmit = (data: any) => {
-    console.log('HANDLE SUBMIT')
     if (isOld)
-      return updateInvoice(data)
+      return updateInvoice(data);
     else
-      return createInvoice(data)
+      return createInvoice(data);
   };
 
   const calculateTotal = (itemsArray:any) => {
@@ -675,6 +722,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           customer: invoiceData?.customer,
           company: invoiceData?.company,
           newInvoice: !isOld,
+          selectedSubmitAction: -1,
         }}
         validationSchema={InvoiceValidationSchema}
         validate ={(values: any) => {
@@ -687,11 +735,24 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
             return errors;
           }
         }
-        onSubmit={(values) => {
-          handleFormSubmit(values);
+        onSubmit={(values, actions) => {
+          switch (values.selectedSubmitAction) {
+            case 0:
+            case 2:
+              handleFormSubmit(values);
+              break;
+            case 1:
+              handleFormSubmit(values).then(() => {
+                actions.setSubmitting(false);
+                showSendInvoiceModal();
+              });
+              break;
+            default:
+              console.info(`You clicked ${options[values.selectedSubmitAction]}`);
+          }
         }}
       >
-        {({submitForm, handleChange, setFieldValue, values, isSubmitting, touched, errors}) => {
+        {({submitForm, handleChange, setFieldValue, values, isSubmitting, errors}) => {
           //console.log({errors})
 
           return (
@@ -723,36 +784,17 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   >
                     Preview
                   </Button>
-                  {invoiceData?.isDraft &&
-                  <Button disableElevation
-                          variant="contained"
-                          color="primary"
-                          disabled={isSubmitting}
-                          onClick={() => {setFieldValue('isDraft', true); submitForm()}}
-                          className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt, invoiceStyles.bcRMargin)}
-                  >
-                    Save as Draft
-                  </Button>
-                  }
-                  <ButtonGroup disableElevation>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={isSubmitting}
-                      onClick={() => {
-                        setFieldValue('isDraft', false);
-                        submitForm()
-                      }}
-                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
-                    >
-                      Save and Continue
-                    </Button>
-                    <Button variant="contained"
-                            color="primary"
-                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
-                      <ArrowDropDownIcon/>
-                    </Button>
-                  </ButtonGroup>
+                  <BCButtonGroup
+                    options={options}
+                    disabled={isSubmitting}
+                    disabledItems={[invoiceData?.isDraft ? -1 : 2]}
+                    clickListener={(selected: number) => {
+                      setFieldValue('selectedSubmitAction', selected);
+                      setFieldValue('isDraft', selected === 2);
+                      submitForm()
+                    }}
+                  />
+
                 </div>
               </PageHeader>
               <DataContainer>
@@ -1202,36 +1244,16 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   >
                     Preview
                   </Button>
-                  {invoiceData?.isDraft &&
-                  <Button
-                    variant="contained"
-                    color="primary"
+                  <BCButtonGroup
+                    options={options}
                     disabled={isSubmitting}
-                    onClick={() => {setFieldValue('isDraft', true); submitForm()}}
-                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt, invoiceStyles.bcRMargin)}
-                  >
-                    Save as Draft
-                  </Button>
-                  }
-                  <ButtonGroup disableElevation>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={isSubmitting}
-                      onClick={() => {
-                        setFieldValue('isDraft', false);
-                        submitForm()
-                      }}
-                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBlueBt)}
-                    >
-                      Save and Continue
-                    </Button>
-                    <Button variant="contained"
-                            color="primary"
-                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcBorderW, invoiceStyles.bcBlueBt)}>
-                      <ArrowDropDownIcon/>
-                    </Button>
-                  </ButtonGroup>
+                    disabledItems={[invoiceData?.isDraft ? -1 : 2]}
+                    clickListener={(selected: number) => {
+                      setFieldValue('selectedSubmitAction', selected);
+                      setFieldValue('isDraft', selected === 2);
+                      submitForm()
+                    }}
+                    />
                 </div>
               </PageHeader>
             </Form>
