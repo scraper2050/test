@@ -106,11 +106,21 @@ function AdminVendorsPage({ classes }: any) {
       'Header': 'Company Name',
       'accessor': 'contractor.info.companyName',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      Cell({ row }: any) {
+        return <span>{row.original?.contractor?.info?.companyName || row.original?.contractorEmail}</span>;
+      }
     },
     {
-      'Cell'({ row }: RowStatusTypes) {
-        return <RenderStatus status={row.original.status} />;
+      'Cell'({ row }: any) {
+        return row.original?.contractor?.info?.companyName
+          ? <RenderStatus status={row.original.status} />
+          : <CSButtonSmall
+              aria-label={'remind'}
+              color={'primary'}
+              variant={'contained'}>
+              {'Remind'}
+            </CSButtonSmall>;
       },
       'Header': 'Status',
       'accessor': 'status',
@@ -134,7 +144,15 @@ function AdminVendorsPage({ classes }: any) {
     setCurTab(newValue);
   };
 
-  const handleRowClick = (event: any, row: any) => renderViewMore(row);
+  const handleRowClick = (event: any, row: any) => {
+    if (row.original?.contractor?.info?.companyName) {
+      localStorage.setItem('companyContractId', row.original._id);
+      renderViewMore(row);
+    } else {
+      // TODO: add action
+      console.log(`Remind ${row.original?.contractorEmail}`);
+    }
+  };
 
   const openVendorModal = () => {
     dispatch(setModalDataAction({
@@ -149,26 +167,8 @@ function AdminVendorsPage({ classes }: any) {
     }, 200);
   };
 
-  const editVendor = (vendor:any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'removeFooter': false,
-        'maxHeight': '450px',
-        'height': '100%',
-        'message': {
-          'title': `Finish contract with ${vendor.contractor.info.companyName}`
-        },
-        'contractId': vendor._id,
-        'notificationType': 'ContractInvitation'
-      },
-      'type': modalTypes.CONTRACT_VIEW_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
   const handleFilterChange = (e:any) => {
+    console.log(`object`, nonActiveVendors)
     if (e.target.value === 'active') {
       setTableData(activeVendors);
     } else {

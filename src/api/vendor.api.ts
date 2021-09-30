@@ -92,10 +92,9 @@ export const acceptRejectVendorAPI = ({ contractId, status }:AcceptRejectContrac
   });
 };
 
-export const cancelOrFinishVendorApi = ({ contractId, status }:AcceptRejectContractProps) => {
+export const finishVendorApi = ({ contractId }:AcceptRejectContractProps) => {
   return new Promise((resolve, reject) => {
-    request(`/CancelOrFinish`, 'post', { contractId,
-      status })
+    request(`/finishContract`, 'post', { contractId })
       .then((res: any) => {
         return resolve(res.data);
       })
