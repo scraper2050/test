@@ -123,6 +123,7 @@ function CompanyProfilePage({ classes }: any) {
   }
 
   const editVendor = () => {
+    const companyContractId = localStorage.getItem('companyContractId');
     dispatch(setModalDataAction({
       'data': {
         'removeFooter': false,
@@ -131,7 +132,7 @@ function CompanyProfilePage({ classes }: any) {
         'message': {
           'title': `Finish contract with ${companyName}`
         },
-        'contractId': vendorObj._id,
+        'contractId': companyContractId,
         'notificationType': 'ContractInvitation'
       },
       'type': modalTypes.CONTRACT_VIEW_MODAL

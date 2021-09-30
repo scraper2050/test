@@ -8,7 +8,7 @@ import {
   takeLatest
 } from 'redux-saga/effects';
 import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
-import { cancelOrFinishVendorApi } from 'api/vendor.api';
+import { finishVendorApi } from 'api/vendor.api';
 import { vendorStatusToNumber } from 'actions/vendor/vendor.types';
 
 
@@ -32,7 +32,7 @@ export function *handleCancelOrFinish(action: { payload: any }) {
   console.log('called');
   yield put(cancelOrFinishContractActions.fetching());
   try {
-    const result = yield call(cancelOrFinishVendorApi, action.payload);
+    const result = yield call(finishVendorApi, action.payload);
     console.log('api');
     if (result.status !== 0) {
       console.log('result');
