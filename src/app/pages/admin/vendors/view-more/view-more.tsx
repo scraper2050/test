@@ -28,7 +28,7 @@ import { CSButton } from "../../../../../helpers/custom";
 function CompanyProfilePage({ classes }: any) {
   const dispatch = useDispatch();
   const image = useSelector((state: any) => state.image);
-  const { vendorObj, loading = true } = useSelector((state: any) => state.vendors);
+  const { vendorObj, response, loading = true } = useSelector((state: any) => state.vendors);
   const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
@@ -51,6 +51,7 @@ function CompanyProfilePage({ classes }: any) {
   const [stateValid] = useState(true);
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
+  const [vendorStatus, setVendorStatus] = useState(localStorage.getItem('companyContractStatus') === 'true');
 
   const cancel = () => { }
   const apply = () => { }
@@ -76,10 +77,14 @@ function CompanyProfilePage({ classes }: any) {
     }
   }, []);
 
+  useEffect(() => {
+    if (response === 'Contract finished successfully.') {
+      setTimeout(() => renderGoBack(location.state), 2000);
+    }
+  }, [response]);
 
   useEffect(() => {
     if (vendorObj) {
-      console.log(vendorObj, 'vendorObj')
       if (vendorObj.info.companyName) {
         setCompanyName(vendorObj.info.companyName);
       }
@@ -258,24 +263,26 @@ function CompanyProfilePage({ classes }: any) {
                             }
                           },
                         ]} />
-                        <Grid
-                          container
-                          spacing={0}
-                          alignItems="center"
-                          justify="center"
-                        >
-                          <Grid item>
-                            <CSButton
-                              aria-label={'make-inactive'}
-                              className={'make-inactive'}
-                              variant="contained"
-                              color="primary"
-                              onClick={editVendor}
-                            >
-                              {'Make Inactive'}
-                            </CSButton>
+                        {vendorStatus && (
+                          <Grid
+                            container
+                            spacing={0}
+                            alignItems="center"
+                            justify="center"
+                          >
+                            <Grid item>
+                              <CSButton
+                                aria-label={'make-inactive'}
+                                className={'make-inactive'}
+                                variant="contained"
+                                color="primary"
+                                onClick={editVendor}
+                              >
+                                {'Make Inactive'}
+                              </CSButton>
+                            </Grid>
                           </Grid>
-                        </Grid>
+                        )}
                     </PageContainer>
 
                   </MainContainer>

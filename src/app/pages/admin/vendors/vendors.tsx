@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { editableStatus } from 'app/models/contract';
 import styled from 'styled-components';
+import Tooltip from '@material-ui/core/Tooltip';
 import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 
 interface StatusTypes {
@@ -64,15 +65,16 @@ function AdminVendorsPage({ classes }: any) {
   const vendors = useSelector((state: any) => state.vendors);
   const [curTab, setCurTab] = useState(0);
   const [tableData, setTableData] = useState([]);
+  const [vendorStatus, setVendorStatus] = useState(true);
   const history = useHistory();
   const location = useLocation<any>();
 
-  const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1].includes(vendor.status)), [vendors]);
-  const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1].includes(vendor.status)), [vendors]);
+  const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1, 5].includes(vendor.status)), [vendors]);
+  const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1, 5].includes(vendor.status)), [vendors]);
 
   function RenderStatus({ status }: StatusTypes) {
-    const statusValues = ['Active', 'Active', 'Cancelled', 'Rejected', 'Finished'];
-    const classNames = [classes.statusConfirmedText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.finishedText];
+    const statusValues = ['Active', 'Active', 'Cancelled', 'Rejected', 'Inactive'];
+    const classNames = [classes.statusConfirmedText, classes.statusConfirmedText, classes.cancelledText, classes.cancelledText, classes.cancelledText];
     const textStatus = statusValues[status];
     return <div className={`${classes.Text} ${classNames[status]}`}>
       {textStatus}
@@ -115,12 +117,14 @@ function AdminVendorsPage({ classes }: any) {
       'Cell'({ row }: any) {
         return row.original?.contractor?.info?.companyName
           ? <RenderStatus status={row.original.status} />
-          : <CSButtonSmall
-              aria-label={'remind'}
-              color={'primary'}
-              variant={'contained'}>
-              {'Remind'}
-            </CSButtonSmall>;
+          : <Tooltip arrow title='Account not created'>
+              <CSButtonSmall
+                aria-label={'remind'}
+                color={'primary'}
+                variant={'contained'}>
+                {'Remind'}
+              </CSButtonSmall>
+          </Tooltip>;
       },
       'Header': 'Status',
       'accessor': 'status',
@@ -147,6 +151,7 @@ function AdminVendorsPage({ classes }: any) {
   const handleRowClick = (event: any, row: any) => {
     if (row.original?.contractor?.info?.companyName) {
       localStorage.setItem('companyContractId', row.original._id);
+      localStorage.setItem('companyContractStatus', vendorStatus.toString());
       renderViewMore(row);
     } else {
       // TODO: add action
@@ -168,7 +173,7 @@ function AdminVendorsPage({ classes }: any) {
   };
 
   const handleFilterChange = (e:any) => {
-    console.log(`object`, nonActiveVendors)
+    setVendorStatus(!vendorStatus);
     if (e.target.value === 'active') {
       setTableData(activeVendors);
     } else {
