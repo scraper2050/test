@@ -389,7 +389,7 @@ function BCJobModal({
       //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       'customerContactId': job.customerContactId ? job.customerContactId._id : ticket.customerContactId || '',
       'customerPO': job.customerPO || ticket.customerPO,
-      'image': ticket.image !== undefined ? ticket.image : ''
+      'image': job.image !== undefined ? job.image : ticket.image
 
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
@@ -406,7 +406,7 @@ function BCJobModal({
       //console.log({tempJobValues});
       delete tempJobValues.customerContactId;
       delete tempJobValues.customerPO;
-      delete tempJobValues.image;
+      // delete tempJobValues.image;
 
       const tempTicket = {
         'ticketId': _id,
