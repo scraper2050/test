@@ -1,5 +1,6 @@
 import request from 'utils/http.service';
 import { formatDateYMD } from 'helpers/format';
+import buildFormData from 'utils/build-formdata';
 import {
   refreshJobTypes,
   setJobTypes,
@@ -102,7 +103,10 @@ export const getjobDetailAPI = async (data: any) => {
 
 export const callCreateJobAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/createJob`, 'post', data)
+    const formData = new FormData();
+    buildFormData(formData, data);
+
+    request(`/createJob`, 'post', formData)
       .then((res: any) => {
         return resolve(res.data);
       })
@@ -115,7 +119,10 @@ export const callCreateJobAPI = (data: any) => {
 
 export const callEditJobAPI = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/editJob`, 'post', data)
+    const formData = new FormData();
+    buildFormData(formData, data)
+
+    request(`/editJob`, 'post', formData)
       .then((res: any) => {
         return resolve(res.data);
       })
