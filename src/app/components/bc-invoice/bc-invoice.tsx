@@ -233,9 +233,24 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
       fontWeight: 600,
       color: CONSTANTS.INVOICE_TABLE_HEADING,
       display: 'block',
-      padding: '20px 0',
       borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`
     },
+    itemsTableBodyDescription: {
+      fontSize: 14,
+      color: CONSTANTS.INVOICE_TABLE_HEADING,
+      display: 'block',
+      borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`
+    },
+    itemsTableOneRow: {
+      padding: '20px 0',
+    },
+    itemsTableFirstRow: {
+      padding: '20px 0 2px 0',
+    },
+    itemsTableSecondRow: {
+      padding: '2px 0 20px 0',
+    }
+
   }),
 );
 
@@ -363,45 +378,56 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
         <div className={invoiceTableStyle.itemsTableBody}>
           {invoiceDetail?.items && invoiceDetail?.items.map((row: any) => (
             <Grid container>
-              <Grid item xs={12} lg={6}>
-                <span className={invoiceTableStyle.itemsTableBodyText}>{row?.item?.name}</span>
+              <Grid item container
+                    className={row?.description ? invoiceTableStyle.itemsTableFirstRow : invoiceTableStyle.itemsTableOneRow}>
+                <Grid item xs={12} lg={6}>
+                  <span className={invoiceTableStyle.itemsTableBodyText}>{row?.item?.name}</span>
+                </Grid>
+                <Grid item xs={12} lg={1}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyText,
+                    invoiceTableStyle.itemsTableHeaderTextCenter
+                  )}>{row?.quantity}</span>
+                </Grid>
+                <Grid item xs={12} lg={1}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyText,
+                    invoiceTableStyle.itemsTableHeaderTextCenter
+                  )}>${parseFloat(row?.price).toFixed(2)}</span>
+                </Grid>
+                <Grid item xs={12} lg={1}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyText,
+                    invoiceTableStyle.itemsTableHeaderTextCenter
+                  )}>{row?.quantity}</span>
+                </Grid>
+                <Grid item xs={12} lg={1}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyText,
+                    invoiceTableStyle.itemsTableHeaderTextCenter
+                  )}>{row?.tax > 0 ? parseFloat(row?.tax).toFixed(2) : 'N/A'}</span>
+                </Grid>
+                <Grid item xs={12} lg={1}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyText,
+                    invoiceTableStyle.itemsTableHeaderTextCenter
+                  )}>${parseFloat(row?.taxAmount).toFixed(2)}</span>
+                </Grid>
+                <Grid item xs={12} lg={1}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyText,
+                    invoiceTableStyle.itemsTableHeaderTextRight
+                  )}>${parseFloat(row?.subTotal).toFixed(2)}</span>
+                </Grid>
               </Grid>
-              <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>{row?.quantity}</span>
-              </Grid>
-              <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>${parseFloat(row?.price).toFixed(2)}</span>
-              </Grid>
-              <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>{row?.quantity}</span>
-              </Grid>
-              <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>{row?.tax > 0 ? parseFloat(row?.tax).toFixed(2) : 'N/A'}</span>
-              </Grid>
-              <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextCenter
-                )}>${parseFloat(row?.taxAmount).toFixed(2)}</span>
-              </Grid>
-              <Grid item xs={12} lg={1}>
-                <span className={classNames(
-                  invoiceTableStyle.itemsTableBodyText,
-                  invoiceTableStyle.itemsTableHeaderTextRight
-                )}>${parseFloat(row?.subTotal).toFixed(2)}</span>
-              </Grid>
+              {row?.description &&
+                <Grid item xs={12} lg={8}
+                      className={invoiceTableStyle.itemsTableSecondRow}>
+                  <span className={classNames(
+                    invoiceTableStyle.itemsTableBodyDescription,
+                  )}>{row?.description}</span>
+                </Grid>
+              }
             </Grid>
           ))}
         </div>
