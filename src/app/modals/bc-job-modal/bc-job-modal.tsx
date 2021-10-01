@@ -369,7 +369,7 @@ function BCJobModal({
   const form = useFormik({
     'initialValues': {
       'customerId': job.customer?._id,
-      'description': job.description ? job.description : '',
+      'description': job.description || ticket.note,
       'employeeType': !job.employeeType
         ? 0
         : 1,
