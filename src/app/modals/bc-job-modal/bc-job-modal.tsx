@@ -278,7 +278,9 @@ function BCJobModal({
         tempJobValue = ticket.tasks && ticket.tasks.length > 0
           ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
-        ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+        if (typeof ticket.tasks !== 'undefined') {
+          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+        }
       }
       setFieldValue('jobTypes', ids);
       setJobTypeValue(tempJobValue);

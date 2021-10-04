@@ -462,7 +462,7 @@ function MapViewTicketsScreen({ classes }: any) {
                   x.customer.profile &&
                   x.customer.profile.displayName
                     ? x.customer.profile.displayName
-                    : ""}
+                    : (x.ticketId ? x.ticketId : '')}
                 </h3>
               </div>
               <div className="location_desc_container">
@@ -478,7 +478,8 @@ function MapViewTicketsScreen({ classes }: any) {
               </div> */}
 
                 <div className="card_desc">
-                  <p>{x.jobType ? x.jobType.title : ""}</p>
+                  {x.jobType ? <p>{x.jobType.title}</p> : ''}
+                  {!x.customer ? <p>Ticket made via website</p> : ''}
                 </div>
               </div>
               <hr></hr>
