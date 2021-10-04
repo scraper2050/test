@@ -278,7 +278,9 @@ function BCJobModal({
         tempJobValue = ticket.tasks && ticket.tasks.length > 0
           ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
-        ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+        if (typeof ticket.tasks !== 'undefined') {
+          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+        }
       }
       setFieldValue('jobTypes', ids);
       setJobTypeValue(tempJobValue);
@@ -318,7 +320,9 @@ function BCJobModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
-        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId?._id || ticket.customerContactId)[0]);
+        setContactValue(contacts.find((contact: any) =>
+          contact._id === (ticket.customerContactId?._id || ticket.customerContactId || ticket.customer))
+        );
       }
     }
   }, [contacts]);
