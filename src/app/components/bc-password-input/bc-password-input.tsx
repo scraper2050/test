@@ -39,11 +39,17 @@ function BCPasswordInput({
 
   const handleChangePassword = (e: any): void => {
     const passwordValue = e.target.value;
+    const validRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/gu;
     onChange({
       'errorMsg': passwordValue.length > 0
-        ? ''
+        ? (passwordValue.length < 8
+          ? 'Password must be equal or more than 8 characters'
+          : !passwordValue.match(validRegex)
+            ? 'Password must contain at least one upper case letter, one number, and one special character'
+            : ''
+          )
         : 'This field is required',
-      'validate': passwordValue.length > 0,
+      'validate': passwordValue.length >= 8 && passwordValue.match(validRegex),
       'value': passwordValue
     });
   };
