@@ -295,7 +295,7 @@ function MapViewTicketsScreen({ classes }: any) {
     }
 
     if (
-      !openTicketObj.jobLocation ||
+      !openTicketObj.jobLocation &&
       (openTicketObj.jobLocation === undefined &&
         openTicketObj.customer.location.coordinates.length === 0)
     ) {

@@ -321,8 +321,8 @@ function BCJobModal({
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
         setContactValue(contacts.find((contact: any) =>
-          contact._id === (ticket.customerContactId?._id || ticket.customerContactId || ticket.customer))
-        );
+          [job?.customerContactId?._id, ticket?.customerContactId?._id, ticket?.customerContactId, ticket?.customer].includes(contact._id)
+        ));
       }
     }
   }, [contacts]);
