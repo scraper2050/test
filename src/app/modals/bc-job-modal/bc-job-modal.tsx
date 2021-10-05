@@ -276,7 +276,7 @@ function BCJobModal({
         ids = job.tasks.map((job:any) => ({ jobTypeId: job.jobType._id }));
       } else {
         tempJobValue = ticket.tasks && ticket.tasks.length > 0
-          ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
+          ? getJobData(ticket.tasks.map((job:any) => job.jobType || (job.jobType === undefined && job._id)), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
         if (typeof ticket.tasks !== 'undefined') {
           ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
