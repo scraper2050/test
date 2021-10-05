@@ -254,8 +254,7 @@ function MakerPin({ ...props }) {
                   {'Job Type'}
                 </h3>
                 <span>
-
-                  {props.ticket.jobType ? props.ticket.jobType.title : ''}
+                  {props.ticket.tasks.map((job: any) => <p>{job?.jobType?.title || job?.title}</p>)}
                 </span>
               </div>
               <div className={'job-type'}>
