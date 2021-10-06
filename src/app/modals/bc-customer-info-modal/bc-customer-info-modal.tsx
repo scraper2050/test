@@ -1,5 +1,5 @@
 import * as CONSTANTS from '../../../constants';
-import BCTextField from '../../components/bc-text-field/bc-text-field';
+import BCInput from 'app/components/bc-input/bc-input';
 import { allStates } from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
@@ -10,14 +10,28 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
   Button,
+  Checkbox,
+  Dialog, DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControlLabel,
   FormGroup,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  TextField
+  TextField,
+  Typography
 } from '@material-ui/core';
-import { Field, Form, Formik } from 'formik';
+import {
+  Field,
+  Form,
+  Formik,
+  FormikProps,
+  FormikValues,
+  useFormik
+} from 'formik';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   closeModalAction,
@@ -48,17 +62,18 @@ interface AllStateTypes {
 function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const dispatch = useDispatch();
   const [nameLabelState, setNameLabelState] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [positionValue, setPositionValue] = useState({
     'lang':
       customerInfo &&
-        customerInfo.location &&
-        customerInfo.location.coordinates.length > 1
+      customerInfo.location &&
+      customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[0]
         : 0,
     'lat':
       customerInfo &&
-        customerInfo.location &&
-        customerInfo.location.coordinates.length > 1
+      customerInfo.location &&
+      customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[1]
         : 0
   });
@@ -66,14 +81,14 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const initialValues = {
     'name':
       customerInfo &&
-        customerInfo.customerName &&
-        customerInfo.customerName !== 'N/A'
+      customerInfo.customerName &&
+      customerInfo.customerName !== 'N/A'
         ? customerInfo.customerName
         : '',
     'contactName':
       customerInfo &&
-        customerInfo.contactName &&
-        customerInfo.contactName !== 'N/A'
+      customerInfo.contactName &&
+      customerInfo.contactName !== 'N/A'
         ? customerInfo.contactName
         : '',
     'phone':
@@ -82,22 +97,22 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         : '',
     'email':
       customerInfo &&
-        customerInfo.email &&
-        customerInfo.email &&
-        customerInfo.email !== 'N/A'
+      customerInfo.email &&
+      customerInfo.email &&
+      customerInfo.email !== 'N/A'
         ? customerInfo.email
         : '',
     'city':
       customerInfo &&
-        customerInfo.customerAddress &&
-        customerInfo.customerAddress.city
+      customerInfo.customerAddress &&
+      customerInfo.customerAddress.city
         ? customerInfo.customerAddress.city
         : '',
     'state': {
       'id':
         customerInfo &&
-          customerInfo.customerAddress &&
-          customerInfo.customerAddress.state
+        customerInfo.customerAddress &&
+        customerInfo.customerAddress.state
           ? allStates.findIndex(x => x.name === customerInfo.customerAddress.state)
           : 0
     },
@@ -112,30 +127,31 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
 
     'zipCode':
       customerInfo &&
-        customerInfo.customerAddress &&
-        customerInfo.customerAddress.zipCode
+      customerInfo.customerAddress &&
+      customerInfo.customerAddress.zipCode
         ? customerInfo.customerAddress.zipCode
         : '',
     'latitude':
       customerInfo &&
-        customerInfo.location &&
-        customerInfo.location.coordinates.length > 1
+      customerInfo.location &&
+      customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[1]
         : 0,
     'longitude':
       customerInfo &&
-        customerInfo.location &&
-        customerInfo.location.coordinates.length > 1
+      customerInfo.location &&
+      customerInfo.location.coordinates.length > 1
         ? customerInfo.location.coordinates[0]
         : 0,
     'customerId':
       customerInfo && customerInfo.customerId ? customerInfo.customerId : '',
     'vendorId':
       customerInfo &&
-        customerInfo.vendorId &&
-        customerInfo.vendorId !== ''
+      customerInfo.vendorId &&
+      customerInfo.vendorId !== ''
         ? customerInfo.vendorId
-        : ''
+        : '',
+    "isActive": customerInfo?.isActive ?? true,
   };
 
   const filterOptions = createFilterOptions({
@@ -229,11 +245,74 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     return validateFlag;
   };
 
-  const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
+  const handleSelectState = (value: AllStateTypes) => {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
-    updateMap(values, undefined, undefined, undefined, index);
+    updateMap(FormikValues, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
   };
+
+  const renderWarnModal = () => {
+    return (
+      <div>
+        <Dialog
+          open={isOpen}
+          //onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Warning"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              This will make the customer and all their job locations <b>inactive</b> in BlueClerk,
+              but the customer will remain <b>active</b> in QuickBooks Online.<br/>
+              Click yes if you would like to make this change.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsOpen(false)} autoFocus>No</Button>
+            <Button onClick={() => {
+              setFieldValue('isActive', false);
+              setIsOpen(false)
+            }}>Yes</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  }
+
+  const {
+    'values': FormikValues,
+    'handleChange': formikChange,
+    'handleSubmit': FormikSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues,
+    onSubmit: async (values, {setSubmitting}) => {
+      const updateCustomerrequest = {
+        ...values,
+        'state': ''
+      };
+
+      if (values.state.id !== -1) {
+        updateCustomerrequest.state =
+          allStates[values.state.id].name;
+      }
+
+      updateCustomerrequest.latitude = positionValue.lat;
+      updateCustomerrequest.longitude = positionValue.lang;
+
+      if (isValidate(updateCustomerrequest)) {
+        await dispatch(updateCustomerAction(updateCustomerrequest, () => {
+          closeModal();
+          dispatch(loadingSingleCustomers());
+          dispatch(getCustomerDetailAction(updateCustomerrequest));
+        }));
+        dispatch(success('Update Customer Info Successful!'));
+      }
+    }
+  })
 
 
   return (
@@ -247,36 +326,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
               item
               lg={6}
               sm={12}>
-              <Formik
-                initialValues={initialValues}
-                onSubmit={async (values, { setSubmitting }) => {
-                  const updateCustomerrequest = { ...values,
-                    'state': '' };
-                  if (values.state.id !== -1) {
-                    updateCustomerrequest.state =
-                        allStates[values.state.id].name;
-                  }
-
-                  updateCustomerrequest.latitude = positionValue.lat;
-                  updateCustomerrequest.longitude = positionValue.lang;
-
-                  if (isValidate(updateCustomerrequest)) {
-                    await dispatch(updateCustomerAction(updateCustomerrequest, () => {
-                      closeModal();
-                      dispatch(loadingSingleCustomers());
-                      dispatch(getCustomerDetailAction(updateCustomerrequest));
-                    }));
-                    dispatch(success('Update Customer Info Successful!'));
-                  }
-                }}>
-                {({
-                  handleChange,
-                  values,
-                  errors,
-                  isSubmitting,
-                  setFieldValue
-                }) =>
-                  <Form className={'editCustomerForm'}>
+                  <form className={'editCustomerForm'} onSubmit={FormikSubmit}>
                     <Grid
                       className={classes.paper}
                       item
@@ -292,11 +342,13 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           {'Name'}
                         </InputLabel>
 
-                        <BCTextField
+                        <BCInput
                           name={'name'}
-                          onChange={handleChange}
+                          handleChange={formikChange}
                           placeholder={'Name'}
                           required
+                          dense={true}
+                          value={FormikValues.name}
                         />
                         {nameLabelState ? <label>
                           {'Required'}
@@ -312,12 +364,14 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         <InputLabel className={classes.label}>
                           {'Email'}
                         </InputLabel>
-                        <BCTextField
+                        <BCInput
                           name={'email'}
-                          onChange={handleChange}
+                          handleChange={formikChange}
                           placeholder={'Email'}
                           required
+                          dense={true}
                           type={'email'}
+                          value={FormikValues.email}
                         />
                       </FormGroup>
                     </Grid>
@@ -331,10 +385,12 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Contact Name'}
                           </InputLabel>
-                          <BCTextField
+                          <BCInput
                             name={'contactName'}
-                            onChange={handleChange}
+                            handleChange={formikChange}
                             placeholder={'Contact Name'}
+                            value={FormikValues.contactName}
+                            dense={true}
                           />
                         </FormGroup>
                       </Grid>
@@ -346,11 +402,13 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
-                          <BCTextField
+                          <BCInput
                             name={'phone'}
-                            onChange={handleChange}
+                            handleChange={formikChange}
                             // Type={"number"}
                             placeholder={'Phone Number'}
+                            value={FormikValues.phone}
+                            dense={true}
                           />
                         </FormGroup>
                       </Grid>
@@ -365,13 +423,15 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Street'}
                           </InputLabel>
-                          <BCTextField
+                          <BCInput
                             name={'street'}
-                            onChange={(e: any) => {
+                            handleChange={(e: any) => {
                               setFieldValue('street', e.target.value);
-                              updateMap(values, e.target.value);
+                              updateMap(FormikValues, e.target.value);
                             }}
                             placeholder={'Street'}
+                            value={FormikValues.street}
+                            dense={true}
                           />
                         </FormGroup>
 
@@ -384,13 +444,15 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Unit # / House #'}
                           </InputLabel>
-                          <BCTextField
+                          <BCInput
                             name={'unit'}
                             onChange={(e: any) => {
                               setFieldValue('unit', e.target.value);
-                              updateMap(values, e.target.value);
+                              updateMap(FormikValues, e.target.value);
                             }}
                             placeholder={'Unit #'}
+                            value={FormikValues.unit}
+                            dense={true}
                           />
                         </FormGroup>
                       </Grid>
@@ -402,13 +464,15 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'City'}
                           </InputLabel>
-                          <BCTextField
+                          <BCInput
                             name={'city'}
                             onChange={(e: any) => {
                               setFieldValue('city', e.target.value);
-                              updateMap(values, undefined, e.target.value);
+                              updateMap(FormikValues, undefined, e.target.value);
                             }}
                             placeholder={'City'}
+                            value={FormikValues.city}
+                            dense={true}
                           />
                         </FormGroup>
                       </Grid>
@@ -420,46 +484,15 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         item
                         sm={6}>
                         <FormGroup>
-                          {/* <InputLabel className={classes.label}>
-                              {"State"}
-                            </InputLabel>
-                            <Field
-                              as={Select}
-                              enableReinitialize
-                              name={"state.id"}
-                              onChange={(e: any) => {
-                                updateMap(
-                                  values,
-                                  undefined,
-                                  undefined,
-                                  undefined,
-                                  e.target.value
-                                );
-                                handleChange(e);
-                              }}
-                              type={"select"}
-                              variant={"outlined"}
-                            >
-                              {allStates.map((state, id) => (
-                                <MenuItem key={id} value={id}>
-                                  {state.name}
-                                </MenuItem>
-                              ))}
-                            </Field> */}
-
                           <div className={'search_form_wrapper'}>
-
                             <Autocomplete
                               autoHighlight
-                              defaultValue={allStates[values.state.id]}
+                              defaultValue={allStates[FormikValues.state.id]}
                               filterOptions={filterOptions}
                               getOptionLabel={option => option.name}
                               id={'tags-standard'}
                               onChange={(ev: any, newValue: any) => handleSelectState(
                                 newValue,
-                                updateMap,
-                                setFieldValue,
-                                values
                               )}
                               options={allStates}
                               renderInput={params =>
@@ -486,37 +519,64 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Zip Code'}
                           </InputLabel>
-                          <BCTextField
+                          <BCInput
                             name={'zipCode'}
-                            onChange={(e: any) => {
+                            handleChange={(e: any) => {
                               setFieldValue('zipCode', e.target.value);
-                              updateMap(values, '', '', e.target.value);
+                              updateMap(FormikValues, '', '', e.target.value);
                             }}
                             placeholder={'Zip Code'}
                             type={'number'}
+                            value={FormikValues.zipCode}
+                            dense={true}
                           />
                         </FormGroup>
                       </Grid>
-                      <Grid container>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={12}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Vendor Number'}
-                            </InputLabel>
-                            <BCTextField
-                              name={'vendorId'}
-                              onChange={handleChange}
-                              placeholder={'Vendor Number'}
-                            />
-                          </FormGroup>
-                        </Grid>
-                      </Grid>
-
-
                     </Grid>
+
+                      <Grid
+                        className={classes.paper}
+                        item
+                        sm={12}>
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Vendor Number'}
+                          </InputLabel>
+                          <BCInput
+                            name={'vendorId'}
+                            handleChange={formikChange}
+                            placeholder={'Vendor Number'}
+                            value={FormikValues.vendorId}
+                            dense={true}
+                          />
+                        </FormGroup>
+                      </Grid>
+                    {customerInfo?.customerId &&
+                    <Grid
+                      className={classes.paper}
+                      item
+                      sm={12}>
+                      <FormGroup>
+                        <FormControlLabel control={
+                          <Checkbox
+                            onChange={(e: any) => {
+                              if (!e.target.checked) setIsOpen(true);
+                              // setFieldValue('isActive', e.target.checked)
+                            }}
+                            name={'isActive'}
+                            color={'primary'}
+                            checked={FormikValues.isActive}
+                          />
+                        } label="Active"/>
+                        {/*{!values.isActive &&
+                      <Typography
+                        variant={'subtitle1'}
+                        style={{color: 'red', marginTop: -5}}>
+                        {inActiveMessage}</Typography>
+                      }*/}
+                      </FormGroup>
+                    </Grid>
+                    }
 
                     <Grid
                       className={classNames(
@@ -544,9 +604,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         </Button>
                       </Box>
                     </Grid>
-                  </Form>
-                }
-              </Formik>
+                  </form>
             </Grid>
 
             <Grid
@@ -562,7 +620,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                     <InputLabel className={classes.label}>
                       {'Latitude'}
                     </InputLabel>
-                    <TextField
+                    <BCInput
                       onChange={(e: any) =>
                         updateMapFromLatLng('lat', e.target.value)
                       }
@@ -581,7 +639,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                     <InputLabel className={classes.label}>
                       {'Longitude'}
                     </InputLabel>
-                    <TextField
+                    <BCInput
                       onChange={(e: any) =>
                         updateMapFromLatLng('lng', e.target.value)
                       }
@@ -602,9 +660,9 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
               </div>
             </Grid>
           </Grid>
-          {/* Main Grid*/}
         </DataContainer>
       </PageContainer>
+      {renderWarnModal()}
     </MainContainer>
   );
 }
