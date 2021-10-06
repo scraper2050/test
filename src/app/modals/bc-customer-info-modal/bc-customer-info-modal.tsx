@@ -185,13 +185,13 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
 
     let fullAddr = '';
     fullAddr = fullAddr.concat(
-      street ? street : values.street,
+      street !== undefined ? street : values.street,
       ' ',
-      city ? city : values.city,
+      city !== undefined ? city : values.city,
       ' ',
       stateVal,
       ' ',
-      zipCode ? zipCode : values.zipCode,
+      zipCode !== undefined ? zipCode : values.zipCode,
       ' ',
       'USA'
     );
@@ -531,7 +531,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'zipCode'}
                             handleChange={(e: any) => {
                               setFieldValue('zipCode', e.target.value);
-                              updateMap(FormikValues, '', '', e.target.value);
+                              updateMap(FormikValues, undefined, undefined, e.target.value);
                             }}
                             placeholder={'Zip Code'}
                             type={'number'}
