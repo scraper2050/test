@@ -1,9 +1,9 @@
 import request from 'utils/http.service';
 
-export const getCustomers = async (param?: {}) => {
+export const getCustomers = async (active = true, inactive = false) => {
   const body = {
-    'includeActive': 'true',
-    'includeNonActive': 'false'
+    'includeActive': active.toString(),
+    'includeNonActive': inactive.toString(),
   };
   let responseData;
   try {

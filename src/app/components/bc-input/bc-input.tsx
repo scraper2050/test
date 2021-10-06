@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
   'inputBox': {
     'marginTop': '0px',
+    'marginBottom': (props: {dense: boolean}) => props.dense ? '0px' : undefined,
     '& .MuiOutlinedInput-multiline': {
       padding: 0,
     }
@@ -32,9 +33,10 @@ function BCInput({
   margin = 'normal',
   type = 'text',
   required=false,
+  dense=false,
   ...props
 }: any) {
-  const classes = useStyles();
+  const classes = useStyles({dense});
   const additionalProps: any = {
     'multiline': false
   };

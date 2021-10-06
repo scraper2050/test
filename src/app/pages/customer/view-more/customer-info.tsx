@@ -1,5 +1,5 @@
 import { withStyles } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './view-more.styles';
 import { useLocation } from 'react-router-dom';
 import {
@@ -109,7 +109,8 @@ function CustomerInfoPage({ classes }: any) {
       phone,
       location,
       vendorId,
-      itemTierId
+      itemTierId,
+      isActive: row.isActive,
     };
     return customerObj;
   };
@@ -203,6 +204,16 @@ function CustomerInfoPage({ classes }: any) {
             </strong>
             {' '}
             {customerData.phone}
+          </div>
+          <div className={'customer_details'}>
+            <strong>
+              {'Status:'}
+              {' '}
+            </strong>
+            {' '}
+            <span className={`${customerData.isActive ? '' : classes.inactiveStyle}`}>
+              {customerData.isActive ? 'Active' : 'Inactive'}
+            </span>
           </div>
         </div>
         <div
