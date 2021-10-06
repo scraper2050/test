@@ -25,14 +25,14 @@ function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
-  const [showCustomer, setShowCustomer] = useState('active');
+
   const history = useHistory();
   const location = useLocation<any>();
   const locationState = location.state;
 
   const prevPage =
     locationState && locationState.prevPage ? locationState.prevPage : null;
-
+  const [showCustomer, setShowCustomer] = useState(prevPage?.showCustomer || 'active');
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
@@ -105,7 +105,7 @@ function CustomersPage({ classes }: any) {
     const customerId = row.original._id;
     const customerObj = { customerName,
       customerId,
-      currentPage };
+      currentPage: {...currentPage, showCustomer} };
     customerName =
       customerName !== undefined
         ? customerName.replace(/ /g, '')
