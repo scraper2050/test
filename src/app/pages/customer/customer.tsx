@@ -2,7 +2,14 @@ import BCTableContainer from '../../components/bc-table-container/bc-table-conta
 import BCTabs from '../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './customer.styles';
-import { Button, Grid, withStyles } from "@material-ui/core";
+import {
+  Button,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  withStyles
+} from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import {
   getCustomerDetailAction,
@@ -18,7 +25,10 @@ function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
+  const [showCustomer, setShowCustomer] = useState('active');
   const history = useHistory();
+  const filteredCustomers = showCustomer === 'all' ? customers?.data :
+    customers?.data?.filter((customer: any) => showCustomer === 'active' ? customer.isActive : !customer.isActive)
 
   const location = useLocation<any>();
   const locationState = location.state;
@@ -48,6 +58,19 @@ function CustomersPage({ classes }: any) {
     {
       'Header': 'Email',
       'accessor': 'info.email',
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
+      'Header': 'Status',
+      'accessor': 'isActive',
+      'Cell': function (row: any) {
+        return (
+          <div className={`${row.value ? '' : classes.inactiveStyle}`}>
+            {`${row.value ? 'Active' : 'Inactive'}`}
+          </div>
+        );
+      },
       'className': 'font-bold',
       'sortable': true
     },
@@ -97,6 +120,25 @@ function CustomersPage({ classes }: any) {
     });
   };
 
+  function Toolbar() {
+    return <div style={{display: 'flex', alignItems: 'center'}}>
+      <strong style={{fontSize: 16}}>{'Show:'}&nbsp;</strong>
+      <FormControl variant="standard" style={{minWidth: 80}}>
+        <Select
+          labelId="location-status-label"
+          id="location-status-select"
+          value={showCustomer}
+          label="Age"
+          onChange={(event: any) => setShowCustomer(event.target.value)}
+        >
+          <MenuItem value={'active'}>Active Customers</MenuItem>
+          <MenuItem value={'inactive'}>Inactive Customers</MenuItem>
+          <MenuItem value={'all'}>All Customers</MenuItem>
+        </Select>
+      </FormControl>
+    </div>
+  }
+
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -131,7 +173,9 @@ function CustomersPage({ classes }: any) {
                 onRowClick={handleRowClick}
                 search
                 setPage={setCurrentPage}
-                tableData={customers.data}
+                tableData={filteredCustomers}
+                toolbarPositionLeft={true}
+                toolbar={Toolbar()}
               />
             </div>
             <div

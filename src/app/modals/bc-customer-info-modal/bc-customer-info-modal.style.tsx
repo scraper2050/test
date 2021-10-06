@@ -26,5 +26,14 @@ export default (theme: Theme): any => ({
     'lineHeight': '26px',
     'margin': 0,
     'textDecoration': 'underline'
-  }
+  },
+  'warnYesButton' :{
+    color: 'white',
+    backgroundColor: `${theme.palette.success.main} !important`
+  },
+  'warnNoButton' :{
+    color: 'white',
+    backgroundColor: `${theme.palette.secondary.main} !important`
+  },
+
 });
