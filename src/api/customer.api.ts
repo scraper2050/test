@@ -3,7 +3,7 @@ import request from 'utils/http.service';
 export const getCustomers = async (param?: {}) => {
   const body = {
     'includeActive': 'true',
-    'includeNonActive': 'false'
+    'includeNonActive': 'true'
   };
   let responseData;
   try {

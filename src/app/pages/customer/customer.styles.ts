@@ -37,5 +37,10 @@ export default (theme: Theme): any => ({
   'statusIncompleteText': {
     'color': '#E05E3A',
     'fontWeight': 'bold'
+  },
+  'inactiveStyle': {
+    fontWeight: 'bold',
+    color: '#f50057',
+    //fontSize: '1rem',
   }
 });

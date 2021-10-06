@@ -265,14 +265,21 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This will make the customer and all their job locations <b>inactive</b> in BlueClerk,
+              This will make the Customer and all their Job Locations <b>Inactive</b> in BlueClerk,
               but the customer will remain <b>active</b> in QuickBooks Online.<br/>
               Click yes if you would like to make this change.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setIsOpen(false)} autoFocus>No</Button>
-            <Button onClick={() => {
+            <Button
+              className={classes.warnNoButton}
+              color={'secondary'}
+              variant={'contained'}
+              onClick={() => setIsOpen(false)} autoFocus>No</Button>
+            <Button
+              className={classes.warnYesButton}
+              variant={'contained'}
+              onClick={() => {
               setFieldValue('isActive', false);
               setIsOpen(false)
             }}>Yes</Button>
@@ -286,6 +293,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     'values': FormikValues,
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
+    isSubmitting,
     setFieldValue,
   } = useFormik({
     initialValues,
@@ -560,8 +568,8 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         <FormControlLabel control={
                           <Checkbox
                             onChange={(e: any) => {
-                              if (!e.target.checked) setIsOpen(true);
-                              // setFieldValue('isActive', e.target.checked)
+                              if (!e.target.checked && customerInfo.isActive) setIsOpen(true);
+                              else setFieldValue('isActive', e.target.checked)
                             }}
                             name={'isActive'}
                             color={'primary'}
@@ -587,6 +595,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       md={12}>
                       <Box mt={2}>
                         <Button
+                          disabled={isSubmitting}
                           className={'save-customer-button'}
                           color={'primary'}
                           type={'submit'}
@@ -596,6 +605,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             : 'Save'}
                         </Button>
                         <Button
+                          disabled={isSubmitting}
                           className={'cancel-customer-button'}
                           color={'secondary'}
                           onClick={() => closeModal()}
