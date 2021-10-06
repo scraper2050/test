@@ -14,7 +14,7 @@ export default (theme: Theme): any => ({
   },
   'paper': {
     'color': theme.palette.text.secondary,
-    'padding': '4px 8px'
+    'padding': '0 8px'
   },
   'root': {
     'flexGrow': 1
