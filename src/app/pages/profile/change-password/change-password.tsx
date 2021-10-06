@@ -21,7 +21,7 @@ const ChangePasswordValidation = yup.object().shape({
     .required('Current Password is required'),
   'newPassword': yup
     .string()
-    .min(8, 'Password must be more than 8 characters')
+    .min(8, 'Password must be equal or more than 8 characters')
     .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/gu, 'New password must contain at least one upper case letter, one number, and one special character')
     .required('New Password is required')
 });

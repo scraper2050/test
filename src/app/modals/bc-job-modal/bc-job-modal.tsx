@@ -276,9 +276,11 @@ function BCJobModal({
         ids = job.tasks.map((job:any) => ({ jobTypeId: job.jobType._id }));
       } else {
         tempJobValue = ticket.tasks && ticket.tasks.length > 0
-          ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
+          ? getJobData(ticket.tasks.map((job:any) => job.jobType || (job.jobType === undefined && job._id)), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
-        ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+        if (typeof ticket.tasks !== 'undefined') {
+          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+        }
       }
       setFieldValue('jobTypes', ids);
       setJobTypeValue(tempJobValue);
@@ -318,7 +320,9 @@ function BCJobModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
-        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId?._id || ticket.customerContactId)[0]);
+        setContactValue(contacts.find((contact: any) =>
+          [job?.customerContactId?._id, ticket?.customerContactId?._id, ticket?.customerContactId, ticket?.customer].includes(contact._id)
+        ));
       }
     }
   }, [contacts]);
@@ -369,7 +373,7 @@ function BCJobModal({
   const form = useFormik({
     'initialValues': {
       'customerId': job.customer?._id,
-      'description': job.description ? job.description : '',
+      'description': job.description || ticket.note,
       'employeeType': !job.employeeType
         ? 0
         : 1,
@@ -389,7 +393,7 @@ function BCJobModal({
       //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       'customerContactId': job.customerContactId ? job.customerContactId._id : ticket.customerContactId || '',
       'customerPO': job.customerPO || ticket.customerPO,
-      'image': ticket.image !== undefined ? ticket.image : ''
+      'image': job.image !== undefined ? job.image : ticket.image
 
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
@@ -406,7 +410,7 @@ function BCJobModal({
       //console.log({tempJobValues});
       delete tempJobValues.customerContactId;
       delete tempJobValues.customerPO;
-      delete tempJobValues.image;
+      // delete tempJobValues.image;
 
       const tempTicket = {
         'ticketId': _id,
