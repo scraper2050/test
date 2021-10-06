@@ -27,9 +27,6 @@ function CustomersPage({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const [showCustomer, setShowCustomer] = useState('active');
   const history = useHistory();
-  const filteredCustomers = showCustomer === 'all' ? customers?.data :
-    customers?.data?.filter((customer: any) => showCustomer === 'active' ? customer.isActive : !customer.isActive)
-
   const location = useLocation<any>();
   const locationState = location.state;
 
@@ -87,9 +84,11 @@ function CustomersPage({ classes }: any) {
   ];
 
   useEffect(() => {
+    const active = showCustomer === 'inactive' ? false : true;
+    const inactive = showCustomer === 'active' ? false : true;
     dispatch(loadingCustomers());
-    dispatch(getCustomers());
-  }, []);
+    dispatch(getCustomers(active, inactive));
+  }, [showCustomer]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -173,7 +172,7 @@ function CustomersPage({ classes }: any) {
                 onRowClick={handleRowClick}
                 search
                 setPage={setCurrentPage}
-                tableData={filteredCustomers}
+                tableData={customers.data}
                 toolbarPositionLeft={true}
                 toolbar={Toolbar()}
               />
