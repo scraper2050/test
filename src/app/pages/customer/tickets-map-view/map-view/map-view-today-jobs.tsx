@@ -23,6 +23,8 @@ import { Job } from '../../../../../actions/job/job.types';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { getCustomerDetail } from 'api/customer.api';
 
+const PAGE_SIZE = 4;
+
 function MapViewTodayJobsScreen({ classes, today }: any) {
   const dispatch = useDispatch();
 
@@ -66,7 +68,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
     };
     const requestObj = { ...rawData,
       'page': 1,
-      'pageSize': 6 };
+      'pageSize': PAGE_SIZE };
     getScheduledJobs(requestObj);
   }, []);
 
@@ -92,9 +94,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
   };
 
   useEffect(() => {
-    const offset = (page - 1) * 6;
+    const offset = (page - 1) * PAGE_SIZE;
 
-    const paginatedItems = jobs.slice(offset).slice(0, 6);
+    const paginatedItems = jobs.slice(offset).slice(0, PAGE_SIZE);
 
     setPaginatedJobs([...paginatedItems]);
     setTotalItems(jobs.length);
@@ -114,9 +116,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
     setPage(1);
 
-    const offset = (1 - 1) * 6;
+    const offset = (1 - 1) * PAGE_SIZE;
 
-    const paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
+    const paginatedItems = filteredDateJobs.slice(offset).slice(0, PAGE_SIZE);
 
     setTotalItems(filteredDateJobs.length);
     setPaginatedJobs([...paginatedItems]);
@@ -134,9 +136,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
     setPage(1);
 
-    const offset = (1 - 1) * 6;
+    const offset = (1 - 1) * PAGE_SIZE;
 
-    const paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
+    const paginatedItems = filteredDateJobs.slice(offset).slice(0, PAGE_SIZE);
 
     setTotalItems(filteredDateJobs.length);
     setPaginatedJobs([...paginatedItems]);
@@ -181,9 +183,9 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
     setPage(1);
 
-    const offset = (1 - 1) * 6;
+    const offset = (1 - 1) * PAGE_SIZE;
 
-    const paginatedItems = filteredDateJobs.slice(offset).slice(0, 6);
+    const paginatedItems = filteredDateJobs.slice(offset).slice(0, PAGE_SIZE);
 
     setTotalItems(filteredDateJobs.length);
     setPaginatedJobs([...paginatedItems]);
@@ -238,7 +240,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
     };
     const requestObj = { ...rawData,
       'page': 1,
-      'pageSize': 6 };
+      'pageSize': PAGE_SIZE };
 
     getScheduledJobs(requestObj);
   };
@@ -249,7 +251,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
 
     const requestObj = { ...filterJobs,
       'page': value,
-      'pageSize': 6 };
+      'pageSize': PAGE_SIZE };
     getScheduledJobs(requestObj);
   };
 
@@ -412,7 +414,7 @@ function MapViewTodayJobsScreen({ classes, today }: any) {
         </div>
         <Pagination
           color={'primary'}
-          count={Math.ceil(totalTodaysJobs / 6)}
+          count={Math.ceil(totalTodaysJobs / PAGE_SIZE)}
           onChange={handleChange}
           page={page}
           showFirstButton
