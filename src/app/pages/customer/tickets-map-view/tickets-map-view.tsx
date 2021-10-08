@@ -113,6 +113,10 @@ function TicketsWithMapView({ classes }: any) {
                 {
                   'label': 'Scheduled Jobs',
                   'value': 2
+                },
+                {
+                  'label': 'Routes',
+                  'value': 3
                 }
               ]}
             />
