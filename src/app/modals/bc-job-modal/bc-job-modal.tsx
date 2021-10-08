@@ -279,7 +279,7 @@ function BCJobModal({
           ? getJobData(ticket.tasks.map((job:any) => job.jobType || (job.jobType === undefined && job._id)), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
         if (typeof ticket.tasks !== 'undefined') {
-          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType || job._id }));
         }
       }
       setFieldValue('jobTypes', ids);
