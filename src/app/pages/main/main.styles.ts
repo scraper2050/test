@@ -22,7 +22,10 @@ export const pageContent = {
       'padding-left': '60px'
     },
     'padding': '10px 30px',
-    'position': 'relative'
+    'position': 'relative',
+    '&.maps': {
+      'padding': '10px 0 0',
+    }
   }
 };
 
@@ -60,7 +63,10 @@ export const dataContainer = {
     'flex-direction': 'column',
     'margin-top': '10px',
     'overflow': 'hidden',
-    'position': 'relative'
+    'position': 'relative',
+    '&_maps': {
+      'margin-top': '0',
+    }
   }
 };
 

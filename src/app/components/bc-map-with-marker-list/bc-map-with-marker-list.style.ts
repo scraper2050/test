@@ -8,8 +8,8 @@ export default (theme: Theme): any => ({
   'markerPopup': {
     'position': 'relative',
     'zIndex': '10',
-    'top': '20px',
-    'left': '-2px',
+    'top': '35px',
+    'left': '-10px',
     'height': 'auto',
     'backgroundColor': '#fff',
   },
