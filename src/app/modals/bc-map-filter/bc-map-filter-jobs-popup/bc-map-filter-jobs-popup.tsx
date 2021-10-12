@@ -19,7 +19,11 @@ function BCMapFilterModal({
   openTicketFilterModal,
   resetDate,
   setPage,
-  getScheduledJobs
+  getScheduledJobs,
+  todaysJobs,
+  showAll,
+  resetFilter,
+  callback
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
@@ -36,9 +40,16 @@ function BCMapFilterModal({
     setSubmitting(true);
     resetDate();
     setPage(1);
-    await getScheduledJobs({ ...values, page: 1, pageSize: 6 });
+    await getScheduledJobs({
+      ...values,
+      page: 1,
+      pageSize: showAll ? 0 : 4,
+      todaysJobs: todaysJobs && todaysJobs.toString()
+    });
     setSubmitting(false);
     openTicketFilterModal();
+
+    if (typeof callback === "function") callback(false);
   }
 
   const form = useFormik({
@@ -54,7 +65,7 @@ function BCMapFilterModal({
   const handleCustomerChange = (field: string, setFieldValue: Function, newValue: any) => {
     // const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
     const customerDatafromAutoselect = newValue?.profile?.displayName;
-    // const customerContacts: string[] = newValue.map((customer: any) => customer.contact.phone).filter(Boolean);  
+    // const customerContacts: string[] = newValue.map((customer: any) => customer.contact.phone).filter(Boolean);
     setFieldValue('customerNames', customerDatafromAutoselect);
     // setContacts(customerContacts);
     let data: any = {
@@ -181,6 +192,23 @@ function BCMapFilterModal({
           <Grid
             container
             spacing={2}>
+            {typeof resetFilter === "function" && (
+              <Fab
+                aria-label={'create-job'}
+                classes={{
+                  'root': classes.fabRoot
+                }}
+                color={'secondary'}
+                disabled={isSubmitting}
+                onClick={() => {
+                  resetFilter();
+                  openTicketFilterModal();
+                  if (typeof callback === "function") callback(true);
+                }}
+                variant={'extended'}>
+                {'Reset'}
+              </Fab>
+            )}
             <Fab
               aria-label={'create-job'}
               classes={{
