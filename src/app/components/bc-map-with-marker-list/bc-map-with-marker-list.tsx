@@ -1,6 +1,5 @@
 import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
-import RoomIcon from '@material-ui/icons/Room';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
@@ -12,6 +11,12 @@ import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
 import InfoIcon from '@material-ui/icons/Info';
+import { bcMapStyle } from './bc-map-style';
+
+import { ReactComponent as IconCancelled } from 'assets/img/icons/map/icon-cancelled.svg';
+import { ReactComponent as IconCompleted } from 'assets/img/icons/map/icon-completed.svg';
+import { ReactComponent as IconPending } from 'assets/img/icons/map/icon-pending.svg';
+import { ReactComponent as IconStarted } from 'assets/img/icons/map/icon-started.svg';
 
 import './bc-map-with-marker.scss';
 const DEFAULT_LAT = 32.3888811;
@@ -32,16 +37,30 @@ interface BCMapWithMarkerListProps {
 }
 function createMapOptions() {
   return {
+    styles: bcMapStyle,
     'gestureHandling': 'greedy'
   };
 }
 
 
 function MakerPin({ ...props }) {
+  let CustomIcon;
   const { lat, lng, showPins } = props;
   const [showInfo, setShowinfo] = useState(false);
   const dispatch = useDispatch();
 
+  const getStatusIcon = (status: any) => {
+    switch (status) {
+      case 1:
+        return IconStarted;
+      case 2:
+        return IconCompleted;
+      case 3:
+        return IconCancelled;
+      default:
+        return IconPending;
+    }
+  }
 
   const openCreateJobModal = (ticketObj: any) => {
     const reqObj = {
@@ -121,7 +140,13 @@ function MakerPin({ ...props }) {
   if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
       <>
-        { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} />}
+        {(() => {
+            const status = props?.openTicketObj?.status;
+            CustomIcon = getStatusIcon(status);
+          })()}
+        { checkIfDefault(lat, lng) &&
+          <CustomIcon className={props.classes.marker} />
+        }
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -214,8 +239,12 @@ function MakerPin({ ...props }) {
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
       <>
-
-        <RoomIcon className={props.classes.marker} />
+        {(() => {
+          const status = props?.openTicketObj?.status;
+          CustomIcon = getStatusIcon(status);
+        })()}
+        <CustomIcon className={props.classes.marker}
+        />
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -311,10 +340,13 @@ function MakerPin({ ...props }) {
   return checkIfDefault(lat, lng)
     ? <div
       onMouseLeave={() => setShowinfo(false)}>
-      <RoomIcon
+      {(() => {
+        const status = props?.ticket?.status;
+        CustomIcon = getStatusIcon(status);
+      })()}
+      <CustomIcon
         className={props.classes.marker}
         onMouseEnter={() => setShowinfo(true)}
-
       />
       {showInfo && <div
         className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -345,7 +377,7 @@ function MakerPin({ ...props }) {
                 {'Job Type'}
               </h3>
               <span>
-                {props.ticket.tasks.map(({ jobType }:any) => <p>
+                {props.ticket.tasks.map(({ jobType }:any) => <p key={jobType._id}>
                   {jobType.title}
                 </p>)}
               </span>

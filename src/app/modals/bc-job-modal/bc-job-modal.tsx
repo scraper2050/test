@@ -553,7 +553,8 @@ function BCJobModal({
     'validate':  (values: any) => {
       const errors: any = {};
 
-      if (values.jobTypes.length === 0) {
+
+      if (values.jobTypes.length === 0 && jobTypeValue.length === 0) {
         errors.jobTypes = 'Select at least one (1) job';
         if (jobTypesInput.current !== null) {
           jobTypesInput.current.setCustomValidity("Select at least one (1) job");

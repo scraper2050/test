@@ -67,6 +67,7 @@ function MapViewTicketsScreen({ classes }: any) {
   const open = useSelector(({ modal }: any) => modal.open);
   const type = useSelector(({ modal }: any) => modal.type);
   const modalData = useSelector(({ modal }: any) => modal.data);
+  const snackMessage = useSelector(({ snackbar }: any) => snackbar.message);
 
   useEffect(() => {
     let rawData = {
@@ -82,6 +83,12 @@ function MapViewTicketsScreen({ classes }: any) {
     getOpenTickets(requestObj);
     setSelectedTicket({});
   }, []);
+
+  useEffect(() => {
+    if(snackMessage === 'Job created successfully.') {
+      setPage(1);
+    }
+  }, [snackMessage])
 
   const openTicketFilterModal = () => {
     setShowFilterModal(!showFilterModal);
@@ -296,8 +303,11 @@ function MapViewTicketsScreen({ classes }: any) {
 
     if (
       !openTicketObj.jobLocation &&
+      openTicketObj.customer.jobLocations.length === 0 &&
       (openTicketObj.jobLocation === undefined &&
-        openTicketObj.customer.location.coordinates.length === 0)
+        openTicketObj.customer.location.coordinates.length === 0) &&
+      (openTicketObj.jobLocation === undefined &&
+        openTicketObj.customer.address.zipCode.length === 0)
     ) {
       dispatch(warning("There's no address on this ticket."));
     }
@@ -480,6 +490,7 @@ function MapViewTicketsScreen({ classes }: any) {
                 <div className="card_desc">
                   {x.jobType ? <p>{x.jobType.title}</p> : ''}
                   {!x.customer ? <p>Ticket made via website</p> : ''}
+                  {x.tasks.length ? x.tasks.map((item: any) => <p>{item.title}</p>) : ''}
                 </div>
               </div>
               <hr></hr>

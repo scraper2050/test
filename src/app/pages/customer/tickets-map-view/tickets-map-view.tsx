@@ -13,6 +13,10 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import styled from 'styled-components';
 import { JobTypes } from 'actions/job/job.types';
 
+import iconCancelled from 'assets/img/icons/map/icon-cancelled.svg';
+import iconCompleted from 'assets/img/icons/map/icon-completed.svg';
+import iconPending from 'assets/img/icons/map/icon-pending.svg';
+import iconStarted from 'assets/img/icons/map/icon-started.svg';
 
 const StatusContainer = styled.div`
 position: absolute;
@@ -22,28 +26,48 @@ display: flex;
 > div {
   position: relative;
   display: flex;
-  margin-right: 10px;
-  font-size: 13px;
-    text-transform: capitalize;
-    align-items: center;
-    letter-spacing: .6px;
+  margin-right: 30px;
+  font-size: 12px;
+  text-transform: capitalize;
+  align-items: center;
+  letter-spacing: .6px;
+  &:last-child {
+    margin-right: 0;
+  }
 }
 .job-status {
-    height: 11px;
-    width: 11px;
+    height: 20px;
+    width: 20px;
     border-radius: 15px;
-    margin-right: 6px;
+    margin-right: 10px;
     &_0 {
-      background-color: #000;
+      background-image: url(${iconPending});
+
+      & + span {
+        color: rgba(130, 130, 130, 1);
+      }
+
     }
     &_1 {
-      background-color: rgb(77, 189, 116);
+      background-image: url(${iconStarted});
+
+      & + span {
+        color: rgba(0, 170, 255, 1);
+      }
     }
     &_2 {
-      background-color: #fe5500;
+      background-image: url(${iconCompleted});
+
+      & + span {
+        color: rgba(80, 174, 85, 1);
+      }
     }
     &_3 {
-      background-color: #c00707;
+      background-image: url(${iconCancelled});
+
+      & + span {
+        color: rgba(245, 0, 87, 1);
+      }
     }
   }
 
@@ -63,7 +87,7 @@ function renderLegend() {
       <div
         className={`job-status job-status_${index}`}
       />
-      {type}
+      <span>{type}</span>
     </div>)}
   </StatusContainer>;
 }
@@ -95,7 +119,7 @@ function TicketsWithMapView({ classes }: any) {
           }}>
             <BCCircularLoader heightValue={'200px'} />
           </div>
-          : <div className={classes.pageContent}>
+          : <div className={`${classes.pageContent} maps`}>
 
             <BCTabs
               curTab={curTab}
@@ -123,19 +147,19 @@ function TicketsWithMapView({ classes }: any) {
             {curTab === 1 && renderLegend()}
             <SwipeableViews index={curTab}>
               <div
-                className={classes.dataContainer}
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 0}
                 id={'0'}>
                 <MapViewTicketsScreen />
               </div>
               <div
-                className={classes.dataContainer}
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 1}
                 id={'1'}>
                 <MapViewTodayJobsScreen />
               </div>
               <div
-                className={classes.dataContainer}
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 2}
                 id={'2'}>
                 <MapViewJobsScreen />
