@@ -108,7 +108,7 @@ function CustomersPage({ classes }: any) {
       currentPage: {...currentPage, showCustomer} };
     customerName =
       customerName !== undefined
-        ? customerName.replace(/ /g, '')
+        ? customerName.replace(/[\/ ]/g, '')
         : 'customername';
     localStorage.setItem('nestedRouteKey', `${customerName}`);
     dispatch(loadingSingleCustomers());

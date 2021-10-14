@@ -40,10 +40,11 @@ function CustomersJobEquipmentInfoEquipmentPage({ classes }: any) {
 
   const renderGoBack = (location: any) => {
     const baseObj = location;
-    let customerName =
+/*    let customerName =
       baseObj["customerName"] && baseObj["customerName"] !== undefined
         ? baseObj["customerName"]
-        : "N/A";
+        : "N/A";*/
+    let customerName = baseObj["customerName"].replace(/[\/ ]/g, '');
     let customerId =
       baseObj["customerId"] && baseObj["customerId"] !== undefined
         ? baseObj["customerId"]

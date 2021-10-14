@@ -172,7 +172,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const refreshPage = (jobLocationUpdated: any) => {
     const obj = {...jobLocationUpdated, customerId: jobLocationInfo.customerId}
     const {name: locationName} = jobLocationUpdated;
-    const locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
+    const locationNameLink = locationName !== undefined ? locationName.replace(/[\/ ]/g, '') : 'locationName';
     const {currentPage, customerName} = location.state;
     const state = {...obj, currentPage, customerName};
     history.replace({
