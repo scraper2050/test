@@ -21,7 +21,7 @@ import { getAllJobsAPI, getSearchJobs } from 'api/job.api';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { getCustomerDetail } from 'api/customer.api';
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 6;
 
 function MapViewJobsScreen({ classes, today }: any) {
   const dispatch = useDispatch();
