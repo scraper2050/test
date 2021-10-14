@@ -39,7 +39,7 @@ import { getAllJobTypesAPI } from "api/job.api";
 import { modalTypes } from "../../../../../constants";
 import { getCustomers } from "actions/customer/customer.action";
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 6;
 
 function MapViewTicketsScreen({ classes }: any) {
   const dispatch = useDispatch();

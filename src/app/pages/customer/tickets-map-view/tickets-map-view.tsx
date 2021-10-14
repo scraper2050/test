@@ -149,19 +149,19 @@ function TicketsWithMapView({ classes }: any) {
               <div
                 className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 0}
-                id={'0'}>
+                id={'map-swipeable-open'}>
                 <MapViewTicketsScreen />
               </div>
               <div
                 className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 1}
-                id={'1'}>
+                id={'map-swipeable-today'}>
                 <MapViewTodayJobsScreen />
               </div>
               <div
                 className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 2}
-                id={'2'}>
+                id={'map-swipeable-schedule'}>
                 <MapViewJobsScreen />
               </div>
             </SwipeableViews>
