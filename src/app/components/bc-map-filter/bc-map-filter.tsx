@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: '4px',
     borderRadius: '8px',
     border: '1px solid #E0E0E0',
-  }
+  },
 }));
 
 const useSidebarStyles = makeStyles(theme =>
@@ -74,24 +74,20 @@ const useSidebarStyles = makeStyles(theme =>
       }),
     },
     drawerClose: {
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
+      display: 'none',
       overflowX: 'hidden',
-      width: theme.spacing(10) + 1,
     },
   }),
 );
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 6;
 
 function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [filterJobs, setFilterJobs] = useState({
     'customerNames': '',
@@ -239,12 +235,12 @@ function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
       <Box
         position="absolute"
         top={76}
-        right={0}
+        right={open ? 290 : 0}
       >
         <Fab
           size="medium"
           className={mapStyles.fab}
-          onClick={handleDrawerOpen}
+          onClick={open ? handleDrawerClose : handleDrawerOpen}
         >
           {open
             ? <ChevronRightIcon style={{ fontSize: 20, color: CONSTANTS.SECONDARY_GREY }} />
@@ -257,6 +253,13 @@ function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
       <Drawer
         open={open}
         anchor="right"
+        PaperProps={{ style: { position: 'absolute' } }}
+        BackdropProps={{ style: { position: 'absolute' } }}
+        ModalProps={{
+          container: document.getElementById('map-swipeable-today'),
+          style: { position: 'absolute' }
+        }}
+        variant="persistent"
         onClose={handleDrawerClose}
         className={classnames(sidebarStyles.drawer, sidebarStyles.drawerOpen, {
           [sidebarStyles.drawerClose]: !open,
