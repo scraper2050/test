@@ -564,25 +564,20 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       className={classes.paper}
                       item
                       sm={12}>
-                      <FormGroup>
-                        <FormControlLabel control={
-                          <Checkbox
-                            onChange={(e: any) => {
-                              if (!e.target.checked && customerInfo.isActive) setIsOpen(true);
-                              else setFieldValue('isActive', e.target.checked)
-                            }}
-                            name={'isActive'}
-                            color={'primary'}
-                            checked={FormikValues.isActive}
-                          />
-                        } label="Active"/>
-                        {/*{!values.isActive &&
-                      <Typography
-                        variant={'subtitle1'}
-                        style={{color: 'red', marginTop: -5}}>
-                        {inActiveMessage}</Typography>
-                      }*/}
-                      </FormGroup>
+                      <FormControlLabel control={
+                        <Checkbox
+                          onChange={(e: any) => {
+                            if (!e.target.checked && customerInfo.isActive) setIsOpen(true);
+                            else setFieldValue('isActive', e.target.checked)
+                          }}
+                          name={'isActive'}
+                          color={'primary'}
+                          checked={FormikValues.isActive}
+                        />
+                      } label=""/>
+                      <span
+                        style={{color: '#383838', fontSize: '1rem', marginLeft: -15}}>
+                            Active</span>
                     </Grid>
                     }
 

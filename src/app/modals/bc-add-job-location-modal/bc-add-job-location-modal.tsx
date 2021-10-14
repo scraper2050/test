@@ -449,7 +449,6 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           className={classes.paper}
                           item
                           sm={12}>
-                          <FormGroup>
                             <FormControlLabel control={
                               <Checkbox
                                 onChange={(e: any) => {
@@ -459,14 +458,16 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 color={'primary'}
                                 checked={values.isActive}
                               />
-                            } label="Active"/>
+                            } label=""/>
+                          <span
+                            style={{color: '#383838', fontSize: '1rem', marginLeft: -15}}>
+                            Active</span>
                             {!values.isActive &&
                             <Typography
                               variant={'subtitle1'}
                               style={{color: 'red', marginTop: -5}}>
                               {inActiveMessage}</Typography>
                             }
-                          </FormGroup>
                         </Grid>
                         }
                       </Grid>
