@@ -54,11 +54,11 @@ function ViewMorePage({ classes }: any) {
 
 /*    customerName =
       customerName !== undefined
-        ? customerName.replace(/ /g, '')
+        ? customerName.replace(/[\/ ]/g, '')
         : 'customername';*/
 
     const locationName = jobLocation.name;
-    const locationNameLink = locationName !== undefined ? locationName.replace(/ /g, '') : 'locationName';
+    const locationNameLink = locationName !== undefined ? locationName.replace(/[\/ ]/g, '') : 'locationName';
     const linkKey: any = localStorage.getItem('nestedRouteKey');
     localStorage.setItem('prevNestedRouteKey', linkKey);
     localStorage.setItem('nestedRouteKey', `location/${locationNameLink}`);
@@ -89,7 +89,7 @@ function ViewMorePage({ classes }: any) {
     };
     customerName =
       customerName !== undefined
-        ? customerName.replace(/ /g, '')
+        ? customerName.replace(/[\/ ]/g, '')
         : 'customername';
 
     const linkKey: any = localStorage.getItem('nestedRouteKey');
