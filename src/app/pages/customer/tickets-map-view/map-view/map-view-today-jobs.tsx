@@ -4,8 +4,8 @@ import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-mark
 import '../ticket-map-view.scss';
 import styles from '../ticket-map-view.style';
 import { getSearchJobs } from 'api/job.api';
+import SidebarTodayJobs from '../sidebar/today-jobs';
 import { Job } from '../../../../../actions/job/job.types';
-import BCMapFilter from 'app/components/bc-map-filter/bc-map-filter';
 
 function MapViewTodayJobsScreen() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -69,7 +69,7 @@ function MapViewTodayJobsScreen() {
         }
       </Grid>
 
-      <BCMapFilter totalJobs={totalJobs} onSelectJob={setSelectedJob} />
+      <SidebarTodayJobs totalJobs={totalJobs} onSelectJob={setSelectedJob} />
 
     </Grid>
   );
