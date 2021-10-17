@@ -372,7 +372,12 @@ function MapViewTicketsScreen({ classes }: any) {
 
   return (
     <Grid container item lg={12}>
-      <Grid container item lg={6} className="ticketsMapContainer">
+      <Grid
+        container
+        item
+        lg={12}
+        className="ticketsMapContainer"
+      >
         <MemoizedMap
           list={openTicketsClone}
           selected={selectedTicket}

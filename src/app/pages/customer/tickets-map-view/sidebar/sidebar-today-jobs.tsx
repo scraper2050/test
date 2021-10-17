@@ -15,7 +15,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
 
 import { getSearchJobs } from 'api/job.api';
-import styles from './today-jobs.styles';
+import styles from './sidebar.styles';
 import { formatDateYMD } from 'helpers/format';
 import { getCustomerDetail } from 'api/customer.api';
 import { warning } from 'actions/snackbar/snackbar.action';
@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
 const useSidebarStyles = makeStyles(theme =>
   createStyles({
     drawer: {
-      height: '100vh',
+      height: 'calc(100% - 125px)',
       zIndex: 1099,
       width: CONSTANTS.ADMIN_MAP_SIDEBAR_WIDTH,
     },

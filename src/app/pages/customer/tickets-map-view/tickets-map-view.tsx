@@ -138,13 +138,13 @@ function TicketsWithMapView({ classes }: any) {
                   'label': 'Scheduled Jobs',
                   'value': 2
                 },
-                {
-                  'label': 'Routes',
-                  'value': 3
-                }
+                // {
+                //   'label': 'Routes',
+                //   'value': 3
+                // }
               ]}
             />
-            {curTab === 1 && renderLegend()}
+            { renderLegend() }
             <SwipeableViews index={curTab}>
               <div
                 className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
