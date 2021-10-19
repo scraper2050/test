@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import Pagination from '@material-ui/lab/Pagination';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -16,7 +16,6 @@ import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
 
 import { getSearchJobs } from 'api/job.api';
 import styles from './sidebar.styles';
-import { formatDateYMD } from 'helpers/format';
 import { getCustomerDetail } from 'api/customer.api';
 import { warning } from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
@@ -308,16 +307,14 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
               {
                 isLoading
                   ? <div style={{
-                    'display': 'flex',
-                    'width': '100%',
-                    'justifyContent': 'center'
-                  }}>
-                    <BCCircularLoader heightValue={'200px'} />
-                  </div>
-                  :
-                  jobs.length
-                    ? (
-                      jobs.map((x: any, i: any) =>
+                      'display': 'flex',
+                      'width': '100%',
+                      'justifyContent': 'center'
+                    }}>
+                      <BCCircularLoader heightValue={'200px'} />
+                    </div>
+                  : jobs.length
+                    ? jobs.map((x: any, i: any) =>
                       <div
                         className={'ticketItemDiv'}
                         id={`openTodayJob${i}`}
@@ -339,8 +336,8 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
                         <div className={'ticket_marker'}>
                           <RoomIcon />
                         </div>
-                      </div>))
-                    : <h4>No available ticket.</h4>
+                      </div>)
+                    : <h4>No available job.</h4>
               }
             </div>
             {Math.ceil(totalJobs / PAGE_SIZE) > 1 && showPagination && (
