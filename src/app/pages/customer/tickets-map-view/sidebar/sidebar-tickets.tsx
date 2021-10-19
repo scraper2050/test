@@ -7,6 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import RoomIcon from '@material-ui/icons/Room';
+import EditIcon from "@material-ui/icons/Edit";
 import { DatePicker } from '@material-ui/pickers';
 import Pagination from '@material-ui/lab/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,10 +17,19 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
 
 import {
+  clearJobSiteStore,
+  getJobSites,
+  loadingJobSites,
+} from "actions/job-site/job-site.action";
+import {
   closeModalAction,
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
+import {
+  getJobLocationsAction,
+  loadingJobLocations,
+} from "actions/job-location/job-location.action";
 import {
   refreshServiceTickets,
   setOpenServiceTicket,
@@ -30,17 +40,17 @@ import {
 } from 'actions/service-ticket/service-ticket.action';
 import styles from './sidebar.styles';
 import { formatDateYMD } from 'helpers/format';
-import { getCustomerDetail } from 'api/customer.api';
+import { getAllJobTypesAPI } from "api/job.api";
+import * as CONSTANTS from "../../../../../constants";
+import { Job } from '../../../../../actions/job/job.types';
 import { warning } from 'actions/snackbar/snackbar.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
-import * as CONSTANTS from "../../../../../constants";
-import { Job } from '../../../../../actions/job/job.types';
 
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
-import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
+// import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 
 interface SidebarTicketsProps {
   classes: any;
@@ -172,8 +182,6 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
   };
 
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
-    console.log(`openTicketObj`, openTicketObj);
-    console.log(`index`, index);
     let prevItemKey = localStorage.getItem("prevItemKey");
     let currentItem = document.getElementById(`openTicket${index}`);
     if (prevItemKey) {
@@ -355,6 +363,54 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     getOpenTickets(requestObj);
   };
 
+  const openEditTicketModal = (ticket: any) => {
+    const reqObj = {
+      customerId: ticket.customer?._id,
+      locationId: ticket.jobLocation,
+    };
+
+    dispatch(loadingJobLocations());
+    dispatch(getJobLocationsAction(reqObj.customerId));
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    } else {
+      dispatch(clearJobSiteStore());
+    }
+    dispatch(getAllJobTypesAPI());
+    ticket.updateFlag = true;
+    dispatch(
+      setModalDataAction({
+        data: {
+          modalTitle: "Edit Service Ticket",
+          removeFooter: false,
+          ticketData: ticket,
+          onSubmit: handleSubmit,
+          className: "serviceTicketTitle",
+          maxHeight: "754px",
+          height: "100%",
+        },
+        type: CONSTANTS.modalTypes.EDIT_TICKET_MODAL,
+      })
+    );
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const handleSubmit = (response: any) => {
+    onSelectedTicket({});
+
+    const requestObj = {
+      ...openServiceTicketFIlter,
+      pageNo: page,
+      pageSize: PAGE_SIZE,
+    };
+
+    getOpenTickets(requestObj);
+  }
+
   useEffect(() => {
     let rawData = {
       jobTypeTitle: "",
@@ -369,29 +425,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     getOpenTickets(requestObj);
     onSelectedTicket({});
 
-    console.log('11111111111111')
   }, []);
-
-  // useEffect(() => {
-  //   const rawData = {
-  //     'customerNames': '',
-  //     'jobId': '',
-  //     'todaysJobs': 'true'
-  //   };
-  //   const requestObj = { ...rawData,
-  //     'page': 1,
-  //     'pageSize': PAGE_SIZE };
-  //   getScheduledJobs(requestObj);
-  // }, []);
-
-  // useEffect(() => {
-  //   const offset = (page - 1) * PAGE_SIZE;
-
-  //   const paginatedItems = jobs.slice(offset).slice(0, PAGE_SIZE);
-
-  //   setPaginatedJobs([...paginatedItems]);
-  //   setTotalItems(jobs.length);
-  // }, [jobs]);
 
   return (
     <>
@@ -502,74 +536,90 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
               {
                 isLoading
                   ? <div style={{
-                    'display': 'flex',
-                    'width': '100%',
-                    'justifyContent': 'center'
-                  }}>
-                    <BCCircularLoader heightValue={'200px'} />
-                  </div>
-                : openTickets.length
-                  ? openTickets.map((x: any, i: any) => (
-                    <div
-                      className={"ticketItemDiv"}
-                      key={i}
-                      onClick={() => {
-                        onSelectedTicket({});
-                        handleOpenTicketCardClick(x, i);
-                      }}
-                      id={`openTicket${i}`}
-                    >
-                      {x?.customer === undefined ? (
-                        <div className="button_wrapper">
-                          test
-                          {/* <EditIcon
-                            className="editIcon"
-                            color={"primary"}
-                            fontSize={"small"}
-                            onClick={() => openEditTicketModal(x)}
-                          /> */}
-                        </div>
-                      ) : (
-                        ""
-                      )}
-
-                      <div className="ticket_title">
-                        <h3>
-                          {x.customer &&
-                          x.customer.profile &&
-                          x.customer.profile.displayName
-                            ? x.customer.profile.displayName
-                            : (x.ticketId ? x.ticketId : '')}
-                        </h3>
-                      </div>
-                      <div className="location_desc_container">
-                        <div className="card_location">
-                          <h4>
-                            {x.jobLocation && x.jobLocation.name
-                              ? x.jobLocation.name
-                              : ` `}
-                          </h4>
-                        </div>
-
-                        <div className="card_desc">
-                          {x.jobType ? <p>{x.jobType.title}</p> : ''}
-                          {!x.customer ? <p>Ticket made via website</p> : ''}
-                          {x.tasks.length ? x.tasks.map((item: any) => <p>{item.title}</p>) : ''}
-                        </div>
-                      </div>
-                      <hr></hr>
-                      <div className="card-footer">
-                        <span>
-                          {" "}
-                          <i className="material-icons">access_time</i>
-                          {x.dueDate
-                            ? new Date(x.dueDate).toString().substr(0, 15)
-                            : ""}
-                        </span>
-                      </div>
+                      'display': 'flex',
+                      'width': '100%',
+                      'justifyContent': 'center'
+                    }}>
+                      <BCCircularLoader heightValue={'200px'} />
                     </div>
-                    ))
-                  : <h4>No available ticket.</h4> }
+                  : openTickets.length
+                    ? openTickets.map((x: any, i: any) => (
+                      <div
+                        className={'ticketItemDiv'}
+                        id={`openTodayJob${i}`}
+                        key={i}
+                        onClick={() => {
+                          onSelectedTicket({});
+                          handleOpenTicketCardClick(x, i);
+                        }}
+                      >
+                        <div className={'ticket_title'}>
+                          <h3>
+                            {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
+                          </h3>
+                          <span className={`job-status job-status_${x.status}`} />
+                        </div>
+                        <div className={'location_desc_container'}>
+                          <div className={'card_location'}>
+                            <h4>
+                              {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
+                            </h4>
+                          </div>
+                        </div>
+                        <div className={'ticket_marker'}>
+                          <RoomIcon />
+                        </div>
+                      </div>
+                      //   {x?.customer === undefined ? (
+                      //     <div className="button_wrapper">
+                      //       <EditIcon
+                      //         className="editIcon"
+                      //         color={"primary"}
+                      //         fontSize={"small"}
+                      //         onClick={() => openEditTicketModal(x)}
+                      //       />
+                      //     </div>
+                      //   ) : (
+                      //     ""
+                      //   )}
+
+                      //   <div className="ticket_title">
+                      //     <h3>
+                      //       {x.customer &&
+                      //       x.customer.profile &&
+                      //       x.customer.profile.displayName
+                      //         ? x.customer.profile.displayName
+                      //         : (x.ticketId ? x.ticketId : '')}
+                      //     </h3>
+                      //   </div>
+                      //   <div className="location_desc_container">
+                      //     <div className="card_location">
+                      //       <h4>
+                      //         {x.jobLocation && x.jobLocation.name
+                      //           ? x.jobLocation.name
+                      //           : ` `}
+                      //       </h4>
+                      //     </div>
+
+                      //     <div className="card_desc">
+                      //       {x.jobType ? <p>{x.jobType.title}</p> : ''}
+                      //       {!x.customer ? <p>Ticket made via website</p> : ''}
+                      //       {x.tasks.length ? x.tasks.map((item: any) => <p>{item.title}</p>) : ''}
+                      //     </div>
+                      //   </div>
+                      //   <hr></hr>
+                      //   <div className="card-footer">
+                      //     <span>
+                      //       {" "}
+                      //       <i className="material-icons">access_time</i>
+                      //       {x.dueDate
+                      //         ? new Date(x.dueDate).toString().substr(0, 15)
+                      //         : ""}
+                      //     </span>
+                      //   </div>
+                      ))
+                    : <h4>No available ticket.</h4>
+              }
             </div>
             {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && showPagination && (
               <Pagination
