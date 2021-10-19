@@ -51,9 +51,17 @@ function MapViewTicketsScreen({ classes }: any) {
     const requestObj = { ...rawData, pageNo: 1, pageSize: PAGE_SIZE }; // TODO: page_size = 0
     setIsLoading(true);
     dispatch(getCustomers());
-    resetDateFilter();
     getOpenTickets(requestObj);
     setSelectedTicket({});
+  }, []);
+
+  useEffect(() => {
+    let prevItemKey = localStorage.getItem("prevItemKey");
+    if (prevItemKey) {
+      let prevItem = document.getElementById(prevItemKey);
+      if (prevItem) prevItem.style.border = "none";
+    }
+    localStorage.setItem("prevItemKey", "");
   }, []);
 
   useEffect(() => {
@@ -104,39 +112,9 @@ function MapViewTicketsScreen({ classes }: any) {
       });
   };
 
-  const resetDateFilter = () => {
-    setPage(1);
-    setDateValue(null);
-    setTempDate(new Date());
-    setSelectedTicket({});
-    dispatch(
-      setClearOpenTicketFilterState({
-        jobTypeTitle: "",
-        dueDate: "",
-        customerNames: "",
-        ticketId: "",
-        contactName: "",
-      })
-    );
-    getOpenTickets({ pageNo: 1, pageSize: PAGE_SIZE });
-    dispatch(setSelectedCustomers([]));
-    setShowFilterModal(false);
-  };
-
-  useEffect(() => {
-    let prevItemKey = localStorage.getItem("prevItemKey");
-    if (prevItemKey) {
-      let prevItem = document.getElementById(prevItemKey);
-      if (prevItem) prevItem.style.border = "none";
-    }
-    localStorage.setItem("prevItemKey", "");
-  }, []);
-
   if (isLoading) {
     return <BCCircularLoader heightValue={"200px"} />;
   }
-
-  console.count('111');
 
   return (
     <Grid container item lg={12}>
