@@ -467,6 +467,17 @@
   }
 }
 
+.datepicker_wrapper_map {
+  padding: 0;
+  width: 200px;
+  height: 40px;
+  margin-right: 4px;
+
+  input {
+    height: 40px;
+  }
+}
+
 .editIcon {
   position: absolute;
   right: 0;

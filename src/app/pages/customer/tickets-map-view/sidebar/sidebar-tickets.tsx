@@ -86,7 +86,7 @@ const useStyles = makeStyles(theme => ({
 const useSidebarStyles = makeStyles(theme =>
   createStyles({
     drawer: {
-      height: 'calc(100vh - 125px)',
+      height: 'calc(100% - 125px)',
       zIndex: 1099,
       width: CONSTANTS.ADMIN_MAP_SIDEBAR_WIDTH,
     },
@@ -474,54 +474,54 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
             lg={12}
           >
             <div className="ticketsFilterContainer">
+              <span
+                className={`${
+                  dateValue == null
+                    ? "datepicker_wrapper datepicker_wrapper_map datepicker_wrapper_default"
+                    : "datepicker_wrapper datepicker_wrapper_map"
+                }`}
+              >
+                <button className="prev_btn">
+                  <i
+                    className="material-icons"
+                    onClick={() => handleButtonClickMinusDay()}
+                  >
+                    keyboard_arrow_left
+                  </i>
+                </button>
+                <DatePicker
+                  autoOk
+                  className={classes.picker}
+                  disablePast={false}
+                  format={"d MMM yyyy"}
+                  id={`datepicker-${"scheduleDate"}`}
+                  inputProps={{
+                    name: "scheduleDate",
+                    placeholder: "Due Date",
+                  }}
+                  inputVariant={"outlined"}
+                  name={"scheduleDate"}
+                  onChange={(e: any) => dateChangeHandler(e)}
+                  required={false}
+                  value={dateValue}
+                  variant={"inline"}
+                />
+                <button className="next_btn">
+                  <i
+                    className="material-icons"
+                    onClick={() => handleButtonClickPlusDay()}
+                  >
+                    keyboard_arrow_right
+                  </i>
+                </button>
+              </span>
               <div className="filter_wrapper">
-                <span
-                  className={`${
-                    dateValue == null
-                      ? "datepicker_wrapper datepicker_wrapper_default"
-                      : "datepicker_wrapper"
-                  }`}
-                >
-                  <button className="prev_btn">
-                    <i
-                      className="material-icons"
-                      onClick={() => handleButtonClickMinusDay()}
-                    >
-                      keyboard_arrow_left
-                    </i>
-                  </button>
-                  <DatePicker
-                    autoOk
-                    className={classes.picker}
-                    disablePast={false}
-                    format={"d MMM yyyy"}
-                    id={`datepicker-${"scheduleDate"}`}
-                    inputProps={{
-                      name: "scheduleDate",
-                      placeholder: "Due Date",
-                    }}
-                    inputVariant={"outlined"}
-                    name={"scheduleDate"}
-                    onChange={(e: any) => dateChangeHandler(e)}
-                    required={false}
-                    value={dateValue}
-                    variant={"inline"}
-                  />
-                  <button className="next_btn">
-                    <i
-                      className="material-icons"
-                      onClick={() => handleButtonClickPlusDay()}
-                    >
-                      keyboard_arrow_right
-                    </i>
-                  </button>
-                </span>
                 <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
                   <IconFunnel />
                 </Button>
                 {showFilterModal ? (
                   <ClickAwayListener onClickAway={handleClickAway}>
-                    <div className="dropdown_wrapper elevation-5">
+                    <div className="dropdown_wrapper dropdown_wrapper_filter elevation-5">
                       <BCMapFilterModal
                         openTicketFilterModal={openTicketFilterModal}
                         resetDate={resetDate}
@@ -532,7 +532,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                 ) : null}
               </div>
             </div>
-            <div className="ticketsCardViewContainer">
+            <div className="ticketsListViewContainer">
               {
                 isLoading
                   ? <div style={{
