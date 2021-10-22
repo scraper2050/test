@@ -20,6 +20,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import { getAllJobsAPI, getSearchJobs } from 'api/job.api';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { getCustomerDetail } from 'api/customer.api';
+import SidebarJobs from "../sidebar/sidebar-jobs";
 
 const PAGE_SIZE = 6;
 
@@ -266,152 +267,23 @@ function MapViewJobsScreen({ classes, today }: any) {
       item
       lg={12} >
       <Grid
-        className={'ticketsMapContainer'}
         container
         item
-        lg={6}>
+        lg={12}
+        className={'ticketsMapContainer'}
+      >
         {
           <MemoizedMap
             hasPhoto={hasPhoto}
             list={jobs}
             onJob
             selected={selectedJob}
+            showPins
           />
         }
       </Grid>
 
-      <Grid
-        container
-        item
-        lg={6} >
-        <div className={'ticketsFilterContainer'}>
-          <div className={'filter_wrapper'}>
-            <button onClick={() => openTicketFilterModal()}>
-              <i className={'material-icons'} >
-                {'filter_list'}
-              </i>
-              <span>
-                {'Filter'}
-              </span>
-            </button>
-            {
-              showFilterModal
-                ? <ClickAwayListener onClickAway={openTicketFilterModal}>
-                  <div className={'dropdown_wrapper elevation-5'}>
-                    <BCMapFilterModal
-                      getScheduledJobs={getScheduledJobs}
-                      openTicketFilterModal={openTicketFilterModal}
-                      resetDate={resetDate}
-                      setPage={setPage}
-                    />
-                  </div>
-                </ClickAwayListener>
-                : null
-            }
-          </div>
-          <span className={`${dateValue == null ? 'datepicker_wrapper datepicker_wrapper_default' : 'datepicker_wrapper'}`}>
-            <button className={'prev_btn'}>
-              <i
-                className={'material-icons'}
-                onClick={() => handleButtonClickMinusDay()}>
-                {'keyboard_arrow_left'}
-              </i>
-            </button>
-            <DatePicker
-              autoOk
-              className={classes.picker}
-              disablePast={false}
-              format={'d MMM yyyy'}
-              id={`datepicker-${'scheduleDate'}`}
-
-              inputProps={{
-                'name': 'scheduleDate',
-                'placeholder': 'Scheduled Date'
-              }}
-              inputVariant={'outlined'}
-              name={'scheduleDate'}
-              onChange={(e: any) => dateChangeHandler(e)}
-              required={false}
-              value={dateValue}
-              variant={'inline'}
-            />
-            <button className={'next_btn'}>
-              <i
-                className={'material-icons'}
-                onClick={() => handleButtonClickPlusDay()}>
-                {'keyboard_arrow_right'}
-              </i>
-            </button>
-          </span>
-          <button onClick={() => resetDateFilter()}>
-            <i className={'material-icons'}>
-              {'undo'}
-            </i>
-            {' '}
-            <span>
-              {'Reset'}
-            </span>
-          </button>
-        </div>
-        <div className={'ticketsCardViewContainer'}>
-          {
-            isLoading
-              ? <div style={{
-                'display': 'flex',
-                'width': '100%',
-                'justifyContent': 'center'
-              }}>
-                <BCCircularLoader heightValue={'200px'} />
-              </div>
-              : paginatedJobs.map((x: any, i: any) =>
-                <div
-                  className={'ticketItemDiv'}
-                  id={`openScheduledJob${i}`}
-                  key={i}
-                  onClick={() => handleJobCardClick(x, i)}>
-                  <div className={'ticket_title'}>
-                    <h3>
-                      {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
-                    </h3>
-                  </div>
-                  <div className={'location_desc_container'}>
-                    <div className={'card_location'}>
-                      <h4>
-                        {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
-                      </h4>
-                    </div>
-
-                    <div className={'card_desc'}>
-                      <p>
-                        {x.type ? x.type.title : ''}
-                      </p>
-                    </div>
-                  </div>
-                  <hr />
-                  <div className={'card-footer'}>
-                    <span>
-                      {' '}
-                      <i className={'material-icons'}>
-                        {'access_time'}
-                      </i>
-                      {x.scheduleDate ? new Date(x.scheduleDate).toString()
-                        .substr(0, 15) : ''}
-                    </span>
-                  </div>
-                </div>)
-
-
-          }
-        </div>
-        <Pagination
-          color={'primary'}
-          count={Math.ceil(totalItems / PAGE_SIZE)}
-          onChange={handleChange}
-          showFirstButton
-          showLastButton
-        />
-      </Grid>
-
+      <SidebarJobs totalJobs={totalJobs} onSelectJob={setSelectedJob} />
     </Grid>
   );
 }
