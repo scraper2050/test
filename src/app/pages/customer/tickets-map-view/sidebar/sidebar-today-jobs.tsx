@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import Pagination from '@material-ui/lab/Pagination';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -15,19 +15,18 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
 
 import { getSearchJobs } from 'api/job.api';
-import styles from './bc-map-filter.styles';
-import { formatDateYMD } from 'helpers/format';
+import styles from './sidebar.styles';
 import { getCustomerDetail } from 'api/customer.api';
 import { warning } from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import BCMapFilterModal from '../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
-import * as CONSTANTS from "../../../constants";
-import { Job } from '../../../actions/job/job.types';
+import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
+import * as CONSTANTS from "../../../../../constants";
+import { Job } from '../../../../../actions/job/job.types';
 
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
 import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 
-interface BCMapFilterProps {
+interface SidebarTodayJobsProps {
   classes: any;
   totalJobs: number;
   onSelectJob: (obj: any) => void;
@@ -62,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 const useSidebarStyles = makeStyles(theme =>
   createStyles({
     drawer: {
-      height: '100vh',
+      height: 'calc(100% - 125px)',
       zIndex: 1099,
       width: CONSTANTS.ADMIN_MAP_SIDEBAR_WIDTH,
     },
@@ -82,7 +81,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
+function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -308,16 +307,14 @@ function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
               {
                 isLoading
                   ? <div style={{
-                    'display': 'flex',
-                    'width': '100%',
-                    'justifyContent': 'center'
-                  }}>
-                    <BCCircularLoader heightValue={'200px'} />
-                  </div>
-                  :
-                  jobs.length
-                    ? (
-                      jobs.map((x: any, i: any) =>
+                      'display': 'flex',
+                      'width': '100%',
+                      'justifyContent': 'center'
+                    }}>
+                      <BCCircularLoader heightValue={'200px'} />
+                    </div>
+                  : jobs.length
+                    ? jobs.map((x: any, i: any) =>
                       <div
                         className={'ticketItemDiv'}
                         id={`openTodayJob${i}`}
@@ -339,8 +336,8 @@ function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
                         <div className={'ticket_marker'}>
                           <RoomIcon />
                         </div>
-                      </div>))
-                    : <h4>No available ticket.</h4>
+                      </div>)
+                    : <h4>No available job.</h4>
               }
             </div>
             {Math.ceil(totalJobs / PAGE_SIZE) > 1 && showPagination && (
@@ -363,4 +360,4 @@ function BCMapFilter({ classes, totalJobs, onSelectJob }: BCMapFilterProps) {
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(BCMapFilter);
+)(SidebarTodayJobs);

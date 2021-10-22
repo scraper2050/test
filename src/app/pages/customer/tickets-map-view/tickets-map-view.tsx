@@ -7,6 +7,7 @@ import './ticket-map-view.scss';
 import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
+import MapViewRoutesScreen from './map-view/map-view-routes';
 import { getAllJobsAPI } from 'api/job.api';
 import { useDispatch } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
@@ -141,10 +142,10 @@ function TicketsWithMapView({ classes }: any) {
                 {
                   'label': 'Routes',
                   'value': 3
-                }
+                },
               ]}
             />
-            {curTab === 1 && renderLegend()}
+            { renderLegend() }
             <SwipeableViews index={curTab}>
               <div
                 className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
@@ -163,6 +164,12 @@ function TicketsWithMapView({ classes }: any) {
                 hidden={curTab !== 2}
                 id={'map-swipeable-schedule'}>
                 <MapViewJobsScreen />
+              </div>
+              <div
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+                hidden={curTab !== 3}
+                id={'map-swipeable-routes'}>
+                <MapViewRoutesScreen />
               </div>
             </SwipeableViews>
           </div>
