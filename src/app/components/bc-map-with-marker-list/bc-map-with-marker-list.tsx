@@ -144,9 +144,10 @@ function MakerPin({ ...props }) {
             const status = props?.openTicketObj?.status;
             CustomIcon = getStatusIcon(status);
           })()}
-        { checkIfDefault(lat, lng) &&
+        <CustomIcon className={props.classes.marker} />
+{/*        { checkIfDefault(lat, lng) &&
           <CustomIcon className={props.classes.marker} />
-        }
+        }*/}
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}

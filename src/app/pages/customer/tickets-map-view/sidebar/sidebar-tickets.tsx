@@ -203,8 +203,15 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     } else {
       setHasPhoto(false);
     }
+    const location =
+      (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
+      (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
+      (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
 
-    if (
+    if (!location){
+      dispatch(warning("There's no address on this ticket."));
+    }
+    /*if (
       !openTicketObj.jobLocation &&
       openTicketObj.customer.jobLocations.length === 0 &&
       (openTicketObj.jobLocation === undefined &&
@@ -213,7 +220,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
         openTicketObj.customer.address.zipCode.length === 0)
     ) {
       dispatch(warning("There's no address on this ticket."));
-    }
+    }*/
 
     if (openTicketObj && !openTicketObj?.customer) {
       dispatch(warning("There's no customer associated with this ticket"));
