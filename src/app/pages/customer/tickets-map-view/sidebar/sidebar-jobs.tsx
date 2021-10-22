@@ -31,7 +31,8 @@ import {setOpenTicketFilterState} from "../../../../../actions/service-ticket/se
 
 interface SidebarJobsProps {
   classes: any;
-  totalJobs: number;
+  scheduledJobs: Job[];
+  isLoading: boolean;
   onSelectJob: (obj: any) => void;
 }
 
@@ -84,7 +85,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarJobs({ classes, totalJobs, onSelectJob }: SidebarJobsProps) {
+function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: SidebarJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -97,13 +98,12 @@ function SidebarJobs({ classes, totalJobs, onSelectJob }: SidebarJobsProps) {
     'schedule_date': ''
   });
   const [hasPhoto, setHasPhoto] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [dateValue, setDateValue] = useState<any>(null);
   const [tempDate, setTempDate] = useState<any>(new Date());
-  const [paginatedJobs, setPaginatedJobs] = useState<any>([]);
+  const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showPagination, setShowPagination] = useState(true);
+  const totalJobs = paginatedJobs.length;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -130,18 +130,18 @@ function SidebarJobs({ classes, totalJobs, onSelectJob }: SidebarJobsProps) {
       // Today?: boolean,
     }
   ) => {
-    setIsLoading(true);
+    //setIsLoading(true);
     const response: any = await getSearchJobs(requestObj);
 
     const { data } = response;
     console.log(data, 'side')
 
     if (data.status) {
-      setJobs(filterScheduledJobs(data.jobs));
+      setPaginatedJobs(filterScheduledJobs(data.jobs));
       //console.log(data.total)
-      setIsLoading(false);
+      //setIsLoading(false);
     } else {
-      setIsLoading(false);
+      //setIsLoading(false);
     }
   };
 
@@ -151,95 +151,29 @@ function SidebarJobs({ classes, totalJobs, onSelectJob }: SidebarJobsProps) {
   };
 
   const handleButtonClickMinusDay = () => {
-/*    const {
-      jobTypeTitle,
-      customerNames,
-      ticketId,
-      contactName,
-    } = ticketFilterObject;*/
-    let rawData = {
-      'customerNames': '',
-      'jobId': '',
-    };
-    onSelectJob({});
-    const dateObj = new Date(tempDate);
-    // const selectDate = dateObj.setHours(0,0,0,0);
-    // const todayDate = new Date().setHours(0,0,0,0);
-    var yesterday = new Date(dateObj.getTime() - 24 * 60 * 60 * 1000);
-    const formattedDate = formatDateYMD(yesterday);
-    setDateValue(formattedDate);
-    setTempDate(yesterday);
-    const requestObj = {
-      ...rawData,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-      dueDate: formattedDate,
-    };
-    dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
-    getScheduledJobs(requestObj);
+    const yesterday = new Date(tempDate.getTime() - 24 * 60 * 60 * 1000);
+    dateChangeHandler(yesterday);
   };
 
-  const dateChangeHandler = (date: string) => {
-    const dateObj = new Date(date);
-/*    const {
-      jobTypeTitle,
-      customerNames,
-      ticketId,
-      contactName,
-    } = ticketFilterObject;*/
-    let rawData = {
-      'customerNames': '',
-      'jobId': '',
-    };
+  const dateChangeHandler = (date: Date) => {
+    const filteredJobs = scheduledJobs.filter(job => moment(job.scheduleDate).isSame(date, 'day'));
+    setPaginatedJobs(filteredJobs);
 
-    const formattedDate = formatDateYMD(dateObj);
+    const formattedDate = formatDateYMD(date);
     setDateValue(formattedDate);
     setTempDate(date);
-    // dispatch(setClearOpenTicketFilterState(rawData));
-    const requestObj = {
-      ...rawData,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-      dueDate: formattedDate,
-    };
-    dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
-    getScheduledJobs(requestObj);
+    onSelectJob({});
+    //dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
   };
 
   const handleButtonClickPlusDay = () => {
-    let rawData = {
-      'customerNames': '',
-      'jobId': '',
-    };
-
-    onSelectJob({});
-    const dateObj = new Date(tempDate);
-    var tomorrow = new Date(dateObj.getTime() + 24 * 60 * 60 * 1000);
-    const formattedDate = formatDateYMD(tomorrow);
-
-    setDateValue(formattedDate);
-    setTempDate(tomorrow);
-    // dispatch(setClearOpenTicketFilterState(rawData));
-    const requestObj = {
-      ...rawData,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-      dueDate: formattedDate,
-    };
-    dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
-    getScheduledJobs(requestObj);
+    const tomorrow = new Date(tempDate.getTime() + 24 * 60 * 60 * 1000);
+    dateChangeHandler(tomorrow);
   };
 
   const resetFilter = async () => {
-    setPage(1);
-    const rawData = {
-      'customerNames': '',
-      'jobId': '',
-    };
-    const requestObj = { ...rawData,
-      'page': 1,
-      'pageSize': PAGE_SIZE };
-    getScheduledJobs(requestObj);
+    resetDate();
+    setPaginatedJobs(scheduledJobs);
   };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
@@ -289,34 +223,32 @@ function SidebarJobs({ classes, totalJobs, onSelectJob }: SidebarJobsProps) {
   const handleChange = (event: any, value: any) => {
     onSelectJob({});
     setPage(value);
-
-    const requestObj = { ...filterJobs,
-      'page': value,
-      'pageSize': PAGE_SIZE,
-      'dueDate': dateValue,
-    };
-    getScheduledJobs(requestObj);
   };
 
   useEffect(() => {
-    const rawData = {
-      'customerNames': '',
-      'jobId': '',
-    };
-    const requestObj = { ...rawData,
-      'page': 1,
-      'pageSize': PAGE_SIZE };
-    getScheduledJobs(requestObj);
-  }, []);
+    //setIsLoading(starting);
+    if (!isLoading) {
+      setPaginatedJobs(scheduledJobs);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    onSelectJob({});
+    if (!isLoading) {
+      if (page === 1) {
+        const firstPage = paginatedJobs.slice(0, PAGE_SIZE);
+        setJobs(firstPage);
+      } else {
+        setPage(1)
+      }
+    }
+  }, [paginatedJobs]);
 
   useEffect(() => {
     const offset = (page - 1) * PAGE_SIZE;
-
-    const paginatedItems = jobs.slice(offset).slice(0, PAGE_SIZE);
-
-    setPaginatedJobs([...paginatedItems]);
-    setTotalItems(jobs.length);
-  }, [jobs]);
+    const paginatedItems = paginatedJobs.slice(offset).slice(0, PAGE_SIZE);
+    setJobs(paginatedItems);
+  }, [page]);
 
   return (
     <>
