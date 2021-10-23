@@ -1,0 +1,89 @@
+.marker_dropdown {
+  background-color: #fff;
+  padding: 15px 20px 15px;
+  height: auto;
+  margin-top: -35px;
+  position: relative;
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 14px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 12px solid #c4c4c4;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: -11px;
+    left: 16px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 11px solid #ffffff;
+    z-index: 1;
+  }
+  .due_date {
+    display: flex;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    color: #979797;
+    padding-bottom: 30px;
+    margin-bottom: 15px;
+    justify-content: space-between;
+    span {
+      display: flex;
+      align-items: center;
+      i {
+        padding-right: 6px;
+      }
+    }
+  }
+
+  .job-type {
+    padding-bottom: 30px;
+    h3 {
+      margin: 0;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 21px;
+      color: #000000;
+      padding-bottom: 3px;
+    }
+    span {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 19px;
+      color: #000000;
+      text-transform: capitalize;
+      word-break: break-word;
+    }
+  }
+  .button_wrapper {
+    text-align: center;
+    button {
+      background: #00aaff;
+      border: 2px solid #00aaff;
+      border-radius: 30px;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: #ffffff;
+      height: 38px;
+      width: 150px;
+    }
+  }
+}
+
+.gm-style > div {
+  // position: absolute;
+  left: -50px !important;
+  top: -60px !important;
+  border: 0 !important;
+}
