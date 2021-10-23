@@ -9,7 +9,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@react-google-maps/api": "^1.9.12",
+    "@react-google-maps/api": "^2.5.0",
     "@testing-library/jest-dom": "^5.11.3",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",

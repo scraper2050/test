@@ -34,7 +34,6 @@ import {Image} from "@material-ui/icons";
 
 interface SidebarJobsProps {
   classes: any;
-  onSelectJob: (obj: any) => void;
   dispatchRoutes: (routes: JobRoute[]) => void;
 }
 
@@ -87,7 +86,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProps) {
+function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -95,12 +94,7 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
   const [open, setOpen] = useState(true);
   const [routes, setRoutes] = useState<JobRoute[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filterJobs, setFilterJobs] = useState({
-    'customerNames': '',
-    'jobId': '',
-    'schedule_date': ''
-  });
-  const [hasPhoto, setHasPhoto] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [currentDate, setCurrentDate] = useState<any>(new Date());
   const [paginatedRoutes, setPaginatedRoutes] = useState<JobRoute[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -117,10 +111,6 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
 
   const openTicketFilterModal = () => {
     setShowFilterModal(!showFilterModal);
-  };
-
-  const filterScheduledJobs = (jobs: any) => {
-    return jobs.filter((job: any) => job && job.status !== 2);
   };
 
   const getInitials = (fullname = '') => {
@@ -154,20 +144,13 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
     const response: any = await getAllRoutes(dateString[0]);
 
     const { data } = response;
-    console.log(data, 'side')
-
     if (data.status) {
       setPaginatedRoutes(data.jobRoutes);
-      //console.log(data.total)
       setIsLoading(false);
     } else {
       setIsLoading(false);
     }
   }
-
-  const resetDate = () => {
-    setCurrentDate(new Date());
-  };
 
   const handleButtonClickMinusDay = () => {
     const yesterday = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
@@ -176,8 +159,7 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
 
   const dateChangeHandler = (date: Date) => {
     setCurrentDate(date);
-    //onSelectJob({});
-    //dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
+    setSelectedIndex(-1);
   };
 
   const handleButtonClickPlusDay = () => {
@@ -186,56 +168,22 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
   };
 
   const resetFilter = async () => {
-    resetDate();
     //setPaginatedRoutes(scheduledJobs);
   };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
-    /*const prevItemKey = localStorage.getItem('prevItemKey');
-    const currentItem = document.getElementById(`openTodayJob${index}`);
-
-    if (prevItemKey) {
-      const prevItem = document.getElementById(prevItemKey);
-      if (prevItem) {
-        prevItem.classList.remove('ticketItemDiv_active');
-      }
-      if (currentItem) {
-        currentItem.classList.add('ticketItemDiv_active');
-        localStorage.setItem('prevItemKey', `openTodayJob${index}`);
-      }
-    } else if (currentItem) {
-      currentItem.classList.add('ticketItemDiv_active');
-      localStorage.setItem('prevItemKey', `openTodayJob${index}`);
-    }
-
-    if (JobObj.ticket.image) {
-      setHasPhoto(true);
+    if (index === selectedIndex) {
+      setSelectedIndex( -1);
+      dispatchRoutes(paginatedRoutes);
     } else {
-      setHasPhoto(false);
+      setSelectedIndex( index);
+      dispatchRoutes(paginatedRoutes.slice(index, 1))
     }
-
-
-    const customer = await getCustomerDetail({
-      'customerId': JobObj.customer._id
-    });
-
-    if (
-      !JobObj?.jobLocation &&
-      JobObj?.customer?.jobLocations?.length === 0 &&
-      (JobObj.jobLocation === undefined &&
-        JobObj?.customer?.location?.coordinates.length === 0) &&
-      (JobObj?.jobLocation === undefined &&
-        JobObj?.customer.address.zipCode.length === 0)
-    ) {
-      dispatch(warning('There\'s no address on this job.'));
-    }
-*/
-    //onSelectJob();
   };
 
   const handleChange = (event: any, value: any) => {
-    onSelectJob({});
     setPage(value);
+    setSelectedIndex(-1);
   };
 
   useEffect(() => {
@@ -243,7 +191,6 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
   }, [currentDate]);
 
   useEffect(() => {
-    onSelectJob({});
     if (page === 1) {
       const firstPage = paginatedRoutes.slice(0, PAGE_SIZE);
       setRoutes(firstPage);
@@ -344,9 +291,9 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
                 </button>
               </span>
               <div className={'filter_wrapper'}>
-                <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
+               {/* <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
                   <IconFunnel />
-                </Button>
+                </Button>*/}
                 {
                   showFilterModal
                     ? <ClickAwayListener onClickAway={openTicketFilterModal}>
@@ -402,7 +349,7 @@ function SidebarRoutes({ classes, onSelectJob, dispatchRoutes }: SidebarJobsProp
                           </div>
                         </div>
                         <div className={'ticket_marker'}>
-                          <RoomIcon />
+                          <RoomIcon style={{color: i === selectedIndex ? '#00aaff' : undefined}}/>
                         </div>
                       </div>)
                     })
