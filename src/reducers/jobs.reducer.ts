@@ -81,6 +81,7 @@ const initialJob: JobsState = {
       jobLocation: "",
     },
     timeSpent: 0,
+    tasks:[],
   },
 };
 
