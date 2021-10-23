@@ -28,14 +28,6 @@ const PAGE_SIZE = 6;
 function MapViewRoutesScreen({ classes, today }: any) {
   const [routes, setRoutes] = useState<JobRoute[]>([]);
 
-  const [hasPhoto, setHasPhoto] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<any>({});
-
-
-  useEffect(() => {
-  }, []);
-
-
   return (
     <Grid
       container
@@ -55,7 +47,7 @@ function MapViewRoutesScreen({ classes, today }: any) {
         }
       </Grid>
 
-      <SidebarRoutes onSelectJob={setSelectedJob} dispatchRoutes={setRoutes}/>
+      <SidebarRoutes dispatchRoutes={setRoutes}/>
 
     </Grid>
   );

@@ -3,7 +3,7 @@ import GoogleMapReact from 'google-map-react';
 import styles from './bc-map-with-routes.style';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, {useRef, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -20,8 +20,6 @@ import { ReactComponent as IconStarted } from 'assets/img/icons/map/icon-started
 
 import './bc-map-with-routes.scss';
 import {JobRoute} from "../../../actions/job-routes/job-route.types";
-import {Job} from "../../../actions/job/job.types";
-import {Polyline} from "@react-google-maps/api";
 const DEFAULT_LAT = 32.3888811;
 const DEFAULT_LNG = -98.6732501;
 
@@ -35,7 +33,7 @@ interface BCMapWithMarkerListProps {
 
 interface MarkerPosition {
   lat: number;
-  long: number;
+  lng: number;
 }
 
 function createMapOptions() {
@@ -355,7 +353,7 @@ function MakerPin({ ...props }) {
 
 /*  return checkIfDefault(lat, lng)
     ? */
-    return <div
+    return <div style={{marginLeft: -10, marginTop: -10}}
       onMouseLeave={() => setShowinfo(false)}>
       {(() => {
         const status = props?.ticket?.status;
@@ -452,7 +450,11 @@ function MakerPin({ ...props }) {
 }
 
 function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = false }: BCMapWithMarkerListProps) {
-  const routeData = routes.map((jobRoute: JobRoute) => {
+  const [map, setMap] = useState<any>(null);
+  const [maps, setMaps] = useState<any>(null);
+  const lines = useRef<any[]>([]);
+
+  const routeData = routes.map((jobRoute: JobRoute, index) => {
     const coordinates: MarkerPosition[] = [];
       jobRoute.routes.forEach(({job}) => {
         const jobLat = job.jobSite?.location?.coordinates?.[1] ||
@@ -464,8 +466,8 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
           job.customer?.location?.coordinates?.[0] ||
           DEFAULT_LNG;
 
-        coordinates.push({lat: jobLat, long: jobLong});
-        console.log({coordinates})
+        coordinates.push({lat: jobLat, lng: jobLong});
+        console.log({coordinates, index})
       });
       return ({...jobRoute, coordinates, color: getColor(jobRoute.technician.profile.displayName)})
   })
@@ -474,7 +476,7 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
     let latMax=-Infinity, latMin = Infinity, longMax=-Infinity, longMin = Infinity;
 
     routeData.forEach(route=>
-      route.coordinates.forEach(({lat: jobLat, long: jobLong}) => {
+      route.coordinates.forEach(({lat: jobLat, lng: jobLong}) => {
         latMax = Math.max(latMax, jobLat);
         latMin = Math.min(latMin, jobLat);
         longMax = Math.max(longMax, jobLong);
@@ -487,25 +489,39 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
     // longitudeDelta: longMax === longMin ? 0.005 : (longMax - longMin) * 1.3,
     // latitudeDelta: latMax === latMin ? 0.004 : (latMax - latMin) * 1.3,
 
-  //}
+  if (map) {
+    lines.current.forEach(line => line.setMap(null));
+    lines.current = [];
+    const newLines: any[] = [];
+    routeData.forEach((jobRoute, index) => {
+      const options = {
+        strokeColor: jobRoute.color,
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+        clickable: false,
+        draggable: false,
+        editable: false,
+        visible: true,
+        radius: 30000,
+        paths: jobRoute.coordinates,
+        zIndex: 1
+      };
+      const route = new maps.Polyline({
+        path: jobRoute.coordinates,
+        options,
+        key:`P-${index}`
+      });
+      route.setMap(map);
+      lines.current.push(route);
+    });
+  }
 
-
-/*  if (selected.jobSite) {
-    centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : DEFAULT_LNG;
-    centerLat -= 0.004;
-    centerLng += 0.002;
-  } else if (selected.jobLocation) {
-    centerLat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : DEFAULT_LNG;
-    centerLat -= 0.004;
-    centerLng += 0.002;
-  } else if (selected.customer) {
-    centerLat = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.customer.location?.coordinates?.length > 1 && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
-    centerLat -= 0.004;
-    centerLng += 0.002;
-  }*/
+  const handleApiLoaded = (map: any, maps: any) => {
+    setMap(map);
+    setMaps(maps);
+  };
 
   return (
     <GoogleMapReact
@@ -514,47 +530,17 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
         'lng': centerLng }}
       defaultZoom={7}
       onClick={event => console.log(event)}
-      options={createMapOptions}>
-
-      {/* <MakerPin
-        classes={classes}
-        lat={centerLat + .002}
-        lng={centerLat - (hasPhoto ? .006 : .002)}
-        ticket={openTicketObj}
-        openTicketObj={openTicketObj}
-      /> */}
-      {
-        routeData.map((jobRoute) => {
-          const options = {
-            strokeColor: jobRoute.color,
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            clickable: false,
-            draggable: false,
-            editable: false,
-            visible: true,
-            radius: 30000,
-            paths: jobRoute.coordinates,
-            zIndex: 1
-          };
-          return <Polyline
-            //onLoad={onLoad}
-            path={jobRoute.coordinates}
-            options={options}
-          />
-        })
-      }
+      options={createMapOptions}
+      yesIWantToUseGoogleMapApiInternals
+      onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+    >
       { routeData.map((jobRoute) => {
           return jobRoute.coordinates.map((item: MarkerPosition, index: number) => {
-
-
               return <MakerPin
                 classes={classes}
                 key={index}
                 lat={item.lat}
-                lng={item.long}
+                lng={item.lng}
                 onJob={onJob}
                 openTicketObj={{}}
                 showPins={showPins}
