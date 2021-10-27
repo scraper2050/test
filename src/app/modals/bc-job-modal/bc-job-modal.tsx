@@ -398,7 +398,7 @@ function BCJobModal({
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
-      //console.log({values, job})
+      console.log({values, job})
 
       const customerId = customer?._id;
       const jobFromMapFilter = job.jobFromMap;
@@ -424,7 +424,7 @@ function BCJobModal({
       const formatedTicketRequest = formatRequestObj(tempTicket);
 
       const tempData = {
-        ...job,
+        //...job,
         ...values,
         customerId
       };
@@ -433,25 +433,25 @@ function BCJobModal({
       delete tempData.technician;
 
 
-      if (values.contractorId && values.contractorId !== '') {
+      if (values.employeeType && values.contractorId && values.contractorId !== '') {
         delete tempData.technicianId;
         tempData.employeeType = 1;
         tempData.contractorId = values.contractorId;
       }
 
 
-      if (values.technicianId && values.technicianId !== '') {
+      if (!values.employeeType && values.technicianId && values.technicianId !== '') {
         delete tempData.contractorId;
         tempData.technicianId = values.technicianId;
         tempData.employeeType = 0;
       }
-      //console.log({tempData});
-      /*setSubmitting(false);
-      return;*/
+      //setSubmitting(false);
+      //return;
 
 
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
+        console.log({tempData})
         return callEditJobAPI(tempData);
       };
 
