@@ -108,8 +108,8 @@ function BCJobModal({
   const [showVendorFlag, setShowVendorFlag] = useState(Boolean(job._id && job.employeeType));
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
-  const [employeeValue, setEmployeeValue] = useState<any>([]);
-  const [contractorValue, setContractorValue] = useState<any>([]);
+  const [employeeValue, setEmployeeValue] = useState<any>(null);
+  const [contractorValue, setContractorValue] = useState<any>(null);
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
@@ -249,7 +249,7 @@ function BCJobModal({
   }, []);
 
   useEffect(() => {
-    if (job._id) {
+    if (job._id && !employeeValue) {
       if (employeesForJob.length !== 0 && !job.employeeType && job.technician) {
         setEmployeeValue(employeesForJob.filter((employee: any) => employee._id === job.technician._id)[0]);
       }
@@ -258,7 +258,7 @@ function BCJobModal({
 
 
   useEffect(() => {
-    if (job._id) {
+    if (job._id && !contractorValue) {
       if (vendorsList.length !== 0 && job.employeeType && job.contractor) {
         setContractorValue(vendorsList.filter((vendor: any) => vendor.contractor._id === job.contractor._id)[0]);
       }
@@ -398,7 +398,7 @@ function BCJobModal({
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
-      //console.log({values, job})
+      console.log({values, job})
 
       const customerId = customer?._id;
       const jobFromMapFilter = job.jobFromMap;
@@ -424,7 +424,7 @@ function BCJobModal({
       const formatedTicketRequest = formatRequestObj(tempTicket);
 
       const tempData = {
-        ...job,
+        //...job,
         ...values,
         customerId
       };
@@ -433,25 +433,25 @@ function BCJobModal({
       delete tempData.technician;
 
 
-      if (values.contractorId && values.contractorId !== '') {
+      if (values.employeeType && values.contractorId && values.contractorId !== '') {
         delete tempData.technicianId;
         tempData.employeeType = 1;
         tempData.contractorId = values.contractorId;
       }
 
 
-      if (values.technicianId && values.technicianId !== '') {
+      if (!values.employeeType && values.technicianId && values.technicianId !== '') {
         delete tempData.contractorId;
         tempData.technicianId = values.technicianId;
         tempData.employeeType = 0;
       }
-      //console.log({tempData});
-      /*setSubmitting(false);
-      return;*/
+      //setSubmitting(false);
+      //return;
 
 
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
+        console.log({tempData})
         return callEditJobAPI(tempData);
       };
 
