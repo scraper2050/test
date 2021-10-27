@@ -11,15 +11,14 @@ export const loadingJobLocations = () => {
 
 export const getJobLocationsAction = (data: any) => {
   return async (dispatch: any) => {
-    if (data !== '') {
-
+    if (data.customerId !== '') {
       const jobLocations: any = await getJobLocations(data);
       if (jobLocations.hasOwnProperty('msg')) {
         dispatch({ type: JobLocationActionType.FAILED, payload: jobLocations.msg });
       } else {
         dispatch(setJobLocations(jobLocations));
       }
-    } else if (data == '') {
+    } else {
       dispatch(setJobLocations([]))
     }
   };

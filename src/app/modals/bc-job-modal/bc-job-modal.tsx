@@ -239,7 +239,7 @@ function BCJobModal({
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
     dispatch(getAllJobTypesAPI());
-    dispatch(getJobLocationsAction(customerId));
+    dispatch(getJobLocationsAction({customerId: customerId, isActive: true}));
 
     const data: any = {
       'type': 'Customer',

@@ -18,10 +18,10 @@ export const createJobLocation = async (data: any) => {
 
 
 export const getJobLocations = async (data: any) => {
-  const customerId = data;
+  const {customerId, isActive = 'ALL'} = data;
   let responseData;
   try {
-    const response: any = await request(`/jobLocation?customerId=${customerId}`, 'GET', {}, false);
+    const response: any = await request(`/jobLocation?customerId=${customerId}&isActive=${isActive}`, 'GET', {}, false);
     responseData = response.data;
   } catch (err) {
     responseData = { 'msg': '' };

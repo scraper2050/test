@@ -69,7 +69,7 @@ function MakerPin({ ...props }) {
     };
     if (!reqObj.locationId) {
       dispatch(loadingJobLocations());
-      dispatch(getJobLocationsAction(reqObj.customerId));
+      dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
     }
     if (reqObj.locationId) {
       dispatch(loadingJobSites());

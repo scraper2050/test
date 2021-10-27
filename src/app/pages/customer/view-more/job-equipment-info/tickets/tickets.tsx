@@ -80,7 +80,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     }
 
     dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
+    dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
@@ -111,7 +111,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       locationId: ticket.jobLocation
     }
     dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
+    dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
@@ -170,7 +170,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       locationId: ticket.jobLocation
     }
     dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
+    dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));

@@ -168,7 +168,7 @@ function ViewMorePage({ classes }: any) {
       const obj: any = location.state;
       const { customerId } = obj;
       dispatch(loadingJobLocations());
-      dispatch(getJobLocationsAction(customerId));
+      dispatch(getJobLocationsAction({customerId}));
     }
   }, [jobLocations.refresh]);
 
@@ -176,7 +176,7 @@ function ViewMorePage({ classes }: any) {
     const obj: any = location.state;
     const { customerId } = obj;
     dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(customerId));
+    dispatch(getJobLocationsAction({customerId}));
   }, [location.pathname]);
 
   useEffect(() => {

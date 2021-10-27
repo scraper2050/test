@@ -94,7 +94,7 @@ function BCServiceTicketModal({
       };
 
       await dispatch(getContacts(data));
-      await dispatch(getJobLocationsAction(customerId));
+      await dispatch(getJobLocationsAction({customerId}));
     }
 
     await setFieldValue(fieldName, customerId);
@@ -329,7 +329,7 @@ function BCServiceTicketModal({
     dispatch(getEmployeesForJobAction());
 
     if (ticket.customer?._id !== '') {
-      dispatch(getJobLocationsAction(ticket.customer?._id));
+      dispatch(getJobLocationsAction({customerId: ticket.customer?._id, isActive: true}));
 
       const data: any = {
         'type': 'Customer',
