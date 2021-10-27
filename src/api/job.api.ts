@@ -8,6 +8,16 @@ import {
 } from 'actions/job-type/job-type.action';
 import { refreshJobs, setJobLoading, setJobs } from 'actions/job/job.action';
 
+const compareByDate = (a: any, b: any) => {
+  if (new Date(a.scheduleDate) > new Date(b.scheduleDate)) {
+    return 1;
+  }
+  if (new Date(a.scheduleDate) < new Date(b.scheduleDate)) {
+    return -1;
+  }
+  return 0;
+};
+
 export const getAllJobTypesAPI = () => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
@@ -46,7 +56,7 @@ export const getAllJobsAPI = () => {
       request(`/getJobs`, 'post', null)
         .then((res: any) => {
           const tempJobs = res.data.jobs?.filter((job: any) => job.status !== 3);
-
+          tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
