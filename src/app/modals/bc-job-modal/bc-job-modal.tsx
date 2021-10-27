@@ -108,8 +108,8 @@ function BCJobModal({
   const [showVendorFlag, setShowVendorFlag] = useState(Boolean(job._id && job.employeeType));
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
-  const [employeeValue, setEmployeeValue] = useState<any>([]);
-  const [contractorValue, setContractorValue] = useState<any>([]);
+  const [employeeValue, setEmployeeValue] = useState<any>(null);
+  const [contractorValue, setContractorValue] = useState<any>(null);
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
@@ -249,7 +249,7 @@ function BCJobModal({
   }, []);
 
   useEffect(() => {
-    if (job._id) {
+    if (job._id && !employeeValue) {
       if (employeesForJob.length !== 0 && !job.employeeType && job.technician) {
         setEmployeeValue(employeesForJob.filter((employee: any) => employee._id === job.technician._id)[0]);
       }
@@ -258,7 +258,7 @@ function BCJobModal({
 
 
   useEffect(() => {
-    if (job._id) {
+    if (job._id && !contractorValue) {
       if (vendorsList.length !== 0 && job.employeeType && job.contractor) {
         setContractorValue(vendorsList.filter((vendor: any) => vendor.contractor._id === job.contractor._id)[0]);
       }
