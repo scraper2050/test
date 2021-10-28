@@ -10,10 +10,11 @@ import SidebarJobs from "../sidebar/sidebar-jobs";
 function MapViewJobsScreen({ classes, today }: any) {
 
   const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasPhoto, setHasPhoto] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>({});
-
+  console.log({filteredJobs});
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => job && job.status !== 2);
   };
@@ -47,6 +48,7 @@ function MapViewJobsScreen({ classes, today }: any) {
 
     if (data.status) {
       setJobs(filterScheduledJobs(data.jobs));
+      //setFilteredJobs(filterScheduledJobs(data.jobs));
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -67,7 +69,7 @@ function MapViewJobsScreen({ classes, today }: any) {
         {
           <MemoizedMap
             hasPhoto={hasPhoto}
-            list={jobs}
+            list={filteredJobs}
             onJob
             selected={selectedJob}
             showPins
@@ -75,7 +77,7 @@ function MapViewJobsScreen({ classes, today }: any) {
         }
       </Grid>
 
-      <SidebarJobs isLoading={isLoading} scheduledJobs={jobs} onSelectJob={setSelectedJob} />
+      <SidebarJobs isLoading={isLoading} scheduledJobs={jobs} onSelectJob={setSelectedJob} onFilterJobs={setFilteredJobs}/>
     </Grid>
   );
 }
