@@ -31,9 +31,8 @@ import {setOpenTicketFilterState} from "../../../../../actions/service-ticket/se
 
 interface SidebarJobsProps {
   classes: any;
-  scheduledJobs: Job[];
-  isLoading: boolean;
   onSelectJob: (obj: any) => void;
+  onFilterJobs: (obj: any[]) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -85,18 +84,15 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: SidebarJobsProps) {
+function SidebarJobs({ classes, onSelectJob, onFilterJobs }: SidebarJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [filterJobs, setFilterJobs] = useState({
-    'customerNames': '',
-    'jobId': '',
-    'schedule_date': ''
-  });
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasPhoto, setHasPhoto] = useState(false);
   const [dateValue, setDateValue] = useState<any>(null);
   const [tempDate, setTempDate] = useState<any>(new Date());
@@ -128,20 +124,21 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
       customerNames?: any,
       jobId?: string,
       // Today?: boolean,
-    }
+    }, saveAll = true
   ) => {
-    //setIsLoading(true);
+    setIsLoading(true);
     const response: any = await getSearchJobs(requestObj);
 
     const { data } = response;
-    console.log(data, 'side')
 
     if (data.status) {
       setPaginatedJobs(filterScheduledJobs(data.jobs));
+      onFilterJobs(filterScheduledJobs(data.jobs));
+      if (saveAll) setAllJobs(filterScheduledJobs(data.jobs));
       //console.log(data.total)
-      //setIsLoading(false);
+      setIsLoading(false);
     } else {
-      //setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -156,13 +153,15 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
   };
 
   const dateChangeHandler = (date: Date) => {
-    const filteredJobs = scheduledJobs.filter(job => moment(job.scheduleDate).isSame(date, 'day'));
+    const filteredJobs = allJobs.filter(job => moment(job.scheduleDate).isSame(date, 'day'));
     setPaginatedJobs(filteredJobs);
 
     const formattedDate = formatDateYMD(date);
     setDateValue(formattedDate);
     setTempDate(date);
     onSelectJob({});
+    onFilterJobs(filteredJobs);
+    console.log('ffffffffffffff')
     //dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
   };
 
@@ -173,12 +172,13 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
 
   const resetFilter = async () => {
     resetDate();
-    setPaginatedJobs(scheduledJobs);
+    setPaginatedJobs(allJobs);
+    onFilterJobs(allJobs);
   };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
     const prevItemKey = localStorage.getItem('prevItemKey');
-    const currentItem = document.getElementById(`openTodayJob${index}`);
+    const currentItem = document.getElementById(`scheduledJobs${index}`);
 
     if (prevItemKey) {
       const prevItem = document.getElementById(prevItemKey);
@@ -187,11 +187,11 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
       }
       if (currentItem) {
         currentItem.classList.add('ticketItemDiv_active');
-        localStorage.setItem('prevItemKey', `openTodayJob${index}`);
+        localStorage.setItem('prevItemKey', `scheduledJobs${index}`);
       }
     } else if (currentItem) {
       currentItem.classList.add('ticketItemDiv_active');
-      localStorage.setItem('prevItemKey', `openTodayJob${index}`);
+      localStorage.setItem('prevItemKey', `scheduledJobs${index}`);
     }
 
     if (JobObj.ticket.image) {
@@ -226,9 +226,21 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
   };
 
   useEffect(() => {
+    const rawData = {
+      'customerNames': '',
+      'jobId': ''
+      // Today: false,
+    };
+    const requestObj = { ...rawData,
+      'page': 1,
+      'pageSize': 0 };
+    getScheduledJobs(requestObj, true);
+  }, []);
+
+  useEffect(() => {
     //setIsLoading(starting);
     if (!isLoading) {
-      setPaginatedJobs(scheduledJobs);
+      setPaginatedJobs(allJobs);
     }
   }, [isLoading]);
 
@@ -241,6 +253,7 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
       } else {
         setPage(1)
       }
+      onFilterJobs(paginatedJobs);
     }
   }, [paginatedJobs]);
 
@@ -375,7 +388,7 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
                     ? jobs.map((x: any, i: any) =>
                       <div
                         className={'ticketItemDiv'}
-                        id={`openTodayJob${i}`}
+                        id={`scheduledJobs${i}`}
                         key={i}
                         onClick={() => handleJobCardClick(x, i)}>
                         <div className={'ticket_title'}>
