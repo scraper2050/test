@@ -156,8 +156,7 @@ function SidebarJobs({ classes, onSelectJob, onFilterJobs }: SidebarJobsProps) {
     const filteredJobs = allJobs.filter(job => moment(job.scheduleDate).isSame(date, 'day'));
     setPaginatedJobs(filteredJobs);
 
-    const formattedDate = formatDateYMD(date);
-    setDateValue(formattedDate);
+    setDateValue(date);
     setTempDate(date);
     onSelectJob({});
     onFilterJobs(filteredJobs);
@@ -328,7 +327,7 @@ function SidebarJobs({ classes, onSelectJob, onFilterJobs }: SidebarJobsProps) {
                   autoOk
                   className={classes.picker}
                   disablePast={false}
-                  format={"d MMM yyyy"}
+                  format={"MMM d, yyyy"}
                   id={`datepicker-${"scheduleDate"}`}
                   inputProps={{
                     name: "scheduleDate",
