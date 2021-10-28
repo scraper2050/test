@@ -91,11 +91,10 @@
     cursor: pointer;
   }
   .ticketItemDiv_active {
-    border-bottom: 1px solid #00aaff;
+    border-bottom: 1px solid #00aaff !important;
     .ticket_title h3, .ticket_marker {
       color: #00aaff;
     }
-
   }
   .ticket_title {
     font-style: normal;

@@ -345,14 +345,6 @@ function MakerPin({ ...props }) {
     );
   }
 
-/*
-  if (!showPins && !(props.openTicketObj._id === props.ticket._id)) {
-    return <></>;
-  }
-*/
-
-/*  return checkIfDefault(lat, lng)
-    ? */
     return <div style={{marginLeft: -10, marginTop: -10}}
       onMouseLeave={() => setShowinfo(false)}>
       {(() => {
@@ -386,7 +378,7 @@ function MakerPin({ ...props }) {
           spacing={3}>
           <Grid
             item
-            xs={6}>
+            xs={props.ticket.ticket.image ? 6 : 12}>
             <div className={'job-type'}>
               <h3>
                 {'Job Type'}

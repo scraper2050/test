@@ -42,6 +42,7 @@ import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
 import { useHistory, useLocation } from 'react-router-dom';
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
+import moment from "moment";
 
 const initialJobState = {
   'customer': {
@@ -640,16 +641,10 @@ function BCJobModal({
       'id': 'date',
       'sortable': true,
       Cell({ row }: any) {
-        const date = formatDate(row.original.date);
-        let time;
-        const formatedTime = formatSchedulingTime(row.original.date);
-        time = convertMilitaryTime(`${formatedTime.hours}:${formatedTime.minutes}`);
+        const dataTime = moment(new Date(row.original.date)).format('MM/DD/YYYY h:mm A')
         return (
-          <div>
-            <i>
-              {' '}
-              {`${date} ${time}`}
-            </i>
+          <div style={{color: 'gray', fontStyle: 'italic'}}>
+            {`${dataTime}`}
           </div>
         );
       }

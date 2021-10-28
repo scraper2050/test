@@ -136,15 +136,15 @@ function MakerPin({ ...props }) {
     }, 200);
   };
 
-
+  // Show selected ticket
   if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
-      <>
+      <div style={{zIndex: 10}}>
         {(() => {
             const status = props?.openTicketObj?.status;
             CustomIcon = getStatusIcon(status);
           })()}
-        <CustomIcon className={props.classes.marker} />
+        <CustomIcon className={props.classes.markerTop}/>
 {/*        { checkIfDefault(lat, lng) &&
           <CustomIcon className={props.classes.marker} />
         }*/}
@@ -170,9 +170,7 @@ function MakerPin({ ...props }) {
             container
             justify={'space-between'}
             spacing={3}>
-            <Grid
-              item
-              xs={6}>
+            <Grid item xs={props.ticket.ticket.image ? 6 : 12}>
               <div className={'job-type'}>
                 <h3>
                   {'Job Type(s)'}
@@ -231,7 +229,7 @@ function MakerPin({ ...props }) {
             <InfoIcon style={{ 'margin': 'auto, 0' }} />
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -239,7 +237,7 @@ function MakerPin({ ...props }) {
   //console.log('ticket', props.ticket, 'openticket', props.openTicketObj, props.openTicketObj._id, props.ticket._id);
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
-      <>
+      <div style={{zIndex: 1}}>
         {(() => {
           const status = props?.openTicketObj?.status;
           CustomIcon = getStatusIcon(status);
@@ -278,10 +276,11 @@ function MakerPin({ ...props }) {
             container
             justify={'space-between'}
             spacing={3}>
-            <Grid item>
-              <div className={'job-type'}>
+            <Grid item xs={props.ticket.ticket.image ? 6 : 12}>
+
+            <div className={'job-type'}>
                 <h3>
-                  {'Job Type'}
+                  {'Job Type(s)'}
                 </h3>
                 <span>
                   {props.ticket.tasks.map((job: any) => <p>{job?.jobType?.title || job?.title}</p>)}
@@ -330,7 +329,7 @@ function MakerPin({ ...props }) {
               </div>
           }
         </div>
-      </>
+      </div>
     );
   }
 
@@ -370,12 +369,10 @@ function MakerPin({ ...props }) {
           container
           justify={'space-between'}
           spacing={3}>
-          <Grid
-            item
-            xs={6}>
+          <Grid item xs={props.ticket.ticket.image ? 6 : 12}>
             <div className={'job-type'}>
               <h3>
-                {'Job Type'}
+                {'Job Type(s)'}
               </h3>
               <span>
                 {props.ticket.tasks.map(({ jobType }:any) => <p key={jobType._id}>
@@ -438,7 +435,6 @@ function MakerPin({ ...props }) {
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false, showPins = false }: BCMapWithMarkerListProps) {
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
-
 
   if (selected.jobSite) {
     centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : DEFAULT_LAT;
