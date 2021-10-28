@@ -315,7 +315,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                       const {technician: {profile}} = route;
 
                       return (<div
-                        className={'route_item_div'}
+                        className={`route_item_div ${i === selectedIndex ? 'ticketItemDiv_active' : ''}`}
                         id={`openTodayJob${i}`}
                         key={i}
                         onClick={() => handleJobCardClick(route, i)}>
@@ -344,7 +344,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                           </div>
                         </div>
                         <div className={'ticket_marker'}>
-                          <RoomIcon style={{color: i === selectedIndex ? '#00aaff' : undefined}}/>
+                          <RoomIcon/>
                         </div>
                       </div>)
                     })
