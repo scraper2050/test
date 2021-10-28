@@ -140,8 +140,8 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
 
   const getRoute = async () => {
     setIsLoading(true);
-    const dateString = currentDate.toISOString().split('T');
-    const response: any = await getAllRoutes(dateString[0]);
+    const dateString = moment(currentDate).utc().format('YYYY-MM-DD');
+    const response: any = await getAllRoutes(dateString);
 
     const { data } = response;
     if (data.status) {
@@ -176,8 +176,8 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
       setSelectedIndex( -1);
       dispatchRoutes(paginatedRoutes);
     } else {
-      setSelectedIndex( index);
-      dispatchRoutes(paginatedRoutes.slice(index, 1))
+      setSelectedIndex(index);
+      dispatchRoutes([paginatedRoutes[index]]);
     }
   };
 
@@ -256,16 +256,14 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
               <span
                 className={"datepicker_wrapper datepicker_wrapper_map"}
               >
-                <button className="prev_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickMinusDay()}
-                  >
+                <button className="prev_btn" disabled={isLoading} onClick={() => handleButtonClickMinusDay()}>
+                  <i className="material-icons" >
                     keyboard_arrow_left
                   </i>
                 </button>
                 <DatePicker
                   autoOk
+                  disabled={isLoading}
                   className={classes.picker}
                   disablePast={false}
                   format={"d MMM yyyy"}
@@ -281,11 +279,8 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                   value={formatDateYMD(currentDate)}
                   variant={"inline"}
                 />
-                <button className="next_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickPlusDay()}
-                  >
+                <button className="next_btn" disabled={isLoading} onClick={() => handleButtonClickPlusDay()}>
+                  <i className="material-icons">
                     keyboard_arrow_right
                   </i>
                 </button>

@@ -34,6 +34,7 @@ interface SidebarJobsProps {
   scheduledJobs: Job[];
   isLoading: boolean;
   onSelectJob: (obj: any) => void;
+  onFilterJobs: (obj: any[]) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -85,7 +86,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: SidebarJobsProps) {
+function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob, onFilterJobs }: SidebarJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -134,10 +135,10 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
     const response: any = await getSearchJobs(requestObj);
 
     const { data } = response;
-    console.log(data, 'side')
 
     if (data.status) {
       setPaginatedJobs(filterScheduledJobs(data.jobs));
+      onFilterJobs(filterScheduledJobs(data.jobs));
       //console.log(data.total)
       //setIsLoading(false);
     } else {
@@ -163,6 +164,8 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
     setDateValue(formattedDate);
     setTempDate(date);
     onSelectJob({});
+    onFilterJobs(filteredJobs);
+    console.log('ffffffffffffff')
     //dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
   };
 
@@ -174,6 +177,7 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
   const resetFilter = async () => {
     resetDate();
     setPaginatedJobs(scheduledJobs);
+    onFilterJobs(scheduledJobs);
   };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
@@ -241,6 +245,7 @@ function SidebarJobs({ classes, isLoading, scheduledJobs, onSelectJob }: Sidebar
       } else {
         setPage(1)
       }
+      onFilterJobs(paginatedJobs);
     }
   }, [paginatedJobs]);
 
