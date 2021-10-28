@@ -266,7 +266,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                   disabled={isLoading}
                   className={classes.picker}
                   disablePast={false}
-                  format={"d MMM yyyy"}
+                  format={"MMM d, yyyy"}
                   id={`datepicker-${"scheduleDate"}`}
                   inputProps={{
                     name: "scheduleDate",
@@ -276,7 +276,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                   name={"scheduleDate"}
                   onChange={(e: any) => dateChangeHandler(e)}
                   required={false}
-                  value={formatDateYMD(currentDate)}
+                  value={currentDate}
                   variant={"inline"}
                 />
                 <button className="next_btn" disabled={isLoading} onClick={() => handleButtonClickPlusDay()}>

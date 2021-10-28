@@ -500,7 +500,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                   autoOk
                   className={classes.picker}
                   disablePast={false}
-                  format={"d MMM yyyy"}
+                  format={"MMM d, yyyy"}
                   id={`datepicker-${"scheduleDate"}`}
                   inputProps={{
                     name: "scheduleDate",
