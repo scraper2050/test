@@ -3,13 +3,19 @@ import { Theme } from '@material-ui/core/styles';
 export default (theme: Theme): any => ({
   'marker': {
     'color': '#ee0000',
-    'fontSize': '36px'
+    'fontSize': '36px',
+    'zIndex': '1',
+  },
+  'markerTop': {
+    'color': '#ee0000',
+    'fontSize': '36px',
+    'zIndex': '10',
   },
   'markerPopup': {
     'position': 'relative',
     'zIndex': '10',
-    'top': '20px',
-    'left': '-2px',
+    'top': '35px',
+    'left': '-10px',
     'height': 'auto',
     'backgroundColor': '#fff',
   },

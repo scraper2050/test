@@ -193,7 +193,7 @@ function AdminVendorsPage({ classes }: any) {
       vendorId };
     vendorCompanyName =
       vendorCompanyName !== undefined
-        ? vendorCompanyName.replace(/ /g, '')
+        ? vendorCompanyName.replace(/[\/ ]/g, '')
         : 'vendorName';
 
     localStorage.setItem('nestedRouteKey', `${vendorCompanyName}`);

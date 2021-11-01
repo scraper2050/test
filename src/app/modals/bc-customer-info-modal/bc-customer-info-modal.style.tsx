@@ -14,7 +14,7 @@ export default (theme: Theme): any => ({
   },
   'paper': {
     'color': theme.palette.text.secondary,
-    'padding': '4px 8px'
+    'padding': '0 8px'
   },
   'root': {
     'flexGrow': 1
@@ -26,5 +26,14 @@ export default (theme: Theme): any => ({
     'lineHeight': '26px',
     'margin': 0,
     'textDecoration': 'underline'
-  }
+  },
+  'warnYesButton' :{
+    color: 'white',
+    backgroundColor: `${theme.palette.success.main} !important`
+  },
+  'warnNoButton' :{
+    color: 'white',
+    backgroundColor: `${theme.palette.secondary.main} !important`
+  },
+
 });

@@ -31,6 +31,9 @@ export interface Job {
     contact: {
       phone: string;
     };
+    location?: {
+      coordinates?: number[];
+    }
     _t: string;
     _id: string;
   };
@@ -80,6 +83,17 @@ export interface Job {
     _id: string;
   };
   timeSpent: number;
+  jobSite?: {
+    location?: {
+      coordinates?: number[];
+    }
+  }
+  jobLocation?: {
+    location?: {
+      coordinates?: number[];
+    }
+  }
+  tasks: any[];
 }
 
 export interface JobsState {

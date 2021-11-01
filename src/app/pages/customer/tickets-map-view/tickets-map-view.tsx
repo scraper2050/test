@@ -7,12 +7,17 @@ import './ticket-map-view.scss';
 import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
+import MapViewRoutesScreen from './map-view/map-view-routes';
 import { getAllJobsAPI } from 'api/job.api';
 import { useDispatch } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import styled from 'styled-components';
 import { JobTypes } from 'actions/job/job.types';
 
+import iconCancelled from 'assets/img/icons/map/icon-cancelled.svg';
+import iconCompleted from 'assets/img/icons/map/icon-completed.svg';
+import iconPending from 'assets/img/icons/map/icon-pending.svg';
+import iconStarted from 'assets/img/icons/map/icon-started.svg';
 
 const StatusContainer = styled.div`
 position: absolute;
@@ -22,28 +27,48 @@ display: flex;
 > div {
   position: relative;
   display: flex;
-  margin-right: 10px;
-  font-size: 13px;
-    text-transform: capitalize;
-    align-items: center;
-    letter-spacing: .6px;
+  margin-right: 30px;
+  font-size: 12px;
+  text-transform: capitalize;
+  align-items: center;
+  letter-spacing: .6px;
+  &:last-child {
+    margin-right: 0;
+  }
 }
 .job-status {
-    height: 11px;
-    width: 11px;
+    height: 20px;
+    width: 20px;
     border-radius: 15px;
-    margin-right: 6px;
+    margin-right: 10px;
     &_0 {
-      background-color: #000;
+      background-image: url(${iconPending});
+
+      & + span {
+        color: rgba(130, 130, 130, 1);
+      }
+
     }
     &_1 {
-      background-color: rgb(77, 189, 116);
+      background-image: url(${iconStarted});
+
+      & + span {
+        color: rgba(0, 170, 255, 1);
+      }
     }
     &_2 {
-      background-color: #fe5500;
+      background-image: url(${iconCompleted});
+
+      & + span {
+        color: rgba(80, 174, 85, 1);
+      }
     }
     &_3 {
-      background-color: #c00707;
+      background-image: url(${iconCancelled});
+
+      & + span {
+        color: rgba(245, 0, 87, 1);
+      }
     }
   }
 
@@ -63,7 +88,7 @@ function renderLegend() {
       <div
         className={`job-status job-status_${index}`}
       />
-      {type}
+      <span>{type}</span>
     </div>)}
   </StatusContainer>;
 }
@@ -95,7 +120,7 @@ function TicketsWithMapView({ classes }: any) {
           }}>
             <BCCircularLoader heightValue={'200px'} />
           </div>
-          : <div className={classes.pageContent}>
+          : <div className={`${classes.pageContent} maps`}>
 
             <BCTabs
               curTab={curTab}
@@ -113,28 +138,38 @@ function TicketsWithMapView({ classes }: any) {
                 {
                   'label': 'Scheduled Jobs',
                   'value': 2
-                }
+                },
+                {
+                  'label': 'Routes',
+                  'value': 3
+                },
               ]}
             />
-            {curTab === 1 && renderLegend()}
+            { renderLegend() }
             <SwipeableViews index={curTab}>
               <div
-                className={classes.dataContainer}
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 0}
-                id={'0'}>
+                id={'map-swipeable-open'}>
                 <MapViewTicketsScreen />
               </div>
               <div
-                className={classes.dataContainer}
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 1}
-                id={'1'}>
+                id={'map-swipeable-today'}>
                 <MapViewTodayJobsScreen />
               </div>
               <div
-                className={classes.dataContainer}
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
                 hidden={curTab !== 2}
-                id={'2'}>
+                id={'map-swipeable-schedule'}>
                 <MapViewJobsScreen />
+              </div>
+              <div
+                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+                hidden={curTab !== 3}
+                id={'map-swipeable-routes'}>
+                <MapViewRoutesScreen />
               </div>
             </SwipeableViews>
           </div>

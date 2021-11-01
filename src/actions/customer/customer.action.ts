@@ -23,9 +23,9 @@ export const loadingSingleCustomers = () => {
   };
 };
 
-export const getCustomers = () => {
+export const getCustomers = (active = true, inactive = false) => {
   return async (dispatch: any) => {
-    const customers: any = await fetchCustomers();
+    const customers: any = await fetchCustomers(active, inactive);
     if (customers.status === 0) {
       dispatch(error(customers.message));
       dispatch(setCustomers([]));

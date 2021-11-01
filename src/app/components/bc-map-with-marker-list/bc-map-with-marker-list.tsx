@@ -1,6 +1,5 @@
 import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
-import RoomIcon from '@material-ui/icons/Room';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
@@ -12,6 +11,12 @@ import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
 import InfoIcon from '@material-ui/icons/Info';
+import { bcMapStyle } from './bc-map-style';
+
+import { ReactComponent as IconCancelled } from 'assets/img/icons/map/icon-cancelled.svg';
+import { ReactComponent as IconCompleted } from 'assets/img/icons/map/icon-completed.svg';
+import { ReactComponent as IconPending } from 'assets/img/icons/map/icon-pending.svg';
+import { ReactComponent as IconStarted } from 'assets/img/icons/map/icon-started.svg';
 
 import './bc-map-with-marker.scss';
 const DEFAULT_LAT = 32.3888811;
@@ -32,16 +37,30 @@ interface BCMapWithMarkerListProps {
 }
 function createMapOptions() {
   return {
+    styles: bcMapStyle,
     'gestureHandling': 'greedy'
   };
 }
 
 
 function MakerPin({ ...props }) {
+  let CustomIcon;
   const { lat, lng, showPins } = props;
   const [showInfo, setShowinfo] = useState(false);
   const dispatch = useDispatch();
 
+  const getStatusIcon = (status: any) => {
+    switch (status) {
+      case 1:
+        return IconStarted;
+      case 2:
+        return IconCompleted;
+      case 3:
+        return IconCancelled;
+      default:
+        return IconPending;
+    }
+  }
 
   const openCreateJobModal = (ticketObj: any) => {
     const reqObj = {
@@ -117,11 +136,18 @@ function MakerPin({ ...props }) {
     }, 200);
   };
 
-
+  // Show selected ticket
   if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
-      <>
-        { checkIfDefault(lat, lng) && <RoomIcon className={props.classes.marker} />}
+      <div style={{zIndex: 10}}>
+        {(() => {
+            const status = props?.openTicketObj?.status;
+            CustomIcon = getStatusIcon(status);
+          })()}
+        <CustomIcon className={props.classes.markerTop}/>
+{/*        { checkIfDefault(lat, lng) &&
+          <CustomIcon className={props.classes.marker} />
+        }*/}
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -144,9 +170,7 @@ function MakerPin({ ...props }) {
             container
             justify={'space-between'}
             spacing={3}>
-            <Grid
-              item
-              xs={6}>
+            <Grid item xs={props.ticket.ticket.image ? 6 : 12}>
               <div className={'job-type'}>
                 <h3>
                   {'Job Type(s)'}
@@ -205,7 +229,7 @@ function MakerPin({ ...props }) {
             <InfoIcon style={{ 'margin': 'auto, 0' }} />
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -213,9 +237,13 @@ function MakerPin({ ...props }) {
   //console.log('ticket', props.ticket, 'openticket', props.openTicketObj, props.openTicketObj._id, props.ticket._id);
   if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
     return (
-      <>
-
-        <RoomIcon className={props.classes.marker} />
+      <div style={{zIndex: 1}}>
+        {(() => {
+          const status = props?.openTicketObj?.status;
+          CustomIcon = getStatusIcon(status);
+        })()}
+        <CustomIcon className={props.classes.marker}
+        />
         {';'}
         <div
           className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -248,14 +276,14 @@ function MakerPin({ ...props }) {
             container
             justify={'space-between'}
             spacing={3}>
-            <Grid item>
-              <div className={'job-type'}>
+            <Grid item xs={props.ticket.ticket.image ? 6 : 12}>
+
+            <div className={'job-type'}>
                 <h3>
-                  {'Job Type'}
+                  {'Job Type(s)'}
                 </h3>
                 <span>
-
-                  {props.ticket.jobType ? props.ticket.jobType.title : ''}
+                  {props.ticket.tasks.map((job: any) => <p>{job?.jobType?.title || job?.title}</p>)}
                 </span>
               </div>
               <div className={'job-type'}>
@@ -301,7 +329,7 @@ function MakerPin({ ...props }) {
               </div>
           }
         </div>
-      </>
+      </div>
     );
   }
 
@@ -312,10 +340,13 @@ function MakerPin({ ...props }) {
   return checkIfDefault(lat, lng)
     ? <div
       onMouseLeave={() => setShowinfo(false)}>
-      <RoomIcon
+      {(() => {
+        const status = props?.ticket?.status;
+        CustomIcon = getStatusIcon(status);
+      })()}
+      <CustomIcon
         className={props.classes.marker}
         onMouseEnter={() => setShowinfo(true)}
-
       />
       {showInfo && <div
         className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
@@ -338,15 +369,13 @@ function MakerPin({ ...props }) {
           container
           justify={'space-between'}
           spacing={3}>
-          <Grid
-            item
-            xs={6}>
+          <Grid item xs={props.ticket.ticket.image ? 6 : 12}>
             <div className={'job-type'}>
               <h3>
-                {'Job Type'}
+                {'Job Type(s)'}
               </h3>
               <span>
-                {props.ticket.tasks.map(({ jobType }:any) => <p>
+                {props.ticket.tasks.map(({ jobType }:any) => <p key={jobType._id}>
                   {jobType.title}
                 </p>)}
               </span>
@@ -406,7 +435,6 @@ function MakerPin({ ...props }) {
 function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, lat, lng, onJob = false, showPins = false }: BCMapWithMarkerListProps) {
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
-
 
   if (selected.jobSite) {
     centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : DEFAULT_LAT;

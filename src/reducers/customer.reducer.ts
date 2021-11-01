@@ -54,7 +54,7 @@ export const CustomersReducer: Reducer<any> = (
       return {
         ...state,
         'loading': true,
-        'data': initialCustomers
+        'data': [], //initialCustomers
       };
     case CustomersActionType.SUCCESS:
       return {

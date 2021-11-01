@@ -42,6 +42,7 @@ import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
 import { useHistory, useLocation } from 'react-router-dom';
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
+import moment from "moment";
 
 const initialJobState = {
   'customer': {
@@ -108,8 +109,8 @@ function BCJobModal({
   const [showVendorFlag, setShowVendorFlag] = useState(Boolean(job._id && job.employeeType));
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
-  const [employeeValue, setEmployeeValue] = useState<any>([]);
-  const [contractorValue, setContractorValue] = useState<any>([]);
+  const [employeeValue, setEmployeeValue] = useState<any>(null);
+  const [contractorValue, setContractorValue] = useState<any>(null);
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const openServiceTicketFilter = useSelector((state: any) => state.serviceTicket.filterTicketState);
   const [contactValue, setContactValue] = useState<any>([]);
@@ -249,7 +250,7 @@ function BCJobModal({
   }, []);
 
   useEffect(() => {
-    if (job._id) {
+    if (job._id && !employeeValue) {
       if (employeesForJob.length !== 0 && !job.employeeType && job.technician) {
         setEmployeeValue(employeesForJob.filter((employee: any) => employee._id === job.technician._id)[0]);
       }
@@ -258,7 +259,7 @@ function BCJobModal({
 
 
   useEffect(() => {
-    if (job._id) {
+    if (job._id && !contractorValue) {
       if (vendorsList.length !== 0 && job.employeeType && job.contractor) {
         setContractorValue(vendorsList.filter((vendor: any) => vendor.contractor._id === job.contractor._id)[0]);
       }
@@ -276,10 +277,10 @@ function BCJobModal({
         ids = job.tasks.map((job:any) => ({ jobTypeId: job.jobType._id }));
       } else {
         tempJobValue = ticket.tasks && ticket.tasks.length > 0
-          ? getJobData(ticket.tasks.map((job:any) => job.jobType), jobTypes)
+          ? getJobData(ticket.tasks.map((job:any) => job.jobType || (job.jobType === undefined && job._id)), jobTypes)
           : getJobData([ticket.jobType], jobTypes);
         if (typeof ticket.tasks !== 'undefined') {
-          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType }));
+          ids = ticket.tasks.map((job:any) => ({ jobTypeId: job.jobType || job._id }));
         }
       }
       setFieldValue('jobTypes', ids);
@@ -321,8 +322,8 @@ function BCJobModal({
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
         setContactValue(contacts.find((contact: any) =>
-          contact._id === (ticket.customerContactId?._id || ticket.customerContactId || ticket.customer))
-        );
+          [job?.customerContactId?._id, ticket?.customerContactId?._id, ticket?.customerContactId, ticket?.customer].includes(contact._id)
+        ));
       }
     }
   }, [contacts]);
@@ -398,7 +399,7 @@ function BCJobModal({
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
-      //console.log({values, job})
+      console.log({values, job})
 
       const customerId = customer?._id;
       const jobFromMapFilter = job.jobFromMap;
@@ -424,7 +425,7 @@ function BCJobModal({
       const formatedTicketRequest = formatRequestObj(tempTicket);
 
       const tempData = {
-        ...job,
+        //...job,
         ...values,
         customerId
       };
@@ -433,25 +434,25 @@ function BCJobModal({
       delete tempData.technician;
 
 
-      if (values.contractorId && values.contractorId !== '') {
+      if (values.employeeType && values.contractorId && values.contractorId !== '') {
         delete tempData.technicianId;
         tempData.employeeType = 1;
         tempData.contractorId = values.contractorId;
       }
 
 
-      if (values.technicianId && values.technicianId !== '') {
+      if (!values.employeeType && values.technicianId && values.technicianId !== '') {
         delete tempData.contractorId;
         tempData.technicianId = values.technicianId;
         tempData.employeeType = 0;
       }
-      //console.log({tempData});
-      /*setSubmitting(false);
-      return;*/
+      //setSubmitting(false);
+      //return;
 
 
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
+        console.log({tempData})
         return callEditJobAPI(tempData);
       };
 
@@ -553,7 +554,8 @@ function BCJobModal({
     'validate':  (values: any) => {
       const errors: any = {};
 
-      if (values.jobTypes.length === 0) {
+
+      if (values.jobTypes.length === 0 && jobTypeValue.length === 0) {
         errors.jobTypes = 'Select at least one (1) job';
         if (jobTypesInput.current !== null) {
           jobTypesInput.current.setCustomValidity("Select at least one (1) job");
@@ -639,16 +641,10 @@ function BCJobModal({
       'id': 'date',
       'sortable': true,
       Cell({ row }: any) {
-        const date = formatDate(row.original.date);
-        let time;
-        const formatedTime = formatSchedulingTime(row.original.date);
-        time = convertMilitaryTime(`${formatedTime.hours}:${formatedTime.minutes}`);
+        const dataTime = moment(new Date(row.original.date)).format('MM/DD/YYYY h:mm A')
         return (
-          <div>
-            <i>
-              {' '}
-              {`${date} ${time}`}
-            </i>
+          <div style={{color: 'gray', fontStyle: 'italic'}}>
+            {`${dataTime}`}
           </div>
         );
       }

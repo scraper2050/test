@@ -25,9 +25,13 @@ const BCContractViewModalContainer = styled.div`
     h2 {
         text-transform: uppercase;
     }
-   
-     .header-container {
-        text-align: center;
+
+    .header-container {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         svg {
         width: 120px;
         height: 120px;
@@ -157,7 +161,7 @@ export default function BCContractViewModal({ message, notificationId, contractI
           : ''}
       </p>
     </div>
-    <div className={'actions-container'} >
+    {/* <div className={'actions-container'} >
       {(notificationType === NotificationTypeTypes.CONTRACT_INVITATION || !notificationId) && !responseMessage && <>
         {notificationId && <Button
           color={'secondary'}
@@ -182,7 +186,7 @@ export default function BCContractViewModal({ message, notificationId, contractI
             : 'Accept'}`}
         </Button>
       </>}
-    </div>
+    </div> */}
 
   </BCContractViewModalContainer>;
 }

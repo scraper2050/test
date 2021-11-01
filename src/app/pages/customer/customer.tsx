@@ -2,7 +2,14 @@ import BCTableContainer from '../../components/bc-table-container/bc-table-conta
 import BCTabs from '../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './customer.styles';
-import { Button, Grid, withStyles } from "@material-ui/core";
+import {
+  Button,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  withStyles
+} from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import {
   getCustomerDetailAction,
@@ -18,14 +25,14 @@ function CustomersPage({ classes }: any) {
   const dispatch = useDispatch();
   const customers = useSelector((state: any) => state.customers);
   const [curTab, setCurTab] = useState(0);
-  const history = useHistory();
 
+  const history = useHistory();
   const location = useLocation<any>();
   const locationState = location.state;
 
   const prevPage =
     locationState && locationState.prevPage ? locationState.prevPage : null;
-
+  const [showCustomer, setShowCustomer] = useState(prevPage?.showCustomer || 'active');
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
@@ -52,6 +59,19 @@ function CustomersPage({ classes }: any) {
       'sortable': true
     },
     {
+      'Header': 'Status',
+      'accessor': 'isActive',
+      'Cell': function (row: any) {
+        return (
+          <div className={`${row.value ? '' : classes.inactiveStyle}`}>
+            {`${row.value ? 'Active' : 'Inactive'}`}
+          </div>
+        );
+      },
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
       Cell({ row }: any) {
         return (
           <BCQbSyncStatus data={row.original} />
@@ -64,9 +84,11 @@ function CustomersPage({ classes }: any) {
   ];
 
   useEffect(() => {
+    const active = showCustomer === 'inactive' ? false : true;
+    const inactive = showCustomer === 'active' ? false : true;
     dispatch(loadingCustomers());
-    dispatch(getCustomers());
-  }, []);
+    dispatch(getCustomers(active, inactive));
+  }, [showCustomer]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -83,10 +105,10 @@ function CustomersPage({ classes }: any) {
     const customerId = row.original._id;
     const customerObj = { customerName,
       customerId,
-      currentPage };
+      currentPage: {...currentPage, showCustomer} };
     customerName =
       customerName !== undefined
-        ? customerName.replace(/ /g, '')
+        ? customerName.replace(/[\/ ]/g, '')
         : 'customername';
     localStorage.setItem('nestedRouteKey', `${customerName}`);
     dispatch(loadingSingleCustomers());
@@ -96,6 +118,25 @@ function CustomersPage({ classes }: any) {
       'state': customerObj
     });
   };
+
+  function Toolbar() {
+    return <div style={{display: 'flex', alignItems: 'center'}}>
+      <strong style={{fontSize: 16}}>{'Show:'}&nbsp;</strong>
+      <FormControl variant="standard" style={{minWidth: 80}}>
+        <Select
+          labelId="location-status-label"
+          id="location-status-select"
+          value={showCustomer}
+          label="Age"
+          onChange={(event: any) => setShowCustomer(event.target.value)}
+        >
+          <MenuItem value={'active'}>Active Customers</MenuItem>
+          <MenuItem value={'inactive'}>Inactive Customers</MenuItem>
+          <MenuItem value={'all'}>All Customers</MenuItem>
+        </Select>
+      </FormControl>
+    </div>
+  }
 
   return (
     <div className={classes.pageMainContainer}>
@@ -132,6 +173,8 @@ function CustomersPage({ classes }: any) {
                 search
                 setPage={setCurrentPage}
                 tableData={customers.data}
+                toolbarPositionLeft={true}
+                toolbar={Toolbar()}
               />
             </div>
             <div

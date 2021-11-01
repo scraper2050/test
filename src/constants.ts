@@ -15,6 +15,7 @@ export const ADMIN_SIDEBAR_WIDTH_MINI = 76;
 export const ADMIN_HEADER_HEIGHT = 58;
 export const ADMIN_SIDEBAR_BG = '#D0D3DC';
 export const ADMIN_SIDEBAR_TOGGLE_BG = '#f2f2f2';
+export const ADMIN_MAP_SIDEBAR_WIDTH = 290;
 
 export const SECONDARY_CARD_BLUE = '#3582BE';
 export const PRIMARY_CARD_PURPLE = '#6846D3';
