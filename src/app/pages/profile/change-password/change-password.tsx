@@ -10,71 +10,78 @@ import { PRIMARY_GREEN, PRIMARY_RED } from '../../../../constants';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const ChangePasswordValidation = yup.object().shape({
-  'confirmPassword': yup
+  confirmPassword: yup
     .string()
     .oneOf([yup.ref('newPassword'), ''], 'Passwords must match')
     .required('Confirm password is required'),
-  'currentPassword': yup
-    .string()
-    .required('Current Password is required'),
-  'newPassword': yup
+  currentPassword: yup.string().required('Current Password is required'),
+  newPassword: yup
     .string()
     .min(8, 'Password must be equal or more than 8 characters')
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/gu, 'New password must contain at least one upper case letter, one number, and one special character')
-    .required('New Password is required')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/gu,
+      'New password must contain at least one upper case letter, one number, and one special character'
+    )
+    .required('New Password is required'),
 });
 
-
 function ChangePasswordPage() {
-  const { 'changePasswordApi': { hasErrored, isLoading, msg } } = useSelector(({ auth }:any) => auth);
+  const {
+    changePasswordApi: { hasErrored, isLoading, msg },
+  } = useSelector(({ auth }: any) => auth);
   const dispatch = useDispatch();
   const formik = useFormik({
-    'initialValues': {
-      'confirmPassword': '',
-      'currentPassword': '',
-      'newPassword': ''
+    initialValues: {
+      confirmPassword: '',
+      currentPassword: '',
+      newPassword: '',
     },
-    'onSubmit': values => {
+    onSubmit: (values) => {
       dispatch(changePasswordAction.fetch(values));
     },
-    'validateOnBlur': false,
-    'validateOnChange': true,
-    'validationSchema': ChangePasswordValidation
+    validateOnBlur: false,
+    validateOnChange: true,
+    validationSchema: ChangePasswordValidation,
   });
 
-  useEffect(
-    () => {
-      return () => {
-        dispatch(changePasswordAction.cancelled());
-      };
+  useEffect(() => {
+    if (msg === 'Password changed successfully.') {
+      formik.resetForm();
     }
-    , []
-  );
+  }, [msg]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(changePasswordAction.cancelled());
+    };
+  }, []);
   return (
     <MainContainer>
       <PageContainer>
         <Grid container>
           <Grid xs={7}>
             <ChangePasswordContainer>
-              <Typography
-                align={'left'}
-                color={'primary'}
-                variant={'h4'}>
-                <strong>
-                  {'Change Password'}
-                </strong>
+              <Typography align={'left'} color={'primary'} variant={'h4'}>
+                <strong>{'Change Password'}</strong>
               </Typography>
               <p className={'subtitle'}>
-                {'New password must be more than 8 characters, contain at least one upper case letter, one number, and one special character'}
+                {
+                  'New password must be more than 8 characters, contain at least one upper case letter, one number, and one special character'
+                }
               </p>
 
               <div className={'form-container'}>
-                <form onSubmit={formik.handleSubmit} >
+                <form onSubmit={formik.handleSubmit}>
                   <BCUncontrolledPasswordInput
-                    error={formik.touched.currentPassword && Boolean(formik.errors.currentPassword)}
-                    helperText={formik.touched.currentPassword && formik.errors.currentPassword}
+                    error={
+                      formik.touched.currentPassword &&
+                      Boolean(formik.errors.currentPassword)
+                    }
+                    helperText={
+                      formik.touched.currentPassword &&
+                      formik.errors.currentPassword
+                    }
                     id={'currentPassword'}
                     label={'Current Password'}
                     name={'currentPassword'}
@@ -84,8 +91,13 @@ function ChangePasswordPage() {
                     value={formik.values.currentPassword}
                   />
                   <BCUncontrolledPasswordInput
-                    error={Boolean(formik.values.newPassword) && Boolean(formik.errors.newPassword)}
-                    helperText={formik.touched.newPassword && formik.errors.newPassword}
+                    error={
+                      Boolean(formik.values.newPassword) &&
+                      Boolean(formik.errors.newPassword)
+                    }
+                    helperText={
+                      formik.touched.newPassword && formik.errors.newPassword
+                    }
                     id={'newPassword'}
                     label={'New Password'}
                     name={'newPassword'}
@@ -95,8 +107,14 @@ function ChangePasswordPage() {
                     value={formik.values.newPassword}
                   />
                   <BCUncontrolledPasswordInput
-                    error={Boolean(formik.values.confirmPassword) && Boolean(formik.errors.confirmPassword)}
-                    helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                    error={
+                      Boolean(formik.values.confirmPassword) &&
+                      Boolean(formik.errors.confirmPassword)
+                    }
+                    helperText={
+                      formik.touched.confirmPassword &&
+                      formik.errors.confirmPassword
+                    }
                     id={'confirmPassword'}
                     label={'Confirm Password'}
                     name={'confirmPassword'}
@@ -106,26 +124,21 @@ function ChangePasswordPage() {
                     value={formik.values.confirmPassword}
                   />
                   <div className={'actions-container'}>
-                    <Fab
-                      color={'primary'}
-                      disabled={isLoading}
-                      type={'submit'}>
+                    <Fab color={'primary'} disabled={isLoading} type={'submit'}>
                       {'Change Password'}
                     </Fab>
                   </div>
                 </form>
               </div>
-              {msg && <div className={hasErrored
-                ? 'error'
-                : 'success'}>
-                {msg}
-              </div> }
+              {msg && (
+                <div className={hasErrored ? 'error' : 'success'}>{msg}</div>
+              )}
             </ChangePasswordContainer>
-
           </Grid>
         </Grid>
       </PageContainer>
-    </MainContainer>);
+    </MainContainer>
+  );
 }
 
 const MainContainer = styled.div`
@@ -148,42 +161,41 @@ const PageContainer = styled.div`
 `;
 
 const ChangePasswordContainer = styled(Paper)`
-background: white;
-padding: 30px;
-width: 100%;
-border-radius: 4px;
-.success {
-  color: ${PRIMARY_GREEN}
-}
-.error {
-  color: ${PRIMARY_RED}
-}
-h4 {
-  margin-bottom: 0;
-}
-p.subtitle {
-  margin-bottom: 30px;
-}
-label {
-  margin-bottom: 8px;
-}
+  background: white;
+  padding: 30px;
+  width: 100%;
+  border-radius: 4px;
+  .success {
+    color: ${PRIMARY_GREEN};
+  }
+  .error {
+    color: ${PRIMARY_RED};
+  }
+  h4 {
+    margin-bottom: 0;
+  }
+  p.subtitle {
+    margin-bottom: 30px;
+  }
+  label {
+    margin-bottom: 8px;
+  }
 
-.actions-container {
-  display: flex;
-  justify-content: flex-end;
-  margin: 30px 0 0;
-}
-.MuiTextField-root {
-  margin-bottom: 20px;
-}
-.MuiFab-primary {
-  width: 210px;
-  color: #fff;
-  border-radius: 30px;
-  height: auto;
-  padding: 10px;
-}
+  .actions-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 30px 0 0;
+  }
+  .MuiTextField-root {
+    margin-bottom: 20px;
+  }
+  .MuiFab-primary {
+    width: 210px;
+    color: #fff;
+    border-radius: 30px;
+    height: auto;
+    padding: 10px;
+  }
 `;
-
 
 export default ChangePasswordPage;
