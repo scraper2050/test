@@ -7,5 +7,18 @@ export default (theme: Theme): any => ({
   ...pageContainer,
   ...topActionBar,
   ...dataContainer,
- 
+  dialog: {
+    width: '25%',
+    padding: 25,
+  },
+  dialogTitle: {
+    paddingBottom: '25px !important',
+    borderBottom: '2px solid #eee',
+    textAlign: 'center',
+  },
+  dialogClose: {
+    position: 'absolute',
+    right: 5,
+    top: 5,
+  }
 });

@@ -114,6 +114,24 @@ function AdminVendorsPage({ classes }: any) {
       }
     },
     {
+      'Header': 'Contact Name',
+      'accessor': 'contractor.admin.profile.displayName',
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Contact Email',
+      'accessor': 'contractor.admin.auth.email',
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Contact Phone',
+      'accessor': 'contractor.admin.contact.phone',
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
       'Cell'({ row }: any) {
         return row.original?.contractor?.info?.companyName
           ? <RenderStatus status={row.original.status} />
