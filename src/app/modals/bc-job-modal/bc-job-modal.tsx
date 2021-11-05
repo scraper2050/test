@@ -1,4 +1,4 @@
-// Import * as Yup from 'yup';
+// import * as yup from 'yup';
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
@@ -524,6 +524,11 @@ function BCJobModal({
     return { hours, minutes };
   };
 
+  //validation schema object
+  // const schemaCheck = yup.object().shape({
+  //   scheduleDate: yup.date().min(new Date()),
+  // });
+
   /**
    * Formik form configuration
    */
@@ -562,7 +567,14 @@ function BCJobModal({
       customerPO: job.customerPO || ticket.customerPO,
       image: job.image !== undefined ? job.image : ticket.image,
     },
+    // validationSchema: schemaCheck,
     onSubmit: (values: any, { setSubmitting }: any) => {
+      // if (new Date(`${values.scheduleDate}`) < new Date()) {
+      //   dispatch(error('Past date can not be selected'));
+      //   setSubmitting(false)
+      //   return;
+      // }
+
       setSubmitting(true);
 
       const customerId = customer?._id;
@@ -754,9 +766,15 @@ function BCJobModal({
         }
       }
 
-      if (new Date(`${values.scheduleDate}`) < new Date()) {
+      const selectedDate = moment(new Date(values.scheduleDate));
+      const todaysDate = moment(new Date());
+
+      if (
+        values.scheduleDate !== null &&
+        selectedDate.diff(todaysDate, 'days') < 0
+      ) {
+        errors.scheduleDate = 'Past date can not be selected';
         dispatch(error('Past date can not be selected'));
-        errors.jobTypes = 'Past date  can not be selected';
       }
 
       return errors;
