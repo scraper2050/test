@@ -176,6 +176,7 @@ function SidebarJobs({ classes, onSelectJob, onFilterJobs }: SidebarJobsProps) {
     const currentItem = document.getElementById(`scheduledJobs${index}`);
 
     if (prevItemKey === `scheduledJobs${index}`) {
+      localStorage.removeItem("prevItemKey");
       if (currentItem) {
         currentItem.classList.remove('ticketItemDiv_active');
       }

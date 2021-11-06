@@ -157,6 +157,7 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
     const currentItem = document.getElementById(`openTodayJob${index}`);
 
     if (prevItemKey === `openTodayJob${index}`) {
+      localStorage.removeItem("prevItemKey");
       if (currentItem) {
         currentItem.classList.remove('ticketItemDiv_active');
       }

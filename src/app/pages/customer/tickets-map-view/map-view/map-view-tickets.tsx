@@ -82,6 +82,10 @@ function MapViewTicketsScreen({ classes }: any) {
     }
   }, [openTickets]);
 
+  const handleClearSelection = () => {
+    console.log('ffffffffffff')
+  }
+
   const getOpenTickets = (requestObj: {
     pageNo?: number;
     pageSize?: number;
@@ -130,10 +134,11 @@ function MapViewTicketsScreen({ classes }: any) {
           hasPhoto={hasPhoto}
           showPins
           isTicket={true}
+          onClearSelection={handleClearSelection}
         />
       </Grid>
 
-      <SidebarTickets onSelectedTicket={setSelectedTicket} />
+      <SidebarTickets onSelectedTicket={setSelectedTicket}/>
     </Grid>
   );
 }

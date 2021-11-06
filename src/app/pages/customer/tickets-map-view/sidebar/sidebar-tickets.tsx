@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import classnames from "classnames";
 import Box from '@material-ui/core/Box';
 import Fab from "@material-ui/core/Fab";
@@ -7,7 +6,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import RoomIcon from '@material-ui/icons/Room';
-import EditIcon from "@material-ui/icons/Edit";
 import { DatePicker } from '@material-ui/pickers';
 import Pagination from '@material-ui/lab/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
@@ -181,12 +179,23 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     getOpenTickets(requestObj);
   };
 
+  const clearSelection = () => {
+    let prevItemKey = localStorage.getItem("prevItemKey");
+    if (prevItemKey) {
+      const prevItem = document.getElementById(prevItemKey);
+      if (prevItem) {
+        prevItem.classList.remove('ticketItemDiv_active');
+      }
+    }
+  }
+
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
     let prevItemKey = localStorage.getItem("prevItemKey");
     let currentItem = document.getElementById(`openTicket${index}`);
 
 
     if (prevItemKey === `openTicket${index}`) {
+      localStorage.removeItem("prevItemKey");
       if (currentItem) {
         currentItem.classList.remove('ticketItemDiv_active');
       }
@@ -584,53 +593,6 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                           <RoomIcon />
                         </div>
                       </div>
-                      //   {x?.customer === undefined ? (
-                      //     <div className="button_wrapper">
-                      //       <EditIcon
-                      //         className="editIcon"
-                      //         color={"primary"}
-                      //         fontSize={"small"}
-                      //         onClick={() => openEditTicketModal(x)}
-                      //       />
-                      //     </div>
-                      //   ) : (
-                      //     ""
-                      //   )}
-
-                      //   <div className="ticket_title">
-                      //     <h3>
-                      //       {x.customer &&
-                      //       x.customer.profile &&
-                      //       x.customer.profile.displayName
-                      //         ? x.customer.profile.displayName
-                      //         : (x.ticketId ? x.ticketId : '')}
-                      //     </h3>
-                      //   </div>
-                      //   <div className="location_desc_container">
-                      //     <div className="card_location">
-                      //       <h4>
-                      //         {x.jobLocation && x.jobLocation.name
-                      //           ? x.jobLocation.name
-                      //           : ` `}
-                      //       </h4>
-                      //     </div>
-
-                      //     <div className="card_desc">
-                      //       {x.jobType ? <p>{x.jobType.title}</p> : ''}
-                      //       {!x.customer ? <p>Ticket made via website</p> : ''}
-                      //       {x.tasks.length ? x.tasks.map((item: any) => <p>{item.title}</p>) : ''}
-                      //     </div>
-                      //   </div>
-                      //   <hr></hr>
-                      //   <div className="card-footer">
-                      //     <span>
-                      //       {" "}
-                      //       <i className="material-icons">access_time</i>
-                      //       {x.dueDate
-                      //         ? new Date(x.dueDate).toString().substr(0, 15)
-                      //         : ""}
-                      //     </span>
-                      //   </div>
                       ))
                     : <h4>No available ticket.</h4>
               }

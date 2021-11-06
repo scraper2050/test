@@ -36,9 +36,10 @@ interface Props {
   lng: number,
   selected?: boolean,
   isTicket?: boolean,
+  clearSelection?: () => void,
 }
 
-function BCMapMarker({classes, ticket, selected, isTicket = false}: Props) {
+function BCMapMarker({classes, ticket, selected, isTicket = false, clearSelection}: Props) {
   let CustomIcon;
   const [showInfo, setShowInfo] = useState(false);
   const dispatch = useDispatch();
@@ -162,6 +163,11 @@ function BCMapMarker({classes, ticket, selected, isTicket = false}: Props) {
     }, 200);
   };
 
+  const closeInfo = () => {
+    if (clearSelection) clearSelection();
+    setShowInfo(false);
+  }
+
   return <div style={{marginLeft: -10, marginTop: -10}}
     //onMouseLeave={() => setShowinfo(false)}
   >
@@ -179,7 +185,7 @@ function BCMapMarker({classes, ticket, selected, isTicket = false}: Props) {
         'width': '270px',
       }}>
       <div className={'action-container'}>
-        <IconButton className={'no-padding'} onClick={() => setShowInfo(false)}>
+        <IconButton className={'no-padding'} onClick={closeInfo}>
           <CloseIcon style={{color: '#BDBDBD'}}/>
         </IconButton>
       </div>

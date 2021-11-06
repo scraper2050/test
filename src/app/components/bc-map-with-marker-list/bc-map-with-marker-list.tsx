@@ -23,6 +23,7 @@ interface BCMapWithMarkerListProps {
   onJob?: boolean,
   showPins?: boolean,
   isTicket?: boolean,
+  onClearSelection?: () => void,
 }
 function createMapOptions() {
   return {
@@ -31,7 +32,7 @@ function createMapOptions() {
   };
 }
 
-function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, isTicket = false }: BCMapWithMarkerListProps) {
+function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, isTicket = false, onClearSelection }: BCMapWithMarkerListProps) {
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
 
@@ -88,6 +89,7 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             selected = {ticket._id === selected._id}
             ticket={ticket}
             isTicket={isTicket}
+            clearSelection={onClearSelection}
           />;
         })
       }
