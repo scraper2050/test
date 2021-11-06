@@ -67,7 +67,7 @@ svg {
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
     console.log(classes)
-  const [curTab, setCurTab] = useState(0);
+  const [curTab, setCurTab] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
 

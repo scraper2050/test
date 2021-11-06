@@ -561,10 +561,10 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                         }}
                       >
                         <div className={'ticket_title'}>
+                          <span className={`job-status job-status_${x.status}`} />
                           <h3>
                             {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
                           </h3>
-                          <span className={`job-status job-status_${x.status}`} />
                         </div>
                         <div className={'location_desc_container'}>
                           <div className={'card_location'}>
