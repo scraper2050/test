@@ -24,10 +24,7 @@ import * as CONSTANTS from "../../../../../constants";
 import { Job } from '../../../../../actions/job/job.types';
 
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
-import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 import {DatePicker} from "@material-ui/pickers";
-import {formatDateYMD} from "../../../../../helpers/format";
-import {setOpenTicketFilterState} from "../../../../../actions/service-ticket/service-ticket.action";
 
 interface SidebarJobsProps {
   classes: any;
@@ -160,7 +157,6 @@ function SidebarJobs({ classes, onSelectJob, onFilterJobs }: SidebarJobsProps) {
     setTempDate(date);
     onSelectJob({});
     onFilterJobs(filteredJobs);
-    console.log('ffffffffffffff')
     //dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
   };
 
@@ -179,26 +175,30 @@ function SidebarJobs({ classes, onSelectJob, onFilterJobs }: SidebarJobsProps) {
     const prevItemKey = localStorage.getItem('prevItemKey');
     const currentItem = document.getElementById(`scheduledJobs${index}`);
 
+    if (prevItemKey === `scheduledJobs${index}`) {
+      if (currentItem) {
+        currentItem.classList.remove('ticketItemDiv_active');
+      }
+      onSelectJob({_id: 0 });
+      return;
+    }
+
     if (prevItemKey) {
       const prevItem = document.getElementById(prevItemKey);
       if (prevItem) {
         prevItem.classList.remove('ticketItemDiv_active');
       }
-      if (currentItem) {
-        currentItem.classList.add('ticketItemDiv_active');
-        localStorage.setItem('prevItemKey', `scheduledJobs${index}`);
-      }
-    } else if (currentItem) {
+    }
+    if (currentItem) {
       currentItem.classList.add('ticketItemDiv_active');
       localStorage.setItem('prevItemKey', `scheduledJobs${index}`);
     }
 
-    if (JobObj.ticket.image) {
+/*    if (JobObj.ticket.image) {
       setHasPhoto(true);
     } else {
       setHasPhoto(false);
-    }
-
+    }*/
 
     const customer = await getCustomerDetail({
       'customerId': JobObj.customer._id

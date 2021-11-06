@@ -129,6 +129,7 @@ function MapViewTicketsScreen({ classes }: any) {
           selected={selectedTicket}
           hasPhoto={hasPhoto}
           showPins
+          isTicket={true}
         />
       </Grid>
 

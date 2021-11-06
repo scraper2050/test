@@ -184,25 +184,32 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
     let prevItemKey = localStorage.getItem("prevItemKey");
     let currentItem = document.getElementById(`openTicket${index}`);
-    if (prevItemKey) {
-      let prevItem = document.getElementById(prevItemKey);
-      if (prevItem) prevItem.style.border = "none";
+
+
+    if (prevItemKey === `openTicket${index}`) {
       if (currentItem) {
-        currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem("prevItemKey", `openTicket${index}`);
+        currentItem.classList.remove('ticketItemDiv_active');
       }
-    } else {
-      if (currentItem) {
-        currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem("prevItemKey", `openTicket${index}`);
-      }
+      onSelectedTicket({_id: 0 });
+      return;
     }
 
-    if (openTicketObj.image) {
+    if (prevItemKey) {
+      const prevItem = document.getElementById(prevItemKey);
+      if (prevItem) {
+        prevItem.classList.remove('ticketItemDiv_active');
+      }
+    }
+    if (currentItem) {
+      currentItem.classList.add('ticketItemDiv_active');
+      localStorage.setItem('prevItemKey', `openTicket${index}`);
+    }
+
+/*    if (openTicketObj.image) {
       setHasPhoto(true);
     } else {
       setHasPhoto(false);
-    }
+    }*/
     const location =
       (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
       (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
@@ -553,7 +560,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                     ? openTickets.map((x: any, i: any) => (
                       <div
                         className={'ticketItemDiv'}
-                        id={`openTodayJob${i}`}
+                        id={`openTicket${i}`}
                         key={i}
                         onClick={() => {
                           onSelectedTicket({});

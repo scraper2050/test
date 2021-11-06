@@ -156,25 +156,30 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
     const prevItemKey = localStorage.getItem('prevItemKey');
     const currentItem = document.getElementById(`openTodayJob${index}`);
 
+    if (prevItemKey === `openTodayJob${index}`) {
+      if (currentItem) {
+        currentItem.classList.remove('ticketItemDiv_active');
+      }
+      onSelectJob({_id: 0 });
+      return;
+    }
+
     if (prevItemKey) {
       const prevItem = document.getElementById(prevItemKey);
       if (prevItem) {
         prevItem.classList.remove('ticketItemDiv_active');
       }
-      if (currentItem) {
-        currentItem.classList.add('ticketItemDiv_active');
-        localStorage.setItem('prevItemKey', `openTodayJob${index}`);
-      }
-    } else if (currentItem) {
+    }
+    if (currentItem) {
       currentItem.classList.add('ticketItemDiv_active');
       localStorage.setItem('prevItemKey', `openTodayJob${index}`);
     }
 
-    if (JobObj.ticket.image) {
+/*    if (JobObj.ticket.image) {
       setHasPhoto(true);
     } else {
       setHasPhoto(false);
-    }
+    }*/
 
 
     const customer = await getCustomerDetail({
@@ -319,7 +324,8 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
                         className={'ticketItemDiv'}
                         id={`openTodayJob${i}`}
                         key={i}
-                        onClick={() => handleJobCardClick(x, i)}>
+                        onClick={() => handleJobCardClick(x, i)}
+                      >
                         <div className={'ticket_title'}>
                           <span className={`job-status job-status_${x.status}`} />
                           <h3>

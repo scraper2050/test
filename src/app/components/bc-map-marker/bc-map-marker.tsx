@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {ReactComponent as IconStarted} from "../../../assets/img/icons/map/icon-started.svg";
 import {ReactComponent as IconCompleted} from "../../../assets/img/icons/map/icon-completed.svg";
@@ -21,21 +21,37 @@ import {
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
-import {IconButton} from "@material-ui/core";
+import {Button, IconButton} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
 import {withStyles} from "@material-ui/core/styles";
 import styles from "./bc-map-marker.style";
 import './bc-map-marker.scss';
+import {openDetailTicketModal} from "../../pages/notifications/notification-click-handlers";
 
-function BCMapMarker({ ...props }) {
+interface Props {
+  classes: any,
+  ticket: any,
+  lat: number,
+  lng: number,
+  selected?: boolean,
+  isTicket?: boolean,
+}
+
+function BCMapMarker({classes, ticket, selected, isTicket = false}: Props) {
   let CustomIcon;
-  const { lat, lng, showPins } = props;
-  const [showInfo, setShowinfo] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const dispatch = useDispatch();
-  const title = props.ticket.tasks.length === 1 ?props.ticket.tasks[0].jobType.title : 'Multiple Jobs';
+  const title = ticket.tasks.length === 1 ?ticket.tasks[0].jobType.title : 'Multiple Jobs';
+  const note = ticket.description || ticket.note || 'N/A';
+  const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
 
-  const getStatusIcon = (status) => {
+  useEffect(() => {
+    console.log(ticket);
+    if (selected !== undefined) setShowInfo(selected);
+  }, [selected]);
+
+  const getStatusIcon = (status: number) => {
     switch (status) {
       case 1:
         return IconStarted;
@@ -54,7 +70,7 @@ function BCMapMarker({ ...props }) {
     }
   }
 
-  const openCreateJobModal = (ticketObj) => {
+  const openCreateJobModal = (ticketObj: any) => {
     const reqObj = {
       'customerId': ticketObj.customer._id,
       'locationId': ticketObj.jobLocation ? ticketObj.jobLocation._id : ''
@@ -113,7 +129,7 @@ function BCMapMarker({ ...props }) {
     }, 200);
   };
 
-  const openDetailJobModal = (job) => {
+  const openDetailJobModal = (job: any) => {
     dispatch(setModalDataAction({
       'data': {
         'job': job,
@@ -128,24 +144,42 @@ function BCMapMarker({ ...props }) {
     }, 200);
   };
 
+  const openEditTicketModal = (ticket: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'View Service Ticket',
+        'removeFooter': false,
+        'detail': true,
+        'ticketData': ticket,
+        'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+        'height': '100%'
+      },
+      'type': modalTypes.EDIT_TICKET_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   return <div style={{marginLeft: -10, marginTop: -10}}
     //onMouseLeave={() => setShowinfo(false)}
   >
     {(() => {
-      const status = props?.ticket?.status;
+      const status = ticket?.status;
       CustomIcon = getStatusIcon(status);
     })()}
     <CustomIcon
-      className={props.classes.marker}
-      onClick={(e) => setShowinfo(true)}
+      className={classes.marker}
+      onClick={(e) => setShowInfo(true)}
     />
     {showInfo && <div
-      className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
+      className={`${classes.markerPopup} marker_dropdown elevation-4`}
       style={{
         'width': '270px',
       }}>
       <div className={'action-container'}>
-        <IconButton className={'no-padding'} onClick={() => setShowinfo(false)}>
+        <IconButton className={'no-padding'} onClick={() => setShowInfo(false)}>
           <CloseIcon style={{color: '#BDBDBD'}}/>
         </IconButton>
       </div>
@@ -153,21 +187,29 @@ function BCMapMarker({ ...props }) {
         <CustomIcon />
         <span>{title}</span>
       </div>
-      <span className={'company'}>Norton Fitness</span>
+      <span className={'company'}>{ticket.customer?.profile?.displayName || 'Norton Fitness'}</span>
       <hr />
       <div className={'date-container'}>
         <span>Description</span>
         <div style={{display: 'flex', alignItems: 'center'}}>
             <span className={'date'}>
-              {props.ticket.scheduleDate ? new Date(props.ticket.scheduleDate).toString()
+              {ticket.scheduleDate ? new Date(ticket.scheduleDate).toString()
                 .substr(0, 15) : ''}
             </span>
-          <InfoIcon style={{ fontSize: 14, marginLeft: 5 }} onClick={() => openDetailJobModal(props.ticket)}/>
+          <InfoIcon
+            style={{ fontSize: 14, marginLeft: 5 }}
+            onClick={() => isTicket ? openEditTicketModal(ticket) : openDetailJobModal(ticket)}
+          />
         </div>
       </div>
       <span className={'note'}>
-          {props.ticket.ticket.note ? props.ticket.ticket.note : 'N/A'}
-        </span>
+        {notes}
+      </span>
+      {isTicket &&
+        <div className={'button-wrapper'}>
+          <Button onClick={() => openCreateJobModal(ticket)}>Create Job</Button>
+        </div>
+      }
     </div>}
   </div>
 }

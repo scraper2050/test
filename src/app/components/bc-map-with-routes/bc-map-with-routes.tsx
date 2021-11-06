@@ -138,23 +138,17 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
       onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
     >
       { routeData.map((jobRoute) => {
-          return jobRoute.coordinates.map((item: MarkerPosition, index: number) => {
-              return <BCMapMarker
-                classes={classes}
-                key={index}
-                lat={item.lat}
-                lng={item.lng}
-                onJob={onJob}
-                openTicketObj={{}}
-                showPins={showPins}
-                ticket={jobRoute.routes[index].job}
-                //tickets={jobRoute.routes}
-              />
-            }
-          )
+        return jobRoute.coordinates.map((item: MarkerPosition, index: number) =>
+          <BCMapMarker
+            classes={classes}
+            key={index}
+            lat={item.lat}
+            lng={item.lng}
+            ticket={jobRoute.routes[index].job}
+          />
+        )
         })
       }
-
     </GoogleMapReact>
   );
 }
