@@ -124,7 +124,6 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
       // Today?: boolean,
     }, saveAll = false
   ) => {
-    console.log({saveAll});
     setIsLoading(true);
     const response: any = await getSearchJobs(requestObj);
 
