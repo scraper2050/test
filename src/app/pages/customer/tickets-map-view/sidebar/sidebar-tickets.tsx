@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import classnames from "classnames";
 import Box from '@material-ui/core/Box';
 import Fab from "@material-ui/core/Fab";
@@ -7,7 +6,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import RoomIcon from '@material-ui/icons/Room';
-import EditIcon from "@material-ui/icons/Edit";
 import { DatePicker } from '@material-ui/pickers';
 import Pagination from '@material-ui/lab/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,11 +48,12 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
 
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
+import {setTicketSelected} from "../../../../../actions/map/map.actions";
+import {RootState} from "../../../../../reducers";
 // import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 
 interface SidebarTicketsProps {
   classes: any;
-  onSelectedTicket: (obj: any) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -106,7 +105,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
+function SidebarTickets({ classes }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -138,6 +137,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     (state: any) => state.serviceTicket.filterTicketState
   );
   const isLoading = useSelector((state: any) => state.serviceTicket.isLoading);
+  const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -181,56 +181,39 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     getOpenTickets(requestObj);
   };
 
-  const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
+  const clearSelection = () => {
     let prevItemKey = localStorage.getItem("prevItemKey");
-    let currentItem = document.getElementById(`openTicket${index}`);
     if (prevItemKey) {
-      let prevItem = document.getElementById(prevItemKey);
-      if (prevItem) prevItem.style.border = "none";
-      if (currentItem) {
-        currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem("prevItemKey", `openTicket${index}`);
-      }
-    } else {
-      if (currentItem) {
-        currentItem.style.border = `1px solid #00aaff`;
-        localStorage.setItem("prevItemKey", `openTicket${index}`);
+      const prevItem = document.getElementById(prevItemKey);
+      if (prevItem) {
+        prevItem.classList.remove('ticketItemDiv_active');
       }
     }
+  }
 
-    if (openTicketObj.image) {
-      setHasPhoto(true);
+  const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
+    if (selectedTicket._id === openTicketObj._id) {
+      dispatch(setTicketSelected({_id: ''}));
     } else {
-      setHasPhoto(false);
-    }
-    const location =
-      (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
-      (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
-      (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
+      const location =
+        (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
+        (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
+        (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
 
-    if (!location){
-      dispatch(warning("There's no address on this ticket."));
-    }
-    /*if (
-      !openTicketObj.jobLocation &&
-      openTicketObj.customer.jobLocations.length === 0 &&
-      (openTicketObj.jobLocation === undefined &&
-        openTicketObj.customer.location.coordinates.length === 0) &&
-      (openTicketObj.jobLocation === undefined &&
-        openTicketObj.customer.address.zipCode.length === 0)
-    ) {
-      dispatch(warning("There's no address on this ticket."));
-    }*/
+      if (!location){
+        dispatch(warning("There's no address on this ticket."));
+      }
 
-    if (openTicketObj && !openTicketObj?.customer) {
-      dispatch(warning("There's no customer associated with this ticket"));
-    }
+      if (openTicketObj && !openTicketObj?.customer) {
+        dispatch(warning("There's no customer associated with this ticket"));
+      }
 
-    onSelectedTicket(openTicketObj);
-  };
+      dispatch(setTicketSelected(openTicketObj))
+    }
+  }
 
   const handleChange = (event: any, value: any) => {
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     setPage(value);
 
     const requestObj = {
@@ -245,7 +228,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     setPage(1);
     setDateValue(null);
     setTempDate(new Date());
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     dispatch(
       setClearOpenTicketFilterState({
         jobTypeTitle: "",
@@ -318,7 +301,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
       ticketId: ticketId || "",
       contactName: contactName || "",
     };
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     const dateObj = new Date(tempDate);
     // const selectDate = dateObj.setHours(0,0,0,0);
     // const todayDate = new Date().setHours(0,0,0,0);
@@ -352,7 +335,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
       contactName: "",
     };
 
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     const dateObj = new Date(tempDate);
     var tomorrow = new Date(dateObj.getTime() + 24 * 60 * 60 * 1000);
     const formattedDate = formatDateYMD(tomorrow);
@@ -407,7 +390,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
   };
 
   const handleSubmit = (response: any) => {
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
 
     const requestObj = {
       ...openServiceTicketFIlter,
@@ -430,7 +413,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     dispatch(getCustomers());
     resetDateFilter();
     getOpenTickets(requestObj);
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
 
   }, []);
 
@@ -552,19 +535,16 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                   : openTickets.length
                     ? openTickets.map((x: any, i: any) => (
                       <div
-                        className={'ticketItemDiv'}
-                        id={`openTodayJob${i}`}
+                        className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
+                        id={`openTicket${i}`}
                         key={i}
-                        onClick={() => {
-                          onSelectedTicket({});
-                          handleOpenTicketCardClick(x, i);
-                        }}
+                        onClick={() => {handleOpenTicketCardClick(x, i);}}
                       >
                         <div className={'ticket_title'}>
+                          <span className={`job-status job-status_${x.status}`} />
                           <h3>
                             {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
                           </h3>
-                          <span className={`job-status job-status_${x.status}`} />
                         </div>
                         <div className={'location_desc_container'}>
                           <div className={'card_location'}>
@@ -577,53 +557,6 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                           <RoomIcon />
                         </div>
                       </div>
-                      //   {x?.customer === undefined ? (
-                      //     <div className="button_wrapper">
-                      //       <EditIcon
-                      //         className="editIcon"
-                      //         color={"primary"}
-                      //         fontSize={"small"}
-                      //         onClick={() => openEditTicketModal(x)}
-                      //       />
-                      //     </div>
-                      //   ) : (
-                      //     ""
-                      //   )}
-
-                      //   <div className="ticket_title">
-                      //     <h3>
-                      //       {x.customer &&
-                      //       x.customer.profile &&
-                      //       x.customer.profile.displayName
-                      //         ? x.customer.profile.displayName
-                      //         : (x.ticketId ? x.ticketId : '')}
-                      //     </h3>
-                      //   </div>
-                      //   <div className="location_desc_container">
-                      //     <div className="card_location">
-                      //       <h4>
-                      //         {x.jobLocation && x.jobLocation.name
-                      //           ? x.jobLocation.name
-                      //           : ` `}
-                      //       </h4>
-                      //     </div>
-
-                      //     <div className="card_desc">
-                      //       {x.jobType ? <p>{x.jobType.title}</p> : ''}
-                      //       {!x.customer ? <p>Ticket made via website</p> : ''}
-                      //       {x.tasks.length ? x.tasks.map((item: any) => <p>{item.title}</p>) : ''}
-                      //     </div>
-                      //   </div>
-                      //   <hr></hr>
-                      //   <div className="card-footer">
-                      //     <span>
-                      //       {" "}
-                      //       <i className="material-icons">access_time</i>
-                      //       {x.dueDate
-                      //         ? new Date(x.dueDate).toString().substr(0, 15)
-                      //         : ""}
-                      //     </span>
-                      //   </div>
                       ))
                     : <h4>No available ticket.</h4>
               }
@@ -632,7 +565,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
               <Pagination
                 color="primary"
                 count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
-                onClick={() => onSelectedTicket({})}
+                onClick={() => dispatch(setTicketSelected({_id: ''}))}
                 onChange={handleChange}
                 page={page}
                 showFirstButton

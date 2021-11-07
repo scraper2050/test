@@ -26,16 +26,12 @@ function MapViewJobsScreen({ classes, today }: any) {
       >
         {
           <MemoizedMap
-            hasPhoto={hasPhoto}
             list={jobs}
-            onJob
-            selected={selectedJob}
-            showPins
           />
         }
       </Grid>
 
-      <SidebarJobs onSelectJob={setSelectedJob} onFilterJobs={setJobs} />
+      <SidebarJobs onFilterJobs={setJobs} />
     </Grid>
   );
 }

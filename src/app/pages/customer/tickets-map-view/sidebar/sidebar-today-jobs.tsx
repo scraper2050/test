@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import Pagination from '@material-ui/lab/Pagination';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -25,11 +25,12 @@ import { Job } from '../../../../../actions/job/job.types';
 
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
 import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
+import {setTicketSelected} from "../../../../../actions/map/map.actions";
+import {RootState} from "../../../../../reducers";
 
 interface SidebarTodayJobsProps {
   classes: any;
   totalJobs: number;
-  onSelectJob: (obj: any) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -81,7 +82,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsProps) {
+function SidebarTodayJobs({ classes, totalJobs }: SidebarTodayJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -101,6 +102,7 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
   const [paginatedJobs, setPaginatedJobs] = useState<any>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showPagination, setShowPagination] = useState(true);
+  const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -152,52 +154,32 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
     getScheduledJobs(requestObj);
   };
 
+
   const handleJobCardClick = async (JobObj: any, index: any) => {
-    const prevItemKey = localStorage.getItem('prevItemKey');
-    const currentItem = document.getElementById(`openTodayJob${index}`);
-
-    if (prevItemKey) {
-      const prevItem = document.getElementById(prevItemKey);
-      if (prevItem) {
-        prevItem.classList.remove('ticketItemDiv_active');
-      }
-      if (currentItem) {
-        currentItem.classList.add('ticketItemDiv_active');
-        localStorage.setItem('prevItemKey', `openTodayJob${index}`);
-      }
-    } else if (currentItem) {
-      currentItem.classList.add('ticketItemDiv_active');
-      localStorage.setItem('prevItemKey', `openTodayJob${index}`);
-    }
-
-    if (JobObj.ticket.image) {
-      setHasPhoto(true);
+    if (selectedTicket._id === JobObj._id) {
+      dispatch(setTicketSelected({_id: ''}));
     } else {
-      setHasPhoto(false);
+      const customer = await getCustomerDetail({
+        'customerId': JobObj.customer._id
+      });
+
+      if (
+        !JobObj?.jobLocation &&
+        JobObj?.customer?.jobLocations?.length === 0 &&
+        (JobObj.jobLocation === undefined &&
+          JobObj?.customer?.location?.coordinates.length === 0) &&
+        (JobObj?.jobLocation === undefined &&
+          JobObj?.customer.address.zipCode.length === 0)
+      ) {
+        dispatch(warning('There\'s no address on this job.'));
+      }
+
+      dispatch(setTicketSelected ({...JobObj, customer }))
     }
-
-
-    const customer = await getCustomerDetail({
-      'customerId': JobObj.customer._id
-    });
-
-    if (
-      !JobObj?.jobLocation &&
-      JobObj?.customer?.jobLocations?.length === 0 &&
-      (JobObj.jobLocation === undefined &&
-        JobObj?.customer?.location?.coordinates.length === 0) &&
-      (JobObj?.jobLocation === undefined &&
-        JobObj?.customer.address.zipCode.length === 0)
-    ) {
-      dispatch(warning('There\'s no address on this job.'));
-    }
-
-    onSelectJob({ ...JobObj,
-      customer });
-  };
+  }
 
   const handleChange = (event: any, value: any) => {
-    onSelectJob({});
+    dispatch(setTicketSelected({_id: ''}));
     setPage(value);
 
     const requestObj = { ...filterJobs,
@@ -316,15 +298,16 @@ function SidebarTodayJobs({ classes, totalJobs, onSelectJob }: SidebarTodayJobsP
                   : jobs.length
                     ? jobs.map((x: any, i: any) =>
                       <div
-                        className={'ticketItemDiv'}
+                        className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
                         id={`openTodayJob${i}`}
                         key={i}
-                        onClick={() => handleJobCardClick(x, i)}>
+                        onClick={() => handleJobCardClick(x, i)}
+                      >
                         <div className={'ticket_title'}>
+                          <span className={`job-status job-status_${x.status}`} />
                           <h3>
                             {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
                           </h3>
-                          <span className={`job-status job-status_${x.status}`} />
                         </div>
                         <div className={'location_desc_container'}>
                           <div className={'card_location'}>
