@@ -47,6 +47,7 @@ import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
 import { VendorsState } from 'actions/vendor/vendor.types';
 import { QuickbooksState, quickbooksReducer as quickbooks } from './quickbooks.reducer';
+import { mapState, mapReducer as map } from './map.reducer';
 
 import { InvoiceItemsState
   , InvoiceItemsReducer as invoiceItems
@@ -69,7 +70,8 @@ export interface RootState {
   serviceTicket: any
   invoiceItems: InvoiceItemsState;
   email: EmailState;
-  quickbooks: QuickbooksState,
+  quickbooks: QuickbooksState;
+  map: mapState;
 }
 
 
@@ -116,7 +118,8 @@ const appReducer = combineReducers({
   tax,
   paymentTerms,
   technicians,
-  vendors
+  vendors,
+  map,
 });
 
 const rootReducer = (state: any, action: any) => {

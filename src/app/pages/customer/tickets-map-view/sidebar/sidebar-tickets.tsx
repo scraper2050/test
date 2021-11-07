@@ -48,11 +48,12 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
 
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
+import {setTicketSelected} from "../../../../../actions/map/map.actions";
+import {RootState} from "../../../../../reducers";
 // import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 
 interface SidebarTicketsProps {
   classes: any;
-  onSelectedTicket: (obj: any) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -104,7 +105,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
+function SidebarTickets({ classes }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -136,6 +137,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     (state: any) => state.serviceTicket.filterTicketState
   );
   const isLoading = useSelector((state: any) => state.serviceTicket.isLoading);
+  const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -190,63 +192,28 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
   }
 
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
-    let prevItemKey = localStorage.getItem("prevItemKey");
-    let currentItem = document.getElementById(`openTicket${index}`);
-
-
-    if (prevItemKey === `openTicket${index}`) {
-      localStorage.removeItem("prevItemKey");
-      if (currentItem) {
-        currentItem.classList.remove('ticketItemDiv_active');
-      }
-      onSelectedTicket({_id: 0 });
-      return;
-    }
-
-    if (prevItemKey) {
-      const prevItem = document.getElementById(prevItemKey);
-      if (prevItem) {
-        prevItem.classList.remove('ticketItemDiv_active');
-      }
-    }
-    if (currentItem) {
-      currentItem.classList.add('ticketItemDiv_active');
-      localStorage.setItem('prevItemKey', `openTicket${index}`);
-    }
-
-/*    if (openTicketObj.image) {
-      setHasPhoto(true);
+    if (selectedTicket._id === openTicketObj._id) {
+      dispatch(setTicketSelected({_id: ''}));
     } else {
-      setHasPhoto(false);
-    }*/
-    const location =
-      (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
-      (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
-      (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
+      const location =
+        (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
+        (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
+        (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
 
-    if (!location){
-      dispatch(warning("There's no address on this ticket."));
+      if (!location){
+        dispatch(warning("There's no address on this ticket."));
+      }
+
+      if (openTicketObj && !openTicketObj?.customer) {
+        dispatch(warning("There's no customer associated with this ticket"));
+      }
+
+      dispatch(setTicketSelected(openTicketObj))
     }
-    /*if (
-      !openTicketObj.jobLocation &&
-      openTicketObj.customer.jobLocations.length === 0 &&
-      (openTicketObj.jobLocation === undefined &&
-        openTicketObj.customer.location.coordinates.length === 0) &&
-      (openTicketObj.jobLocation === undefined &&
-        openTicketObj.customer.address.zipCode.length === 0)
-    ) {
-      dispatch(warning("There's no address on this ticket."));
-    }*/
-
-    if (openTicketObj && !openTicketObj?.customer) {
-      dispatch(warning("There's no customer associated with this ticket"));
-    }
-
-    onSelectedTicket(openTicketObj);
-  };
+  }
 
   const handleChange = (event: any, value: any) => {
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     setPage(value);
 
     const requestObj = {
@@ -261,7 +228,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     setPage(1);
     setDateValue(null);
     setTempDate(new Date());
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     dispatch(
       setClearOpenTicketFilterState({
         jobTypeTitle: "",
@@ -334,7 +301,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
       ticketId: ticketId || "",
       contactName: contactName || "",
     };
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     const dateObj = new Date(tempDate);
     // const selectDate = dateObj.setHours(0,0,0,0);
     // const todayDate = new Date().setHours(0,0,0,0);
@@ -368,7 +335,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
       contactName: "",
     };
 
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
     const dateObj = new Date(tempDate);
     var tomorrow = new Date(dateObj.getTime() + 24 * 60 * 60 * 1000);
     const formattedDate = formatDateYMD(tomorrow);
@@ -423,7 +390,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
   };
 
   const handleSubmit = (response: any) => {
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
 
     const requestObj = {
       ...openServiceTicketFIlter,
@@ -446,7 +413,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
     dispatch(getCustomers());
     resetDateFilter();
     getOpenTickets(requestObj);
-    onSelectedTicket({});
+    dispatch(setTicketSelected({_id: ''}));
 
   }, []);
 
@@ -568,13 +535,10 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
                   : openTickets.length
                     ? openTickets.map((x: any, i: any) => (
                       <div
-                        className={'ticketItemDiv'}
+                        className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
                         id={`openTicket${i}`}
                         key={i}
-                        onClick={() => {
-                          onSelectedTicket({});
-                          handleOpenTicketCardClick(x, i);
-                        }}
+                        onClick={() => {handleOpenTicketCardClick(x, i);}}
                       >
                         <div className={'ticket_title'}>
                           <span className={`job-status job-status_${x.status}`} />
@@ -601,7 +565,7 @@ function SidebarTickets({ classes, onSelectedTicket }: SidebarTicketsProps) {
               <Pagination
                 color="primary"
                 count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
-                onClick={() => onSelectedTicket({})}
+                onClick={() => dispatch(setTicketSelected({_id: ''}))}
                 onChange={handleChange}
                 page={page}
                 showFirstButton

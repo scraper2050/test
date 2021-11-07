@@ -10,9 +10,7 @@ import {
 import {
   refreshServiceTickets,
   setOpenServiceTicket,
-  setClearOpenTicketFilterState,
   setOpenServiceTicketLoading,
-  setSelectedCustomers,
 } from 'actions/service-ticket/service-ticket.action';
 import '../ticket-map-view.scss';
 import styles from '../ticket-map-view.style';
@@ -31,10 +29,6 @@ function MapViewTicketsScreen({ classes }: any) {
   const status = useSelector((state: any) => state.serviceTicket.status);
   const isLoadingTmp = useSelector((state: any) => state.serviceTicket.isLoading);
   const [tickets, setTickets] = useState([]);
-  const [selectedTicket, setSelectedTicket] = useState<any>({});
-  const [dateValue, setDateValue] = useState<any>(null);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const [tempDate, setTempDate] = useState<any>(new Date());
   const [page, setPage] = useState(1);
   const [hasPhoto, setHasPhoto] = useState(false);
   const snackMessage = useSelector(({ snackbar }: any) => snackbar.message);
@@ -52,7 +46,7 @@ function MapViewTicketsScreen({ classes }: any) {
     setIsLoading(true);
     dispatch(getCustomers());
     getOpenTickets(requestObj);
-    setSelectedTicket({});
+    //setSelectedTicket({});
   }, []);
 
   useEffect(() => {
@@ -81,10 +75,6 @@ function MapViewTicketsScreen({ classes }: any) {
       setTickets(openTickets);
     }
   }, [openTickets]);
-
-  const handleClearSelection = () => {
-    console.log('ffffffffffff')
-  }
 
   const getOpenTickets = (requestObj: {
     pageNo?: number;
@@ -130,15 +120,11 @@ function MapViewTicketsScreen({ classes }: any) {
       >
         <MemoizedMap
           list={tickets}
-          selected={selectedTicket}
-          hasPhoto={hasPhoto}
-          showPins
           isTicket={true}
-          onClearSelection={handleClearSelection}
         />
       </Grid>
 
-      <SidebarTickets onSelectedTicket={setSelectedTicket}/>
+      <SidebarTickets/>
     </Grid>
   );
 }

@@ -14,7 +14,6 @@ const DEFAULT_LNG = -98.6732501;
 interface BCMapWithMarkerListProps {
   classes: any,
   routes: JobRoute[],
-  onJob?: boolean,
   showPins?: boolean
 }
 
@@ -44,7 +43,7 @@ const getColor = (str: string) => {
 }
 
 
-function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = false }: BCMapWithMarkerListProps) {
+function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMarkerListProps) {
   const [map, setMap] = useState<any>(null);
   const [maps, setMaps] = useState<any>(null);
   const lines = useRef<any[]>([]);

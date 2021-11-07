@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {ReactComponent as IconStarted} from "../../../assets/img/icons/map/icon-started.svg";
 import {ReactComponent as IconCompleted} from "../../../assets/img/icons/map/icon-completed.svg";
 import {ReactComponent as IconCancelled} from "../../../assets/img/icons/map/icon-cancelled.svg";
@@ -28,28 +28,28 @@ import {withStyles} from "@material-ui/core/styles";
 import styles from "./bc-map-marker.style";
 import './bc-map-marker.scss';
 import {openDetailTicketModal} from "../../pages/notifications/notification-click-handlers";
+import {RootState} from "../../../reducers";
+import {setTicketSelected} from "../../../actions/map/map.actions";
 
 interface Props {
   classes: any,
   ticket: any,
   lat: number,
   lng: number,
-  selected?: boolean,
   isTicket?: boolean,
-  clearSelection?: () => void,
 }
 
-function BCMapMarker({classes, ticket, selected, isTicket = false, clearSelection}: Props) {
+function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   let CustomIcon;
   const [showInfo, setShowInfo] = useState(false);
   const dispatch = useDispatch();
   const title = ticket.tasks.length === 1 ?ticket.tasks[0].jobType.title : 'Multiple Jobs';
   const note = ticket.description || ticket.note || 'N/A';
   const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
+  const selected = useSelector((state: RootState) => state.map.ticketSelected);
 
   useEffect(() => {
-    console.log(ticket);
-    if (selected !== undefined) setShowInfo(selected);
+    setShowInfo(selected._id === ticket._id);
   }, [selected]);
 
   const getStatusIcon = (status: number) => {
@@ -164,8 +164,8 @@ function BCMapMarker({classes, ticket, selected, isTicket = false, clearSelectio
   };
 
   const closeInfo = () => {
-    if (clearSelection) clearSelection();
-    setShowInfo(false);
+    dispatch(setTicketSelected({_id: ''}));
+    //setShowInfo(false);
   }
 
   return <div style={{marginLeft: -10, marginTop: -10}}

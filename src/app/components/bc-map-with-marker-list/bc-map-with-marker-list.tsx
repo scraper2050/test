@@ -7,6 +7,8 @@ import { bcMapStyle } from './bc-map-style';
 
 import './bc-map-with-marker.scss';
 import BCMapMarker from "../bc-map-marker/bc-map-marker";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../reducers";
 const DEFAULT_LAT = 32.3888811;
 const DEFAULT_LNG = -98.6732501;
 /*const checkIfDefault = (lat:number, long: number) => {
@@ -18,12 +20,8 @@ interface BCMapWithMarkerListProps {
   classes: any,
   lat?: any,
   lng?: any,
-  hasPhoto?: any,
-  selected?: any,
-  onJob?: boolean,
   showPins?: boolean,
   isTicket?: boolean,
-  onClearSelection?: () => void,
 }
 function createMapOptions() {
   return {
@@ -32,7 +30,8 @@ function createMapOptions() {
   };
 }
 
-function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = false, isTicket = false, onClearSelection }: BCMapWithMarkerListProps) {
+function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: BCMapWithMarkerListProps) {
+  const selected = useSelector((state: RootState) => state.map.ticketSelected);
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
 
@@ -40,17 +39,17 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
     centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : DEFAULT_LAT;
     centerLng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : DEFAULT_LNG;
     centerLat -= 0.004;
-    centerLng += hasPhoto ? 0.006 : 0.002;
+    centerLng += 0.002;
   } else if (selected.jobLocation) {
     centerLat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : DEFAULT_LAT;
     centerLng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : DEFAULT_LNG;
     centerLat -= 0.004;
-    centerLng += hasPhoto ? 0.006 : 0.002;
+    centerLng += 0.002;
   } else if (selected.customer) {
     centerLat = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : DEFAULT_LAT;
     centerLng = selected.customer.location?.coordinates?.length > 1 && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
     centerLat -= 0.004;
-    centerLng += hasPhoto ? 0.006 : 0.002;
+    centerLng += 0.002;
   }
 
   return (
@@ -86,10 +85,8 @@ function BCMapWithMarkerWithList({ classes, list, selected = {}, hasPhoto = fals
             key={index}
             lat={lat}
             lng={lng}
-            selected = {ticket._id === selected._id}
             ticket={ticket}
             isTicket={isTicket}
-            clearSelection={onClearSelection}
           />;
         })
       }
