@@ -44,12 +44,16 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const [showInfo, setShowInfo] = useState(false);
   const dispatch = useDispatch();
   let title = 'N/A';
-  if (ticket.tasks.length === 0) {
-    title = ticket.jobType?.title || 'N/A';
-  } else if (ticket.tasks.length === 1) {
-    title = ticket.tasks[0].jobType?.title || ticket.tasks[0].title || 'N/A';
-  } else {
-    title = 'Multiple Jobs';
+  if (ticket.tasks) {
+    if (ticket.tasks.length === 0) {
+      title = ticket.jobType?.title || 'N/A';
+    } else if (ticket.tasks.length === 1) {
+      title = ticket.tasks[0].jobType?.title || ticket.tasks[0].title || 'N/A';
+    } else {
+      title = 'Multiple Jobs';
+    }
+  } else if (ticket.jobType) {
+    title = ticket.jobType.title || 'N/A';
   }
 
   const note = ticket.description || ticket.note || 'N/A';
