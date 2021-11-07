@@ -43,7 +43,15 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   let CustomIcon;
   const [showInfo, setShowInfo] = useState(false);
   const dispatch = useDispatch();
-  const title = ticket.tasks.length === 1 ?ticket.tasks[0].jobType.title : 'Multiple Jobs';
+  let title = 'N/A';
+  if (ticket.tasks.length === 0) {
+    title = ticket.jobType?.title || 'N/A';
+  } else if (ticket.tasks.length === 1) {
+    title = ticket.tasks[0].jobType?.title || ticket.tasks[0].title || 'N/A';
+  } else {
+    title = 'Multiple Jobs';
+  }
+
   const note = ticket.description || ticket.note || 'N/A';
   const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
