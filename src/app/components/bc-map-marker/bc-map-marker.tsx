@@ -180,7 +180,9 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     //setShowInfo(false);
   }
 
-  return <div style={{marginLeft: -10, marginTop: -10}}
+  return <div
+    className={classes.marker}
+    style={{zIndex: showInfo ? 10 : 1}}
     //onMouseLeave={() => setShowinfo(false)}
   >
     {(() => {
@@ -188,7 +190,6 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       CustomIcon = getStatusIcon(status);
     })()}
     <CustomIcon
-      className={classes.marker}
       onClick={(e) => setShowInfo(true)}
     />
     {showInfo && <div
