@@ -2,32 +2,18 @@ import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
 import styles from './bc-map-with-routes.style';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
 import React, {useRef, useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { modalTypes } from '../../../constants';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
-import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
-import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
-import InfoIcon from '@material-ui/icons/Info';
 import { bcMapStyle } from './bc-map-style';
-
-import { ReactComponent as IconCancelled } from 'assets/img/icons/map/icon-cancelled.svg';
-import { ReactComponent as IconCompleted } from 'assets/img/icons/map/icon-completed.svg';
-import { ReactComponent as IconPending } from 'assets/img/icons/map/icon-pending.svg';
-import { ReactComponent as IconStarted } from 'assets/img/icons/map/icon-started.svg';
 
 import './bc-map-with-routes.scss';
 import {JobRoute} from "../../../actions/job-routes/job-route.types";
+import BCMapMarker from "../bc-map-marker/bc-map-marker";
 const DEFAULT_LAT = 32.3888811;
 const DEFAULT_LNG = -98.6732501;
 
 interface BCMapWithMarkerListProps {
-  //list: any,
   classes: any,
   routes: JobRoute[],
-  onJob?: boolean,
   showPins?: boolean
 }
 
@@ -56,392 +42,8 @@ const getColor = (str: string) => {
   return colour;
 }
 
-function MakerPin({ ...props }) {
-  let CustomIcon;
-  const { lat, lng, showPins } = props;
-  const [showInfo, setShowinfo] = useState(false);
-  const dispatch = useDispatch();
 
-  const getStatusIcon = (status: any) => {
-    switch (status) {
-      case 1:
-        return IconStarted;
-      case 2:
-        return IconCompleted;
-      case 3:
-        return IconCancelled;
-      default:
-        return IconPending;
-    }
-  }
-
-  const openCreateJobModal = (ticketObj: any) => {
-    const reqObj = {
-      'customerId': ticketObj.customer._id,
-      'locationId': ticketObj.jobLocation ? ticketObj.jobLocation._id : ''
-    };
-    if (!reqObj.locationId) {
-      dispatch(loadingJobLocations());
-      dispatch(getJobLocationsAction(reqObj.customerId));
-    }
-    if (reqObj.locationId) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    const ticket = {
-      ...ticketObj,
-      'jobLocation': reqObj.locationId,
-      'jobSite': ticketObj.jobSite ? ticketObj.jobSite._id : '',
-      'jobType': ticketObj.jobType ? ticketObj.jobType._id : '',
-      'dueDate': ticketObj.dueDate ? ticketObj.dueDate : '',
-      'description': ticketObj.note ? ticketObj.note : ''
-    };
-
-
-    dispatch(setModalDataAction({
-      'data': {
-        'job': {
-          'customer': {
-            '_id': ''
-          },
-          'description': '',
-          'employeeType': false,
-          'equipment': {
-            '_id': ''
-          },
-          'scheduleDate': null,
-          'scheduledEndTime': null,
-          'scheduledStartTime': null,
-          'technician': {
-            '_id': ''
-          },
-          ticket,
-          'type': {
-            '_id': ''
-          },
-          'jobFromMap': true
-        },
-        'modalTitle': 'Create Job',
-        'removeFooter': false
-
-      },
-      'type': modalTypes.EDIT_JOB_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
-  const openDetailJobModal = (job: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'job': job,
-        'detail': true,
-        'modalTitle': 'View Job',
-        'removeFooter': false
-      },
-      'type': modalTypes.EDIT_JOB_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
-  if (props.onJob && props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
-    return (
-      <>
-        {(() => {
-            const status = props?.openTicketObj?.status;
-            CustomIcon = getStatusIcon(status);
-          })()}
-        <CustomIcon className={props.classes.marker} />
-{/*        { checkIfDefault(lat, lng) &&
-          <CustomIcon className={props.classes.marker} />
-        }*/}
-        {';'}
-        <div
-          className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
-          style={{
-            'width': props.ticket.ticket.image ? '370px' : '200px'
-          }}>
-          <div className={'due_date'}>
-            <span>
-              {' '}
-              <i className={'material-icons'}>
-                {'access_time'}
-              </i>
-              {' '}
-              {props.ticket.scheduleDate ? new Date(props.ticket.scheduleDate).toString()
-                .substr(0, 15) : ''}
-            </span>
-          </div>
-          <Grid
-            alignItems={'center'}
-            container
-            justify={'space-between'}
-            spacing={3}>
-            <Grid
-              item
-              xs={6}>
-              <div className={'job-type'}>
-                <h3>
-                  {'Job Type(s)'}
-                </h3>
-                <span>
-                  {props.ticket.tasks.map(({ jobType }:any) => <p>
-                    {jobType.title}
-                  </p>)}
-                </span>
-              </div>
-              <div className={'job-type'}>
-                <h3>
-                  {'Description'}
-                </h3>
-                <span>
-                  {props.ticket.ticket.note ? props.ticket.ticket.note : ''}
-                </span>
-              </div>
-            </Grid>
-            {
-              props.ticket.ticket.image &&
-                <Grid
-                  item
-                  xs={6}>
-                  <Grid
-                    alignItems={'center'}
-                    container
-                    direction={'column'}
-                    justify={'center'}
-                    spacing={3}>
-                    <div
-                      className={props.classes.uploadImageNoData}
-                      style={{
-                        'backgroundImage': `url(${props.ticket.ticket.image})`,
-                        'border': `2px solid #00aaff`,
-                        'backgroundSize': 'cover',
-                        'backgroundPosition': 'center',
-                        'backgroundRepeat': 'no-repeat'
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-            }
-          </Grid>
-          <div
-            className={'flex items-cjobSiteenter'}
-            onClick={() => openDetailJobModal(props.ticket)}
-            style={{
-              'marginLeft': '.5rem',
-              'height': 34,
-              'display': 'flex',
-              'alignItems': 'center',
-              'justifyContent': 'center',
-              'cursor': 'pointer'
-            }}>
-            <InfoIcon style={{ 'margin': 'auto, 0' }} />
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  //console.log('ticket', props.ticket, 'openticket', props.openTicketObj, props.openTicketObj._id, props.ticket._id);
-  if (props.ticket && props.openTicketObj && props.openTicketObj._id === props.ticket._id) {
-    return (
-      <>
-        {(() => {
-          const status = props?.openTicketObj?.status;
-          CustomIcon = getStatusIcon(status);
-        })()}
-        <CustomIcon className={props.classes.marker}
-        />
-        {';'}
-        <div
-          className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
-          style={{
-            'width': props.ticket.image ? '370px' : '200px'
-          }}>
-          <div className={'due_date'}>
-            <span>
-              {' '}
-              <i className={'material-icons'}>
-                {'access_time'}
-              </i>
-              {' '}
-              {props.ticket.dueDate ? new Date(props.ticket.dueDate).toString()
-                .substr(0, 15) : ''}
-            </span>
-            {/* <div
-                onClick={() => openDetailJobModal(props.ticket)}
-                style={{
-                  marginLeft: '.5rem', height: 34,
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                className={'flex items-center'}>
-                <InfoIcon style={{ margin: 'auto, 0' }} />
-              </div> */}
-          </div>
-          <Grid
-            alignItems={'center'}
-            container
-            justify={'space-between'}
-            spacing={3}>
-            <Grid item>
-              <div className={'job-type'}>
-                <h3>
-                  {'Job Type'}
-                </h3>
-                <span>
-                  {props.ticket.tasks.map((job: any) => <p>{job?.jobType?.title || job?.title}</p>)}
-                </span>
-              </div>
-              <div className={'job-type'}>
-                <h3>
-                  {'Notes'}
-                </h3>
-                <span>
-                  {props.ticket.note ? props.ticket.note : ''}
-                </span>
-              </div>
-            </Grid>
-
-
-            {
-              props.ticket.image &&
-                <Grid item>
-                  <Grid
-                    alignItems={'center'}
-                    container
-                    direction={'column'}
-                    justify={'center'}
-                    spacing={3}>
-                    <div
-                      className={props.classes.uploadImageNoData}
-                      style={{
-                        'backgroundImage': `url(${props.ticket.image})`,
-                        'border': `2px solid #00aaff`,
-                        'backgroundSize': 'cover',
-                        'backgroundPosition': 'center',
-                        'backgroundRepeat': 'no-repeat'
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-            }
-          </Grid>
-          {
-            !props.onJob &&
-              <div className={'button_wrapper'}>
-                <button onClick={() => openCreateJobModal(props.ticket)}>
-                  {'Create Job'}
-                </button>
-              </div>
-          }
-        </div>
-      </>
-    );
-  }
-
-    return <div style={{marginLeft: -10, marginTop: -10}}
-      onMouseLeave={() => setShowinfo(false)}>
-      {(() => {
-        const status = props?.ticket?.status;
-        CustomIcon = getStatusIcon(status);
-      })()}
-      <CustomIcon
-        className={props.classes.marker}
-        onMouseEnter={() => setShowinfo(true)}
-      />
-      {showInfo && <div
-        className={`${props.classes.markerPopup} marker_dropdown elevation-4`}
-        style={{
-          'width': props.ticket.ticket.image ? '370px' : '200px'
-        }}>
-        <div className={'due_date'}>
-          <span>
-            {' '}
-            <i className={'material-icons'}>
-              {'access_time'}
-            </i>
-            {' '}
-            {props.ticket.scheduleDate ? new Date(props.ticket.scheduleDate).toString()
-              .substr(0, 15) : ''}
-          </span>
-        </div>
-        <Grid
-          alignItems={'center'}
-          container
-          justify={'space-between'}
-          spacing={3}>
-          <Grid
-            item
-            xs={props.ticket.ticket.image ? 6 : 12}>
-            <div className={'job-type'}>
-              <h3>
-                {'Job Type'}
-              </h3>
-              <span>
-                {props.ticket.tasks.map(({ jobType }:any) => <p key={jobType._id}>
-                  {jobType.title}
-                </p>)}
-              </span>
-            </div>
-            <div className={'job-type'}>
-              <h3>
-                {'Description'}
-              </h3>
-              <span>
-                {props.ticket.ticket.note ? props.ticket.ticket.note : ''}
-              </span>
-            </div>
-          </Grid>
-          {
-            props.ticket.ticket.image &&
-            <Grid
-              item
-              xs={6}>
-              <Grid
-                alignItems={'center'}
-                container
-                direction={'column'}
-                justify={'center'}
-                spacing={3}>
-                <div
-                  className={props.classes.uploadImageNoData}
-                  style={{
-                    'backgroundImage': `url(${props.ticket.ticket.image})`,
-                    'border': `2px solid #00aaff`,
-                    'backgroundSize': 'cover',
-                    'backgroundPosition': 'center',
-                    'backgroundRepeat': 'no-repeat'
-                  }}
-                />
-              </Grid>
-            </Grid>
-          }
-        </Grid>
-        <div
-          className={'flex items-cjobSiteenter'}
-          onClick={() => openDetailJobModal(props.ticket)}
-          style={{
-            'marginLeft': '.5rem',
-            'height': 34,
-            'display': 'flex',
-            'alignItems': 'center',
-            'justifyContent': 'center',
-            'cursor': 'pointer'
-          }}>
-          <InfoIcon style={{ 'margin': 'auto, 0' }} />
-        </div>
-      </div>}
-    </div>
-    //: null;
-}
-
-function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = false }: BCMapWithMarkerListProps) {
+function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMarkerListProps) {
   const [map, setMap] = useState<any>(null);
   const [maps, setMaps] = useState<any>(null);
   const lines = useRef<any[]>([]);
@@ -503,6 +105,14 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
       const route = new maps.Polyline({
         path: jobRoute.coordinates,
         options,
+        icons: [
+          {
+            icon: {
+              path: maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            },
+            offset: "98%",
+          },
+        ],
         key:`P-${index}`
       });
       route.setMap(map);
@@ -527,23 +137,17 @@ function BCMapWithRoutes({ classes, routes = [],  onJob = false, showPins = fals
       onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
     >
       { routeData.map((jobRoute) => {
-          return jobRoute.coordinates.map((item: MarkerPosition, index: number) => {
-              return <MakerPin
-                classes={classes}
-                key={index}
-                lat={item.lat}
-                lng={item.lng}
-                onJob={onJob}
-                openTicketObj={{}}
-                showPins={showPins}
-                ticket={jobRoute.routes[index].job}
-                //tickets={jobRoute.routes}
-              />
-            }
-          )
+        return jobRoute.coordinates.map((item: MarkerPosition, index: number) =>
+          <BCMapMarker
+            classes={classes}
+            key={index}
+            lat={item.lat}
+            lng={item.lng}
+            ticket={jobRoute.routes[index].job}
+          />
+        )
         })
       }
-
     </GoogleMapReact>
   );
 }

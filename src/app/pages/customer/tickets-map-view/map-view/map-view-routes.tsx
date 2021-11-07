@@ -42,7 +42,6 @@ function MapViewRoutesScreen({ classes, today }: any) {
         {
           <MemoizedMap
             routes={routes}
-            onJob
           />
         }
       </Grid>

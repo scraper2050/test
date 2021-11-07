@@ -95,6 +95,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
   const [routes, setRoutes] = useState<JobRoute[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  //const [currentDate, setCurrentDate] = useState<any>(new Date('2021-10-28'));
   const [currentDate, setCurrentDate] = useState<any>(new Date());
   const [paginatedRoutes, setPaginatedRoutes] = useState<JobRoute[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -334,13 +335,6 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                             <h3>
                               {profile.displayName}
                             </h3>
-                          </div>
-                          <div className={'location_desc_container'}>
-                            <div className={'card_location'}>
-                              <h4>
-
-                              </h4>
-                            </div>
                           </div>
                         </div>
                         <div className={'ticket_marker'}>

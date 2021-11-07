@@ -64,16 +64,13 @@ function MapViewTodayJobsScreen() {
       >
         {
           <MemoizedMap
-            hasPhoto={hasPhoto}
             list={jobs}
-            onJob
-            selected={selectedJob}
             showPins
           />
         }
       </Grid>
 
-      <SidebarTodayJobs totalJobs={totalJobs} onSelectJob={setSelectedJob} />
+      <SidebarTodayJobs totalJobs={totalJobs}/>
 
     </Grid>
   );
