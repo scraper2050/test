@@ -1,4 +1,4 @@
-// import * as yup from 'yup';
+import * as yup from 'yup';
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
@@ -156,6 +156,7 @@ function BCJobModal({
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
   const [thumb, setThumb] = useState<any>(null);
+  const [dateErr, setDateErr] = useState('Requires recent date');
 
   // ----------
   const history = useHistory();
@@ -291,6 +292,7 @@ function BCJobModal({
     await setFieldValue('jobSiteId', '');
     await setJobSiteValue([]);
     await setJobLocationValue(newValue);
+
     if (locationId !== '') {
       await dispatch(getJobSites({ customerId, locationId }));
     } else {
@@ -524,50 +526,99 @@ function BCJobModal({
     return { hours, minutes };
   };
 
-  //validation schema object
-  // const schemaCheck = yup.object().shape({
-  //   scheduleDate: yup.date().min(new Date()),
-  // });
+  // validation schema object
+  const schemaCheck = yup.object().shape({
+    // customerId: yup.string(),
+    // description: yup.string(),
+    employeeType: yup.mixed().required('Please this field is required'),
+    // equipmentId: yup.mixed(),
+    jobTypes: yup.array().min(1, 'Select at least one (1) job'),
+    // dueDate: yup.string(),
+    scheduleDate: yup
+      .mixed()
+      .transform((value, originalValue): any => {
+        if (value !== null) {
+          const selectedDate = moment(new Date(originalValue)).format('LL');
+          const todaysDate = moment(new Date()).format('LL');
+
+          const diff: number = +new Date(selectedDate) - +new Date(todaysDate);
+
+          return Math.round(diff);
+        }
+
+        return value;
+      })
+      .test(
+        'validate-date',
+        'Past date can not be selected',
+        (value): boolean => {
+          if (value !== null) {
+            return value >= 0;
+          }
+
+          return value === null;
+        }
+      )
+      .nullable(),
+    // scheduledStartTime: yup.string().nullable(),
+    // scheduledEndTime: yup.string().nullable(),
+    // technicianId: yup.string().required(),
+    // contractorId: yup.string().required(),
+    // ticketId: yup.mixed(),
+    // jobLocationId: yup.mixed(),
+    // jobSiteId: yup.mixed(),
+    // customerContactId: yup.mixed(),
+    // customerPO: yup.mixed(),
+    // image: yup.mixed(),
+  });
+
+  const jobValue = JSON.parse(JSON.stringify(job));
 
   /**
    * Formik form configuration
    */
   const form = useFormik({
     initialValues: {
-      customerId: job.customer?._id,
-      description: job.description || ticket.note,
-      employeeType: !job.employeeType ? 0 : 1,
-      equipmentId: job.equipment && job.equipment._id ? job.equipment._id : '',
+      customerId: jobValue.customer?._id,
+      description: jobValue.description || ticket.note,
+      employeeType: !jobValue.employeeType ? 0 : 1,
+      equipmentId:
+        jobValue.equipment && jobValue.equipment._id
+          ? jobValue.equipment._id
+          : '',
       jobTypes: [],
-      dueDate: job.ticket.dueDate ? formatDate(job.ticket.dueDate) : '',
-      scheduleDate: job.scheduleDate,
-      scheduledStartTime: job?.scheduledStartTime
-        ? formatISOToDateString(job.scheduledStartTime)
-        : null,
-      scheduledEndTime: job.scheduledEndTime
-        ? formatISOToDateString(job.scheduledEndTime)
-        : null,
-      technicianId: job.technician ? job.technician._id : '',
-      contractorId: job.contractor ? job.contractor._id : '',
-      ticketId: job.ticket._id,
-      jobLocationId: job.jobLocation
-        ? job.jobLocation._id
-        : job.ticket.jobLocation
-        ? job.ticket.jobLocation
+      dueDate: jobValue.ticket.dueDate
+        ? formatDate(jobValue.ticket.dueDate)
         : '',
-      jobSiteId: job.jobSite
-        ? job.jobSite._id
-        : job.ticket.jobSite
-        ? job.ticket.jobSite
+      scheduleDate: jobValue.scheduleDate,
+      scheduledStartTime: jobValue?.scheduledStartTime
+        ? formatISOToDateString(jobValue.scheduledStartTime)
+        : null,
+      scheduledEndTime: jobValue.scheduledEndTime
+        ? formatISOToDateString(jobValue.scheduledEndTime)
+        : null,
+      technicianId: jobValue.technician ? jobValue.technician._id : '',
+      contractorId: jobValue.contractor ? jobValue.contractor._id : '',
+      ticketId: jobValue.ticket._id,
+      jobLocationId: jobValue.jobLocation
+        ? jobValue.jobLocation._id
+        : jobValue.ticket.jobLocation
+        ? jobValue.ticket.jobLocation
+        : '',
+      jobSiteId: jobValue.jobSite
+        ? jobValue.jobSite._id
+        : jobValue.ticket.jobSite
+        ? jobValue.ticket.jobSite
         : '',
       //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
-      customerContactId: job.customerContactId
-        ? job.customerContactId._id
+      customerContactId: jobValue.customerContactId
+        ? jobValue.customerContactId._id
         : ticket.customerContactId || '',
-      customerPO: job.customerPO || ticket.customerPO,
-      image: job.image !== undefined ? job.image : ticket.image,
+      customerPO: jobValue.customerPO || ticket.customerPO,
+      image: jobValue.image !== undefined ? jobValue.image : ticket.image,
     },
-    // validationSchema: schemaCheck,
+    validateOnMount: false,
+    validationSchema: schemaCheck,
     onSubmit: (values: any, { setSubmitting }: any) => {
       // if (new Date(`${values.scheduleDate}`) < new Date()) {
       //   dispatch(error('Past date can not be selected'));
@@ -750,35 +801,54 @@ function BCJobModal({
         setSubmitting(false);
       }
     },
-    validate: (values: any) => {
-      const errors: any = {};
+    // validate: (values: any) => {
+    //   const errors: any = {};
 
-      if (values.jobTypes.length === 0 && jobTypeValue.length === 0) {
-        errors.jobTypes = 'Select at least one (1) job';
-        if (jobTypesInput.current !== null) {
-          jobTypesInput.current.setCustomValidity(
-            'Select at least one (1) job'
-          );
-        }
-      } else {
-        if (jobTypesInput.current !== null) {
-          jobTypesInput.current.setCustomValidity('');
-        }
-      }
+    //   schemaCheck
+    //     .validate(values)
+    //     .then((res) => {
+    //       const selectedDate = moment(new Date(values.scheduleDate));
+    //       const todaysDate = moment(new Date());
 
-      const selectedDate = moment(new Date(values.scheduleDate));
-      const todaysDate = moment(new Date());
+    //       if (
+    //         values.scheduleDate !== null &&
+    //         selectedDate.diff(todaysDate, 'days') < 0
+    //       ) {
+    //         errors.scheduleDate = 'Past date can not be selected';
+    //         return errors;
+    //         // dispatch(error('Past date can not be selected'));
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       const field = err.path;
+    //       errors[field] = err.message;
+    //       return errors;
+    //     });
 
-      if (
-        values.scheduleDate !== null &&
-        selectedDate.diff(todaysDate, 'days') < 0
-      ) {
-        errors.scheduleDate = 'Past date can not be selected';
-        dispatch(error('Past date can not be selected'));
-      }
+    // if (values.jobTypes.length === 0 && jobTypeValue.length === 0) {
+    //   errors.jobTypes = 'Select at least one (1) job';
+    //   if (jobTypesInput.current !== null) {
+    //     jobTypesInput.current.setCustomValidity(
+    //       'Select at least one (1) job'
+    //     );
+    //   }
+    // } else {
+    //   if (jobTypesInput.current !== null) {
+    //     jobTypesInput.current.setCustomValidity('');
+    //   }
+    // }
 
-      return errors;
-    },
+    // const selectedDate = moment(new Date(values.scheduleDate));
+    // const todaysDate = moment(new Date());
+
+    // if (
+    //   values.scheduleDate !== null &&
+    //   selectedDate.diff(todaysDate, 'days') < 0
+    // ) {
+    //   errors.scheduleDate = 'Past date can not be selected';
+    //   dispatch(error('Past date can not be selected'));
+    // }
+    // },
   });
 
   const {
@@ -956,7 +1026,19 @@ function BCJobModal({
                             </Typography>
                           )}
                         </InputLabel>
-                        <TextField required {...params} variant={'standard'} />
+                        <TextField
+                          error={
+                            form.touched.employeeType &&
+                            Boolean(form.errors.employeeType)
+                          }
+                          helperText={
+                            form.touched.employeeType &&
+                            form.errors.employeeType
+                          }
+                          required
+                          {...params}
+                          variant={'standard'}
+                        />
                       </>
                     )}
                   />
@@ -1039,6 +1121,14 @@ function BCJobModal({
                             )}
                           </InputLabel>
                           <TextField
+                            error={
+                              form.touched.technicianId &&
+                              Boolean(form.errors.technicianId)
+                            }
+                            helperText={
+                              form.touched.technicianId &&
+                              form.errors.technicianId
+                            }
                             {...params}
                             required
                             variant={'standard'}
@@ -1117,6 +1207,14 @@ function BCJobModal({
                             )}
                           </InputLabel>
                           <TextField
+                            error={
+                              form.touched.contractorId &&
+                              Boolean(form.errors.contractorId)
+                            }
+                            helperText={
+                              form.touched.contractorId &&
+                              form.errors.contractorId
+                            }
                             required
                             {...params}
                             variant={'standard'}
@@ -1186,9 +1284,16 @@ function BCJobModal({
                         </InputLabel>
                         <TextField
                           {...params}
+                          error={
+                            form.touched.jobTypes &&
+                            Boolean(form.errors.jobTypes)
+                          }
+                          helperText={
+                            form.touched.jobTypes && form.errors.jobTypes
+                          }
                           variant={'standard'}
                           inputRef={jobTypesInput}
-                          // required={!jobTypeValue.length}
+                          required={!jobTypeValue.length}
                           // error= {!!FormikErrors.jobTypes}
                           // helperText={FormikErrors.jobTypes}
                         />
@@ -1252,7 +1357,18 @@ function BCJobModal({
                         <InputLabel className={classes.label}>
                           <strong>{'Job Location'}</strong>
                         </InputLabel>
-                        <TextField {...params} variant={'standard'} />
+                        <TextField
+                          error={
+                            form.touched.jobLocationId &&
+                            Boolean(form.errors.jobLocationId)
+                          }
+                          helperText={
+                            form.touched.jobLocationId &&
+                            form.errors.jobLocationId
+                          }
+                          {...params}
+                          variant={'standard'}
+                        />
                       </>
                     )}
                     value={jobLocationValue}
@@ -1320,7 +1436,17 @@ function BCJobModal({
                         <InputLabel className={classes.label}>
                           <strong>{'Job Site'}</strong>
                         </InputLabel>
-                        <TextField {...params} variant={'standard'} />
+                        <TextField
+                          error={
+                            form.touched.jobSiteId &&
+                            Boolean(form.errors.jobSiteId)
+                          }
+                          helperText={
+                            form.touched.jobSiteId && form.errors.jobSiteId
+                          }
+                          {...params}
+                          variant={'standard'}
+                        />
                       </>
                     )}
                     value={jobSiteValue}
@@ -1376,7 +1502,17 @@ function BCJobModal({
                         <InputLabel className={classes.label}>
                           <strong>{'Equipment '}</strong>
                         </InputLabel>
-                        <TextField {...params} variant={'standard'} />
+                        <TextField
+                          error={
+                            form.touched.equipmentId &&
+                            Boolean(form.errors.equipmentId)
+                          }
+                          helperText={
+                            form.touched.equipmentId && form.errors.equipmentId
+                          }
+                          {...params}
+                          variant={'standard'}
+                        />
                       </>
                     )}
                   />
@@ -1407,14 +1543,17 @@ function BCJobModal({
               <div className={detail ? 'input-detail-only' : ''}>
                 <BCDateTimePicker
                   disabled={detail}
-                  disablePast={!job._id}
+                  disablePast={true}
                   handleChange={(e: any) =>
                     dateChangeHandler(e, 'scheduleDate')
                   }
                   label={'Scheduled Date'}
                   name={'scheduleDate'}
                   required={!detail}
+                  // invalidMessage={form.errors.scheduleDate}
+                  minDateMessage={form.errors.scheduleDate}
                   value={FormikValues.scheduleDate}
+                  // TextField={<TextField />}
                 />
               </div>
 
@@ -1430,6 +1569,7 @@ function BCJobModal({
                   name={'scheduledStartTime'}
                   pickerType={'time'}
                   placeholder={'Start Time'}
+                  minDateMessage={form?.errors?.scheduledStartTime || ''}
                   value={FormikValues.scheduledStartTime}
                 />
               </div>
@@ -1450,6 +1590,7 @@ function BCJobModal({
                   label={'End Time'}
                   name={'scheduledEndTime'}
                   pickerType={'time'}
+                  minDateMessage={form?.errors?.scheduledEndTime || ''}
                   placeholder={'End Time'}
                   value={FormikValues.scheduledEndTime}
                 />
@@ -1473,6 +1614,13 @@ function BCJobModal({
                     multiline
                     name={'description'}
                     value={FormikValues.description}
+                    error={
+                      form.touched.description &&
+                      Boolean(form.errors.description)
+                    }
+                    helperText={
+                      form.touched.description && form.errors.description
+                    }
                   />
                 </div>
               </FormGroup>
@@ -1507,7 +1655,18 @@ function BCJobModal({
                         <InputLabel className={classes.label}>
                           <strong>{'Contact Associated'}</strong>
                         </InputLabel>
-                        <TextField {...params} variant={'standard'} />
+                        <TextField
+                          error={
+                            form.touched.customerContactId &&
+                            Boolean(form.errors.customerContactId)
+                          }
+                          helperText={
+                            form.touched.customerContactId &&
+                            form.errors.customerContactId
+                          }
+                          {...params}
+                          variant={'standard'}
+                        />
                       </>
                     )}
                     value={contactValue}
@@ -1528,6 +1687,12 @@ function BCJobModal({
                     name={'customerPO'}
                     placeholder={'Customer PO / Sales Order #'}
                     value={FormikValues.customerPO}
+                    error={
+                      form.touched.customerPO && Boolean(form.errors.customerPO)
+                    }
+                    helperText={
+                      form.touched.customerPO && form.errors.customerPO
+                    }
                   />
                 </div>
               </FormGroup>
@@ -1544,6 +1709,8 @@ function BCJobModal({
                     }
                     name={'image'}
                     type={'file'}
+                    error={form.touched.image && Boolean(form.errors.image)}
+                    helperText={form.touched.image && form.errors.image}
                   />
                 </FormGroup>
               ) : (
