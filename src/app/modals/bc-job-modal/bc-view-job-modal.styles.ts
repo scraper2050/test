@@ -32,6 +32,11 @@ export default (theme: Theme): any => ({
     fontWeight: 'bold',
     color: theme.palette.primary.main,
   },
+  previewTextTitle: {
+    marginTop: 8,
+    color: '#4F4F4F',
+    fontSize: 16,
+  },
   previewText: {
     color: '#4F4F4F',
     fontSize: 16,

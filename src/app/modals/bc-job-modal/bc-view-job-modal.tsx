@@ -144,15 +144,15 @@ function BCViewJobModal({
         </Grid>
         <Grid item xs>
           <Typography variant={'caption'} className={classes.previewCaption}>SCHEDULE DATE</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{formatDate(job.scheduleDate)}</Typography>
+          <Typography variant={'h6'} className={classes.previewTextTitle}>{formatDate(job.scheduleDate)}</Typography>
         </Grid>
         <Grid item xs>
           <Typography variant={'caption'} className={classes.previewCaption}>START TIME</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{startTime}</Typography>
+          <Typography variant={'h6'} className={classes.previewTextTitle}>{startTime}</Typography>
         </Grid>
         <Grid item xs>
           <Typography variant={'caption'} className={classes.previewCaption}>END TIME</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{endTime}</Typography>
+          <Typography variant={'h6'} className={classes.previewTextTitle}>{endTime}</Typography>
         </Grid>
       </Grid>
       <Grid container className={classes.modalContent} justify={'space-around'}>
