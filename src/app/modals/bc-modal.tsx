@@ -1,5 +1,6 @@
 import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
+import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
 import BCModalTransition from './bc-modal-transition';
 import BCServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-modal';
@@ -139,6 +140,18 @@ function BCModal() {
         });
         setComponent(<BCJobModal
           detail={data.detail}
+          job={data.job}
+        />);
+        break;
+      case modalTypes.VIEW_JOB_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCViewJobModal
+          detail={true}
           job={data.job}
         />);
         break;
@@ -466,7 +479,16 @@ function BCModal() {
               <CloseIcon />
             </IconButton>
           </DialogTitle>
-          : null}
+          : <IconButton
+            aria-label={'close'}
+            onClick={handleClose}
+            style={{
+              'position': 'absolute',
+              'right': 1,
+              'top': 1
+            }}>
+            <CloseIcon />
+          </IconButton>}
         {component ? component : null}
       </Dialog>
     </div>
