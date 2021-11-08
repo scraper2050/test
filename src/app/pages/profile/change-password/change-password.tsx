@@ -92,7 +92,7 @@ function ChangePasswordPage() {
                   />
                   <BCUncontrolledPasswordInput
                     error={
-                      Boolean(formik.values.newPassword) &&
+                      Boolean(formik.touched.newPassword) &&
                       Boolean(formik.errors.newPassword)
                     }
                     helperText={
@@ -108,7 +108,7 @@ function ChangePasswordPage() {
                   />
                   <BCUncontrolledPasswordInput
                     error={
-                      Boolean(formik.values.confirmPassword) &&
+                      Boolean(formik.touched.confirmPassword) &&
                       Boolean(formik.errors.confirmPassword)
                     }
                     helperText={
