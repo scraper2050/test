@@ -30,6 +30,8 @@ import './bc-map-marker.scss';
 import {openDetailTicketModal} from "../../pages/notifications/notification-click-handlers";
 import {RootState} from "../../../reducers";
 import {setTicketSelected} from "../../../actions/map/map.actions";
+import {getServiceTicketDetail} from "../../../api/service-tickets.api";
+import {formatDate} from "../../../helpers/format";
 
 interface Props {
   classes: any,
@@ -61,8 +63,12 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
 
   useEffect(() => {
-    if (selected._id === ticket._id) setShowInfo({show: true, inside: false});
-    else if (!showInfo.inside) setShowInfo({show: false, inside: true})
+    if (selected._id === ticket._id) {
+      setShowInfo({show: true, inside: false});
+    }
+    else if (!showInfo.inside) {
+      setShowInfo({show: false, inside: true})
+    }
 
   }, [selected]);
 
@@ -148,9 +154,8 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     dispatch(setModalDataAction({
       'data': {
         'job': job,
-        'detail': true,
         'modalTitle': '',
-        'removeFooter': false
+        'removeFooter': true,
       },
       'type': modalTypes.VIEW_JOB_MODAL
     }));
@@ -159,18 +164,24 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }, 200);
   };
 
-  const openEditTicketModal = (ticket: any) => {
+  const openEditTicketModal = async(ticket: any) => {
+    let data = {...ticket, images: []};
+    try {
+      const {status, serviceTicket} = await getServiceTicketDetail(ticket._id);
+      if (status === 1) {
+        data = serviceTicket;
+      }
+    } catch (e) {
+      console.log(e);
+    }
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'View Service Ticket',
-        'removeFooter': false,
-        'detail': true,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%'
+        'job': data,
+        'isTicket': true,
+        'modalTitle': '',
+        'removeFooter': true,
       },
-      'type': modalTypes.EDIT_TICKET_MODAL
+      'type': modalTypes.VIEW_JOB_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
@@ -184,6 +195,8 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       dispatch(setTicketSelected({_id: ''}));
     }
   }
+
+  const scheduleDate = isTicket ? ticket.dueDate : ticket.scheduleDate;
 
   return <div
     className={classes.marker}
@@ -217,11 +230,10 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
         <span>Description</span>
         <div style={{display: 'flex', alignItems: 'center'}}>
             <span className={'date'}>
-              {ticket.scheduleDate ? new Date(ticket.scheduleDate).toString()
-                .substr(0, 15) : ''}
+              {scheduleDate ? formatDate(scheduleDate) : ''}
             </span>
           <InfoIcon
-            style={{ fontSize: 14, marginLeft: 5 }}
+            className={'info-button'}
             onClick={() => isTicket ? openEditTicketModal(ticket) : openDetailJobModal(ticket)}
           />
         </div>

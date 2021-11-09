@@ -5,6 +5,7 @@ export default (theme: Theme): any => ({
     position: 'absolute',
     marginLeft: -10,
     marginTop: -10,
+    cursor: 'pointer',
   },
   'markerPopup': {
     'position': 'relative',
@@ -13,5 +14,6 @@ export default (theme: Theme): any => ({
     'left': '-10px',
     'height': 'auto',
     'backgroundColor': '#fff',
+    'cursor': 'default',
   },
 });

@@ -153,6 +153,7 @@ function BCModal() {
         setComponent(<BCViewJobModal
           detail={true}
           job={data.job}
+          isTicket={data.isTicket}
         />);
         break;
       case modalTypes.CANCEL_JOB_MODAL:
