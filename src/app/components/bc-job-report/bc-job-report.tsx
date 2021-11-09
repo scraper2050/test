@@ -163,7 +163,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Name'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.customer.profile.displayName || 'N/A'}
+                      {job.customer?.profile?.displayName || 'N/A'}
                     </p>
                   </div>
 
@@ -181,7 +181,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Phone Number'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.customer.contact.phone || 'N/A'}
+                      {job.customer?.contact?.phone || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -193,7 +193,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Email'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.customer.info.email || 'N/A'}
+                      {job.customer?.info?.email || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -205,18 +205,18 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Address'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.customer.address.street && <>
-                        {job.customer.address.street}
+                      {job.customer?.address?.street && <>
+                        {job.customer?.address?.street}
                         <br />
                       </>}
-                      {job.customer.address.city && <>
-                        {job.customer.address.city}
+                      {job.customer?.address?.city && <>
+                        {job.customer?.address?.city}
                         <br />
                       </>}
-                      {job.customer.address.state && <>
-                        {job.customer.address.state}
+                      {job.customer?.address?.state && <>
+                        {job.customer?.address?.state}
                         {' '}
-                        {job.customer.address.zipCode}
+                        {job.customer?.address?.zipCode}
                         <br />
                       </>}
                     </p>
