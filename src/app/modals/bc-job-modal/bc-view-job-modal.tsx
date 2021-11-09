@@ -18,6 +18,7 @@ import '../../../scss/job-poup.scss';
 import './bc-job-modal.scss';
 import moment from 'moment';
 import classNames from "classnames";
+import {getVendors} from "../../../actions/vendor/vendor.action";
 
 const initialJobState = {
   customer: {
@@ -74,10 +75,14 @@ function BCViewJobModal({
   const { loading, data } = useSelector(
     ({ employeesForJob }: any) => employeesForJob
   );
+  const vendorsList = useSelector(({ vendors }: any) =>
+    vendors.data.filter((vendor: any) => vendor.status <= 1)
+  );
   const employeesForJob = useMemo(() => [...data], [data]);
 
   useEffect(() => {
     dispatch(getEmployeesForJobAction());
+    dispatch(getVendors());
   }, []);
 
   const columns: any = [
@@ -89,7 +94,8 @@ function BCViewJobModal({
         const user = isTicket ? row.original.user : employeesForJob.filter(
           (employee: any) => employee._id === row.original.user
         )[0];
-        const { displayName } = user?.profile || '';
+        const vendor = vendorsList.find((v: any) => v.contractor.admin._id === row.original.user);
+        const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
         return <div>{displayName}</div>;
       },
     },
