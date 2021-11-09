@@ -32,24 +32,27 @@ function createMapOptions() {
 
 function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: BCMapWithMarkerListProps) {
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
+
   let centerLat = DEFAULT_LAT;
   let centerLng = DEFAULT_LNG;
 
-  if (selected.jobSite) {
-    centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : DEFAULT_LNG;
-    centerLat -= 0.004;
-    centerLng += 0.002;
-  } else if (selected.jobLocation) {
-    centerLat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : DEFAULT_LNG;
-    centerLat -= 0.004;
-    centerLng += 0.002;
-  } else if (selected.customer) {
-    centerLat = selected.customer.location && selected.customer.location.coordinates.length > 1 && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : DEFAULT_LAT;
-    centerLng = selected.customer.location?.coordinates?.length > 1 && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
-    centerLat -= 0.004;
-    centerLng += 0.002;
+  if (selected._id !== '') {
+    if (selected.jobSite) {
+      centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : DEFAULT_LAT;
+      centerLng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : DEFAULT_LNG;
+      centerLat -= 0.004;
+      centerLng += 0.002;
+    } else if (selected.jobLocation) {
+      centerLat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : DEFAULT_LAT;
+      centerLng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : DEFAULT_LNG;
+      centerLat -= 0.004;
+      centerLng += 0.002;
+    } else if (selected.customer) {
+      centerLat = selected.customer.location && selected.customer.location.coordinates && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : DEFAULT_LAT;
+      centerLng = selected.customer.location && selected.customer.location.coordinates && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : DEFAULT_LNG;
+      centerLat -= 0.004;
+      centerLng += 0.002;
+    }
   }
 
   return (
@@ -58,7 +61,7 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
       center={{ 'lat': centerLat,
         'lng': centerLng }}
       defaultZoom={7}
-      onClick={event => console.log(event)}
+      //onClick={event => console.log(event)}
       options={createMapOptions}>
       {
         list.map((ticket: any, index: number) => {
@@ -73,11 +76,6 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
           } else if (ticket.customer) {
             lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : DEFAULT_LAT;
             lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : DEFAULT_LNG;
-          }
-
-          if (selected.jobSite) {
-            lat = centerLat;
-            lng = centerLng;
           }
 
           return <BCMapMarker

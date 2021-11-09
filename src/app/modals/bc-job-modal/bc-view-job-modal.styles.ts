@@ -53,11 +53,17 @@ export default (theme: Theme): any => ({
     borderRadius: 8,
     display: 'inline-block',
   },
+  jobImageWrapper: {
+    padding: 10,
+    height: 220,
+    width: '80%',
+    borderRadius: 10,
+    border: '1px solid #BDBDBD',
+    textAlign:'center',
+  },
   jobImage: {
     height: 200,
     objectFit: 'contain',
-    borderRadius: 10,
-    border: '1px solid #BDBDBD',
   },
   actionsList: {
     margin: '4px 0 4px 4px',
