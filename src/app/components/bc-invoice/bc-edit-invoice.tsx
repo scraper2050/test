@@ -696,7 +696,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   }
 
   const currentPaymentTerm = invoiceData?.paymentTerm ? invoiceData?.paymentTerm?._id
-    : customerPaymentTerm._id ? customerPaymentTerm._id : invoiceData?.company?.paymentTerm?._id;
+    : customerPaymentTerm?._id ? customerPaymentTerm._id : invoiceData?.company?.paymentTerm?._id;
 
   const calculateInitialDueDate = () => {
     if (invoiceData?.company?.paymentTerm) {
