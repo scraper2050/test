@@ -613,6 +613,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         })),
         charges: 0,
       }
+      if (data.customer_po) params.customerPO = data.customer_po;
 
       callCreateInvoiceAPI(params).then((response: any) => {
         history.goBack();
