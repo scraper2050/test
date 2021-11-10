@@ -36,6 +36,7 @@ export const modalTypes = {
   'CREATE_JOB_MODAL': 'create-job',
   'CREATE_TICKET_MODAL': 'create-ticket-modal',
   'EDIT_JOB_MODAL': 'edit-job-modal',
+  'VIEW_JOB_MODAL': 'view-job-modal',
   'CANCEL_JOB_MODAL': 'cancel-job-modal',
   'EDIT_TICKET_MODAL': 'edit-ticket-modal',
   'CANCEL_SERVICE_TICKET_MODAL': 'cancel-service-ticket-modal',

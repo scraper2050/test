@@ -30,6 +30,8 @@ import './bc-map-marker.scss';
 import {openDetailTicketModal} from "../../pages/notifications/notification-click-handlers";
 import {RootState} from "../../../reducers";
 import {setTicketSelected} from "../../../actions/map/map.actions";
+import {getServiceTicketDetail} from "../../../api/service-tickets.api";
+import {formatDate} from "../../../helpers/format";
 
 interface Props {
   classes: any,
@@ -41,7 +43,7 @@ interface Props {
 
 function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   let CustomIcon;
-  const [showInfo, setShowInfo] = useState(false);
+  const [showInfo, setShowInfo] = useState({show: false, inside: true});
   const dispatch = useDispatch();
   let title = 'N/A';
   if (ticket.tasks) {
@@ -61,7 +63,13 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
 
   useEffect(() => {
-    setShowInfo(selected._id === ticket._id);
+    if (selected._id === ticket._id) {
+      setShowInfo({show: true, inside: false});
+    }
+    else if (!showInfo.inside) {
+      setShowInfo({show: false, inside: true})
+    }
+
   }, [selected]);
 
   const getStatusIcon = (status: number) => {
@@ -146,29 +154,34 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     dispatch(setModalDataAction({
       'data': {
         'job': job,
-        'detail': true,
-        'modalTitle': 'View Job',
-        'removeFooter': false
+        'modalTitle': '',
+        'removeFooter': true,
       },
-      'type': modalTypes.EDIT_JOB_MODAL
+      'type': modalTypes.VIEW_JOB_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
   };
 
-  const openEditTicketModal = (ticket: any) => {
+  const openEditTicketModal = async(ticket: any) => {
+    let data = {...ticket, images: []};
+    try {
+      const {status, serviceTicket} = await getServiceTicketDetail(ticket._id);
+      if (status === 1) {
+        data = serviceTicket;
+      }
+    } catch (e) {
+      console.log(e);
+    }
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'View Service Ticket',
-        'removeFooter': false,
-        'detail': true,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%'
+        'job': data,
+        'isTicket': true,
+        'modalTitle': '',
+        'removeFooter': true,
       },
-      'type': modalTypes.EDIT_TICKET_MODAL
+      'type': modalTypes.VIEW_JOB_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
@@ -176,11 +189,18 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   };
 
   const closeInfo = () => {
-    dispatch(setTicketSelected({_id: ''}));
-    //setShowInfo(false);
+    if (showInfo.inside) {
+      setShowInfo({show: false, inside: true});
+    } else {
+      dispatch(setTicketSelected({_id: ''}));
+    }
   }
 
-  return <div style={{marginLeft: -10, marginTop: -10}}
+  const scheduleDate = isTicket ? ticket.dueDate : ticket.scheduleDate;
+
+  return <div
+    className={classes.marker}
+    style={{zIndex: showInfo.show ? 10 : 1}}
     //onMouseLeave={() => setShowinfo(false)}
   >
     {(() => {
@@ -188,10 +208,9 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       CustomIcon = getStatusIcon(status);
     })()}
     <CustomIcon
-      className={classes.marker}
-      onClick={(e) => setShowInfo(true)}
+      onClick={(e) => setShowInfo({show: true, inside:true})}
     />
-    {showInfo && <div
+    {showInfo.show && <div
       className={`${classes.markerPopup} marker_dropdown elevation-4`}
       style={{
         'width': '270px',
@@ -211,11 +230,10 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
         <span>Description</span>
         <div style={{display: 'flex', alignItems: 'center'}}>
             <span className={'date'}>
-              {ticket.scheduleDate ? new Date(ticket.scheduleDate).toString()
-                .substr(0, 15) : ''}
+              {scheduleDate ? formatDate(scheduleDate) : ''}
             </span>
           <InfoIcon
-            style={{ fontSize: 14, marginLeft: 5 }}
+            className={'info-button'}
             onClick={() => isTicket ? openEditTicketModal(ticket) : openDetailJobModal(ticket)}
           />
         </div>

@@ -97,7 +97,7 @@ export const callEditServiceTicket = (data: any) => {
   });
 };
 
-export const getServiceTicketDetail = (ticketId:string) => {
+export const getServiceTicketDetail:any = (ticketId:string) => {
   return new Promise((resolve, reject) => {
     request(`/getServiceTicketDetail`, 'post', { ticketId }, false)
       .then((res: any) => {

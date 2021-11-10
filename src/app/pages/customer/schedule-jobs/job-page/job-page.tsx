@@ -1,35 +1,37 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import { getAllJobsAPI } from 'api/job.api';
-import {
-  modalTypes
-} from "../../../../../constants";
+import { modalTypes } from '../../../../../constants';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import {Checkbox, FormControlLabel, withStyles} from "@material-ui/core";
-import React, {useEffect, useState} from 'react';
+import { Checkbox, FormControlLabel, withStyles } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import { convertMilitaryTime, formatDate } from 'helpers/format';
 import {
   openModalAction,
-  setModalDataAction
+  setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
-import BCJobStatus from "../../../../components/bc-job-status";
+import BCJobStatus from '../../../../components/bc-job-status';
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
   const [showAllJobs, toggleShowAllJobs] = useState(false);
-  const { _id } = useSelector(({ auth }:RootState) => auth);
-  const { isLoading = true, jobs, refresh = true } = useSelector(({ jobState }: any) => ({
-    'isLoading': jobState.isLoading,
-    'jobs': jobState.data,
-    'refresh': jobState.refresh
-  }));
+  const { _id } = useSelector(({ auth }: RootState) => auth);
+  const { isLoading = true, jobs, refresh = true } = useSelector(
+    ({ jobState }: any) => ({
+      isLoading: jobState.isLoading,
+      jobs: jobState.data,
+      refresh: jobState.refresh,
+    })
+  );
 
-  const filteredJobs = jobs.filter ((job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0 );
+  const filteredJobs = jobs.filter(
+    (job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0
+  );
 
-  function RenderVendor({ vendor }:any) {
+  function RenderVendor({ vendor }: any) {
     if (vendor) {
       return vendor.profile
         ? vendor.profile.displayName
@@ -39,19 +41,20 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   }
 
   const openEditJobModal = (job: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'job': job,
-        'modalTitle': 'Edit Job',
-        'removeFooter': false
-      },
-      'type': modalTypes.EDIT_JOB_MODAL
-    }));
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          modalTitle: 'Edit Job',
+          removeFooter: false,
+        },
+        type: modalTypes.EDIT_JOB_MODAL,
+      })
+    );
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
   };
-
 
   /*
    * Const closeModal = () => {
@@ -66,15 +69,17 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
    */
 
   const openDetailJobModal = (job: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'detail': true,
-        'job': job,
-        'modalTitle': 'View Job',
-        'removeFooter': false
-      },
-      'type': modalTypes.EDIT_JOB_MODAL
-    }));
+    dispatch(
+      setModalDataAction({
+        data: {
+          detail: true,
+          job: job,
+          modalTitle: 'View Job',
+          removeFooter: false,
+        },
+        type: modalTypes.EDIT_JOB_MODAL,
+      })
+    );
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
@@ -86,112 +91,123 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     const hours = timeWithSeconds.substr(0, 2);
     const minutes = timeWithSeconds.substr(3, 5);
 
-    return { hours,
-      minutes };
+    return { hours, minutes };
   };
 
   const columns: any = [
     {
-      'Header': 'Job ID',
-      'accessor': 'jobId',
-      'className': 'font-bold',
-      'sortable': true,
-      'width': 50
+      Header: 'Job ID',
+      accessor: 'jobId',
+      className: 'font-bold',
+      sortable: true,
+      width: 50,
     },
     {
       Cell({ row }: any) {
         return <BCJobStatus status={row.original.status} />;
       },
-      'Header': 'Status',
-      'accessor': 'status',
-      'className': 'font-bold',
-      'sortable': true,
-      'width': 60
+      Header: 'Status',
+      accessor: 'status',
+      className: 'font-bold',
+      sortable: true,
+      width: 60,
     },
     {
       Cell({ row }: any) {
-        return <RenderVendor vendor={row.original.technician || row.original.contractor} />;
+        return (
+          <RenderVendor
+            vendor={row.original.technician || row.original.contractor}
+          />
+        );
       },
-      'Header': 'Technician',
-      'accessor': 'contractor.info.companyName',
-      'className': 'font-bold',
-      'sortable': true,
-      'width': 100
+      Header: 'Technician',
+      accessor: 'contractor.info.companyName',
+      className: 'font-bold',
+      sortable: true,
+      width: 100,
     },
     {
-      'Header': 'Customer',
-      'accessor': 'customer.profile.displayName',
-      'className': 'font-bold',
-      'sortable': true
+      Header: 'Customer',
+      accessor: 'customer.profile.displayName',
+      className: 'font-bold',
+      sortable: true,
     },
     {
       Cell({ row }: any) {
         return (
           <div className={'flex items-center'}>
             {row.original.tasks.length > 0
-              ? (row.original.tasks.length === 1 ? row.original.tasks[0].jobType.title : 'Multiple Jobs')
+              ? row.original.tasks.length === 1
+                ? row.original.tasks[0].jobType.title
+                : 'Multiple Jobs'
               : row.original.type?.title}
           </div>
         );
       },
-      'Header': 'Type',
-      'accessor': 'type.title',
-      'className': 'font-bold',
-      'sortable': true
+      Header: 'Type',
+      accessor: 'type.title',
+      className: 'font-bold',
+      sortable: true,
     },
     {
       Cell({ row }: any) {
         const scheduleDate = formatDate(row.original.scheduleDate);
-        return (
-          <div className={'flex items-center'}>
-            {scheduleDate}
-          </div>
-        );
+        return <div className={'flex items-center'}>{scheduleDate}</div>;
       },
-      'Header': 'Schedule Date',
-      'id': 'job-schedulee-date',
-      'sortable': true,
-      'width': 60
+      Header: 'Schedule Date',
+      id: 'job-schedulee-date',
+      sortable: true,
+      width: 60,
     },
     {
       Cell({ row }: any) {
         let startTime = 'N/A';
         let endTime = 'N/A';
         if (row.original.scheduledStartTime !== undefined) {
-          const formatScheduledObj = formatSchedulingTime(row.original.scheduledStartTime);
-          startTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
+          const formatScheduledObj = formatSchedulingTime(
+            row.original.scheduledStartTime
+          );
+          startTime = convertMilitaryTime(
+            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+          );
         }
         if (row.original.scheduledEndTime !== undefined) {
-          const formatScheduledObj = formatSchedulingTime(row.original.scheduledEndTime);
-          endTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
+          const formatScheduledObj = formatSchedulingTime(
+            row.original.scheduledEndTime
+          );
+          endTime = convertMilitaryTime(
+            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+          );
         }
         return (
-          <div className={'flex items-center'} >
+          <div className={'flex items-center'}>
             {`${startTime} - ${endTime}`}
           </div>
         );
       },
-      'Header': 'Time',
-      'id': 'job-time',
-      'sortable': true,
-      'width': 40
+      Header: 'Time',
+      id: 'job-time',
+      sortable: true,
+      width: 40,
     },
   ];
 
   function Toolbar() {
-    return <>
-    <FormControlLabel
-      control={
-        <Checkbox
-          checked={showAllJobs}
-          onChange={() => toggleShowAllJobs(!showAllJobs)}
-          name="checkedB"
-          color="primary"
+    return (
+      <>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={showAllJobs}
+              onChange={() => toggleShowAllJobs(!showAllJobs)}
+              name="checkedB"
+              color="primary"
+            />
+          }
+          label="Display All Jobs"
         />
-      }
-      label="Display All Jobs"
-    />
-    </>
+      </>
+    );
   }
 
   useEffect(() => {
@@ -201,10 +217,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   }, [refresh]);
 
   const handleRowClick = (event: any, row: any) => {
-    if ([0, 4].includes(row.original.status) && (!row.original.employeeType || row.original.createdBy?.profile?._id === _id)){
-      openEditJobModal(row.original)
+    if (
+      [0, 4].includes(row.original.status) &&
+      (!row.original.employeeType ||
+        row.original.createdBy?.profile?._id === _id)
+    ) {
+      openEditJobModal(row.original);
     } else {
-      openDetailJobModal(row.original)
+      openDetailJobModal(row.original);
     }
   };
 
@@ -230,4 +250,4 @@ const DataContainer = styled.div`
   overflow: hidden;
 `;
 
-export default withStyles(styles, { 'withTheme': true })(JobPage);
+export default withStyles(styles, { withTheme: true })(JobPage);

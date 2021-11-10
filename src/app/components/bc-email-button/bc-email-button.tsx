@@ -42,7 +42,7 @@ export default function EmailButton({ data, Component, showLoader = true }: Emai
         }
       } catch (e) {
         setIsLoading(false);
-        dispatch(errorSnackBar(e));
+        dispatch(errorSnackBar(e.message));
         console.log(e);
       }
     } else {
