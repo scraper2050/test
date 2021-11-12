@@ -135,9 +135,6 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
   const openTickets = useSelector(
     (state: any) => state.serviceTicket.openTickets
   );
-  const openServiceTicketFIlter = useSelector(
-    (state: any) => state.serviceTicket.filterTicketState
-  );
   const isLoading = useSelector((state: any) => state.serviceTicket.isLoading);
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
 
@@ -275,6 +272,7 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
     getOpenServiceTickets(requestObj)
       .then((response: any) => {
         dispatch(setOpenServiceTicketLoading(false));
+        console.log({response});
         dispatch(setOpenServiceTicket(response));
         dispatch(refreshServiceTickets(true));
         dispatch(closeModalAction());
