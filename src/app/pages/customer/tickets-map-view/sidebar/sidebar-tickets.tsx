@@ -11,46 +11,23 @@ import Pagination from '@material-ui/lab/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
-
-import {
-  clearJobSiteStore,
-  getJobSites,
-  loadingJobSites,
-} from "actions/job-site/job-site.action";
-import {
-  closeModalAction,
-  openModalAction,
-  setModalDataAction,
-} from 'actions/bc-modal/bc-modal.action';
-import {
-  getJobLocationsAction,
-  loadingJobLocations,
-} from "actions/job-location/job-location.action";
 import {
   refreshServiceTickets,
   setOpenServiceTicket,
-  setClearOpenTicketFilterState,
   setOpenServiceTicketLoading,
-  setOpenTicketFilterState,
-  setSelectedCustomers,
 } from 'actions/service-ticket/service-ticket.action';
 import styles from './sidebar.styles';
 import { formatDateYMD } from 'helpers/format';
-import { getAllJobTypesAPI } from "api/job.api";
 import * as CONSTANTS from "../../../../../constants";
-import { Job } from '../../../../../actions/job/job.types';
-import { warning } from 'actions/snackbar/snackbar.action';
+import {error, warning} from 'actions/snackbar/snackbar.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
 import BCMapFilter from "./bc-map-filter";
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
-// import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 
 interface SidebarTicketsProps {
   classes: any;
@@ -119,7 +96,6 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
-  const [jobs, setJobs] = useState<Job[]>([]);
   const [filterTickets, setFilterTickets] = useState<FilterTickets>({
     'customerNames': null,
     'jobId': '',
@@ -271,19 +247,14 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
     dispatch(setOpenServiceTicketLoading(true));
     getOpenServiceTickets(requestObj)
       .then((response: any) => {
-        dispatch(setOpenServiceTicketLoading(false));
-        console.log({response});
-        dispatch(setOpenServiceTicket(response));
-        dispatch(refreshServiceTickets(true));
-        dispatch(closeModalAction());
-        setTimeout(() => {
-          dispatch(
-            setModalDataAction({
-              data: {},
-              type: "",
-            })
-          );
-        }, 200);
+        if (response.status === 1) {
+          dispatch(setOpenServiceTicketLoading(false));
+          dispatch(setOpenServiceTicket(response));
+          dispatch(refreshServiceTickets(true));
+        } else {
+          dispatch(setOpenServiceTicketLoading(false));
+          dispatch(error(response.message));
+        }
       })
       .catch((err: any) => {
         throw err;

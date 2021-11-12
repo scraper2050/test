@@ -16,8 +16,14 @@ export default (theme: Theme): any => ({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    '&& .MuiFormControl-root': {
+    '&& .MuiFormGroup-root': {
       marginBottom: 16,
+    },
+    '&& .MuiFormGroup-root:last-of-type': {
+      marginBottom: 0,
+    },
+    '&& .MuiFormControl-root': {
+      marginBottom: 0,
     },
     '&& .MuiOutlinedInput-root': {
       borderRadius: 8,

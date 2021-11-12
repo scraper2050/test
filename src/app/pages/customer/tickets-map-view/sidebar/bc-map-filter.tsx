@@ -79,7 +79,6 @@ function BCMapFilter({
   }
 
   const handleCustomerChange = (newValue: any) => {
-    //const customerDatafromAutoselect = newValue?.profile?.displayName;
     setFieldValue('customerNames', newValue);
     console.log({newValue})
     if (newValue) {
@@ -143,7 +142,7 @@ function BCMapFilter({
             <FormGroup className={'required'}>
               <TextField
                 name={'jobId'}
-                placeholder={'Job ID'}
+                placeholder={isTicket ? 'Ticket ID' : 'Job ID'}
                 variant={'outlined'}
                 onChange={form.handleChange}
                 //type={'search'}
