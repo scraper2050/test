@@ -35,7 +35,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
       'pathname': `view/${id}`,
     });
   };
-  console.log(invoiceList)
+  //console.log(invoiceList)
   const columns: any = [
     {
       'Header': 'Invoice ID',
