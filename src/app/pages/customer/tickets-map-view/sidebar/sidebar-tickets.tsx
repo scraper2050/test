@@ -46,7 +46,7 @@ import { getCustomers } from 'actions/customer/customer.action';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
-
+import BCMapFilter from "./bc-map-filter";
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
@@ -509,69 +509,71 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
                 <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
                   <IconFunnel />
                 </Button>
-                {showFilterModal ? (
-                  <ClickAwayListener onClickAway={handleClickAway}>
-                    <div className="dropdown_wrapper dropdown_wrapper_filter elevation-5">
-                      <BCMapFilterModal
-                        openTicketFilterModal={openTicketFilterModal}
-                        resetDate={resetDate}
-                        // TODO: add here...
-                      />
-                    </div>
-                  </ClickAwayListener>
-                ) : null}
               </div>
             </div>
-            <div className="ticketsListViewContainer">
-              {
-                isLoading
-                  ? <div style={{
-                      'display': 'flex',
-                      'width': '100%',
-                      'justifyContent': 'center'
-                    }}>
-                      <BCCircularLoader heightValue={'200px'} />
-                    </div>
-                  : openTickets.length
-                    ? openTickets.map((x: any, i: any) => (
-                      <div
-                        className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
-                        id={`openTicket${i}`}
-                        key={i}
-                        onClick={() => {handleOpenTicketCardClick(x, i);}}
-                      >
-                        <div className={'ticket_title'}>
-                          <span className={`job-status job-status_${x.status}`} />
-                          <h3>
-                            {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
-                          </h3>
-                        </div>
-                        <div className={'location_desc_container'}>
-                          <div className={'card_location'}>
-                            <h4>
-                              {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
-                            </h4>
-                          </div>
-                        </div>
-                        <div className={'ticket_marker'}>
-                          <RoomIcon />
-                        </div>
-                      </div>
-                      ))
-                    : <h4>No available ticket.</h4>
-              }
-            </div>
-            {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && showPagination && (
-              <Pagination
-                color="primary"
-                count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
-                onClick={() => dispatch(setTicketSelected({_id: ''}))}
-                onChange={handleChange}
-                page={page}
-                showFirstButton
-                showLastButton
+            {showFilterModal ?
+              <BCMapFilter
+                openTicketFilterModal={openTicketFilterModal}
+                resetDate={resetDate}
+                // TODO: add here...
               />
-            )}
+              :<>
+                <div className="ticketsListViewContainer">
+                  {
+                    isLoading
+                      ? <div style={{
+                        'display': 'flex',
+                        'width': '100%',
+                        'justifyContent': 'center'
+                      }}>
+                        <BCCircularLoader heightValue={'200px'}/>
+                      </div>
+                      : openTickets.length
+                        ? openTickets.map((x: any, i: any) => (
+                          <div
+                            className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
+                            id={`openTicket${i}`}
+                            key={i}
+                            onClick={() => {
+                              handleOpenTicketCardClick(x, i);
+                            }}
+                          >
+                            <div className={'ticket_title'}>
+                              <span
+                                className={`job-status job-status_${x.status}`}/>
+                              <h3>
+                                {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
+                              </h3>
+                            </div>
+                            <div className={'location_desc_container'}>
+                              <div className={'card_location'}>
+                                <h4>
+                                  {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
+                                </h4>
+                              </div>
+                            </div>
+                            <div className={'ticket_marker'}>
+                              <RoomIcon/>
+                            </div>
+                          </div>
+                        ))
+                        : <h4>No available ticket.</h4>
+                  }
+                </div>
+                {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && showPagination && (
+                  <Pagination
+                  color="primary"
+                  count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
+                  onClick={() => dispatch(setTicketSelected({_id: ''}))}
+                  onChange={handleChange}
+                  page={page}
+                  showFirstButton
+                  showLastButton
+                  />
+                  )}
+              </>
+            }
+
           </Grid>
         </Grid>
       </Drawer>
