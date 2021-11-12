@@ -30,7 +30,6 @@ function MapViewTicketsScreen({ classes }: any) {
   const isLoadingTmp = useSelector((state: any) => state.serviceTicket.isLoading);
   const [tickets, setTickets] = useState([]);
   const [page, setPage] = useState(1);
-  const [hasPhoto, setHasPhoto] = useState(false);
   const snackMessage = useSelector(({ snackbar }: any) => snackbar.message);
   const [isLoading, setIsLoading] = useState(false);
 

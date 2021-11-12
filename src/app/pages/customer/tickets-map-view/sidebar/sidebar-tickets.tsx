@@ -56,6 +56,14 @@ interface SidebarTicketsProps {
   classes: any;
 }
 
+interface FilterTickets {
+  jobId?: string | null,
+  customerNames?: any,
+  contact?: any,
+  jobStatus?: number[],
+  schedule_date: string | null,
+}
+
 const useStyles = makeStyles(theme => ({
   fab: {
     zIndex: 1101,
@@ -112,26 +120,20 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [filterJobs, setFilterJobs] = useState({
-    'customerNames': '',
+  const [filterTickets, setFilterTickets] = useState<FilterTickets>({
+    'customerNames': null,
     'jobId': '',
-    'schedule_date': ''
+    'schedule_date': '',
+    'contact': null,
   });
-  const [hasPhoto, setHasPhoto] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
   const [dateValue, setDateValue] = useState<any>(null);
-  const [tempDate, setTempDate] = useState<any>(new Date());
   const [paginatedJobs, setPaginatedJobs] = useState<any>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [showPagination, setShowPagination] = useState(true);
   const totalOpenTickets = useSelector(
     (state: any) => state.serviceTicket.totalOpenTickets
   );
   const openTickets = useSelector(
     (state: any) => state.serviceTicket.openTickets
-  );
-  const ticketFilterObject = useSelector(
-    ({ serviceTicket }: any) => serviceTicket?.filterTicketState
   );
   const openServiceTicketFIlter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
@@ -147,49 +149,77 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
     setOpen(false);
   };
 
-  const openTicketFilterModal = () => {
-    setShowFilterModal(!showFilterModal);
+  const handleFilter =  (filter: any) => {
+    dispatch(setTicketSelected({_id: ''}));
+    setShowFilterModal(false);
+    if (filter) {
+      setFilterTickets(filter);
+
+      const rawData = {
+        jobTypeTitle: '',
+        dueDate: dateValue ? formatDateYMD(dateValue) : '',
+        customerNames: filter.customerNames?.profile?.displayName || '',
+        ticketId:  filter.jobId || '',
+        contactName: filter.contact?.name || '',
+      }
+
+      const requestObj = {
+        ...rawData,
+        pageNo: 1,
+        pageSize: PAGE_SIZE,
+      };
+      getOpenTickets(requestObj);
+    }
   };
 
-  const dateChangeHandler = (date: string) => {
-    const dateObj = new Date(date);
-    const {
-      jobTypeTitle,
-      customerNames,
-      ticketId,
-      contactName,
-    } = ticketFilterObject;
-    let rawData = {
-      jobTypeTitle: jobTypeTitle || "",
-      // dueDate: '',
-      customerNames: customerNames || "",
-      ticketId: ticketId || "",
-      contactName: contactName || "",
-    };
+  const resetFilter = () => {
+    dispatch(setTicketSelected({_id: ''}));
+    setShowFilterModal(false);
+    setPage(1);
+    setDateValue(null);
 
-    const formattedDate = formatDateYMD(dateObj);
-    setDateValue(dateObj);
-    setTempDate(date);
-    // dispatch(setClearOpenTicketFilterState(rawData));
+    setFilterTickets({
+      'customerNames': null,
+      'jobId': '',
+      'schedule_date': '',
+      'contact': null,
+    });
+
+    const rawData = {
+      jobTypeTitle: '',
+      dueDate: '',
+      customerNames: '',
+      ticketId: '',
+      contactName: '',
+    }
+
     const requestObj = {
       ...rawData,
       pageNo: 1,
       pageSize: PAGE_SIZE,
-      dueDate: formattedDate,
     };
-    dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
+    getOpenTickets(requestObj);
+  }
+
+  const dateChangeHandler = (date: string) => {
+    const dateObj = new Date(date);
+    const rawData = {
+      jobTypeTitle: '',
+      dueDate: formatDateYMD(dateObj),
+      customerNames: filterTickets.customerNames?.profile?.displayName || '',
+      ticketId:  filterTickets.jobId || '',
+      contactName: filterTickets.contact?.name || '',
+    }
+    console.log(rawData);
+    setDateValue(dateObj);
+
+    const requestObj = {
+      ...rawData,
+      pageNo: 1,
+      pageSize: PAGE_SIZE,
+    };
     getOpenTickets(requestObj);
   };
-
-  const clearSelection = () => {
-    let prevItemKey = localStorage.getItem("prevItemKey");
-    if (prevItemKey) {
-      const prevItem = document.getElementById(prevItemKey);
-      if (prevItem) {
-        prevItem.classList.remove('ticketItemDiv_active');
-      }
-    }
-  }
 
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
     if (selectedTicket._id === openTicketObj._id) {
@@ -212,35 +242,24 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
     }
   }
 
-  const handleChange = (event: any, value: any) => {
+  const handlePageChange = (event: any, value: any) => {
     dispatch(setTicketSelected({_id: ''}));
     setPage(value);
 
+    const rawData = {
+      jobTypeTitle: '',
+      dueDate: dateValue ? formatDateYMD(dateValue) : '',
+      customerNames: filterTickets.customerNames?.profile?.displayName || '',
+      ticketId:  filterTickets.jobId || '',
+      contactName: filterTickets.contact?.name || '',
+    }
+
     const requestObj = {
-      ...openServiceTicketFIlter,
+      ...rawData,
       pageNo: value,
       pageSize: PAGE_SIZE,
     };
     getOpenTickets(requestObj);
-  };
-
-  const resetDateFilter = () => {
-    setPage(1);
-    setDateValue(null);
-    setTempDate(new Date());
-    dispatch(setTicketSelected({_id: ''}));
-    dispatch(
-      setClearOpenTicketFilterState({
-        jobTypeTitle: "",
-        dueDate: "",
-        customerNames: "",
-        ticketId: "",
-        contactName: "",
-      })
-    );
-    getOpenTickets({ pageNo: 1, pageSize: PAGE_SIZE });
-    dispatch(setSelectedCustomers([]));
-    setShowFilterModal(false);
   };
 
   const getOpenTickets = (requestObj: {
@@ -273,133 +292,17 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
       });
   };
 
-  const handleClickAway = (event: any) => {
-    const target = event.target;
-    const isBody = (target as Element).nodeName === "BODY";
-
-    if (!isBody) {
-      openTicketFilterModal();
-    }
-  };
-
-  const resetDate = () => {
-    // setDateValue(null);
-    // setTempDate(new Date());
-  };
-
   const handleButtonClickMinusDay = () => {
-    const {
-      jobTypeTitle,
-      customerNames,
-      ticketId,
-      contactName,
-    } = ticketFilterObject;
-    let rawData = {
-      jobTypeTitle: jobTypeTitle || "",
-      dueDate: "",
-      customerNames: customerNames || "",
-      ticketId: ticketId || "",
-      contactName: contactName || "",
-    };
-    dispatch(setTicketSelected({_id: ''}));
-    const dateObj = new Date(tempDate);
-    // const selectDate = dateObj.setHours(0,0,0,0);
-    // const todayDate = new Date().setHours(0,0,0,0);
-    var yesterday = new Date(dateObj.getTime() - 24 * 60 * 60 * 1000);
-    const formattedDate = formatDateYMD(yesterday);
-    setDateValue(formattedDate);
-    setTempDate(yesterday);
-    // dispatch(setClearOpenTicketFilterState({
-    //   'jobTypeTitle': '',
-    //   'dueDate': '',
-    //   'customerNames': '',
-    //   'ticketId': '',
-    //   'contactName': '',
-    // }));
-    const requestObj = {
-      ...openServiceTicketFIlter,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-      dueDate: formattedDate,
-    };
-    dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
-    getOpenTickets(requestObj);
+    const previousDay = dateValue ? new Date(dateValue.getTime() - 24 * 60 * 60 * 1000) : new Date();
+    const formattedDate = formatDateYMD(previousDay);
+    dateChangeHandler(formattedDate);
   };
 
   const handleButtonClickPlusDay = () => {
-    let rawData = {
-      jobTypeTitle: "",
-      dueDate: "",
-      customerNames: "",
-      ticketId: "",
-      contactName: "",
-    };
-
-    dispatch(setTicketSelected({_id: ''}));
-    const dateObj = new Date(tempDate);
-    var tomorrow = new Date(dateObj.getTime() + 24 * 60 * 60 * 1000);
-    const formattedDate = formatDateYMD(tomorrow);
-
-    setDateValue(formattedDate);
-    setTempDate(tomorrow);
-    // dispatch(setClearOpenTicketFilterState(rawData));
-    const requestObj = {
-      ...openServiceTicketFIlter,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-      dueDate: formattedDate,
-    };
-    dispatch(setOpenTicketFilterState({ ...rawData, dueDate: formattedDate }));
-    getOpenTickets(requestObj);
+    const nextDay =  dateValue ? new Date(dateValue.getTime() + 24 * 60 * 60 * 1000) : new Date();
+    const formattedDate = formatDateYMD(nextDay);
+    dateChangeHandler(formattedDate);
   };
-
-  const openEditTicketModal = (ticket: any) => {
-    const reqObj = {
-      customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation,
-    };
-
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;
-    dispatch(
-      setModalDataAction({
-        data: {
-          modalTitle: "Edit Service Ticket",
-          removeFooter: false,
-          ticketData: ticket,
-          onSubmit: handleSubmit,
-          className: "serviceTicketTitle",
-          maxHeight: "754px",
-          height: "100%",
-        },
-        type: CONSTANTS.modalTypes.EDIT_TICKET_MODAL,
-      })
-    );
-
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
-  const handleSubmit = (response: any) => {
-    dispatch(setTicketSelected({_id: ''}));
-
-    const requestObj = {
-      ...openServiceTicketFIlter,
-      pageNo: page,
-      pageSize: PAGE_SIZE,
-    };
-
-    getOpenTickets(requestObj);
-  }
 
   useEffect(() => {
     let rawData = {
@@ -411,10 +314,8 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
     };
     const requestObj = { ...rawData, pageNo: 1, pageSize: PAGE_SIZE };
     dispatch(getCustomers());
-    resetDateFilter();
     getOpenTickets(requestObj);
     dispatch(setTicketSelected({_id: ''}));
-
   }, []);
 
   return (
@@ -506,16 +407,17 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
                 </button>
               </span>
               <div className="filter_wrapper">
-                <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
+                <Button className={mapStyles.funnel} onClick={() => setShowFilterModal(true)}>
                   <IconFunnel />
                 </Button>
               </div>
             </div>
             {showFilterModal ?
               <BCMapFilter
-                openTicketFilterModal={openTicketFilterModal}
-                resetDate={resetDate}
-                // TODO: add here...
+                callback={handleFilter}
+                currentFilter={filterTickets}
+                resetFilter={resetFilter}
+                isTicket={true}
               />
               :<>
                 <div className="ticketsListViewContainer">
@@ -560,12 +462,12 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
                         : <h4>No available ticket.</h4>
                   }
                 </div>
-                {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && showPagination && (
+                {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && (
                   <Pagination
                   color="primary"
                   count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
                   onClick={() => dispatch(setTicketSelected({_id: ''}))}
-                  onChange={handleChange}
+                  onChange={handlePageChange}
                   page={page}
                   showFirstButton
                   showLastButton

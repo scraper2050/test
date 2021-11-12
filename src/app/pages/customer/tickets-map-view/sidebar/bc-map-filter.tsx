@@ -1,11 +1,7 @@
 import { useFormik } from 'formik';
 import {
   Button, Checkbox,
-  DialogActions,
-  DialogContent,
-  Fab,
-  Grid, IconButton, Input,
-  InputAdornment, InputLabel, MenuItem, Select,
+  Grid, IconButton, InputAdornment, MenuItem, Select,
   withStyles
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -19,21 +15,23 @@ import {
 } from '@material-ui/core';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import CloseIcon from "@material-ui/icons/Close";
-import moment from 'moment';
 import { getContacts } from 'api/contacts.api';
 import {STATUSES} from "../../../../../helpers/contants";
 
+interface filter {
+  jobId?: string,
+  customerNames?: string,
+  contact?: string,
+  jobStatus?: number[],
+}
+
 function BCMapFilter({
-                            classes,
-                            openTicketFilterModal,
-                            resetDate,
-                            setPage,
-                            getScheduledJobs,
-                            todaysJobs,
-                            showAll,
-                            resetFilter,
-                            callback
-                          }: any): JSX.Element {
+  classes,
+  isTicket = false,
+  currentFilter,
+  resetFilter,
+  callback
+}: any): JSX.Element {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   const loading = useSelector(({ customers }: any) => customers.loading);
@@ -46,51 +44,61 @@ function BCMapFilter({
   }, []);
 
   const onSubmit = async (values: any, { setSubmitting }: any) => {
-    setSubmitting(true);
-    resetDate();
-    setPage(1);
-    await getScheduledJobs({
-      ...values,
-      page: 1,
-      pageSize: showAll ? 0 : 4,
-      todaysJobs: todaysJobs && todaysJobs.toString()
-    });
-    setSubmitting(false);
-    openTicketFilterModal();
-
-    if (typeof callback === "function") callback(false);
+    if (typeof callback === "function") callback(values);
   }
 
   const form = useFormik({
     initialValues: {
-      jobId: '',
-      customerNames: "",
-      contact: "",
-      jobStatus: [-1],
-      // schedule_date: "",
+      jobId: currentFilter.jobId || '',
+      customerNames: currentFilter.customerNames,
+      contact: currentFilter.contact,
+      jobStatus: currentFilter.jobStatus || [-1],
     },
     onSubmit
   });
 
-  const handleCustomerChange = (setFieldValue: Function, newValue: any) => {
-    // const customerDatafromAutoselect = newValue.map((customer: any) => customer.profile.displayName).join(',');
-    const customerDatafromAutoselect = newValue?.profile?.displayName;
-    // const customerContacts: string[] = newValue.map((customer: any) => customer.contact.phone).filter(Boolean);
-    setFieldValue('customerNames', customerDatafromAutoselect);
-    // setContacts(customerContacts);
-    let data: any = {
-      type: 'Customer',
-      referenceNumber: newValue._id
-    }
+  const {
+    errors: FormikErrors,
+    values: FormikValues,
+    handleChange: formikChange,
+    handleSubmit: FormikSubmit,
+    setFieldValue,
+    isSubmitting
+  } = form;
 
-    dispatch(getContacts(data));
+  const clearFilter = () => {
+/*    setFieldValue('customerNames', null);
+    setFieldValue('jobId', '');
+    setFieldValue('contact', null);
+    setFieldValue('jobStatus', [-1]);*/
+    resetFilter();
   }
 
-  const handleCustomerContactChange = (setFieldValue: Function, newValue: string) => {
+  const closeFilter = () => {
+    callback();
+  }
+
+  const handleCustomerChange = (newValue: any) => {
+    //const customerDatafromAutoselect = newValue?.profile?.displayName;
+    setFieldValue('customerNames', newValue);
+    console.log({newValue})
+    if (newValue) {
+      let data: any = {
+        type: 'Customer',
+        referenceNumber: newValue._id
+      }
+
+      dispatch(getContacts(data));
+    } else {
+      setFieldValue('contact', '');
+    }
+  }
+
+  const handleCustomerContactChange = (newValue: any) => {
     setFieldValue('contact', newValue);
   }
 
-  const handleJobStatusChange = (setFieldValue: Function, newValue: any) => {
+  const handleJobStatusChange = (newValue: any) => {
     const {value} = newValue.props;
     const i = form.values.jobStatus.indexOf(value);
     let newArray = [...form.values.jobStatus];
@@ -115,15 +123,6 @@ function BCMapFilter({
     return form.values.jobStatus.length;
   }
 
-  const {
-    errors: FormikErrors,
-    values: FormikValues,
-    handleChange: formikChange,
-    handleSubmit: FormikSubmit,
-    setFieldValue,
-    isSubmitting
-  } = form;
-
   return (
     <form onSubmit={FormikSubmit}>
       <div className={classes.filterContainer}>
@@ -136,8 +135,8 @@ function BCMapFilter({
             xs={12}
           >
             <div className={classes.actionContainer}>
-              <Button size={"small"}>Clear Filters</Button>
-              <IconButton aria-label="close">
+              <Button size={"small"} onClick={clearFilter}>Clear Filters</Button>
+              <IconButton aria-label="close" onClick={closeFilter}>
                 <CloseIcon/>
               </IconButton>
             </div>
@@ -147,7 +146,8 @@ function BCMapFilter({
                 placeholder={'Job ID'}
                 variant={'outlined'}
                 onChange={form.handleChange}
-                type={'search'}
+                //type={'search'}
+                value={form.values.jobId}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -159,16 +159,16 @@ function BCMapFilter({
             </FormGroup>
             <FormGroup>
               <Autocomplete
-                id="tags-standard"
                 onOpen={() => setMenuOpen('customer')}
                 onClose={() => setMenuOpen('')}
                 options={customers}
-                getOptionLabel={(option) => option.profile.displayName}
+                getOptionLabel={(option) => option?.profile?.displayName}
                 classes={{
                   inputRoot: menuOpen === 'customer' ? classes.menuOpen : '',
                   paper: classes.menuContainer
                 }}
-                onChange={(event: any, newValue: any) => handleCustomerChange(setFieldValue, newValue)}
+                onChange={(event: any, newValue: any) => handleCustomerChange(newValue)}
+                value={form.values.customerNames}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -178,42 +178,45 @@ function BCMapFilter({
                 )}
               />
           </FormGroup>
-            <FormGroup className={'required'}>
+            <FormGroup>
               <Autocomplete
-                id="tags-standard"
                 onOpen={() => setMenuOpen('contact')}
                 onClose={() => setMenuOpen('')}
                 options={contacts}
                 getOptionLabel={(option) => option?.name}
-                onChange={(event: any, newValue: any) => handleCustomerContactChange(setFieldValue, newValue)}
+                value={form.values.contact}
+                onChange={(event: any, newValue: any) => handleCustomerContactChange(newValue)}
                 classes={{
                   inputRoot: menuOpen === 'contact' ? classes.menuOpen : '',
                   paper: classes.menuContainer
-                }}                renderInput={(params) => (
+                }}
+                renderInput={(params) => (
                   <TextField
                     {...params}
                     name={'contact'}
                     variant="outlined"
                     label={'Contact Name'}
-                    type={'search'}
+                    //type={'search'}
                   />
                 )}
               />
             </FormGroup>
+            {!isTicket &&
             <FormGroup>
               <Select
-                className={menuOpen === 'status' ? classes.menuOpen: ''}
+                className={menuOpen === 'status' ? classes.menuOpen : ''}
                 name={'jobStatus'}
                 multiple
                 value={form.values.jobStatus}
                 onOpen={() => setMenuOpen('status')}
                 onClose={() => setMenuOpen('')}
-                onChange={(event: any, newValue: any) => handleJobStatusChange(setFieldValue, newValue)}
+                onChange={(event: any, newValue: any) => handleJobStatusChange(newValue)}
                 variant={'outlined'}
                 renderValue={() =>
                   <>
                     Job Status&nbsp;&nbsp;
-                    <span className={classes.statusCount}>{countSelected()}</span>
+                    <span
+                      className={classes.statusCount}>{countSelected()}</span>
                   </>}
                 MenuProps={{
                   anchorOrigin: {
@@ -229,7 +232,7 @@ function BCMapFilter({
                     paper: classes.menuContainer,
                     list: classes.menu,
                   }
-                }} >
+                }}>
                 <MenuItem value={-1} classes={{
                   root: classes.itemRoot,
                   selected: classes.itemSelected
@@ -240,26 +243,26 @@ function BCMapFilter({
                     <Checkbox
                       checked={form.values.jobStatus.indexOf(-1) >= 0}
                       color="primary"
-                      inputProps={{ 'aria-label': 'primary checkbox' }}
+                      inputProps={{'aria-label': 'primary checkbox'}}
                     />
-                 </div>
+                  </div>
                 </MenuItem>
                 {STATUSES.map((status, index) => {
-                  const StatusIcon = status.icon;
-                  return <MenuItem
+                    const StatusIcon = status.icon;
+                    return <MenuItem
                       classes={{
                         root: classes.itemRoot,
                         selected: classes.itemSelected
                       }}
                       value={index}>
                       <div className={classes.menuItemContainer}>
-                        <StatusIcon />
+                        <StatusIcon/>
                         <span style={{color: status.color}}>{status.title}</span>
                         <p></p>
                         <Checkbox
                           checked={form.values.jobStatus.indexOf(index) >= 0}
                           color="primary"
-                          inputProps={{ 'aria-label': 'primary checkbox' }}
+                          inputProps={{'aria-label': 'primary checkbox'}}
                         />
                       </div>
                     </MenuItem>
@@ -267,6 +270,7 @@ function BCMapFilter({
                 )}
               </Select>
             </FormGroup>
+            }
           </Grid>
           <Grid
             item
@@ -277,7 +281,6 @@ function BCMapFilter({
               color={'primary'}
               disabled={isSubmitting}
               type={'submit'}
-              onClick={() => openTicketFilterModal()}
               size={"large"}
               variant={'contained'}>Apply</Button>
           </Grid>
