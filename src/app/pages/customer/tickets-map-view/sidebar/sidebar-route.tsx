@@ -255,13 +255,14 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
             lg={12} >
             <div className={'ticketsFilterContainer'}>
               <span
-                className={"datepicker_wrapper datepicker_wrapper_map"}
+                className={"datepicker_wrapper"}
               >
                 <button className="prev_btn" disabled={isLoading} onClick={() => handleButtonClickMinusDay()}>
                   <i className="material-icons" >
                     keyboard_arrow_left
                   </i>
                 </button>
+                <IconCalendar className="calendar_icon" />
                 <DatePicker
                   autoOk
                   disabled={isLoading}

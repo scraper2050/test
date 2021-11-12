@@ -27,6 +27,7 @@ import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.s
 import {DatePicker} from "@material-ui/pickers";
 import {RootState} from "../../../../../reducers";
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
+import {ReactComponent as IconCalendar} from "../../../../../assets/img/icons/map/icon-calendar.svg";
 
 interface SidebarJobsProps {
   classes: any;
@@ -276,11 +277,7 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
             lg={12} >
             <div className={'ticketsFilterContainer'}>
               <span
-                className={`${
-                  dateValue == null
-                    ? "datepicker_wrapper datepicker_wrapper_map datepicker_wrapper_default"
-                    : "datepicker_wrapper datepicker_wrapper_map"
-                }`}
+                className={"datepicker_wrapper"}
               >
                 <button className="prev_btn">
                   <i
@@ -290,6 +287,7 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
                     keyboard_arrow_left
                   </i>
                 </button>
+                <IconCalendar className="calendar_icon" />
                 <DatePicker
                   autoOk
                   className={classes.picker}
