@@ -384,6 +384,7 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
                 currentFilter={filterTickets}
                 resetFilter={resetFilter}
                 isTicket={true}
+                showStatusSelector={false}
               />
               :<>
                 <div className="ticketsListViewContainer">

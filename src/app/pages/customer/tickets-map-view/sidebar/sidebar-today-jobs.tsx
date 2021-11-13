@@ -304,7 +304,7 @@ function SidebarTodayJobs({ classes, onJobs }: SidebarTodayJobsProps) {
                 callback={handleFilter}
                 currentFilter={filterJobs}
                 resetFilter={resetFilter}
-                isTicket={true}
+                showStatusSelector={false}
               />
               :
               <div style={{flexDirection: 'column', flex: 1}}>

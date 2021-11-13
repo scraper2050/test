@@ -28,6 +28,7 @@ interface filter {
 function BCMapFilter({
   classes,
   isTicket = false,
+  showStatusSelector = true,
   currentFilter,
   resetFilter,
   callback
@@ -200,7 +201,7 @@ function BCMapFilter({
                 )}
               />
             </FormGroup>
-            {!isTicket &&
+            {showStatusSelector &&
             <FormGroup>
               <Select
                 className={menuOpen === 'status' ? classes.menuOpen : ''}
@@ -253,13 +254,13 @@ function BCMapFilter({
                         root: classes.itemRoot,
                         selected: classes.itemSelected
                       }}
-                      value={index}>
+                      value={status.id}>
                       <div className={classes.menuItemContainer}>
                         <StatusIcon/>
                         <span style={{color: status.color}}>{status.title}</span>
                         <p></p>
                         <Checkbox
-                          checked={form.values.jobStatus.indexOf(index) >= 0}
+                          checked={form.values.jobStatus.indexOf(status.id) >= 0}
                           color="primary"
                           inputProps={{'aria-label': 'primary checkbox'}}
                         />
