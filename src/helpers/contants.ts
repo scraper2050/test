@@ -12,11 +12,11 @@ export enum SocketMessage {
 }
 
 export const STATUSES = [
-  { title: 'Pending', icon: IconPending, color: '#828282' },
-  { title: 'Started', icon: IconStarted, color: '#00AAFF' },
-  { title: 'Paused', icon: IconPaused, color: '#FA8029'},
-  { title: 'Completed', icon: IconCompleted, color: '#50AE55'},
-  { title: 'Cancelled', icon: IconCancelled, color: '#A107FF'},
-  { title: 'Rescheduled', icon: IconRescheduled, color: '#828282' },
-  { title: 'Incomplete', icon: IconIncomplete, color: '#F50057'},
+  { id: 0, title: 'Pending', icon: IconPending, color: '#828282' },
+  { id: 1, title: 'Started', icon: IconStarted, color: '#00AAFF' },
+  { id: 5, title: 'Paused', icon: IconPaused, color: '#FA8029'},
+  { id: 2, title: 'Completed', icon: IconCompleted, color: '#50AE55'},
+  { id: 3, title: 'Cancelled', icon: IconCancelled, color: '#A107FF'},
+  { id: 4, title: 'Rescheduled', icon: IconRescheduled, color: '#828282' },
+  { id: 6, title: 'Incomplete', icon: IconIncomplete, color: '#F50057'},
 ];

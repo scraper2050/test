@@ -28,6 +28,7 @@ import BCMapFilter from "./bc-map-filter";
 import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
+import {ReactComponent as IconCalendar} from "../../../../../assets/img/icons/map/icon-calendar.svg";
 
 interface SidebarTicketsProps {
   classes: any;
@@ -335,11 +336,7 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
           >
             <div className="ticketsFilterContainer">
               <span
-                className={`${
-                  dateValue == null
-                    ? "datepicker_wrapper datepicker_wrapper_map datepicker_wrapper_default"
-                    : "datepicker_wrapper datepicker_wrapper_map"
-                }`}
+                className={"datepicker_wrapper"}
               >
                 <button className="prev_btn">
                   <i
@@ -349,9 +346,9 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
                     keyboard_arrow_left
                   </i>
                 </button>
+                <IconCalendar className="calendar_icon" />
                 <DatePicker
                   autoOk
-                  className={classes.picker}
                   disablePast={false}
                   format={"MMM d, yyyy"}
                   id={`datepicker-${"scheduleDate"}`}
@@ -387,6 +384,7 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
                 currentFilter={filterTickets}
                 resetFilter={resetFilter}
                 isTicket={true}
+                showStatusSelector={false}
               />
               :<>
                 <div className="ticketsListViewContainer">

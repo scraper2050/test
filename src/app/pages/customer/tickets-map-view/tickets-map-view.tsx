@@ -20,13 +20,6 @@ import { useDispatch } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import styled from 'styled-components';
 
-import { ReactComponent as  IconCancelled} from 'assets/img/icons/map/icon-cancelled.svg';
-import { ReactComponent as  IconCompleted} from 'assets/img/icons/map/icon-completed.svg';
-import { ReactComponent as  IconPending} from 'assets/img/icons/map/icon-pending.svg';
-import { ReactComponent as  IconStarted} from 'assets/img/icons/map/icon-started.svg';
-import { ReactComponent as  IconIncomplete} from 'assets/img/icons/map/icon-incomplete.svg';
-import { ReactComponent as IconPaused} from 'assets/img/icons/map/icon-paused.svg';
-import { ReactComponent as  IconRescheduled} from 'assets/img/icons/map/icon-rescheduled.svg';
 import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
 
