@@ -190,7 +190,7 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
 
     setDateValue(date);
     dispatch(setTicketSelected({_id: ''}));
-    onFilterJobs(filteredJobs);
+    //onFilterJobs(filteredJobs);
   };
 
   const handleButtonClickPlusDay = () => {
@@ -246,16 +246,18 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
     if (page === 1) {
       const firstPage = paginatedJobs.slice(0, PAGE_SIZE);
       setJobs(firstPage);
+      onFilterJobs(firstPage)
     } else {
       setPage(1)
     }
-    onFilterJobs(paginatedJobs);
+    //onFilterJobs(paginatedJobs);
   }, [paginatedJobs]);
 
   useEffect(() => {
     const offset = (page - 1) * PAGE_SIZE;
     const paginatedItems = paginatedJobs.slice(offset).slice(0, PAGE_SIZE);
     setJobs(paginatedItems);
+    onFilterJobs(paginatedItems)
   }, [page]);
 
   return (
