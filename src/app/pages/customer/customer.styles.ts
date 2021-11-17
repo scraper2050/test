@@ -15,27 +15,27 @@ export default (theme: Theme): any => ({
     'fontWeight': 'bold'
   },
   'statusFinishedText': {
-    'color': '#008000',
+    'color': '#50AE55',
     'fontWeight': 'bold'
   },
   'statusCanceledText': {
-    'color': '#eb3856',
+    'color': '#A107FF',
     'fontWeight': 'bold'
   },
   'statusStartedText': {
-    'color': '#0762a8',
+    'color': '#00AAFF',
     'fontWeight': 'bold'
   },
   'statusResheduledText': {
-    'color': '#F76D2E',
+    'color': '#828282',
     'fontWeight': 'bold'
   },
   'statusPausedText': {
-    'color': '#FFE5B0',
+    'color': '#FA8029',
     'fontWeight': 'bold'
   },
   'statusIncompleteText': {
-    'color': '#E05E3A',
+    'color': '#F50057',
     'fontWeight': 'bold'
   },
   'inactiveStyle': {

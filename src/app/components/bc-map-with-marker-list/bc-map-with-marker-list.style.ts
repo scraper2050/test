@@ -1,9 +1,15 @@
 import { Theme } from '@material-ui/core/styles';
 
 export default (theme: Theme): any => ({
-  'marker': {
+/*  'marker': {
     'color': '#ee0000',
-    'fontSize': '36px'
+    'fontSize': '36px',
+    'zIndex': '1',
+  },
+  'markerTop': {
+    'color': '#ee0000',
+    'fontSize': '36px',
+    'zIndex': '10',
   },
   'markerPopup': {
     'position': 'relative',
@@ -13,7 +19,6 @@ export default (theme: Theme): any => ({
     'height': 'auto',
     'backgroundColor': '#fff',
   },
-
   'uploadImageNoData': {
     'alignSelf': 'center',
     'height': '140px',
@@ -24,5 +29,5 @@ export default (theme: Theme): any => ({
     'background-size': '100% 100%',
     'position': 'relative',
     'marginTop': '-5rem',
-  },
+  },*/
 });

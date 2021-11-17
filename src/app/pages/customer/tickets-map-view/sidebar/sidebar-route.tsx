@@ -95,6 +95,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
   const [routes, setRoutes] = useState<JobRoute[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  //const [currentDate, setCurrentDate] = useState<any>(new Date('2021-10-28'));
   const [currentDate, setCurrentDate] = useState<any>(new Date());
   const [paginatedRoutes, setPaginatedRoutes] = useState<JobRoute[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -140,8 +141,8 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
 
   const getRoute = async () => {
     setIsLoading(true);
-    const dateString = currentDate.toISOString().split('T');
-    const response: any = await getAllRoutes(dateString[0]);
+    const dateString = moment(currentDate).utc().format('YYYY-MM-DD');
+    const response: any = await getAllRoutes(dateString);
 
     const { data } = response;
     if (data.status) {
@@ -176,8 +177,8 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
       setSelectedIndex( -1);
       dispatchRoutes(paginatedRoutes);
     } else {
-      setSelectedIndex( index);
-      dispatchRoutes(paginatedRoutes.slice(index, 1))
+      setSelectedIndex(index);
+      dispatchRoutes([paginatedRoutes[index]]);
     }
   };
 
@@ -254,21 +255,20 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
             lg={12} >
             <div className={'ticketsFilterContainer'}>
               <span
-                className={"datepicker_wrapper datepicker_wrapper_map"}
+                className={"datepicker_wrapper"}
               >
-                <button className="prev_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickMinusDay()}
-                  >
+                <button className="prev_btn" disabled={isLoading} onClick={() => handleButtonClickMinusDay()}>
+                  <i className="material-icons" >
                     keyboard_arrow_left
                   </i>
                 </button>
+                <IconCalendar className="calendar_icon" />
                 <DatePicker
                   autoOk
+                  disabled={isLoading}
                   className={classes.picker}
                   disablePast={false}
-                  format={"d MMM yyyy"}
+                  format={"MMM d, yyyy"}
                   id={`datepicker-${"scheduleDate"}`}
                   inputProps={{
                     name: "scheduleDate",
@@ -278,14 +278,11 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                   name={"scheduleDate"}
                   onChange={(e: any) => dateChangeHandler(e)}
                   required={false}
-                  value={formatDateYMD(currentDate)}
+                  value={currentDate}
                   variant={"inline"}
                 />
-                <button className="next_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickPlusDay()}
-                  >
+                <button className="next_btn" disabled={isLoading} onClick={() => handleButtonClickPlusDay()}>
+                  <i className="material-icons">
                     keyboard_arrow_right
                   </i>
                 </button>
@@ -320,7 +317,7 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                       const {technician: {profile}} = route;
 
                       return (<div
-                        className={'route_item_div'}
+                        className={`route_item_div ${i === selectedIndex ? 'ticketItemDiv_active' : ''}`}
                         id={`openTodayJob${i}`}
                         key={i}
                         onClick={() => handleJobCardClick(route, i)}>
@@ -340,16 +337,9 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                               {profile.displayName}
                             </h3>
                           </div>
-                          <div className={'location_desc_container'}>
-                            <div className={'card_location'}>
-                              <h4>
-
-                              </h4>
-                            </div>
-                          </div>
                         </div>
                         <div className={'ticket_marker'}>
-                          <RoomIcon style={{color: i === selectedIndex ? '#00aaff' : undefined}}/>
+                          <RoomIcon/>
                         </div>
                       </div>)
                     })

@@ -1,7 +1,14 @@
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './ticket-map-view.style';
-import { Grid, withStyles } from '@material-ui/core';
+import {
+  Dialog,
+  DialogTitle,
+  IconButton, List, ListItem, ListItemText,
+  withStyles,
+  withTheme
+} from '@material-ui/core';
+import { Info } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 import './ticket-map-view.scss';
 import MapViewTicketsScreen from './map-view/map-view-tickets';
@@ -12,65 +19,25 @@ import { getAllJobsAPI } from 'api/job.api';
 import { useDispatch } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import styled from 'styled-components';
-import { JobTypes } from 'actions/job/job.types';
 
-import iconCancelled from 'assets/img/icons/map/icon-cancelled.svg';
-import iconCompleted from 'assets/img/icons/map/icon-completed.svg';
-import iconPending from 'assets/img/icons/map/icon-pending.svg';
-import iconStarted from 'assets/img/icons/map/icon-started.svg';
+import CloseIcon from "@material-ui/icons/Close";
+import {STATUSES} from "../../../../helpers/contants";
 
-const StatusContainer = styled.div`
+
+const StatusContainer = withTheme(styled('div')`
 position: absolute;
 top: 20px;
 right: 30px;
 display: flex;
-> div {
-  position: relative;
-  display: flex;
-  margin-right: 30px;
-  font-size: 12px;
-  text-transform: capitalize;
-  align-items: center;
-  letter-spacing: .6px;
-  &:last-child {
-    margin-right: 0;
-  }
+button {
+    background-color: transparent;
+    border: 0;
+    color: ${(props) => props.theme.palette.primary.main};
+    cursor: pointer;
 }
-.job-status {
-    height: 20px;
-    width: 20px;
-    border-radius: 15px;
-    margin-right: 10px;
-    &_0 {
-      background-image: url(${iconPending});
-
-      & + span {
-        color: rgba(130, 130, 130, 1);
-      }
-
-    }
-    &_1 {
-      background-image: url(${iconStarted});
-
-      & + span {
-        color: rgba(0, 170, 255, 1);
-      }
-    }
-    &_2 {
-      background-image: url(${iconCompleted});
-
-      & + span {
-        color: rgba(80, 174, 85, 1);
-      }
-    }
-    &_3 {
-      background-image: url(${iconCancelled});
-
-      & + span {
-        color: rgba(245, 0, 87, 1);
-      }
-    }
-  }
+svg {
+  color: ${(props) => props.theme.palette.primary.main};
+}
 
   @media(max-width: 1200px) {
     position: relative;
@@ -80,24 +47,13 @@ display: flex;
     right: 0;
     justify-content: flex-end;
   }
-`;
-
-function renderLegend() {
-  return <StatusContainer>
-    {JobTypes.map((type, index) => <div key={index}>
-      <div
-        className={`job-status job-status_${index}`}
-      />
-      <span>{type}</span>
-    </div>)}
-  </StatusContainer>;
-}
+`);
 
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
-
   const [curTab, setCurTab] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [showLegendDialog, setShowLegendDialog] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -108,6 +64,32 @@ function TicketsWithMapView({ classes }: any) {
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
+
+  const renderLegend = () => {
+    return <Dialog
+      classes= {{paper: classes.dialog}}
+      onClose={() => setShowLegendDialog(false)}
+      aria-labelledby="simple-dialog-title"
+      open={showLegendDialog}>
+      <DialogTitle classes={{root: classes.dialogTitle}} id="simple-dialog-title">
+        Legend Information
+        <IconButton classes={{root: classes.dialogClose}} onClick={() => setShowLegendDialog(false)}>
+          <CloseIcon style={{color: '#828282'}}/>
+        </IconButton>
+      </DialogTitle>
+      <List>
+        {STATUSES.map((status) => {
+          const StatusIcon = status.icon;
+          return (
+            <ListItem key={status.title}>
+              <StatusIcon />
+              <ListItemText style={{color: status.color, marginLeft: 15}} primary={status.title}/>
+            </ListItem>
+          )
+        })}
+      </List>
+    </Dialog>
+  }
 
   return (
     <div className={classes.pageMainContainer}>
@@ -145,7 +127,10 @@ function TicketsWithMapView({ classes }: any) {
                 },
               ]}
             />
-            { renderLegend() }
+            <StatusContainer>
+              <button onClick={() => setShowLegendDialog(true)}>Legend</button>
+              <Info fontSize={'small'}/>
+            </StatusContainer>
             <SwipeableViews index={curTab}>
               <div
                 className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
@@ -175,6 +160,7 @@ function TicketsWithMapView({ classes }: any) {
           </div>
         }
       </div>
+      {renderLegend()}
     </div>
   );
 }
