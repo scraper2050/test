@@ -24,12 +24,19 @@ import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites } from 'actions/job-site/job-site.action';
 import '../../../scss/index.scss';
-import { clearJobLocationStore, getJobLocationsAction } from 'actions/job-location/job-location.action';
+import {
+  clearJobLocationStore,
+  getJobLocationsAction,
+  setJobLocations
+} from 'actions/job-location/job-location.action';
 import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { getContacts } from 'api/contacts.api';
 import { convertMilitaryTime, formatDate, formatToMilitaryTime } from 'helpers/format';
-import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
+import {
+  error as SnackBarError,
+  success
+} from 'actions/snackbar/snackbar.action';
 import './bc-service-ticket.scss';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
@@ -94,7 +101,7 @@ function BCServiceTicketModal({
       };
 
       await dispatch(getContacts(data));
-      await dispatch(getJobLocationsAction({customerId}));
+      await dispatch(getJobLocationsAction({customerId, isActive: true}));
     }
 
     await setFieldValue(fieldName, customerId);
@@ -329,7 +336,7 @@ function BCServiceTicketModal({
     dispatch(getEmployeesForJobAction());
 
     if (ticket.customer?._id !== '') {
-      dispatch(getJobLocationsAction({customerId: ticket.customer?._id, isActive: true}));
+      dispatch(getJobLocationsAction({customerId: ticket.customer?._id}));
 
       const data: any = {
         'type': 'Customer',
@@ -340,14 +347,18 @@ function BCServiceTicketModal({
   }, []);
 
   useEffect(() => {
-    if (ticket.customer?._id !== '') {
-      if (jobLocations.length !== 0) {
-        setJobLocationValue(jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]);
-
-        if (ticket.jobLocation !== '' && ticket.jobLocation !== undefined) {
-          dispatch(getJobSites({ 'customerId': ticket.customer?._id,
-            'locationId': ticket.jobLocation }));
+    if (ticket.customer?._id) {
+      const jobLocation = jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0];
+      if (jobLocation) {
+        setJobLocationValue(jobLocation);
+        if (jobLocation.isActive) {
+          dispatch(getJobSites({
+            'customerId': ticket.customer._id,
+            'locationId': ticket.jobLocation
+          }));
         }
+        const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation._id);
+        if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
       }
     }
   }, [jobLocations]);
@@ -523,6 +534,7 @@ function BCServiceTicketModal({
                     defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
                     disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
                     getOptionLabel={option => option.name ? option.name : ''}
+                    getOptionDisabled={(option) => !option.isActive}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
                     options={jobLocations && jobLocations.length !== 0 ? jobLocations.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
