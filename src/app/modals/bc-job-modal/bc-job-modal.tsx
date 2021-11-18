@@ -53,7 +53,7 @@ import {
 } from 'actions/job-site/job-site.action';
 import {
   getJobLocationsAction,
-  loadingJobLocations,
+  setJobLocations,
 } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import '../../../scss/job-poup.scss';
@@ -61,13 +61,12 @@ import { getOpenServiceTickets } from 'api/service-tickets.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   error,
-  error as SnackBarError,
   success,
 } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { stringSortCaseInsensitive } from '../../../helpers/sort';
 import moment from 'moment';
 
@@ -330,7 +329,7 @@ function BCJobModal({
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
     dispatch(getAllJobTypesAPI());
-    dispatch(getJobLocationsAction(customerId));
+    dispatch(getJobLocationsAction({customerId: customerId}));
 
     const data: any = {
       type: 'Customer',
@@ -399,43 +398,23 @@ function BCJobModal({
   }, [jobTypes]);
 
   useEffect(() => {
-    if (ticket.customer?._id !== '') {
-      if (jobLocations.length !== 0) {
-        if (
-          ticket.jobLocation !== '' &&
-          ticket.jobLocation !== undefined &&
-          ticket.jobLocation
-        ) {
-          setJobLocationValue(
-            jobLocations.filter(
-              (jobLocation: any) => jobLocation._id === ticket.jobLocation
-            )[0]
-          );
+    if (ticket.customer || ticket.customer._id) {
+      const jobLocation = jobLocations.filter(
+        (jobLocation: any) => jobLocation._id === (ticket.jobLocation ||  job.jobLocation?._id)
+      )[0];
+
+      if (jobLocation) {
+        setJobLocationValue(jobLocation);
+        if (jobLocation.isActive) {
           dispatch(
             getJobSites({
-              customerId:
-                ticket.customer?._id !== undefined
-                  ? ticket.customer?._id
-                  : ticket.customer,
-              locationId: ticket.jobLocation,
+              customerId: ticket.customer._id || ticket.customer,
+              locationId: jobLocation._id,
             })
-          );
-        } else if (job.jobLocation) {
-          dispatch(
-            getJobSites({
-              customerId:
-                ticket.customer?._id !== undefined
-                  ? ticket.customer?._id
-                  : ticket.customer,
-              locationId: job.jobLocation._id,
-            })
-          );
-          setJobLocationValue(
-            jobLocations.filter(
-              (jobLocation: any) => jobLocation._id === job.jobLocation._id
-            )[0]
           );
         }
+        const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation._id);
+        if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
       }
     }
   }, [jobLocations]);
@@ -738,7 +717,7 @@ function BCJobModal({
         request(requestObj)
           .then(async (response: any) => {
             if (response.status === 0) {
-              dispatch(SnackBarError(response.message));
+              dispatch(error(response.message));
               return;
             }
             /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
@@ -1335,6 +1314,7 @@ function BCJobModal({
                     getOptionLabel={(option) =>
                       option.name ? option.name : ''
                     }
+                    getOptionDisabled={(option) => !option.isActive}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) =>
                       handleLocationChange(
