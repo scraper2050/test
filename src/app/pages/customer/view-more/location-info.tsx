@@ -21,7 +21,7 @@ function LocationInfoPage({ classes }: any) {
     const lat = baseObj.location.coordinates[1];
     const long = baseObj.location.coordinates[0];
 
-    const {street = '', city = '', state = '', zipcode = ''} = baseObj.address;
+    const {street = '', city = '', state = '', zipcode = ''} = baseObj.address || {};
     const address =street;
     const address1 =`${city}${city && state ? ', ' : ''}${state} ${zipcode}`;
 
