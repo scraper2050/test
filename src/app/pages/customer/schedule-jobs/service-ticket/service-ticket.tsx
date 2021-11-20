@@ -1,6 +1,9 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import InfoIcon from '@material-ui/icons/Info';
-import { getAllServiceTicketAPI } from 'api/service-tickets.api';
+import {
+  getAllServiceTicketAPI,
+  getServiceTicketDetail
+} from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
 import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
@@ -15,6 +18,7 @@ import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location
 import "../../../../../scss/popup.scss";
 import EditIcon from '@material-ui/icons/Edit';
 import {CSButtonSmall, useCustomStyles} from "../../../../../helpers/custom";
+import {error} from "../../../../../actions/snackbar/snackbar.action";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -49,7 +53,6 @@ function ServiceTicket({ classes }: any) {
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
         'maxHeight': '754px',
-        'height': '100%'
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -74,9 +77,9 @@ function ServiceTicket({ classes }: any) {
     </>
   }
 
-  const openDetailTicketModal = (ticket: any) => {
+  const openDetailTicketModal = async (ticket: any) => {
 
-    const reqObj = {
+/*    const reqObj = {
       customerId: ticket.customer?._id,
       locationId: ticket.jobLocation
     }
@@ -89,23 +92,29 @@ function ServiceTicket({ classes }: any) {
       dispatch(clearJobSiteStore());
     }
     dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'detail': true,
+    ticket.updateFlag = true;*/
+    const {serviceTicket, status, message} = await getServiceTicketDetail(ticket._id);
+    if (status === 1) {
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'Service Ticket Details',
+          'removeFooter': false,
+          'job': serviceTicket,
+          'isTicket': true,
+          'className': 'serviceTicketTitle',
+          //'maxHeight': '754px',
+          'detail': true,
 
-      },
-      'type': modalTypes.EDIT_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+        },
+        //'type': modalTypes.EDIT_TICKET_MODAL
+        'type': modalTypes.VIEW_JOB_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      dispatch(error(message));
+    }
   };
 
 
