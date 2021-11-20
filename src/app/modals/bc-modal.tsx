@@ -75,7 +75,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'md'
+          'maxWidth': 'lg'
         });
         setComponent(<BCServiceTicketModal error={data.error} />);
         break;
@@ -84,7 +84,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': data.detail ? 'lg' : 'md'
+          'maxWidth': 'lg'
         });
         setComponent(<BCServiceTicketModal
           detail={data.detail}

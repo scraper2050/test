@@ -1,19 +1,16 @@
-import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import React, {useEffect, useRef, useState} from 'react';
 import { formatDateYMD } from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
-import styles from './bc-service-ticket-modal.styles';
+import styles from './bc-new-service-ticket-modal.styles';
 import { useFormik } from 'formik';
 import {
+  Button,
   Chip,
   DialogActions,
   DialogContent,
-  Fab,
-  FormGroup,
   Grid,
-  InputLabel,
   TextField,
   Typography,
   withStyles
@@ -23,7 +20,7 @@ import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api'
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites } from 'actions/job-site/job-site.action';
-import '../../../scss/index.scss';
+import '../../../scss/new-modals.scss';
 import {
   clearJobLocationStore,
   getJobLocationsAction,
@@ -37,13 +34,12 @@ import {
   error as SnackBarError,
   success
 } from 'actions/snackbar/snackbar.action';
-import './bc-service-ticket.scss';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
-import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { modalTypes } from '../../../constants';
 import {refreshJobs} from "../../../actions/job/job.action";
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
+import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
+import {JobImage} from "../../models/job";
 
 
 function BCServiceTicketModal({
@@ -61,7 +57,7 @@ function BCServiceTicketModal({
     'dueDate': new Date(),
     'customerContactId': '',
     'customerPO': '',
-    'image': '',
+    'images': [],
     'postCode': ''
   },
   error = {
@@ -77,7 +73,7 @@ function BCServiceTicketModal({
   const [contactValue, setContactValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
-  const [thumb, setThumb] = useState<any>(null);
+  const [thumbs, setThumbs] = useState<any[]>([]);
 
 
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
@@ -207,7 +203,7 @@ function BCServiceTicketModal({
       'updateFlag': ticket.updateFlag,
       'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : '',
-      'image': ticket.image !== undefined ? ticket.image : ''
+      'images': ticket.images !== undefined ? ticket.images : []
     },
     'onSubmit': (values, { setSubmitting }) => {
       values.jobTypes = JSON.stringify(values.jobTypes);
@@ -380,18 +376,45 @@ function BCServiceTicketModal({
   }, [jobSites]);
 
   useEffect(() => {
-    const reader = new FileReader();
-    if (FormikValues.image && FormikValues.image !== '' && FormikValues.image !== undefined) {
-      if (typeof FormikValues.image === 'string') {
-        setThumb(FormikValues.image);
-      } else {
-        reader.onloadend = () => {
-          setThumb(reader.result);
-        };
-        reader.readAsDataURL(FormikValues.image);
+    console.log(FormikValues.images)
+    if (FormikValues.images) {
+      const images: any[] = [];
+      const prs: any[] = [];
+
+      FormikValues.images.forEach((image: any) => {
+        if (image.imageUrl) {
+          images.push(image.imageUrl);
+        } else {
+          if (image.type.match('image.*')) prs.push(readImage(image))
+        }
+      });
+      setThumbs(images);
+      if (prs.length) {
+        Promise.all(prs).then(images => {
+          const temp = [...thumbs];
+          temp.push(...images);
+          setThumbs(temp);
+        });
       }
     }
-  }, [FormikValues.image]);
+  }, [FormikValues.images]);
+
+  const readImage = (image: File) => {
+    return new Promise(function(resolve,reject){
+      let fr = new FileReader();
+
+      fr.onload = function(){
+        resolve(fr.result);
+      };
+
+      fr.onerror = function(){
+        reject(fr);
+      };
+
+      fr.readAsDataURL(image);
+    });
+  }
+
 
   const formatSchedulingTime = (time: string) => {
     const timeAr = time.split('T');
@@ -402,61 +425,6 @@ function BCServiceTicketModal({
     return { hours,
       minutes };
   };
-
-  const columns: any = [
-    {
-      'Header': 'User',
-      'id': 'user',
-      'sortable': true,
-      'Cell'({ row }: any) {
-        const user = employeesForJob.filter((employee: any) => employee._id === row.original.user)[0];
-        const { displayName } = user?.profile;
-        return (
-          <div>
-            {displayName}
-          </div>
-        );
-      },
-      'width': 70
-    },
-    {
-      'Header': 'Date',
-      'id': 'date',
-      'sortable': true,
-      'Cell'({ row }: any) {
-        const date = formatDate(row.original.date);
-        let time;
-        const formatedTime = formatSchedulingTime(row.original.date);
-        time = convertMilitaryTime(`${formatedTime.hours}:${formatedTime.minutes}`);
-        return (
-          <div>
-            <i>
-              {' '}
-              {`${date} ${time}`}
-            </i>
-          </div>
-        );
-      },
-      'width': 80
-    },
-    {
-      'Header': 'Actions',
-      'id': 'action',
-      'sortable': true,
-      'Cell'({ row }: any) {
-        const splittedActions = row.original.action.split('|');
-        const actions = splittedActions.filter((action: any) => action !== '');
-        return (
-          actions.length === 0 ? <div />
-            : <ul>
-              {actions.map((action: any) => <li>
-                {action}
-              </li>)}
-            </ul>
-        );
-      }
-    }
-  ];
 
   const getJobType = () => {
     if (jobTypes?.length !== 0) {
@@ -482,356 +450,177 @@ function BCServiceTicketModal({
   }
   return (
     <DataContainer>
-      <form
-        className={`ticket_form__wrapper ${classes.formWrapper}`}
-        onSubmit={FormikSubmit}>
-        <DialogContent classes={{ 'root': classes.dialogContent }}>
-          <Grid
-            container
-            spacing={5}>
+      <form onSubmit={FormikSubmit}>
+        <Grid container className={classes.modalPreview} justify={'space-between'} spacing={4}>
+          <Grid item xs={4}>
+            <Typography variant={'caption'} className={classes.previewCaption}>customer</Typography>
+                <Autocomplete
+                  className={detail ? 'detail-only' : ''}
+                  defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
+                  disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
+                  getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
+                  id={'tags-standard'}
+                  onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
+                  options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
+                  renderInput={params =>
+                    <TextField
+                      required
+                      {...params}
+                      variant={'standard'}
+                    />
+                  }
+                />
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant={'caption'} className={classes.previewCaption}>due date</Typography>
+            <BCDateTimePicker
+              className={'serviceTicketLabel'}
+              disabled={detail}
+              disablePast
+              handleChange={dateChangeHandler}
+              name={'dueDate'}
+              placeholder={'Date'}
+              value={FormikValues.dueDate}
+            />
+          </Grid>
+          <Grid item xs={6} />
+        </Grid>
 
-            <Grid
-              item
-              sm={detail ? 3 : 6}
-              xs={12}>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
-                    disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
-                    getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
-                    options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
-                    renderInput={params =>
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>
-                            {'Customer '}
-                          </strong>
-                          {!detail && <Typography
-                            color={'error'}
-                            display={'inline'}
-                            style={{ 'lineHeight': '1' }}>
-                            {'*'}
-                          </Typography>}
-                        </InputLabel>
-                        <TextField
-                          required
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    }
-                  />
-                </div>
-              </FormGroup>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
-                    disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
-                    getOptionLabel={option => option.name ? option.name : ''}
-                    getOptionDisabled={(option) => !option.isActive}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
-                    options={jobLocations && jobLocations.length !== 0 ? jobLocations.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
-                    renderInput={params =>
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>
-                            {'Job Location '}
-                          </strong>
-                        </InputLabel>
-                        <TextField
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    }
-                    value={jobLocationValue}
-                  />
-                </div>
-              </FormGroup>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail}
-                    getOptionLabel={option => option.name ? option.name : ''}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
-                    options={jobSites && jobSites.length !== 0 ? jobSites.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
-                    renderInput={params =>
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>
-                            {'Job Site '}
-                          </strong>
-                        </InputLabel>
-                        <TextField
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    }
-                    value={jobSiteValue}
-                  />
-                </div>
-              </FormGroup>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    defaultValue={defaultJobTypeValue}
-                    disabled={detail}
-                    getOptionLabel={option => {
-                      const {title, description} = option;
-                      return `${title}${description ? ' - '+description: ''}`
-                    }}
-                    id={'tags-standard'}
-                    multiple
-                    onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
-                    options={jobTypes && jobTypes.length !== 0 ? stringSortCaseInsensitive(jobTypes, 'title') : []}
-                    renderInput={params =>
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>
-                            {'Job Type '}
-                          </strong>
-                          <Typography
-                            color={'error'}
-                            display={'inline'}
-                            style={{ 'lineHeight': '1' }}>
-                            {'*'}
-                          </Typography>
-                        </InputLabel>
-                        <TextField
-                          {...params}
-                          inputRef={jobTypesInput}
-                          variant={'standard'}
-                        />
-                      </>
-                    }
-                  />
-                </div>
-              </FormGroup>
-              <div className={detail ? 'input-detail-only' : ''}>
+        <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
+          <Grid item xs>
+            <Typography variant={'caption'} className={classes.previewCaption}>job location</Typography>
+            <Autocomplete
+              defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
+              disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
+              getOptionLabel={option => option.name ? option.name : ''}
+              getOptionDisabled={(option) => !option.isActive}
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
+              options={jobLocations && jobLocations.length !== 0 ? jobLocations.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+              renderInput={params =>
+                <TextField
+                  {...params}
+                  variant={'outlined'}
+                />
+              }
+              value={jobLocationValue}
+            />
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={classes.previewCaption}>job site</Typography>
+            <Autocomplete
+              className={detail ? 'detail-only' : ''}
+              disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail}
+              getOptionLabel={option => option.name ? option.name : ''}
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
+              options={jobSites && jobSites.length !== 0 ? jobSites.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+              renderInput={params =>
+                <TextField
+                  {...params}
+                  variant={'outlined'}
+                />
+              }
+              value={jobSiteValue}
+            />
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={classes.previewCaption}>job type</Typography>
+            <Autocomplete
+              className={detail ? 'detail-only' : ''}
+              defaultValue={defaultJobTypeValue}
+              disabled={detail}
+              getOptionLabel={option => {
+                const {title, description} = option;
+                return `${title}${description ? ' - '+description: ''}`
+              }}
+              id={'tags-standard'}
+              multiple
+              onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
+              options={jobTypes && jobTypes.length !== 0 ? stringSortCaseInsensitive(jobTypes, 'title') : []}
+              renderInput={params =>
+                <TextField
+                  {...params}
+                  inputRef={jobTypesInput}
+                  variant={'outlined'}
+                />
+              }
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
+          <Grid container xs={8} spacing={4}>
+            <Grid container xs={12} spacing={4}>
+              <Grid item xs>
+                <Typography variant={'caption'} className={classes.previewCaption}>contact associated</Typography>
+                <Autocomplete
+                  disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
+                  getOptionLabel={option => option.name ? option.name : ''}
+                  id={'tags-standard'}
+                  onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
+                  options={contacts && contacts.length !== 0 ? contacts.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+                  renderInput={params =>
+                    <TextField
+                      {...params}
+                      variant={'outlined'}
+                    />
+                  }
+                  renderTags={(tagValue, getTagProps) =>
+                    tagValue.map((option, index) => {
+                      return <Chip
+                        label={`${option.title}${option.description ? ' - ' + option.description : ''}`}
+                        {...getTagProps({index})}
+                        // disabled={disabledChips.includes(option._id) || !job._id}
+                      />;
+                    })
+                  }
+                  value={contactValue}
+                />
+              </Grid>
+              <Grid item xs>
+                <Typography variant={'caption'} className={classes.previewCaption}>customer PO</Typography>
+                <BCInput
+                  disabled={detail}
+                  handleChange={formikChange}
+                  name={'customerPO'}
+                  value={FormikValues.customerPO}
+                />
+              </Grid>
+            </Grid>
+            <Grid container xs={12}>
+              <Grid item xs>
+                <Typography variant={'caption'} className={classes.previewCaption}>notes / special instructions</Typography>
                 <BCInput
                   className={'serviceTicketLabel'}
                   disabled={detail}
                   handleChange={formikChange}
-                  label={'Notes / Special Instructions'}
                   multiline
                   name={'note'}
                   value={FormikValues.note}
                 />
-              </div>
-              <Label>
-                {notesLabelState ? ' Notes are required while updating the ticket.' : null}
-              </Label>
-              <div className={detail ? 'input-detail-only' : ''}>
-                <BCDateTimePicker
-                  className={'serviceTicketLabel'}
-                  disabled={detail}
-                  disablePast
-                  handleChange={dateChangeHandler}
-                  label={'Due Date'}
-                  name={'dueDate'}
-                  placeholder={'Date'}
-                  value={FormikValues.dueDate}
-                />
-              </div>
-            </Grid>
-            <Grid
-              item
-              sm={detail ? 3 : 6}
-              xs={12}>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
-                    getOptionLabel={option => option.name ? option.name : ''}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
-                    options={contacts && contacts.length !== 0 ? contacts.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
-                    renderInput={params =>
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>
-                            {'Contact Associated'}
-                          </strong>
-                        </InputLabel>
-                        <TextField
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    }
-                    renderTags={(tagValue, getTagProps) =>
-                      tagValue.map((option, index) => {
-                        return <Chip
-                          label={`${option.title}${option.description ? ' - ' + option.description : ''}`}
-                          {...getTagProps({index})}
-                          // disabled={disabledChips.includes(option._id) || !job._id}
-                        />;
-                      })
-                    }
-                    value={contactValue}
-                  />
-                </div>
-              </FormGroup>
-              <FormGroup>
-                <InputLabel className={classes.label}>
-                  <strong>
-                    {'Customer PO'}
-                  </strong>
-                </InputLabel>
-
-                <div className={detail ? 'input-detail-only' : ''}>
-                  <BCInput
-                    className={'serviceTicketLabel'}
-                    disabled={detail}
-                    handleChange={formikChange}
-                    name={'customerPO'}
-                    placeholder={'Customer PO / Sales Order #'}
-                    value={FormikValues.customerPO}
-                  />
-                </div>
-              </FormGroup>
-              {
-                !detail
-                  ? <FormGroup>
-                    <InputLabel className={classes.label}>
-                      <strong>
-                        {'Add Photo'}
-                      </strong>
-                    </InputLabel>
-                    <BCInput
-                      default
-                      handleChange={(event: any) => setFieldValue('image', event.currentTarget.files[0])}
-                      name={'image'}
-                      type={'file'}
-                    />
-                  </FormGroup>
-                  : <div style={{ 'marginTop': '2rem' }} />
-              }
-              <Grid
-                alignItems={'center'}
-                container
-                direction={'column'}
-                justify={'center'}
-                spacing={3}>
-                <div
-                  className={classes.uploadImageNoData}
-                  style={{
-                    'backgroundImage': `url(${thumb ? thumb : ''})`,
-                    'border': `${thumb ? '5px solid #00aaff' : '1px dashed #000000'}`,
-                    'backgroundSize': 'cover',
-                    'backgroundPosition': 'center',
-                    'backgroundRepeat': 'no-repeat'
-                  }}
-                />
+                <Label>
+                  {notesLabelState ? ' Notes are required while updating the ticket.' : null}
+                </Label>
               </Grid>
             </Grid>
-            {
-              detail &&
-                <Grid
-                  item
-                  sm={6}
-                  xs={12} >
-
-                  <div className={`${classes.formGroup} search_form_wrapper`}>
-                    <InputLabel className={classes.label}>
-                      <strong>
-                        {'Ticket History'}
-                      </strong>
-                    </InputLabel>
-
-                    <div className={classes.historyContainer}>
-                      {
-                        loading ? <BCCircularLoader />
-                          : employeesForJob.length !== 0 && ticket.track &&
-                          <BCTableContainer
-                            className={classes.tableContainer}
-                            columns={columns}
-                            initialMsg={'No history yet'}
-                            isDefault
-                            isLoading={false}
-                            onRowClick={() => { }}
-                            pageSize={ticket.track.length}
-                            pagination={false}
-                            stickyHeader
-                            tableData={ticket.track}
-                          />
-                      }
-                    </div>
-                  </div>
-                </Grid>
-            }
           </Grid>
-        </DialogContent>
-        <DialogActions classes={{
-          'root': classes.dialogActions
-        }}>
-          {
-            !detail
-              ? <>
-                <Fab
-                  aria-label={'create-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  className={'serviceTicketBtn'}
-                  disabled={isSubmitting || isLoadingDatas}
-                  onClick={() => closeModal()}
-                  variant={'extended'}>
-                  {'Close'}
-                </Fab>
-                {
-                  ticket._id &&
-                    <Fab
-                      aria-label={'create-job'}
-                      classes={{
-                        'root': classes.deleteButton
-                      }}
+          <Grid item container xs={4} style={{paddingTop: 0}}>
+            <BCDragAndDrop images={thumbs} onDrop={(files) => setFieldValue('images', Array.from(files))} />
+          </Grid>
+        </Grid>
 
-                      disabled={isSubmitting || isLoadingDatas}
-                      onClick={() => openCancelTicketModal(ticket)}
-                      style={{
-                      }}
-                      variant={'extended'}>
-                      {'Cancel Ticket'}
-                    </Fab>
-                }
-                <Fab
-                  aria-label={'create-job'}
-                  classes={{
-                    'root': classes.fabRoot
-                  }}
-                  color={'primary'}
+        <DialogActions>
+          <Button disabled={isSubmitting || isLoadingDatas}
+                  disableElevation={true}
+                  onClick={() => closeModal()}
+                  variant={'outlined'}>Close</Button>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button color={'primary'}
+                  disableElevation={true}
                   disabled={isSubmitting || isLoadingDatas}
                   type={'submit'}
-                  variant={'extended'}>
-                  {ticket._id
-                    ? 'Save Ticket'
-                    : 'Generate Ticket'}
-                </Fab>
-              </>
-              : <Fab
-                aria-label={'create-job'}
-                classes={{
-                  'root': classes.fabRoot
-                }}
-                color={'primary'}
-                onClick={() => closeModal()}
-                variant={'extended'}>
-                {'Close'}
-              </Fab>
-          }
+                  variant={'contained'}>Submit</Button>
         </DialogActions>
       </form>
     </DataContainer >
@@ -851,33 +640,29 @@ const ErrorMessage = styled.div`
 
 
 const DataContainer = styled.div`
+  *:not(.MuiGrid-container) > .MuiGrid-container {
+    width: 100%;
+    padding: 20px 40px;
+  }
+  .MuiGrid-spacing-xs-4 > .MuiGrid-spacing-xs-4 {
+    margin: -16px 0;
+  }
+  .MuiGrid-grid-xs-true {
+    padding: 16px;
+  }
+  .MuiOutlinedInput-root {
+    border-radius: 8px;
+    padding: 2px;
+  }
 
-  margin: auto 0;
+  .MuiOutlinedInput-input {
+    padding: 9.5px 4px;
+  }
 
-  .MuiFormLabel-root {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: ${CONSTANTS.PRIMARY_DARK};
-    /* margin-bottom: 6px; */
-  }
-  .MuiFormControl-marginNormal {
-    margin-top: .5rem !important;
-    margin-bottom: 1rem !important;
-    /* height: 20px !important; */
-  }
-  .MuiInputBase-input {
-    color: #383838;
-    font-size: 16px;
-    padding: 12px 14px;
-  }
   .required > label:after {
     margin-left: 3px;
     content: "*";
     color: red;
-  }
-  .save-customer-button {
-    color: ${CONSTANTS.PRIMARY_WHITE};
   }
 `;
 

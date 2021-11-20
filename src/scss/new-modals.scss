@@ -1,0 +1,44 @@
+.MuiPaper-root {
+  .MuiDialogTitle-root {
+    background-color: #EAECF3;
+    padding: 25px 15px 8px;
+    h6 {
+      text-align: center;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 30px;
+      line-height: 35px;
+      color: #00aaff;
+    }
+  }
+  .MuiDialogContent-root {
+    overflow: initial;
+  }
+  .MuiDialogActions-root {
+    border-top: 1px solid #bdbdbd;
+    text-align: right;
+    padding: 25px  56px;
+
+    .MuiButton-root {
+      border-radius: 8px;
+    }
+
+    .MuiButton-label {
+      text-transform: none;
+    }
+
+    .MuiButton-containedPrimary > .MuiButton-label {
+      color: white;
+    }
+  }
+}
+#dueDate {
+  text-align: right;
+}
+@media only screen and (max-width: 767px) {
+  .MuiPaper-root {
+    .MuiDialogActions-root {
+      align-items: baseline;
+    }
+  }
+}
