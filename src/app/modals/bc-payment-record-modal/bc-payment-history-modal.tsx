@@ -100,7 +100,7 @@ function BcPaymentHistoryModal({
   const customerPO = invoice.customerPO ? invoice.customerPO : '\u00A0';
 
   return (
-    <DataContainer >
+    <DataContainer className={'new-modal-design'}>
       {loading ?
         <BCCircularLoader heightValue={'60vh'}/> :
         <>
@@ -251,13 +251,13 @@ const DataContainer = styled.div`
   }
   td:first-child {
     padding-left: ${TABLE_PADDING}px;
-  }  
+  }
   th:first-child {
     padding-left: ${TABLE_PADDING}px;
-  }  
+  }
   td:last-child {
     padding-right: ${TABLE_PADDING}px;
-  }  
+  }
   th:last-child {
     padding-right: ${TABLE_PADDING}px;
   }

@@ -1,4 +1,11 @@
-import { Button, createStyles, makeStyles, withStyles, Chip } from "@material-ui/core";
+import {
+  Button,
+  createStyles,
+  makeStyles,
+  withStyles,
+  Chip,
+  IconButton
+} from "@material-ui/core";
 import { Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../constants";
 
@@ -54,6 +61,7 @@ export const CSButtonSmall = withStyles({
     fontSize: 13,
     padding: '5px 15px',
     //lineHeight: 1.5,
+    borderRadius: '8px',
     minWidth: '134px',
     height: '30px',
     margin: '0 5px 0 0',
@@ -73,6 +81,31 @@ export const CSButtonSmall = withStyles({
     },
   },
 })(Button);
+
+export const CSIconButton = withStyles({
+  root: {
+    textTransform: 'none',
+    fontSize: 13,
+    padding: '5px 10px',
+    borderRadius: '8px',
+    height: '30px',
+    margin: '0 15px 0 0',
+    color: CONSTANTS.PRIMARY_WHITE,
+    backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    '&:hover': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:active': {
+      backgroundColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    '&:focus': {
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+    },
+  },
+})(IconButton);
 
 export const CSChip = withStyles({
   root: {

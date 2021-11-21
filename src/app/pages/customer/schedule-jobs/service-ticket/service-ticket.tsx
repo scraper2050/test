@@ -17,7 +17,11 @@ import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import "../../../../../scss/popup.scss";
 import EditIcon from '@material-ui/icons/Edit';
-import {CSButtonSmall, useCustomStyles} from "../../../../../helpers/custom";
+import {
+  CSButtonSmall,
+  CSIconButton,
+  useCustomStyles
+} from "../../../../../helpers/custom";
 import {error} from "../../../../../actions/snackbar/snackbar.action";
 
 function ServiceTicket({ classes }: any) {
@@ -194,11 +198,34 @@ function ServiceTicket({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
+          <CSIconButton
+            //variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => openDetailTicketModal(row.original)}
+          >
+            <InfoIcon className={customStyles.iconBtn}/>
+          </CSIconButton>
+          {row.original && row.original.status !== 1
+            ? <CSIconButton
+            //variant="contained"
+            color="primary"
+            size="small"
+            aria-label={'edit-ticket'}
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditTicketModal(row.original);
+            }}
+          >
+            <EditIcon className={customStyles.iconBtn}/>
+          </CSIconButton>
+            : null
+          }
           {
             !row.original.jobCreated
               ? row.original.status !== 2
                 ? <CSButtonSmall
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   size="small"
                   aria-label={'edit-ticket'}
@@ -211,46 +238,11 @@ function ServiceTicket({ classes }: any) {
           }
         </div>;
       },
-      'Header': 'Create Job',
+      'Header': 'Actions',
       'id': 'action-create-job',
       'sortable': false,
       'width': 60
     },
-    {
-      'Cell'({ row }: any) {
-        return row.original && row.original.status !== 1
-          ? <Button
-            variant="outlined"
-            size="small"
-            aria-label={'edit-ticket'}
-            onClick={(e) => {
-              e.stopPropagation();
-              openEditTicketModal(row.original);
-            }}
-            style={{height: 30}}
-          >
-            <EditIcon className={customStyles.iconBtnGray}/>
-          </Button>
-          : '-';
-      },
-      'Header': 'Edit Ticket',
-      'id': 'action-edit-ticket',
-      'sortable': false,
-      'width': 60
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div
-          onClick={() => openDetailTicketModal(row.original)}
-          className={'flex items-center'}>
-          <InfoIcon style={{display: 'block'}} />
-        </div>;
-      },
-      'Header': 'Ticket Details',
-      'id': 'action-detail',
-      'sortable': false,
-      'width': 60
-    }
   ];
 
   useEffect(() => {

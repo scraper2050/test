@@ -20,7 +20,6 @@ import { callCreateTicketAPI, callEditTicketAPI } from 'api/service-tickets.api'
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites } from 'actions/job-site/job-site.action';
-import '../../../scss/new-modals.scss';
 import {
   clearJobLocationStore,
   getJobLocationsAction,
@@ -449,10 +448,10 @@ function BCServiceTicketModal({
     );
   }
   return (
-    <DataContainer>
+    <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         <Grid container className={classes.modalPreview} justify={'space-between'} spacing={4}>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <Typography variant={'caption'} className={classes.previewCaption}>customer</Typography>
                 <Autocomplete
                   className={detail ? 'detail-only' : ''}
@@ -471,19 +470,23 @@ function BCServiceTicketModal({
                   }
                 />
           </Grid>
+          <Grid item xs={1}>
+            &nbsp;
+          </Grid>
           <Grid item xs={2}>
             <Typography variant={'caption'} className={classes.previewCaption}>due date</Typography>
             <BCDateTimePicker
-              className={'serviceTicketLabel'}
+              className={'due_date'}
               disabled={detail}
               disablePast
               handleChange={dateChangeHandler}
               name={'dueDate'}
+              id={'dueDate'}
               placeholder={'Date'}
               value={FormikValues.dueDate}
             />
           </Grid>
-          <Grid item xs={6} />
+          <Grid item xs={4} />
         </Grid>
 
         <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
@@ -525,7 +528,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={classes.previewCaption}>job type</Typography>
+            <Typography variant={'caption'} className={`required ${classes.previewCaption}`}>job type</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               defaultValue={defaultJobTypeValue}
@@ -615,7 +618,16 @@ function BCServiceTicketModal({
                   disableElevation={true}
                   onClick={() => closeModal()}
                   variant={'outlined'}>Close</Button>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {
+            ticket._id &&
+            <Button
+              color={'secondary'}
+              disabled={isSubmitting || isLoadingDatas}
+              onClick={() => openCancelTicketModal(ticket)}
+              variant={'contained'}>
+              {'Cancel Ticket'}
+            </Button>
+          }
           <Button color={'primary'}
                   disableElevation={true}
                   disabled={isSubmitting || isLoadingDatas}
@@ -642,7 +654,7 @@ const ErrorMessage = styled.div`
 const DataContainer = styled.div`
   *:not(.MuiGrid-container) > .MuiGrid-container {
     width: 100%;
-    padding: 20px 40px;
+    padding: 10px 40px;
   }
   .MuiGrid-spacing-xs-4 > .MuiGrid-spacing-xs-4 {
     margin: -16px 0;
@@ -659,7 +671,7 @@ const DataContainer = styled.div`
     padding: 9.5px 4px;
   }
 
-  .required > label:after {
+  span.required:after {
     margin-left: 3px;
     content: "*";
     color: red;
