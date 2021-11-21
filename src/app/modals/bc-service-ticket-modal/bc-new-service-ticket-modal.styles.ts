@@ -3,8 +3,11 @@ import * as CONSTANTS from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
-    padding: '25px  40px 25px 0 !important',
-    backgroundColor: 'auto'
+    borderTop: '1px solid #bdbdbd',
+    textAlign: 'right',
+    padding: '25px  56px',
+    backgroundColor: 'auto',
+
   },
   dialogContent: {
     padding: '8px 200px !important',
@@ -12,19 +15,62 @@ export default (theme: Theme): any => ({
   modalPreview: {
     backgroundColor: '#EAECF3',
     padding: '35px 50px',
-    margin: '0 0 15px 0',
+    margin: '0',
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    padding: '35px 50px 0 50px',
+    margin: '0',
+  },
+  lastContent: {
+    marginBottom: 35,
   },
   previewCaption: {
     color: '#828282',
     marginBottom: '10px',
     textTransform:'uppercase',
   },
-  previewCaption2: {
-    color: '#828282',
-    marginBottom: '5px',
+  bigText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: theme.palette.primary.main,
+  },
+  previewTextTitle: {
+    marginTop: 8,
+    color: '#4F4F4F',
+    fontSize: 16,
   },
   previewText: {
     color: '#4F4F4F',
+    fontSize: 16,
+  },
+  description: {
+    maxHeight: 80,
+    overflowY: 'auto',
+  },
+  jobTypeText: {
+    fontSize: 12,
+    backgroundColor: '#F2F2F2',
+    marginRight: 2,
+    padding: '4px 8px',
+    borderRadius: 8,
+    display: 'inline-block',
+  },
+  jobImageWrapper: {
+    padding: 10,
+    height: 220,
+    width: '80%',
+    borderRadius: 10,
+    border: '1px solid #BDBDBD',
+    textAlign:'center',
+  },
+  jobImage: {
+    height: 200,
+    objectFit: 'contain',
+  },
+  actionsList: {
+    margin: '4px 0 4px 4px',
+    padding: 0,
   },
   previewTextSm: {
     color: '#4F4F4F',

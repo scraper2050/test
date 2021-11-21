@@ -74,8 +74,9 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
-          'maxWidth': 'md'
+          'maxWidth': 'lg'
         });
         setComponent(<BCServiceTicketModal error={data.error} />);
         break;
@@ -83,8 +84,9 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
-          'maxWidth': data.detail ? 'lg' : 'md'
+          'maxWidth': 'lg'
         });
         setComponent(<BCServiceTicketModal
           detail={data.detail}
@@ -147,6 +149,7 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
@@ -461,7 +464,7 @@ function BCModal() {
         scroll={'paper'}
         TransitionComponent={BCModalTransition}>
         {data && data.modalTitle !== ''
-          ? <DialogTitle disableTypography>
+          ? <DialogTitle className={`${modalOptions.newDesign ? 'new-modal-design' : ''}`} disableTypography>
             <Typography
               className={data.className ? data.className : ''}
               variant={'h6'}>

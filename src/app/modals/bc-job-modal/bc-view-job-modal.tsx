@@ -60,7 +60,7 @@ function BCViewJobModal({
   isTicket = false,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  //console.log(job);
+  console.log(job);
   const calculateJobType = () => {
     let title = [];
     if (job.tasks) {

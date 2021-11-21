@@ -69,8 +69,6 @@ function ScheduleJobsPage({ classes }: any) {
           'modalTitle': 'New Service Ticket',
           'removeFooter': false,
           'className': 'serviceTicketTitle',
-          'maxHeight': '754px',
-          'height': '100%',
           'error': {
             'status': false,
             'message': ''

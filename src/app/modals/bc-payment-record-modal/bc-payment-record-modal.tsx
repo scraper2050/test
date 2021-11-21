@@ -180,7 +180,7 @@ function BcPaymentRecordModal({
   const customerPO = invoice.customerPO ? invoice.customerPO : '\u00A0';
 
   return (
-    <DataContainer >
+    <DataContainer className={'new-modal-design'}>
       {sent ?
         <BCSent title={payment ? 'The payment was updated.' : 'The payment was recorded.'}/>
         :
@@ -352,49 +352,38 @@ function BcPaymentRecordModal({
               </Grid>
             </Grid>
           </DialogContent>
-            <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
           </>
         }
+        <DialogActions classes={{
+          'root': classes.dialogActions
+        }}>
+          <Button
+            aria-label={'record-payment'}
+            classes={{
+              'root': classes.closeButton
+            }}
+            disabled={isSubmitting}
+            onClick={() => closeModal()}
+            variant={'outlined'}>
+            Close
+          </Button>
 
-        <Grid
-          alignItems={'center'}
-          container
-          justify={'flex-end'} >
-          <Grid
-            item
-            sm={7}>
-            <DialogActions classes={{
-              'root': classes.dialogActions
-            }}>
-              <Button
-                aria-label={'record-payment'}
-                classes={{
-                  'root': classes.closeButton
-                }}
-                disabled={isSubmitting}
-                onClick={() => closeModal()}
-                variant={'outlined'}>
-                Close
-              </Button>
+          {!sent &&
+          <Button
+            disabled={!isValidate() || isSubmitting}
+            aria-label={'create-job'}
+            classes={{
+              root: classes.submitButton,
+              disabled: classes.submitButtonDisabled
+            }}
+            color="primary"
+            type={'submit'}
+            variant={'contained'}>
+            Submit
+          </Button>
+          }
 
-              {!sent &&
-              <Button
-                disabled={!isValidate() || isSubmitting}
-                aria-label={'create-job'}
-                classes={{
-                  root: classes.submitButton,
-                  disabled: classes.submitButtonDisabled
-                }}
-                color="primary"
-                type={'submit'}
-                variant={'contained'}>
-                Submit
-              </Button>
-              }
-
-            </DialogActions>
-          </Grid>
-        </Grid>
+        </DialogActions>
       </form>
 
     </DataContainer >
@@ -445,14 +434,14 @@ const DataContainer = styled.div`
   .save-customer-button {
     color: ${CONSTANTS.PRIMARY_WHITE};
   }
-  
+
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  
+
   /* Firefox */
   input[type=number] {
     -moz-appearance: textfield;

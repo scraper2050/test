@@ -28,7 +28,11 @@ export const callCreateTicketAPI = (data: any) => {
     const formData = new FormData();
 
     Object.keys(data).forEach(key => {
-      formData.append(key, data[key]);
+      if (key === 'images') {
+        data.images.forEach((image: any) => formData.append(key, image))
+      } else {
+        formData.append(key, data[key]);
+      }
     });
     request(`/createServiceTicket`, 'post', formData, false)
       .then((res: any) => {
@@ -45,7 +49,11 @@ export const callEditTicketAPI = (data: any) => {
     const formData = new FormData();
 
     Object.keys(data).forEach(key => {
-      formData.append(key, data[key]);
+      if (key === 'images') {
+        data.images.forEach((image: any) => formData.append(key, image))
+      } else {
+        formData.append(key, data[key]);
+      }
     });
 
 

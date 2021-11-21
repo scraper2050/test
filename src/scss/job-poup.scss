@@ -53,26 +53,60 @@
       color: #00aaff;
     }
   }
+
+  .MuiDialogTitle-root.new-modal-design {
+    background-color: #EAECF3;
+    padding-top: 25px;
+  }
+
   .MuiDialogContent-root {
     overflow: initial;
   }
+
   .MuiDialogActions-root {
     .MuiButtonBase-root {
-      background-color: transparent;
       box-shadow: none;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
-      line-height: 16px;
+      //line-height: 16px;
     }
     .MuiFab-secondary {
       color: #000000;
+      background-color: transparent;
     }
 
     .MuiFab-primary {
       background: #219653;
       border-radius: 30px;
       width: 195px;
+    }
+  }
+
+
+  .new-modal-design {
+    .MuiDialogActions-root {
+      border-top: 1px solid #bdbdbd;
+      text-align: right;
+      padding: 25px  56px;
+      margin: 20px 0;
+
+      .MuiButton-root {
+        border-radius: 8px;
+        margin-left: 15px;
+      }
+
+      .MuiButton-label {
+        text-transform: none;
+      }
+
+      .MuiButton-containedSecondary {
+        margin-left: 30px;
+      }
+
+      .MuiButton-containedPrimary > .MuiButton-label {
+        color: white;
+      }
     }
   }
 }
