@@ -138,7 +138,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
           <div className={'flex items-center'}>
             {row.original.tasks.length > 0
               ? row.original.tasks.length === 1
-                ? row.original.tasks[0].jobType.title
+                ? row.original.tasks[0].jobType?.title
                 : 'Multiple Jobs'
               : row.original.type?.title}
           </div>

@@ -159,7 +159,7 @@ function ServiceTicket({ classes }: any) {
         },
         'modalTitle': 'Create Job',
         'removeFooter': false,
-
+        'maxHeight': '100%',
       },
       'type': modalTypes.EDIT_JOB_MODAL
     }));

@@ -128,6 +128,7 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
@@ -137,6 +138,7 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });

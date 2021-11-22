@@ -38,7 +38,6 @@ import { modalTypes } from '../../../constants';
 import {refreshJobs} from "../../../actions/job/job.action";
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
-import {JobImage} from "../../models/job";
 
 
 function BCServiceTicketModal({
@@ -375,7 +374,6 @@ function BCServiceTicketModal({
   }, [jobSites]);
 
   useEffect(() => {
-    console.log(FormikValues.images)
     if (FormikValues.images) {
       const images: any[] = [];
       const prs: any[] = [];
@@ -450,31 +448,31 @@ function BCServiceTicketModal({
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
-        <Grid container className={classes.modalPreview} justify={'space-between'} spacing={4}>
+        <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
           <Grid item xs={5}>
-            <Typography variant={'caption'} className={classes.previewCaption}>customer</Typography>
-                <Autocomplete
-                  className={detail ? 'detail-only' : ''}
-                  defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
-                  disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
-                  getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
-                  id={'tags-standard'}
-                  onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
-                  options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
-                  renderInput={params =>
-                    <TextField
-                      required
-                      {...params}
-                      variant={'standard'}
-                    />
-                  }
+            <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
+            <Autocomplete
+              className={detail ? 'detail-only' : ''}
+              defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
+              disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
+              getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
+              options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
+              renderInput={params =>
+                <TextField
+                  required
+                  {...params}
+                  variant={'standard'}
                 />
+              }
+            />
           </Grid>
           <Grid item xs={1}>
             &nbsp;
           </Grid>
           <Grid item xs={2}>
-            <Typography variant={'caption'} className={classes.previewCaption}>due date</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
             <BCDateTimePicker
               className={'due_date'}
               disabled={detail}
@@ -489,9 +487,9 @@ function BCServiceTicketModal({
           <Grid item xs={4} />
         </Grid>
 
-        <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
-            <Typography variant={'caption'} className={classes.previewCaption}>job location</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
             <Autocomplete
               defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
               disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
@@ -510,7 +508,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={classes.previewCaption}>job site</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail}
@@ -528,7 +526,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={`required ${classes.previewCaption}`}>job type</Typography>
+            <Typography variant={'caption'} className={`required ${'previewCaption'}`}>job type</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               defaultValue={defaultJobTypeValue}
@@ -552,11 +550,11 @@ function BCServiceTicketModal({
           </Grid>
         </Grid>
 
-        <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid container xs={8} spacing={4}>
             <Grid container xs={12} spacing={4}>
               <Grid item xs>
-                <Typography variant={'caption'} className={classes.previewCaption}>contact associated</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
                 <Autocomplete
                   disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
                   getOptionLabel={option => option.name ? option.name : ''}
@@ -582,7 +580,7 @@ function BCServiceTicketModal({
                 />
               </Grid>
               <Grid item xs>
-                <Typography variant={'caption'} className={classes.previewCaption}>customer PO</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>customer PO</Typography>
                 <BCInput
                   disabled={detail}
                   handleChange={formikChange}
@@ -593,7 +591,7 @@ function BCServiceTicketModal({
             </Grid>
             <Grid container xs={12}>
               <Grid item xs>
-                <Typography variant={'caption'} className={classes.previewCaption}>notes / special instructions</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>notes / special instructions</Typography>
                 <BCInput
                   className={'serviceTicketLabel'}
                   disabled={detail}

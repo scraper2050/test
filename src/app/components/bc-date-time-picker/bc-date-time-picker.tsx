@@ -8,6 +8,7 @@ import {
   KeyboardTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
+import TimerIcon from '@material-ui/icons/Timer';
 
 const useStyles = makeStyles((theme) => ({
   datePicker: {
@@ -95,6 +96,7 @@ function BCDateTimePicker({
             variant={variant}
             invalidDateMessage={minDateMessage}
             views={views}
+            keyboardIcon={<TimerIcon />}
           />
         )}
       </MuiPickersUtilsProvider>

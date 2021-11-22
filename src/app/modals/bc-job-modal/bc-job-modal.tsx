@@ -13,13 +13,10 @@ import {
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import {
+  Button,
   Chip,
   DialogActions,
-  DialogContent,
-  Fab,
-  FormGroup,
   Grid,
-  InputLabel,
   TextField,
   Typography,
   withStyles,
@@ -56,7 +53,6 @@ import {
   setJobLocations,
 } from 'actions/job-location/job-location.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import '../../../scss/job-poup.scss';
 import { getOpenServiceTickets } from 'api/service-tickets.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
@@ -64,11 +60,11 @@ import {
   success,
 } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
-import './bc-job-modal.scss';
 import { modalTypes } from '../../../constants';
 import { useHistory } from 'react-router-dom';
 import { stringSortCaseInsensitive } from '../../../helpers/sort';
 import moment from 'moment';
+import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 
 const initialJobState = {
   customer: {
@@ -120,7 +116,7 @@ function BCJobModal({
   detail = false,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-
+  const [thumbs, setThumbs] = useState<any[]>([]);
   // Selected variable with useSelector from the store
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   const { loading, data } = useSelector(
@@ -594,7 +590,7 @@ function BCJobModal({
         ? jobValue.customerContactId._id
         : ticket.customerContactId || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
-      image: jobValue.image !== undefined ? jobValue.image : ticket.image,
+      images: jobValue.images !== undefined ? jobValue.images : ticket.images,
     },
     validateOnMount: false,
     validationSchema: schemaCheck,
@@ -864,993 +860,540 @@ function BCJobModal({
   };
 
   useEffect(() => {
-    const reader = new FileReader();
+    if (FormikValues.images) {
+      const images: any[] = [];
+      const prs: any[] = [];
 
-    if (
-      FormikValues.image &&
-      FormikValues.image !== '' &&
-      FormikValues.image !== undefined
-    ) {
-      if (typeof FormikValues.image === 'string') {
-        setThumb(FormikValues.image);
-      } else {
-        reader.onloadend = () => {
-          setThumb(reader.result);
-        };
-        reader.readAsDataURL(FormikValues.image);
+      FormikValues.images.forEach((image: any) => {
+        if (image.imageUrl) {
+          images.push(image.imageUrl);
+        } else {
+          if (image.type.match('image.*')) prs.push(readImage(image))
+        }
+      });
+      setThumbs(images);
+      if (prs.length) {
+        Promise.all(prs).then(images => {
+          const temp = [...thumbs];
+          temp.push(...images);
+          setThumbs(temp);
+        });
       }
     }
-  }, [FormikValues.image]);
+  }, [FormikValues.images]);
 
-  const columns: any = [
-    {
-      Header: 'User',
-      id: 'user',
-      sortable: true,
-      Cell({ row }: any) {
-        const user = employeesForJob.filter(
-          (employee: any) => employee._id === row.original.user
-        )[0];
-        const { displayName } = user?.profile || '';
-        return <div>{displayName}</div>;
-      },
-    },
-    {
-      Header: 'Date',
-      id: 'date',
-      sortable: true,
-      Cell({ row }: any) {
-        const dataTime = moment(new Date(row.original.date)).format(
-          'MM/DD/YYYY h:mm A'
-        );
-        return (
-          <div style={{ color: 'gray', fontStyle: 'italic' }}>
-            {`${dataTime}`}
-          </div>
-        );
-      },
-    },
-    {
-      Header: 'Actions',
-      id: 'action',
-      sortable: true,
-      Cell({ row }: any) {
-        const splittedActions = row.original.action.split('|');
-        const actions = splittedActions.filter((action: any) => action !== '');
-        return (
-          <>
-            {actions.length === 0 ? (
-              <div />
-            ) : (
-              <ul>
-                {actions.map((action: any) => (
-                  <li>{action}</li>
-                ))}
-              </ul>
-            )}
-          </>
-        );
-      },
-    },
-  ];
+  const readImage = (image: File) => {
+    return new Promise(function(resolve,reject){
+      let fr = new FileReader();
+
+      fr.onload = function(){
+        resolve(fr.result);
+      };
+
+      fr.onerror = function(){
+        reject(fr);
+      };
+
+      fr.readAsDataURL(image);
+    });
+  }
 
   if (isLoading) {
     return <BCCircularLoader />;
   }
 
   return (
-    <DataContainer>
-      <form
-        className={`ticket_form__wrapper ${classes.formWrapper}`}
-        onSubmit={FormikSubmit}
-      >
-        <DialogContent classes={{ root: classes.dialogContent }}>
-          <Grid container justify={'space-between'}>
-            <Grid item>
-              <Typography className={'modal_heading'} variant={'h6'}>
-                {`Customer : ${
-                  job.customer.profile
-                    ? job.customer.profile.displayName
-                    : displayName
-                }`}
-              </Typography>
-            </Grid>
-            {!job._id && (
-              <Grid item>
-                <Typography
-                  className={'modal_heading'}
-                  id={'dueDate'}
-                  variant={'h6'}
-                >
-                  {`Due Date : ${FormikValues.dueDate}`}
-                </Typography>
-              </Grid>
-            )}
+    <DataContainer className={'new-modal-design'}>
+      <form onSubmit={FormikSubmit}>
+        <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
+          <Grid item xs={3}>
+            <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customer.profile
+              ? job.customer.profile.displayName
+              : displayName}</Typography>
           </Grid>
-          {/* <h4 className="MuiTypography-root MuiTypography-subtitle1 modal_heading"><span>{`Customer : ${displayName}`}</span>
-              <span id='dueDate'>{`Due Date : ${FormikValues.dueDate}`}</span>
-            </h4> */}
-          {/* <h4 className="MuiTypography-root MuiTypography-subtitle1">{`Ticket ID : ${ticket.ticketId}`}</h4> */}
-          <Grid container spacing={5}>
-            <Grid item sm={detail ? 2 : 4} xs={12}>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    defaultValue={
-                      job._id && job.employeeType
-                        ? employeeTypes[1]
-                        : employeeTypes[0]
-                    }
-                    disabled={detail}
-                    getOptionLabel={(option) =>
-                      option.name ? option.name : ''
-                    }
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) =>
-                      handleEmployeeTypeChange('employeeType', newValue)
-                    }
-                    options={employeeTypes}
-                    renderInput={(params) => (
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>{'Technician Type'}</strong>
-                          {!detail && (
-                            <Typography
-                              color={'error'}
-                              display={'inline'}
-                              style={{ lineHeight: '1' }}
-                            >
-                              {'*'}
-                            </Typography>
-                          )}
-                        </InputLabel>
-                        <TextField
-                          error={
-                            form.touched.employeeType &&
-                            Boolean(form.errors.employeeType)
-                          }
-                          helperText={
-                            form.touched.employeeType &&
-                            form.errors.employeeType
-                          }
-                          required
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    )}
-                  />
-                </div>
-              </FormGroup>
-
-              {/* <BCSelectOutlined
-                error={{
-                  'isError': true,
-                  'message': FormikErrors.employeeType
-                }}
-                handleChange={(event: any) => handleEmployeeTypeChange('employeeType', event.target.value)}
-                items={{
-                  'data': employeeTypes,
-                  'displayKey': 'name',
-                  'valueKey': '_id'
-                }}
-                label={'Employee Type'}
-                name={'employeeType'}
-                required
-                value={FormikValues.employeeType}
-              /> */}
-              {/* <BCSelectOutlined
-                handleChange={formikChange}
-                items={{
-                  'data': [
-                    ...ticketData.map((o: any) => {
-                      return {
-                        '_id': o._id,
-                        'ticketId': o.ticketId
-                      };
-                    })
-                  ],
-                  'displayKey': 'ticketId',
-                  'valueKey': '_id'
-                }}
-                label={'Ticket No'}
-                name={'ticketId'}
-                required
-                value={FormikValues.ticketId}
-              /> */}
-              {!showVendorFlag ? (
-                <FormGroup className={`required ${classes.formGroup}`}>
-                  <div className={'search_form_wrapper'}>
-                    <Autocomplete
-                      className={detail ? 'detail-only' : ''}
-                      disabled={detail}
-                      getOptionLabel={(option) =>
-                        option.profile ? option.profile.displayName : ''
-                      }
-                      id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                      onChange={(ev: any, newValue: any) =>
-                        handleSelectChange('technicianId', newValue?._id, () =>
-                          setEmployeeValue(newValue)
-                        )
-                      }
-                      options={
-                        employeesForJob && employeesForJob.length !== 0
-                          ? employeesForJob.sort((a: any, b: any) =>
-                              a.profile.displayName > b.profile.displayName
-                                ? 1
-                                : b.profile.displayName > a.profile.displayName
-                                ? -1
-                                : 0
-                            )
-                          : []
-                      }
-                      renderInput={(params) => (
-                        <>
-                          <InputLabel className={classes.label}>
-                            <strong>{'Technician '}</strong>
-                            {!detail && (
-                              <Typography
-                                color={'error'}
-                                display={'inline'}
-                                style={{ lineHeight: '1' }}
-                              >
-                                {'*'}
-                              </Typography>
-                            )}
-                          </InputLabel>
-                          <TextField
-                            error={
-                              form.touched.technicianId &&
-                              Boolean(form.errors.technicianId)
-                            }
-                            helperText={
-                              form.touched.technicianId &&
-                              form.errors.technicianId
-                            }
-                            {...params}
-                            required
-                            variant={'standard'}
-                          />
-                        </>
-                      )}
-                      value={employeeValue}
-                    />
-                  </div>
-                </FormGroup>
-              ) : // <BCSelectOutlined
-              //   HandleChange={formikChange}
-              //   Items={{
-              //     'data': [
-              //       ...employeesForJob.map((o: any) => {
-              //         Return {
-              //           '_id': o._id,
-              //           'displayName': o.profile.displayName
-              //         };
-              //       })
-              //     ],
-              //     'displayKey': 'displayName',
-              //     'valueKey': '_id'
-              //   }}
-              //   Label={'Select Technician'}
-              //   Name={'technicianId'}
-              //   Required
-              //   Value={FormikValues.technicianId}
-              // />
-              null}
-              {showVendorFlag ? (
-                <FormGroup className={`required ${classes.formGroup}`}>
-                  <div className={'search_form_wrapper'}>
-                    <Autocomplete
-                      className={detail ? 'detail-only' : ''}
-                      // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
-                      disabled={detail}
-                      getOptionLabel={(option) =>
-                        option?.contractor?.info?.companyName
-                          ? option.contractor.info.companyName
-                          : ''
-                      }
-                      id={'tags-standard'}
-                      onChange={(ev: any, newValue: any) =>
-                        handleSelectChange(
-                          'contractorId',
-                          newValue?.contractor?._id,
-                          () => setContractorValue(newValue)
-                        )
-                      }
-                      options={
-                        vendorsList && vendorsList.length !== 0
-                          ? vendorsList.sort((a: any, b: any) =>
-                              a.contractor.info.companyName >
-                              b.contractor.info.companyName
-                                ? 1
-                                : b.contractor.info.companyName >
-                                  a.contractor.info.companyName
-                                ? -1
-                                : 0
-                            )
-                          : []
-                      }
-                      renderInput={(params) => (
-                        <>
-                          <InputLabel className={classes.label}>
-                            <strong>{'Contractor '}</strong>
-                            {!detail && (
-                              <Typography
-                                color={'error'}
-                                display={'inline'}
-                                style={{ lineHeight: '1' }}
-                              >
-                                {'*'}
-                              </Typography>
-                            )}
-                          </InputLabel>
-                          <TextField
-                            error={
-                              form.touched.contractorId &&
-                              Boolean(form.errors.contractorId)
-                            }
-                            helperText={
-                              form.touched.contractorId &&
-                              form.errors.contractorId
-                            }
-                            required
-                            {...params}
-                            variant={'standard'}
-                          />
-                        </>
-                      )}
-                      value={contractorValue}
-                    />
-                  </div>
-                </FormGroup>
-              ) : // <BCSelectOutlined
-              //   HandleChange={formikChange}
-              //   Items={{
-              //     'data': [
-              //       ...vendorsList.map((o: any) => {
-              //         Return {
-              //           '_id': o.contractor._id,
-              //           'displayName': o.contractor.info.companyName
-              //         };
-              //       })
-              //     ],
-              //     'displayKey': 'displayName',
-              //     'valueKey': '_id'
-              //   }}
-              //   Label={'Select Contractor'}
-              //   Name={'contractorId'}
-              //   Required
-              //   Value={FormikValues.contractorId}
-              // />
-              null}
-
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    disabled={detail}
-                    // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
-                    getOptionLabel={(option) => {
-                      const { title, description } = option;
-                      return `${title}${
-                        description ? ' - ' + description : ''
-                      }`;
-                    }}
-                    id={'tags-standard'}
-                    multiple
-                    onChange={(ev: any, newValue: any) =>
-                      handleJobTypeChange(newValue)
-                    }
-                    options={
-                      jobTypes && jobTypes.length !== 0
-                        ? stringSortCaseInsensitive(jobTypes, 'title')
-                        : []
-                    }
-                    renderInput={(params) => (
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>{'Job Type'}</strong>
-                          {!detail && (
-                            <Typography
-                              color={'error'}
-                              display={'inline'}
-                              style={{ lineHeight: '1' }}
-                            >
-                              {'*'}
-                            </Typography>
-                          )}
-                        </InputLabel>
-                        <TextField
-                          {...params}
-                          error={
-                            form.touched.jobTypes &&
-                            Boolean(form.errors.jobTypes)
-                          }
-                          helperText={
-                            form.touched.jobTypes && form.errors.jobTypes
-                          }
-                          variant={'standard'}
-                          inputRef={jobTypesInput}
-                          required={!jobTypeValue.length}
-                          // error= {!!FormikErrors.jobTypes}
-                          // helperText={FormikErrors.jobTypes}
-                        />
-                      </>
-                    )}
-                    renderTags={(tagValue, getTagProps) =>
-                      tagValue.map((option, index) => {
-                        return (
-                          <Chip
-                            label={`${option.title}${
-                              option.description
-                                ? ' - ' + option.description
-                                : ''
-                            }`}
-                            {...getTagProps({ index })}
-                            // disabled={disabledChips.includes(option._id) || !job._id}
-                          />
-                        );
-                      })
-                    }
-                    value={jobTypeValue}
-                  />
-                </div>
-              </FormGroup>
-
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    defaultValue={
-                      ticket.jobLocation !== '' &&
-                      jobLocations.length !== 0 &&
-                      jobLocations.filter(
-                        (jobLocation: any) =>
-                          jobLocation._id === ticket.jobLocation
-                      )[0]
-                    }
-                    disabled={ticket.jobLocation}
-                    getOptionLabel={(option) =>
-                      option.name ? option.name : ''
-                    }
-                    getOptionDisabled={(option) => !option.isActive}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) =>
-                      handleLocationChange(
-                        ev,
-                        'jobLocationId',
-                        setFieldValue,
-                        getFieldMeta,
-                        newValue
-                      )
-                    }
-                    options={
-                      jobLocations && jobLocations.length !== 0
-                        ? jobLocations.sort((a: any, b: any) =>
-                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                          )
-                        : []
-                    }
-                    renderInput={(params) => (
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>{'Job Location'}</strong>
-                        </InputLabel>
-                        <TextField
-                          error={
-                            form.touched.jobLocationId &&
-                            Boolean(form.errors.jobLocationId)
-                          }
-                          helperText={
-                            form.touched.jobLocationId &&
-                            form.errors.jobLocationId
-                          }
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    )}
-                    value={jobLocationValue}
-                  />
-                </div>
-              </FormGroup>
-
-              {/* <BCSelectOutlined
-                  items={{
-                    'data': [
-                      ...jobLocations.map((o: any) => {
-                        return {
-                          '_id': o._id,
-                          'name': o.name
-                        };
-                      })
-                    ],
-                    'displayKey': 'name',
-                    'valueKey': '_id'
-                  }}
-                  label={'Select Job Location'}
-                  name={'jobLocationId'}
-                  disabled={job.ticket.jobLocation ? true : false}
-                  value={FormikValues.jobLocationId}
-                  handleChange={(event: any) => handleLocationChange(event, 'jobLocationId', setFieldValue)}
-                /> */}
-
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    defaultValue={
-                      ticket.jobSite !== '' &&
-                      jobSites.length !== 0 &&
-                      jobSites.filter(
-                        (jobSite: any) => jobSite._id === ticket.jobSite
-                      )[0]
-                    }
-                    disabled={
-                      ticket.jobSite ||
-                      FormikValues.jobLocationId === '' ||
-                      detail
-                    }
-                    getOptionLabel={(option) =>
-                      option.name ? option.name : ''
-                    }
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) =>
-                      handleJobSiteChange(
-                        ev,
-                        'jobSiteId',
-                        setFieldValue,
-                        newValue
-                      )
-                    }
-                    options={
-                      jobSites && jobSites.length !== 0
-                        ? jobSites.sort((a: any, b: any) =>
-                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                          )
-                        : []
-                    }
-                    renderInput={(params) => (
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>{'Job Site'}</strong>
-                        </InputLabel>
-                        <TextField
-                          error={
-                            form.touched.jobSiteId &&
-                            Boolean(form.errors.jobSiteId)
-                          }
-                          helperText={
-                            form.touched.jobSiteId && form.errors.jobSiteId
-                          }
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    )}
-                    value={jobSiteValue}
-                  />
-                </div>
-              </FormGroup>
-
-              {/* <BCSelectOutlined
-                  handleChange={formikChange}
-                  items={{
-                    'data': [
-                      ...jobSites.map((o: any) => {
-                        return {
-                          '_id': o._id,
-                          'name': o.name
-                        };
-                      })
-                    ],
-                    'displayKey': 'name',
-                    'valueKey': '_id',
-                  }}
-                  label={'Select Job Site'}
-                  name={'jobSiteId'}
-                  disabled={job.ticket.jobSite ? true : false}
-                  value={FormikValues.jobSiteId}
-                /> */}
-
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    disabled={detail}
-                    getOptionLabel={(option) =>
-                      option.company ? option.company : ''
-                    }
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) =>
-                      handleSelectChange('equipmentId', newValue?._id)
-                    }
-                    options={
-                      equipments && equipments.length !== 0
-                        ? equipments.sort((a: any, b: any) =>
-                            a.company > b.company
-                              ? 1
-                              : b.company > a.company
-                              ? -1
-                              : 0
-                          )
-                        : []
-                    }
-                    renderInput={(params) => (
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>{'Equipment '}</strong>
-                        </InputLabel>
-                        <TextField
-                          error={
-                            form.touched.equipmentId &&
-                            Boolean(form.errors.equipmentId)
-                          }
-                          helperText={
-                            form.touched.equipmentId && form.errors.equipmentId
-                          }
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    )}
-                  />
-                </div>
-              </FormGroup>
-
-              {/* <BCSelectOutlined
-                  handleChange={formikChange}
-                  items={{
-                    'data': [
-                      ...equipments.map((o: any) => {
-                        return {
-                          '_id': o._id,
-                          'displayName': o.company
-                        };
-                      })
-                    ],
-                    'displayKey': 'displayName',
-                    'valueKey': '_id'
-                  }}
-                  label={'Select Equipment'}
-                  name={'equipmentId'}
-                  value={FormikValues.equipmentId}
-                /> */}
-            </Grid>
-
-            <Grid item sm={detail ? 2 : 4} xs={12}>
-              <div className={detail ? 'input-detail-only' : ''}>
-                <BCDateTimePicker
-                  disabled={detail}
-                  disablePast={true}
-                  handleChange={(e: any) =>
-                    dateChangeHandler(e, 'scheduleDate')
-                  }
-                  label={'Scheduled Date'}
-                  name={'scheduleDate'}
-                  required={!detail}
-                  // invalidMessage={form.errors.scheduleDate}
-                  minDateMessage={form.errors.scheduleDate}
-                  value={FormikValues.scheduleDate}
-                  // TextField={<TextField />}
-                />
-              </div>
-
-              <div className={detail ? 'input-detail-only' : ''}>
-                <BCDateTimePicker
-                  dateFormat={'HH:mm:ss'}
-                  disabled={detail}
-                  disablePast={!job._id}
-                  handleChange={(e: any) =>
-                    dateChangeHandler(e, 'scheduledStartTime')
-                  }
-                  label={'Start Time'}
-                  name={'scheduledStartTime'}
-                  pickerType={'time'}
-                  placeholder={'Start Time'}
-                  minDateMessage={form?.errors?.scheduledStartTime || ''}
-                  value={FormikValues.scheduledStartTime}
-                />
-              </div>
-              {startTimeLabelState && !detail ? (
-                <Label>{'Start time is required.'}</Label>
-              ) : (
-                ''
-              )}
-
-              <div className={detail ? 'input-detail-only' : ''}>
-                <BCDateTimePicker
-                  dateFormat={'HH:mm:ss'}
-                  disabled={detail}
-                  disablePast={!job._id}
-                  handleChange={(e: any) =>
-                    dateChangeHandler(e, 'scheduledEndTime')
-                  }
-                  label={'End Time'}
-                  name={'scheduledEndTime'}
-                  pickerType={'time'}
-                  minDateMessage={form?.errors?.scheduledEndTime || ''}
-                  placeholder={'End Time'}
-                  value={FormikValues.scheduledEndTime}
-                />
-              </div>
-              {endTimeLabelState && !detail ? (
-                <Label>{scheduledEndTimeMsg}</Label>
-              ) : (
-                ''
-              )}
-
-              <div style={{ marginTop: '.5rem' }} />
-              <FormGroup>
-                <InputLabel className={classes.label}>
-                  <strong>{'Description'}</strong>
-                </InputLabel>
-
-                <div className={detail ? 'input-detail-only' : ''}>
-                  <BCInput
-                    disabled={detail}
-                    handleChange={formikChange}
-                    multiline
-                    name={'description'}
-                    value={FormikValues.description}
-                    error={
-                      form.touched.description &&
-                      Boolean(form.errors.description)
-                    }
-                    helperText={
-                      form.touched.description && form.errors.description
-                    }
-                  />
-                </div>
-              </FormGroup>
-            </Grid>
-
-            <Grid item sm={detail ? 2 : 4} xs={12}>
-              <FormGroup className={`required ${classes.formGroup}`}>
-                <div className={'search_form_wrapper'}>
-                  <Autocomplete
-                    className={detail ? 'detail-only' : ''}
-                    disabled={ticket.customerContactId}
-                    getOptionLabel={(option) =>
-                      option.name ? option.name : ''
-                    }
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) =>
-                      handleSelectChange(
-                        'customerContactId',
-                        newValue?._id,
-                        setContactValue(newValue)
-                      )
-                    }
-                    options={
-                      contacts && contacts.length !== 0
-                        ? contacts.sort((a: any, b: any) =>
-                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                          )
-                        : []
-                    }
-                    renderInput={(params) => (
-                      <>
-                        <InputLabel className={classes.label}>
-                          <strong>{'Contact Associated'}</strong>
-                        </InputLabel>
-                        <TextField
-                          error={
-                            form.touched.customerContactId &&
-                            Boolean(form.errors.customerContactId)
-                          }
-                          helperText={
-                            form.touched.customerContactId &&
-                            form.errors.customerContactId
-                          }
-                          {...params}
-                          variant={'standard'}
-                        />
-                      </>
-                    )}
-                    value={contactValue}
-                  />
-                </div>
-              </FormGroup>
-
-              <FormGroup>
-                <InputLabel className={classes.label}>
-                  <strong>{'Customer PO'}</strong>
-                </InputLabel>
-
-                <div className={detail ? 'input-detail-only' : ''}>
-                  <BCInput
-                    className={'serviceTicketLabel'}
-                    disabled={ticket.customerPO}
-                    handleChange={formikChange}
-                    name={'customerPO'}
-                    placeholder={'Customer PO / Sales Order #'}
-                    value={FormikValues.customerPO}
-                    error={
-                      form.touched.customerPO && Boolean(form.errors.customerPO)
-                    }
-                    helperText={
-                      form.touched.customerPO && form.errors.customerPO
-                    }
-                  />
-                </div>
-              </FormGroup>
-
-              {!detail ? (
-                <FormGroup>
-                  <InputLabel className={classes.label}>
-                    <strong>{'Add Photo'}</strong>
-                  </InputLabel>
-                  <BCInput
-                    default
-                    handleChange={(event: any) =>
-                      setFieldValue('image', event.currentTarget.files[0])
-                    }
-                    name={'image'}
-                    type={'file'}
-                    error={form.touched.image && Boolean(form.errors.image)}
-                    helperText={form.touched.image && form.errors.image}
-                  />
-                </FormGroup>
-              ) : (
-                <div style={{ marginTop: '1.5rem' }} />
-              )}
-
-              <Grid
-                alignItems={'center'}
-                container
-                direction={'column'}
-                justify={'center'}
-                spacing={3}
-              >
-                <div
-                  className={classes.uploadImageNoData}
-                  style={{
-                    backgroundImage: `url(${thumb ? thumb : ''})`,
-                    border: `${
-                      thumb ? '5px solid #00aaff' : '1px dashed #000000'
-                    }`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                  }}
-                />
-              </Grid>
-            </Grid>
-
-            {detail && (
-              <Grid item sm={6} xs={12}>
-                <div className={`${classes.formGroup} search_form_wrapper`}>
-                  <Grid container>
-                    <InputLabel className={classes.label}>
-                      <strong>{'Job History'}</strong>
-                    </InputLabel>
-                    <div className={classes.historyContainer}>
-                      {loading ? (
-                        <BCCircularLoader />
-                      ) : (
-                        employeesForJob.length !== 0 &&
-                        job.track && (
-                          <BCTableContainer
-                            className={classes.tableContainer}
-                            columns={columns}
-                            initialMsg={'No history yet'}
-                            isDefault
-                            isLoading={loading}
-                            onRowClick={() => {}}
-                            pageSize={job.track.length}
-                            pagination={false}
-                            stickyHeader
-                            tableData={job.track}
-                          />
-                        )
-                      )}
-                    </div>
-                  </Grid>
-                </div>
-              </Grid>
-            )}
+          <Grid item xs={3}>
+            <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{FormikValues.dueDate}</Typography>
           </Grid>
-        </DialogContent>
-
-        <Grid alignItems={'center'} container justify={'space-between'}>
-          <Grid className={classes.noteContainer} item sm={5}>
-            {!detail && (
-              <Typography style={{ color: '#888f99' }} variant={'body2'}>
-                <i>
-                  {`( Note: Some fields cannot be changed because they were selected in the service ticket. To change these, edit the service ticket.)`}
-                </i>
-              </Typography>
-            )}
+          <Grid item xs={2}>
+            <Typography variant={'caption'} className={'required previewCaption'}>schedule date</Typography>
+            <BCDateTimePicker
+              disablePast={true}
+              handleChange={(e: any) =>
+                dateChangeHandler(e, 'scheduleDate')
+              }
+              name={'scheduleDate'}
+              minDateMessage={form.errors.scheduleDate}
+              value={FormikValues.scheduleDate}
+            />
           </Grid>
-          <Grid item sm={7}>
-            <DialogActions
-              classes={{
-                root: classes.dialogActions,
-              }}
-            >
-              {!detail ? (
-                <>
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      root: classes.fabRoot,
-                    }}
-                    color={'secondary'}
-                    disabled={isSubmitting}
-                    onClick={() => closeModal()}
-                    variant={'extended'}
-                  >
-                    {'Close'}
-                  </Fab>
-                  {job._id && (
-                    <>
-                      <Fab
-                        aria-label={'create-job'}
-                        classes={{
-                          root: classes.deleteButton,
-                        }}
-                        /*
-                         * Classes={{
-                         *   'root': classes.fabRoot
-                         * }}
-                         */
-                        disabled={isSubmitting}
-                        onClick={() => openCancelJobModal(job, true)}
-                        style={{}}
-                        variant={'extended'}
-                      >
-                        {'Cancel Job'}
-                      </Fab>
-                      <Fab
-                        aria-label={'create-job'}
-                        classes={{
-                          root: classes.deleteButton,
-                        }}
-                        disabled={isSubmitting}
-                        /*
-                         * Classes={{
-                         *   'root': classes.fabRoot
-                         * }}
-                         */
-                        onClick={() => openCancelJobModal(job, false)}
-                        style={{}}
-                        variant={'extended'}
-                      >
-                        {'Cancel Job and Service Ticket'}
-                      </Fab>
-                    </>
-                  )}
-                  <Fab
-                    aria-label={'create-job'}
-                    classes={{
-                      root: classes.fabRoot,
-                    }}
-                    color={'primary'}
-                    disabled={isSubmitting}
-                    type={'submit'}
-                    variant={'extended'}
-                  >
-                    {job._id ? 'Update' : 'Submit'}
-                  </Fab>
-                </>
-              ) : (
-                <Fab
-                  aria-label={'create-job'}
-                  classes={{
-                    root: classes.fabRoot,
-                  }}
-                  color={'primary'}
-                  onClick={() => closeModal()}
-                  variant={'extended'}
-                >
-                  {'Close'}
-                </Fab>
-              )}
-            </DialogActions>
+          <Grid item xs={2}>
+            <Typography variant={'caption'} className={'previewCaption'}>open time</Typography>
+            <BCDateTimePicker
+              dateFormat={'HH:mm:ss'}
+              disablePast={!job._id}
+              handleChange={(e: any) =>
+                dateChangeHandler(e, 'scheduledStartTime')
+              }
+              name={'scheduledStartTime'}
+              pickerType={'time'}
+              placeholder={'Start Time'}
+              minDateMessage={form?.errors?.scheduledStartTime || ''}
+              value={FormikValues.scheduledStartTime}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant={'caption'} className={'previewCaption'}>close time</Typography>
+            <BCDateTimePicker
+              dateFormat={'HH:mm:ss'}
+              disablePast={!job._id}
+              handleChange={(e: any) =>
+                dateChangeHandler(e, 'scheduledEndTime')
+              }
+              name={'scheduledEndTime'}
+              pickerType={'time'}
+              minDateMessage={form?.errors?.scheduledEndTime || ''}
+              placeholder={'End Time'}
+              value={FormikValues.scheduledEndTime}
+            />
           </Grid>
         </Grid>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+          <Grid item xs>
+            <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
+            <Autocomplete
+              defaultValue={
+                job._id && job.employeeType
+                  ? employeeTypes[1]
+                  : employeeTypes[0]
+              }
+              getOptionLabel={(option) =>
+                option.name ? option.name : ''
+              }
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) =>
+                handleEmployeeTypeChange('employeeType', newValue)
+              }
+              options={employeeTypes}
+              renderInput={(params) => (
+                <TextField
+                  error={
+                    form.touched.employeeType &&
+                    Boolean(form.errors.employeeType)
+                  }
+                  helperText={
+                    form.touched.employeeType &&
+                    form.errors.employeeType
+                  }
+                  required
+                  {...params}
+                  variant={'outlined'}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={' required previewCaption'}>{showVendorFlag ? 'contractor' : 'technician'}</Typography>
+            {showVendorFlag ?
+              <Autocomplete
+                className={detail ? 'detail-only' : ''}
+                // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
+                disabled={detail}
+                getOptionLabel={(option) =>
+                  option?.contractor?.info?.companyName
+                    ? option.contractor.info.companyName
+                    : ''
+                }
+                id={'tags-standard'}
+                onChange={(ev: any, newValue: any) =>
+                  handleSelectChange(
+                    'contractorId',
+                    newValue?.contractor?._id,
+                    () => setContractorValue(newValue)
+                  )
+                }
+                options={
+                  vendorsList && vendorsList.length !== 0
+                    ? vendorsList.sort((a: any, b: any) =>
+                      a.contractor.info.companyName >
+                      b.contractor.info.companyName
+                        ? 1
+                        : b.contractor.info.companyName >
+                        a.contractor.info.companyName
+                          ? -1
+                          : 0
+                    )
+                    : []
+                }
+                renderInput={(params) => (
+                  <TextField
+                    error={
+                      form.touched.contractorId &&
+                      Boolean(form.errors.contractorId)
+                    }
+                    helperText={
+                      form.touched.contractorId &&
+                      form.errors.contractorId
+                    }
+                    required
+                    {...params}
+                    variant={'outlined'}
+                  />
+                )}
+                value={contractorValue}
+              />
+              :
+              <Autocomplete
+                getOptionLabel={(option) =>
+                  option.profile ? option.profile.displayName : ''
+                }
+                id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
+                onChange={(ev: any, newValue: any) =>
+                  handleSelectChange('technicianId', newValue?._id, () =>
+                    setEmployeeValue(newValue)
+                  )
+                }
+                options={
+                  employeesForJob && employeesForJob.length !== 0
+                    ? employeesForJob.sort((a: any, b: any) =>
+                      a.profile.displayName > b.profile.displayName
+                        ? 1
+                        : b.profile.displayName > a.profile.displayName
+                          ? -1
+                          : 0
+                    )
+                    : []
+                }
+                renderInput={(params) => (
+                  <TextField
+                    error={
+                      form.touched.technicianId &&
+                      Boolean(form.errors.technicianId)
+                    }
+                    helperText={
+                      form.touched.technicianId &&
+                      form.errors.technicianId
+                    }
+                    {...params}
+                    required
+                    variant={'outlined'}
+                  />
+                )}
+                value={employeeValue}
+              />
+            }
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={' required previewCaption'}>job type</Typography>
+            <Autocomplete
+              // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
+              getOptionLabel={(option) => {
+                const { title, description } = option;
+                return `${title}${
+                  description ? ' - ' + description : ''
+                }`;
+              }}
+              id={'tags-standard'}
+              multiple
+              onChange={(ev: any, newValue: any) =>
+                handleJobTypeChange(newValue)
+              }
+              options={
+                jobTypes && jobTypes.length !== 0
+                  ? stringSortCaseInsensitive(jobTypes, 'title')
+                  : []
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={
+                    form.touched.jobTypes &&
+                    Boolean(form.errors.jobTypes)
+                  }
+                  helperText={
+                    form.touched.jobTypes && form.errors.jobTypes
+                  }
+                  variant={'outlined'}
+                  inputRef={jobTypesInput}
+                  required={!jobTypeValue.length}
+                  // error= {!!FormikErrors.jobTypes}
+                  // helperText={FormikErrors.jobTypes}
+                />
+              )}
+              renderTags={(tagValue, getTagProps) =>
+                tagValue.map((option, index) => {
+                  return (
+                    <Chip
+                      label={`${option.title}${
+                        option.description
+                          ? ' - ' + option.description
+                          : ''
+                      }`}
+                      {...getTagProps({ index })}
+                      // disabled={disabledChips.includes(option._id) || !job._id}
+                    />
+                  );
+                })
+              }
+              value={jobTypeValue}
+            />
+          </Grid>
+        </Grid>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+          <Grid item xs>
+            <Typography variant={'caption'} className={' required previewCaption'}>job location</Typography>
+            <Autocomplete
+              defaultValue={
+                ticket.jobLocation !== '' &&
+                jobLocations.length !== 0 &&
+                jobLocations.filter(
+                  (jobLocation: any) =>
+                    jobLocation._id === ticket.jobLocation
+                )[0]
+              }
+              disabled={ticket.jobLocation}
+              getOptionLabel={(option) =>
+                option.name ? option.name : ''
+              }
+              getOptionDisabled={(option) => !option.isActive}
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) =>
+                handleLocationChange(
+                  ev,
+                  'jobLocationId',
+                  setFieldValue,
+                  getFieldMeta,
+                  newValue
+                )
+              }
+              options={
+                jobLocations && jobLocations.length !== 0
+                  ? jobLocations.sort((a: any, b: any) =>
+                    a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                  )
+                  : []
+              }
+              renderInput={(params) => (
+                <TextField
+                  error={
+                    form.touched.jobLocationId &&
+                    Boolean(form.errors.jobLocationId)
+                  }
+                  helperText={
+                    form.touched.jobLocationId &&
+                    form.errors.jobLocationId
+                  }
+                  {...params}
+                  variant={'outlined'}
+                />
+              )}
+              value={jobLocationValue}
+            />
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={' required previewCaption'}>job site</Typography>
+            <Autocomplete
+              defaultValue={
+                ticket.jobSite !== '' &&
+                jobSites.length !== 0 &&
+                jobSites.filter(
+                  (jobSite: any) => jobSite._id === ticket.jobSite
+                )[0]
+              }
+              disabled={
+                ticket.jobSite ||
+                FormikValues.jobLocationId === '' ||
+                detail
+              }
+              getOptionLabel={(option) =>
+                option.name ? option.name : ''
+              }
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) =>
+                handleJobSiteChange(
+                  ev,
+                  'jobSiteId',
+                  setFieldValue,
+                  newValue
+                )
+              }
+              options={
+                jobSites && jobSites.length !== 0
+                  ? jobSites.sort((a: any, b: any) =>
+                    a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                  )
+                  : []
+              }
+              renderInput={(params) => (
+                <TextField
+                  error={
+                    form.touched.jobSiteId &&
+                    Boolean(form.errors.jobSiteId)
+                  }
+                  helperText={
+                    form.touched.jobSiteId && form.errors.jobSiteId
+                  }
+                  {...params}
+                  variant={'outlined'}
+                />
+              )}
+              value={jobSiteValue}
+            />
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={' required previewCaption'}>equipment</Typography>
+            <Autocomplete
+              className={detail ? 'detail-only' : ''}
+              disabled={detail}
+              getOptionLabel={(option) =>
+                option.company ? option.company : ''
+              }
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) =>
+                handleSelectChange('equipmentId', newValue?._id)
+              }
+              options={
+                equipments && equipments.length !== 0
+                  ? equipments.sort((a: any, b: any) =>
+                    a.company > b.company
+                      ? 1
+                      : b.company > a.company
+                        ? -1
+                        : 0
+                  )
+                  : []
+              }
+              renderInput={(params) => (
+                <TextField
+                  error={
+                    form.touched.equipmentId &&
+                    Boolean(form.errors.equipmentId)
+                  }
+                  helperText={
+                    form.touched.equipmentId && form.errors.equipmentId
+                  }
+                  {...params}
+                  variant={'outlined'}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+          <Grid container xs={8} spacing={4}>
+            <Grid container xs={12} spacing={4}>
+              <Grid item xs>
+                <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
+                <Autocomplete
+                  getOptionLabel={(option) =>
+                    option.name ? option.name : ''
+                  }
+                  id={'tags-standard'}
+                  onChange={(ev: any, newValue: any) =>
+                    handleSelectChange(
+                      'customerContactId',
+                      newValue?._id,
+                      setContactValue(newValue)
+                    )
+                  }
+                  options={
+                    contacts && contacts.length !== 0
+                      ? contacts.sort((a: any, b: any) =>
+                        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                      )
+                      : []
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      error={
+                        form.touched.customerContactId &&
+                        Boolean(form.errors.customerContactId)
+                      }
+                      helperText={
+                        form.touched.customerContactId &&
+                        form.errors.customerContactId
+                      }
+                      {...params}
+                      variant={'outlined'}
+                    />
+                  )}
+                  value={contactValue}
+                />
+              </Grid>
+              <Grid item xs>
+                <Typography variant={'caption'} className={'previewCaption'}>customer po</Typography>
+                <BCInput
+                  className={'serviceTicketLabel'}
+                  disabled={ticket.customerPO}
+                  handleChange={formikChange}
+                  name={'customerPO'}
+                  placeholder={'Customer PO / Sales Order #'}
+                  value={FormikValues.customerPO}
+                  error={
+                    form.touched.customerPO && Boolean(form.errors.customerPO)
+                  }
+                  helperText={
+                    form.touched.customerPO && form.errors.customerPO
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid container xs={12}>
+              <Grid item xs>
+                <Typography variant={'caption'} className={'previewCaption'}>description</Typography>
+                <BCInput
+                  handleChange={formikChange}
+                  multiline
+                  name={'description'}
+                  value={FormikValues.description}
+                  error={
+                    form.touched.description &&
+                    Boolean(form.errors.description)
+                  }
+                  helperText={
+                    form.touched.description && form.errors.description
+                  }
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item container xs={4} style={{paddingTop: 16}}>
+            <BCDragAndDrop images={thumbs} onDrop={(files) => setFieldValue('images', Array.from(files))} />
+          </Grid>
+        </Grid>
+
+        <DialogActions>
+          <Button
+            disabled={isSubmitting}
+            onClick={() => closeModal()}
+            variant={'outlined'}
+          >Close</Button>
+          {job._id &&
+            <>
+              <Button
+                color={'secondary'}
+                disabled={isSubmitting}
+                onClick={() => openCancelJobModal(job, true)}
+                style={{}}
+                variant={'contained'}
+              >Cancel Job</Button>
+              <Button
+                color={'secondary'}
+                disabled={isSubmitting}
+                onClick={() => openCancelJobModal(job, false)}
+                style={{}}
+                variant={'contained'}
+              >Cancel Job and Service Ticket</Button>
+            </>
+          }
+          <Button
+            color={'primary'}
+            disabled={isSubmitting}
+            type={'submit'}
+            variant={'contained'}
+          >{job._id ? 'Update' : 'Submit'}</Button>
+        </DialogActions>
       </form>
     </DataContainer>
   );
@@ -1862,32 +1405,32 @@ const Label = styled.div`
 `;
 
 const DataContainer = styled.div`
-  margin: auto 0;
+  *:not(.MuiGrid-container) > .MuiGrid-container {
+    width: 100%;
+    padding: 0px 40px;
+  }
+  .MuiGrid-spacing-xs-4 > .MuiGrid-spacing-xs-4 {
+    margin: 0;
+  }
+  .MuiGrid-grid-xs-12 {
+    margin-top: -16px;
+  }
+  .MuiGrid-grid-xs-true {
+    padding: 10px 16px;
+  }
+  .MuiOutlinedInput-root {
+    border-radius: 8px;
+    padding: 2px;
+  }
 
-  .MuiFormLabel-root {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: ${CONSTANTS.PRIMARY_DARK};
-    /* margin-bottom: 6px; */
+  .MuiOutlinedInput-input {
+    padding: 9.5px 4px;
   }
-  .MuiFormControl-marginNormal {
-    margin-top: 0.5rem !important;
-    margin-bottom: 1rem !important;
-    /* height: 20px !important; */
-  }
-  .MuiInputBase-input {
-    color: #383838;
-    font-size: 16px;
-    padding: 12px 14px;
-  }
-  .required > label:after {
+
+  span.required:after {
     margin-left: 3px;
-    content: '*';
+    content: "*";
     color: red;
-  }
-  .save-customer-button {
-    color: ${CONSTANTS.PRIMARY_WHITE};
   }
 `;
 
