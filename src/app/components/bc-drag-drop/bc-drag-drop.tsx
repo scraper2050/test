@@ -111,16 +111,18 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
 }
 
 const ImageContainer = styled.div`
-  padding-bottom: 4px;
+  height: 114px;
+  padding-right: 4px;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
-  overflow-x: auto;
+  overflow-y: auto;
 
   /* width */
   ::-webkit-scrollbar {
     height: 4px;
-
+    width: 4px;
   }
 
   /* Track */

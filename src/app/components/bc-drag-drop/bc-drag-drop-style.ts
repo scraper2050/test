@@ -41,7 +41,7 @@ export default (theme: Theme): any => ({
   imageWrapper: {
     border: 'solid #bdbdbd 1px',
     borderRadius: 8,
-    padding: '8px 8px 4px 8px',
+    padding: '8px 4px 0 8px',
   },
   image: {
     border: 'solid #bdbdbd 1px',
@@ -50,6 +50,7 @@ export default (theme: Theme): any => ({
     aspectRatio: 1,
     objectFit: 'contain',
     backgroundColor: '#e9eef1',
+    marginBottom: 8,
   },
   imageMargin: {
     marginRight: 4,
