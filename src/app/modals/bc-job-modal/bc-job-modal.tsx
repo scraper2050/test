@@ -1,8 +1,6 @@
 import * as yup from 'yup';
-import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
-import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
 import {
@@ -65,6 +63,7 @@ import { useHistory } from 'react-router-dom';
 import { stringSortCaseInsensitive } from '../../../helpers/sort';
 import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 const initialJobState = {
   customer: {
@@ -1138,6 +1137,17 @@ function BCJobModal({
               }
               value={jobTypeValue}
             />
+          </Grid>
+        </Grid>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+          <Grid item xs>
+            <Button
+              color={'primary'}
+              classes={{root: classes.addJobType}}
+              variant={'outlined'}
+              startIcon={<AddCircleIcon />}
+            >Add Technician</Button>
+
           </Grid>
         </Grid>
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
