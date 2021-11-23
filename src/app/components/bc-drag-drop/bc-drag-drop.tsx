@@ -3,6 +3,7 @@ import BackupIcon from '@material-ui/icons/Backup';
 import {Button, Typography, withStyles} from "@material-ui/core";
 import styles from "./bc-drag-drop-style";
 import emptyImage from "../../../assets/img/dummy-big.jpg";
+import styled from "styled-components";
 
 interface Props {
   classes: any,
@@ -51,9 +52,16 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
     if (btn) btn.click();
   }
 
-/*  useEffect(() => {
-    setThumbs(images);
-  }, [images])*/
+  const renderImages = () => {
+    if (images.length >= 3) return images
+    else {
+      const emptyImages = [...images];
+      for(let i = 0; i < 3 - images.length; i++) {
+        emptyImages.push('');
+      }
+      return emptyImages;
+    }
+  }
 
   return (
     <div
@@ -80,11 +88,15 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
 
       </div>
 
-      <div className={classes.imageContainer} >
-        <img className={classes.image} src={images.length > 0 ? images[0] : emptyImage}/>
-        <img className={classes.image} src={images.length > 1 ? images[1] : emptyImage}/>
-        <img className={classes.image} src={images.length > 2 ? images[2] : emptyImage}/>
+      <div className={classes.imageWrapper}>
+        <ImageContainer >
+          {renderImages().map((image, index, arr) =>
+            <img className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`} src={image || emptyImage} />
+            )
+          }
+        </ImageContainer>
       </div>
+
       <input
         type={'file'}
         id={'selectedFile'}
@@ -97,6 +109,38 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   )
 
 }
+
+const ImageContainer = styled.div`
+  padding-bottom: 4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  overflow-x: auto;
+
+  /* width */
+  ::-webkit-scrollbar {
+    height: 4px;
+
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #BDBDBD;
+    border-radius: 2px;
+    border: solid 3px transparent;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+`;
 
 export default withStyles(
   styles,
