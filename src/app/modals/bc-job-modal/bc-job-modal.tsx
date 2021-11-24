@@ -130,7 +130,6 @@ const getJobTasks = (job: any, jobTypes: any) => {
       contractor: task.contractor ? task.contractor : null,
       jobTypes: getJobData(task.jobTypes.map((task: any) => task.jobType._id), jobTypes)
     }));
-    console.log(tasks);
     return tasks;
   } else {
     return [{
@@ -630,6 +629,8 @@ function BCJobModal({
 
       if (scheduleDate === null) {
         errors['scheduleDate'] = 'Please select date';
+      } else if (moment().isAfter(scheduleDate, 'day')){
+        errors['scheduleDate'] = 'Cannot select a date that has already passed';
       }
 
       if (scheduledStartTime === null && scheduledEndTime !== null) {
