@@ -14,7 +14,7 @@ import {
   Button,
   Chip,
   DialogActions,
-  Grid,
+  Grid, IconButton,
   TextField,
   Typography,
   withStyles,
@@ -64,6 +64,16 @@ import { stringSortCaseInsensitive } from '../../../helpers/sort';
 import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+
+const initialTask = {
+  employeeType: 0,
+  contractorId: '',
+  contractor: null,
+  technicianId: '',
+  employee: null,
+  jobTypes: [],
+}
 
 const initialJobState = {
   customer: {
@@ -97,7 +107,9 @@ const initialJobState = {
     _id: '',
   },
   jobRescheduled: false,
+  tasks: [initialTask],
 };
+
 
 /**
  * Helper function to get job data from jobTypes
@@ -108,6 +120,26 @@ const getJobData = (ids: any, jobTypes: any) => {
   }
   return jobTypes.filter((job: any) => ids.includes(job._id));
 };
+
+/**
+ * Helper function to get job tasks
+ */
+const getJobTasks = (job: any, jobTypes: any) => {
+  if (job._id) {
+
+  } else {
+    return [{
+      employeeType: 0,
+      contractorId: '',
+      contractor: null,
+      technicianId: '',
+      employee: null,
+      jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType), jobTypes),
+    }]
+  }
+};
+
+
 
 function BCJobModal({
   classes,
@@ -133,23 +165,18 @@ function BCJobModal({
     (state: any) => state.serviceTicket.filterTicketState
   );
 
-  //-----------
   const employeesForJob = useMemo(() => [...data], [data]);
 
   // componenet usestate variables
   const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
   const [startTimeLabelState, setStartTimeLabelState] = useState(false);
   const [endTimeLabelState, setEndTimeLabelState] = useState(false);
-  const [showVendorFlag, setShowVendorFlag] = useState(
-    Boolean(job._id && job.employeeType)
-  );
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [employeeValue, setEmployeeValue] = useState<any>(null);
   const [contractorValue, setContractorValue] = useState<any>(null);
   const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
-  const [thumb, setThumb] = useState<any>(null);
   const [dateErr, setDateErr] = useState('Requires recent date');
 
   // ----------
@@ -162,41 +189,38 @@ function BCJobModal({
   const { profile: { displayName = '' } = {} } = customer;
 
   const employeeTypes = [
-    {
-      _id: '0',
-      name: 'Employee',
-    },
-    {
-      _id: '1',
-      name: 'Contractor',
-    },
+    {_id: 0, name: 'Employee',},
+    {_id: 1, name: 'Contractor'},
   ];
 
   /**
    * Handle employee type change field
    */
-  const handleEmployeeTypeChange = (fieldName: string, data: any) => {
-    const _id = data ? data._id : 0;
-    setFieldValue('contractorId', '');
-    setFieldValue('technicianId', '');
-    if (_id === '0') {
-      setFieldValue(fieldName, 0);
-      setShowVendorFlag(false);
-    } else if (_id === '1') {
-      setFieldValue(fieldName, 1);
-      setShowVendorFlag(true);
+  const handleTaskChange = (fieldName: string, data: any, index: number) => {
+    console.log({index})
+    const tasks = [...FormikValues.tasks];
+    switch (fieldName) {
+      case 'employeeType':
+        const _id = data ? data._id : 0;
+        tasks[index].employeeType = _id;
+        tasks[index].contractorId = '';
+        tasks[index].contractor = null;
+        tasks[index].technicianId = '';
+        tasks[index].employee = null;
+        break;
+      case 'contractorId':
+        tasks[index].contractorId = data._id;
+        tasks[index].contractor = data;
+        break;
+      case 'technicianId':
+        tasks[index].technicianId = data._id;
+        tasks[index].employee = data;
+        break;
+      case 'jobTypes':
+        tasks[index].jobTypes = data;
     }
-  };
-
-  /**
-   * Handle changes to Job type fields
-   */
-  const handleJobTypeChange = (newValue: any) => {
-    const ids = newValue.map(
-      (jobType: any): Object => ({ jobTypeId: jobType?._id })
-    );
-    setFieldValue('jobTypes', ids);
-    setJobTypeValue(newValue);
+    console.log({tasks});
+    setFieldValue('tasks', tasks);
   };
 
   /**
@@ -236,21 +260,6 @@ function BCJobModal({
       })
     );
   };
-
-  /*
-   * Const handleLocationChange = (event: any, fieldName: any, setFieldValue: any) => {
-   *   const locationId = event.target.value;
-   *   const customerId = job.ticket.customer?._id;
-   *   setFieldValue(fieldName, locationId);
-   *   setFieldValue('jobSiteId', '');
-   *   if (locationId !== '') {
-   *     dispatch(getJobSites({ customerId, locationId }));
-   *   } else {
-   *     dispatch(clearJobSiteStore());
-   *   }
-   */
-
-  // }
 
   /**
    * Handle job site changes field
@@ -358,38 +367,8 @@ function BCJobModal({
   }, [vendorsList]);
 
   useEffect(() => {
-    if (jobTypes.length !== 0) {
-      let tempJobValue = [];
-      let ids = [];
-      if (job._id) {
-        tempJobValue =
-          job.tasks && job.tasks.length > 0
-            ? getJobData(
-                job.tasks.map((job: any) => job.jobType._id),
-                jobTypes
-              )
-            : getJobData([job.type?._id], jobTypes);
-        ids = job.tasks.map((job: any) => ({ jobTypeId: job.jobType._id }));
-      } else {
-        tempJobValue =
-          ticket.tasks && ticket.tasks.length > 0
-            ? getJobData(
-                ticket.tasks.map(
-                  (job: any) =>
-                    job.jobType || (job.jobType === undefined && job._id)
-                ),
-                jobTypes
-              )
-            : getJobData([ticket.jobType], jobTypes);
-        if (typeof ticket.tasks !== 'undefined') {
-          ids = ticket.tasks.map((job: any) => ({
-            jobTypeId: job.jobType || job._id,
-          }));
-        }
-      }
-      setFieldValue('jobTypes', ids);
-      setJobTypeValue(tempJobValue);
-    }
+    const tasks = getJobTasks(job, jobTypes);
+    setFieldValue('tasks', tasks);
   }, [jobTypes]);
 
   useEffect(() => {
@@ -456,6 +435,19 @@ function BCJobModal({
       );
     }
   }, [job?.jobRescheduled]);
+
+  const addEmptyTask =() => {
+    const tasks = [...FormikValues.tasks];
+    tasks.push({...initialTask});
+    console.log({tasks})
+    setFieldValue('tasks', tasks);
+  }
+
+  const removeTask = (index: number) => {
+    const tasks = [...FormikValues.tasks];
+    tasks.splice(index, 1);
+    setFieldValue('tasks', tasks);
+  }
 
   /**
    * Handle schedule time validation
@@ -561,6 +553,7 @@ function BCJobModal({
           ? jobValue.equipment._id
           : '',
       jobTypes: [],
+      tasks: [{...initialTask}],
       dueDate: jobValue.ticket.dueDate
         ? formatDate(jobValue.ticket.dueDate)
         : '',
@@ -592,13 +585,15 @@ function BCJobModal({
       images: jobValue.images !== undefined ? jobValue.images : ticket.images,
     },
     validateOnMount: false,
-    validationSchema: schemaCheck,
+    //validationSchema: schemaCheck,
     onSubmit: (values: any, { setSubmitting }: any) => {
       // if (new Date(`${values.scheduleDate}`) < new Date()) {
       //   dispatch(error('Past date can not be selected'));
       //   setSubmitting(false)
       //   return;
       // }
+      console.log({values});
+      return;
 
       setSubmitting(true);
 
@@ -958,193 +953,183 @@ function BCJobModal({
             />
           </Grid>
         </Grid>
-        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
-          <Grid item xs>
-            <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
-            <Autocomplete
-              defaultValue={
-                job._id && job.employeeType
-                  ? employeeTypes[1]
-                  : employeeTypes[0]
-              }
-              getOptionLabel={(option) =>
-                option.name ? option.name : ''
-              }
-              id={'tags-standard'}
-              onChange={(ev: any, newValue: any) =>
-                handleEmployeeTypeChange('employeeType', newValue)
-              }
-              options={employeeTypes}
-              renderInput={(params) => (
-                <TextField
-                  error={
-                    form.touched.employeeType &&
-                    Boolean(form.errors.employeeType)
-                  }
-                  helperText={
-                    form.touched.employeeType &&
-                    form.errors.employeeType
-                  }
-                  required
-                  {...params}
-                  variant={'outlined'}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={' required previewCaption'}>{showVendorFlag ? 'contractor' : 'technician'}</Typography>
-            {showVendorFlag ?
+
+        {FormikValues.tasks.map((task: any, index) =>
+          <Grid container className={`modalContent ${classes.relative}`} justify={'space-between'} spacing={4}>
+            <Grid item xs>
+              <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
               <Autocomplete
-                className={detail ? 'detail-only' : ''}
-                // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
-                disabled={detail}
+                defaultValue={employeeTypes[task.employeeType]}
                 getOptionLabel={(option) =>
-                  option?.contractor?.info?.companyName
-                    ? option.contractor.info.companyName
-                    : ''
+                  option.name ? option.name : ''
                 }
                 id={'tags-standard'}
                 onChange={(ev: any, newValue: any) =>
-                  handleSelectChange(
-                    'contractorId',
-                    newValue?.contractor?._id,
-                    () => setContractorValue(newValue)
-                  )
+                  handleTaskChange('employeeType', newValue, index)
                 }
-                options={
-                  vendorsList && vendorsList.length !== 0
-                    ? vendorsList.sort((a: any, b: any) =>
-                      a.contractor.info.companyName >
-                      b.contractor.info.companyName
-                        ? 1
-                        : b.contractor.info.companyName >
-                        a.contractor.info.companyName
-                          ? -1
-                          : 0
-                    )
-                    : []
-                }
+                options={employeeTypes}
                 renderInput={(params) => (
                   <TextField
                     error={
-                      form.touched.contractorId &&
-                      Boolean(form.errors.contractorId)
+                      form.touched.employeeType &&
+                      Boolean(form.errors.employeeType)
                     }
                     helperText={
-                      form.touched.contractorId &&
-                      form.errors.contractorId
+                      form.touched.employeeType &&
+                      form.errors.employeeType
                     }
                     required
                     {...params}
                     variant={'outlined'}
                   />
                 )}
-                value={contractorValue}
               />
-              :
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={' required previewCaption'}>{task.employeeType ? 'contractor' : 'technician'}</Typography>
+              {task.employeeType ?
+                <Autocomplete
+                  className={detail ? 'detail-only' : ''}
+                  // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
+                  disabled={detail}
+                  getOptionLabel={(option) =>
+                    option?.contractor?.info?.companyName
+                      ? option.contractor.info.companyName
+                      : ''
+                  }
+                  id={'tags-standard'}
+                  onChange={(ev: any, newValue: any) => handleTaskChange('contractorId', newValue, index)}
+                  options={
+                    vendorsList && vendorsList.length !== 0
+                      ? vendorsList.sort((a: any, b: any) =>
+                        a.contractor.info.companyName >
+                        b.contractor.info.companyName
+                          ? 1
+                          : b.contractor.info.companyName >
+                          a.contractor.info.companyName
+                            ? -1
+                            : 0
+                      )
+                      : []
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      error={
+                        form.touched.contractorId &&
+                        Boolean(form.errors.contractorId)
+                      }
+                      helperText={
+                        form.touched.contractorId &&
+                        form.errors.contractorId
+                      }
+                      required
+                      {...params}
+                      variant={'outlined'}
+                    />
+                  )}
+                  value={task.contractor}
+                />
+                :
+                <Autocomplete
+                  getOptionLabel={(option) =>
+                    option.profile ? option.profile.displayName : ''
+                  }
+                  id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
+                  onChange={(ev: any, newValue: any) => handleTaskChange('technicianId', newValue, index)}
+                  options={
+                    employeesForJob && employeesForJob.length !== 0
+                      ? employeesForJob.sort((a: any, b: any) =>
+                        a.profile.displayName > b.profile.displayName
+                          ? 1
+                          : b.profile.displayName > a.profile.displayName
+                            ? -1
+                            : 0
+                      )
+                      : []
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      error={
+                        form.touched.technicianId &&
+                        Boolean(form.errors.technicianId)
+                      }
+                      helperText={
+                        form.touched.technicianId &&
+                        form.errors.technicianId
+                      }
+                      {...params}
+                      required
+                      variant={'outlined'}
+                    />
+                  )}
+                  value={task.employee}
+                />
+              }
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={' required previewCaption'}>job type</Typography>
               <Autocomplete
-                getOptionLabel={(option) =>
-                  option.profile ? option.profile.displayName : ''
-                }
-                id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                onChange={(ev: any, newValue: any) =>
-                  handleSelectChange('technicianId', newValue?._id, () =>
-                    setEmployeeValue(newValue)
-                  )
-                }
+                // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
+                getOptionLabel={(option) => {
+                  const { title, description } = option;
+                  return `${title}`;
+                }}
+                id={'tags-standard'}
+                multiple
+                onChange={(ev: any, newValue: any) => handleTaskChange('jobTypes', newValue, index)}
                 options={
-                  employeesForJob && employeesForJob.length !== 0
-                    ? employeesForJob.sort((a: any, b: any) =>
-                      a.profile.displayName > b.profile.displayName
-                        ? 1
-                        : b.profile.displayName > a.profile.displayName
-                          ? -1
-                          : 0
-                    )
+                  jobTypes && jobTypes.length !== 0
+                    ? stringSortCaseInsensitive(jobTypes, 'title')
                     : []
                 }
                 renderInput={(params) => (
                   <TextField
+                    {...params}
                     error={
-                      form.touched.technicianId &&
-                      Boolean(form.errors.technicianId)
+                      form.touched.jobTypes &&
+                      Boolean(form.errors.jobTypes)
                     }
                     helperText={
-                      form.touched.technicianId &&
-                      form.errors.technicianId
+                      form.touched.jobTypes && form.errors.jobTypes
                     }
-                    {...params}
-                    required
                     variant={'outlined'}
+                    //inputRef={jobTypesInput}
+                    required={!task.jobTypes.length}
+                    // error= {!!FormikErrors.jobTypes}
+                    // helperText={FormikErrors.jobTypes}
                   />
                 )}
-                value={employeeValue}
+                renderTags={(tagValue, getTagProps) =>
+                  tagValue.map((option, index) => {
+                    return (
+                      <Chip
+                        label={`${option.title}`}
+                        {...getTagProps({ index })}
+                        // disabled={disabledChips.includes(option._id) || !job._id}
+                      />
+                    );
+                  })
+                }
+                value={task.jobTypes}
               />
+            </Grid>
+            {index > 0 &&
+            <IconButton className={classes.removeJobTypeButton}
+                        component="span"
+                        onClick={() => removeTask(index)}
+            >
+              <RemoveCircleIcon/>
+            </IconButton>
             }
           </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={' required previewCaption'}>job type</Typography>
-            <Autocomplete
-              // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
-              getOptionLabel={(option) => {
-                const { title, description } = option;
-                return `${title}${
-                  description ? ' - ' + description : ''
-                }`;
-              }}
-              id={'tags-standard'}
-              multiple
-              onChange={(ev: any, newValue: any) =>
-                handleJobTypeChange(newValue)
-              }
-              options={
-                jobTypes && jobTypes.length !== 0
-                  ? stringSortCaseInsensitive(jobTypes, 'title')
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  error={
-                    form.touched.jobTypes &&
-                    Boolean(form.errors.jobTypes)
-                  }
-                  helperText={
-                    form.touched.jobTypes && form.errors.jobTypes
-                  }
-                  variant={'outlined'}
-                  inputRef={jobTypesInput}
-                  required={!jobTypeValue.length}
-                  // error= {!!FormikErrors.jobTypes}
-                  // helperText={FormikErrors.jobTypes}
-                />
-              )}
-              renderTags={(tagValue, getTagProps) =>
-                tagValue.map((option, index) => {
-                  return (
-                    <Chip
-                      label={`${option.title}${
-                        option.description
-                          ? ' - ' + option.description
-                          : ''
-                      }`}
-                      {...getTagProps({ index })}
-                      // disabled={disabledChips.includes(option._id) || !job._id}
-                    />
-                  );
-                })
-              }
-              value={jobTypeValue}
-            />
-          </Grid>
-        </Grid>
+        )}
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
             <Button
               color={'primary'}
-              classes={{root: classes.addJobType}}
+              classes={{root: classes.addJobTypeButton}}
               variant={'outlined'}
+              onClick={addEmptyTask}
               startIcon={<AddCircleIcon />}
             >Add Technician</Button>
 
@@ -1152,7 +1137,7 @@ function BCJobModal({
         </Grid>
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
-            <Typography variant={'caption'} className={' required previewCaption'}>job location</Typography>
+            <Typography variant={'caption'} className={' previewCaption'}>job location</Typography>
             <Autocomplete
               defaultValue={
                 ticket.jobLocation !== '' &&
@@ -1202,7 +1187,7 @@ function BCJobModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={' required previewCaption'}>job site</Typography>
+            <Typography variant={'caption'} className={' previewCaption'}>job site</Typography>
             <Autocomplete
               defaultValue={
                 ticket.jobSite !== '' &&
@@ -1252,7 +1237,7 @@ function BCJobModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={' required previewCaption'}>equipment</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               disabled={detail}

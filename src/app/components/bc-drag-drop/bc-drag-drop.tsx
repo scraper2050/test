@@ -13,9 +13,6 @@ interface Props {
 
 function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   const [drag, setDrag] = useState(false);
-  const [thumbs, setThumbs] = useState<any[]>(images);
-
-  console.log({images, thumbs});
 
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     setDrag(true);
