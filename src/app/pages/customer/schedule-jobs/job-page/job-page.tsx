@@ -31,11 +31,25 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     (job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0
   );
 
-  function RenderVendor({ vendor }: any) {
+  function RenderVendor({ vendor, tasks }: any) {
     if (vendor) {
       return vendor.profile
         ? vendor.profile.displayName
         : vendor.info.companyName;
+    }
+    if (tasks) {
+      console.log(tasks);
+      if (tasks.length === 0) return null;
+      else if (tasks.length > 1) return 'Multiple Techs'
+      else if (tasks[0].vendor) {
+        return tasks[0].vendor.profile
+          ? tasks[0].vendor.profile.displayName
+          : tasks[0].vendor.info.companyName;
+      } else if (tasks[0].technician) {
+          return tasks[0].technician.profile
+            ? tasks[0].technician.profile.displayName
+            : tasks[0].technician.info.companyName;
+      } else return null;
     }
     return null;
   }
@@ -117,6 +131,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         return (
           <RenderVendor
             vendor={row.original.technician || row.original.contractor}
+            tasks={row.original.tasks}
           />
         );
       },
