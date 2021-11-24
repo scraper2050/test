@@ -186,6 +186,7 @@ function BCServiceTicketModal({
     'values': FormikValues,
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
+    errors: FormikErrors,
     setFieldValue,
     getFieldMeta,
     isSubmitting
@@ -210,6 +211,8 @@ function BCServiceTicketModal({
         ...ticket,
         ...values
       };
+      tempData.images = tempData.images.filter((image: any) => image instanceof File);
+
       const editTicketObj = { ...values,
         'ticketId': '' };
       if (ticket._id) {
@@ -300,7 +303,6 @@ function BCServiceTicketModal({
           jobTypesInput.current.setCustomValidity("");
         }
       }
-
       return errors;
     }
   });
@@ -315,6 +317,14 @@ function BCServiceTicketModal({
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);
   };
+
+  const handleImageDrop = (files: FileList) => {
+    const images = [...FormikValues.images];
+    const newImages = Array.from(files);
+    images.push(...newImages);
+
+    setFieldValue('images', images);
+  }
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -343,6 +353,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer?._id) {
       const jobLocation = jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0];
+
       if (jobLocation) {
         setJobLocationValue(jobLocation);
         if (jobLocation.isActive) {
@@ -351,9 +362,10 @@ function BCServiceTicketModal({
             'locationId': ticket.jobLocation
           }));
         }
-        const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation._id);
-        if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
       }
+      const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation?._id);
+      if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
+
     }
   }, [jobLocations]);
 
@@ -385,19 +397,20 @@ function BCServiceTicketModal({
           if (image.type.match('image.*')) prs.push(readImage(image))
         }
       });
-      setThumbs(images);
+
       if (prs.length) {
-        Promise.all(prs).then(images => {
-          const temp = [...thumbs];
-          temp.push(...images);
-          setThumbs(temp);
+        Promise.all(prs).then(reads => {
+          images.push(...reads.filter((image: any) => image !== null));
+          setThumbs(images);
         });
+      } else {
+        setThumbs(images);
       }
     }
   }, [FormikValues.images]);
 
   const readImage = (image: File) => {
-    return new Promise(function(resolve,reject){
+    return new Promise(function(resolve){
       let fr = new FileReader();
 
       fr.onload = function(){
@@ -405,23 +418,12 @@ function BCServiceTicketModal({
       };
 
       fr.onerror = function(){
-        reject(fr);
+        resolve(null);
       };
 
       fr.readAsDataURL(image);
     });
   }
-
-
-  const formatSchedulingTime = (time: string) => {
-    const timeAr = time.split('T');
-    const timeWithSeconds = timeAr[1].substr(0, 5);
-    const hours = timeWithSeconds.substr(0, 2);
-    const minutes = timeWithSeconds.substr(3, 5);
-
-    return { hours,
-      minutes };
-  };
 
   const getJobType = () => {
     if (jobTypes?.length !== 0) {
@@ -482,6 +484,7 @@ function BCServiceTicketModal({
               id={'dueDate'}
               placeholder={'Date'}
               value={FormikValues.dueDate}
+              errorText={FormikErrors.dueDate}
             />
           </Grid>
           <Grid item xs={4} />
@@ -607,7 +610,7 @@ function BCServiceTicketModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 0}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => setFieldValue('images', Array.from(files))} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} />
           </Grid>
         </Grid>
 

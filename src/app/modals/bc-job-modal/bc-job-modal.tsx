@@ -68,9 +68,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 const initialTask = {
   employeeType: 0,
-  contractorId: '',
   contractor: null,
-  technicianId: '',
   employee: null,
   jobTypes: [],
 }
@@ -126,13 +124,18 @@ const getJobData = (ids: any, jobTypes: any) => {
  */
 const getJobTasks = (job: any, jobTypes: any) => {
   if (job._id) {
-
+    const tasks = job.tasks.map((task: any) => ({
+      employeeType: task.employeeType ? 1 : 0,
+      employee: task.technician ? task.technician : null,
+      contractor: task.contractor ? task.contractor : null,
+      jobTypes: getJobData(task.jobTypes.map((task: any) => task.jobType._id), jobTypes)
+    }));
+    console.log(tasks);
+    return tasks;
   } else {
     return [{
       employeeType: 0,
-      contractorId: '',
       contractor: null,
-      technicianId: '',
       employee: null,
       jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType), jobTypes),
     }]
@@ -168,20 +171,11 @@ function BCJobModal({
   const employeesForJob = useMemo(() => [...data], [data]);
 
   // componenet usestate variables
-  const [scheduledEndTimeMsg, setScheduledEndTimeMsg] = useState('');
-  const [startTimeLabelState, setStartTimeLabelState] = useState(false);
-  const [endTimeLabelState, setEndTimeLabelState] = useState(false);
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [employeeValue, setEmployeeValue] = useState<any>(null);
   const [contractorValue, setContractorValue] = useState<any>(null);
-  const [jobTypeValue, setJobTypeValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
-  const [dateErr, setDateErr] = useState('Requires recent date');
-
-  // ----------
-  const history = useHistory();
-  const jobTypesInput = useRef<HTMLInputElement>(null);
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -194,43 +188,33 @@ function BCJobModal({
   ];
 
   /**
-   * Handle employee type change field
+   * Handle task's items change
    */
   const handleTaskChange = (fieldName: string, data: any, index: number) => {
-    console.log({index})
     const tasks = [...FormikValues.tasks];
     switch (fieldName) {
       case 'employeeType':
         const _id = data ? data._id : 0;
         tasks[index].employeeType = _id;
-        tasks[index].contractorId = '';
         tasks[index].contractor = null;
-        tasks[index].technicianId = '';
         tasks[index].employee = null;
         break;
       case 'contractorId':
-        tasks[index].contractorId = data._id;
         tasks[index].contractor = data;
         break;
       case 'technicianId':
-        tasks[index].technicianId = data._id;
         tasks[index].employee = data;
         break;
       case 'jobTypes':
         tasks[index].jobTypes = data;
     }
-    console.log({tasks});
     setFieldValue('tasks', tasks);
   };
 
   /**
    * Handle role field change
    */
-  const handleSelectChange = (
-    fieldName: string,
-    newValue: string,
-    setState?: any
-  ) => {
+  const handleSelectChange = (fieldName: string, newValue: string, setState?: any) => {
     if (fieldName === 'contractorId') {
       setFieldValue('technicianId', '');
     }
@@ -264,12 +248,7 @@ function BCJobModal({
   /**
    * Handle job site changes field
    */
-  const handleJobSiteChange = (
-    event: any,
-    fieldName: any,
-    setFieldValue: any,
-    newValue: any
-  ) => {
+  const handleJobSiteChange = (fieldName: any, newValue: any) => {
     const jobSiteId = newValue ? newValue._id : '';
     setFieldValue(fieldName, jobSiteId);
     setJobSiteValue(newValue);
@@ -278,13 +257,7 @@ function BCJobModal({
   /**
    * Handle Location field change
    */
-  const handleLocationChange = async (
-    event: any,
-    fieldName: any,
-    setFieldValue: any,
-    getFieldMeta: any,
-    newValue: any
-  ) => {
+  const handleLocationChange = async (fieldName: any, newValue: any) => {
     const locationId = newValue ? newValue._id : '';
 
     const customerId = job.ticket.customer?._id
@@ -309,6 +282,11 @@ function BCJobModal({
    */
   const dateChangeHandler = (date: string, fieldName: string) => {
     setFieldValue(fieldName, date);
+    if (fieldName === 'scheduleDate') FormikErrors[fieldName] = '';
+    else if(fieldName === 'scheduledStartTime' || fieldName === 'scheduledEndTime') {
+      FormikErrors.scheduledStartTime = ''
+      FormikErrors.scheduledEndTime = ''
+    }
   };
 
   /**
@@ -317,7 +295,7 @@ function BCJobModal({
   const formatRequestObj = (rawReqObj: any) => {
     for (const key in rawReqObj) {
       //check for property with empty string  or null as value
-      if (rawReqObj[key] === '' || rawReqObj[key] === null) {
+      if (rawReqObj[key] === '' || rawReqObj[key] === null || rawReqObj[key] === undefined) {
         delete rawReqObj[key];
       }
     }
@@ -439,7 +417,6 @@ function BCJobModal({
   const addEmptyTask =() => {
     const tasks = [...FormikValues.tasks];
     tasks.push({...initialTask});
-    console.log({tasks})
     setFieldValue('tasks', tasks);
   }
 
@@ -449,56 +426,9 @@ function BCJobModal({
     setFieldValue('tasks', tasks);
   }
 
-  /**
-   * Handle schedule time validation
-   */
-  const isValidate = (requestObj: any) => {
-    let validateFlag = true;
-    if (
-      requestObj.scheduledStartTime === null &&
-      requestObj.scheduledEndTime !== null
-    ) {
-      //  SetScheduledEndTimeMsg('');
-      setStartTimeLabelState(true);
-      validateFlag = false;
-    } /* Else if (requestObj.scheduledStartTime !== null && requestObj.scheduledEndTime === null) {
-      setScheduledEndTimeMsg('End time is required.');
-      setEndTimeLabelState(true);
-      validateFlag = false;
-    }
-     else if (requestObj.scheduledStartTime > requestObj.scheduledEndTime) {
-      setScheduledEndTimeMsg('End time should be greater than start time.');
-      setEndTimeLabelState(true);
-      setStartTimeLabelState(false);
-      validateFlag = false;
-    } */ else {
-      setScheduledEndTimeMsg('');
-      setStartTimeLabelState(false);
-      setEndTimeLabelState(false);
-      validateFlag = true;
-    }
-    return validateFlag;
-  };
-
-  /**
-   * Format schedule time handler
-   */
-  const formatSchedulingTime = (time: string) => {
-    const timeAr = time.split('T');
-    const timeWithSeconds = timeAr[1].substr(0, 5);
-    const hours = timeWithSeconds.substr(0, 2);
-    const minutes = timeWithSeconds.substr(3, 5);
-
-    return { hours, minutes };
-  };
-
   // validation schema object
   const schemaCheck = yup.object().shape({
-    // customerId: yup.string(),
-    // description: yup.string(),
-    employeeType: yup.mixed().required('Please this field is required'),
-    // equipmentId: yup.mixed(),
-    jobTypes: yup.array().min(1, 'Select at least one (1) job'),
+    //jobTypes: yup.array().min(1, 'Select at least one (1) job'),
     // dueDate: yup.string(),
     scheduleDate: yup
       .mixed()
@@ -547,12 +477,10 @@ function BCJobModal({
     initialValues: {
       customerId: jobValue.customer?._id,
       description: jobValue.description || ticket.note,
-      employeeType: !jobValue.employeeType ? 0 : 1,
       equipmentId:
         jobValue.equipment && jobValue.equipment._id
           ? jobValue.equipment._id
           : '',
-      jobTypes: [],
       tasks: [{...initialTask}],
       dueDate: jobValue.ticket.dueDate
         ? formatDate(jobValue.ticket.dueDate)
@@ -564,8 +492,6 @@ function BCJobModal({
       scheduledEndTime: jobValue.scheduledEndTime
         ? formatISOToDateString(jobValue.scheduledEndTime)
         : null,
-      technicianId: jobValue.technician ? jobValue.technician._id : '',
-      contractorId: jobValue.contractor ? jobValue.contractor._id : '',
       ticketId: jobValue.ticket._id,
       jobLocationId: jobValue.jobLocation
         ? jobValue.jobLocation._id
@@ -585,69 +511,38 @@ function BCJobModal({
       images: jobValue.images !== undefined ? jobValue.images : ticket.images,
     },
     validateOnMount: false,
+    validateOnChange: false,
+    validateOnBlur: false,
     //validationSchema: schemaCheck,
     onSubmit: (values: any, { setSubmitting }: any) => {
-      // if (new Date(`${values.scheduleDate}`) < new Date()) {
-      //   dispatch(error('Past date can not be selected'));
-      //   setSubmitting(false)
-      //   return;
-      // }
       console.log({values});
-      return;
+      const tempData = {...values};
+      tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
+      tempData.customerId = customer?._id;
 
-      setSubmitting(true);
+      if (values.scheduledStartTime)
+        tempData.scheduledStartTime = formatToMilitaryTime(values.scheduledStartTime);
+      if (values.scheduledEndTime)
+        tempData.scheduledEndTime = formatToMilitaryTime(values.scheduledEndTime);
 
-      const customerId = customer?._id;
-      const jobFromMapFilter = job.jobFromMap;
+      const newImages = values.images.filter((image: any) => image instanceof File);
+      if(newImages.length > 0)
+        tempData.images = newImages;
+      else
+        delete tempData.images;
 
-      const { image, customerPO, customerContactId } = values;
-      const { note, _id } = ticket;
+      delete tempData.dueDate;
 
-      const tempJobValues = { ...values };
-      delete tempJobValues.customerContactId;
-      delete tempJobValues.customerPO;
-      // delete tempJobValues.image;
+      const tasks = values.tasks.map((task: any) => ({
+        employeeType: task.employeeType.toString(),
+        contractorId: task.contractor ? task.contractor._id : '',
+        technicianId: task.employee ? task.employee._id : '',
+        jobTypes: task.jobTypes.map((type: any) => ({jobTypeId: type._id}))
+      }))
 
-      const tempTicket = {
-        ticketId: _id,
-        note: note === undefined ? 'Job Created' : note,
-        image,
-        customerPO,
-        customerContactId,
-      };
-
-      const formatedTicketRequest = formatRequestObj(tempTicket);
-
-      const tempData = {
-        //...job,
-        ...values,
-        customerId,
-      };
-
-      delete tempData.contractor;
-      delete tempData.technician;
-
-      if (
-        values.employeeType &&
-        values.contractorId &&
-        values.contractorId !== ''
-      ) {
-        delete tempData.technicianId;
-        tempData.employeeType = 1;
-        tempData.contractorId = values.contractorId;
-      }
-
-      if (
-        !values.employeeType &&
-        values.technicianId &&
-        values.technicianId !== ''
-      ) {
-        delete tempData.contractorId;
-        tempData.technicianId = values.technicianId;
-        tempData.employeeType = 0;
-      }
-      //setSubmitting(false);
-      //return;
+      tempData.tasks = tasks;
+      const requestObj = formatRequestObj(tempData)
+      console.log({requestObj});
 
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
@@ -666,158 +561,87 @@ function BCJobModal({
         request = createJob;
       }
 
-      if (isValidate(tempData)) {
-        const requestObj = { ...formatRequestObj(tempData) };
+      request(requestObj)
+        .then(async (response: any) => {
+          if (response.status === 0) {
+            dispatch(error(response.message));
+            return;
+          }
+          /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
+            await callEditTicketAPI(formatedTicketRequest);
+          }*/
+          await dispatch(refreshServiceTickets(true));
+          await dispatch(refreshJobs(true));
+          dispatch(closeModalAction());
+          dispatch(setOpenServiceTicketLoading(false));
 
-        if (
-          requestObj.scheduledStartTime &&
-          requestObj.scheduledStartTime !== null
-        ) {
-          requestObj.scheduledStartTime = formatToMilitaryTime(
-            requestObj.scheduledStartTime
-          );
-        } else {
-          requestObj.scheduledStartTime = '';
-        }
-
-        if (
-          requestObj.scheduledEndTime &&
-          requestObj.scheduledEndTime !== null
-        ) {
-          requestObj.scheduledEndTime = formatToMilitaryTime(
-            requestObj.scheduledEndTime
-          );
-        } else {
-          requestObj.scheduledEndTime = '';
-        }
-
-        if (requestObj.companyId) {
-          delete requestObj.companyId;
-        }
-        delete requestObj.dueDate;
-
-        if (!job._id) {
-          delete requestObj.customer;
-          delete requestObj.equipment;
-          delete requestObj.technician;
-          delete requestObj.ticket;
-          delete requestObj.type;
-        }
-
-        request(requestObj)
-          .then(async (response: any) => {
-            if (response.status === 0) {
-              dispatch(error(response.message));
-              return;
-            }
-            /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
-              await callEditTicketAPI(formatedTicketRequest);
-            }*/
-            await dispatch(refreshServiceTickets(true));
-            await dispatch(refreshJobs(true));
-            dispatch(closeModalAction());
-            dispatch(setOpenServiceTicketLoading(false));
-
-            // Executed only when job is created from Map View.
-            if (jobFromMapFilter) {
-              dispatch(setOpenServiceTicketLoading(true));
-              getOpenServiceTickets({
-                ...openServiceTicketFilter,
-                pageNo: 1,
-                pageSize: 4,
+          // Executed only when job is created from Map View.
+          if (job.jobFromMapFilter) {
+            dispatch(setOpenServiceTicketLoading(true));
+            getOpenServiceTickets({
+              ...openServiceTicketFilter,
+              pageNo: 1,
+              pageSize: 6,
+            })
+              .then((response: any) => {
+                dispatch(setOpenServiceTicketLoading(false));
+                dispatch(setOpenServiceTicket(response));
+                dispatch(refreshServiceTickets(true));
+                dispatch(closeModalAction());
+                setTimeout(() => {
+                  dispatch(
+                    setModalDataAction({
+                      data: {},
+                      type: '',
+                    })
+                  );
+                }, 200);
               })
-                .then((response: any) => {
-                  dispatch(setOpenServiceTicketLoading(false));
-                  dispatch(setOpenServiceTicket(response));
-                  dispatch(refreshServiceTickets(true));
-                  dispatch(closeModalAction());
-                  setTimeout(() => {
-                    dispatch(
-                      setModalDataAction({
-                        data: {},
-                        type: '',
-                      })
-                    );
-                  }, 200);
-                })
-                .catch((err: any) => {
-                  throw err;
-                });
-            }
-            setTimeout(() => {
-              dispatch(
-                setModalDataAction({
-                  data: {},
-                  type: '',
-                })
-              );
-            }, 200);
+              .catch((err: any) => {
+                throw err;
+              });
+          }
+          setTimeout(() => {
+            dispatch(
+              setModalDataAction({
+                data: {},
+                type: '',
+              })
+            );
+          }, 200);
 
-            if (
-              response.message === 'Job created successfully.' ||
-              response.message === 'Job edited successfully.'
-            ) {
-              dispatch(success(response.message));
-            }
-          })
-          .catch((err: any) => {
-            throw err;
-          })
-          .finally(() => {
-            setSubmitting(false);
-          });
-      } else {
-        setSubmitting(false);
-      }
+          if (
+            response.message === 'Job created successfully.' ||
+            response.message === 'Job edited successfully.'
+          ) {
+            dispatch(success(response.message));
+          }
+        })
+        .catch((err: any) => {
+          throw err;
+        })
+        .finally(() => {
+          setSubmitting(false);
+        });
     },
-    // validate: (values: any) => {
-    //   const errors: any = {};
+    validate: (values: any) => {
+      const errors: any = {};
+      const {scheduleDate, scheduledStartTime, scheduledEndTime} = values;
 
-    //   schemaCheck
-    //     .validate(values)
-    //     .then((res) => {
-    //       const selectedDate = moment(new Date(values.scheduleDate));
-    //       const todaysDate = moment(new Date());
+      if (scheduleDate === null) {
+        errors['scheduleDate'] = 'Please select date';
+      }
 
-    //       if (
-    //         values.scheduleDate !== null &&
-    //         selectedDate.diff(todaysDate, 'days') < 0
-    //       ) {
-    //         errors.scheduleDate = 'Past date can not be selected';
-    //         return errors;
-    //         // dispatch(error('Past date can not be selected'));
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       const field = err.path;
-    //       errors[field] = err.message;
-    //       return errors;
-    //     });
+      if (scheduledStartTime === null && scheduledEndTime !== null) {
+        errors['scheduledStartTime'] = 'Start time is required when end time is provided';
+      } else if (scheduledStartTime !== null && scheduledEndTime !== null) {
+        const d1 = moment(scheduledStartTime);
+        const d2 = moment(scheduledEndTime);
+        if (d2.isSameOrBefore(d1)) errors['scheduledStartTime'] = 'Start time must be before end time';
+      }
 
-    // if (values.jobTypes.length === 0 && jobTypeValue.length === 0) {
-    //   errors.jobTypes = 'Select at least one (1) job';
-    //   if (jobTypesInput.current !== null) {
-    //     jobTypesInput.current.setCustomValidity(
-    //       'Select at least one (1) job'
-    //     );
-    //   }
-    // } else {
-    //   if (jobTypesInput.current !== null) {
-    //     jobTypesInput.current.setCustomValidity('');
-    //   }
-    // }
-
-    // const selectedDate = moment(new Date(values.scheduleDate));
-    // const todaysDate = moment(new Date());
-
-    // if (
-    //   values.scheduleDate !== null &&
-    //   selectedDate.diff(todaysDate, 'days') < 0
-    // ) {
-    //   errors.scheduleDate = 'Past date can not be selected';
-    //   dispatch(error('Past date can not be selected'));
-    // }
-    // },
+      return errors;
+    },
   });
 
   const {
@@ -826,7 +650,6 @@ function BCJobModal({
     handleChange: formikChange,
     handleSubmit: FormikSubmit,
     setFieldValue,
-    getFieldMeta,
     isSubmitting,
   } = form;
 
@@ -842,16 +665,12 @@ function BCJobModal({
     }, 200);
   };
 
-  const disabledChips = job?._id
+/*  const disabledChips = job?._id
     ? job.tasks.length
       ? job.tasks.map(({ jobType }: any) => jobType._id)
       : [job.type._id]
-    : [];
+    : [];*/
 
-  const goToJobs = () => {
-    closeModal();
-    history.push('/main/customers/schedule');
-  };
 
   useEffect(() => {
     if (FormikValues.images) {
@@ -865,13 +684,14 @@ function BCJobModal({
           if (image.type.match('image.*')) prs.push(readImage(image))
         }
       });
-      setThumbs(images);
+
       if (prs.length) {
-        Promise.all(prs).then(images => {
-          const temp = [...thumbs];
-          temp.push(...images);
-          setThumbs(temp);
+        Promise.all(prs).then(reads => {
+          images.push(...reads.filter((image: any) => image !== null));
+          setThumbs(images);
         });
+      } else {
+        setThumbs(images);
       }
     }
   }, [FormikValues.images]);
@@ -885,7 +705,7 @@ function BCJobModal({
       };
 
       fr.onerror = function(){
-        reject(fr);
+        reject(null);
       };
 
       fr.readAsDataURL(image);
@@ -894,6 +714,13 @@ function BCJobModal({
 
   if (isLoading) {
     return <BCCircularLoader />;
+  }
+
+  function handleImageDrop(files: FileList) {
+    const images = [...FormikValues.images];
+    const newImages = Array.from(files);
+    images.push(...newImages);
+    setFieldValue('images', images);
   }
 
   return (
@@ -914,12 +741,11 @@ function BCJobModal({
             <Typography variant={'caption'} className={'required previewCaption'}>schedule date</Typography>
             <BCDateTimePicker
               disablePast={true}
-              handleChange={(e: any) =>
-                dateChangeHandler(e, 'scheduleDate')
-              }
+              handleChange={(e: any) => dateChangeHandler(e, 'scheduleDate')}
               name={'scheduleDate'}
               minDateMessage={form.errors.scheduleDate}
               value={FormikValues.scheduleDate}
+              errorText={FormikErrors.scheduleDate}
             />
           </Grid>
           <Grid item xs={2}>
@@ -935,6 +761,7 @@ function BCJobModal({
               placeholder={'Start Time'}
               minDateMessage={form?.errors?.scheduledStartTime || ''}
               value={FormikValues.scheduledStartTime}
+              errorText={FormikErrors.scheduledStartTime}
             />
           </Grid>
           <Grid item xs={2}>
@@ -950,12 +777,13 @@ function BCJobModal({
               minDateMessage={form?.errors?.scheduledEndTime || ''}
               placeholder={'End Time'}
               value={FormikValues.scheduledEndTime}
+              errorText={FormikErrors.scheduledEndTime}
             />
           </Grid>
         </Grid>
 
         {FormikValues.tasks.map((task: any, index) =>
-          <Grid container className={`modalContent ${classes.relative}`} justify={'space-between'} spacing={4}>
+          <Grid container key={`Grid_${index}`} className={`modalContent ${classes.relative}`} justify={'space-between'} spacing={4}>
             <Grid item xs>
               <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
               <Autocomplete
@@ -970,14 +798,6 @@ function BCJobModal({
                 options={employeeTypes}
                 renderInput={(params) => (
                   <TextField
-                    error={
-                      form.touched.employeeType &&
-                      Boolean(form.errors.employeeType)
-                    }
-                    helperText={
-                      form.touched.employeeType &&
-                      form.errors.employeeType
-                    }
                     required
                     {...params}
                     variant={'outlined'}
@@ -1014,14 +834,6 @@ function BCJobModal({
                   }
                   renderInput={(params) => (
                     <TextField
-                      error={
-                        form.touched.contractorId &&
-                        Boolean(form.errors.contractorId)
-                      }
-                      helperText={
-                        form.touched.contractorId &&
-                        form.errors.contractorId
-                      }
                       required
                       {...params}
                       variant={'outlined'}
@@ -1049,14 +861,6 @@ function BCJobModal({
                   }
                   renderInput={(params) => (
                     <TextField
-                      error={
-                        form.touched.technicianId &&
-                        Boolean(form.errors.technicianId)
-                      }
-                      helperText={
-                        form.touched.technicianId &&
-                        form.errors.technicianId
-                      }
                       {...params}
                       required
                       variant={'outlined'}
@@ -1085,18 +889,8 @@ function BCJobModal({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    error={
-                      form.touched.jobTypes &&
-                      Boolean(form.errors.jobTypes)
-                    }
-                    helperText={
-                      form.touched.jobTypes && form.errors.jobTypes
-                    }
                     variant={'outlined'}
-                    //inputRef={jobTypesInput}
                     required={!task.jobTypes.length}
-                    // error= {!!FormikErrors.jobTypes}
-                    // helperText={FormikErrors.jobTypes}
                   />
                 )}
                 renderTags={(tagValue, getTagProps) =>
@@ -1153,14 +947,7 @@ function BCJobModal({
               }
               getOptionDisabled={(option) => !option.isActive}
               id={'tags-standard'}
-              onChange={(ev: any, newValue: any) =>
-                handleLocationChange(
-                  ev,
-                  'jobLocationId',
-                  setFieldValue,
-                  getFieldMeta,
-                  newValue
-                )
+              onChange={(ev: any, newValue: any) => handleLocationChange('jobLocationId', newValue)
               }
               options={
                 jobLocations && jobLocations.length !== 0
@@ -1205,14 +992,7 @@ function BCJobModal({
                 option.name ? option.name : ''
               }
               id={'tags-standard'}
-              onChange={(ev: any, newValue: any) =>
-                handleJobSiteChange(
-                  ev,
-                  'jobSiteId',
-                  setFieldValue,
-                  newValue
-                )
-              }
+              onChange={(ev: any, newValue: any) => handleJobSiteChange('jobSiteId', newValue)}
               options={
                 jobSites && jobSites.length !== 0
                   ? jobSites.sort((a: any, b: any) =>
@@ -1354,7 +1134,7 @@ function BCJobModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 16}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => setFieldValue('images', Array.from(files))} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} />
           </Grid>
         </Grid>
 
@@ -1393,11 +1173,6 @@ function BCJobModal({
     </DataContainer>
   );
 }
-
-const Label = styled.div`
-  color: red;
-  font-size: 15px;
-`;
 
 const DataContainer = styled.div`
   *:not(.MuiGrid-container) > .MuiGrid-container {

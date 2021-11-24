@@ -50,14 +50,13 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   }
 
   const renderImages = () => {
-    if (images.length >= 3) return images
-    else {
-      const emptyImages = [...images];
-      for(let i = 0; i < 3 - images.length; i++) {
-        emptyImages.push('');
-      }
-      return emptyImages;
+    const addNumber = images.length === 0 ? 3 : (3 - (images.length % 3)) % 3;
+    const emptyImages = [...images];
+    for(let i = 0; i < addNumber; i++) {
+      emptyImages.push('');
     }
+
+    return emptyImages;
   }
 
   return (
@@ -88,7 +87,11 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
       <div className={classes.imageWrapper}>
         <ImageContainer >
           {renderImages().map((image, index, arr) =>
-            <img className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`} src={image || emptyImage} />
+            <img
+              key={`image_${index}`}
+              className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`}
+              src={image || emptyImage}
+            />
             )
           }
         </ImageContainer>
