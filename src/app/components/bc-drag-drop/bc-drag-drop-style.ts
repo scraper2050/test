@@ -38,13 +38,10 @@ export default (theme: Theme): any => ({
     color: '#828282',
     textTransform: 'none',
   },
-  imageContainer: {
+  imageWrapper: {
     border: 'solid #bdbdbd 1px',
     borderRadius: 8,
-    padding: 8,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    padding: '8px 4px 0 8px',
   },
   image: {
     border: 'solid #bdbdbd 1px',
@@ -53,5 +50,9 @@ export default (theme: Theme): any => ({
     aspectRatio: 1,
     objectFit: 'contain',
     backgroundColor: '#e9eef1',
+    marginBottom: 8,
+  },
+  imageMargin: {
+    marginRight: 4,
   }
 })

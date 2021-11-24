@@ -8,6 +8,7 @@ import {
   KeyboardTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
+import TimerIcon from '@material-ui/icons/Timer';
 
 const useStyles = makeStyles((theme) => ({
   datePicker: {
@@ -40,6 +41,7 @@ function BCDateTimePicker({
   invalidMessage = 'Please select a correct date',
   minDateMessage = 'Cannot select a date that has already passed',
   TextField,
+  errorText = '',
 }: any) {
   const classes = useStyles();
   return (
@@ -72,6 +74,8 @@ function BCDateTimePicker({
             variant={variant}
             TextFieldComponent={TextField}
             minDateMessage={minDateMessage}
+            helperText={errorText}
+            error={errorText !== ''}
           />
         ) : (
           <KeyboardTimePicker
@@ -95,6 +99,9 @@ function BCDateTimePicker({
             variant={variant}
             invalidDateMessage={minDateMessage}
             views={views}
+            keyboardIcon={<TimerIcon />}
+            helperText={errorText}
+            error={errorText !== ''}
           />
         )}
       </MuiPickersUtilsProvider>

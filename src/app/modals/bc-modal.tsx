@@ -128,18 +128,22 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
+        data.maxHeight='100%';
         setComponent(<BCJobModal />);
         break;
       case modalTypes.EDIT_JOB_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
+        data.maxHeight='100%';
         setComponent(<BCJobModal
           detail={data.detail}
           job={data.job}

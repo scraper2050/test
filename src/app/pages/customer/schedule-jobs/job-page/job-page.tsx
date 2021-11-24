@@ -31,13 +31,47 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     (job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0
   );
 
-  function RenderVendor({ vendor }: any) {
+  function RenderVendor({ vendor, tasks }: any) {
     if (vendor) {
       return vendor.profile
         ? vendor.profile.displayName
         : vendor.info.companyName;
     }
+    if (tasks) {
+      if (tasks.length === 0) return null;
+      else if (tasks.length > 1) return 'Multiple Techs'
+      else if (tasks[0].vendor) {
+        return tasks[0].vendor.profile
+          ? tasks[0].vendor.profile.displayName
+          : tasks[0].vendor.info.companyName;
+      } else if (tasks[0].technician) {
+          return tasks[0].technician.profile
+            ? tasks[0].technician.profile.displayName
+            : tasks[0].technician.info.companyName;
+      } else return null;
+    }
     return null;
+  }
+
+  function JobType({tasks, title}: any) {
+    const allTypes = tasks.reduce((acc: string[], task: any) => {
+      if (task.jobType?.title) {
+        if (acc.indexOf(task.jobType.title) === -1) acc.push(task.jobType.title);
+        return acc;
+      }
+
+      const all = task.jobTypes?.map((item: any) => item.jobType?.title);
+      all.forEach((item: string) => {
+        if (item && acc.indexOf(item) === -1) acc.push(item);
+      })
+      return acc;
+    }, []);
+
+    return (
+      <div className={'flex items-center'}>
+        {allTypes.length === 0 ? title :  allTypes.length === 1 ? allTypes[0] : 'Multiple Jobs'}
+      </div>
+    );
   }
 
   const openEditJobModal = (job: any) => {
@@ -117,6 +151,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         return (
           <RenderVendor
             vendor={row.original.technician || row.original.contractor}
+            tasks={row.original.tasks}
           />
         );
       },
@@ -134,15 +169,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     },
     {
       Cell({ row }: any) {
-        return (
-          <div className={'flex items-center'}>
-            {row.original.tasks.length > 0
-              ? row.original.tasks.length === 1
-                ? row.original.tasks[0].jobType.title
-                : 'Multiple Jobs'
-              : row.original.type?.title}
-          </div>
-        );
+        return (<JobType tasks={row.original.tasks} title={row.original.type?.title} />)
       },
       Header: 'Type',
       accessor: 'type.title',

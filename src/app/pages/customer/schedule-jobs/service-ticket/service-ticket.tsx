@@ -82,21 +82,6 @@ function ServiceTicket({ classes }: any) {
   }
 
   const openDetailTicketModal = async (ticket: any) => {
-
-/*    const reqObj = {
-      customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation
-    }
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;*/
     const {serviceTicket, status, message} = await getServiceTicketDetail(ticket._id);
     if (status === 1) {
       dispatch(setModalDataAction({
@@ -120,7 +105,6 @@ function ServiceTicket({ classes }: any) {
       dispatch(error(message));
     }
   };
-
 
   const openCreateJobModal = (ticket: any) => {
     const reqObj = {
@@ -159,7 +143,6 @@ function ServiceTicket({ classes }: any) {
         },
         'modalTitle': 'Create Job',
         'removeFooter': false,
-
       },
       'type': modalTypes.EDIT_JOB_MODAL
     }));

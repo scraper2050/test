@@ -130,7 +130,7 @@ export const callCreateJobAPI = (data: any) => {
 export const callEditJobAPI = (data: any) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
-    buildFormData(formData, data)
+    buildFormData(formData, data);
 
     request(`/editJob`, 'post', formData)
       .then((res: any) => {

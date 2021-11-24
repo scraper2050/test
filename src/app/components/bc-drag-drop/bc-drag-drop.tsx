@@ -3,6 +3,7 @@ import BackupIcon from '@material-ui/icons/Backup';
 import {Button, Typography, withStyles} from "@material-ui/core";
 import styles from "./bc-drag-drop-style";
 import emptyImage from "../../../assets/img/dummy-big.jpg";
+import styled from "styled-components";
 
 interface Props {
   classes: any,
@@ -12,9 +13,6 @@ interface Props {
 
 function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   const [drag, setDrag] = useState(false);
-  const [thumbs, setThumbs] = useState<any[]>(images);
-
-  console.log({images, thumbs});
 
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     setDrag(true);
@@ -51,9 +49,15 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
     if (btn) btn.click();
   }
 
-/*  useEffect(() => {
-    setThumbs(images);
-  }, [images])*/
+  const renderImages = () => {
+    const addNumber = images.length === 0 ? 3 : (3 - (images.length % 3)) % 3;
+    const emptyImages = [...images];
+    for(let i = 0; i < addNumber; i++) {
+      emptyImages.push('');
+    }
+
+    return emptyImages;
+  }
 
   return (
     <div
@@ -80,11 +84,19 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
 
       </div>
 
-      <div className={classes.imageContainer} >
-        <img className={classes.image} src={images.length > 0 ? images[0] : emptyImage}/>
-        <img className={classes.image} src={images.length > 1 ? images[1] : emptyImage}/>
-        <img className={classes.image} src={images.length > 2 ? images[2] : emptyImage}/>
+      <div className={classes.imageWrapper}>
+        <ImageContainer >
+          {renderImages().map((image, index, arr) =>
+            <img
+              key={`image_${index}`}
+              className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`}
+              src={image || emptyImage}
+            />
+            )
+          }
+        </ImageContainer>
       </div>
+
       <input
         type={'file'}
         id={'selectedFile'}
@@ -97,6 +109,40 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   )
 
 }
+
+const ImageContainer = styled.div`
+  height: 114px;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  overflow-y: auto;
+
+  /* width */
+  ::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #BDBDBD;
+    border-radius: 2px;
+    border: solid 3px transparent;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+`;
 
 export default withStyles(
   styles,

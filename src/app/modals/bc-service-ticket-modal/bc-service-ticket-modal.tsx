@@ -38,7 +38,6 @@ import { modalTypes } from '../../../constants';
 import {refreshJobs} from "../../../actions/job/job.action";
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
-import {JobImage} from "../../models/job";
 
 
 function BCServiceTicketModal({
@@ -187,6 +186,7 @@ function BCServiceTicketModal({
     'values': FormikValues,
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
+    errors: FormikErrors,
     setFieldValue,
     getFieldMeta,
     isSubmitting
@@ -211,6 +211,8 @@ function BCServiceTicketModal({
         ...ticket,
         ...values
       };
+      tempData.images = tempData.images.filter((image: any) => image instanceof File);
+
       const editTicketObj = { ...values,
         'ticketId': '' };
       if (ticket._id) {
@@ -301,7 +303,6 @@ function BCServiceTicketModal({
           jobTypesInput.current.setCustomValidity("");
         }
       }
-
       return errors;
     }
   });
@@ -316,6 +317,14 @@ function BCServiceTicketModal({
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);
   };
+
+  const handleImageDrop = (files: FileList) => {
+    const images = [...FormikValues.images];
+    const newImages = Array.from(files);
+    images.push(...newImages);
+
+    setFieldValue('images', images);
+  }
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -344,6 +353,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer?._id) {
       const jobLocation = jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0];
+
       if (jobLocation) {
         setJobLocationValue(jobLocation);
         if (jobLocation.isActive) {
@@ -352,9 +362,10 @@ function BCServiceTicketModal({
             'locationId': ticket.jobLocation
           }));
         }
-        const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation._id);
-        if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
       }
+      const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation?._id);
+      if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
+
     }
   }, [jobLocations]);
 
@@ -375,7 +386,6 @@ function BCServiceTicketModal({
   }, [jobSites]);
 
   useEffect(() => {
-    console.log(FormikValues.images)
     if (FormikValues.images) {
       const images: any[] = [];
       const prs: any[] = [];
@@ -387,19 +397,20 @@ function BCServiceTicketModal({
           if (image.type.match('image.*')) prs.push(readImage(image))
         }
       });
-      setThumbs(images);
+
       if (prs.length) {
-        Promise.all(prs).then(images => {
-          const temp = [...thumbs];
-          temp.push(...images);
-          setThumbs(temp);
+        Promise.all(prs).then(reads => {
+          images.push(...reads.filter((image: any) => image !== null));
+          setThumbs(images);
         });
+      } else {
+        setThumbs(images);
       }
     }
   }, [FormikValues.images]);
 
   const readImage = (image: File) => {
-    return new Promise(function(resolve,reject){
+    return new Promise(function(resolve){
       let fr = new FileReader();
 
       fr.onload = function(){
@@ -407,23 +418,12 @@ function BCServiceTicketModal({
       };
 
       fr.onerror = function(){
-        reject(fr);
+        resolve(null);
       };
 
       fr.readAsDataURL(image);
     });
   }
-
-
-  const formatSchedulingTime = (time: string) => {
-    const timeAr = time.split('T');
-    const timeWithSeconds = timeAr[1].substr(0, 5);
-    const hours = timeWithSeconds.substr(0, 2);
-    const minutes = timeWithSeconds.substr(3, 5);
-
-    return { hours,
-      minutes };
-  };
 
   const getJobType = () => {
     if (jobTypes?.length !== 0) {
@@ -450,31 +450,31 @@ function BCServiceTicketModal({
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
-        <Grid container className={classes.modalPreview} justify={'space-between'} spacing={4}>
+        <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
           <Grid item xs={5}>
-            <Typography variant={'caption'} className={classes.previewCaption}>customer</Typography>
-                <Autocomplete
-                  className={detail ? 'detail-only' : ''}
-                  defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
-                  disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
-                  getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
-                  id={'tags-standard'}
-                  onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
-                  options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
-                  renderInput={params =>
-                    <TextField
-                      required
-                      {...params}
-                      variant={'standard'}
-                    />
-                  }
+            <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
+            <Autocomplete
+              className={detail ? 'detail-only' : ''}
+              defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
+              disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
+              getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
+              id={'tags-standard'}
+              onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
+              options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
+              renderInput={params =>
+                <TextField
+                  required
+                  {...params}
+                  variant={'standard'}
                 />
+              }
+            />
           </Grid>
           <Grid item xs={1}>
             &nbsp;
           </Grid>
           <Grid item xs={2}>
-            <Typography variant={'caption'} className={classes.previewCaption}>due date</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
             <BCDateTimePicker
               className={'due_date'}
               disabled={detail}
@@ -484,14 +484,15 @@ function BCServiceTicketModal({
               id={'dueDate'}
               placeholder={'Date'}
               value={FormikValues.dueDate}
+              errorText={FormikErrors.dueDate}
             />
           </Grid>
           <Grid item xs={4} />
         </Grid>
 
-        <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
-            <Typography variant={'caption'} className={classes.previewCaption}>job location</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
             <Autocomplete
               defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
               disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
@@ -510,7 +511,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={classes.previewCaption}>job site</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail}
@@ -528,7 +529,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={`required ${classes.previewCaption}`}>job type</Typography>
+            <Typography variant={'caption'} className={`required ${'previewCaption'}`}>job type</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               defaultValue={defaultJobTypeValue}
@@ -552,11 +553,11 @@ function BCServiceTicketModal({
           </Grid>
         </Grid>
 
-        <Grid container className={classes.modalContent} justify={'space-between'} spacing={4}>
+        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid container xs={8} spacing={4}>
             <Grid container xs={12} spacing={4}>
               <Grid item xs>
-                <Typography variant={'caption'} className={classes.previewCaption}>contact associated</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
                 <Autocomplete
                   disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
                   getOptionLabel={option => option.name ? option.name : ''}
@@ -582,7 +583,7 @@ function BCServiceTicketModal({
                 />
               </Grid>
               <Grid item xs>
-                <Typography variant={'caption'} className={classes.previewCaption}>customer PO</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>customer PO</Typography>
                 <BCInput
                   disabled={detail}
                   handleChange={formikChange}
@@ -593,7 +594,7 @@ function BCServiceTicketModal({
             </Grid>
             <Grid container xs={12}>
               <Grid item xs>
-                <Typography variant={'caption'} className={classes.previewCaption}>notes / special instructions</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>notes / special instructions</Typography>
                 <BCInput
                   className={'serviceTicketLabel'}
                   disabled={detail}
@@ -609,7 +610,7 @@ function BCServiceTicketModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 0}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => setFieldValue('images', Array.from(files))} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} />
           </Grid>
         </Grid>
 
