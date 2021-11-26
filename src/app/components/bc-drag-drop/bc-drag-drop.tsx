@@ -1,4 +1,9 @@
-import React, {useEffect, useRef, useState, DragEvent} from 'react';
+import React, {
+  useRef,
+  useState,
+  DragEvent,
+  useLayoutEffect
+} from 'react';
 import BackupIcon from '@material-ui/icons/Backup';
 import {Button, Typography, withStyles} from "@material-ui/core";
 import styles from "./bc-drag-drop-style";
@@ -13,6 +18,8 @@ interface Props {
 
 function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   const [drag, setDrag] = useState(false);
+  const [height, setHeight] = useState(114);
+  const targetRef = useRef<HTMLDivElement>(null);
 
   const handleDrag = (e: DragEvent<HTMLDivElement>) => {
     setDrag(true);
@@ -43,6 +50,13 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
       e.dataTransfer.clearData()
     }
   }
+
+  useLayoutEffect(() => {
+    if (targetRef.current) {
+      const width = targetRef.current.offsetWidth;
+      setHeight((width - 12) /3);
+    }
+  }, [])
 
   const showDialog = () => {
     const btn = document.getElementById('selectedFile');
@@ -85,7 +99,7 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
       </div>
 
       <div className={classes.imageWrapper}>
-        <ImageContainer >
+        <ImageContainer ref={targetRef} height={height}>
           {renderImages().map((image, index, arr) =>
             <img
               key={`image_${index}`}
@@ -110,8 +124,8 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
 
 }
 
-const ImageContainer = styled.div`
-  height: 114px;
+const ImageContainer = styled.div<{height: number}>`
+  height: ${props => props.height}px;
   padding-right: 4px;
   display: flex;
   flex-direction: row;

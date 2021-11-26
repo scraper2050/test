@@ -91,31 +91,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }
   }
 
-  const openCreateJobModal = (ticketObj: any) => {
-    const reqObj = {
-      'customerId': ticketObj.customer._id,
-      'locationId': ticketObj.jobLocation ? ticketObj.jobLocation._id : ''
-    };
-    if (!reqObj.locationId) {
-      dispatch(loadingJobLocations());
-      dispatch(getJobLocationsAction(reqObj.customerId));
-    }
-    if (reqObj.locationId) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    const ticket = {
-      ...ticketObj,
-      'jobLocation': reqObj.locationId,
-      'jobSite': ticketObj.jobSite ? ticketObj.jobSite._id : '',
-      'jobType': ticketObj.jobType ? ticketObj.jobType._id : '',
-      'dueDate': ticketObj.dueDate ? ticketObj.dueDate : '',
-      'description': ticketObj.note ? ticketObj.note : ''
-    };
-
-
+  const openCreateJobModal = () => {
     dispatch(setModalDataAction({
       'data': {
         'job': {
@@ -243,7 +219,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       </span>
       {isTicket &&
         <div className={'button-wrapper'}>
-          <Button onClick={() => openCreateJobModal(ticket)}>Create Job</Button>
+          <Button onClick={() => openCreateJobModal()}>Create Job</Button>
         </div>
       }
     </div>}
