@@ -59,7 +59,6 @@ import {
 } from 'actions/snackbar/snackbar.action';
 import { getContacts } from 'api/contacts.api';
 import { modalTypes } from '../../../constants';
-import { useHistory } from 'react-router-dom';
 import { stringSortCaseInsensitive } from '../../../helpers/sort';
 import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
@@ -126,8 +125,8 @@ const getJobTasks = (job: any, jobTypes: any) => {
   if (job._id) {
     const tasks = job.tasks.map((task: any) => ({
       employeeType: task.employeeType ? 1 : 0,
-      employee: task.technician ? task.technician : null,
-      contractor: task.contractor ? task.contractor : null,
+      employee: !task.employeeType && task.technician ? task.technician : null,
+      contractor: task.employeeType && task.contractor ? task.contractor : null,
       jobTypes: getJobData(task.jobTypes.map((task: any) => task.jobType._id), jobTypes)
     }));
     return tasks;
@@ -136,12 +135,10 @@ const getJobTasks = (job: any, jobTypes: any) => {
       employeeType: 0,
       contractor: null,
       employee: null,
-      jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType), jobTypes),
+      jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType || task._id), jobTypes),
     }]
   }
 };
-
-
 
 function BCJobModal({
   classes,
@@ -156,7 +153,10 @@ function BCJobModal({
     ({ employeesForJob }: any) => employeesForJob
   );
   const vendorsList = useSelector(({ vendors }: any) =>
-    vendors.data.filter((vendor: any) => vendor.status <= 1)
+    vendors.data.reduce((acc: any[],vendor: any) => {
+      if (vendor.status === 1) acc.push(vendor.contractor);
+      return acc;
+    }, [])
   );
   const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
@@ -172,9 +172,9 @@ function BCJobModal({
   // componenet usestate variables
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
-  const [employeeValue, setEmployeeValue] = useState<any>(null);
-  const [contractorValue, setContractorValue] = useState<any>(null);
   const [contactValue, setContactValue] = useState<any>([]);
+
+  //console.log({job})
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -320,39 +320,14 @@ function BCJobModal({
   }, []);
 
   useEffect(() => {
-    if (job._id && !employeeValue) {
-      if (employeesForJob.length !== 0 && !job.employeeType && job.technician) {
-        setEmployeeValue(
-          employeesForJob.filter(
-            (employee: any) => employee._id === job.technician._id
-          )[0]
-        );
-      }
-    }
-  }, [employeesForJob]);
-
-  useEffect(() => {
-    if (job._id && !contractorValue) {
-      if (vendorsList.length !== 0 && job.employeeType && job.contractor) {
-        setContractorValue(
-          vendorsList.filter(
-            (vendor: any) => vendor.contractor._id === job.contractor._id
-          )[0]
-        );
-      }
-    }
-  }, [vendorsList]);
-
-  useEffect(() => {
     const tasks = getJobTasks(job, jobTypes);
     setFieldValue('tasks', tasks);
   }, [jobTypes]);
 
   useEffect(() => {
     if (ticket.customer || ticket.customer._id) {
-      const jobLocation = jobLocations.filter(
-        (jobLocation: any) => jobLocation._id === (ticket.jobLocation ||  job.jobLocation?._id)
-      )[0];
+      const jobLocationId = job._id ? job.jobLocation?._id : ticket.jobLocation?._id || ticket.jobLocation;
+      const jobLocation = jobLocations.find((jobLocation: any) => jobLocation._id === jobLocationId);
 
       if (jobLocation) {
         setJobLocationValue(jobLocation);
@@ -364,26 +339,18 @@ function BCJobModal({
             })
           );
         }
-        const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation._id);
-        if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
       }
+      const activeJobLocations = jobLocations.filter((location: any) => location.isActive || location._id === jobLocation?._id);
+      if (activeJobLocations.length !== jobLocations.length) dispatch(setJobLocations(activeJobLocations)) ;
     }
   }, [jobLocations]);
 
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (jobSites.length !== 0) {
-        if (ticket.jobSite) {
-          setJobSiteValue(
-            jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0]
-          );
-        } else if (job.jobSite) {
-          setJobSiteValue(
-            jobSites.filter(
-              (jobSite: any) => jobSite._id === job.jobSite._id
-            )[0]
-          );
-        }
+        const jobSiteId = job._id ? job.jobSite?._id : ticket.jobSite?._id || ticket.jobSite;
+        const jobSite = jobSites.find((jobSite: any) => jobSite._id === jobSiteId);
+        setJobSiteValue(jobSite);
       }
     }
   }, [jobSites]);
@@ -425,48 +392,6 @@ function BCJobModal({
     setFieldValue('tasks', tasks);
   }
 
-  // validation schema object
-  const schemaCheck = yup.object().shape({
-    //jobTypes: yup.array().min(1, 'Select at least one (1) job'),
-    // dueDate: yup.string(),
-    scheduleDate: yup
-      .mixed()
-      .transform((value, originalValue): any => {
-        if (value !== null) {
-          const selectedDate = moment(new Date(originalValue)).format('LL');
-          const todaysDate = moment(new Date()).format('LL');
-
-          const diff: number = +new Date(selectedDate) - +new Date(todaysDate);
-
-          return Math.round(diff);
-        }
-
-        return value;
-      })
-      .test(
-        'validate-date',
-        'Past date can not be selected',
-        (value): boolean => {
-          if (value !== null) {
-            return value >= 0;
-          }
-
-          return value === null;
-        }
-      )
-      .nullable(),
-    // scheduledStartTime: yup.string().nullable(),
-    // scheduledEndTime: yup.string().nullable(),
-    // technicianId: yup.string().required(),
-    // contractorId: yup.string().required(),
-    // ticketId: yup.mixed(),
-    // jobLocationId: yup.mixed(),
-    // jobSiteId: yup.mixed(),
-    // customerContactId: yup.mixed(),
-    // customerPO: yup.mixed(),
-    // image: yup.mixed(),
-  });
-
   const jobValue = JSON.parse(JSON.stringify(job));
 
   /**
@@ -495,26 +420,25 @@ function BCJobModal({
       jobLocationId: jobValue.jobLocation
         ? jobValue.jobLocation._id
         : jobValue.ticket.jobLocation
-        ? jobValue.ticket.jobLocation
+        ? jobValue.ticket.jobLocation._id || jobValue.ticket.jobLocation
         : '',
       jobSiteId: jobValue.jobSite
         ? jobValue.jobSite._id
         : jobValue.ticket.jobSite
-        ? jobValue.ticket.jobSite
+        ? jobValue.ticket.jobSite._id || jobValue.ticket.jobSite
         : '',
       //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       customerContactId: jobValue.customerContactId
         ? jobValue.customerContactId._id
         : ticket.customerContactId || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
-      images: jobValue.images !== undefined ? jobValue.images : ticket.images,
+      images: jobValue.images !== undefined ? jobValue.images : ticket.images || [],
     },
     validateOnMount: false,
     validateOnChange: false,
     validateOnBlur: false,
-    //validationSchema: schemaCheck,
     onSubmit: (values: any, { setSubmitting }: any) => {
-      console.log({values});
+      //console.log({values});
       const tempData = {...values};
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
       tempData.customerId = customer?._id;
@@ -541,7 +465,7 @@ function BCJobModal({
 
       tempData.tasks = tasks;
       const requestObj = formatRequestObj(tempData)
-      console.log({requestObj});
+      //console.log({requestObj,}, JSON.stringify(tasks));
 
       const editJob = (tempData: any) => {
         tempData.jobId = job._id;
@@ -552,13 +476,7 @@ function BCJobModal({
         return callCreateJobAPI(tempData);
       };
 
-      let request = null;
-
-      if (job._id) {
-        request = editJob;
-      } else {
-        request = createJob;
-      }
+      const request = job._id ? editJob : createJob;
 
       request(requestObj)
         .then(async (response: any) => {
@@ -575,7 +493,7 @@ function BCJobModal({
           dispatch(setOpenServiceTicketLoading(false));
 
           // Executed only when job is created from Map View.
-          if (job.jobFromMapFilter) {
+          if (job.jobFromMap) {
             dispatch(setOpenServiceTicketLoading(true));
             getOpenServiceTickets({
               ...openServiceTicketFilter,
@@ -640,7 +558,6 @@ function BCJobModal({
         const d2 = moment(scheduledEndTime);
         if (d2.isSameOrBefore(d1)) errors['scheduledStartTime'] = 'Start time must be before end time';
       }
-
       return errors;
     },
   });
@@ -810,12 +727,10 @@ function BCJobModal({
               <Typography variant={'caption'} className={' required previewCaption'}>{task.employeeType ? 'contractor' : 'technician'}</Typography>
               {task.employeeType ?
                 <Autocomplete
-                  className={detail ? 'detail-only' : ''}
                   // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
-                  disabled={detail}
                   getOptionLabel={(option) =>
-                    option?.contractor?.info?.companyName
-                      ? option.contractor.info.companyName
+                    option?.info?.companyName
+                      ? option.info.companyName
                       : ''
                   }
                   id={'tags-standard'}
@@ -823,11 +738,11 @@ function BCJobModal({
                   options={
                     vendorsList && vendorsList.length !== 0
                       ? vendorsList.sort((a: any, b: any) =>
-                        a.contractor.info.companyName >
-                        b.contractor.info.companyName
+                        a.info.companyName >
+                        b.info.companyName
                           ? 1
-                          : b.contractor.info.companyName >
-                          a.contractor.info.companyName
+                          : b.info.companyName >
+                          a.info.companyName
                             ? -1
                             : 0
                       )

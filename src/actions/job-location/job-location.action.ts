@@ -13,8 +13,8 @@ export const getJobLocationsAction = (data: any) => {
   return async (dispatch: any) => {
     if (data.customerId !== '') {
       const jobLocations: any = await getJobLocations(data);
-      if (jobLocations.hasOwnProperty('msg')) {
-        dispatch({ type: JobLocationActionType.FAILED, payload: jobLocations.msg });
+      if (jobLocations.status === 0) {
+        dispatch({ type: JobLocationActionType.FAILED, payload: jobLocations.message});
       } else {
         dispatch(setJobLocations(jobLocations));
       }
@@ -41,8 +41,8 @@ export const setJobLocations = (jobLocations: any) => {
 export const createJobLocationAction = (data: any, callback: any) => {
   return async (dispatch: any) => {
     const jobLocation: any = await createJobLocation(data);
-    if (jobLocation.hasOwnProperty('msg')) {
-      dispatch({ type: JobLocationActionType.ADD_NEW_JOB_LOCATION_FAILED, payload: jobLocation.msg });
+    if (jobLocation.status === 0) {
+      dispatch({ type: JobLocationActionType.ADD_NEW_JOB_LOCATION_FAILED, payload: jobLocation.message });
     } else {
       const {status, message} = jobLocation;
       dispatch(setJobLocationNew(jobLocation));
@@ -54,8 +54,8 @@ export const createJobLocationAction = (data: any, callback: any) => {
 export const updateJobLocationAction = (data: any, callback: any) => {
   return async (dispatch: any) => {
     const jobLocationUpdated: any = await updateJobLocation(data);
-    if (jobLocationUpdated.hasOwnProperty('msg')) {
-      dispatch({ type: JobLocationActionType.UPDATE_JOB_LOCATION_FAILED, payload: jobLocationUpdated.msg });
+    if (jobLocationUpdated.status === 0) {
+      dispatch({ type: JobLocationActionType.UPDATE_JOB_LOCATION_FAILED, payload: jobLocationUpdated.message });
     } else {
       const {status, message, jobLocation} = jobLocationUpdated;
       dispatch(updateJobLocationOld(jobLocationUpdated));

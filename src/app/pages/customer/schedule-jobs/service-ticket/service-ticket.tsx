@@ -107,18 +107,6 @@ function ServiceTicket({ classes }: any) {
   };
 
   const openCreateJobModal = (ticket: any) => {
-    const reqObj = {
-      customerId: ticket.customer?._id ? ticket.customer?._id :'',
-      locationId: ticket.jobLocation ? ticket.jobLocation :''
-    }
-    //dispatch(loadingJobLocations());
-    //dispatch(getJobLocationsAction({customerId: reqObj.customerId, isActive: true}));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
     dispatch(setModalDataAction({
       'data': {
         'job': {
