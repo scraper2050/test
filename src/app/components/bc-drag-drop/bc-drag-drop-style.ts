@@ -7,6 +7,9 @@ export default (theme: Theme): any => ({
     borderRadius: 8,
     padding: 8,
   },
+  noBottomPadding: {
+    paddingBottom: 0,
+  },
   dropContainer: {
     position: 'relative',
     border: 'dashed #bdbdbd 1px',
@@ -42,6 +45,10 @@ export default (theme: Theme): any => ({
     border: 'solid #bdbdbd 1px',
     borderRadius: 8,
     padding: '8px 4px 0 8px',
+  },
+  noBorder: {
+    borderWidth: 0,
+    padding: 0,
   },
   image: {
     border: 'solid #bdbdbd 1px',

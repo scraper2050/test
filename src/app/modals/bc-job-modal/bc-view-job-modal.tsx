@@ -19,6 +19,7 @@ import './bc-job-modal.scss';
 import moment from 'moment';
 import classNames from "classnames";
 import {getVendors} from "../../../actions/vendor/vendor.action";
+import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 
 const initialJobState = {
   customer: {
@@ -154,12 +155,20 @@ function BCViewJobModal({
           <Typography variant={'h6'} className={classes.previewTextTitle}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>start time</Typography>
-          <Typography variant={'h6'} className={classes.previewTextTitle}>{startTime}</Typography>
+          {!isTicket &&
+            <>
+            <Typography variant={'caption'} className={classes.previewCaption}>start time</Typography>
+            <Typography variant={'h6'} className={classes.previewTextTitle}>{startTime}</Typography>
+            </>
+          }
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>end time</Typography>
-          <Typography variant={'h6'} className={classes.previewTextTitle}>{endTime}</Typography>
+          {!isTicket &&
+          <>
+            <Typography variant={'caption'} className={classes.previewCaption}>end time</Typography>
+            <Typography variant={'h6'} className={classes.previewTextTitle}>{endTime}</Typography>
+          </>
+          }
         </Grid>
       </Grid>
       <Grid container className={classes.modalContent} justify={'space-around'}>
@@ -204,15 +213,13 @@ function BCViewJobModal({
           <Typography variant={'h6'} className={classNames(classes.previewText, classes.description)}>{(isTicket ?  job.note : job.description) || 'N/A'}</Typography>
         </Grid>
       </Grid>
-      <Grid container className={classNames(classes.modalContent, classes.lastContent)} justify={'space-around'}>
-        <Grid item style={{width: '40%'}}>
-          <div className={classes.jobImageWrapper} style={{backgroundColor: job.images?.length > 0 ? 'white' : '#E9EEF1'}}>
-            <img className={classes.jobImage}
-                 src={job.images.length > 0 ? job.images[0].imageUrl : emptyImage}/>
-          </div>
+      <Grid container className={classNames(classes.modalContent, classes.lastContent)} justify={'space-between'}>
+        <Grid item style={{width: '30%'}}>
+          <Typography variant={'caption'} className={classes.previewCaption}>&nbsp;</Typography>
+          <BCDragAndDrop images={job.images.map((image: any) => image.imageUrl)} readonly={true}  />
         </Grid>
-        <Grid item style={{width: '60%'}}>
-          <Typography variant={'caption'} className={classes.previewCaption}>{isTicket ? 'ticket' : 'job'} history</Typography>
+        <Grid item style={{width: '68%'}}>
+          <Typography variant={'caption'} className={classes.previewCaption}>&nbsp;&nbsp;{isTicket ? 'ticket' : 'job'} history</Typography>
           <div style={{height: 180, overflowY: 'auto'}}>
             <BCTableContainer
               className={classes.tableContainer}

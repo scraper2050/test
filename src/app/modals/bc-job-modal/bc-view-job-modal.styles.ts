@@ -20,6 +20,7 @@ export default (theme: Theme): any => ({
     margin: '0',
   },
   lastContent: {
+    marginTop: -10,
     marginBottom: 35,
   },
   previewCaption: {
