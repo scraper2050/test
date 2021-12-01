@@ -326,6 +326,12 @@ function BCServiceTicketModal({
     setFieldValue('images', images);
   }
 
+  const handleRemoveImage = (index: number) => {
+    const images = [...FormikValues.images];
+    images.splice(index, 1);
+    setFieldValue('images', images);
+  }
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -610,7 +616,7 @@ function BCServiceTicketModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 0}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} onDelete={handleRemoveImage}/>
           </Grid>
         </Grid>
 

@@ -641,6 +641,12 @@ function BCJobModal({
     setFieldValue('images', images);
   }
 
+  const handleRemoveImage = (index: number) => {
+    const images = [...FormikValues.images];
+    images.splice(index, 1);
+    setFieldValue('images', images);
+  }
+
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
@@ -1050,7 +1056,7 @@ function BCJobModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 16}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)}  onDelete={handleRemoveImage}/>
           </Grid>
         </Grid>
 

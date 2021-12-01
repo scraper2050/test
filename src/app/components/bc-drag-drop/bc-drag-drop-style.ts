@@ -41,7 +41,7 @@ export default (theme: Theme): any => ({
     color: '#828282',
     textTransform: 'none',
   },
-  imageWrapper: {
+  imagesWrapper: {
     border: 'solid #bdbdbd 1px',
     borderRadius: 8,
     padding: '8px 4px 0 8px',
@@ -50,16 +50,25 @@ export default (theme: Theme): any => ({
     borderWidth: 0,
     padding: 0,
   },
+  imageWrapper: {
+    position: 'relative',
+    width: '30%',
+  },
   image: {
     border: 'solid #bdbdbd 1px',
     borderRadius: 8,
-    width: '30%',
+    width: '100%',
     aspectRatio: 1,
     objectFit: 'contain',
     backgroundColor: '#e9eef1',
-    marginBottom: 8,
   },
   imageMargin: {
     marginRight: 4,
+  },
+  removeImage: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    //backgroundColor:'rgba(88, 88, 88, 0.5)'
   }
 })
