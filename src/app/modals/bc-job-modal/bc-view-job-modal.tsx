@@ -15,7 +15,6 @@ import {
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import '../../../scss/job-poup.scss';
-import './bc-job-modal.scss';
 import moment from 'moment';
 import classNames from "classnames";
 import {getVendors} from "../../../actions/vendor/vendor.action";
@@ -144,82 +143,82 @@ function BCViewJobModal({
   const endTime = job.endTime ? formatTime(job.endTime) : 'N/A';
 
   return (
-    <DataContainer >
-      <Grid container className={classes.modalPreview} justify={'space-around'}>
+    <DataContainer className={'new-modal-design'}>
+      <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid item style={{width: '40%'}}>
-          <Typography variant={'caption'} className={classes.previewCaption}>customer</Typography>
-          <Typography variant={'h6'} className={classes.bigText}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
+          <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>{isTicket ? 'due' : 'schedule'} date</Typography>
-          <Typography variant={'h6'} className={classes.previewTextTitle}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>{isTicket ? 'due' : 'schedule'} date</Typography>
+          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
           {!isTicket &&
             <>
-            <Typography variant={'caption'} className={classes.previewCaption}>start time</Typography>
-            <Typography variant={'h6'} className={classes.previewTextTitle}>{startTime}</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>start time</Typography>
+            <Typography variant={'h6'} className={'previewTextTitle'}>{startTime}</Typography>
             </>
           }
         </Grid>
         <Grid item xs>
           {!isTicket &&
           <>
-            <Typography variant={'caption'} className={classes.previewCaption}>end time</Typography>
-            <Typography variant={'h6'} className={classes.previewTextTitle}>{endTime}</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>end time</Typography>
+            <Typography variant={'h6'} className={'previewTextTitle'}>{endTime}</Typography>
           </>
           }
         </Grid>
       </Grid>
-      <Grid container className={classes.modalContent} justify={'space-around'}>
+      <Grid container className={'modalContent'} justify={'space-around'}>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>technician type</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{isTicket ? 'N/A' : job.employeeType ? 'Employee' : 'Contractor'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>technician type</Typography>
+          <Typography variant={'h6'} className={'previewText'}>{isTicket ? 'N/A' : job.employeeType ? 'Employee' : 'Contractor'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>technician name</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{job.technician?.profile?.displayName || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>technician name</Typography>
+          <Typography variant={'h6'} className={'previewText'}>{job.technician?.profile?.displayName || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>job type</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>
-            {calculateJobType().map((type:string) => <span className={classes.jobTypeText}>{type}</span>)}
+          <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
+          <Typography variant={'h6'} className={'previewText'}>
+            {calculateJobType().map((type:string) => <span className={'jobTypeText'}>{type}</span>)}
           </Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>job location</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{job.jobLocation?.name || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
+          <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>job site</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{job.jobSite?.name || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
+          <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
         </Grid>
       </Grid>
-      <Grid container className={classes.modalContent} justify={'space-around'}>
+      <Grid container className={'modalContent'} justify={'space-around'}>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>contact associated</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{job.customer?.contactName || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
+          <Typography variant={'h6'} className={'previewText'}>{job.customer?.contactName || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>Customer PO</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{job.customerPO || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>
+          <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
-          <Typography variant={'caption'} className={classes.previewCaption}>equipment</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>N/A</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>
+          <Typography variant={'h6'} className={'previewText'}>N/A</Typography>
         </Grid>
         <Grid item style={{width: '40%'}}>
-          <Typography variant={'caption'} className={classes.previewCaption}>{isTicket ? 'note' : 'description'}</Typography>
-          <Typography variant={'h6'} className={classNames(classes.previewText, classes.description)}>{(isTicket ?  job.note : job.description) || 'N/A'}</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>{isTicket ? 'note' : 'description'}</Typography>
+          <Typography variant={'h6'} className={classNames('previewText', 'description')}>{(isTicket ?  job.note : job.description) || 'N/A'}</Typography>
         </Grid>
       </Grid>
-      <Grid container className={classNames(classes.modalContent, classes.lastContent)} justify={'space-between'}>
+      <Grid container className={classNames('modalContent', classes.lastContent)} justify={'space-between'}>
         <Grid item style={{width: '30%'}}>
-          <Typography variant={'caption'} className={classes.previewCaption}>&nbsp;</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>&nbsp;</Typography>
           <BCDragAndDrop images={job.images.map((image: any) => image.imageUrl)} readonly={true}  />
         </Grid>
         <Grid item style={{width: '68%'}}>
-          <Typography variant={'caption'} className={classes.previewCaption}>&nbsp;&nbsp;{isTicket ? 'ticket' : 'job'} history</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;{isTicket ? 'ticket' : 'job'} history</Typography>
           <div style={{height: 180, overflowY: 'auto'}}>
             <BCTableContainer
               className={classes.tableContainer}

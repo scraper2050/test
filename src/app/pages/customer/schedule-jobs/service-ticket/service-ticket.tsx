@@ -89,14 +89,9 @@ function ServiceTicket({ classes }: any) {
           'modalTitle': 'Service Ticket Details',
           'removeFooter': false,
           'job': serviceTicket,
-          'isTicket': true,
           'className': 'serviceTicketTitle',
-          //'maxHeight': '754px',
-          'detail': true,
-
         },
-        //'type': modalTypes.EDIT_TICKET_MODAL
-        'type': modalTypes.VIEW_JOB_MODAL
+        'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
       }));
       setTimeout(() => {
         dispatch(openModalAction());

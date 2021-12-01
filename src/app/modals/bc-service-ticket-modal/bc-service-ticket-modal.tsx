@@ -3,7 +3,7 @@ import BCInput from 'app/components/bc-input/bc-input';
 import React, {useEffect, useRef, useState} from 'react';
 import { formatDateYMD } from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
-import styles from './bc-new-service-ticket-modal.styles';
+import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
 import {
   Button,

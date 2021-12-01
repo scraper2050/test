@@ -153,11 +153,10 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     dispatch(setModalDataAction({
       'data': {
         'job': data,
-        'isTicket': true,
         'modalTitle': '',
         'removeFooter': true,
       },
-      'type': modalTypes.VIEW_JOB_MODAL
+      'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
