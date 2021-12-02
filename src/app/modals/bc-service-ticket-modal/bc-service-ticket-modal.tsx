@@ -3,7 +3,7 @@ import BCInput from 'app/components/bc-input/bc-input';
 import React, {useEffect, useRef, useState} from 'react';
 import { formatDateYMD } from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
-import styles from './bc-new-service-ticket-modal.styles';
+import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
 import {
   Button,
@@ -326,6 +326,12 @@ function BCServiceTicketModal({
     setFieldValue('images', images);
   }
 
+  const handleRemoveImage = (index: number) => {
+    const images = [...FormikValues.images];
+    images.splice(index, 1);
+    setFieldValue('images', images);
+  }
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -610,7 +616,7 @@ function BCServiceTicketModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 0}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} onDelete={handleRemoveImage}/>
           </Grid>
         </Grid>
 

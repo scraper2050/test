@@ -98,12 +98,12 @@ function BCModal() {
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
+          'newDesign': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
         setComponent(<BCViewServiceTicketModal
-          notificationId={data.notificationId}
-          ticketId={data.ticketId}
+          job={data.job}
         />);
         break;
       case modalTypes.CANCEL_SERVICE_TICKET_MODAL:
@@ -158,7 +158,6 @@ function BCModal() {
           'maxWidth': 'lg'
         });
         setComponent(<BCViewJobModal
-          detail={true}
           job={data.job}
           isTicket={data.isTicket}
         />);

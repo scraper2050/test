@@ -5,18 +5,22 @@ import React, {
   useLayoutEffect
 } from 'react';
 import BackupIcon from '@material-ui/icons/Backup';
-import {Button, Typography, withStyles} from "@material-ui/core";
+import {Button, IconButton, Typography, withStyles} from "@material-ui/core";
 import styles from "./bc-drag-drop-style";
 import emptyImage from "../../../assets/img/dummy-big.jpg";
+import CloseIcon from '@material-ui/icons/Close';
 import styled from "styled-components";
+import classNames from "classnames";
 
 interface Props {
   classes: any,
-  onDrop: (files: FileList) => void;
+  onDrop?: (files: FileList) => void;
+  onDelete?: (index: number) => void;
   images?: string[];
+  readonly?: boolean;
 }
 
-function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
+function BCDragAndDrop ({onDrop, onDelete, images=[], readonly = false, classes} : Props) {
   const [drag, setDrag] = useState(false);
   const [height, setHeight] = useState(114);
   const targetRef = useRef<HTMLDivElement>(null);
@@ -45,7 +49,7 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
     e.preventDefault()
     e.stopPropagation()
     setDrag(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0 && onDrop) {
       onDrop(e.dataTransfer.files)
       e.dataTransfer.clearData()
     }
@@ -74,9 +78,8 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
   }
 
   return (
-    <div
-      className={classes.container}
-    >
+    <div className={classNames(classes.container, {[classes.noBottomPadding]: readonly })}>
+      {!readonly &&
       <div
         className={`${classes.dropContainer} ${drag ? classes.dropContainerActive : ''}`}
         onDragEnter={handleDragIn}
@@ -95,17 +98,24 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
           disableElevation={true}
           onClick={showDialog}
         >Choose File(s)</Button>
-
       </div>
+      }
 
-      <div className={classes.imageWrapper}>
+      <div className={classNames(classes.imagesWrapper, {[classes.noBorder]: readonly })}>
         <ImageContainer ref={targetRef} height={height}>
           {renderImages().map((image, index, arr) =>
-            <img
-              key={`image_${index}`}
-              className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`}
-              src={image || emptyImage}
-            />
+            <div className={classes.imageWrapper}>
+              <img
+                key={`image_${index}`}
+                className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`}
+                src={image || emptyImage}
+              />
+              {!readonly && image && !image.startsWith('http') &&
+              <IconButton size="small" className={classes.removeImage} onClick={() => {if (onDelete) onDelete(index)}}>
+                <CloseIcon/>
+              </IconButton>
+              }
+            </div>
             )
           }
         </ImageContainer>
@@ -117,7 +127,7 @@ function BCDragAndDrop ({onDrop, images=[], classes} : Props) {
         accept={"image/*"}
         multiple={true}
         style={{display: 'none'}}
-        onChange={(e: any) => onDrop(e.currentTarget.files)}
+        onChange={(e: any) => {if (onDrop) onDrop(e.currentTarget.files)}}
       />
     </div>
   )

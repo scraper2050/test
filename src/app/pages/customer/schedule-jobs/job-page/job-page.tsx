@@ -106,12 +106,11 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     dispatch(
       setModalDataAction({
         data: {
-          detail: true,
           job: job,
-          modalTitle: 'View Job',
           removeFooter: false,
+          maxHeight: '100%',
         },
-        type: modalTypes.EDIT_JOB_MODAL,
+        type: modalTypes.VIEW_JOB_MODAL,
       })
     );
     setTimeout(() => {
