@@ -129,9 +129,10 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const openDetailJobModal = (job: any) => {
     dispatch(setModalDataAction({
       'data': {
-        'job': job,
-        'modalTitle': '',
-        'removeFooter': true,
+        job: job,
+        modalTitle: '',
+        removeFooter: true,
+        maxHeight: '100%',
       },
       'type': modalTypes.VIEW_JOB_MODAL
     }));

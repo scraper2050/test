@@ -108,6 +108,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         data: {
           job: job,
           removeFooter: false,
+          maxHeight: '100%',
         },
         type: modalTypes.VIEW_JOB_MODAL,
       })

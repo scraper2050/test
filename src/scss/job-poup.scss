@@ -87,6 +87,28 @@
 
 
   .new-modal-design {
+    .modalDataContainer{
+      overflow-y: auto;
+      max-height: 75vh;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #BDBDBD;
+        border-radius: 4px;
+        border: solid 3px transparent;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    }
     .modalPreview {
       background-color: #EAECF3;
       padding: 35px 50px;
@@ -127,6 +149,28 @@
     .description {
       max-height: 80px;
       overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      /* Track */
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #BDBDBD;
+        border-radius: 4px;
+        border: solid 3px transparent;
+      }
+
+      /* Handle on hover */
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
     }
     .MuiDialogActions-root {
       border-top: 1px solid #bdbdbd;

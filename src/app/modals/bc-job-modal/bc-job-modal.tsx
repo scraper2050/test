@@ -705,392 +705,393 @@ function BCJobModal({
             />
           </Grid>
         </Grid>
-
-        {FormikValues.tasks.map((task: any, index) =>
-          <Grid container key={`Grid_${index}`} className={`modalContent ${classes.relative}`} justify={'space-between'} spacing={4}>
-            <Grid item xs>
-              <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
-              <Autocomplete
-                defaultValue={employeeTypes[task.employeeType]}
-                getOptionLabel={(option) =>
-                  option.name ? option.name : ''
-                }
-                id={'tags-standard'}
-                onChange={(ev: any, newValue: any) =>
-                  handleTaskChange('employeeType', newValue, index)
-                }
-                options={employeeTypes}
-                renderInput={(params) => (
-                  <TextField
-                    required
-                    {...params}
-                    variant={'outlined'}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs>
-              <Typography variant={'caption'} className={' required previewCaption'}>{task.employeeType ? 'contractor' : 'technician'}</Typography>
-              {task.employeeType ?
-                <Autocomplete
-                  // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
-                  getOptionLabel={(option) =>
-                    option?.info?.companyName
-                      ? option.info.companyName
-                      : ''
-                  }
-                  id={'tags-standard'}
-                  onChange={(ev: any, newValue: any) => handleTaskChange('contractorId', newValue, index)}
-                  options={
-                    vendorsList && vendorsList.length !== 0
-                      ? vendorsList.sort((a: any, b: any) =>
-                        a.info.companyName >
-                        b.info.companyName
-                          ? 1
-                          : b.info.companyName >
-                          a.info.companyName
-                            ? -1
-                            : 0
-                      )
-                      : []
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      required
-                      {...params}
-                      variant={'outlined'}
-                    />
-                  )}
-                  value={task.contractor}
-                />
-                :
-                <Autocomplete
-                  getOptionLabel={(option) =>
-                    option.profile ? option.profile.displayName : ''
-                  }
-                  id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
-                  onChange={(ev: any, newValue: any) => handleTaskChange('technicianId', newValue, index)}
-                  options={
-                    employeesForJob && employeesForJob.length !== 0
-                      ? employeesForJob.sort((a: any, b: any) =>
-                        a.profile.displayName > b.profile.displayName
-                          ? 1
-                          : b.profile.displayName > a.profile.displayName
-                            ? -1
-                            : 0
-                      )
-                      : []
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      required
-                      variant={'outlined'}
-                    />
-                  )}
-                  value={task.employee}
-                />
-              }
-            </Grid>
-            <Grid item xs>
-              <Typography variant={'caption'} className={' required previewCaption'}>job type</Typography>
-              <Autocomplete
-                // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
-                getOptionLabel={(option) => {
-                  const { title, description } = option;
-                  return `${title}`;
-                }}
-                id={'tags-standard'}
-                multiple
-                onChange={(ev: any, newValue: any) => handleTaskChange('jobTypes', newValue, index)}
-                options={
-                  jobTypes && jobTypes.length !== 0
-                    ? stringSortCaseInsensitive(jobTypes, 'title')
-                    : []
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant={'outlined'}
-                    required={!task.jobTypes.length}
-                  />
-                )}
-                renderTags={(tagValue, getTagProps) =>
-                  tagValue.map((option, index) => {
-                    return (
-                      <Chip
-                        label={`${option.title}`}
-                        {...getTagProps({ index })}
-                        // disabled={disabledChips.includes(option._id) || !job._id}
-                      />
-                    );
-                  })
-                }
-                value={task.jobTypes}
-              />
-            </Grid>
-            {index > 0 &&
-            <IconButton className={classes.removeJobTypeButton}
-                        component="span"
-                        onClick={() => removeTask(index)}
-            >
-              <RemoveCircleIcon/>
-            </IconButton>
-            }
-          </Grid>
-        )}
-        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
-          <Grid item xs>
-            <Button
-              color={'primary'}
-              classes={{root: classes.addJobTypeButton}}
-              variant={'outlined'}
-              onClick={addEmptyTask}
-              startIcon={<AddCircleIcon />}
-            >Add Technician</Button>
-
-          </Grid>
-        </Grid>
-        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
-          <Grid item xs>
-            <Typography variant={'caption'} className={' previewCaption'}>job location</Typography>
-            <Autocomplete
-              defaultValue={
-                ticket.jobLocation !== '' &&
-                jobLocations.length !== 0 &&
-                jobLocations.filter(
-                  (jobLocation: any) =>
-                    jobLocation._id === ticket.jobLocation
-                )[0]
-              }
-              disabled={ticket.jobLocation}
-              getOptionLabel={(option) =>
-                option.name ? option.name : ''
-              }
-              getOptionDisabled={(option) => !option.isActive}
-              id={'tags-standard'}
-              onChange={(ev: any, newValue: any) => handleLocationChange('jobLocationId', newValue)
-              }
-              options={
-                jobLocations && jobLocations.length !== 0
-                  ? jobLocations.sort((a: any, b: any) =>
-                    a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                  )
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  error={
-                    form.touched.jobLocationId &&
-                    Boolean(form.errors.jobLocationId)
-                  }
-                  helperText={
-                    form.touched.jobLocationId &&
-                    form.errors.jobLocationId
-                  }
-                  {...params}
-                  variant={'outlined'}
-                />
-              )}
-              value={jobLocationValue}
-            />
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={' previewCaption'}>job site</Typography>
-            <Autocomplete
-              defaultValue={
-                ticket.jobSite !== '' &&
-                jobSites.length !== 0 &&
-                jobSites.filter(
-                  (jobSite: any) => jobSite._id === ticket.jobSite
-                )[0]
-              }
-              disabled={
-                ticket.jobSite ||
-                FormikValues.jobLocationId === '' ||
-                detail
-              }
-              getOptionLabel={(option) =>
-                option.name ? option.name : ''
-              }
-              id={'tags-standard'}
-              onChange={(ev: any, newValue: any) => handleJobSiteChange('jobSiteId', newValue)}
-              options={
-                jobSites && jobSites.length !== 0
-                  ? jobSites.sort((a: any, b: any) =>
-                    a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                  )
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  error={
-                    form.touched.jobSiteId &&
-                    Boolean(form.errors.jobSiteId)
-                  }
-                  helperText={
-                    form.touched.jobSiteId && form.errors.jobSiteId
-                  }
-                  {...params}
-                  variant={'outlined'}
-                />
-              )}
-              value={jobSiteValue}
-            />
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>
-            <Autocomplete
-              className={detail ? 'detail-only' : ''}
-              disabled={detail}
-              getOptionLabel={(option) =>
-                option.company ? option.company : ''
-              }
-              id={'tags-standard'}
-              onChange={(ev: any, newValue: any) =>
-                handleSelectChange('equipmentId', newValue?._id)
-              }
-              options={
-                equipments && equipments.length !== 0
-                  ? equipments.sort((a: any, b: any) =>
-                    a.company > b.company
-                      ? 1
-                      : b.company > a.company
-                        ? -1
-                        : 0
-                  )
-                  : []
-              }
-              renderInput={(params) => (
-                <TextField
-                  error={
-                    form.touched.equipmentId &&
-                    Boolean(form.errors.equipmentId)
-                  }
-                  helperText={
-                    form.touched.equipmentId && form.errors.equipmentId
-                  }
-                  {...params}
-                  variant={'outlined'}
-                />
-              )}
-            />
-          </Grid>
-        </Grid>
-        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
-          <Grid container xs={8} spacing={4}>
-            <Grid container xs={12} spacing={4}>
+        <div className={'modalDataContainer'}>
+          {FormikValues.tasks.map((task: any, index) =>
+            <Grid container key={`Grid_${index}`} className={`modalContent ${classes.relative}`} justify={'space-between'} spacing={4}>
               <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
+                <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
                 <Autocomplete
+                  defaultValue={employeeTypes[task.employeeType]}
                   getOptionLabel={(option) =>
                     option.name ? option.name : ''
                   }
                   id={'tags-standard'}
                   onChange={(ev: any, newValue: any) =>
-                    handleSelectChange(
-                      'customerContactId',
-                      newValue?._id,
-                      setContactValue(newValue)
-                    )
+                    handleTaskChange('employeeType', newValue, index)
                   }
-                  options={
-                    contacts && contacts.length !== 0
-                      ? contacts.sort((a: any, b: any) =>
-                        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                      )
-                      : []
-                  }
+                  options={employeeTypes}
                   renderInput={(params) => (
                     <TextField
-                      error={
-                        form.touched.customerContactId &&
-                        Boolean(form.errors.customerContactId)
-                      }
-                      helperText={
-                        form.touched.customerContactId &&
-                        form.errors.customerContactId
-                      }
+                      required
                       {...params}
                       variant={'outlined'}
                     />
                   )}
-                  value={contactValue}
                 />
               </Grid>
               <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>customer po</Typography>
-                <BCInput
-                  className={'serviceTicketLabel'}
-                  disabled={ticket.customerPO}
-                  handleChange={formikChange}
-                  name={'customerPO'}
-                  placeholder={'Customer PO / Sales Order #'}
-                  value={FormikValues.customerPO}
-                  error={
-                    form.touched.customerPO && Boolean(form.errors.customerPO)
-                  }
-                  helperText={
-                    form.touched.customerPO && form.errors.customerPO
-                  }
-                />
+                <Typography variant={'caption'} className={' required previewCaption'}>{task.employeeType ? 'contractor' : 'technician'}</Typography>
+                {task.employeeType ?
+                  <Autocomplete
+                    // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
+                    getOptionLabel={(option) =>
+                      option?.info?.companyName
+                        ? option.info.companyName
+                        : ''
+                    }
+                    id={'tags-standard'}
+                    onChange={(ev: any, newValue: any) => handleTaskChange('contractorId', newValue, index)}
+                    options={
+                      vendorsList && vendorsList.length !== 0
+                        ? vendorsList.sort((a: any, b: any) =>
+                          a.info.companyName >
+                          b.info.companyName
+                            ? 1
+                            : b.info.companyName >
+                            a.info.companyName
+                              ? -1
+                              : 0
+                        )
+                        : []
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        required
+                        {...params}
+                        variant={'outlined'}
+                      />
+                    )}
+                    value={task.contractor}
+                  />
+                  :
+                  <Autocomplete
+                    getOptionLabel={(option) =>
+                      option.profile ? option.profile.displayName : ''
+                    }
+                    id={'tags-standard'} // Options={employeesForJob && employeesForJob.length !== 0 ? (employeesForJob.sort((a: any, b: any) => (a.profile.displayName > b.profile.displayName) ? 1 : ((b.profile.displayName > a.profile.displayName) ? -1 : 0))) : []}
+                    onChange={(ev: any, newValue: any) => handleTaskChange('technicianId', newValue, index)}
+                    options={
+                      employeesForJob && employeesForJob.length !== 0
+                        ? employeesForJob.sort((a: any, b: any) =>
+                          a.profile.displayName > b.profile.displayName
+                            ? 1
+                            : b.profile.displayName > a.profile.displayName
+                              ? -1
+                              : 0
+                        )
+                        : []
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        required
+                        variant={'outlined'}
+                      />
+                    )}
+                    value={task.employee}
+                  />
+                }
               </Grid>
-            </Grid>
-            <Grid container xs={12}>
               <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>description</Typography>
-                <BCInput
-                  handleChange={formikChange}
-                  multiline
-                  name={'description'}
-                  value={FormikValues.description}
-                  error={
-                    form.touched.description &&
-                    Boolean(form.errors.description)
+                <Typography variant={'caption'} className={' required previewCaption'}>job type</Typography>
+                <Autocomplete
+                  // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
+                  getOptionLabel={(option) => {
+                    const { title, description } = option;
+                    return `${title}`;
+                  }}
+                  id={'tags-standard'}
+                  multiple
+                  onChange={(ev: any, newValue: any) => handleTaskChange('jobTypes', newValue, index)}
+                  options={
+                    jobTypes && jobTypes.length !== 0
+                      ? stringSortCaseInsensitive(jobTypes, 'title')
+                      : []
                   }
-                  helperText={
-                    form.touched.description && form.errors.description
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant={'outlined'}
+                      required={!task.jobTypes.length}
+                    />
+                  )}
+                  renderTags={(tagValue, getTagProps) =>
+                    tagValue.map((option, index) => {
+                      return (
+                        <Chip
+                          label={`${option.title}`}
+                          {...getTagProps({ index })}
+                          // disabled={disabledChips.includes(option._id) || !job._id}
+                        />
+                      );
+                    })
                   }
+                  value={task.jobTypes}
                 />
               </Grid>
+              {index > 0 &&
+              <IconButton className={classes.removeJobTypeButton}
+                          component="span"
+                          onClick={() => removeTask(index)}
+              >
+                <RemoveCircleIcon/>
+              </IconButton>
+              }
             </Grid>
-          </Grid>
-          <Grid item container xs={4} style={{paddingTop: 16}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)}  onDelete={handleRemoveImage}/>
-          </Grid>
-        </Grid>
+          )}
+          <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+            <Grid item xs>
+              <Button
+                color={'primary'}
+                classes={{root: classes.addJobTypeButton}}
+                variant={'outlined'}
+                onClick={addEmptyTask}
+                startIcon={<AddCircleIcon />}
+              >Add Technician</Button>
 
-        <DialogActions>
-          <Button
-            disabled={isSubmitting}
-            onClick={() => closeModal()}
-            variant={'outlined'}
-          >Close</Button>
-          {job._id &&
-            <>
-              <Button
-                color={'secondary'}
-                disabled={isSubmitting}
-                onClick={() => openCancelJobModal(job, true)}
-                style={{}}
-                variant={'contained'}
-              >Cancel Job</Button>
-              <Button
-                color={'secondary'}
-                disabled={isSubmitting}
-                onClick={() => openCancelJobModal(job, false)}
-                style={{}}
-                variant={'contained'}
-              >Cancel Job and Service Ticket</Button>
-            </>
-          }
-          <Button
-            color={'primary'}
-            disabled={isSubmitting}
-            type={'submit'}
-            variant={'contained'}
-          >{job._id ? 'Update' : 'Submit'}</Button>
-        </DialogActions>
+            </Grid>
+          </Grid>
+          <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+            <Grid item xs>
+              <Typography variant={'caption'} className={' previewCaption'}>job location</Typography>
+              <Autocomplete
+                defaultValue={
+                  ticket.jobLocation !== '' &&
+                  jobLocations.length !== 0 &&
+                  jobLocations.filter(
+                    (jobLocation: any) =>
+                      jobLocation._id === ticket.jobLocation
+                  )[0]
+                }
+                disabled={ticket.jobLocation}
+                getOptionLabel={(option) =>
+                  option.name ? option.name : ''
+                }
+                getOptionDisabled={(option) => !option.isActive}
+                id={'tags-standard'}
+                onChange={(ev: any, newValue: any) => handleLocationChange('jobLocationId', newValue)
+                }
+                options={
+                  jobLocations && jobLocations.length !== 0
+                    ? jobLocations.sort((a: any, b: any) =>
+                      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                    )
+                    : []
+                }
+                renderInput={(params) => (
+                  <TextField
+                    error={
+                      form.touched.jobLocationId &&
+                      Boolean(form.errors.jobLocationId)
+                    }
+                    helperText={
+                      form.touched.jobLocationId &&
+                      form.errors.jobLocationId
+                    }
+                    {...params}
+                    variant={'outlined'}
+                  />
+                )}
+                value={jobLocationValue}
+              />
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={' previewCaption'}>job site</Typography>
+              <Autocomplete
+                defaultValue={
+                  ticket.jobSite !== '' &&
+                  jobSites.length !== 0 &&
+                  jobSites.filter(
+                    (jobSite: any) => jobSite._id === ticket.jobSite
+                  )[0]
+                }
+                disabled={
+                  ticket.jobSite ||
+                  FormikValues.jobLocationId === '' ||
+                  detail
+                }
+                getOptionLabel={(option) =>
+                  option.name ? option.name : ''
+                }
+                id={'tags-standard'}
+                onChange={(ev: any, newValue: any) => handleJobSiteChange('jobSiteId', newValue)}
+                options={
+                  jobSites && jobSites.length !== 0
+                    ? jobSites.sort((a: any, b: any) =>
+                      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                    )
+                    : []
+                }
+                renderInput={(params) => (
+                  <TextField
+                    error={
+                      form.touched.jobSiteId &&
+                      Boolean(form.errors.jobSiteId)
+                    }
+                    helperText={
+                      form.touched.jobSiteId && form.errors.jobSiteId
+                    }
+                    {...params}
+                    variant={'outlined'}
+                  />
+                )}
+                value={jobSiteValue}
+              />
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>
+              <Autocomplete
+                className={detail ? 'detail-only' : ''}
+                disabled={detail}
+                getOptionLabel={(option) =>
+                  option.company ? option.company : ''
+                }
+                id={'tags-standard'}
+                onChange={(ev: any, newValue: any) =>
+                  handleSelectChange('equipmentId', newValue?._id)
+                }
+                options={
+                  equipments && equipments.length !== 0
+                    ? equipments.sort((a: any, b: any) =>
+                      a.company > b.company
+                        ? 1
+                        : b.company > a.company
+                          ? -1
+                          : 0
+                    )
+                    : []
+                }
+                renderInput={(params) => (
+                  <TextField
+                    error={
+                      form.touched.equipmentId &&
+                      Boolean(form.errors.equipmentId)
+                    }
+                    helperText={
+                      form.touched.equipmentId && form.errors.equipmentId
+                    }
+                    {...params}
+                    variant={'outlined'}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+          <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+            <Grid container xs={8} spacing={4}>
+              <Grid container xs={12} spacing={4}>
+                <Grid item xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
+                  <Autocomplete
+                    getOptionLabel={(option) =>
+                      option.name ? option.name : ''
+                    }
+                    id={'tags-standard'}
+                    onChange={(ev: any, newValue: any) =>
+                      handleSelectChange(
+                        'customerContactId',
+                        newValue?._id,
+                        setContactValue(newValue)
+                      )
+                    }
+                    options={
+                      contacts && contacts.length !== 0
+                        ? contacts.sort((a: any, b: any) =>
+                          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                        )
+                        : []
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        error={
+                          form.touched.customerContactId &&
+                          Boolean(form.errors.customerContactId)
+                        }
+                        helperText={
+                          form.touched.customerContactId &&
+                          form.errors.customerContactId
+                        }
+                        {...params}
+                        variant={'outlined'}
+                      />
+                    )}
+                    value={contactValue}
+                  />
+                </Grid>
+                <Grid item xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>customer po</Typography>
+                  <BCInput
+                    className={'serviceTicketLabel'}
+                    disabled={ticket.customerPO}
+                    handleChange={formikChange}
+                    name={'customerPO'}
+                    placeholder={'Customer PO / Sales Order #'}
+                    value={FormikValues.customerPO}
+                    error={
+                      form.touched.customerPO && Boolean(form.errors.customerPO)
+                    }
+                    helperText={
+                      form.touched.customerPO && form.errors.customerPO
+                    }
+                  />
+                </Grid>
+              </Grid>
+              <Grid container xs={12}>
+                <Grid item xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>description</Typography>
+                  <BCInput
+                    handleChange={formikChange}
+                    multiline
+                    name={'description'}
+                    value={FormikValues.description}
+                    error={
+                      form.touched.description &&
+                      Boolean(form.errors.description)
+                    }
+                    helperText={
+                      form.touched.description && form.errors.description
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item container xs={4} style={{paddingTop: 16}}>
+              <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)}  onDelete={handleRemoveImage}/>
+            </Grid>
+          </Grid>
+
+          <DialogActions>
+            <Button
+              disabled={isSubmitting}
+              onClick={() => closeModal()}
+              variant={'outlined'}
+            >Close</Button>
+            {job._id &&
+              <>
+                <Button
+                  color={'secondary'}
+                  disabled={isSubmitting}
+                  onClick={() => openCancelJobModal(job, true)}
+                  style={{}}
+                  variant={'contained'}
+                >Cancel Job</Button>
+                <Button
+                  color={'secondary'}
+                  disabled={isSubmitting}
+                  onClick={() => openCancelJobModal(job, false)}
+                  style={{}}
+                  variant={'contained'}
+                >Cancel Job and Service Ticket</Button>
+              </>
+            }
+            <Button
+              color={'primary'}
+              disabled={isSubmitting}
+              type={'submit'}
+              variant={'contained'}
+            >{job._id ? 'Update' : 'Submit'}</Button>
+          </DialogActions>
+        </div>
       </form>
     </DataContainer>
   );
