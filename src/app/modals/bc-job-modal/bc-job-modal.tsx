@@ -711,7 +711,6 @@ function BCJobModal({
               <Grid item xs>
                 <Typography variant={'caption'} className={' required previewCaption'}>technician type</Typography>
                 <Autocomplete
-                  defaultValue={employeeTypes[task.employeeType]}
                   getOptionLabel={(option) =>
                     option.name ? option.name : ''
                   }
@@ -727,13 +726,13 @@ function BCJobModal({
                       variant={'outlined'}
                     />
                   )}
+                  value={task.employeeType ? employeeTypes[1] : employeeTypes[0]}
                 />
               </Grid>
               <Grid item xs>
                 <Typography variant={'caption'} className={' required previewCaption'}>{task.employeeType ? 'contractor' : 'technician'}</Typography>
                 {task.employeeType ?
                   <Autocomplete
-                    // DefaultValue={job._id && job.employeeType ? vendorsList.filter((vendor: any) => vendor.contrator._id === job.contractor._id) : null}
                     getOptionLabel={(option) =>
                       option?.info?.companyName
                         ? option.info.companyName
