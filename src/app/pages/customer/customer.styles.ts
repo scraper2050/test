@@ -42,5 +42,8 @@ export default (theme: Theme): any => ({
     fontWeight: 'bold',
     color: '#f50057',
     //fontSize: '1rem',
-  }
+  },
+  capitalize: {
+    textTransform: 'capitalize'
+  },
 });

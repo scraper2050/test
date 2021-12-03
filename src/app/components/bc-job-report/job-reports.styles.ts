@@ -32,6 +32,7 @@ export default (theme: Theme): any => ({
   },
 
   'noMargin': {
+    'display': 'block',
     'marginTop': '0px',
     'paddingRight': '15px'
   },

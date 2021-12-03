@@ -31,18 +31,21 @@ const renderTime = (startTime:Date, endTime: Date) => {
   return start;
 };
 
-const getJobs = (jobs:any, jobTypes:any) => {
-  const ids = jobs.map((job:any) => job.jobType._id);
+const getJobs = (tasks:any = [], jobTypes:any) => {
+  const ids: string[] = [];
+  const titles: string[] = [];
+  tasks.forEach((task:any) => task.jobTypes.forEach((type:any) => {
+    if (ids.indexOf(type.jobType) < 0) ids.push(type.jobType)
+  }));
   return jobTypes.filter((jobType:any) => ids.includes(jobType._id));
 };
-
 
 function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   const history = useHistory();
   const dispatch = useDispatch();
 
   const { job, invoiceCreated, invoice } = jobReportData;
-
+  //console.log({jobReportData});
 
   if (!jobReportData || !job) {
     return null;
@@ -187,7 +190,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                 </Grid>
                 <Grid
                   item
-                  xs={6}>
+                  xs={12}>
                   <div className={classes.addMargin}>
                     <strong>
                       {'Email'}
@@ -285,11 +288,13 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       xs={12}>
                       <div className={classes.addMargin}>
                         <strong>
-                          {'Technician Name'}
+                          {'Technician(s) Name(s)'}
                         </strong>
-                        <p className={classes.noMargin}>
-                          {job.technician.profile.displayName || 'N/A'}
-                        </p>
+                        {job.tasks.map((task: any) => <span className={classes.noMargin}>
+                            {task.profile?.displayName || 'N/A'}
+                          </span>
+                        )}
+
                       </div>
                     </Grid>
                     <Grid
@@ -300,14 +305,12 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                           {'Job Type(s)'}
                         </strong>
                         {jobs.map((item :any) =>
-                          <p
-                            className={job.tasks.length
-                              ? classes.addMargin
-                              : classes.noMargin}
+                          <span
+                            className={classes.noMargin}
                             key={item._id}>
                             {item.title || 'N/A'}
-                          </p>)}
-
+                          </span>
+                        )}
                       </div>
                     </Grid>
                   </Grid>
