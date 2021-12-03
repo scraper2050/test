@@ -305,7 +305,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
   }, [location, isMobile]);
 
   useEffect(() => {
-    dispatch(getCompanyProfileAction(user?.company as string));
+    if (user?.company) dispatch(getCompanyProfileAction(user?.company as string));
   }, [user]);
 
   const onClickLink = (strLink: string): void => {

@@ -31,13 +31,62 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     (job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0
   );
 
-  function RenderVendor({ vendor }: any) {
-    if (vendor) {
-      return vendor.profile
-        ? vendor.profile.displayName
-        : vendor.info.companyName;
+  function getVendor (originalRow: any, rowIndex: number) {
+    const {tasks} = originalRow;
+    let value = '';
+    if (tasks) {
+      if (tasks.length === 0) return null;
+      else if (tasks.length > 1) value = 'Multiple Techs';
+      else if (tasks[0].vendor) {
+        value = tasks[0].vendor.profile
+          ? tasks[0].vendor.profile.displayName
+          : tasks[0].vendor.info.companyName;
+      } else if (tasks[0].technician) {
+        value =  tasks[0].technician.profile
+          ? tasks[0].technician.profile.displayName
+          : tasks[0].technician.info.companyName;
+      }
     }
-    return null;
+    return value.toLowerCase();
+  }
+
+  function getJobType(originalRow: any, rowIndex: number) {
+    const allTypes = originalRow.tasks.reduce((acc: string[], task: any) => {
+      if (task.jobType?.title) {
+        if (acc.indexOf(task.jobType.title) === -1) acc.push(task.jobType.title);
+        return acc;
+      }
+
+      const all = task.jobTypes?.map((item: any) => item.jobType?.title);
+      all.forEach((item: string) => {
+        if (item && acc.indexOf(item) === -1) acc.push(item);
+      })
+      return acc;
+    }, []);
+
+    return allTypes.length === 1 ? allTypes[0].toLowerCase() : 'multiple jobs';
+  }
+
+  function getJobTime(originalRow: any, rowIndex: number) {
+    let startTime = 'N/A';
+    let endTime = 'N/A';
+    if (originalRow.scheduledStartTime !== undefined) {
+      const formatScheduledObj = formatSchedulingTime(
+        originalRow.scheduledStartTime
+      );
+      startTime = convertMilitaryTime(
+        `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+      );
+    }
+    if (originalRow.scheduledEndTime !== undefined) {
+      const formatScheduledObj = formatSchedulingTime(
+        originalRow.scheduledEndTime
+      );
+      endTime = convertMilitaryTime(
+        `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+      );
+    }
+    return `${startTime} - ${endTime}`;
   }
 
   const openEditJobModal = (job: any) => {
@@ -72,12 +121,11 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     dispatch(
       setModalDataAction({
         data: {
-          detail: true,
           job: job,
-          modalTitle: 'View Job',
           removeFooter: false,
+          maxHeight: '100%',
         },
-        type: modalTypes.EDIT_JOB_MODAL,
+        type: modalTypes.VIEW_JOB_MODAL,
       })
     );
     setTimeout(() => {
@@ -113,16 +161,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       width: 60,
     },
     {
-      Cell({ row }: any) {
-        return (
-          <RenderVendor
-            vendor={row.original.technician || row.original.contractor}
-          />
-        );
-      },
       Header: 'Technician',
-      accessor: 'contractor.info.companyName',
-      className: 'font-bold',
+      accessor: getVendor,
+      id: 'technician',
+      className: classes.capitalize,
       sortable: true,
       width: 100,
     },
@@ -133,20 +175,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       sortable: true,
     },
     {
-      Cell({ row }: any) {
-        return (
-          <div className={'flex items-center'}>
-            {row.original.tasks.length > 0
-              ? row.original.tasks.length === 1
-                ? row.original.tasks[0].jobType.title
-                : 'Multiple Jobs'
-              : row.original.type?.title}
-          </div>
-        );
-      },
       Header: 'Type',
-      accessor: 'type.title',
-      className: 'font-bold',
+      id: 'job-type',
+      accessor: getJobType,
+      className: classes.capitalize,
       sortable: true,
     },
     {
@@ -156,37 +188,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       },
       Header: 'Schedule Date',
       id: 'job-schedulee-date',
+      accessor: 'scheduleDate',
       sortable: true,
       width: 60,
     },
     {
-      Cell({ row }: any) {
-        let startTime = 'N/A';
-        let endTime = 'N/A';
-        if (row.original.scheduledStartTime !== undefined) {
-          const formatScheduledObj = formatSchedulingTime(
-            row.original.scheduledStartTime
-          );
-          startTime = convertMilitaryTime(
-            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
-          );
-        }
-        if (row.original.scheduledEndTime !== undefined) {
-          const formatScheduledObj = formatSchedulingTime(
-            row.original.scheduledEndTime
-          );
-          endTime = convertMilitaryTime(
-            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
-          );
-        }
-        return (
-          <div className={'flex items-center'}>
-            {`${startTime} - ${endTime}`}
-          </div>
-        );
-      },
       Header: 'Time',
       id: 'job-time',
+      accessor: getJobTime,
       sortable: true,
       width: 40,
     },

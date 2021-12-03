@@ -105,8 +105,8 @@ export default function CustomizedMenus({status, handleClick}:ButtonProps) {
         style={{
           backgroundColor: bgColors[status],
           color: '#fff',
-          borderBottomLeftRadius: anchorEl ? 0 : 4,
-          borderBottomRightRadius: anchorEl ? 0 : 4,
+          borderBottomLeftRadius: anchorEl ? 0 : 8,
+          borderBottomRightRadius: anchorEl ? 0 : 8,
         }}
         onClick={_handleButtonClick}
         >

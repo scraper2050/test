@@ -1,6 +1,9 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import InfoIcon from '@material-ui/icons/Info';
-import { getAllServiceTicketAPI } from 'api/service-tickets.api';
+import {
+  getAllServiceTicketAPI,
+  getServiceTicketDetail
+} from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
 import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
@@ -14,7 +17,12 @@ import { getAllJobTypesAPI } from 'api/job.api';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import "../../../../../scss/popup.scss";
 import EditIcon from '@material-ui/icons/Edit';
-import {CSButtonSmall, useCustomStyles} from "../../../../../helpers/custom";
+import {
+  CSButtonSmall,
+  CSIconButton,
+  useCustomStyles
+} from "../../../../../helpers/custom";
+import {error} from "../../../../../actions/snackbar/snackbar.action";
 
 function ServiceTicket({ classes }: any) {
   const dispatch = useDispatch();
@@ -32,8 +40,8 @@ function ServiceTicket({ classes }: any) {
       customerId: ticket.customer?._id,
       locationId: ticket.jobLocation
     }
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
+    //dispatch(loadingJobLocations());
+    //dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
@@ -49,7 +57,6 @@ function ServiceTicket({ classes }: any) {
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
         'maxHeight': '754px',
-        'height': '100%'
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -74,54 +81,27 @@ function ServiceTicket({ classes }: any) {
     </>
   }
 
-  const openDetailTicketModal = (ticket: any) => {
-
-    const reqObj = {
-      customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation
-    }
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
+  const openDetailTicketModal = async (ticket: any) => {
+    const {serviceTicket, status, message} = await getServiceTicketDetail(ticket._id);
+    if (status === 1) {
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'Service Ticket Details',
+          'removeFooter': false,
+          'job': serviceTicket,
+          'className': 'serviceTicketTitle',
+        },
+        'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
     } else {
-      dispatch(clearJobSiteStore());
+      dispatch(error(message));
     }
-    dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'detail': true,
-
-      },
-      'type': modalTypes.EDIT_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
   };
 
-
   const openCreateJobModal = (ticket: any) => {
-    const reqObj = {
-      customerId: ticket.customer?._id ? ticket.customer?._id :'',
-      locationId: ticket.jobLocation ? ticket.jobLocation :''
-    }
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction(reqObj.customerId));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
     dispatch(setModalDataAction({
       'data': {
         'job': {
@@ -146,7 +126,6 @@ function ServiceTicket({ classes }: any) {
         },
         'modalTitle': 'Create Job',
         'removeFooter': false,
-
       },
       'type': modalTypes.EDIT_JOB_MODAL
     }));
@@ -185,11 +164,34 @@ function ServiceTicket({ classes }: any) {
     {
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
+          <CSIconButton
+            //variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => openDetailTicketModal(row.original)}
+          >
+            <InfoIcon className={customStyles.iconBtn}/>
+          </CSIconButton>
+          {row.original && row.original.status !== 1
+            ? <CSIconButton
+            //variant="contained"
+            color="primary"
+            size="small"
+            aria-label={'edit-ticket'}
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditTicketModal(row.original);
+            }}
+          >
+            <EditIcon className={customStyles.iconBtn}/>
+          </CSIconButton>
+            : null
+          }
           {
             !row.original.jobCreated
               ? row.original.status !== 2
                 ? <CSButtonSmall
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   size="small"
                   aria-label={'edit-ticket'}
@@ -202,46 +204,11 @@ function ServiceTicket({ classes }: any) {
           }
         </div>;
       },
-      'Header': 'Create Job',
+      'Header': 'Actions',
       'id': 'action-create-job',
       'sortable': false,
       'width': 60
     },
-    {
-      'Cell'({ row }: any) {
-        return row.original && row.original.status !== 1
-          ? <Button
-            variant="outlined"
-            size="small"
-            aria-label={'edit-ticket'}
-            onClick={(e) => {
-              e.stopPropagation();
-              openEditTicketModal(row.original);
-            }}
-            style={{height: 30}}
-          >
-            <EditIcon className={customStyles.iconBtnGray}/>
-          </Button>
-          : '-';
-      },
-      'Header': 'Edit Ticket',
-      'id': 'action-edit-ticket',
-      'sortable': false,
-      'width': 60
-    },
-    {
-      'Cell'({ row }: any) {
-        return <div
-          onClick={() => openDetailTicketModal(row.original)}
-          className={'flex items-center'}>
-          <InfoIcon style={{display: 'block'}} />
-        </div>;
-      },
-      'Header': 'Ticket Details',
-      'id': 'action-detail',
-      'sortable': false,
-      'width': 60
-    }
   ];
 
   useEffect(() => {

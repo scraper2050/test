@@ -12,7 +12,7 @@ export default (theme: Theme): any => ({
   modalPreview: {
     backgroundColor: '#EAECF3',
     padding: '35px 50px',
-    margin: '15px 0',
+    margin: '0 0 15px 0',
   },
   previewCaption: {
     color: '#828282',

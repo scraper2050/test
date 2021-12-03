@@ -1,258 +1,254 @@
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
-import { PRIMARY_GREEN } from '../../../constants';
-import { RootState } from 'reducers';
-import { closeModalAction } from 'actions/bc-modal/bc-modal.action';
-import { formatDatTimelll } from 'helpers/format';
-import { getServiceTicketDetailAction } from 'actions/service-ticket/service-ticket.action';
-import styled from 'styled-components';
-import { Fab, Grid, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import styles from './bc-service-ticket-modal.styles';
+import {
+  Grid,
+  Typography,
+  withStyles,
+} from '@material-ui/core';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { markNotificationAsRead } from 'actions/notifications/notifications.action';
+import {
+  formatDate,
+  formatTime,
+} from 'helpers/format';
+import styled from 'styled-components';
+import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
+import '../../../scss/job-poup.scss';
+import moment from 'moment';
+import classNames from "classnames";
+import {getVendors} from "../../../actions/vendor/vendor.action";
+import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 
-
-const BCViewServiceTicketModalContainer = styled.div`
-    padding: 50px;
-    h6 {
-        font-size: 1.2rem;
-        color: #707070;
-    }
-    p {
-        font-weight: 800;
-        font-size: 1.2rem;
-    }
-    .detail {
-        margin-bottom: 27px;
-    }
-
-    .image-container {
-        max-height: 200px;
-        overflow: hidden;
-    }
-    .MuiTableCell-body {
-        white-space: pre-wrap;
-    }
-
-    .actions{
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        button {
-            width: 200px;
-            color: white;
-            background: ${PRIMARY_GREEN}
-        }
-    }
-    `;
-
-
-interface BCViewServiceTicketModalProps {
-    ticketId: string;
-    notificationId: string;
-}
-
-const columns: any = [
-  {
-    'Cell'({ row }: any) {
-      return (
-        <div>
-          {row.original.user?.profile?.displayName || 'N/A'}
-        </div>
-      );
-    },
-    'Header': 'User',
-    'id': 'user',
-    'sortable': true,
-
-    'width': 70
+const initialJobState = {
+  customer: {
+    _id: '',
   },
-  { 'Cell'({ row }: any) {
-    return (
-      <div>
-        <i>
-          {`${formatDatTimelll(row.original.date)}`}
-        </i>
-      </div>
-    );
+  description: '',
+  employeeType: false,
+  equipment: {
+    _id: '',
   },
-  'Header': 'Date',
-  'id': 'date',
-  'sortable': true,
-
-  'width': 80
+  dueDate: '',
+  scheduleDate: null,
+  scheduledEndTime: null,
+  scheduledStartTime: null,
+  technician: {
+    _id: '',
   },
-  { 'Cell'({ row }: any) {
-    const splittedActions = row.original.action.split('|');
-    const actions = splittedActions.filter((action: any) => action !== '');
-    return actions.length === 0
-      ? <div />
-      : <ul>
-        {actions.map((action: any, index: number) => <li key={index}>
-          {action}
-        </li>)}
-      </ul>;
+  contractor: {
+    _id: '',
   },
-  'Header': 'Actions',
-  'id': 'action',
-  'sortable': true
+  ticket: {
+    _id: '',
+  },
+  type: {
+    _id: '',
+  },
+  jobLocation: {
+    _id: '',
+  },
+  jobSite: {
+    _id: '',
+  },
+  jobRescheduled: false,
+};
 
-  }
-];
-
-export default function BCViewServiceTicketModal({ ticketId, notificationId }:BCViewServiceTicketModalProps) {
-  const { loadingObj, openTicketObj, error } = useSelector(({ serviceTicket }:RootState) => serviceTicket);
+function BCViewServiceTicketModal({
+                          classes,
+                          job = initialJobState,
+                        }: any): JSX.Element {
   const dispatch = useDispatch();
+  console.log(job);
+  const calculateJobType = () => {
+    let title = [];
+    if (job.tasks) {
+      job.tasks.forEach((task: any) => title.push(task.jobType?.title))
+    } else if (job.jobType) {
+      title.push(job.jobType.title || 'N/A');
+    }
+    return title;
+  }
 
+  const equipments = useSelector(({ inventory }: any) => inventory.data);
+  const { loading, data } = useSelector(
+    ({ employeesForJob }: any) => employeesForJob
+  );
+  const vendorsList = useSelector(({ vendors }: any) =>
+    vendors.data.filter((vendor: any) => vendor.status <= 1)
+  );
+  const employeesForJob = useMemo(() => [...data], [data]);
 
   useEffect(() => {
-    if (openTicketObj._id !== ticketId) {
-      dispatch(getServiceTicketDetailAction(ticketId));
-    }
+    dispatch(getEmployeesForJobAction());
+    dispatch(getVendors());
   }, []);
 
-  useEffect(() => {
-    if (!loadingObj) {
-      dispatch(markNotificationAsRead.fetch({ 'id': notificationId,
-        'isRead': true }));
-    }
-  }, [openTicketObj]);
+  const columns: any = [
+    {
+      Header: 'User',
+      id: 'user',
+      sortable: true,
+      Cell({ row }: any) {
+        const user = row.original.user;
+        const vendor = vendorsList.find((v: any) => v.contractor.admin._id === row.original.user);
+        const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
+        return <div>{displayName}</div>;
+      },
+    },
+    {
+      Header: 'Date',
+      id: 'date',
+      sortable: true,
+      Cell({ row }: any) {
+        const dataTime = moment(new Date(row.original.date)).format(
+          'MM/DD/YYYY h:mm A'
+        );
+        return (
+          <div style={{ color: 'gray', fontStyle: 'italic' }}>
+            {`${dataTime}`}
+          </div>
+        );
+      },
+    },
+    {
+      Header: 'Actions',
+      id: 'action',
+      sortable: true,
+      Cell({ row }: any) {
+        const splittedActions = row.original.action.split('|');
+        const actions = splittedActions.filter((action: any) => action !== '');
+        return (
+          <>
+            {actions.length === 0 ? (
+              <div />
+            ) : (
+              <ul className={classes.actionsList}>
+                {actions.map((action: any) => (
+                  <li>{action}</li>
+                ))}
+              </ul>
+            )}
+          </>
+        );
+      },
+    },
+  ];
 
-  if (loadingObj || !openTicketObj?.track) {
-    return <BCCircularLoader />;
+  const scheduleDate = job.dueDate;
+  const startTime = job.startTime ? formatTime(job.startTime) : 'N/A';
+  const endTime = job.endTime ? formatTime(job.endTime) : 'N/A';
+
+  return (
+    <DataContainer className={'new-modal-design'}>
+      <Grid container className={'modalPreview'} justify={'space-around'}>
+        <Grid item style={{width: '40%'}}>
+          <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
+          <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
+        </Grid>
+        <Grid item xs>
+          <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
+          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
+        </Grid>
+        <Grid item xs />
+        <Grid item xs />
+      </Grid>
+      <div className={'modalDataContainer'}>
+        <Grid container className={'modalContent'} justify={'space-around'}>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
+            <Typography variant={'h6'} className={'previewText'}>
+              {calculateJobType().map((type:string) => <span className={'jobTypeText'}>{type}</span>)}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>
+            <Typography variant={'h6'} className={'previewText'}>N/A</Typography>
+          </Grid>
+        </Grid>
+        <Grid container className={'modalContent'} justify={'space-around'}>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customer?.contactName || 'N/A'}</Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
+          </Grid>
+          <Grid item style={{width: '50%'}}>
+            <Typography variant={'caption'} className={'previewCaption'}>note</Typography>
+            <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.note || 'N/A'}</Typography>
+          </Grid>
+        </Grid>
+        <Grid container className={classNames('modalContent', classes.lastContent)} justify={'space-between'}>
+          <Grid item style={{width: '30%'}}>
+            <Typography variant={'caption'} className={'previewCaption'}>&nbsp;</Typography>
+            <BCDragAndDrop images={job.images.map((image: any) => image.imageUrl)} readonly={true}  />
+          </Grid>
+          <Grid item style={{width: '68%'}}>
+            <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;ticket history</Typography>
+            <div style={{height: 180, overflowY: 'auto'}}>
+              <BCTableContainer
+                className={classes.tableContainer}
+                columns={columns}
+                initialMsg={'No history yet'}
+                isDefault
+                isLoading={loading}
+                onRowClick={() => {}}
+                pageSize={5}
+                pagination={true}
+                stickyHeader
+                tableData={job.track}
+              />
+            </div>
+          </Grid>
+        </Grid>
+      </div>
+    </DataContainer>
+  );
+}
+
+const Label = styled.div`
+  color: red;
+  font-size: 15px;
+`;
+
+const DataContainer = styled.div`
+  margin: auto 0;
+
+  ::-webkit-scrollbar {
+    width: 12px;
   }
 
-  const {
-    image, jobLocation, jobSite, jobType, customerContactId, note, dueDate, customer, customerPo
-  } = openTicketObj;
+  /* Track */
+  ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+  }
 
-  return <BCViewServiceTicketModalContainer>
-    <Grid
-      container
-      spacing={4}>
-      <Grid
-        item
-        xs={3}>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Customer'}
-          </Typography>
-          <Typography>
-            {customer?.profile?.displayName || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Job Location'}
-          </Typography>
-          <Typography>
-            {jobLocation?.name || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Job Site'}
-          </Typography>
-          <Typography>
-            {jobSite?.name || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Job Type'}
-          </Typography>
-          <Typography>
-            {jobType?.title || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Notes/Special Instructions'}
-          </Typography>
-          <Typography>
-            {note || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Due Date'}
-          </Typography>
-          <Typography>
-            {dueDate
-              ? formatDatTimelll(dueDate)
-              : 'N/A'}
-          </Typography>
-        </div>
-      </Grid>
-      <Grid
-        item
-        xs={3}>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Contact Associated'}
-          </Typography>
-          <Typography>
-            {customerContactId?.name || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Customer PO'}
-          </Typography>
-          <Typography>
-            {customerPo || 'N/A'}
-          </Typography>
-        </div>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Attached image'}
-          </Typography>
-          <div className={'image-container'}>
-            <a
-              href={image}
-              rel={'noopener noreferrer'}
-              target={'_blank'}>
-              <img
-                alt={jobType}
-                src={image}
-              />
-            </a>
-          </div>
-        </div>
-      </Grid>
-      <Grid
-        item
-        xs={6}>
-        <div className={'detail'}>
-          <Typography variant={'h6'}>
-            {'Ticket History'}
-          </Typography>
-          <BCTableContainer
-            columns={columns}
-            initialMsg={'No history yet'}
-            isDefault
-            isLoading={false}
-            onRowClick={() => { }}
-            pageSize={openTicketObj.track.length}
-            pagination={false}
-            stickyHeader
-            tableData={openTicketObj.track}
-          />
-        </div>
-      </Grid>
-    </Grid>
-    <div className={'actions'}>
-      <Fab
-        aria-label={'create-job'}
-        color={'primary'}
-        onClick={
-          () => dispatch(closeModalAction())
-        }
-        type={'submit'}
-        variant={'extended'}>
-        {'Close'}
-      </Fab>
-    </div>
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      background: rgba(255,0,0,0.8);
+      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  }
+  .MuiTableCell-root {
+    line-height: normal;
+  }
 
-  </BCViewServiceTicketModalContainer>;
-}
+  .MuiTableCell-sizeSmall {
+    padding: 0px 16px;
+  }
+
+`;
+
+export default withStyles(styles, { withTheme: true })(BCViewServiceTicketModal);

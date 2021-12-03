@@ -613,6 +613,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         })),
         charges: 0,
       }
+      if (data.customer_po) params.customerPO = data.customer_po;
 
       callCreateInvoiceAPI(params).then((response: any) => {
         history.goBack();
@@ -696,7 +697,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   }
 
   const currentPaymentTerm = invoiceData?.paymentTerm ? invoiceData?.paymentTerm?._id
-    : customerPaymentTerm._id ? customerPaymentTerm._id : invoiceData?.company?.paymentTerm?._id;
+    : customerPaymentTerm?._id ? customerPaymentTerm._id : invoiceData?.company?.paymentTerm?._id;
 
   const calculateInitialDueDate = () => {
     if (invoiceData?.company?.paymentTerm) {
