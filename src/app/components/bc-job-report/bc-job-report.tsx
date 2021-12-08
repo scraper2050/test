@@ -125,6 +125,13 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     });
   };
 
+  const reportJobTypes = job.tasks.reduce((acc: string[], task: any) => {
+    task.jobTypes.forEach((type: any) => {
+      if (type.jobType && acc.indexOf(type.jobType.title) === -1) acc.push(type.jobType.title)
+    });
+    return acc;
+  }, []);
+
   return (
     <MainContainer>
       <PageContainer>
@@ -304,11 +311,11 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                         <strong>
                           {'Job Type(s)'}
                         </strong>
-                        {jobs.map((item :any) =>
+                        {reportJobTypes.map((item :any, index: number) =>
                           <span
                             className={classes.noMargin}
-                            key={item._id}>
-                            {item.title || 'N/A'}
+                            key={index.toString()}>
+                            {item || 'N/A'}
                           </span>
                         )}
                       </div>
