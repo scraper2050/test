@@ -16,7 +16,7 @@ import {CSButton} from "../../../helpers/custom";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import {PageHeader} from "../../pages/customer/job-reports/view-invoice";
+import {getJobTypesFromJob} from "../../../helpers/utils";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -124,13 +124,6 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       'pathname': `view/${invoice._id}`,
     });
   };
-
-  const reportJobTypes = job.tasks.reduce((acc: string[], task: any) => {
-    task.jobTypes.forEach((type: any) => {
-      if (type.jobType && acc.indexOf(type.jobType.title) === -1) acc.push(type.jobType.title)
-    });
-    return acc;
-  }, []);
 
   return (
     <MainContainer>
@@ -311,7 +304,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                         <strong>
                           {'Job Type(s)'}
                         </strong>
-                        {reportJobTypes.map((item :any, index: number) =>
+                        {getJobTypesFromJob(job).map((item :any, index: number) =>
                           <span
                             className={classes.noMargin}
                             key={index.toString()}>

@@ -32,6 +32,11 @@ import {RootState} from "../../../reducers";
 import {setTicketSelected} from "../../../actions/map/map.actions";
 import {getServiceTicketDetail} from "../../../api/service-tickets.api";
 import {formatDate} from "../../../helpers/format";
+import {
+  getJobTypesFromJob,
+  getJobTypesFromTicket,
+  getJobTypesTitle
+} from "../../../helpers/utils";
 
 interface Props {
   classes: any,
@@ -45,18 +50,8 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   let CustomIcon;
   const [showInfo, setShowInfo] = useState({show: false, inside: true});
   const dispatch = useDispatch();
-  let title = 'N/A';
-  if (ticket.tasks) {
-    if (ticket.tasks.length === 0) {
-      title = ticket.jobType?.title || 'N/A';
-    } else if (ticket.tasks.length === 1) {
-      title = ticket.tasks[0].jobType?.title || ticket.tasks[0].title || 'N/A';
-    } else {
-      title = 'Multiple Jobs';
-    }
-  } else if (ticket.jobType) {
-    title = ticket.jobType.title || 'N/A';
-  }
+
+  const title = getJobTypesTitle(isTicket ? getJobTypesFromTicket(ticket) : getJobTypesFromJob(ticket));
 
   const note = ticket.description || ticket.note || 'N/A';
   const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
