@@ -90,7 +90,7 @@ function BCViewJobModal({
         const user = employeesForJob.filter(
           (employee: any) => employee._id === row.original.user
         )[0];
-        const vendor = vendorsList.find((v: any) => v.contractor.admin._id === row.original.user);
+        const vendor = vendorsList.find((v: any) => v.contractor.admin?._id === row.original.user);
         const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
         return <div>{displayName}</div>;
       },
