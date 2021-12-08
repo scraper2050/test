@@ -158,11 +158,11 @@ function BCViewJobModal({
           <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
-          <Typography variant={'caption'} className={'previewCaption'}>start time</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>open time</Typography>
           <Typography variant={'h6'} className={'previewTextTitle'}>{startTime}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
-          <Typography variant={'caption'} className={'previewCaption'}>end time</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>close time</Typography>
           <Typography variant={'h6'} className={'previewTextTitle'}>{endTime}</Typography>
         </Grid>
       </Grid>
