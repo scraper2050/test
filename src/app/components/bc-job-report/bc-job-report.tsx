@@ -291,7 +291,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                           {'Technician(s) Name(s)'}
                         </strong>
                         {job.tasks.map((task: any) => <span className={classes.noMargin}>
-                            {task.profile?.displayName || 'N/A'}
+                            {task.technician?.profile?.displayName || 'N/A'}
                           </span>
                         )}
 

@@ -56,16 +56,9 @@ function JobReportsPage({ classes, theme }: any) {
       'sortable': true
     },
     {
-      Cell({ row }: any) {
-        const Date = formatDate(row.original.jobDate);
-        return (
-          <div className={'flex items-center'}>
-            {Date}
-          </div>
-        );
-      },
       'Header': 'Date',
       'id': 'job-date',
+      'accessor': (originalRow: any, rowIndex: number) => formatDate(originalRow.jobDate),
       'sortable': true
     },
     {
