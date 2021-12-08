@@ -135,8 +135,6 @@ function BCViewServiceTicketModal({
   ];
 
   const scheduleDate = job.dueDate;
-  const startTime = job.startTime ? formatTime(job.startTime) : 'N/A';
-  const endTime = job.endTime ? formatTime(job.endTime) : 'N/A';
 
   return (
     <DataContainer className={'new-modal-design'}>
