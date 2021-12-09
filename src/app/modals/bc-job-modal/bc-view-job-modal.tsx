@@ -135,8 +135,8 @@ function BCViewJobModal({
   ];
 
   const scheduleDate = job.scheduleDate;
-  const startTime = job.startTime ? formatTime(job.startTime) : 'N/A';
-  const endTime = job.endTime ? formatTime(job.endTime) : 'N/A';
+  const startTime = job.scheduledStartTime ? formatTime(job.scheduledStartTime) : 'N/A';
+  const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = job.status === 0 || job.status === 4;
 
   return (
@@ -158,11 +158,11 @@ function BCViewJobModal({
           <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
-          <Typography variant={'caption'} className={'previewCaption'}>start time</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>open time</Typography>
           <Typography variant={'h6'} className={'previewTextTitle'}>{startTime}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
-          <Typography variant={'caption'} className={'previewCaption'}>end time</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>close time</Typography>
           <Typography variant={'h6'} className={'previewTextTitle'}>{endTime}</Typography>
         </Grid>
       </Grid>
