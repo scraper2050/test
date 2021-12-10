@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import moment from 'moment';
 import classnames from "classnames";
 import Box from '@material-ui/core/Box';
 import Fab from "@material-ui/core/Fab";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import Pagination from '@material-ui/lab/Pagination';
 import {useDispatch, useSelector} from 'react-redux';
@@ -12,8 +10,6 @@ import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
-
-import { getSearchJobs } from 'api/job.api';
 import styles from './sidebar.styles';
 import { getCustomerDetail } from 'api/customer.api';
 import { warning } from 'actions/snackbar/snackbar.action';
