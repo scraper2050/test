@@ -20,17 +20,14 @@ import { warning } from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import * as CONSTANTS from "../../../../../constants";
 import { Job } from '../../../../../actions/job/job.types';
-
-import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
-import {DatePicker} from "@material-ui/pickers";
 import {RootState} from "../../../../../reducers";
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
-import {ReactComponent as IconCalendar} from "../../../../../assets/img/icons/map/icon-calendar.svg";
 import BCMapFilter from "./bc-map-filter";
 
 interface SidebarJobsProps {
   classes: any;
-  onFilterJobs: (obj: any[]) => void;
+  jobs: any[];
+  isLoading: boolean;
 }
 
 interface FilterJobs {
@@ -89,17 +86,13 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
+function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [allJobs, setAllJobs] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [dateValue, setDateValue] = useState<any>(null);
-  const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const totalJobs = paginatedJobs.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
@@ -122,41 +115,6 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
     setShowFilterModal(!showFilterModal);
   };
 
-  const filterScheduledJobs = (jobs: any, date = dateValue) => {
-    return jobs.filter((job: any) => {
-      let filter = true;
-      if (filterJobs.jobStatus.indexOf(-1) === -1) {
-        filter = filterJobs.jobStatus.indexOf(job.status) >= 0;
-      }
-      if(date) {
-        filter = filter && moment(job.scheduleDate).isSame(date, 'day');
-      }
-      return filter;
-    });
-  };
-
-  const getScheduledJobs = async (
-    requestObj: {
-      page?: number,
-      pageSize?: number,
-      customerNames?: any,
-      jobId?: string,
-    }, saveAll = false
-  ) => {
-    setIsLoading(true);
-    const response: any = await getSearchJobs(requestObj);
-
-    const { data } = response;
-
-    if (data.status) {
-      setPaginatedJobs(filterScheduledJobs(data.jobs));
-      if (saveAll) setAllJobs(data.jobs);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  };
-
   const handleFilter =  (filter: FilterJobs) => {
     dispatch(setTicketSelected({_id: ''}));
     setShowFilterModal(false);
@@ -169,7 +127,6 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
     dispatch(setTicketSelected({_id: ''}));
     setShowFilterModal(false);
     setPage(1);
-    setDateValue(null);
 
     setFilterJobs({
       'customerNames': null,
@@ -178,25 +135,6 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
       'jobStatus': [-1],
     });
   }
-
-  const handleButtonClickMinusDay = () => {
-    const yesterday = dateValue ? moment(dateValue).add(-1, 'day').toDate() : new Date();
-    dateChangeHandler(yesterday);
-  };
-
-  const dateChangeHandler = (date: Date) => {
-    const filteredJobs = filterScheduledJobs(allJobs, date);
-    setPaginatedJobs(filteredJobs);
-
-    setDateValue(date);
-    dispatch(setTicketSelected({_id: ''}));
-    //onFilterJobs(filteredJobs);
-  };
-
-  const handleButtonClickPlusDay = () => {
-    const tomorrow = dateValue ? moment(dateValue).add(1, 'day').toDate() : new Date();
-    dateChangeHandler(tomorrow);
-  };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
     if (selectedTicket._id === JobObj._id) {
@@ -227,37 +165,19 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
   };
 
   useEffect(() => {
-    const rawData = {
-      customerNames: filterJobs.customerNames?.profile?.displayName || '',
-      jobId:  filterJobs.jobId || '',
-      contactName: filterJobs.contact?.name || '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      page: 1,
-      pageSize: 0,
-    };
-    getScheduledJobs(requestObj, true);
-  }, [filterJobs]);
-
-  useEffect(() => {
     dispatch(setTicketSelected({_id: ''}));
     if (page === 1) {
       const firstPage = paginatedJobs.slice(0, PAGE_SIZE);
       setJobs(firstPage);
-      onFilterJobs(firstPage)
     } else {
       setPage(1)
     }
-    //onFilterJobs(paginatedJobs);
   }, [paginatedJobs]);
 
   useEffect(() => {
     const offset = (page - 1) * PAGE_SIZE;
     const paginatedItems = paginatedJobs.slice(offset).slice(0, PAGE_SIZE);
     setJobs(paginatedItems);
-    onFilterJobs(paginatedItems)
   }, [page]);
 
   return (
@@ -305,51 +225,6 @@ function SidebarJobs({ classes, onFilterJobs }: SidebarJobsProps) {
             container
             item
             lg={12} >
-            <div className={'ticketsFilterContainer'}>
-              <span
-                className={"datepicker_wrapper"}
-              >
-                <button className="prev_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickMinusDay()}
-                  >
-                    keyboard_arrow_left
-                  </i>
-                </button>
-                <IconCalendar className="calendar_icon" />
-                <DatePicker
-                  autoOk
-                  className={classes.picker}
-                  disablePast={false}
-                  format={"MMM d, yyyy"}
-                  id={`datepicker-${"scheduleDate"}`}
-                  inputProps={{
-                    name: "scheduleDate",
-                    placeholder: "Scheduled Date",
-                  }}
-                  inputVariant={"outlined"}
-                  name={"scheduleDate"}
-                  onChange={(e: any) => dateChangeHandler(e)}
-                  required={false}
-                  value={dateValue}
-                  variant={"inline"}
-                />
-                <button className="next_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickPlusDay()}
-                  >
-                    keyboard_arrow_right
-                  </i>
-                </button>
-              </span>
-              <div className={'filter_wrapper'}>
-                <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
-                  <IconFunnel />
-                </Button>
-              </div>
-            </div>
             {showFilterModal ?
               <BCMapFilter
                 callback={handleFilter}

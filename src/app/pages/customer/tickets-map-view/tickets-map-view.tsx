@@ -22,22 +22,24 @@ import styled from 'styled-components';
 
 import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
+import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
 
 
 const StatusContainer = withTheme(styled('div')`
-position: absolute;
-top: 20px;
-right: 30px;
-display: flex;
-button {
+  position: absolute;
+  top: 8px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  button {
     background-color: transparent;
     border: 0;
     color: ${(props) => props.theme.palette.primary.main};
     cursor: pointer;
-}
-svg {
-  color: ${(props) => props.theme.palette.primary.main};
-}
+  }
+  svg {
+    color: ${(props) => props.theme.palette.primary.main};
+  }
 
   @media(max-width: 1200px) {
     position: relative;
@@ -51,15 +53,9 @@ svg {
 
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
-  const [curTab, setCurTab] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
+  const [curTab, setCurTab] = useState(2);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    dispatch(getAllJobsAPI());
-    setIsLoading(false);
-  }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -91,74 +87,76 @@ function TicketsWithMapView({ classes }: any) {
     </Dialog>
   }
 
+  const handleDateChange = (date: Date) => {
+    const tempDates = [...allDates];
+    tempDates[curTab] = date;
+    setAllDates(tempDates);
+  }
+
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        {isLoading
-          ? <div style={{
-            'display': 'flex',
-            'width': '100%',
-            'justifyContent': 'center'
-          }}>
-            <BCCircularLoader heightValue={'200px'} />
-          </div>
-          : <div className={`${classes.pageContent} maps`}>
-
-            <BCTabs
-              curTab={curTab}
-              indicatorColor={'primary'}
-              onChangeTab={handleTabChange}
-              tabsData={[
-                {
-                  'label': 'Open Tickets',
-                  'value': 0
-                },
-                {
-                  'label': 'Today\'s Jobs',
-                  'value': 1
-                },
-                {
-                  'label': 'Scheduled Jobs',
-                  'value': 2
-                },
-                {
-                  'label': 'Routes',
-                  'value': 3
-                },
-              ]}
+        <div className={`${classes.pageContent} maps`}>
+          <BCTabs
+            curTab={curTab}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Open Tickets',
+                'value': 0
+              },
+              {
+                'label': 'Today\'s Jobs',
+                'value': 1
+              },
+              {
+                'label': 'Scheduled Jobs',
+                'value': 2
+              },
+              {
+                'label': 'Routes',
+                'value': 3
+              },
+            ]}
+          />
+          <StatusContainer>
+            <BCMapFilterHead
+              startDate={allDates[curTab]}
+              disableDate={curTab === 1}
+              placeholder={curTab === 0 ? "Due Date" : 'Schedule Date'}
+              onChangeDate={handleDateChange}
             />
-            <StatusContainer>
-              <button onClick={() => setShowLegendDialog(true)}>Legend</button>
-              <Info fontSize={'small'}/>
-            </StatusContainer>
-            <SwipeableViews index={curTab}>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 0}
-                id={'map-swipeable-open'}>
-                <MapViewTicketsScreen />
-              </div>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 1}
-                id={'map-swipeable-today'}>
-                <MapViewTodayJobsScreen />
-              </div>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 2}
-                id={'map-swipeable-schedule'}>
-                <MapViewJobsScreen />
-              </div>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 3}
-                id={'map-swipeable-routes'}>
-                <MapViewRoutesScreen />
-              </div>
-            </SwipeableViews>
-          </div>
-        }
+            <button onClick={() => setShowLegendDialog(true)}>Legend</button>
+            <Info fontSize={'small'}/>
+          </StatusContainer>
+          <SwipeableViews index={curTab}>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 0}
+              id={'map-swipeable-open'}>
+              <MapViewTicketsScreen />
+            </div>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 1}
+              id={'map-swipeable-today'}>
+              <MapViewTodayJobsScreen />
+            </div>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 2}
+              id={'map-swipeable-schedule'}>
+              <MapViewJobsScreen selectedDate={allDates[2]}/>
+            </div>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 3}
+              id={'map-swipeable-routes'}>
+              <MapViewRoutesScreen />
+            </div>
+          </SwipeableViews>
+        </div>
       </div>
       {renderLegend()}
     </div>

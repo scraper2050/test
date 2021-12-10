@@ -212,6 +212,8 @@ export const allStates = [
   },
 ];
 
+export const DEFAULT_COORD = {lat: 32.3888811, lng: -98.6732501};
+
 export const NEW_JOB_MODE = {
   TICKET: 0,
   TICKET_JOB: 1,
