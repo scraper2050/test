@@ -17,18 +17,13 @@ interface FilterJobs {
 interface Props {
   classes: any;
   selectedDate: Date | null;
+  filter: FilterJobs;
 }
 
-function MapViewJobsScreen({ classes, selectedDate }: Props) {
+function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [allJobs, setAllJobs] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
-  const [filterJobs, setFilterJobs] = useState<FilterJobs>({
-    'customerNames': null,
-    'jobId': '',
-    'contact': null,
-    'jobStatus': [-1],
-  });
 
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -71,16 +66,10 @@ function MapViewJobsScreen({ classes, selectedDate }: Props) {
 
 
   useEffect(() => {
-/*    const rawData = {
+    const rawData = {
       customerNames: filterJobs.customerNames?.profile?.displayName || '',
       jobId:  filterJobs.jobId || '',
       contactName: filterJobs.contact?.name || '',
-    }*/
-
-    const rawData = {
-      customerNames: '',
-      jobId:  '',
-      contactName: '',
     }
 
     const requestObj = {

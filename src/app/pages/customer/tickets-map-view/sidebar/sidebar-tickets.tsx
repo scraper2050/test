@@ -283,7 +283,6 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
       contactName: "",
     };
     const requestObj = { ...rawData, pageNo: 1, pageSize: PAGE_SIZE };
-    dispatch(getCustomers());
     getOpenTickets(requestObj);
     dispatch(setTicketSelected({_id: ''}));
   }, []);

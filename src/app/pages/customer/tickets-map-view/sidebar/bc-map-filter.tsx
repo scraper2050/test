@@ -39,11 +39,6 @@ function BCMapFilter({
   const [menuOpen, setMenuOpen] = useState('');
   const contacts = useSelector(({contacts}: any) => contacts?.contacts);
 
-  useEffect(() => {
-    dispatch(loadingCustomers());
-    dispatch(getCustomers());
-  }, []);
-
   const onSubmit = async (values: any, { setSubmitting }: any) => {
     if (typeof callback === "function") callback(values);
   }
@@ -201,7 +196,7 @@ function BCMapFilter({
                 )}
               />
             </FormGroup>
-            {showStatusSelector &&
+            {!isTicket &&
             <FormGroup>
               <Select
                 className={menuOpen === 'status' ? classes.menuOpen : ''}

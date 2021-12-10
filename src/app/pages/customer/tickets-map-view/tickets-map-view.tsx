@@ -23,7 +23,14 @@ import styled from 'styled-components';
 import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
 import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
+import { getCustomers } from "../../../../actions/customer/customer.action";
 
+interface FilterJobs {
+  jobId?: string | null,
+  customerNames?: any,
+  contact?: any,
+  jobStatus: number[],
+}
 
 const StatusContainer = withTheme(styled('div')`
   position: absolute;
@@ -31,13 +38,13 @@ const StatusContainer = withTheme(styled('div')`
   right: 30px;
   display: flex;
   align-items: center;
-  button {
+  .buttonLegend {
     background-color: transparent;
     border: 0;
     color: ${(props) => props.theme.palette.primary.main};
     cursor: pointer;
   }
-  svg {
+  .infoLegend {
     color: ${(props) => props.theme.palette.primary.main};
   }
 
@@ -56,6 +63,18 @@ function TicketsWithMapView({ classes }: any) {
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
   const [curTab, setCurTab] = useState(2);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
+
+  const [filterJobs, setFilterJobs] = useState<FilterJobs>({
+    'customerNames': null,
+    'jobId': '',
+    'contact': null,
+    'jobStatus': [-1],
+  });
+
+  useEffect(() => {
+    //dispatch(loadingCustomers());
+    dispatch(getCustomers());
+  }, []);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -126,9 +145,11 @@ function TicketsWithMapView({ classes }: any) {
               disableDate={curTab === 1}
               placeholder={curTab === 0 ? "Due Date" : 'Schedule Date'}
               onChangeDate={handleDateChange}
+              filter={{filterJobs, setFilterJobs}}
+              isTicket={curTab === 0}
             />
-            <button onClick={() => setShowLegendDialog(true)}>Legend</button>
-            <Info fontSize={'small'}/>
+            <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
+            <Info className={'infoLegend'} fontSize={'small'}/>
           </StatusContainer>
           <SwipeableViews index={curTab}>
             <div
@@ -147,7 +168,7 @@ function TicketsWithMapView({ classes }: any) {
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
               hidden={curTab !== 2}
               id={'map-swipeable-schedule'}>
-              <MapViewJobsScreen selectedDate={allDates[2]}/>
+              <MapViewJobsScreen selectedDate={allDates[2]} filter={filterJobs}/>
             </div>
             <div
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}

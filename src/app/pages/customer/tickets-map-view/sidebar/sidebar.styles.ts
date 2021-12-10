@@ -9,7 +9,7 @@ export default (theme: Theme): any => ({
   ...topActionBar,
 
   filterContainer: {
-    borderTop: '2px solid #8D79FA',
+    //borderTop: '2px solid #8D79FA',
     margin: '0 24px 0 24px',
     padding: 0,
     //display: 'flex',

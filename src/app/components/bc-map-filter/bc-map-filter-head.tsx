@@ -3,11 +3,13 @@ import {DatePicker} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import {ReactComponent as IconFunnel} from "../../../assets/img/icons/map/icon-funnel.svg";
 import React, {useEffect, useState} from "react";
-import {withStyles} from "@material-ui/core";
+import {ClickAwayListener, withStyles} from "@material-ui/core";
 import styles from "./bc-map-filter.styles";
 import {makeStyles} from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../constants";
 import {formatDateYMD} from "../../../helpers/format";
+import BCMapFilter
+  from "../../pages/customer/tickets-map-view/sidebar/bc-map-filter";
 
 const useStyles = makeStyles(theme => ({
   funnel: {
@@ -28,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = false, onChangeDate }: any): JSX.Element {
+function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = false, onChangeDate, filter, isTicket }: any): JSX.Element {
   const mapStyles = useStyles();
   const [dateValue, setDateValue] = useState<any>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -53,30 +55,52 @@ function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = fal
   const dateChangeHandler = (date: string) => {
     const dateObj = new Date(date);
     onChangeDate(dateObj);
-    /*const rawData = {
-      jobTypeTitle: '',
-      dueDate: formatDateYMD(dateObj),
-      customerNames: filterTickets.customerNames?.profile?.displayName || '',
-      ticketId:  filterTickets.jobId || '',
-      contactName: filterTickets.contact?.name || '',
-    }
-    console.log(rawData);*/
     setDateValue(dateObj);
-
-/*    const requestObj = {
-      ...rawData,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-    };
-    getOpenTickets(requestObj);*/
   };
+
+  const handleFilter =  (f: any) => {
+    setShowFilterModal(false);
+    if (f) {
+      filter.setFilterJobs(f);
+    }
+  };
+
+  const resetFilter = async () => {
+    setShowFilterModal(false);
+
+    filter.setFilterJobs({
+      'customerNames': null,
+      'jobId': '',
+      'contact': null,
+      'jobStatus': [-1],
+    });
+  }
+
+  const toggleFilterModal = () => {
+    setShowFilterModal(!showFilterModal);
+  };
+
 
   return (
     <div className="filterHeadContainer">
       <div className="filter_wrapper">
-        <Button className={mapStyles.funnel} onClick={() => setShowFilterModal(true)}>
+        <Button className={mapStyles.funnel} onClick={toggleFilterModal}>
           <IconFunnel/>
         </Button>
+        {
+          showFilterModal
+            ? <ClickAwayListener onClickAway={toggleFilterModal} mouseEvent={'onMouseUp'}>
+              <div className={'dropdown_wrapper dropdown_wrapper_filter elevation-5'}>
+                <BCMapFilter
+                  callback={handleFilter}
+                  currentFilter={filter.filterJobs}
+                  resetFilter={resetFilter}
+                  isTicket={isTicket}
+                />
+              </div>
+            </ClickAwayListener>
+            : null
+        }
       </div>
       <span className={"datepicker_wrapper"} >
         <button
