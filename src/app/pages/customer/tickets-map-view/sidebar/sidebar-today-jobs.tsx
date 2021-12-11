@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import React, {useEffect, useState} from 'react';
 import classnames from "classnames";
 import Box from '@material-ui/core/Box';
 import Fab from "@material-ui/core/Fab";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import Pagination from '@material-ui/lab/Pagination';
 import {useDispatch, useSelector} from 'react-redux';
@@ -12,33 +10,19 @@ import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
-
-import { getSearchJobs } from 'api/job.api';
 import styles from './sidebar.styles';
 import { getCustomerDetail } from 'api/customer.api';
 import { warning } from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
 import * as CONSTANTS from "../../../../../constants";
-import { Job } from '../../../../../actions/job/job.types';
-
-import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
-import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
-import {formatDateYMD} from "../../../../../helpers/format";
-import BCMapFilter from "./bc-map-filter";
+import {Job} from "../../../../../actions/job/job.types";
 
 interface SidebarTodayJobsProps {
   classes: any;
-  onJobs: (jobs: any[]) => void;
-}
-
-interface FilterJobs {
-  jobId?: string | null,
-  customerNames?: any,
-  contact?: any,
-  jobStatus?: number[],
+  jobs: any[];
+  isLoading: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -90,21 +74,14 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTodayJobs({ classes, onJobs }: SidebarTodayJobsProps) {
+function SidebarTodayJobs({ classes, jobs, isLoading }: SidebarTodayJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [filterJobs, setFilterJobs] = useState<FilterJobs>({
-    'customerNames': null,
-    'jobId': '',
-    'contact': null,
-  });
-  const [totalItems, setTotalItems] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
+  const totalItems = jobs.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
 
   const handleDrawerOpen = () => {
@@ -113,82 +90,6 @@ function SidebarTodayJobs({ classes, onJobs }: SidebarTodayJobsProps) {
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-
-  const openTicketFilterModal = () => {
-    setShowFilterModal(true);
-  };
-
-  const getScheduledJobs = async (
-    requestObj: {
-      page?: number,
-      pageSize?: number,
-      customerNames?: any,
-      jobId?: string,
-      todaysJobs?: string
-    }
-  ) => {
-    setIsLoading(true);
-    const response: any = await getSearchJobs(requestObj);
-    const { data } = response;
-    if (data.status) {
-      setJobs(data.jobs);
-      onJobs(data.jobs);
-      setTotalItems(data.total);
-      setIsLoading(false);
-    } else {
-      onJobs([]);
-      setIsLoading(false);
-    }
-  };
-
-
-  const handleFilter =  (filter: any) => {
-    dispatch(setTicketSelected({_id: ''}));
-    setShowFilterModal(false);
-    if (filter) {
-      setFilterJobs(filter);
-
-      const rawData = {
-        todaysJobs: 'true',
-        customerNames: filter.customerNames?.profile?.displayName || '',
-        jobId:  filter.jobId || '',
-        contactName: filter.contact?.name || '',
-      }
-
-      const requestObj = {
-        ...rawData,
-        page: 1,
-        pageSize: PAGE_SIZE,
-      };
-      getScheduledJobs(requestObj);
-    }
-  };
-
-  const resetFilter = async () => {
-    dispatch(setTicketSelected({_id: ''}));
-    setShowFilterModal(false);
-    setPage(1);
-
-    setFilterJobs({
-      'customerNames': null,
-      'jobId': '',
-      'contact': null,
-    });
-
-    const rawData = {
-      todaysJobs: 'true',
-      customerNames: '',
-      ticketId: '',
-      contactName: '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      page: 1,
-      pageSize: PAGE_SIZE,
-    };
-    getScheduledJobs(requestObj);
   };
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
@@ -217,31 +118,24 @@ function SidebarTodayJobs({ classes, onJobs }: SidebarTodayJobsProps) {
   const handlePageChange = (event: any, value: any) => {
     dispatch(setTicketSelected({_id: ''}));
     setPage(value);
-
-    const rawData = {
-      todaysJobs: 'true',
-      customerNames: filterJobs.customerNames?.profile?.displayName || '',
-      ticketId:  filterJobs.jobId || '',
-      contactName: filterJobs.contact?.name || '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      page: value,
-      pageSize: PAGE_SIZE,
-    };
-    getScheduledJobs(requestObj);
   };
 
+
   useEffect(() => {
-    const rawData = {
-      'todaysJobs': 'true',
-    };
-    const requestObj = { ...rawData,
-      'page': 1,
-      'pageSize': PAGE_SIZE };
-    getScheduledJobs(requestObj);
-  }, []);
+    dispatch(setTicketSelected({_id: ''}));
+    if (page === 1) {
+      const firstPage = jobs.slice(0, PAGE_SIZE);
+      setPaginatedJobs(firstPage);
+    } else {
+      setPage(1)
+    }
+  }, [jobs]);
+
+  useEffect(() => {
+    const offset = (page - 1) * PAGE_SIZE;
+    const paginatedItems = jobs.slice(offset).slice(0, PAGE_SIZE);
+    setPaginatedJobs(paginatedItems);
+  }, [page]);
 
   return (
     <>
@@ -284,81 +178,58 @@ function SidebarTodayJobs({ classes, onJobs }: SidebarTodayJobsProps) {
         }}
       >
         <Grid>
-          <Grid
-            container
-            item
-            lg={12} >
-            <div className={'ticketsFilterContainer'}>
-              <Box className={mapStyles.date} >
-                <IconCalendar />
-                <Box marginLeft={1}>{moment(new Date()).format("MMM DD, YYYY")}</Box>
-              </Box>
-              <div className={'filter_wrapper'}>
-                <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
-                  <IconFunnel />
-                </Button>
+          <Grid container item lg={12} >
+            <div style={{flexDirection: 'column', flex: 1}}>
+              <div className={'ticketsListViewContainer'}>
+                {
+                  isLoading
+                    ? <div style={{
+                      'display': 'flex',
+                      'width': '100%',
+                      'justifyContent': 'center'
+                    }}>
+                      <BCCircularLoader heightValue={'200px'}/>
+                    </div>
+                    : paginatedJobs.length
+                      ? paginatedJobs.map((x: any, i: any) =>
+                        <div
+                          className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
+                          id={`openTodayJob${i}`}
+                          key={i}
+                          onClick={() => handleJobCardClick(x, i)}
+                        >
+                          <div className={'ticket_title'}>
+                            <span
+                              className={`job-status job-status_${x.status}`}/>
+                            <h3>
+                              {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
+                            </h3>
+                          </div>
+                          <div className={'location_desc_container'}>
+                            <div className={'card_location'}>
+                              <h4>
+                                {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
+                              </h4>
+                            </div>
+                          </div>
+                          <div className={'ticket_marker'}>
+                            <RoomIcon/>
+                          </div>
+                        </div>)
+                      : <h4>No available job.</h4>
+                }
               </div>
+              {Math.ceil(totalItems / PAGE_SIZE) > 1 && !isLoading &&(
+                <Pagination
+                  color={'primary'}
+                  count={Math.ceil(totalItems / PAGE_SIZE)}
+                  onChange={handlePageChange}
+                  page={page}
+                  showFirstButton
+                  showLastButton
+                />
+              )}
             </div>
-            {showFilterModal ?
-              <BCMapFilter
-                callback={handleFilter}
-                currentFilter={filterJobs}
-                resetFilter={resetFilter}
-                showStatusSelector={false}
-              />
-              :
-              <div style={{flexDirection: 'column', flex: 1}}>
-                <div className={'ticketsListViewContainer'}>
-                  {
-                    isLoading
-                      ? <div style={{
-                        'display': 'flex',
-                        'width': '100%',
-                        'justifyContent': 'center'
-                      }}>
-                        <BCCircularLoader heightValue={'200px'}/>
-                      </div>
-                      : jobs.length
-                        ? jobs.map((x: any, i: any) =>
-                          <div
-                            className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
-                            id={`openTodayJob${i}`}
-                            key={i}
-                            onClick={() => handleJobCardClick(x, i)}
-                          >
-                            <div className={'ticket_title'}>
-                              <span
-                                className={`job-status job-status_${x.status}`}/>
-                              <h3>
-                                {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
-                              </h3>
-                            </div>
-                            <div className={'location_desc_container'}>
-                              <div className={'card_location'}>
-                                <h4>
-                                  {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
-                                </h4>
-                              </div>
-                            </div>
-                            <div className={'ticket_marker'}>
-                              <RoomIcon/>
-                            </div>
-                          </div>)
-                        : <h4>No available job.</h4>
-                  }
-                </div>
-                {Math.ceil(totalItems / PAGE_SIZE) > 1 && (
-                  <Pagination
-                    color={'primary'}
-                    count={Math.ceil(totalItems / PAGE_SIZE)}
-                    onChange={handlePageChange}
-                    page={page}
-                    showFirstButton
-                    showLastButton
-                  />
-                )}
-              </div>
-            }
           </Grid>
         </Grid>
       </Drawer>

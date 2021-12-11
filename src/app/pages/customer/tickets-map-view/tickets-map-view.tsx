@@ -15,9 +15,7 @@ import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
 import MapViewRoutesScreen from './map-view/map-view-routes';
-import { getAllJobsAPI } from 'api/job.api';
 import { useDispatch } from 'react-redux';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import styled from 'styled-components';
 
 import CloseIcon from "@material-ui/icons/Close";
@@ -25,7 +23,13 @@ import {STATUSES} from "../../../../helpers/contants";
 import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
 import { getCustomers } from "../../../../actions/customer/customer.action";
 
-interface FilterJobs {
+export  interface FilterTickets {
+  jobId?: string | null,
+  customerNames?: any,
+  contact?: any,
+}
+
+export  interface FilterJobs {
   jobId?: string | null,
   customerNames?: any,
   contact?: any,
@@ -61,8 +65,21 @@ const StatusContainer = withTheme(styled('div')`
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
-  const [curTab, setCurTab] = useState(2);
+  const [curTab, setCurTab] = useState(1);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
+
+  const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
+    'customerNames': null,
+    'jobId': '',
+    'contact': null,
+  });
+
+  const [filterTodayJobs, setFilterTodayJobs] = useState<FilterJobs>({
+    'customerNames': null,
+    'jobId': '',
+    'contact': null,
+    'jobStatus': [-1],
+  });
 
   const [filterJobs, setFilterJobs] = useState<FilterJobs>({
     'customerNames': null,
@@ -70,6 +87,13 @@ function TicketsWithMapView({ classes }: any) {
     'contact': null,
     'jobStatus': [-1],
   });
+
+  const allFilters = [
+    [filterOpenTickets, setFilterOpenTickets],
+    [filterTodayJobs, setFilterTodayJobs],
+    [filterJobs, setFilterJobs],
+    [filterJobs, setFilterJobs],
+  ]
 
   useEffect(() => {
     //dispatch(loadingCustomers());
@@ -145,7 +169,7 @@ function TicketsWithMapView({ classes }: any) {
               disableDate={curTab === 1}
               placeholder={curTab === 0 ? "Due Date" : 'Schedule Date'}
               onChangeDate={handleDateChange}
-              filter={{filterJobs, setFilterJobs}}
+              filter={allFilters[curTab]}
               isTicket={curTab === 0}
             />
             <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
@@ -162,7 +186,7 @@ function TicketsWithMapView({ classes }: any) {
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
               hidden={curTab !== 1}
               id={'map-swipeable-today'}>
-              <MapViewTodayJobsScreen />
+              <MapViewTodayJobsScreen filter={filterTodayJobs}/>
             </div>
             <div
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}

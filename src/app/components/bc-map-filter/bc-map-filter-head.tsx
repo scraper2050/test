@@ -61,14 +61,14 @@ function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = fal
   const handleFilter =  (f: any) => {
     setShowFilterModal(false);
     if (f) {
-      filter.setFilterJobs(f);
+      filter[1](f);
     }
   };
 
   const resetFilter = async () => {
     setShowFilterModal(false);
 
-    filter.setFilterJobs({
+    filter[1]({
       'customerNames': null,
       'jobId': '',
       'contact': null,
@@ -93,7 +93,7 @@ function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = fal
               <div className={'dropdown_wrapper dropdown_wrapper_filter elevation-5'}>
                 <BCMapFilter
                   callback={handleFilter}
-                  currentFilter={filter.filterJobs}
+                  currentFilter={filter[0]}
                   resetFilter={resetFilter}
                   isTicket={isTicket}
                 />

@@ -18,19 +18,11 @@ import * as CONSTANTS from "../../../../../constants";
 import { Job } from '../../../../../actions/job/job.types';
 import {RootState} from "../../../../../reducers";
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
-import BCMapFilter from "./bc-map-filter";
 
 interface SidebarJobsProps {
   classes: any;
   jobs: any[];
   isLoading: boolean;
-}
-
-interface FilterJobs {
-  jobId?: string | null,
-  customerNames?: any,
-  contact?: any,
-  jobStatus: number[],
 }
 
 const useStyles = makeStyles(theme => ({
@@ -82,22 +74,15 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsProps) {
+function SidebarJobs({ classes, jobs, isLoading }: SidebarJobsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const totalJobs = paginatedJobs.length;
+  const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
+  const totalJobs = jobs.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
-  const [filterJobs, setFilterJobs] = useState<FilterJobs>({
-    'customerNames': null,
-    'jobId': '',
-    'contact': null,
-    'jobStatus': [-1],
-  });
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -106,31 +91,6 @@ function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsPro
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  const openTicketFilterModal = () => {
-    setShowFilterModal(!showFilterModal);
-  };
-
-  const handleFilter =  (filter: FilterJobs) => {
-    dispatch(setTicketSelected({_id: ''}));
-    setShowFilterModal(false);
-    if (filter) {
-      setFilterJobs(filter);
-    }
-  };
-
-  const resetFilter = async () => {
-    dispatch(setTicketSelected({_id: ''}));
-    setShowFilterModal(false);
-    setPage(1);
-
-    setFilterJobs({
-      'customerNames': null,
-      'jobId': '',
-      'contact': null,
-      'jobStatus': [-1],
-    });
-  }
 
   const handleJobCardClick = async (JobObj: any, index: any) => {
     if (selectedTicket._id === JobObj._id) {
@@ -163,17 +123,17 @@ function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsPro
   useEffect(() => {
     dispatch(setTicketSelected({_id: ''}));
     if (page === 1) {
-      const firstPage = paginatedJobs.slice(0, PAGE_SIZE);
-      setJobs(firstPage);
+      const firstPage = jobs.slice(0, PAGE_SIZE);
+      setPaginatedJobs(firstPage);
     } else {
       setPage(1)
     }
-  }, [paginatedJobs]);
+  }, [jobs]);
 
   useEffect(() => {
     const offset = (page - 1) * PAGE_SIZE;
-    const paginatedItems = paginatedJobs.slice(offset).slice(0, PAGE_SIZE);
-    setJobs(paginatedItems);
+    const paginatedItems = jobs.slice(offset).slice(0, PAGE_SIZE);
+    setPaginatedJobs(paginatedItems);
   }, [page]);
 
   return (
@@ -221,14 +181,6 @@ function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsPro
             container
             item
             lg={12} >
-            {showFilterModal ?
-              <BCMapFilter
-                callback={handleFilter}
-                currentFilter={filterJobs}
-                resetFilter={resetFilter}
-                isTicket={false}
-              />
-              :
               <div style={{flexDirection: 'column', flex: 1}}>
                 <div className={'ticketsListViewContainer'}>
                   {
@@ -240,8 +192,8 @@ function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsPro
                       }}>
                         <BCCircularLoader heightValue={'200px'}/>
                       </div>
-                      : jobs.length
-                        ? jobs.map((x: any, i: any) =>
+                      : paginatedJobs.length
+                        ? paginatedJobs.map((x: any, i: any) =>
                           <div
                             className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
                             id={`scheduledJobs${i}`}
@@ -268,7 +220,7 @@ function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsPro
                         : <h4>No available job.</h4>
                   }
                 </div>
-                {Math.ceil(totalJobs / PAGE_SIZE) > 1 && (
+                {Math.ceil(totalJobs / PAGE_SIZE) > 1 && !isLoading && (
                   <Pagination
                     color={'primary'}
                     count={Math.ceil(totalJobs / PAGE_SIZE)}
@@ -279,7 +231,6 @@ function SidebarJobs({ classes, jobs: paginatedJobs, isLoading }: SidebarJobsPro
                   />
                 )}
               </div>
-            }
           </Grid>
         </Grid>
       </Drawer>
