@@ -1,5 +1,6 @@
 import { Reducer } from 'redux';
 import { initialCompanyProfileState, CompanyProfileActonType } from "../actions/user/user.types";
+import {DEFAULT_COORD} from "../utils/constants";
 
 export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfileState, action) => {
   switch (action.type) {
@@ -24,6 +25,7 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
         state: address.state,
         street: address.street,
         zipCode: address.zipCode,
+        coordinates: address.coordinates || DEFAULT_COORD,
         paymentTerm: paymentTerm
       }
       return { ...newState, inputError: {}, serverError: null }

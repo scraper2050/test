@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Grid, withStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
@@ -6,18 +6,68 @@ import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-mark
 import '../ticket-map-view.scss';
 import styles from '../ticket-map-view.style';
 import SidebarTickets from '../sidebar/sidebar-tickets';
+import {io} from "socket.io-client";
+import Config from "../../../../../config";
+import {SocketMessage} from "../../../../../helpers/contants";
+import {getOpenServiceTicketsStream} from "../../../../../api/service-tickets.api";
+import moment from "moment";
 
-function MapViewTicketsScreen({ classes }: any) {
-  const openTickets = useSelector(
-    (state: any) => state.serviceTicket.openTickets
-  );
+function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
+  const { token } = useSelector(({ auth }: any) => auth);
+  const tempTokens = useRef<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [allTickets, setAllTickets] = useState<any[]>([]);
+  const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
 
-  const [tickets, setTickets] = useState([]);
+  const filterOpenTickets = (tickets: any) => {
+    return tickets.filter((ticket: any) => {
+      let filter = true;
+
+      if (filterTickets.jobId) {
+        filter = filter && (ticket.ticketId.indexOf(filterTickets.jobId) >= 0);
+      }
+
+      if (filterTickets.customerNames) {
+        filter = filter && (ticket.customer?._id === filterTickets.customerNames._id);
+        if (filterTickets.contact) {
+          filter = filter && (ticket.customerContactId?._id === filterTickets.contact._id);
+        }
+      }
+
+      if(selectedDate) {
+        filter = filter && moment(ticket.dueDate).isSame(selectedDate, 'day');
+      }
+      return filter;
+    });
+  };
 
   useEffect(() => {
-    setTickets(openTickets);
-  }, [openTickets]);
+    const socket = io(`${Config.socketSever}`, {
+      'extraHeaders': { 'Authorization': token }
+    });
 
+    socket.on(SocketMessage.SERVICE_TICKETS, data => {
+      const {count, serviceTicket} = data;
+      if (serviceTicket) {
+        tempTokens.current.push(serviceTicket);
+        if (count % 100 === 0) {
+          setIsLoading(false);
+          setAllTickets(tempTokens.current);
+          setFilteredTickets([...tempTokens.current]);
+        }
+      }
+    });
+
+    getOpenServiceTicketsStream();
+
+    return () => {
+      socket.close();
+    };
+  }, [token]);
+
+  useEffect(() => {
+    setFilteredTickets(filterOpenTickets(allTickets));
+  }, [selectedDate, filterTickets])
 
   return (
     <Grid container item lg={12}>
@@ -28,12 +78,12 @@ function MapViewTicketsScreen({ classes }: any) {
         className="ticketsMapContainer"
       >
         <MemoizedMap
-          list={tickets}
+          list={filteredTickets}
           isTicket={true}
         />
       </Grid>
 
-      <SidebarTickets/>
+      <SidebarTickets tickets={filteredTickets} isLoading={isLoading}/>
     </Grid>
   );
 }

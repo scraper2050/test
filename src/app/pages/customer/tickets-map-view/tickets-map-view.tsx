@@ -15,29 +15,50 @@ import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
 import MapViewRoutesScreen from './map-view/map-view-routes';
-import { getAllJobsAPI } from 'api/job.api';
 import { useDispatch } from 'react-redux';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import styled from 'styled-components';
 
 import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
+import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
+import { getCustomers } from "../../../../actions/customer/customer.action";
+import {getAllJobTypesAPI} from "../../../../api/job.api";
+import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
+import {getVendors} from "../../../../actions/vendor/vendor.action";
 
+export  interface FilterTickets {
+  jobId?: string | null,
+  customerNames?: any,
+  contact?: any,
+}
+
+export  interface FilterJobs {
+  jobId?: string | null,
+  customerNames?: any,
+  contact?: any,
+  jobStatus: number[],
+}
+
+export  interface FilterRoutes {
+  technician?: any,
+  jobType?: any[],
+}
 
 const StatusContainer = withTheme(styled('div')`
-position: absolute;
-top: 20px;
-right: 30px;
-display: flex;
-button {
+  position: absolute;
+  top: 8px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  .buttonLegend {
     background-color: transparent;
     border: 0;
     color: ${(props) => props.theme.palette.primary.main};
     cursor: pointer;
-}
-svg {
-  color: ${(props) => props.theme.palette.primary.main};
-}
+  }
+  .infoLegend {
+    color: ${(props) => props.theme.palette.primary.main};
+  }
 
   @media(max-width: 1200px) {
     position: relative;
@@ -51,14 +72,47 @@ svg {
 
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
-  const [curTab, setCurTab] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
+  const [curTab, setCurTab] = useState(3);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
 
+  const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
+    'customerNames': null,
+    'jobId': '',
+    'contact': null,
+  });
+
+  const [filterTodayJobs, setFilterTodayJobs] = useState<FilterJobs>({
+    'customerNames': null,
+    'jobId': '',
+    'contact': null,
+    'jobStatus': [-1],
+  });
+
+  const [filterJobs, setFilterJobs] = useState<FilterJobs>({
+    'customerNames': null,
+    'jobId': '',
+    'contact': null,
+    'jobStatus': [-1],
+  });
+
+  const [filterRoutes, setFilterRoutes] = useState<FilterRoutes>({
+    'technician': null,
+    'jobType': [],
+  });
+
+  const allFilters = [
+    [filterOpenTickets, setFilterOpenTickets],
+    [filterTodayJobs, setFilterTodayJobs],
+    [filterJobs, setFilterJobs],
+    [filterRoutes, setFilterRoutes],
+  ]
+
   useEffect(() => {
-    setIsLoading(true);
-    dispatch(getAllJobsAPI());
-    setIsLoading(false);
+    dispatch(getCustomers());
+    dispatch(getAllJobTypesAPI());
+    dispatch(getEmployeesForJobAction());
+    dispatch(getVendors());
   }, []);
 
   const handleTabChange = (newValue: number) => {
@@ -91,74 +145,79 @@ function TicketsWithMapView({ classes }: any) {
     </Dialog>
   }
 
+  const handleDateChange = (date: Date) => {
+    const tempDates = [...allDates];
+    tempDates[curTab] = date;
+    setAllDates(tempDates);
+  }
+
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
-        {isLoading
-          ? <div style={{
-            'display': 'flex',
-            'width': '100%',
-            'justifyContent': 'center'
-          }}>
-            <BCCircularLoader heightValue={'200px'} />
-          </div>
-          : <div className={`${classes.pageContent} maps`}>
-
-            <BCTabs
-              curTab={curTab}
-              indicatorColor={'primary'}
-              onChangeTab={handleTabChange}
-              tabsData={[
-                {
-                  'label': 'Open Tickets',
-                  'value': 0
-                },
-                {
-                  'label': 'Today\'s Jobs',
-                  'value': 1
-                },
-                {
-                  'label': 'Scheduled Jobs',
-                  'value': 2
-                },
-                {
-                  'label': 'Routes',
-                  'value': 3
-                },
-              ]}
+        <div className={`${classes.pageContent} maps`}>
+          <BCTabs
+            curTab={curTab}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Open Tickets',
+                'value': 0
+              },
+              {
+                'label': 'Today\'s Jobs',
+                'value': 1
+              },
+              {
+                'label': 'Scheduled Jobs',
+                'value': 2
+              },
+              {
+                'label': 'Routes',
+                'value': 3
+              },
+            ]}
+          />
+          <StatusContainer>
+            <BCMapFilterHead
+              startDate={allDates[curTab]}
+              disableDate={curTab === 1}
+              placeholder={curTab === 0 ? "Due Date" : 'Schedule Date'}
+              onChangeDate={handleDateChange}
+              filter={allFilters[curTab]}
+              shouldResetDate={curTab === 0 || curTab === 2}
+              filterType={curTab === 0 ? 'ticket' : curTab === 3 ? 'route' : 'job'}
             />
-            <StatusContainer>
-              <button onClick={() => setShowLegendDialog(true)}>Legend</button>
-              <Info fontSize={'small'}/>
-            </StatusContainer>
-            <SwipeableViews index={curTab}>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 0}
-                id={'map-swipeable-open'}>
-                <MapViewTicketsScreen />
-              </div>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 1}
-                id={'map-swipeable-today'}>
-                <MapViewTodayJobsScreen />
-              </div>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 2}
-                id={'map-swipeable-schedule'}>
-                <MapViewJobsScreen />
-              </div>
-              <div
-                className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
-                hidden={curTab !== 3}
-                id={'map-swipeable-routes'}>
-                <MapViewRoutesScreen />
-              </div>
-            </SwipeableViews>
-          </div>
-        }
+            <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
+            <Info className={'infoLegend'} fontSize={'small'}/>
+          </StatusContainer>
+          <SwipeableViews index={curTab}>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 0}
+              id={'map-swipeable-open'}>
+              <MapViewTicketsScreen selectedDate={allDates[0]} filter={filterOpenTickets}/>
+            </div>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 1}
+              id={'map-swipeable-today'}>
+              <MapViewTodayJobsScreen filter={filterTodayJobs}/>
+            </div>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 2}
+              id={'map-swipeable-schedule'}>
+              <MapViewJobsScreen selectedDate={allDates[2]} filter={filterJobs}/>
+            </div>
+            <div
+              className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
+              hidden={curTab !== 3}
+              id={'map-swipeable-routes'}>
+              <MapViewRoutesScreen selectedDate={allDates[3]} filter={filterRoutes}/>
+            </div>
+          </SwipeableViews>
+        </div>
       </div>
       {renderLegend()}
     </div>

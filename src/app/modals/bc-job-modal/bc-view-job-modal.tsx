@@ -212,7 +212,7 @@ function BCViewJobModal({
             <Grid container xs={12}>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{job.customer?.contactName || 'N/A'}</Typography>
+                <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name || 'N/A'}</Typography>
               </Grid>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>

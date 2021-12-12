@@ -5,30 +5,21 @@ import {
   withStyles
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styles from './sidebar.styles';
-import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
+import styles from './bc-map-filter.styles';
+
 import {
   FormGroup,
   TextField
 } from '@material-ui/core';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import CloseIcon from "@material-ui/icons/Close";
 import { getContacts } from 'api/contacts.api';
-import {STATUSES} from "../../../../../helpers/contants";
-
-interface filter {
-  jobId?: string,
-  customerNames?: string,
-  contact?: string,
-  jobStatus?: number[],
-}
+import {STATUSES} from "../../../helpers/contants";
 
 function BCMapFilter({
   classes,
-  isTicket = false,
-  showStatusSelector = true,
+  filterType,
   currentFilter,
   resetFilter,
   callback
@@ -38,11 +29,6 @@ function BCMapFilter({
   const loading = useSelector(({ customers }: any) => customers.loading);
   const [menuOpen, setMenuOpen] = useState('');
   const contacts = useSelector(({contacts}: any) => contacts?.contacts);
-
-  useEffect(() => {
-    dispatch(loadingCustomers());
-    dispatch(getCustomers());
-  }, []);
 
   const onSubmit = async (values: any, { setSubmitting }: any) => {
     if (typeof callback === "function") callback(values);
@@ -68,10 +54,6 @@ function BCMapFilter({
   } = form;
 
   const clearFilter = () => {
-/*    setFieldValue('customerNames', null);
-    setFieldValue('jobId', '');
-    setFieldValue('contact', null);
-    setFieldValue('jobStatus', [-1]);*/
     resetFilter();
   }
 
@@ -81,7 +63,6 @@ function BCMapFilter({
 
   const handleCustomerChange = (newValue: any) => {
     setFieldValue('customerNames', newValue);
-    console.log({newValue})
     if (newValue) {
       let data: any = {
         type: 'Customer',
@@ -143,7 +124,7 @@ function BCMapFilter({
             <FormGroup className={'required'}>
               <TextField
                 name={'jobId'}
-                placeholder={isTicket ? 'Ticket ID' : 'Job ID'}
+                placeholder={filterType === 'ticket' ? 'Ticket ID' : 'Job ID'}
                 variant={'outlined'}
                 onChange={form.handleChange}
                 //type={'search'}
@@ -201,7 +182,7 @@ function BCMapFilter({
                 )}
               />
             </FormGroup>
-            {showStatusSelector &&
+            {filterType !== 'ticket' &&
             <FormGroup>
               <Select
                 className={menuOpen === 'status' ? classes.menuOpen : ''}

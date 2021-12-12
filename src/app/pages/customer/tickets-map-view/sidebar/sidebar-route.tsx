@@ -4,37 +4,23 @@ import classnames from "classnames";
 import Box from '@material-ui/core/Box';
 import Fab from "@material-ui/core/Fab";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import Pagination from '@material-ui/lab/Pagination';
 import { useDispatch } from 'react-redux';
 import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
-
-import { getSearchJobs } from 'api/job.api';
 import styles from './sidebar.styles';
-import { getCustomerDetail } from 'api/customer.api';
-import { warning } from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import BCMapFilterModal from '../../../../modals/bc-map-filter/bc-map-filter-jobs-popup/bc-map-filter-jobs-popup';
 import * as CONSTANTS from "../../../../../constants";
-import { Job } from '../../../../../actions/job/job.types';
-
-import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
-import { ReactComponent as IconCalendar } from 'assets/img/icons/map/icon-calendar.svg';
-import {DatePicker} from "@material-ui/pickers";
-import {formatDateYMD} from "../../../../../helpers/format";
-import {setOpenTicketFilterState} from "../../../../../actions/service-ticket/service-ticket.action";
-import {getAllRoutes} from "../../../../../api/job-routes.api";
 import {JobRoute} from "../../../../../actions/job-routes/job-route.types";
-import {Image} from "@material-ui/icons";
 
 interface SidebarJobsProps {
   classes: any;
+  routes: JobRoute[];
   dispatchRoutes: (routes: JobRoute[]) => void;
+  isLoading: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -86,21 +72,15 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
+function SidebarRoutes({ classes, routes: allRoutes, dispatchRoutes, isLoading }: SidebarJobsProps) {
   const mapStyles = useStyles();
-  const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
-  const [routes, setRoutes] = useState<JobRoute[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  //const [currentDate, setCurrentDate] = useState<any>(new Date('2021-10-28'));
-  const [currentDate, setCurrentDate] = useState<any>(new Date());
   const [paginatedRoutes, setPaginatedRoutes] = useState<JobRoute[]>([]);
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showPagination, setShowPagination] = useState(true);
-  const totalRoutes = paginatedRoutes.length;
+  const totalRoutes = allRoutes.length;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -108,10 +88,6 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-
-  const openTicketFilterModal = () => {
-    setShowFilterModal(!showFilterModal);
   };
 
   const getInitials = (fullname = '') => {
@@ -139,46 +115,13 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
     return colour;
   }
 
-  const getRoute = async () => {
-    setIsLoading(true);
-    const dateString = moment(currentDate).utc().format('YYYY-MM-DD');
-    const response: any = await getAllRoutes(dateString);
-
-    const { data } = response;
-    if (data.status) {
-      setPaginatedRoutes(data.jobRoutes);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  }
-
-  const handleButtonClickMinusDay = () => {
-    const yesterday = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
-    dateChangeHandler(yesterday);
-  };
-
-  const dateChangeHandler = (date: Date) => {
-    setCurrentDate(date);
-    setSelectedIndex(-1);
-  };
-
-  const handleButtonClickPlusDay = () => {
-    const tomorrow = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
-    dateChangeHandler(tomorrow);
-  };
-
-  const resetFilter = async () => {
-    //setPaginatedRoutes(scheduledJobs);
-  };
-
   const handleJobCardClick = async (JobObj: any, index: any) => {
     if (index === selectedIndex) {
       setSelectedIndex( -1);
-      dispatchRoutes(paginatedRoutes);
+      dispatchRoutes(allRoutes);
     } else {
       setSelectedIndex(index);
-      dispatchRoutes([paginatedRoutes[index]]);
+      dispatchRoutes([allRoutes[index]]);
     }
   };
 
@@ -188,23 +131,19 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
   };
 
   useEffect(() => {
-    getRoute();
-  }, [currentDate]);
-
-  useEffect(() => {
     if (page === 1) {
-      const firstPage = paginatedRoutes.slice(0, PAGE_SIZE);
-      setRoutes(firstPage);
+      const firstPage = allRoutes.slice(0, PAGE_SIZE);
+      setPaginatedRoutes(firstPage);
       dispatchRoutes(firstPage);
     } else {
       setPage(1)
     }
-  }, [paginatedRoutes]);
+  }, [allRoutes]);
 
   useEffect(() => {
     const offset = (page - 1) * PAGE_SIZE;
-    const paginatedItems = paginatedRoutes.slice(offset).slice(0, PAGE_SIZE);
-    setRoutes(paginatedItems);
+    const paginatedItems = allRoutes.slice(offset).slice(0, PAGE_SIZE);
+    setPaginatedRoutes(paginatedItems);
     dispatchRoutes(paginatedItems);
   }, [page]);
 
@@ -253,55 +192,6 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
             container
             item
             lg={12} >
-            <div className={'ticketsFilterContainer'}>
-              <span
-                className={"datepicker_wrapper"}
-              >
-                <button className="prev_btn" disabled={isLoading} onClick={() => handleButtonClickMinusDay()}>
-                  <i className="material-icons" >
-                    keyboard_arrow_left
-                  </i>
-                </button>
-                <IconCalendar className="calendar_icon" />
-                <DatePicker
-                  autoOk
-                  disabled={isLoading}
-                  className={classes.picker}
-                  disablePast={false}
-                  format={"MMM d, yyyy"}
-                  id={`datepicker-${"scheduleDate"}`}
-                  inputProps={{
-                    name: "scheduleDate",
-                    placeholder: "Scheduled Date",
-                  }}
-                  inputVariant={"outlined"}
-                  name={"scheduleDate"}
-                  onChange={(e: any) => dateChangeHandler(e)}
-                  required={false}
-                  value={currentDate}
-                  variant={"inline"}
-                />
-                <button className="next_btn" disabled={isLoading} onClick={() => handleButtonClickPlusDay()}>
-                  <i className="material-icons">
-                    keyboard_arrow_right
-                  </i>
-                </button>
-              </span>
-              <div className={'filter_wrapper'}>
-               {/* <Button className={mapStyles.funnel} onClick={() => openTicketFilterModal()}>
-                  <IconFunnel />
-                </Button>*/}
-                {
-                  showFilterModal
-                    ? <ClickAwayListener onClickAway={openTicketFilterModal}>
-                      <div className={'dropdown_wrapper dropdown_wrapper_filter elevation-5'}>
-
-                      </div>
-                    </ClickAwayListener>
-                    : null
-                }
-              </div>
-            </div>
             <div className={'ticketsListViewContainer'}>
               {
                 isLoading
@@ -312,8 +202,8 @@ function SidebarRoutes({ classes, dispatchRoutes }: SidebarJobsProps) {
                     }}>
                       <BCCircularLoader heightValue={'200px'} />
                     </div>
-                  : routes.length
-                    ? routes.map((route: JobRoute, i: any) => {
+                  : paginatedRoutes.length
+                    ? paginatedRoutes.map((route: JobRoute, i: any) => {
                       const {technician: {profile}} = route;
 
                       return (<div
