@@ -5,23 +5,21 @@ import {
   withStyles
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styles from './sidebar.styles';
-import { getCustomers, loadingCustomers } from 'actions/customer/customer.action';
+import styles from './bc-map-filter.styles';
+
 import {
   FormGroup,
   TextField
 } from '@material-ui/core';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import CloseIcon from "@material-ui/icons/Close";
 import { getContacts } from 'api/contacts.api';
-import {STATUSES} from "../../../../../helpers/contants";
+import {STATUSES} from "../../../helpers/contants";
 
 function BCMapFilter({
   classes,
-  isTicket = false,
-  showStatusSelector = true,
+  filterType,
   currentFilter,
   resetFilter,
   callback
@@ -126,7 +124,7 @@ function BCMapFilter({
             <FormGroup className={'required'}>
               <TextField
                 name={'jobId'}
-                placeholder={isTicket ? 'Ticket ID' : 'Job ID'}
+                placeholder={filterType === 'ticket' ? 'Ticket ID' : 'Job ID'}
                 variant={'outlined'}
                 onChange={form.handleChange}
                 //type={'search'}
@@ -184,7 +182,7 @@ function BCMapFilter({
                 )}
               />
             </FormGroup>
-            {!isTicket &&
+            {filterType !== 'ticket' &&
             <FormGroup>
               <Select
                 className={menuOpen === 'status' ? classes.menuOpen : ''}

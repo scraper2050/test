@@ -22,6 +22,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
 import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
 import { getCustomers } from "../../../../actions/customer/customer.action";
+import {getAllJobTypesAPI} from "../../../../api/job.api";
+import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
+import {getVendors} from "../../../../actions/vendor/vendor.action";
 
 export  interface FilterTickets {
   jobId?: string | null,
@@ -34,6 +37,11 @@ export  interface FilterJobs {
   customerNames?: any,
   contact?: any,
   jobStatus: number[],
+}
+
+export  interface FilterRoutes {
+  technician?: any,
+  jobType?: any[],
 }
 
 const StatusContainer = withTheme(styled('div')`
@@ -65,7 +73,7 @@ const StatusContainer = withTheme(styled('div')`
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
-  const [curTab, setCurTab] = useState(0);
+  const [curTab, setCurTab] = useState(3);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
 
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
@@ -88,16 +96,23 @@ function TicketsWithMapView({ classes }: any) {
     'jobStatus': [-1],
   });
 
+  const [filterRoutes, setFilterRoutes] = useState<FilterRoutes>({
+    'technician': null,
+    'jobType': [],
+  });
+
   const allFilters = [
     [filterOpenTickets, setFilterOpenTickets],
     [filterTodayJobs, setFilterTodayJobs],
     [filterJobs, setFilterJobs],
-    [filterJobs, setFilterJobs],
+    [filterRoutes, setFilterRoutes],
   ]
 
   useEffect(() => {
-    //dispatch(loadingCustomers());
     dispatch(getCustomers());
+    dispatch(getAllJobTypesAPI());
+    dispatch(getEmployeesForJobAction());
+    dispatch(getVendors());
   }, []);
 
   const handleTabChange = (newValue: number) => {
@@ -170,7 +185,8 @@ function TicketsWithMapView({ classes }: any) {
               placeholder={curTab === 0 ? "Due Date" : 'Schedule Date'}
               onChangeDate={handleDateChange}
               filter={allFilters[curTab]}
-              isTicket={curTab === 0}
+              shouldResetDate={curTab === 0 || curTab === 2}
+              filterType={curTab === 0 ? 'ticket' : curTab === 3 ? 'route' : 'job'}
             />
             <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
             <Info className={'infoLegend'} fontSize={'small'}/>
@@ -198,7 +214,7 @@ function TicketsWithMapView({ classes }: any) {
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
               hidden={curTab !== 3}
               id={'map-swipeable-routes'}>
-              <MapViewRoutesScreen />
+              <MapViewRoutesScreen selectedDate={allDates[3]} filter={filterRoutes}/>
             </div>
           </SwipeableViews>
         </div>

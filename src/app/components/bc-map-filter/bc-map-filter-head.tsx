@@ -8,8 +8,8 @@ import styles from "./bc-map-filter.styles";
 import {makeStyles} from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../constants";
 import {formatDateYMD} from "../../../helpers/format";
-import BCMapFilter
-  from "../../pages/customer/tickets-map-view/sidebar/bc-map-filter";
+import BCMapFilter from "./bc-map-filter";
+import BCMapFilterRoute from "./bc-map-filter-route";
 
 const useStyles = makeStyles(theme => ({
   funnel: {
@@ -30,7 +30,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = false, onChangeDate, filter, isTicket }: any): JSX.Element {
+function BCMapFilterHead({
+ startDate = null,
+ placeholder = '',
+ disableDate = false,
+ onChangeDate,
+ filter,
+ shouldResetDate = false,
+ filterType
+}: any): JSX.Element {
   const mapStyles = useStyles();
   const [dateValue, setDateValue] = useState<any>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -67,13 +75,20 @@ function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = fal
 
   const resetFilter = async () => {
     setShowFilterModal(false);
-    onChangeDate(null);
-    filter[1]({
-      'customerNames': null,
-      'jobId': '',
-      'contact': null,
-      'jobStatus': [-1],
-    });
+    if (shouldResetDate) onChangeDate(null);
+    if (filterType === 'route'){
+      filter[1]({
+        'technician': null,
+        'jobType': [],
+      });
+    } else {
+      filter[1]({
+        'customerNames': null,
+        'jobId': '',
+        'contact': null,
+        'jobStatus': [-1],
+      });
+    }
   }
 
   const toggleFilterModal = () => {
@@ -91,12 +106,21 @@ function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = fal
           showFilterModal
             ? <ClickAwayListener onClickAway={toggleFilterModal} mouseEvent={'onMouseUp'}>
               <div className={'dropdown_wrapper dropdown_wrapper_filter elevation-5'}>
-                <BCMapFilter
-                  callback={handleFilter}
-                  currentFilter={filter[0]}
-                  resetFilter={resetFilter}
-                  isTicket={isTicket}
-                />
+                {filterType === 'route' ?
+                  <BCMapFilterRoute
+                    callback={handleFilter}
+                    currentFilter={filter[0]}
+                    resetFilter={resetFilter}
+                    filterType={filterType}
+                  />
+                  :
+                  <BCMapFilter
+                    callback={handleFilter}
+                    currentFilter={filter[0]}
+                    resetFilter={resetFilter}
+                    filterType={filterType}
+                  />
+                }
               </div>
             </ClickAwayListener>
             : null

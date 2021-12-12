@@ -61,7 +61,7 @@ function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMa
           DEFAULT_LNG;
 
         coordinates.push({lat: jobLat, lng: jobLong});
-        console.log({coordinates, index})
+        //console.log({coordinates, index})
       });
       return ({...jobRoute, coordinates, color: getColor(jobRoute.technician.profile.displayName)})
   })

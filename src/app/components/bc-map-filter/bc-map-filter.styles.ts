@@ -2,22 +2,14 @@ import { Theme } from '@material-ui/core/styles';
 import { fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
 
 export default (theme: Theme): any => ({
-  ...fabRoot,
-  ...pageContent,
-  ...pageMainContainer,
-  ...pageContainer,
-  ...topActionBar,
-
   ticketsFilterContainer: {
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
 
   filterContainer: {
-    //borderTop: '2px solid #8D79FA',
     margin: '0 24px 0 24px',
     padding: 0,
-    //display: 'flex',
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
