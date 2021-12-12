@@ -21,6 +21,11 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
       let filter = true;
+
+      if (filterJobs.customerNames && filterJobs.contact) {
+        filter = filter && (job.customerContactId === filterJobs.contact._id);
+      }
+
       if (filterJobs.jobStatus.indexOf(-1) === -1) {
         filter = filterJobs.jobStatus.indexOf(job.status) >= 0;
       }

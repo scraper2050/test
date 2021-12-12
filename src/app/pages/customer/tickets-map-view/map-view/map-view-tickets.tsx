@@ -19,8 +19,6 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
 
-  console.log({filterTickets, allTickets})
-
   const filterOpenTickets = (tickets: any) => {
     return tickets.filter((ticket: any) => {
       let filter = true;

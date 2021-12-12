@@ -65,7 +65,6 @@ function BCMapFilter({
 
   const handleCustomerChange = (newValue: any) => {
     setFieldValue('customerNames', newValue);
-    console.log({newValue})
     if (newValue) {
       let data: any = {
         type: 'Customer',

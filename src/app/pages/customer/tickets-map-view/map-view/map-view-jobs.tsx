@@ -26,6 +26,10 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
         filter = filterJobs.jobStatus.indexOf(job.status) >= 0;
       }
 
+      if (filterJobs.customerNames && filterJobs.contact) {
+        filter = filter && (job.customerContactId === filterJobs.contact._id);
+      }
+
       if(selectedDate) {
         filter = filter && moment(job.scheduleDate).isSame(selectedDate, 'day');
       }
