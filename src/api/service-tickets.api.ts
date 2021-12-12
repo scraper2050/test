@@ -116,3 +116,15 @@ export const getServiceTicketDetail:any = (ticketId:string) => {
       });
   });
 };
+
+export const getOpenServiceTicketsStream:any = () => {
+  return new Promise((resolve, reject) => {
+    request(`/getOpenServiceTicketsStream`, 'get', {}, false)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};

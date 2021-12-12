@@ -65,7 +65,7 @@ const StatusContainer = withTheme(styled('div')`
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
-  const [curTab, setCurTab] = useState(1);
+  const [curTab, setCurTab] = useState(0);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
 
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
@@ -180,7 +180,7 @@ function TicketsWithMapView({ classes }: any) {
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}
               hidden={curTab !== 0}
               id={'map-swipeable-open'}>
-              <MapViewTicketsScreen />
+              <MapViewTicketsScreen selectedDate={allDates[0]} filter={filterOpenTickets}/>
             </div>
             <div
               className={`${classes.dataContainer} ${classes.dataContainer}_maps`}

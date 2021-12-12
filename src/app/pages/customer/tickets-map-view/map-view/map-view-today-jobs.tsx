@@ -7,13 +7,7 @@ import { Job } from '../../../../../actions/job/job.types';
 import SidebarTodayJobs from '../sidebar/sidebar-today-jobs';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import {getSearchJobs} from "../../../../../api/job.api";
-
-interface FilterJobs {
-  jobId?: string | null,
-  customerNames?: any,
-  contact?: any,
-  jobStatus: number[],
-}
+import {FilterJobs} from "../tickets-map-view";
 
 interface Props {
   classes: any;

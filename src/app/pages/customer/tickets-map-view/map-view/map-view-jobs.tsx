@@ -6,13 +6,7 @@ import styles from '../ticket-map-view.style';
 import SidebarJobs from "../sidebar/sidebar-jobs";
 import {getSearchJobs} from "../../../../../api/job.api";
 import moment from "moment";
-
-interface FilterJobs {
-  jobId?: string | null,
-  customerNames?: any,
-  contact?: any,
-  jobStatus: number[],
-}
+import {FilterJobs} from "../tickets-map-view";
 
 interface Props {
   classes: any;
@@ -31,6 +25,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       if (filterJobs.jobStatus.indexOf(-1) === -1) {
         filter = filterJobs.jobStatus.indexOf(job.status) >= 0;
       }
+
       if(selectedDate) {
         filter = filter && moment(job.scheduleDate).isSame(selectedDate, 'day');
       }

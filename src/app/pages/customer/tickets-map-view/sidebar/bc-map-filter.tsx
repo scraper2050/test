@@ -18,13 +18,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import { getContacts } from 'api/contacts.api';
 import {STATUSES} from "../../../../../helpers/contants";
 
-interface filter {
-  jobId?: string,
-  customerNames?: string,
-  contact?: string,
-  jobStatus?: number[],
-}
-
 function BCMapFilter({
   classes,
   isTicket = false,
@@ -63,10 +56,6 @@ function BCMapFilter({
   } = form;
 
   const clearFilter = () => {
-/*    setFieldValue('customerNames', null);
-    setFieldValue('jobId', '');
-    setFieldValue('contact', null);
-    setFieldValue('jobStatus', [-1]);*/
     resetFilter();
   }
 

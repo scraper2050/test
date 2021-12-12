@@ -67,7 +67,7 @@ function BCMapFilterHead({ startDate = null, placeholder = '', disableDate = fal
 
   const resetFilter = async () => {
     setShowFilterModal(false);
-
+    onChangeDate(null);
     filter[1]({
       'customerNames': null,
       'jobId': '',

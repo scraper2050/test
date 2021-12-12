@@ -7,8 +7,9 @@ import {ReactComponent as IconRescheduled} from "../assets/img/icons/map/icon-re
 import {ReactComponent as IconIncomplete} from "../assets/img/icons/map/icon-incomplete.svg";
 
 export enum SocketMessage {
-    CREATESERVICETICKET= 'createServiceTicketMsg',
-    CREATENOTIFICATION = 'notification_center',
+  CREATESERVICETICKET= 'createServiceTicketMsg',
+  CREATENOTIFICATION = 'notification_center',
+  SERVICE_TICKETS = 'all_open_service_tickets',
 }
 
 export const STATUSES = [
