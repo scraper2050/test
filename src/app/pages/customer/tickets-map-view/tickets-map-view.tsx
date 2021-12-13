@@ -73,7 +73,7 @@ const StatusContainer = withTheme(styled('div')`
 function TicketsWithMapView({ classes }: any) {
   const dispatch = useDispatch();
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
-  const [curTab, setCurTab] = useState(3);
+  const [curTab, setCurTab] = useState(0);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
 
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
