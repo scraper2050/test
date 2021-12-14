@@ -58,7 +58,7 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
       bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
       center={{ 'lat': centerLat,
         'lng': centerLng }}
-      defaultZoom={6}
+      defaultZoom={11}
       //onClick={event => console.log(event)}
       options={createMapOptions}>
       {

@@ -15,6 +15,7 @@ import moment from "moment";
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
   const { token } = useSelector(({ auth }: any) => auth);
   const tempTokens = useRef<any[]>([]);
+  const totalTickets = useRef<number>(1);
   const [isLoading, setIsLoading] = useState(true);
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
@@ -46,19 +47,22 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       'extraHeaders': { 'Authorization': token }
     });
 
+    socket.on("connect", () => {
+      getOpenServiceTicketsStream();
+    });
+
     socket.on(SocketMessage.SERVICE_TICKETS, data => {
-      const {count, serviceTicket} = data;
+      const {count, serviceTicket, total} = data;
       if (serviceTicket) {
         tempTokens.current.push(serviceTicket);
-        if (count % 100 === 0) {
+        if (count % 25 === 0 || count === total) {
+          totalTickets.current = total;
           setIsLoading(false);
           setAllTickets(tempTokens.current);
           setFilteredTickets([...tempTokens.current]);
         }
       }
     });
-
-    getOpenServiceTicketsStream();
 
     return () => {
       socket.close();
@@ -83,7 +87,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         />
       </Grid>
 
-      <SidebarTickets tickets={filteredTickets} isLoading={isLoading}/>
+      <SidebarTickets totalTicketsCount={totalTickets.current} tickets={filteredTickets} isLoading={isLoading}/>
     </Grid>
   );
 }

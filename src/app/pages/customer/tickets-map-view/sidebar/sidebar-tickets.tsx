@@ -16,11 +16,13 @@ import {warning} from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
+import {CircularProgress, Typography} from "@material-ui/core";
 
 interface SidebarTicketsProps {
   classes: any;
   tickets:any[];
   isLoading: boolean;
+  totalTicketsCount: number;
 }
 
 interface FilterTickets {
@@ -80,7 +82,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
+function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -240,6 +242,25 @@ function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
               showLastButton
               />
               )}
+
+            <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
+              <Typography variant="caption" component="div" color="textSecondary">Total Tickets</Typography>
+              <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
+                <CircularProgress variant="determinate" value={(totalOpenTickets / totalTicketsCount) * 100} />
+                <Box
+                  top={0}
+                  left={0}
+                  bottom={0}
+                  right={0}
+                  position="absolute"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Typography variant="caption" component="div" color="textSecondary">{`${totalOpenTickets}`}</Typography>
+                </Box>
+              </Box>
+            </Box>
           </Grid>
         </Grid>
       </Drawer>
