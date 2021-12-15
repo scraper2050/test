@@ -19,20 +19,12 @@ import {
   FormGroup,
   Grid,
   InputLabel,
-  MenuItem,
-  Select,
   TextField,
-  Typography
 } from '@material-ui/core';
 import {
-  Field,
-  Form,
-  Formik,
-  FormikProps,
-  FormikValues,
   useFormik
 } from 'formik';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   closeModalAction,
   setModalDataAction
@@ -44,10 +36,9 @@ import {
   updateCustomerAction
 } from 'actions/customer/customer.action';
 import '../../../scss/index.scss';
-import { useHistory } from 'react-router-dom';
 import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-marker';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { error, success } from 'actions/snackbar/snackbar.action';
+import { success } from 'actions/snackbar/snackbar.action';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
 
 interface Props {
@@ -63,6 +54,9 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const dispatch = useDispatch();
   const [nameLabelState, setNameLabelState] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const timeoutID = useRef<NodeJS.Timeout|null>(null);
+  //console.log({customerInfo})
+
   const [positionValue, setPositionValue] = useState({
     'lang':
       customerInfo &&
@@ -158,7 +152,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     'stringify': (option: AllStateTypes) => option.abbreviation + option.name
   });
 
-
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -169,51 +162,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     }, 200);
   };
 
-  const updateMap = (
-    values: any,
-    street?: any,
-    city?: any,
-    zipCode?: number,
-    state?: number
-  ): void => {
-    Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    let stateVal: any = '';
-    Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if (state) {
-      stateVal = allStates[state].name;
-    }
-
-    let fullAddr = '';
-    fullAddr = fullAddr.concat(
-      street !== undefined ? street : values.street,
-      ' ',
-      city !== undefined ? city : values.city,
-      ' ',
-      stateVal,
-      ' ',
-      zipCode !== undefined ? zipCode : values.zipCode,
-      ' ',
-      'USA'
-    );
-
-    Geocode.fromAddress(fullAddr).then(
-      (response: {
-        results: { geometry: { location: { lat: any; lng: any } } }[];
-      }) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        setPositionValue({
-          'lang': lng,
-          'lat': lat
-        });
-      },
-      (error: any) => {
-        console.error(error);
-      }
-    );
-  };
-
   const updateMapFromLatLng = (name: string, value: any): void => {
-    Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     if (name === 'lat') {
       setPositionValue({
         'lang': positionValue.lang,
@@ -226,13 +175,14 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
       });
     }
   };
+
   useEffect(
     () => {
+      Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
       dispatch(loadTierListItems.fetch());
     }
     , []
   );
-
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -247,7 +197,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
 
   const handleSelectState = (value: AllStateTypes) => {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
-    updateMap(FormikValues, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
   };
 
@@ -321,6 +270,54 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
       }
     }
   })
+
+  const updateMap2 = (): void => {
+    const {street, city, state, zipCode} = FormikValues;
+
+    let stateVal: any = '';
+    if (state?.id !== undefined) {
+      stateVal = allStates[state.id].name;
+    }
+
+    let fullAddr = '';
+    fullAddr = fullAddr.concat(
+      street !== undefined ? street : '',
+      ' ',
+      city !== undefined ? city : '',
+      ' ',
+      stateVal,
+      ' ',
+      zipCode !== undefined ? zipCode : '',
+      ' ',
+      'USA'
+    );
+
+    Geocode.fromAddress(fullAddr).then(
+      (response: {
+        results: { geometry: { location: { lat: any; lng: any } } }[];
+      }) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        setPositionValue({
+          'lang': lng,
+          'lat': lat
+        });
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  };
+
+
+  useEffect(() => {
+    if (timeoutID.current) {
+      clearTimeout(timeoutID.current);
+      timeoutID.current = setTimeout(() => updateMap2(), 1000);
+    } else {
+      timeoutID.current = setTimeout(() => null, 0);
+    }
+
+  }, [FormikValues.street, FormikValues.city, FormikValues.state, FormikValues.zipCode])
 
 
   return (
@@ -435,7 +432,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'street'}
                             handleChange={(e: any) => {
                               setFieldValue('street', e.target.value);
-                              updateMap(FormikValues, e.target.value);
+                              //(FormikValues, e.target.value);
                             }}
                             placeholder={'Street'}
                             value={FormikValues.street}
@@ -456,7 +453,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'unit'}
                             onChange={(e: any) => {
                               setFieldValue('unit', e.target.value);
-                              updateMap(FormikValues, e.target.value);
+                              //updateMap(FormikValues, e.target.value);
                             }}
                             placeholder={'Unit #'}
                             value={FormikValues.unit}
@@ -476,7 +473,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'city'}
                             onChange={(e: any) => {
                               setFieldValue('city', e.target.value);
-                              updateMap(FormikValues, undefined, e.target.value);
+                              //updateMap(FormikValues, undefined, e.target.value);
                             }}
                             placeholder={'City'}
                             value={FormikValues.city}
@@ -531,7 +528,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'zipCode'}
                             handleChange={(e: any) => {
                               setFieldValue('zipCode', e.target.value);
-                              updateMap(FormikValues, undefined, undefined, e.target.value);
+                              //updateMap(FormikValues, undefined, undefined, e.target.value);
                             }}
                             placeholder={'Zip Code'}
                             type={'number'}
