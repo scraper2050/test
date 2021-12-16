@@ -125,6 +125,7 @@ function BCMapFilterRoute({
                 value={form.values.jobType}
                 onChange={(event: any, newValue: any) => setFieldValue('jobType', newValue)}
                 classes={{
+                  root: classes.fullWidth,
                   inputRoot: menuOpen === 'contact' ? classes.menuOpen : '',
                   paper: classes.menuContainer
                 }}

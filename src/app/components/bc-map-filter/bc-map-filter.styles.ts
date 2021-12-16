@@ -88,6 +88,9 @@ export default (theme: Theme): any => ({
       padding: 2,
     }
   },
+  fullWidth: {
+    width: '100%'
+  },
   menuContainer: {
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
