@@ -17,6 +17,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
 import {CircularProgress, Typography} from "@material-ui/core";
+import BCNoResults from "../../../../components/bc-no-results";
 
 interface SidebarTicketsProps {
   classes: any;
@@ -228,7 +229,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
                         </div>
                       </div>
                     ))
-                    : <h4>No available ticket.</h4>
+                    : <BCNoResults message={'No tickets with this search criteria'} />
               }
             </div>
             {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && (

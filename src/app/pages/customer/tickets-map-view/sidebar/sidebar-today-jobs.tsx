@@ -18,6 +18,7 @@ import * as CONSTANTS from "../../../../../constants";
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
 import {Job} from "../../../../../actions/job/job.types";
+import BCNoResults from "../../../../components/bc-no-results";
 
 interface SidebarTodayJobsProps {
   classes: any;
@@ -216,7 +217,7 @@ function SidebarTodayJobs({ classes, jobs, isLoading }: SidebarTodayJobsProps) {
                             <RoomIcon/>
                           </div>
                         </div>)
-                      : <h4>No available job.</h4>
+                      : <BCNoResults message={'No jobs with this search criteria'} />
                 }
               </div>
               {Math.ceil(totalItems / PAGE_SIZE) > 1 && !isLoading &&(
