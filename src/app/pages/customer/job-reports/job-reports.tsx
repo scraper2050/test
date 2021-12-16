@@ -56,21 +56,14 @@ function JobReportsPage({ classes, theme }: any) {
       'sortable': true
     },
     {
-      Cell({ row }: any) {
-        const Date = formatDate(row.original.jobDate);
-        return (
-          <div className={'flex items-center'}>
-            {Date}
-          </div>
-        );
-      },
       'Header': 'Date',
       'id': 'job-date',
+      'accessor': (originalRow: any, rowIndex: number) => formatDate(originalRow.jobDate),
       'sortable': true
     },
     {
       'Header': 'Technician',
-      'accessor': 'technicianName',
+      'accessor': (originalRow: any) => originalRow.job.tasks.length === 1 ? originalRow.job.tasks[0]?.technician?.profile?.displayName : 'Multiple Techs',
       'className': 'font-bold',
       'sortable': true
     },

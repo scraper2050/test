@@ -7,10 +7,7 @@ import {
 } from '@material-ui/core';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  formatDate,
-  formatTime,
-} from 'helpers/format';
+import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 import '../../../scss/job-poup.scss';
@@ -58,7 +55,7 @@ function BCViewServiceTicketModal({
                           job = initialJobState,
                         }: any): JSX.Element {
   const dispatch = useDispatch();
-  console.log(job);
+  // console.log(job);
   const calculateJobType = () => {
     let title = [];
     if (job.tasks) {
@@ -135,8 +132,6 @@ function BCViewServiceTicketModal({
   ];
 
   const scheduleDate = job.dueDate;
-  const startTime = job.startTime ? formatTime(job.startTime) : 'N/A';
-  const endTime = job.endTime ? formatTime(job.endTime) : 'N/A';
 
   return (
     <DataContainer className={'new-modal-design'}>
@@ -176,7 +171,7 @@ function BCViewServiceTicketModal({
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.customer?.contactName || 'N/A'}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name ||'N/A'}</Typography>
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>

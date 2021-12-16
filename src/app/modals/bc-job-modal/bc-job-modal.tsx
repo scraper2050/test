@@ -127,7 +127,7 @@ const getJobTasks = (job: any, jobTypes: any) => {
       employeeType: task.employeeType ? 1 : 0,
       employee: !task.employeeType && task.technician ? task.technician : null,
       contractor: task.employeeType && task.contractor ? task.contractor : null,
-      jobTypes: getJobData(task.jobTypes.map((task: any) => task.jobType._id), jobTypes)
+      jobTypes: getJobData(task.jobTypes.map((task: any) => task.jobType?._id), jobTypes)
     }));
     return tasks;
   } else {
@@ -158,7 +158,8 @@ function BCJobModal({
       return acc;
     }, [])
   );
-  const jobTypes = useSelector(({ jobTypes }: any) => jobTypes.data);
+
+  const {isLoading: jobTypesLoading, data: jobTypes} = useSelector((state: any) => state.jobTypes);
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
@@ -828,7 +829,7 @@ function BCJobModal({
                   value={task.jobTypes}
                 />
               </Grid>
-              {index > 0 &&
+              {index > 0 && !jobTypesLoading &&
               <IconButton className={classes.removeJobTypeButton}
                           component="span"
                           onClick={() => removeTask(index)}
@@ -842,6 +843,7 @@ function BCJobModal({
             <Grid item xs>
               <Button
                 color={'primary'}
+                disabled={jobTypesLoading}
                 classes={{root: classes.addJobTypeButton}}
                 variant={'outlined'}
                 onClick={addEmptyTask}

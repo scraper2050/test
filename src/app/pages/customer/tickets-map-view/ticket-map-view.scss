@@ -23,6 +23,31 @@
   }
 }
 
+.filterHeadContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-right: 20px;
+  @media (max-width: 1280px) {
+    margin-top: 22px;
+  }
+  button {
+    border: 0;
+    //background: transparent;
+    //display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    i {
+      padding-right: 6px;
+    }
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
+
 .ticketsCardViewContainer {
   @media (min-width: 1280px) {
     height: calc(100vh - 350px);
@@ -255,6 +280,11 @@
       color: rgba(0, 0, 0, 0.54);
     }
   }
+  button:disabled {
+    & i {
+      color: white;
+    }
+  }
 }
 
 .ticketsCardViewContainer {
@@ -358,6 +388,7 @@
   box-sizing: border-box;
   border-radius: 5px;
   width: 400px;
+  z-index: 10;
   .MuiGrid-root {
     width: 100%;
     margin: 0;

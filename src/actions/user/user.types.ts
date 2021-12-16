@@ -1,4 +1,4 @@
-import { fromLatLng } from "react-geocode";
+import {DEFAULT_COORD} from "../../utils/constants";
 
 export interface CompanyProfile {
   companyName: string;
@@ -10,6 +10,7 @@ export interface CompanyProfile {
   zipCode?: string;
   phone: string;
   fax?: string;
+  coordinates?: {lat: number, lng: number};
   paymentTerm?: {
     createdAt: string,
     createdBy: string,
@@ -39,6 +40,7 @@ export const companyProfileState: CompanyProfile = {
   city: '',
   state: '',
   zipCode: '',
+  coordinates: DEFAULT_COORD,
   logoUrl: undefined,
   street: '',
   paymentTerm: {

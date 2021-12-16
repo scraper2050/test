@@ -3,35 +3,26 @@ import classnames from "classnames";
 import Box from '@material-ui/core/Box';
 import Fab from "@material-ui/core/Fab";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import Drawer from '@material-ui/core/Drawer';
 import RoomIcon from '@material-ui/icons/Room';
-import { DatePicker } from '@material-ui/pickers';
 import Pagination from '@material-ui/lab/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { createStyles, withStyles, makeStyles } from '@material-ui/core/styles';
-import {
-  refreshServiceTickets,
-  setOpenServiceTicket,
-  setOpenServiceTicketLoading,
-} from 'actions/service-ticket/service-ticket.action';
 import styles from './sidebar.styles';
-import { formatDateYMD } from 'helpers/format';
 import * as CONSTANTS from "../../../../../constants";
-import {error, warning} from 'actions/snackbar/snackbar.action';
-import { getCustomers } from 'actions/customer/customer.action';
-import { getOpenServiceTickets } from 'api/service-tickets.api';
+import {warning} from 'actions/snackbar/snackbar.action';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import BCMapFilter from "./bc-map-filter";
-import { ReactComponent as IconFunnel } from 'assets/img/icons/map/icon-funnel.svg';
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
-import {ReactComponent as IconCalendar} from "../../../../../assets/img/icons/map/icon-calendar.svg";
+import {CircularProgress, Typography} from "@material-ui/core";
 
 interface SidebarTicketsProps {
   classes: any;
+  tickets:any[];
+  isLoading: boolean;
+  totalTicketsCount: number;
 }
 
 interface FilterTickets {
@@ -91,28 +82,15 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes }: SidebarTicketsProps) {
+function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
-  const [filterTickets, setFilterTickets] = useState<FilterTickets>({
-    'customerNames': null,
-    'jobId': '',
-    'schedule_date': '',
-    'contact': null,
-  });
-  const [dateValue, setDateValue] = useState<any>(null);
-  const [paginatedJobs, setPaginatedJobs] = useState<any>([]);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const totalOpenTickets = useSelector(
-    (state: any) => state.serviceTicket.totalOpenTickets
-  );
-  const openTickets = useSelector(
-    (state: any) => state.serviceTicket.openTickets
-  );
-  const isLoading = useSelector((state: any) => state.serviceTicket.isLoading);
+
+  const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
+  const totalOpenTickets = tickets.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
 
   const handleDrawerOpen = () => {
@@ -121,78 +99,6 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-
-  const handleFilter =  (filter: any) => {
-    dispatch(setTicketSelected({_id: ''}));
-    setShowFilterModal(false);
-    if (filter) {
-      setFilterTickets(filter);
-
-      const rawData = {
-        jobTypeTitle: '',
-        dueDate: dateValue ? formatDateYMD(dateValue) : '',
-        customerNames: filter.customerNames?.profile?.displayName || '',
-        ticketId:  filter.jobId || '',
-        contactName: filter.contact?.name || '',
-      }
-
-      const requestObj = {
-        ...rawData,
-        pageNo: 1,
-        pageSize: PAGE_SIZE,
-      };
-      getOpenTickets(requestObj);
-    }
-  };
-
-  const resetFilter = () => {
-    dispatch(setTicketSelected({_id: ''}));
-    setShowFilterModal(false);
-    setPage(1);
-    setDateValue(null);
-
-    setFilterTickets({
-      'customerNames': null,
-      'jobId': '',
-      'schedule_date': '',
-      'contact': null,
-    });
-
-    const rawData = {
-      jobTypeTitle: '',
-      dueDate: '',
-      customerNames: '',
-      ticketId: '',
-      contactName: '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-    };
-    getOpenTickets(requestObj);
-  }
-
-  const dateChangeHandler = (date: string) => {
-    const dateObj = new Date(date);
-    const rawData = {
-      jobTypeTitle: '',
-      dueDate: formatDateYMD(dateObj),
-      customerNames: filterTickets.customerNames?.profile?.displayName || '',
-      ticketId:  filterTickets.jobId || '',
-      contactName: filterTickets.contact?.name || '',
-    }
-    console.log(rawData);
-    setDateValue(dateObj);
-
-    const requestObj = {
-      ...rawData,
-      pageNo: 1,
-      pageSize: PAGE_SIZE,
-    };
-    getOpenTickets(requestObj);
   };
 
   const handleOpenTicketCardClick = (openTicketObj: any, index: any) => {
@@ -219,74 +125,23 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
   const handlePageChange = (event: any, value: any) => {
     dispatch(setTicketSelected({_id: ''}));
     setPage(value);
-
-    const rawData = {
-      jobTypeTitle: '',
-      dueDate: dateValue ? formatDateYMD(dateValue) : '',
-      customerNames: filterTickets.customerNames?.profile?.displayName || '',
-      ticketId:  filterTickets.jobId || '',
-      contactName: filterTickets.contact?.name || '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      pageNo: value,
-      pageSize: PAGE_SIZE,
-    };
-    getOpenTickets(requestObj);
-  };
-
-  const getOpenTickets = (requestObj: {
-    pageNo?: number;
-    pageSize?: number;
-    jobTypeTitle?: string;
-    dueDate?: string;
-    customerNames?: any;
-    ticketId?: string;
-    companyId?: string;
-  }) => {
-    dispatch(setOpenServiceTicketLoading(true));
-    getOpenServiceTickets(requestObj)
-      .then((response: any) => {
-        if (response.status === 1) {
-          dispatch(setOpenServiceTicketLoading(false));
-          dispatch(setOpenServiceTicket(response));
-          dispatch(refreshServiceTickets(true));
-        } else {
-          dispatch(setOpenServiceTicketLoading(false));
-          dispatch(error(response.message));
-        }
-      })
-      .catch((err: any) => {
-        throw err;
-      });
-  };
-
-  const handleButtonClickMinusDay = () => {
-    const previousDay = dateValue ? new Date(dateValue.getTime() - 24 * 60 * 60 * 1000) : new Date();
-    const formattedDate = formatDateYMD(previousDay);
-    dateChangeHandler(formattedDate);
-  };
-
-  const handleButtonClickPlusDay = () => {
-    const nextDay =  dateValue ? new Date(dateValue.getTime() + 24 * 60 * 60 * 1000) : new Date();
-    const formattedDate = formatDateYMD(nextDay);
-    dateChangeHandler(formattedDate);
   };
 
   useEffect(() => {
-    let rawData = {
-      jobTypeTitle: "",
-      dueDate: "",
-      customerNames: "",
-      ticketId: "",
-      contactName: "",
-    };
-    const requestObj = { ...rawData, pageNo: 1, pageSize: PAGE_SIZE };
-    dispatch(getCustomers());
-    getOpenTickets(requestObj);
     dispatch(setTicketSelected({_id: ''}));
-  }, []);
+    if (page === 1) {
+      const firstPage = tickets.slice(0, PAGE_SIZE);
+      setPaginatedTickets(firstPage);
+    } else {
+      setPage(1)
+    }
+  }, [tickets]);
+
+  useEffect(() => {
+    const offset = (page - 1) * PAGE_SIZE;
+    const paginatedItems = tickets.slice(offset).slice(0, PAGE_SIZE);
+    setPaginatedTickets(paginatedItems);
+  }, [page]);
 
   return (
     <>
@@ -334,115 +189,78 @@ function SidebarTickets({ classes }: SidebarTicketsProps) {
             item
             lg={12}
           >
-            <div className="ticketsFilterContainer">
-              <span
-                className={"datepicker_wrapper"}
-              >
-                <button className="prev_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickMinusDay()}
-                  >
-                    keyboard_arrow_left
-                  </i>
-                </button>
-                <IconCalendar className="calendar_icon" />
-                <DatePicker
-                  autoOk
-                  disablePast={false}
-                  format={"MMM d, yyyy"}
-                  id={`datepicker-${"scheduleDate"}`}
-                  inputProps={{
-                    name: "scheduleDate",
-                    placeholder: "Due Date",
-                  }}
-                  inputVariant={"outlined"}
-                  name={"scheduleDate"}
-                  onChange={(e: any) => dateChangeHandler(e)}
-                  required={false}
-                  value={dateValue}
-                  variant={"inline"}
-                />
-                <button className="next_btn">
-                  <i
-                    className="material-icons"
-                    onClick={() => handleButtonClickPlusDay()}
-                  >
-                    keyboard_arrow_right
-                  </i>
-                </button>
-              </span>
-              <div className="filter_wrapper">
-                <Button className={mapStyles.funnel} onClick={() => setShowFilterModal(true)}>
-                  <IconFunnel />
-                </Button>
-              </div>
-            </div>
-            {showFilterModal ?
-              <BCMapFilter
-                callback={handleFilter}
-                currentFilter={filterTickets}
-                resetFilter={resetFilter}
-                isTicket={true}
-                showStatusSelector={false}
-              />
-              :<>
-                <div className="ticketsListViewContainer">
-                  {
-                    isLoading
-                      ? <div style={{
-                        'display': 'flex',
-                        'width': '100%',
-                        'justifyContent': 'center'
-                      }}>
-                        <BCCircularLoader heightValue={'200px'}/>
-                      </div>
-                      : openTickets.length
-                        ? openTickets.map((x: any, i: any) => (
-                          <div
-                            className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
-                            id={`openTicket${i}`}
-                            key={i}
-                            onClick={() => {
-                              handleOpenTicketCardClick(x, i);
-                            }}
-                          >
-                            <div className={'ticket_title'}>
-                              <span
-                                className={`job-status job-status_${x.status}`}/>
-                              <h3>
-                                {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
-                              </h3>
-                            </div>
-                            <div className={'location_desc_container'}>
-                              <div className={'card_location'}>
-                                <h4>
-                                  {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
-                                </h4>
-                              </div>
-                            </div>
-                            <div className={'ticket_marker'}>
-                              <RoomIcon/>
-                            </div>
+            <div className="ticketsListViewContainer">
+              {
+                isLoading
+                  ? <div style={{
+                    'display': 'flex',
+                    'width': '100%',
+                    'justifyContent': 'center'
+                  }}>
+                    <BCCircularLoader heightValue={'200px'}/>
+                  </div>
+                  : paginatedTickets.length
+                    ? paginatedTickets.map((x: any, i: any) => (
+                      <div
+                        className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
+                        id={`openTicket${i}`}
+                        key={i}
+                        onClick={() => {
+                          handleOpenTicketCardClick(x, i);
+                        }}
+                      >
+                        <div className={'ticket_title'}>
+                          <span
+                            className={`job-status job-status_${x.status}`}/>
+                          <h3>
+                            {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
+                          </h3>
+                        </div>
+                        <div className={'location_desc_container'}>
+                          <div className={'card_location'}>
+                            <h4>
+                              {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
+                            </h4>
                           </div>
-                        ))
-                        : <h4>No available ticket.</h4>
-                  }
-                </div>
-                {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && (
-                  <Pagination
-                  color="primary"
-                  count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
-                  onClick={() => dispatch(setTicketSelected({_id: ''}))}
-                  onChange={handlePageChange}
-                  page={page}
-                  showFirstButton
-                  showLastButton
-                  />
-                  )}
-              </>
-            }
+                        </div>
+                        <div className={'ticket_marker'}>
+                          <RoomIcon/>
+                        </div>
+                      </div>
+                    ))
+                    : <h4>No available ticket.</h4>
+              }
+            </div>
+            {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && (
+              <Pagination
+              color="primary"
+              count={Math.ceil(totalOpenTickets / PAGE_SIZE)}
+              onClick={() => dispatch(setTicketSelected({_id: ''}))}
+              onChange={handlePageChange}
+              page={page}
+              showFirstButton
+              showLastButton
+              />
+              )}
 
+            <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
+              <Typography variant="caption" component="div" color="textSecondary">Total Tickets</Typography>
+              <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
+                <CircularProgress variant="determinate" value={(totalOpenTickets / totalTicketsCount) * 100} />
+                <Box
+                  top={0}
+                  left={0}
+                  bottom={0}
+                  right={0}
+                  position="absolute"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Typography variant="caption" component="div" color="textSecondary">{`${totalOpenTickets}`}</Typography>
+                </Box>
+              </Box>
+            </Box>
           </Grid>
         </Grid>
       </Drawer>

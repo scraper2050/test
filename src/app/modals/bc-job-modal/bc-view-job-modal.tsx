@@ -90,7 +90,7 @@ function BCViewJobModal({
         const user = employeesForJob.filter(
           (employee: any) => employee._id === row.original.user
         )[0];
-        const vendor = vendorsList.find((v: any) => v.contractor.admin._id === row.original.user);
+        const vendor = vendorsList.find((v: any) => v.contractor.admin?._id === row.original.user);
         const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
         return <div>{displayName}</div>;
       },
@@ -135,8 +135,8 @@ function BCViewJobModal({
   ];
 
   const scheduleDate = job.scheduleDate;
-  const startTime = job.startTime ? formatTime(job.startTime) : 'N/A';
-  const endTime = job.endTime ? formatTime(job.endTime) : 'N/A';
+  const startTime = job.scheduledStartTime ? formatTime(job.scheduledStartTime) : 'N/A';
+  const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = job.status === 0 || job.status === 4;
 
   return (
@@ -158,11 +158,11 @@ function BCViewJobModal({
           <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
-          <Typography variant={'caption'} className={'previewCaption'}>start time</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>open time</Typography>
           <Typography variant={'h6'} className={'previewTextTitle'}>{startTime}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
-          <Typography variant={'caption'} className={'previewCaption'}>end time</Typography>
+          <Typography variant={'caption'} className={'previewCaption'}>close time</Typography>
           <Typography variant={'h6'} className={'previewTextTitle'}>{endTime}</Typography>
         </Grid>
       </Grid>
@@ -212,7 +212,7 @@ function BCViewJobModal({
             <Grid container xs={12}>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{job.customer?.contactName || 'N/A'}</Typography>
+                <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name || 'N/A'}</Typography>
               </Grid>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>
