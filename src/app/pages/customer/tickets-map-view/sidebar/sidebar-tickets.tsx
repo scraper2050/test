@@ -88,6 +88,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(true);
+  const [showProgress, setShowProgress] = useState(true);
 
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
   const totalOpenTickets = tickets.length;
@@ -135,6 +136,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
     } else {
       setPage(1)
     }
+    if (totalOpenTickets === totalTicketsCount) setShowProgress(false);
   }, [tickets]);
 
   useEffect(() => {
@@ -246,7 +248,10 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
             <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
               <Typography variant="caption" component="div" color="textSecondary">Total Tickets</Typography>
               <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
-                <CircularProgress variant="determinate" value={(totalOpenTickets / totalTicketsCount) * 100} />
+                <CircularProgress
+                  variant="determinate"
+                  value={showProgress ? (totalOpenTickets / totalTicketsCount) * 100 : 100}
+                />
                 <Box
                   top={0}
                   left={0}
