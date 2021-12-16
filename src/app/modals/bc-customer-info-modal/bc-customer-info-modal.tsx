@@ -271,7 +271,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     }
   })
 
-  const updateMap2 = (): void => {
+  const updateMap = (): void => {
     const {street, city, state, zipCode} = FormikValues;
 
     let stateVal: any = '';
@@ -312,7 +312,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   useEffect(() => {
     if (timeoutID.current) {
       clearTimeout(timeoutID.current);
-      timeoutID.current = setTimeout(() => updateMap2(), 1000);
+      timeoutID.current = setTimeout(() => updateMap(), 500);
     } else {
       timeoutID.current = setTimeout(() => null, 0);
     }
@@ -410,7 +410,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <BCInput
                             name={'phone'}
                             handleChange={formikChange}
-                            // Type={"number"}
+                            type={"tel"}
                             placeholder={'Phone Number'}
                             value={FormikValues.phone}
                             dense={true}
@@ -451,10 +451,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           </InputLabel>
                           <BCInput
                             name={'unit'}
-                            onChange={(e: any) => {
-                              setFieldValue('unit', e.target.value);
-                              //updateMap(FormikValues, e.target.value);
-                            }}
+                            onChange={(e: any) => setFieldValue('unit', e.target.value)}
                             placeholder={'Unit #'}
                             value={FormikValues.unit}
                             dense={true}
@@ -471,10 +468,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           </InputLabel>
                           <BCInput
                             name={'city'}
-                            onChange={(e: any) => {
-                              setFieldValue('city', e.target.value);
-                              //updateMap(FormikValues, undefined, e.target.value);
-                            }}
+                            onChange={(e: any) => setFieldValue('city', e.target.value)}
                             placeholder={'City'}
                             value={FormikValues.city}
                             dense={true}
@@ -526,10 +520,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           </InputLabel>
                           <BCInput
                             name={'zipCode'}
-                            handleChange={(e: any) => {
-                              setFieldValue('zipCode', e.target.value);
-                              //updateMap(FormikValues, undefined, undefined, e.target.value);
-                            }}
+                            handleChange={(e: any) => setFieldValue('zipCode', e.target.value)}
                             placeholder={'Zip Code'}
                             type={'number'}
                             value={FormikValues.zipCode}
@@ -623,9 +614,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       {'Latitude'}
                     </InputLabel>
                     <BCInput
-                      onChange={(e: any) =>
-                        updateMapFromLatLng('lat', e.target.value)
-                      }
+                      onChange={(e: any) => updateMapFromLatLng('lat', e.target.value)}
                       placeholder={'Longitude'}
                       type={'number'}
                       value={positionValue.lat}
@@ -642,9 +631,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       {'Longitude'}
                     </InputLabel>
                     <BCInput
-                      onChange={(e: any) =>
-                        updateMapFromLatLng('lng', e.target.value)
-                      }
+                      onChange={(e: any) => updateMapFromLatLng('lng', e.target.value)}
                       placeholder={'Longitude'}
                       type={'number'}
                       value={positionValue.lang}
