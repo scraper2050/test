@@ -80,7 +80,7 @@ function SidebarTodayJobs({ classes, jobs, isLoading }: SidebarTodayJobsProps) {
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
   const totalItems = jobs.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
