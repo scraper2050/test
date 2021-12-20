@@ -77,7 +77,7 @@ function SidebarRoutes({ classes, routes: allRoutes, dispatchRoutes, isLoading }
   const mapStyles = useStyles();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [paginatedRoutes, setPaginatedRoutes] = useState<JobRoute[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showPagination, setShowPagination] = useState(true);

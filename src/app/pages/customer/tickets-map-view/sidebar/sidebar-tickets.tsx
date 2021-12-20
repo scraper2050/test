@@ -88,7 +88,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [showProgress, setShowProgress] = useState(true);
 
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);

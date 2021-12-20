@@ -9,6 +9,8 @@ import './bc-map-with-routes.scss';
 import {JobRoute} from "../../../actions/job-routes/job-route.types";
 import BCMapMarker from "../bc-map-marker/bc-map-marker";
 import {DEFAULT_COORD} from "../../../utils/constants";
+import {CompanyProfileStateType} from "../../../actions/user/user.types";
+import {useSelector} from "react-redux";
 
 interface BCMapWithMarkerListProps {
   classes: any,
@@ -45,6 +47,7 @@ const getColor = (str: string) => {
 function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMarkerListProps) {
   const [map, setMap] = useState<any>(null);
   const [maps, setMaps] = useState<any>(null);
+  const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const lines = useRef<any[]>([]);
 
   const routeData = routes.map((jobRoute: JobRoute, index) => {
@@ -76,8 +79,8 @@ function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMa
         longMin = Math.min(longMin, jobLong);
       })
     );
-    const centerLat = routeData.length > 0 ? (latMax + latMin) / 2 : DEFAULT_COORD.lat;
-    const centerLng = routeData.length > 0 ? (longMax + longMin) / 2 : DEFAULT_COORD.lng;
+    const centerLat = routeData.length > 0 ? (latMax + latMin) / 2 : coordinates?.lat || DEFAULT_COORD.lat;
+    const centerLng = routeData.length > 0 ? (longMax + longMin) / 2 : coordinates?.lng || DEFAULT_COORD.lng;
 
     // longitudeDelta: longMax === longMin ? 0.005 : (longMax - longMin) * 1.3,
     // latitudeDelta: latMax === latMin ? 0.004 : (latMax - latMin) * 1.3,
