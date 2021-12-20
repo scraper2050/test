@@ -154,7 +154,7 @@ function BCMapFilter({
                   <TextField
                     {...params}
                     variant="outlined"
-                    label="Customer"
+                    placeholder="Customer"
                   />
                 )}
               />
@@ -176,7 +176,7 @@ function BCMapFilter({
                     {...params}
                     name={'contact'}
                     variant="outlined"
-                    label={'Contact Name'}
+                    placeholder={'Contact Name'}
                     //type={'search'}
                   />
                 )}

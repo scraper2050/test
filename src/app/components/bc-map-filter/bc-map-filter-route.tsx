@@ -110,7 +110,7 @@ function BCMapFilterRoute({
                   return <TextField
                     {...params}
                     variant="outlined"
-                    label="Technician"
+                    placeholder="Technician Name"
                   />
                 }}
               />
@@ -134,7 +134,7 @@ function BCMapFilterRoute({
                     {...params}
                     name={'jobType'}
                     variant="outlined"
-                    label={'Job Type'}
+                    placeholder={'Job Type'}
                   />
                 )}
               />
