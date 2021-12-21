@@ -20,7 +20,11 @@ import {
 } from 'api/service-tickets.api';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
-import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
+import {
+  getCustomerDetailAction,
+  getCustomers,
+  loadingSingleCustomers
+} from 'actions/customer/customer.action';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {error} from "../../../../../../actions/snackbar/snackbar.action";
 
@@ -270,7 +274,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     if (tickets) {
       handleFilterData(tickets, location.state);
     }
-
+    dispatch(getCustomers());
     if (customerObj._id === '') {
       const obj: any = location.state;
       const customerId = obj.customerId;
