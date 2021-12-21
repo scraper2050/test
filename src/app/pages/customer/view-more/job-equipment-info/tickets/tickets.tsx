@@ -14,11 +14,15 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { modalTypes } from '../../../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getAllJobTypesAPI } from 'api/job.api';
-import { getAllServiceTicketAPI } from 'api/service-tickets.api';
+import {
+  getAllServiceTicketAPI,
+  getServiceTicketDetail
+} from 'api/service-tickets.api';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
+import {error} from "../../../../../../actions/snackbar/snackbar.action";
 
 interface LocationStateTypes {
   customerName: string;
@@ -96,7 +100,6 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
         'maxHeight': '754px',
-        'height': '100%'
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -106,7 +109,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
   };
 
   const openCreateJobModal = async (ticket: any) => {
-    const reqObj = {
+/*    const reqObj = {
       customerId: ticket.customer._id,
       locationId: ticket.jobLocation
     }
@@ -117,7 +120,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       dispatch(getJobSites(reqObj));
     } else {
       dispatch(clearJobSiteStore());
-    }
+    }*/
     dispatch(setModalDataAction({
       'data': {
         'job': {
@@ -151,7 +154,6 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     }, 200);
   };
 
-
   const handleFilterData = (jobs: any, location: LocationStateTypes) => {
     let oldJobs = jobs;
     let filteredTickets = oldJobs;
@@ -162,39 +164,24 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     setFilteredTickets(filteredTickets);
   }
 
-
-  const openDetailTicketModal = (ticket: any) => {
-
-    const reqObj = {
-      customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation
-    }
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
+  const openDetailTicketModal = async (ticket: any) => {
+    const {serviceTicket, status, message} = await getServiceTicketDetail(ticket._id);
+    if (status === 1) {
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'Service Ticket Details',
+          'removeFooter': false,
+          'job': serviceTicket,
+          'className': 'serviceTicketTitle',
+        },
+        'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
     } else {
-      dispatch(clearJobSiteStore());
+      dispatch(error(message));
     }
-    dispatch(getAllJobTypesAPI());
-    ticket.updateFlag = true;
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Service Ticket Details',
-        'removeFooter': false,
-        'ticketData': ticket,
-        'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
-        'height': '100%',
-        'detail': true,
-
-      },
-      'type': modalTypes.EDIT_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
   };
 
   const columns: any = [
