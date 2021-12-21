@@ -87,8 +87,8 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       locationId: ticket.jobLocation
     }
 
-    dispatch(loadingJobLocations());
-    dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
+    //dispatch(loadingJobLocations());
+    //dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
       dispatch(getJobSites(reqObj));
