@@ -39,7 +39,6 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const [filteredJobs, setFilterJobs] = useState<Job[] | []>([]);
 
-
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
@@ -146,8 +145,9 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
     },
     {
       Header: "Technician",
-      accessor: "technician.profile.displayName",
-      className: "font-bold",
+      accessor: getVendor,
+      id: 'technician',
+      className: classes.capitalize,
       sortable: true,
     },
     // {
@@ -158,8 +158,9 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
     // },
     {
       Header: "Type",
-      accessor: "type.title",
-      className: "font-bold",
+      accessor: getJobType,
+      id: 'job-type',
+      className: classes.capitalize,
       sortable: true,
     },
     {
@@ -172,37 +173,14 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
         );
       },
       Header: "Schedule Date",
-      id: "job-schedulee-date",
+      accessor: 'scheduleDate',
+      id: "job-schedule-date",
       sortable: true,
     },
     {
-      Cell({ row }: any) {
-        let startTime = "N/A";
-        let endTime = "N/A";
-        if (row.original.scheduledStartTime !== undefined) {
-          let formatScheduledObj = formatSchedulingTime(
-            row.original.scheduledStartTime
-          );
-          startTime = convertMilitaryTime(
-            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
-          );
-        }
-        if (row.original.scheduledEndTime !== undefined) {
-          let formatScheduledObj = formatSchedulingTime(
-            row.original.scheduledEndTime
-          );
-          endTime = convertMilitaryTime(
-            `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
-          );
-        }
-        return (
-          <div className={"flex items-center"}>
-            {`${startTime} - ${endTime}`}
-          </div>
-        );
-      },
       Header: "Time",
       id: "job-time",
+      accessor: getJobTime,
       sortable: true,
     },
     {
@@ -226,6 +204,64 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       width: 60,
     },
   ];
+
+  function getVendor (originalRow: any, rowIndex: number) {
+    const {tasks} = originalRow;
+    let value = '';
+    if (tasks) {
+      if (tasks.length === 0) return null;
+      else if (tasks.length > 1) value = 'Multiple Techs';
+      else if (tasks[0].vendor) {
+        value = tasks[0].vendor.profile
+          ? tasks[0].vendor.profile.displayName
+          : tasks[0].vendor.info.companyName;
+      } else if (tasks[0].technician) {
+        value =  tasks[0].technician.profile
+          ? tasks[0].technician.profile.displayName
+          : tasks[0].technician.info.companyName;
+      }
+    }
+    return value.toLowerCase();
+  }
+
+  function getJobType(originalRow: any, rowIndex: number) {
+    const allTypes = originalRow.tasks.reduce((acc: string[], task: any) => {
+      if (task.jobType?.title) {
+        if (acc.indexOf(task.jobType.title) === -1) acc.push(task.jobType.title);
+        return acc;
+      }
+
+      const all = task.jobTypes?.map((item: any) => item.jobType?.title);
+      all.forEach((item: string) => {
+        if (item && acc.indexOf(item) === -1) acc.push(item);
+      })
+      return acc;
+    }, []);
+
+    return allTypes.length === 1 ? allTypes[0].toLowerCase() : 'multiple jobs';
+  }
+
+  function getJobTime(originalRow: any, rowIndex: number) {
+    let startTime = 'N/A';
+    let endTime = 'N/A';
+    if (originalRow.scheduledStartTime !== undefined) {
+      const formatScheduledObj = formatSchedulingTime(
+        originalRow.scheduledStartTime
+      );
+      startTime = convertMilitaryTime(
+        `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+      );
+    }
+    if (originalRow.scheduledEndTime !== undefined) {
+      const formatScheduledObj = formatSchedulingTime(
+        originalRow.scheduledEndTime
+      );
+      endTime = convertMilitaryTime(
+        `${formatScheduledObj.hours}:${formatScheduledObj.minutes}`
+      );
+    }
+    return `${startTime} - ${endTime}`;
+  }
 
   useEffect(() => {
     if (refresh) {
