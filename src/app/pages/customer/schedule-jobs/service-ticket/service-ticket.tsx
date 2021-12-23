@@ -188,18 +188,16 @@ function ServiceTicket({ classes }: any) {
             : null
           }
           {
-            !row.original.jobCreated
-              ? row.original.status !== 2
-                ? <CSButtonSmall
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                  aria-label={'edit-ticket'}
-                  onClick={() => openCreateJobModal(row.original)}
-                >
-                  Create Job
-                </CSButtonSmall>
-                : null
+            !row.original.jobCreated && row.original.status !== 2 && row.original.customer?._id
+              ? <CSButtonSmall
+                variant="outlined"
+                color="primary"
+                size="small"
+                aria-label={'edit-ticket'}
+                onClick={() => openCreateJobModal(row.original)}
+              >
+                Create Job
+              </CSButtonSmall>
               : null
           }
         </div>;

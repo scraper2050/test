@@ -135,7 +135,7 @@ const getJobTasks = (job: any, jobTypes: any) => {
       employeeType: 0,
       contractor: null,
       employee: null,
-      jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType || task._id), jobTypes),
+      jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType?._id || task.jobType || task._id), jobTypes),
     }]
   }
 };
@@ -175,7 +175,7 @@ function BCJobModal({
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
 
-  //console.log({job})
+  console.log({job})
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;

@@ -16,7 +16,6 @@ export default function BCSent({title}:Props) {
       <CheckCircleIcon style={{color: '#50AE55', fontSize: 100}}/><br/>
       <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>{title}</span>
     </div>
-    <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
   </>
   )
 }

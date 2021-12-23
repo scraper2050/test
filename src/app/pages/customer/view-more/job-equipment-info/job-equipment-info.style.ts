@@ -14,5 +14,8 @@ export default (theme: Theme): any => ({
         'position': 'absolute',
         'right': '0',
         'zIndex': '1000'
-    }
+    },
+    capitalize: {
+      textTransform: 'capitalize'
+    },
 });

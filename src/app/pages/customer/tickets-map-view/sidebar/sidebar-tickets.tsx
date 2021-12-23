@@ -26,14 +26,6 @@ interface SidebarTicketsProps {
   totalTicketsCount: number;
 }
 
-interface FilterTickets {
-  jobId?: string | null,
-  customerNames?: any,
-  contact?: any,
-  jobStatus?: number[],
-  schedule_date: string | null,
-}
-
 const useStyles = makeStyles(theme => ({
   fab: {
     zIndex: 1101,
@@ -89,7 +81,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const [showProgress, setShowProgress] = useState(true);
+  const [isStreaming, setStreaming] = useState(true);
 
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
   const totalOpenTickets = tickets.length;
@@ -130,14 +122,14 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
   };
 
   useEffect(() => {
-    dispatch(setTicketSelected({_id: ''}));
+    if (!isStreaming) dispatch(setTicketSelected({_id: ''}));
     if (page === 1) {
       const firstPage = tickets.slice(0, PAGE_SIZE);
       setPaginatedTickets(firstPage);
     } else {
       setPage(1)
     }
-    if (totalOpenTickets === totalTicketsCount) setShowProgress(false);
+    if (totalOpenTickets === totalTicketsCount) setStreaming(false);
   }, [tickets]);
 
   useEffect(() => {
@@ -251,7 +243,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
               <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
                 <CircularProgress
                   variant="determinate"
-                  value={showProgress ? (totalOpenTickets / totalTicketsCount) * 100 : 100}
+                  value={isStreaming ? (totalOpenTickets / totalTicketsCount) * 100 : 100}
                 />
                 <Box
                   top={0}
