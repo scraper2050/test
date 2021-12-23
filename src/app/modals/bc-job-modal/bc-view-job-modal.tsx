@@ -20,6 +20,11 @@ import classNames from "classnames";
 import {getVendors} from "../../../actions/vendor/vendor.action";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import EditIcon from '@material-ui/icons/Edit';
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../constants";
 
 const initialJobState = {
   customer: {
@@ -139,6 +144,22 @@ function BCViewJobModal({
   const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = job.status === 0 || job.status === 4;
 
+  const openEditJobModal = () => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          modalTitle: 'Edit Job',
+          removeFooter: false,
+        },
+        type: modalTypes.EDIT_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
@@ -148,6 +169,7 @@ function BCViewJobModal({
             <Button size='small'
               classes={{root: classes.editButton, label: classes.editButtonText}}
               startIcon={<EditIcon />}
+              onClick={openEditJobModal}
             >Edit Job</Button><br/></>
           }
           <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
