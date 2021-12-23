@@ -15,6 +15,7 @@ import styles from './sidebar.styles';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import * as CONSTANTS from "../../../../../constants";
 import {JobRoute} from "../../../../../actions/job-routes/job-route.types";
+import BCNoResults from "../../../../components/bc-no-results";
 
 interface SidebarJobsProps {
   classes: any;
@@ -76,7 +77,7 @@ function SidebarRoutes({ classes, routes: allRoutes, dispatchRoutes, isLoading }
   const mapStyles = useStyles();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [paginatedRoutes, setPaginatedRoutes] = useState<JobRoute[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showPagination, setShowPagination] = useState(true);
@@ -233,7 +234,7 @@ function SidebarRoutes({ classes, routes: allRoutes, dispatchRoutes, isLoading }
                         </div>
                       </div>)
                     })
-                    : <h4>No available route.</h4>
+                    : <BCNoResults message={'No routes with this search criteria'} />
               }
             </div>
             {Math.ceil(totalRoutes / PAGE_SIZE) > 1 && showPagination && (

@@ -17,6 +17,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import {setTicketSelected} from "../../../../../actions/map/map.actions";
 import {RootState} from "../../../../../reducers";
 import {CircularProgress, Typography} from "@material-ui/core";
+import BCNoResults from "../../../../components/bc-no-results";
 
 interface SidebarTicketsProps {
   classes: any;
@@ -87,7 +88,8 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [showProgress, setShowProgress] = useState(true);
 
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
   const totalOpenTickets = tickets.length;
@@ -135,6 +137,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
     } else {
       setPage(1)
     }
+    if (totalOpenTickets === totalTicketsCount) setShowProgress(false);
   }, [tickets]);
 
   useEffect(() => {
@@ -228,7 +231,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
                         </div>
                       </div>
                     ))
-                    : <h4>No available ticket.</h4>
+                    : <BCNoResults message={'No tickets with this search criteria'} />
               }
             </div>
             {Math.ceil(totalOpenTickets / PAGE_SIZE) > 1 && (
@@ -246,7 +249,10 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
             <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
               <Typography variant="caption" component="div" color="textSecondary">Total Tickets</Typography>
               <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
-                <CircularProgress variant="determinate" value={(totalOpenTickets / totalTicketsCount) * 100} />
+                <CircularProgress
+                  variant="determinate"
+                  value={showProgress ? (totalOpenTickets / totalTicketsCount) * 100 : 100}
+                />
                 <Box
                   top={0}
                   left={0}

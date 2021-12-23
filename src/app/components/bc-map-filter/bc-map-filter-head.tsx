@@ -6,7 +6,6 @@ import React, {useEffect, useState} from "react";
 import {ClickAwayListener, withStyles} from "@material-ui/core";
 import styles from "./bc-map-filter.styles";
 import {makeStyles} from "@material-ui/core/styles";
-import * as CONSTANTS from "../../../constants";
 import {formatDateYMD} from "../../../helpers/format";
 import BCMapFilter from "./bc-map-filter";
 import BCMapFilterRoute from "./bc-map-filter-route";
@@ -31,6 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 
 function BCMapFilterHead({
+ theme,
  startDate = null,
  placeholder = '',
  disableDate = false,
@@ -95,12 +95,29 @@ function BCMapFilterHead({
     setShowFilterModal(!showFilterModal);
   };
 
+  const isFiltered = () => {
+    let isSet = false;
+    for (let value of Object.values(filter[0])) {
+      if (Array.isArray(value)) {
+        if (value.length > 0 && value[0] !== -1) {
+          isSet = true;
+          break;
+        }
+      } else {
+        if (value) {
+          isSet = true;
+          break;
+        }
+      }
+    }
+    return isSet;
+  }
 
   return (
     <div className="filterHeadContainer">
       <div className="filter_wrapper">
         <Button className={mapStyles.funnel} onClick={toggleFilterModal}>
-          <IconFunnel/>
+          <IconFunnel fill={isFiltered() ? theme.palette.primary.main : '#D0D3DC'}/>
         </Button>
         {
           showFilterModal

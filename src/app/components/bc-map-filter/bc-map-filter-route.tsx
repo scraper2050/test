@@ -14,8 +14,7 @@ import {
   TextField
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
-import { getContacts } from 'api/contacts.api';
-import {STATUSES} from "../../../helpers/contants";
+import SearchIcon from "@material-ui/icons/Search";
 
 function BCMapFilterRoute({
   classes,
@@ -105,13 +104,15 @@ function BCMapFilterRoute({
                 }}
                 onChange={(event: any, newValue: any) => setFieldValue('technician', newValue)}
                 value={form.values.technician}
-                renderInput={(params) => (
-                  <TextField
+                renderInput={(params) => {
+                  params.InputProps.startAdornment = <InputAdornment
+                    position="start"><SearchIcon color={'action'} style={{marginLeft: 10}}/></InputAdornment>
+                  return <TextField
                     {...params}
                     variant="outlined"
-                    label="Technician"
+                    placeholder="Technician Name"
                   />
-                )}
+                }}
               />
           </FormGroup>
             <FormGroup>
@@ -124,6 +125,7 @@ function BCMapFilterRoute({
                 value={form.values.jobType}
                 onChange={(event: any, newValue: any) => setFieldValue('jobType', newValue)}
                 classes={{
+                  root: classes.fullWidth,
                   inputRoot: menuOpen === 'contact' ? classes.menuOpen : '',
                   paper: classes.menuContainer
                 }}
@@ -132,8 +134,7 @@ function BCMapFilterRoute({
                     {...params}
                     name={'jobType'}
                     variant="outlined"
-                    label={'Job Type'}
-                    //type={'search'}
+                    placeholder={'Job Type'}
                   />
                 )}
               />

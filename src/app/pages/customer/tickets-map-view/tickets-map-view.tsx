@@ -93,7 +93,7 @@ function TicketsWithMapView({ classes }: any) {
     'customerNames': null,
     'jobId': '',
     'contact': null,
-    'jobStatus': [-1],
+    'jobStatus': [0],
   });
 
   const [filterRoutes, setFilterRoutes] = useState<FilterRoutes>({
