@@ -212,7 +212,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       <span className={'note'}>
         {notes}
       </span>
-      {isTicket &&
+      {isTicket && ticket.customer?._id &&
         <div className={'button-wrapper'}>
           <Button onClick={() => openCreateJobModal()}>Create Job</Button>
         </div>
