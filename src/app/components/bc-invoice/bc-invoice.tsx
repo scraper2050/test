@@ -262,6 +262,16 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     dispatch(getCustomerDetailAction({customerId: invoiceDetail.customer._id}));
   }
   dispatch(getAllSalesTaxAPI());*/
+  const composeAddress = () => {
+    let address = '';
+    if (invoiceDetail?.customer?.contact?.phone)  address+= invoiceDetail?.customer?.contact?.phone + '\n';
+    if (invoiceDetail?.customer?.info?.email)  address+= invoiceDetail?.customer?.info?.email + '\n';
+    if (invoiceDetail?.customer?.contact?.street)  address+= invoiceDetail?.customer?.contact?.street + '\n';
+    if (invoiceDetail?.customer?.contact?.city)  address+= invoiceDetail?.customer?.contact?.city + ',';
+    if (invoiceDetail?.customer?.contact?.state)  address+= invoiceDetail?.customer?.contact?.state;
+    if (invoiceDetail?.customer?.contact?.zipCode)  address+= invoiceDetail?.customer?.contact?.zipCode ;
+    return address;
+  }
 
   return (
     <DataContainer>
@@ -275,11 +285,8 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
               <div></div>
               <div className={invoiceStyles.companyInfo}>
                 <small>BILL TO</small>
-                <h4>{invoiceDetail?.customer?.profile?.lastName} {invoiceDetail?.customer?.profile?.firstName}</h4>
-                <span>{invoiceDetail?.customer?.contact?.phone}</span>
-                <span>{invoiceDetail?.customer?.info?.email}</span>
-                <span>{invoiceDetail?.customer?.address?.street}</span>
-                <span>{invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode}</span>
+                <h4>{invoiceDetail?.customer?.profile?.displayName}</h4>
+                <span>{composeAddress()}</span>
               </div>
             </div>
           </Grid>

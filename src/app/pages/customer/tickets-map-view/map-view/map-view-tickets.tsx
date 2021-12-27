@@ -61,6 +61,9 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
           setAllTickets(tempTokens.current);
           setFilteredTickets([...tempTokens.current]);
         }
+        if (count === total) {
+          socket.close();
+        }
       }
     });
 
