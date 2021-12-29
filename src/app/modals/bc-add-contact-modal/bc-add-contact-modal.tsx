@@ -197,8 +197,8 @@ function BCAddContactModal({
 
 
                 <Grid item className={classes.paper} sm={12}>
-                  <FormGroup>
-                    <InputLabel className={classes.label} required>
+                  <FormGroup className={'required'}>
+                    <InputLabel className={classes.label}>
                       <strong>{"Name"}</strong>
                     </InputLabel>
                     <BCTextField
@@ -206,14 +206,15 @@ function BCAddContactModal({
                       name={"name"}
                       placeholder={"Name"}
                       onChange={handleChange}
+                      required
                     />
                   </FormGroup>
                 </Grid>
 
 
                 <Grid item className={classes.paper} sm={12}>
-                  <FormGroup>
-                    <InputLabel className={classes.label} required>
+                  <FormGroup className={'required'}>
+                    <InputLabel className={classes.label}>
                       <strong>{"Email"}</strong>
                     </InputLabel>
                     <BCTextField
@@ -222,14 +223,15 @@ function BCAddContactModal({
                       placeholder={"Email"}
                       type={"email"}
                       onChange={handleChange}
+                      required
                     />
                   </FormGroup>
                 </Grid>
 
 
                 <Grid item className={classes.paper} sm={12}>
-                  <FormGroup>
-                    <InputLabel className={classes.label} required>
+                  <FormGroup className={'required'}>
+                    <InputLabel className={classes.label}>
                       <strong>{"Phone Number"}</strong>
                     </InputLabel>
                     <BCTextField
@@ -237,6 +239,7 @@ function BCAddContactModal({
                       name={"phone"}
                       placeholder={"Phone Number"}
                       onChange={handleChange}
+                      required
                     />
                   </FormGroup>
                 </Grid>

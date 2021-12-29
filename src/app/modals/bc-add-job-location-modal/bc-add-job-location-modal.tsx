@@ -269,7 +269,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           className={classes.paper}
                           item
                           sm={12}>
-                          <FormGroup>
+                          <FormGroup className={'required'}>
                             <InputLabel className={classes.label}>
                               {'Email'}
                             </InputLabel>
@@ -277,6 +277,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                               name={'contact.email'}
                               placeholder={'Email'}
                               disabled={jobLocationInfo?._id}
+                              required
                               type={'email'}
                               onChange={(e: any) => {
                                 setFieldValue('contact.email', e.target.value)
@@ -291,14 +292,15 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             className={classes.paper}
                             item
                             sm={6}>
-                            <FormGroup>
-                              <InputLabel className={classes.label} required>
+                            <FormGroup className={'required'}>
+                              <InputLabel className={classes.label}>
                                 {'Contact Name'}
                               </InputLabel>
                               <BCTextField
                                 name={'contact.name'}
                                 placeholder={'Contact Name'}
                                 disabled={jobLocationInfo?._id}
+                                required
                                 onChange={(e: any) => {
                                   setFieldValue('contact.name', e.target.value)
                                 }}
@@ -309,8 +311,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             className={classes.paper}
                             item
                             sm={6}>
-                            <FormGroup>
-                              <InputLabel className={classes.label} required>
+                            <FormGroup className={'required'}>
+                              <InputLabel className={classes.label}>
                                 {'Phone Number'}
                               </InputLabel>
                               <BCTextField
@@ -318,6 +320,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 placeholder={'Phone Number'}
                                 disabled={jobLocationInfo?._id}
                                 type={'number'}
+                                required
                                 onChange={(e: any) => {
                                   setFieldValue('contact.phone', e.target.value)
                                 }}
