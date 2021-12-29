@@ -198,7 +198,7 @@ function BCAddContactModal({
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
-                    <InputLabel className={classes.label}>
+                    <InputLabel className={classes.label} required>
                       <strong>{"Name"}</strong>
                     </InputLabel>
                     <BCTextField
@@ -213,7 +213,7 @@ function BCAddContactModal({
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
-                    <InputLabel className={classes.label}>
+                    <InputLabel className={classes.label} required>
                       <strong>{"Email"}</strong>
                     </InputLabel>
                     <BCTextField
@@ -229,7 +229,7 @@ function BCAddContactModal({
 
                 <Grid item className={classes.paper} sm={12}>
                   <FormGroup>
-                    <InputLabel className={classes.label}>
+                    <InputLabel className={classes.label} required>
                       <strong>{"Phone Number"}</strong>
                     </InputLabel>
                     <BCTextField
