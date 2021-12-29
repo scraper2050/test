@@ -292,7 +292,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             item
                             sm={6}>
                             <FormGroup>
-                              <InputLabel className={classes.label}>
+                              <InputLabel className={classes.label} required>
                                 {'Contact Name'}
                               </InputLabel>
                               <BCTextField
@@ -310,7 +310,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             item
                             sm={6}>
                             <FormGroup>
-                              <InputLabel className={classes.label}>
+                              <InputLabel className={classes.label} required>
                                 {'Phone Number'}
                               </InputLabel>
                               <BCTextField
