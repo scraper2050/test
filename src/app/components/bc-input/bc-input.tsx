@@ -43,7 +43,6 @@ function BCInput({
   if (multiline) {
     additionalProps.rows = rows;
   }
-  console.log(label)
   return (
     name === 'exp'
       ? <>
