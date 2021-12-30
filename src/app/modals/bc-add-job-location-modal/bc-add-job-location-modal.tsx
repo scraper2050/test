@@ -52,8 +52,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const location = useLocation<any>();
 
   const [positionValue, setPositionValue] = useState({
-    'long': jobLocationInfo?.location?.coordinates?.[0] ?? 0,
-    'lat': jobLocationInfo.location?.coordinates?.[1] ?? 0
+    'long': jobLocationInfo?.location?.coordinates?.[0] ?? '',
+    'lat': jobLocationInfo.location?.coordinates?.[1] ?? ''
   });
   const [nameLabelState, setNameLabelState] = useState(false);
   const [latLabelState, setLatLabelState] = useState(false);
