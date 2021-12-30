@@ -402,6 +402,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                                 variant={'outlined'}
                                 type={'number'}
                                 value={positionValue.lat}
+                                required
                               />
                               {latLabelState ? <label>Required</label> : null}
                             </FormGroup>
