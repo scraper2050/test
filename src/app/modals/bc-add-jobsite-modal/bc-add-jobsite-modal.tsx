@@ -110,12 +110,12 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     if (name === 'lat') {
       setPositionValue({
         'long': positionValue.long,
-        'lat': parseFloat(value === '' ? 0 : value)
+        'lat': value ? parseFloat(value) : value === 0 ? 0 : ''
       });
 
     } else {
       setPositionValue({
-        'long': parseFloat(value === '' ? 0 : value),
+        'long': value ? parseFloat(value) : value === 0 ? 0 : '',
         'lat': positionValue.lat
       });
     }
