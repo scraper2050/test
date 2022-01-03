@@ -256,7 +256,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           <BCTextField
                             name={'name'}
                             placeholder={'Job Location Name'}
-                            required={true}
+                            required
                             onChange={(e: any) => {
                               setFieldValue('name', e.target.value)
                             }}
@@ -291,7 +291,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             className={classes.paper}
                             item
                             sm={6}>
-                            <FormGroup>
+                            <FormGroup className={'required'}>
                               <InputLabel className={classes.label}>
                                 {'Contact Name'}
                               </InputLabel>
@@ -299,6 +299,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 name={'contact.name'}
                                 placeholder={'Contact Name'}
                                 disabled={jobLocationInfo?._id}
+                                required
                                 onChange={(e: any) => {
                                   setFieldValue('contact.name', e.target.value)
                                 }}
@@ -309,7 +310,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             className={classes.paper}
                             item
                             sm={6}>
-                            <FormGroup>
+                            <FormGroup className={'required'}>
                               <InputLabel className={classes.label}>
                                 {'Phone Number'}
                               </InputLabel>
@@ -318,6 +319,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 placeholder={'Phone Number'}
                                 disabled={jobLocationInfo?._id}
                                 type={'number'}
+                                required
                                 onChange={(e: any) => {
                                   setFieldValue('contact.phone', e.target.value)
                                 }}
