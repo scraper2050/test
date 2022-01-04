@@ -48,22 +48,19 @@ function BCMapFilterHead({
   }, [startDate])
 
   const handleButtonClickMinusDay = () => {
-    const previousDay = dateValue ? new Date(dateValue.getTime() - 24 * 60 * 60 * 1000) : new Date();
-    const formattedDate = formatDateYMD(previousDay);
-    dateChangeHandler(formattedDate);
+    const previousDay = dateValue ? new Date(dateValue.getTime() - 24 * 60 * 60 * 1000) : new Date();;
+    dateChangeHandler(previousDay);
   };
 
   const handleButtonClickPlusDay = () => {
     const nextDay =  dateValue ? new Date(dateValue.getTime() + 24 * 60 * 60 * 1000) : new Date();
-    const formattedDate = formatDateYMD(nextDay);
-    dateChangeHandler(formattedDate);
+    dateChangeHandler(nextDay);
   };
 
 
-  const dateChangeHandler = (date: string) => {
-    const dateObj = new Date(date);
-    onChangeDate(dateObj);
-    setDateValue(dateObj);
+  const dateChangeHandler = (date: Date) => {
+    onChangeDate(date);
+    setDateValue(date);
   };
 
   const handleFilter =  (f: any) => {

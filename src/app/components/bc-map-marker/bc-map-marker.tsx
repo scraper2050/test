@@ -31,7 +31,7 @@ import {openDetailTicketModal} from "../../pages/notifications/notification-clic
 import {RootState} from "../../../reducers";
 import {setTicketSelected} from "../../../actions/map/map.actions";
 import {getServiceTicketDetail} from "../../../api/service-tickets.api";
-import {formatDate} from "../../../helpers/format";
+import {formatDate, formatTime} from "../../../helpers/format";
 import {
   getJobTypesFromJob,
   getJobTypesFromTicket,
@@ -169,6 +169,19 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
 
   const scheduleDate = isTicket ? ticket.dueDate : ticket.scheduleDate;
 
+  const jobTime = () => {
+    let text = '';
+    if (ticket.scheduledStartTime) {
+      text += formatTime(ticket.scheduledStartTime);
+      if (ticket.scheduledEndTime) {
+        text += ' - ' + formatTime(ticket.scheduledEndTime);
+      }
+    } else {
+      text += ' N/A';
+    }
+    return text;
+}
+
   return <div
     className={classes.marker}
     style={{zIndex: showInfo.show ? 10 : 1}}
@@ -195,7 +208,9 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
         <CustomIcon />
         <span>{title}</span>
       </div>
-      <span className={'company'}>{ticket.customer?.profile?.displayName || 'Norton Fitness'}</span>
+      <span className={'company'}>
+        {ticket.jobLocation && ticket.jobLocation.name ? ticket.jobLocation.name : ` `}
+      </span>
       <hr />
       <div className={'date-container'}>
         <span>Description</span>
@@ -212,6 +227,9 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       <span className={'note'}>
         {notes}
       </span>
+      {!isTicket &&
+      <span className={'note'}><strong>Suggested Time: </strong>{jobTime()}</span>
+      }
       {isTicket && ticket.customer?._id &&
         <div className={'button-wrapper'}>
           <Button onClick={() => openCreateJobModal()}>Create Job</Button>
