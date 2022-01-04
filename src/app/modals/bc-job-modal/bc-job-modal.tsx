@@ -449,6 +449,8 @@ function BCJobModal({
       if (values.scheduledEndTime)
         tempData.scheduledEndTime = formatToMilitaryTime(values.scheduledEndTime);
 
+      if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
+
       const newImages = values.images.filter((image: any) => image instanceof File);
       if(newImages.length > 0)
         tempData.images = newImages;
@@ -648,6 +650,8 @@ function BCJobModal({
     setFieldValue('images', images);
   }
 
+  //const headerError = FormikErrors.scheduleDate || FormikErrors.scheduledStartTime || FormikErrors.scheduledEndTime || '';
+
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
@@ -705,6 +709,9 @@ function BCJobModal({
               errorText={FormikErrors.scheduledEndTime}
             />
           </Grid>
+{/*          {headerError &&
+          <span style={{position: 'absolute', bottom: 0, right: 50, color: '#F44336', fontSize: 12}}>{headerError}</span>
+          }*/}
         </Grid>
         <div className={'modalDataContainer'}>
           {FormikValues.tasks.map((task: any, index) =>
@@ -1099,6 +1106,7 @@ function BCJobModal({
 }
 
 const DataContainer = styled.div`
+  overflow-y: hidden;
   *:not(.MuiGrid-container) > .MuiGrid-container {
     width: 100%;
     padding: 0px 40px;
