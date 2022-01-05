@@ -25,6 +25,7 @@ import { getCustomers } from "../../../../actions/customer/customer.action";
 import {getAllJobTypesAPI} from "../../../../api/job.api";
 import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
 import {getVendors} from "../../../../actions/vendor/vendor.action";
+import {refreshJobs} from "../../../../actions/job/job.action";
 
 export  interface FilterTickets {
   jobId?: string | null,
@@ -113,6 +114,7 @@ function TicketsWithMapView({ classes }: any) {
     dispatch(getAllJobTypesAPI());
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
+    dispatch(refreshJobs(false));
   }, []);
 
   const handleTabChange = (newValue: number) => {

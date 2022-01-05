@@ -5,6 +5,7 @@ import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
 import {
   refreshServiceTickets,
+  setTicket2JobID,
   setOpenServiceTicket,
   setOpenServiceTicketLoading,
 } from 'actions/service-ticket/service-ticket.action';
@@ -175,7 +176,7 @@ function BCJobModal({
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
 
-  console.log({job})
+  //console.log({job})
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -491,6 +492,7 @@ function BCJobModal({
             await callEditTicketAPI(formatedTicketRequest);
           }*/
           dispatch(refreshServiceTickets(true));
+          dispatch(setTicket2JobID(response.job?.ticket));
           dispatch(refreshJobs(true));
           dispatch(closeModalAction());
           dispatch(setOpenServiceTicketLoading(false));

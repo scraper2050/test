@@ -8,6 +8,8 @@ import SidebarTodayJobs from '../sidebar/sidebar-today-jobs';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import {getSearchJobs} from "../../../../../api/job.api";
 import {FilterJobs} from "../tickets-map-view";
+import {useDispatch, useSelector} from "react-redux";
+import {refreshJobs} from "../../../../../actions/job/job.action";
 
 interface Props {
   classes: any;
@@ -15,8 +17,13 @@ interface Props {
 }
 
 function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const { refresh = false } = useSelector(
+    ({ jobState }: any) => ({
+      refresh: jobState.refresh,
+    }));
 
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -69,6 +76,26 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
     };
     getScheduledJobs(requestObj);
   }, [filterJobs]);
+
+  useEffect(() => {
+    const rawData = {
+      customerNames: filterJobs.customerNames?.profile?.displayName || '',
+      jobId:  filterJobs.jobId || '',
+      contactName: filterJobs.contact?.name || '',
+    }
+
+    const requestObj = {
+      ...rawData,
+      page: 1,
+      pageSize: 0,
+      todaysJobs: 'true',
+    };
+
+    if (refresh) {
+      getScheduledJobs(requestObj);
+      dispatch(refreshJobs(false));
+    }
+  }, [refresh]);
 
   return (
     <Grid container item lg={12} >

@@ -7,6 +7,8 @@ import SidebarJobs from "../sidebar/sidebar-jobs";
 import {getSearchJobs} from "../../../../../api/job.api";
 import moment from "moment";
 import {FilterJobs} from "../tickets-map-view";
+import {useDispatch, useSelector} from "react-redux";
+import {refreshJobs} from "../../../../../actions/job/job.action";
 
 interface Props {
   classes: any;
@@ -15,9 +17,14 @@ interface Props {
 }
 
 function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props) {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [allJobs, setAllJobs] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
+  const { refresh = false } = useSelector(
+    ({ jobState }: any) => ({
+      refresh: jobState.refresh,
+    }));
 
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -63,7 +70,6 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     setJobs(filterScheduledJobs(allJobs));
   }, [selectedDate])
 
-
   useEffect(() => {
     const rawData = {
       customerNames: filterJobs.customerNames?.profile?.displayName || '',
@@ -78,6 +84,24 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     };
     getScheduledJobs(requestObj, true);
   }, [filterJobs]);
+
+  useEffect(() => {
+    const rawData = {
+      customerNames: filterJobs.customerNames?.profile?.displayName || '',
+      jobId:  filterJobs.jobId || '',
+      contactName: filterJobs.contact?.name || '',
+    }
+
+    const requestObj = {
+      ...rawData,
+      page: 1,
+      pageSize: 0,
+    };
+    if (refresh) {
+      getScheduledJobs(requestObj, false);
+      dispatch(refreshJobs(false));
+    }
+  }, [refresh]);
 
 
   return (

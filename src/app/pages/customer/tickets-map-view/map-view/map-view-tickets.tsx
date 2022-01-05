@@ -14,6 +14,8 @@ import moment from "moment";
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
   const { token } = useSelector(({ auth }: any) => auth);
+  const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({ticket2Job: serviceTicket.ticket2Job}));
+
   const tempTokens = useRef<any[]>([]);
   const totalTickets = useRef<number>(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,6 +73,15 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       socket.close();
     };
   }, [token]);
+
+  useEffect(() => {
+    const tempFiltered = filteredTickets.filter((ticket: any) => ticket._id !== ticket2Job);
+    setFilteredTickets(tempFiltered);
+
+    const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
+    setAllTickets(tempAll);
+
+  }, [ticket2Job])
 
   useEffect(() => {
     setFilteredTickets(filterOpenTickets(allTickets));
