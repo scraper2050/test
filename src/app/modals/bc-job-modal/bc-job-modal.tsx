@@ -5,6 +5,7 @@ import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
 import {
   refreshServiceTickets,
+  setTicket2JobID,
   setOpenServiceTicket,
   setOpenServiceTicketLoading,
 } from 'actions/service-ticket/service-ticket.action';
@@ -490,8 +491,9 @@ function BCJobModal({
           /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
             await callEditTicketAPI(formatedTicketRequest);
           }*/
-          await dispatch(refreshServiceTickets(true));
-          await dispatch(refreshJobs(true));
+          dispatch(refreshServiceTickets(true));
+          dispatch(setTicket2JobID(response.job?.ticket));
+          dispatch(refreshJobs(true));
           dispatch(closeModalAction());
           dispatch(setOpenServiceTicketLoading(false));
 
