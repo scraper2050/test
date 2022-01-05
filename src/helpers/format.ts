@@ -2,7 +2,7 @@ import moment from 'moment';
 
 export const formatDate = (date: string): string | undefined => {
   if (typeof date !== undefined && date !== null) {
-    return moment(date).format('MM/DD/YYYY');
+    return moment.utc(date).format('MM/DD/YYYY');
   }
 };
 
@@ -21,6 +21,15 @@ export const formatDatTimell = (time: Date) => moment(time).format('ll');
 
 export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
+
+export const parseISODate = (date: string) => {
+  const offset = moment.parseZone().utcOffset();
+  const dateObj = moment(date).subtract(offset, 'minutes').toDate();
+  return dateObj;
+/*  const dateObj = new Date(date)
+  const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+  return new Date(dateObj.getTime() + userTimezoneOffset);*/
+}
 
 export const convertMilitaryTime = (time: string) => {
   let timeAr = time.match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];

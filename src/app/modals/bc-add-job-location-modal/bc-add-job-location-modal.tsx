@@ -52,8 +52,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const location = useLocation<any>();
 
   const [positionValue, setPositionValue] = useState({
-    'long': jobLocationInfo?.location?.coordinates?.[0] ?? 0,
-    'lat': jobLocationInfo.location?.coordinates?.[1] ?? 0
+    'long': jobLocationInfo?.location?.coordinates?.[0] ?? '',
+    'lat': jobLocationInfo.location?.coordinates?.[1] ?? ''
   });
   const [nameLabelState, setNameLabelState] = useState(false);
   const [latLabelState, setLatLabelState] = useState(false);
@@ -115,12 +115,12 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
     if (name === 'lat') {
       setPositionValue({
         'long': positionValue.long,
-        'lat': parseFloat(value === '' ? 0 : value)
+        'lat': value ? parseFloat(value) : value === 0 ? 0 : ''
       });
 
     } else {
       setPositionValue({
-        'long': parseFloat(value === '' ? 0 : value),
+        'long': value ? parseFloat(value) : value === 0 ? 0 : '',
         'lat': positionValue.lat
       });
     }
@@ -256,7 +256,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           <BCTextField
                             name={'name'}
                             placeholder={'Job Location Name'}
-                            required={true}
+                            required
                             onChange={(e: any) => {
                               setFieldValue('name', e.target.value)
                             }}
