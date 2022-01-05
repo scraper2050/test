@@ -490,8 +490,8 @@ function BCJobModal({
           /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
             await callEditTicketAPI(formatedTicketRequest);
           }*/
-          await dispatch(refreshServiceTickets(true));
-          await dispatch(refreshJobs(true));
+          dispatch(refreshServiceTickets(true));
+          dispatch(refreshJobs(true));
           dispatch(closeModalAction());
           dispatch(setOpenServiceTicketLoading(false));
 
