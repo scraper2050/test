@@ -36,7 +36,7 @@ import {
   convertMilitaryTime,
   formatDate,
   formatISOToDateString,
-  formatToMilitaryTime,
+  formatToMilitaryTime, parseISODate,
 } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
@@ -175,7 +175,7 @@ function BCJobModal({
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
 
-  console.log({job})
+  //console.log({job})
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -410,7 +410,7 @@ function BCJobModal({
       dueDate: jobValue.ticket.dueDate
         ? formatDate(jobValue.ticket.dueDate)
         : '',
-      scheduleDate: jobValue.scheduleDate,
+      scheduleDate: parseISODate(jobValue.scheduleDate),
       scheduledStartTime: jobValue?.scheduledStartTime
         ? formatISOToDateString(jobValue.scheduledStartTime)
         : null,
