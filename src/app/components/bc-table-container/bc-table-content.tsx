@@ -62,7 +62,6 @@ function BCTableContent({
   const locationState = location.state;
   const tableStyles = useTableStyles();
 
-
   const curTab = locationState && locationState?.curTab;
 
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
@@ -90,7 +89,7 @@ function BCTableContent({
       data,
       'initialState': {
         'sortBy': isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        'pageIndex': isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        'pageIndex': isDefault ? 0 : !onUpdatePage ? initialPageIndex : onUpdatePage.page > data.length / onUpdatePage.pageSize ? 0 : onUpdatePage.page,
         'pageSize': isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
@@ -101,7 +100,7 @@ function BCTableContent({
     useRowSelect,
     (hooks: any) => {
       hooks.allColumns.push((_columns: any) => [..._columns]);
-    }
+    },
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
