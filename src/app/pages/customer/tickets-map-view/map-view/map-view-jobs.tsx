@@ -31,7 +31,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       }
 
       if(selectedDate) {
-        filter = filter && moment(job.scheduleDate).isSame(selectedDate, 'day');
+        filter = filter && moment.utc(job.scheduleDate).isSame(selectedDate, 'day');
       }
       return filter;
     });
