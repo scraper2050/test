@@ -33,8 +33,15 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
         filter = filterJobs.jobStatus.indexOf(job.status) >= 0;
       }
 
-      if (filterJobs.customerNames && filterJobs.contact) {
-        filter = filter && (job.customerContactId === filterJobs.contact._id);
+      if (filterJobs.jobId) {
+        filter = filter && (job.jobId.indexOf(filterJobs.jobId) >= 0);
+      }
+
+      if (filterJobs.customerNames) {
+        filter = filter && (job.customer._id === filterJobs.customerNames._id);
+        if (filterJobs.contact) {
+          filter = filter && (job.customerContactId === filterJobs.contact._id);
+        }
       }
 
       if(selectedDate) {
@@ -50,7 +57,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       pageSize?: number,
       customerNames?: any,
       jobId?: string,
-    }, saveAll = false
+    }
   ) => {
     setIsLoading(true);
     const response: any = await getSearchJobs(requestObj);
@@ -58,7 +65,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     const { data } = response;
 
     if (data.status) {
-      if (saveAll) setAllJobs(data.jobs);
+      setAllJobs(data.jobs);
       setJobs(filterScheduledJobs(data.jobs));
       setIsLoading(false);
     } else {
@@ -71,25 +78,13 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
   }, [selectedDate])
 
   useEffect(() => {
-    const rawData = {
-      customerNames: filterJobs.customerNames?.profile?.displayName || '',
-      jobId:  filterJobs.jobId || '',
-      contactName: filterJobs.contact?.name || '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      page: 1,
-      pageSize: 0,
-    };
-    getScheduledJobs(requestObj, true);
-  }, [filterJobs]);
+    setJobs(filterScheduledJobs(allJobs));
+  }, [filterJobs])
 
   useEffect(() => {
     const rawData = {
-      customerNames: filterJobs.customerNames?.profile?.displayName || '',
-      jobId:  filterJobs.jobId || '',
-      contactName: filterJobs.contact?.name || '',
+      customerNames: '',
+      jobId:  '',
     }
 
     const requestObj = {
@@ -98,7 +93,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       pageSize: 0,
     };
     if (refresh) {
-      getScheduledJobs(requestObj, false);
+      getScheduledJobs(requestObj);
       dispatch(refreshJobs(false));
     }
   }, [refresh]);
