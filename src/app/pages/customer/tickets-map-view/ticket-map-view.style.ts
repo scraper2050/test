@@ -20,5 +20,17 @@ export default (theme: Theme): any => ({
     position: 'absolute',
     right: 5,
     top: 5,
+  },
+  loaderWrapper: {
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#ccc8',
+    zIndex: 2000,
   }
 });

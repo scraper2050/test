@@ -11,6 +11,7 @@ import Config from "../../../../../config";
 import {SocketMessage} from "../../../../../helpers/contants";
 import {getOpenServiceTicketsStream} from "../../../../../api/service-tickets.api";
 import moment from "moment";
+import preloader from '../../../../../assets/img/preloader/loading-icon2.gif';
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
   const { token } = useSelector(({ auth }: any) => auth);
@@ -59,12 +60,13 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         tempTokens.current.push(serviceTicket);
         if (count % 25 === 0 || count === total) {
           totalTickets.current = total;
-          setIsLoading(false);
+          //setIsLoading(false);
           setAllTickets(tempTokens.current);
           setFilteredTickets([...tempTokens.current]);
         }
         if (count === total) {
           socket.close();
+          setIsLoading(false);
         }
       }
     });
@@ -102,6 +104,11 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       </Grid>
 
       <SidebarTickets totalTicketsCount={totalTickets.current} tickets={filteredTickets} isLoading={isLoading}/>
+      {isLoading &&
+      <div className={classes.loaderWrapper}>
+        <img src={preloader}/>
+      </div>
+      }
     </Grid>
   );
 }
