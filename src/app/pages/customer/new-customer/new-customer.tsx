@@ -3,36 +3,27 @@ import BCMapWithMarker
   from '../../../components/bc-map-with-marker/bc-map-with-marker';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
 import Config from '../../../../config';
-import {modalTypes} from '../../../../constants';
 import {createCustomer} from '../../../../api/customer.api';
 import Geocode from 'react-geocode';
 import {allStates} from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
-import {
-  openModalAction,
-  setModalDataAction
-} from '../../../../actions/bc-modal/bc-modal.action';
 import {error, info} from '../../../../actions/snackbar/snackbar.action';
 import {withStyles} from '@material-ui/core/styles';
 import {
   Box,
   Button,
-  FormControl,
   FormGroup,
   Grid,
   InputLabel,
-  MenuItem,
-  Select,
   TextField
 } from '@material-ui/core';
-import {Field, Form, Formik} from 'formik';
-import React, {useEffect, useMemo, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { Form, Formik} from 'formik';
+import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
-import {loadTierListItems} from 'actions/invoicing/items/items.action';
 
 interface Props {
   classes: any;
@@ -160,7 +151,7 @@ function NewCustomerPage({classes}: Props) {
         <DataContainer id={'0'}>
           <Formik
             initialValues={initialValues}
-            onSubmit={async (values, {setSubmitting}) => {
+            onSubmit={async (values, {}) => {
               const state = values.state.id;
               values.latitude = positionValue.lat;
               values.longitude = positionValue.lang;
@@ -190,8 +181,6 @@ function NewCustomerPage({classes}: Props) {
             {({
                 handleChange,
                 values,
-                errors,
-                isSubmitting,
                 setFieldValue
               }) =>
               <Form>

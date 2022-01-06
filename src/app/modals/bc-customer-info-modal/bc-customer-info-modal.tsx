@@ -410,7 +410,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <BCInput
                             name={'phone'}
                             handleChange={formikChange}
-                            type={"tel"}
+                            type={"number"}
                             placeholder={'Phone Number'}
                             value={FormikValues.phone}
                             dense={true}
