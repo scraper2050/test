@@ -63,7 +63,6 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
     const { data } = response;
     if (data.status) {
       setAllJobs(data.jobs);
-      setJobs(filterScheduledJobs(data.jobs));
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -72,7 +71,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
 
   useEffect(() => {
     setJobs(filterScheduledJobs(allJobs));
-  }, [filterJobs]);
+  }, [filterJobs, allJobs]);
 
   useEffect(() => {
     const rawData = {

@@ -66,7 +66,6 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
 
     if (data.status) {
       setAllJobs(data.jobs);
-      setJobs(filterScheduledJobs(data.jobs));
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -75,11 +74,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
 
   useEffect(() => {
     setJobs(filterScheduledJobs(allJobs));
-  }, [selectedDate])
-
-  useEffect(() => {
-    setJobs(filterScheduledJobs(allJobs));
-  }, [filterJobs])
+  }, [allJobs, selectedDate, filterJobs])
 
   useEffect(() => {
     const rawData = {

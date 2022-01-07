@@ -23,7 +23,7 @@ interface SidebarTicketsProps {
   classes: any;
   tickets:any[];
   isLoading: boolean;
-  totalTicketsCount: number;
+  isStreaming: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -75,13 +75,12 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: SidebarTicketsProps) {
+function SidebarTickets({ classes, tickets, isLoading, isStreaming }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const [isStreaming, setStreaming] = useState(true);
 
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
   const totalOpenTickets = tickets.length;
@@ -129,7 +128,6 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
     } else {
       setPage(1)
     }
-    if (totalOpenTickets === totalTicketsCount) setStreaming(false);
   }, [tickets]);
 
   useEffect(() => {
@@ -238,7 +236,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
               />
               )}
 
-            <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
+            {/*<Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
               <Typography variant="caption" component="div" color="textSecondary">Total Tickets</Typography>
               <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
                 <CircularProgress
@@ -258,7 +256,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
                   <Typography variant="caption" component="div" color="textSecondary">{`${totalOpenTickets}`}</Typography>
                 </Box>
               </Box>
-            </Box>
+            </Box>*/}
           </Grid>
         </Grid>
       </Drawer>

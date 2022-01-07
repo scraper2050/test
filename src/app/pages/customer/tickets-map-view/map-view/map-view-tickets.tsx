@@ -20,6 +20,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const tempTokens = useRef<any[]>([]);
   const totalTickets = useRef<number>(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isStreaming, setIsStreaming] = useState(true);
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
 
@@ -60,13 +61,12 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         tempTokens.current.push(serviceTicket);
         if (count % 25 === 0 || count === total) {
           totalTickets.current = total;
-          //setIsLoading(false);
-          setAllTickets(tempTokens.current);
-          setFilteredTickets([...tempTokens.current]);
+          setIsLoading(false);
+          setAllTickets([...tempTokens.current]);
         }
         if (count === total) {
           socket.close();
-          setIsLoading(false);
+          setIsStreaming(false);
         }
       }
     });
@@ -77,17 +77,17 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }, [token]);
 
   useEffect(() => {
-    const tempFiltered = filteredTickets.filter((ticket: any) => ticket._id !== ticket2Job);
-    setFilteredTickets(tempFiltered);
+    setFilteredTickets(filterOpenTickets(allTickets));
+  }, [allTickets, selectedDate, filterTickets])
+
+  useEffect(() => {
+/*    const tempFiltered = filteredTickets.filter((ticket: any) => ticket._id !== ticket2Job);
+    setFilteredTickets(tempFiltered);*/
 
     const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
     setAllTickets(tempAll);
 
   }, [ticket2Job])
-
-  useEffect(() => {
-    setFilteredTickets(filterOpenTickets(allTickets));
-  }, [selectedDate, filterTickets])
 
   return (
     <Grid container item lg={12}>
@@ -103,11 +103,11 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         />
       </Grid>
 
-      <SidebarTickets totalTicketsCount={totalTickets.current} tickets={filteredTickets} isLoading={isLoading}/>
-      {isLoading &&
-      <div className={classes.loaderWrapper}>
-        <img src={preloader}/>
-      </div>
+      <SidebarTickets isStreaming={isStreaming} tickets={filteredTickets} isLoading={isLoading}/>
+      {isStreaming &&
+
+        <img style={{position: 'absolute', bottom: 10, right: 10}} src={preloader}/>
+
       }
     </Grid>
   );
