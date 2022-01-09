@@ -73,7 +73,6 @@ function BCServiceTicketModal({
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumbs, setThumbs] = useState<any[]>([]);
 
-
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
@@ -312,7 +311,6 @@ function BCServiceTicketModal({
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const { contacts } = useSelector((state: any) => state.contacts);
-
 
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);

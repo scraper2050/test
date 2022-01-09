@@ -18,7 +18,8 @@ const initialServiceTicket = {
     'contactName': ''
   },
   'notifications': [],
-  'selectedCustomers': []
+  'selectedCustomers': [],
+  'ticket2Job': '',
 };
 
 export default (state = initialServiceTicket, { payload, type }: ReducerParamsInterface) => {
@@ -86,6 +87,12 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
       return {
         ...state,
         'loadingObj': true
+      };
+
+    case types.SET_TICKET_2_JOB:
+      return {
+        ...state,
+        'ticket2Job': payload
       };
     default:
       return state;

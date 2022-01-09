@@ -25,6 +25,7 @@ import {
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
+import {getContacts} from "../../../api/contacts.api";
 
 const initialJobState = {
   customer: {
@@ -65,7 +66,7 @@ function BCViewJobModal({
   job = initialJobState,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  console.log(job);
+  //console.log(job);
   const calculateJobType = (task: any) => {
     let title: string[] = [];
     task.jobTypes.forEach((type: any) => title.push(type.jobType?.title))
@@ -73,6 +74,7 @@ function BCViewJobModal({
   }
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
+  const { contacts } = useSelector((state: any) => state.contacts);
   const { loading, data } = useSelector(
     ({ employeesForJob }: any) => employeesForJob
   );
@@ -81,7 +83,15 @@ function BCViewJobModal({
   );
   const employeesForJob = useMemo(() => [...data], [data]);
 
+  const customerContact = job.customerContactId?.name ||
+    contacts.find((contact :any) => contact._id === job.customerContactId)?.name;
+
   useEffect(() => {
+    const data: any = {
+      type: 'Customer',
+      referenceNumber: job.customer._id,
+    };
+    dispatch(getContacts(data));
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
   }, []);
@@ -204,7 +214,7 @@ function BCViewJobModal({
           <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
             <Grid container className={classNames(classes.task)}>
             <Grid item xs>
-              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1, borderColor: 'black'}}>{task.employeeType ? 'Employee' : 'Contractor'}</Typography>
+              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1, borderColor: 'black'}}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
             </Grid>
             <Grid item xs>
               <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
@@ -234,7 +244,7 @@ function BCViewJobModal({
             <Grid container xs={12}>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name || 'N/A'}</Typography>
+                <Typography variant={'h6'} className={'previewText'}>{customerContact || 'N/A'}</Typography>
               </Grid>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>

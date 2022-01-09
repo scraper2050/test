@@ -5,6 +5,7 @@ import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
 import {
   refreshServiceTickets,
+  setTicket2JobID,
   setOpenServiceTicket,
   setOpenServiceTicketLoading,
 } from 'actions/service-ticket/service-ticket.action';
@@ -36,7 +37,7 @@ import {
   convertMilitaryTime,
   formatDate,
   formatISOToDateString,
-  formatToMilitaryTime,
+  formatToMilitaryTime, parseISODate,
 } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
@@ -175,7 +176,7 @@ function BCJobModal({
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
 
-  console.log({job})
+  //console.log({job})
 
   const { ticket = {} } = job;
   const { customer = {} } = ticket;
@@ -410,7 +411,7 @@ function BCJobModal({
       dueDate: jobValue.ticket.dueDate
         ? formatDate(jobValue.ticket.dueDate)
         : '',
-      scheduleDate: jobValue.scheduleDate,
+      scheduleDate: parseISODate(jobValue.scheduleDate),
       scheduledStartTime: jobValue?.scheduledStartTime
         ? formatISOToDateString(jobValue.scheduledStartTime)
         : null,
@@ -448,6 +449,8 @@ function BCJobModal({
         tempData.scheduledStartTime = formatToMilitaryTime(values.scheduledStartTime);
       if (values.scheduledEndTime)
         tempData.scheduledEndTime = formatToMilitaryTime(values.scheduledEndTime);
+
+      if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
 
       const newImages = values.images.filter((image: any) => image instanceof File);
       if(newImages.length > 0)
@@ -488,8 +491,9 @@ function BCJobModal({
           /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
             await callEditTicketAPI(formatedTicketRequest);
           }*/
-          await dispatch(refreshServiceTickets(true));
-          await dispatch(refreshJobs(true));
+          dispatch(refreshServiceTickets(true));
+          dispatch(setTicket2JobID(response.job?.ticket));
+          dispatch(refreshJobs(true));
           dispatch(closeModalAction());
           dispatch(setOpenServiceTicketLoading(false));
 
@@ -648,6 +652,8 @@ function BCJobModal({
     setFieldValue('images', images);
   }
 
+  //const headerError = FormikErrors.scheduleDate || FormikErrors.scheduledStartTime || FormikErrors.scheduledEndTime || '';
+
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
@@ -705,6 +711,9 @@ function BCJobModal({
               errorText={FormikErrors.scheduledEndTime}
             />
           </Grid>
+{/*          {headerError &&
+          <span style={{position: 'absolute', bottom: 0, right: 50, color: '#F44336', fontSize: 12}}>{headerError}</span>
+          }*/}
         </Grid>
         <div className={'modalDataContainer'}>
           {FormikValues.tasks.map((task: any, index) =>
@@ -1099,6 +1108,7 @@ function BCJobModal({
 }
 
 const DataContainer = styled.div`
+  overflow-y: hidden;
   *:not(.MuiGrid-container) > .MuiGrid-container {
     width: 100%;
     padding: 0px 40px;
