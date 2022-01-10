@@ -25,6 +25,7 @@ import {
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
+import {getContacts} from "../../../api/contacts.api";
 
 const initialJobState = {
   customer: {
@@ -73,6 +74,7 @@ function BCViewJobModal({
   }
 
   const equipments = useSelector(({ inventory }: any) => inventory.data);
+  const { contacts } = useSelector((state: any) => state.contacts);
   const { loading, data } = useSelector(
     ({ employeesForJob }: any) => employeesForJob
   );
@@ -81,7 +83,15 @@ function BCViewJobModal({
   );
   const employeesForJob = useMemo(() => [...data], [data]);
 
+  const customerContact = job.customerContactId?.name ||
+    contacts.find((contact :any) => contact._id === job.customerContactId)?.name;
+
   useEffect(() => {
+    const data: any = {
+      type: 'Customer',
+      referenceNumber: job.customer._id,
+    };
+    dispatch(getContacts(data));
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
   }, []);
@@ -234,7 +244,7 @@ function BCViewJobModal({
             <Grid container xs={12}>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name || 'N/A'}</Typography>
+                <Typography variant={'h6'} className={'previewText'}>{customerContact || 'N/A'}</Typography>
               </Grid>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>

@@ -66,6 +66,13 @@ export const setSelectedCustomers = (customers: any[]) => {
   };
 };
 
+export const setTicket2JobID = (ticketID: string) => {
+  return {
+    'payload': ticketID,
+    'type': types.SET_TICKET_2_JOB
+  };
+};
+
 export const getServiceTicketDetailAction = (ticketId:string) => {
   return {
     'payload': ticketId,
