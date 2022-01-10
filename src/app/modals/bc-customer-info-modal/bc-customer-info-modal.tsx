@@ -29,7 +29,7 @@ import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   getCustomerDetailAction,
   loadingSingleCustomers,
@@ -40,10 +40,6 @@ import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-mar
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { success } from 'actions/snackbar/snackbar.action';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
-
-interface Props {
-  classes: any;
-}
 
 interface AllStateTypes {
   abbreviation: string,
@@ -246,7 +242,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     setFieldValue,
   } = useFormik({
     initialValues,
-    onSubmit: async (values, {setSubmitting}) => {
+    onSubmit: async (values) => {
       const updateCustomerrequest = {
         ...values,
         'state': ''
@@ -412,7 +408,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             name={'phone'}
                             handleChange={formikChange}
                             required
-                            type={"number"}
+                            type={"tel"}
                             placeholder={'Phone Number'}
                             value={FormikValues.phone}
                             dense={true}

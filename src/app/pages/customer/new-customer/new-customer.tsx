@@ -151,7 +151,7 @@ function NewCustomerPage({classes}: Props) {
         <DataContainer id={'0'}>
           <Formik
             initialValues={initialValues}
-            onSubmit={async (values, {}) => {
+            onSubmit={async (values) => {
               const state = values.state.id;
               values.latitude = positionValue.lat;
               values.longitude = positionValue.lang;
@@ -530,10 +530,8 @@ export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
-  padding: 30px;
+  padding: 30px 65px;
   width: 100%;
-  padding-left: 65px;
-  padding-right: 65px;
   margin: 0 auto;
 
   @media (max-width: 768px) {

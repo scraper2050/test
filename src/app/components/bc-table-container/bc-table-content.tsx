@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect} from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -21,13 +21,11 @@ import {
   useSortBy,
   useTable
 } from 'react-table';
-import {boolean} from 'yup';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../constants";
-import {Theme} from "@material-ui/core/styles";
 import scrollTop from 'utils/scroll-top';
 
-const useTableStyles = makeStyles((theme: Theme) =>
+const useTableStyles = makeStyles(() =>
   createStyles({
     // items table
     tableHeader: {
