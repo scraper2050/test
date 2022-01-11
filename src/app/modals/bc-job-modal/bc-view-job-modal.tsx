@@ -316,13 +316,11 @@ function BCViewJobModal({
           <Button
             color={'secondary'}
             onClick={() => openCancelJobModal(true)}
-            style={{}}
             variant={'contained'}
           >Cancel Job</Button>
           <Button
             color={'secondary'}
             onClick={() => openCancelJobModal(false)}
-            style={{}}
             variant={'contained'}
           >Cancel Job and Service Ticket</Button>
           <Button
@@ -351,6 +349,10 @@ const DataContainer = styled.div`
   .MuiTableCell-sizeSmall {
     padding: 0px 16px;
   }
+
+  .MuiButton-containedSecondary {
+    margin-left: 15px !important;
+}
 
 `;
 
