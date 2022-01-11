@@ -1,12 +1,12 @@
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import styles from './bc-job-modal.styles';
 import {
-  Button,
+  Button, DialogActions,
   Grid,
   Typography,
   withStyles,
 } from '@material-ui/core';
-import React, { useEffect, useMemo } from 'react';
+import React, {useEffect, useMemo} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   formatDate,
@@ -73,7 +73,7 @@ function BCViewJobModal({
     return title;
   }
 
-  const equipments = useSelector(({ inventory }: any) => inventory.data);
+  // const equipments = useSelector(({ inventory }: any) => inventory.data);
   const { contacts } = useSelector((state: any) => state.contacts);
   const { loading, data } = useSelector(
     ({ employeesForJob }: any) => employeesForJob
@@ -154,6 +154,19 @@ function BCViewJobModal({
   const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = job.status === 0 || job.status === 4;
 
+  const rescheduleJob= () => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job,
+          modalTitle: `Reschedule Job`,
+          removeFooter: false,
+        },
+        type: modalTypes.RESCEDULE_JOB_MODAL,
+      })
+    );
+  }
+
   const openEditJobModal = () => {
     dispatch(
       setModalDataAction({
@@ -168,6 +181,20 @@ function BCViewJobModal({
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
+  };
+
+  const openCancelJobModal = async (jobOnly?: boolean) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job,
+          jobOnly,
+          modalTitle: `Cancel Job`,
+          removeFooter: false,
+        },
+        type: modalTypes.CANCEL_JOB_MODAL,
+      })
+    );
   };
 
   return (
@@ -284,15 +311,31 @@ function BCViewJobModal({
             </div>
           </Grid>
         </Grid>
+        {job.status === 6 &&
+        <DialogActions>
+          <Button
+            color={'secondary'}
+            onClick={() => openCancelJobModal(true)}
+            style={{}}
+            variant={'contained'}
+          >Cancel Job</Button>
+          <Button
+            color={'secondary'}
+            onClick={() => openCancelJobModal(false)}
+            style={{}}
+            variant={'contained'}
+          >Cancel Job and Service Ticket</Button>
+          <Button
+            color={'primary'}
+            onClick={rescheduleJob}
+            variant={'contained'}
+          >Reschedule</Button>
+        </DialogActions>
+        }
       </div>
     </DataContainer>
   );
 }
-
-const Label = styled.div`
-  color: red;
-  font-size: 15px;
-`;
 
 const DataContainer = styled.div`
   margin: auto 0;
@@ -309,33 +352,6 @@ const DataContainer = styled.div`
     padding: 0px 16px;
   }
 
-`;
-
-const DialogContainer = styled.div`
-   overflow-y: auto;
-   max-height: 75vh;
-
-   ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-
-  }
-
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: #BDBDBD;
-    border-radius: 4px;
-    border: solid 3px transparent;
-  }
-
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
 `;
 
 export default withStyles(styles, { withTheme: true })(BCViewJobModal);

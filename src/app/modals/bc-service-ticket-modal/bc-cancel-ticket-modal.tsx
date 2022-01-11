@@ -1,25 +1,19 @@
 import * as CONSTANTS from "../../../constants";
-import BCTextField from "../../components/bc-text-field/bc-text-field";
 import styles from './bc-service-ticket-modal.styles';
 import {
   DialogActions,
   Fab,
   Grid,
-  InputLabel,
   withStyles,
-  FormGroup,
   Typography,
 } from '@material-ui/core';
-import { Form, Formik } from "formik";
-import React, { useState } from 'react';
+import React from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
-import { callUpdateJobAPI } from "api/job.api";
 import { callEditServiceTicket } from "api/service-tickets.api";
 import { modalTypes } from "../../../constants";
 import { refreshServiceTickets, } from 'actions/service-ticket/service-ticket.action';
-import { refreshJobs } from 'actions/job/job.action';
 import { success, error } from 'actions/snackbar/snackbar.action';
 
 function BCCancelTicketModal({
