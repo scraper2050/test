@@ -68,5 +68,6 @@ export const modalTypes = {
   'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
   'PAYMENT_RECORD_MODAL': 'payment_record_modal',
   'PAYMENT_HISTORY_MODAL': 'payment_history_modal',
-  'EDIT_TIERS_MODAL': 'edit-tiers-modal'
+  'EDIT_TIERS_MODAL': 'edit-tiers-modal',
+  'RESCEDULE_JOB_MODAL': 'reschedule_job_modal',
 };

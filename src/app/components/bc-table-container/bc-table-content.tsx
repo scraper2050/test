@@ -1,7 +1,7 @@
 import BCTablePagination from './bc-table-pagination';
 import MaUTable from '@material-ui/core/Table';
 import Paper from '@material-ui/core/Paper';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect} from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -10,18 +10,22 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import { useHistory, useLocation } from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './bc-table.styles';
-import { createStyles, makeStyles, withStyles } from "@material-ui/core";
-import { useGlobalFilter, usePagination, useRowSelect, useSortBy, useTable } from 'react-table';
-import { boolean } from 'yup';
+import {createStyles, makeStyles, withStyles} from "@material-ui/core";
+import {
+  useGlobalFilter,
+  usePagination,
+  useRowSelect,
+  useSortBy,
+  useTable
+} from 'react-table';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../constants";
-import { Theme } from "@material-ui/core/styles";
 import scrollTop from 'utils/scroll-top';
 
-const useTableStyles = makeStyles((theme: Theme) =>
+const useTableStyles = makeStyles(() =>
   createStyles({
     // items table
     tableHeader: {
@@ -38,30 +42,30 @@ const useTableStyles = makeStyles((theme: Theme) =>
         cursor: 'pointer'
       }
     },
-/*    tableCell: {
-      lineHeight: '30px',
-    }*/
+    /*    tableCell: {
+          lineHeight: '30px',
+        }*/
   }),
 );
 
 function BCTableContent({
-  noHeader,
-  className,
-  stickyHeader,
-  defaultPageSize,
-  isDefault,
-  columns,
-  data,
-  onRowClick,
-  pagination = true,
-  invoiceTable = false,
-  setPage,
-  cellSize }: any) {
+                          noHeader,
+                          className,
+                          stickyHeader,
+                          defaultPageSize,
+                          isDefault,
+                          columns,
+                          data,
+                          onRowClick,
+                          pagination = true,
+                          invoiceTable = false,
+                          setPage,
+                          cellSize
+                        }: any) {
   const location = useLocation<any>();
   const history = useHistory();
   const locationState = location.state;
   const tableStyles = useTableStyles();
-
 
   const curTab = locationState && locationState?.curTab;
 
@@ -82,7 +86,7 @@ function BCTableContent({
     page,
     gotoPage,
     setPageSize,
-    'state': { pageIndex, pageSize, sortBy }
+    'state': {pageIndex, pageSize, sortBy}
   }: any = useTable(
     {
       // 'autoResetHiddenColumns': true,
@@ -90,7 +94,7 @@ function BCTableContent({
       data,
       'initialState': {
         'sortBy': isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        'pageIndex': isDefault ? 0 : onUpdatePage ? onUpdatePage.page : initialPageIndex,
+        'pageIndex': isDefault ? 0 : !onUpdatePage ? initialPageIndex : onUpdatePage.page > data.length / onUpdatePage.pageSize ? 0 : onUpdatePage.page,
         'pageSize': isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
       'getSubRows': (row: any) => row && row.subRows || []
@@ -101,7 +105,7 @@ function BCTableContent({
     useRowSelect,
     (hooks: any) => {
       hooks.allColumns.push((_columns: any) => [..._columns]);
-    }
+    },
   );
 
   const handleChangePage = (event: any, newPage: any): any => {
@@ -146,9 +150,9 @@ function BCTableContent({
 
   const handleChangeRowsPerPage = (event: any) => {
     const delay = 100;
-    setTimeout(function() {
-        scrollTop();
-      }, delay);
+    setTimeout(function () {
+      scrollTop();
+    }, delay);
 
     if (setPage !== undefined) {
       setPage({
@@ -246,7 +250,7 @@ function BCTableContent({
 
           history.replace({
             ...history.location,
-            'state': { ...tempLocationState }
+            'state': {...tempLocationState}
           });
         }
       }, 200);
@@ -270,7 +274,7 @@ function BCTableContent({
     },
     'table': {
       'width': '95%',
-      'overflow':'hidden',
+      'overflow': 'hidden',
     }
   });
 
@@ -288,7 +292,8 @@ function BCTableContent({
         size="small"
         stickyHeader={stickyHeader}
         {...getTableProps()}>
-        <TableHead style={{ 'display': noHeader ? 'none' : 'table-header-group' }}>
+        <TableHead
+          style={{'display': noHeader ? 'none' : 'table-header-group'}}>
           {headerGroups.map((headerGroup: any, gindex: number) =>
             <TableRow
               key={`table-${gindex}`}
@@ -302,10 +307,10 @@ function BCTableContent({
                   key={`table-cell-${hindex}`}
 
                   {...(!column.sortable
-                    ? column.getHeaderProps()
-                    : column.getHeaderProps(
-                      // HandleSorting(column)
-                      column.getSortByToggleProps())
+                      ? column.getHeaderProps()
+                      : column.getHeaderProps(
+                        // HandleSorting(column)
+                        column.getSortByToggleProps())
                   )}>
                   {column.render('Header')}
                   {column.sortable
@@ -335,7 +340,7 @@ function BCTableContent({
                 {row.cells.map((cell: any, cindex: number) => {
                   return (
                     <TableCell
-                      classes={{ 'root': cellSize ? tableClass.cellMd : '' }}
+                      classes={{'root': cellSize ? tableClass.cellMd : ''}}
                       key={`table-cell-${cindex}`}
                       {...cell.getCellProps()}
                       className={clsx(cell.column.className, `${cell.column.borderRight
@@ -376,7 +381,7 @@ function BCTableContent({
                     }
                   ]}
                   SelectProps={{
-                    'inputProps': { 'aria-label': 'rows per page' },
+                    'inputProps': {'aria-label': 'rows per page'},
                     'native': false
                   }}
                 />
@@ -385,7 +390,7 @@ function BCTableContent({
             : null
         }
       </MaUTable>
-    </TableContainer >
+    </TableContainer>
   );
 }
 
@@ -397,5 +402,5 @@ const StyledPaperContainer = styled(Paper)`
 
 export default withStyles(
   styles,
-  { 'withTheme': true }
+  {'withTheme': true}
 )(BCTableContent);
