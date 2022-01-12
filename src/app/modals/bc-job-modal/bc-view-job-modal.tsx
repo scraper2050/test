@@ -6,7 +6,7 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   formatDate,
@@ -21,11 +21,15 @@ import {getVendors} from "../../../actions/vendor/vendor.action";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import EditIcon from '@material-ui/icons/Edit';
 import {
+  closeModalAction,
   openModalAction,
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
 import {getContacts} from "../../../api/contacts.api";
+import {callUpdateJobAPI} from "../../../api/job.api";
+import {refreshJobs} from "../../../actions/job/job.action";
+import {error, success} from "../../../actions/snackbar/snackbar.action";
 
 const initialJobState = {
   customer: {
@@ -82,6 +86,7 @@ function BCViewJobModal({
     vendors.data.filter((vendor: any) => vendor.status <= 1)
   );
   const employeesForJob = useMemo(() => [...data], [data]);
+  const [isSubmitting, SetIsSubmitting] = useState(false);
 
   const customerContact = job.customerContactId?.name ||
     contacts.find((contact :any) => contact._id === job.customerContactId)?.name;
@@ -152,7 +157,7 @@ function BCViewJobModal({
   const scheduleDate = job.scheduleDate;
   const startTime = job.scheduledStartTime ? formatTime(job.scheduledStartTime) : 'N/A';
   const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
-  const canEdit = job.status === 0 || job.status === 4;
+  const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
 
   const rescheduleJob= () => {
     dispatch(
@@ -196,6 +201,32 @@ function BCViewJobModal({
       })
     );
   };
+
+  const completeJob= () => {
+    SetIsSubmitting(true);
+    const data = {jobId: job._id, status: 2};
+    callUpdateJobAPI(data).then((response: any) => {
+      if (response.status !== 0) {
+        dispatch(refreshJobs(true));
+        dispatch(success(`Job rescheduled successfully!`));
+        dispatch(closeModalAction());
+        setTimeout(() => {
+          dispatch(
+            setModalDataAction({
+              data: {},
+              type: '',
+            })
+          );
+        }, 200);
+      } else {
+        dispatch(error(response.message));
+        SetIsSubmitting(false);
+      }
+    }).catch(e => {
+      dispatch(error(e.message));
+      SetIsSubmitting(false);
+    })
+  }
 
   return (
     <DataContainer className={'new-modal-design'}>
@@ -314,20 +345,29 @@ function BCViewJobModal({
         {job.status === 6 &&
         <DialogActions>
           <Button
+            disabled={isSubmitting}
             color={'secondary'}
             onClick={() => openCancelJobModal(true)}
             variant={'contained'}
           >Cancel Job</Button>
           <Button
+            disabled={isSubmitting}
             color={'secondary'}
             onClick={() => openCancelJobModal(false)}
             variant={'contained'}
           >Cancel Job and Service Ticket</Button>
           <Button
+            disabled={isSubmitting}
             color={'primary'}
-            onClick={rescheduleJob}
+            onClick={completeJob}
             variant={'contained'}
-          >Reschedule</Button>
+          >Complete</Button>
+          {/*<Button
+            disabled={isSubmitting}
+            color={'primary'}
+            onClick={completeJob}
+            variant={'contained'}
+          >Reschedule</Button>*/}
         </DialogActions>
         }
       </div>
