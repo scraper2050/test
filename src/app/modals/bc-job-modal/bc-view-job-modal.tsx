@@ -208,7 +208,7 @@ function BCViewJobModal({
     callUpdateJobAPI(data).then((response: any) => {
       if (response.status !== 0) {
         dispatch(refreshJobs(true));
-        dispatch(success(`Job rescheduled successfully!`));
+        dispatch(success(`Job completed successfully!`));
         dispatch(closeModalAction());
         setTimeout(() => {
           dispatch(
