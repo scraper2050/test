@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import MaskedInput from 'react-text-mask';
 
 interface Props {
   classes: any;
@@ -263,11 +264,14 @@ function NewCustomerPage({classes}: Props) {
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
-                          <BCTextField
+                          <MaskedInput
+                            className={'masked-input masked-input-phone'}
                             name={'phone'}
+                            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
                             onChange={handleChange}
                             placeholder={'Phone Number'}
-                            type={'number'}
+                            type={'text'}
+                            showMask
                           />
                         </FormGroup>
                       </Grid>
