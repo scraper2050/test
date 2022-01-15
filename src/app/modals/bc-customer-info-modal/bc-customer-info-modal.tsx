@@ -40,6 +40,7 @@ import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-mar
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { success } from 'actions/snackbar/snackbar.action';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
+import MaskedInput from "react-text-mask";
 
 interface AllStateTypes {
   abbreviation: string,
@@ -104,7 +105,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         customerInfo.customerAddress &&
         customerInfo.customerAddress.state
           ? allStates.findIndex(x => x.name === customerInfo.customerAddress.state)
-          : 0
+          : -1
     },
     'unit':
       customerInfo?.customerAddress?.unit
@@ -404,14 +405,15 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
-                          <BCInput
+                          <MaskedInput
+                            className={'masked-input masked-input-phone'}
                             name={'phone'}
-                            handleChange={formikChange}
+                            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+                            onChange={formikChange}
                             required
-                            type={"tel"}
-                            placeholder={'Phone Number'}
                             value={FormikValues.phone}
-                            dense={true}
+                            placeholder={'Phone Number'}
+                            type={'text'}
                           />
                         </FormGroup>
                       </Grid>
