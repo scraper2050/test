@@ -680,6 +680,7 @@ function BCJobModal({
               minDateMessage={form.errors.scheduleDate}
               value={FormikValues.scheduleDate}
               errorText={FormikErrors.scheduleDate}
+              required={true}
             />
           </Grid>
           <Grid item xs={2}>
