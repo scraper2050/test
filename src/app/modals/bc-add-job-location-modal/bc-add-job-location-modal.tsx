@@ -103,11 +103,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
           'long': lng,
           'lat': lat
         });
-      },
-      (error: any) => {
-        console.error(error);
-      }
-    );
+      });
   };
 
   const updateMapFromLatLng = (name: string, value: any): void => {
