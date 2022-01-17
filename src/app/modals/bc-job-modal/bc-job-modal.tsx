@@ -681,6 +681,7 @@ function BCJobModal({
               value={FormikValues.scheduleDate}
               errorText={FormikErrors.scheduleDate}
               required={true}
+              showRequired={true}
             />
           </Grid>
           <Grid item xs={2}>
