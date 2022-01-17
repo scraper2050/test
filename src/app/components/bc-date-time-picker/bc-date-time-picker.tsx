@@ -42,13 +42,14 @@ function BCDateTimePicker({
   minDateMessage = 'Cannot select a date that has already passed',
   TextField,
   errorText = '',
+  showRequired = false
 }: any) {
   const classes = useStyles();
   return (
     <FormControl className={classes.fullWidth}>
       <Typography className={className} gutterBottom variant={'subtitle1'}>
         <strong>{`${label}`}</strong>
-        {required ? <sup style={{ color: '#C00707' }}>{'*'}</sup> : null}
+        {required && !showRequired ? <sup style={{ color: '#C00707' }}>{'*'}</sup> : null}
       </Typography>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         {pickerType === 'date' ? (
