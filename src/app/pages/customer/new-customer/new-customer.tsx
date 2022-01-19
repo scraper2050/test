@@ -123,6 +123,24 @@ function NewCustomerPage({classes}: Props) {
     }
   };
 
+  const getMaskString = (str: string): string => {
+    debugger
+    const x = str
+      .replace(
+        /\D/gu,
+        ''
+      )
+      .match(/(\d{0,3})(\d{0,3})(\d{0,4})/u);
+    if (!x) {
+      return '';
+    }
+    return !x[2]
+      ? x[1]
+      : `(${x[1]}) ${x[2]}${x[3]
+        ? `-${x[3]}`
+        : ''}`;
+  };
+
   const handleCancelForm = (setFieldValue: any) => {
     setFieldValue('name', '');
     setFieldValue('email', '');
@@ -279,14 +297,14 @@ function NewCustomerPage({classes}: Props) {
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
-                          <MaskedInput
-                            className={'masked-input masked-input-phone'}
+                          <BCTextField
                             name={'phone'}
-                            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                            onChange={handleChange}
+                            onChange={(event: any) => {
+                              event.target.value = getMaskString(event.target.value);
+                              handleChange(event);
+                            }}
                             placeholder={'Phone Number'}
                             type={'text'}
-                            showMask
                           />
                         </FormGroup>
                       </Grid>
