@@ -466,7 +466,6 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           <p>Please pay within 15 days.</p>
         </div>
         <Divider/>
-        <h3>idiservice.net</h3>
       </div>
     </DataContainer>
   )
