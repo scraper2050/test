@@ -153,6 +153,21 @@ function NewCustomerPage({classes}: Props) {
           <Formik
             initialValues={initialValues}
             onSubmit={async (values) => {
+              const val = values.phone;
+              let count = 0;
+              for (let i = 0; i < val.length; i++)
+                if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
+                  count++
+              const isValid = (count === 0 || count === 10) ? true : false;
+
+              if(!isValid) {
+                dispatch(error('Please enter a valid phone number.'));
+                return;
+              }
+
+              if(count === 0) {
+                values.phone = '';
+              }
               const state = values.state.id;
               values.latitude = positionValue.lat;
               values.longitude = positionValue.lang;
