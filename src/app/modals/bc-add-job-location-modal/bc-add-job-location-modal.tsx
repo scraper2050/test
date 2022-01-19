@@ -94,7 +94,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
     }
 
     let fullAddr = '';
-    fullAddr = fullAddr.concat(street ? street : values.address.street, ' ', city ? city : values.address.city, ' ', stateVal, ' ', zipCode ? zipCode : values.address.zipcode, ' ', 'USA');
+    fullAddr = fullAddr.concat(street ? street : (values.address.street || ''), ' ', city ? city : (values.address.city || ''), ' ', stateVal, ' ', zipCode ? zipCode : (values.address.zipcode || ''), ' ', 'USA');
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
@@ -103,6 +103,9 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
           'long': lng,
           'lat': lat
         });
+      },
+      (error) => {
+        console.error(error);
       });
   };
 
