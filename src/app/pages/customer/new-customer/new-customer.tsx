@@ -124,7 +124,6 @@ function NewCustomerPage({classes}: Props) {
   };
 
   const getMaskString = (str: string): string => {
-    debugger
     const x = str
       .replace(
         /\D/gu,
@@ -299,7 +298,7 @@ function NewCustomerPage({classes}: Props) {
                           </InputLabel>
                           <BCTextField
                             name={'phone'}
-                            onChange={(event: any) => {
+                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
                               event.target.value = getMaskString(event.target.value);
                               handleChange(event);
                             }}
