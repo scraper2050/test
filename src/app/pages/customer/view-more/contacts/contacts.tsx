@@ -77,7 +77,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
             color={'secondary'}
             onClick={() => openDeleteContactModal(row)}
             variant={'contained'}>
-            {'Delete'}
+            {'Remove'}
           </CSButtonSmall>
         </div>
       },
