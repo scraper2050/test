@@ -158,7 +158,7 @@ function NewCustomerPage({classes}: Props) {
               for (let i = 0; i < val.length; i++)
                 if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
                   count++
-              let isValid = (count === 0 || count === 10) ? true : false;
+              const isValid = (count === 0 || count === 10) ? true : false;
 
               if(!isValid) {
                 dispatch(error('Please enter a valid phone number.'));
