@@ -38,9 +38,8 @@ import {
 import '../../../scss/index.scss';
 import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-marker';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { success } from 'actions/snackbar/snackbar.action';
+import {error, success} from 'actions/snackbar/snackbar.action';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
-import MaskedInput from "react-text-mask";
 
 interface AllStateTypes {
   abbreviation: string,
@@ -244,6 +243,22 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   } = useFormik({
     initialValues,
     onSubmit: async (values) => {
+      const val = values?.phone;
+      let count = 0;
+      for (let i = 0; i < val.length; i++)
+        if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
+          count++
+      const isValid = (count === 0 || count === 10) ? true : false;
+
+      if(!isValid) {
+        dispatch(error('Please enter a valid phone number.'));
+        return;
+      }
+
+      if(count === 0) {
+        values.phone = '';
+      }
+
       const updateCustomerrequest = {
         ...values,
         'state': ''
@@ -316,6 +331,23 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
 
   }, [FormikValues.street, FormikValues.city, FormikValues.state, FormikValues.zipCode])
 
+
+  const getMaskString = (str: string): string => {
+    const x = str
+      .replace(
+        /\D/gu,
+        ''
+      )
+      .match(/(\d{0,3})(\d{0,3})(\d{0,4})/u);
+    if (!x) {
+      return '';
+    }
+    return !x[2]
+      ? x[1]
+      : `(${x[1]}) ${x[2]}${x[3]
+        ? `-${x[3]}`
+        : ''}`;
+  };
 
   return (
     <MainContainer>
@@ -405,15 +437,17 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
-                          <MaskedInput
-                            className={'masked-input masked-input-phone'}
+                          <BCInput
                             name={'phone'}
-                            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-                            onChange={formikChange}
+                            handleChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+                              event.target.value = getMaskString(event.target.value);
+                              formikChange(event);
+                            }}
                             required
-                            value={FormikValues.phone}
+                            type={"text"}
                             placeholder={'Phone Number'}
-                            type={'text'}
+                            value={getMaskString(FormikValues.phone)}
+                            dense={true}
                           />
                         </FormGroup>
                       </Grid>
