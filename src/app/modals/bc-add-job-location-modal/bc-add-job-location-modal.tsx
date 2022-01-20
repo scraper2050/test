@@ -159,6 +159,13 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
       setLongLabelState(false);
 
     }
+
+    const parsedContact:{ phone: string } = JSON.parse(requestObj.contact)
+    if (parsedContact.phone && parsedContact.phone.length !== 10) {
+      dispatch(error('Please enter a valid phone number.'))
+      validateFlag = false;
+    }
+
     return validateFlag;
   }
 
@@ -236,6 +243,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                         setSubmitting(false);
                       }))
                   }
+                } else {
+                  setSubmitting(false);
                 }
               }, 400)}
               validateOnChange>
@@ -316,9 +325,9 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 name={'contact.phone'}
                                 placeholder={'Phone Number'}
                                 disabled={jobLocationInfo?._id}
-                                type={'number'}
+                                type={'tel'}
                                 onChange={(e: any) => {
-                                  setFieldValue('contact.phone', e.target.value)
+                                  setFieldValue('contact.phone', e.target.value.replace(/[^0-9]/g,''))
                                 }}
                               />
                             </FormGroup>
