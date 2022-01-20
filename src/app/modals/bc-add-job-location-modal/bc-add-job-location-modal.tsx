@@ -160,7 +160,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
 
     }
 
-    const parsedContact:any = JSON.parse(requestObj.contact)
+    const parsedContact:{ phone: string } = JSON.parse(requestObj.contact)
     if (parsedContact.phone && parsedContact.phone.length !== 10) {
       dispatch(error('Please enter a valid phone number.'))
       validateFlag = false;
