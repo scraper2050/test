@@ -23,13 +23,11 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   callCreateJobAPI,
-  callEditJobAPI,
+  callEditJobAPI, callUpdateJobAPI,
   getAllJobTypesAPI,
 } from 'api/job.api';
-import { callEditTicketAPI } from 'api/service-tickets.api';
 import {
   closeModalAction,
-  openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,7 +35,7 @@ import {
   convertMilitaryTime,
   formatDate,
   formatISOToDateString,
-  formatToMilitaryTime,
+  formatToMilitaryTime, parseISODate,
 } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
@@ -411,7 +409,7 @@ function BCJobModal({
       dueDate: jobValue.ticket.dueDate
         ? formatDate(jobValue.ticket.dueDate)
         : '',
-      scheduleDate: jobValue.scheduleDate,
+      scheduleDate: parseISODate(jobValue.scheduleDate),
       scheduledStartTime: jobValue?.scheduledStartTime
         ? formatISOToDateString(jobValue.scheduledStartTime)
         : null,
@@ -469,8 +467,13 @@ function BCJobModal({
       const requestObj = formatRequestObj(tempData)
       //console.log({requestObj,}, JSON.stringify(tasks));
 
-      const editJob = (tempData: any) => {
+      const editJob = async(tempData: any) => {
         tempData.jobId = job._id;
+        // if incomplete make pending
+        if (job.status === 6) {
+          const data = {jobId: job._id, status: 0};
+          await callUpdateJobAPI(data)
+        }
         return callEditJobAPI(tempData);
       };
 
@@ -675,6 +678,8 @@ function BCJobModal({
               minDateMessage={form.errors.scheduleDate}
               value={FormikValues.scheduleDate}
               errorText={FormikErrors.scheduleDate}
+              required={true}
+              showRequired={true}
             />
           </Grid>
           <Grid item xs={2}>

@@ -42,6 +42,7 @@ import BcPaymentHistoryModal from "./bc-payment-record-modal/bc-payment-history-
 import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
 import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update-payment-terms-modal";
 import BCQbDisconnectModal from "./bc-integration-modal/bc-disconnect-modal";
+import BCRescheduleJobModal from "./bc-job-modal/bc-reschedule-job-modal";
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -170,6 +171,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCDeleteJobModal props={data} />);
+        break;
+      case modalTypes.RESCEDULE_JOB_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCRescheduleJobModal props={data} />);
         break;
       case modalTypes.ADD_VENDOR_MODAL:
         setModalOptions({

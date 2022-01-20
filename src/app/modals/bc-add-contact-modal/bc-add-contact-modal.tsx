@@ -197,7 +197,7 @@ function BCAddContactModal({
 
 
                 <Grid item className={classes.paper} sm={12}>
-                  <FormGroup>
+                  <FormGroup className={'required'}>
                     <InputLabel className={classes.label}>
                       <strong>{"Name"}</strong>
                     </InputLabel>
@@ -206,6 +206,7 @@ function BCAddContactModal({
                       name={"name"}
                       placeholder={"Name"}
                       onChange={handleChange}
+                      required
                     />
                   </FormGroup>
                 </Grid>
@@ -283,6 +284,7 @@ const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
+  padding: 16px;
   background-color: ${CONSTANTS.PRIMARY_WHITE};
 
   .MuiFormLabel-root {

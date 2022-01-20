@@ -1,37 +1,30 @@
 import * as CONSTANTS from '../../../../constants';
-import BCMapWithMarker from '../../../components/bc-map-with-marker/bc-map-with-marker';
+import BCMapWithMarker
+  from '../../../components/bc-map-with-marker/bc-map-with-marker';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
 import Config from '../../../../config';
-import { modalTypes } from '../../../../constants';
-import { createCustomer } from '../../../../api/customer.api';
+import {createCustomer} from '../../../../api/customer.api';
 import Geocode from 'react-geocode';
-import { allStates } from 'utils/constants';
+import {allStates} from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
-import {
-  openModalAction,
-  setModalDataAction
-} from '../../../../actions/bc-modal/bc-modal.action';
-import { error, info } from '../../../../actions/snackbar/snackbar.action';
-import { withStyles } from '@material-ui/core/styles';
+import {error, info} from '../../../../actions/snackbar/snackbar.action';
+import {withStyles} from '@material-ui/core/styles';
 import {
   Box,
   Button,
-  FormControl,
   FormGroup,
   Grid,
   InputLabel,
-  MenuItem,
-  Select,
   TextField
 } from '@material-ui/core';
-import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { loadTierListItems } from 'actions/invoicing/items/items.action';
+import { Form, Formik} from 'formik';
+import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {useHistory} from 'react-router-dom';
+import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import MaskedInput from 'react-text-mask';
 
 interface Props {
   classes: any;
@@ -42,7 +35,7 @@ interface AllStateTypes {
   name: string,
 }
 
-function NewCustomerPage({ classes }: Props) {
+function NewCustomerPage({classes}: Props) {
   const initialValues = {
     'city': '',
     'name': '',
@@ -52,7 +45,7 @@ function NewCustomerPage({ classes }: Props) {
     'longitude': 0.0,
     'phone': '',
     'state': {
-      'id': 0
+      'id': -1
     },
     'street': '',
     'zipCode': '',
@@ -102,7 +95,7 @@ function NewCustomerPage({ classes }: Props) {
       (response: {
         results: { geometry: { location: { lat: any; lng: any } } }[];
       }) => {
-        const { lat, lng } = response.results[0].geometry.location;
+        const {lat, lng} = response.results[0].geometry.location;
         setPositionValue({
           'lang': lng,
           'lat': lat
@@ -130,6 +123,23 @@ function NewCustomerPage({ classes }: Props) {
     }
   };
 
+  const getMaskString = (str: string): string => {
+    const x = str
+      .replace(
+        /\D/gu,
+        ''
+      )
+      .match(/(\d{0,3})(\d{0,3})(\d{0,4})/u);
+    if (!x) {
+      return '';
+    }
+    return !x[2]
+      ? x[1]
+      : `(${x[1]}) ${x[2]}${x[3]
+        ? `-${x[3]}`
+        : ''}`;
+  };
+
   const handleCancelForm = (setFieldValue: any) => {
     setFieldValue('name', '');
     setFieldValue('email', '');
@@ -137,7 +147,7 @@ function NewCustomerPage({ classes }: Props) {
     setFieldValue('street', '');
     setFieldValue('city', '');
     setFieldValue('phone', '');
-    setFieldValue('state', 0);
+    setFieldValue('state', -1);
     setFieldValue('zipCode', '');
     setFieldValue('vendorId', '');
     setPositionValue({
@@ -159,16 +169,34 @@ function NewCustomerPage({ classes }: Props) {
         <DataContainer id={'0'}>
           <Formik
             initialValues={initialValues}
-            onSubmit={async (values, { setSubmitting }) => {
+            onSubmit={async (values) => {
+              const val = values.phone;
+              let count = 0;
+              for (let i = 0; i < val.length; i++)
+                if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
+                  count++
+              const isValid = (count === 0 || count === 10) ? true : false;
+
+              if(!isValid) {
+                dispatch(error('Please enter a valid phone number.'));
+                return;
+              }
+
+              if(count === 0) {
+                values.phone = '';
+              }
               const state = values.state.id;
               values.latitude = positionValue.lat;
               values.longitude = positionValue.lang;
-              const reqObj = { ...values,
-                'state': allStates[state].name };
+
+              const reqObj = {
+                ...values,
+                'state': allStates[state] ? allStates[state].name : ""
+              };
               reqObj.state =
-                   allStates[state].name === 'none'
-                     ? ''
-                     : allStates[state].name;
+                !allStates[state]
+                  ? ''
+                  : allStates[state].name;
 
 
               const customer: any = await createCustomer(reqObj);
@@ -184,12 +212,10 @@ function NewCustomerPage({ classes }: Props) {
             }}
             validateOnChange>
             {({
-              handleChange,
-              values,
-              errors,
-              isSubmitting,
-              setFieldValue
-            }) =>
+                handleChange,
+                values,
+                setFieldValue
+              }) =>
               <Form>
                 <Grid container>
                   <Grid
@@ -272,9 +298,12 @@ function NewCustomerPage({ classes }: Props) {
                           </InputLabel>
                           <BCTextField
                             name={'phone'}
-                            onChange={handleChange}
+                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+                              event.target.value = getMaskString(event.target.value);
+                              handleChange(event);
+                            }}
                             placeholder={'Phone Number'}
-                            type={'number'}
+                            type={'text'}
                           />
                         </FormGroup>
                       </Grid>
@@ -374,7 +403,8 @@ function NewCustomerPage({ classes }: Props) {
                               options={allStates}
                               renderInput={params =>
                                 <>
-                                  <InputLabel className={`${classes.label} state-label`}>
+                                  <InputLabel
+                                    className={`${classes.label} state-label`}>
                                     {'State'}
                                   </InputLabel>
                                   <TextField
@@ -414,7 +444,7 @@ function NewCustomerPage({ classes }: Props) {
                         item
                         sm={6}
                         xs={12}>
-                        <FormGroup >
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Vendor Number'}
                           </InputLabel>
@@ -485,7 +515,8 @@ function NewCustomerPage({ classes }: Props) {
                       </Grid>
                     </Grid>
 
-                    <div className={classNames(classes.paper, classes.mapWrapper)}>
+                    <div
+                      className={classNames(classes.paper, classes.mapWrapper)}>
                       <BCMapWithMarker
                         lang={positionValue.lang}
                         lat={positionValue.lat}
@@ -535,12 +566,10 @@ export const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
-  padding: 30px;
+  padding: 30px 65px;
   width: 100%;
-  padding-left: 65px;
-  padding-right: 65px;
   margin: 0 auto;
-  
+
   @media (max-width: 768px) {
     padding: 18px;
   }
@@ -562,27 +591,32 @@ export const DataContainer = styled.div`
     color: ${CONSTANTS.PRIMARY_DARK};
     margin-bottom: 6px;
   }
+
   .MuiAutocomplete-inputRoot {
     height: 40px;
   }
+
   .state-label {
     color: #383838;
     font-size: 18px !important;
   }
+
   .MuiInputBase-input {
     color: #383838;
     font-size: 16px;
     padding: 12px 14px;
   }
+
   .required > label:after {
     margin-left: 3px;
     content: "*";
     color: red;
   }
+
   .save-customer-button {
     margin-right: 16px;
     color: ${CONSTANTS.PRIMARY_WHITE};
   }
 `;
 
-export default withStyles(styles, { 'withTheme': true })(NewCustomerPage);
+export default withStyles(styles, {'withTheme': true})(NewCustomerPage);

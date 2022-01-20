@@ -92,13 +92,17 @@ function BillingSubscriptionPage({ classes }:Props) {
 
   return (
     <MainContainer>
-      <BCBackButton link={'/main/admin/billing'} />
       <PageContainer>
         <PageContent>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <BCBackButton link={"/main/admin/billing"} />
+          </div>
+
           <Grid container >
             <Grid
               item
-              xs={6}>
+              xs={8}>
               <BCTableContainer
                 columns={columns}
                 isLoading={subscriptions.loading}

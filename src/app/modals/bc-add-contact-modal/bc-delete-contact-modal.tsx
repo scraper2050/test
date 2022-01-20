@@ -141,6 +141,9 @@ const DataContainer = styled.div`
     margin-right: 16px;
     color: ${CONSTANTS.PRIMARY_WHITE};
   }
+  .MuiTypography-h6 {
+    padding: 0px 20px;
+  }
 `;
 
 
