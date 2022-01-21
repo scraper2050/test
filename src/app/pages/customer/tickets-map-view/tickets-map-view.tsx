@@ -28,6 +28,7 @@ import {
 } from "../../../../api/job.api";
 import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
 import {getVendors} from "../../../../actions/vendor/vendor.action";
+import preloader from '../../../../assets/img/preloader/loading-icon2.gif';
 
 export  interface FilterTickets {
   jobId?: string | null,
@@ -78,9 +79,10 @@ function TicketsWithMapView({ classes }: any) {
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
   const [curTab, setCurTab] = useState(0);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
-  const { refresh = true } = useSelector(
-    ({ jobState }: any) => ({
-      refresh: jobState.refresh,
+  const { refresh = true, streaming } = useSelector(
+    ({ serviceTicket }: any) => ({
+      refresh: serviceTicket.refresh,
+      streaming: serviceTicket.stream,
     }));
 
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
@@ -175,7 +177,8 @@ function TicketsWithMapView({ classes }: any) {
             tabsData={[
               {
                 'label': 'Open Tickets',
-                'value': 0
+                'value': 0,
+                'icon': streaming ? preloader : null,
               },
               {
                 'label': 'Today\'s Jobs',
@@ -187,7 +190,7 @@ function TicketsWithMapView({ classes }: any) {
               },
               {
                 'label': 'Routes',
-                'value': 3
+                'value': 3,
               },
             ]}
           />

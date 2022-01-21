@@ -58,3 +58,10 @@ export const refreshJobs = (refresh: any) => {
     'type': types.SET_REFRESH_JOB_STATUS
   };
 };
+
+export const streamJobs = (isStreaming: boolean) => {
+  return {
+    'payload': isStreaming,
+    'type': types.SET_STREAM_JOB_STATUS
+  };
+};

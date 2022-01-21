@@ -2,6 +2,7 @@ export const types = {
   'SET_JOBS': 'SET_JOB',
   'JOB_LOADING': 'JOB_LOADING',
   'SET_REFRESH_JOB_STATUS': 'SET_REFRESH_JOB_STATUS',
+  'SET_STREAM_JOB_STATUS': 'SET_STREAM_JOB_STATUS',
   'SET_SINGLE_JOB': 'SET_SINGLE_JOB',
   'GET_SINGLE_JOB': 'GET_SINGLE_JOB',
   'SET_JOB_LOADING': 'SET_JOB_LOADING'
@@ -98,6 +99,7 @@ export interface Job {
 
 export interface JobsState {
   readonly isLoading: boolean;
+  streaming?: boolean;
   readonly refresh: boolean;
   readonly data?: Job[];
   readonly jobObj?: Job;

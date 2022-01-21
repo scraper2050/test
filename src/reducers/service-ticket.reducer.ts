@@ -6,6 +6,7 @@ const initialServiceTicket = {
   'isLoading': false,
   'loadingObj': false,
   'refresh': true,
+  'stream': true,
   'tickets': [],
   'openTickets': [],
   'openTicketObj': {},
@@ -33,6 +34,11 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
       return {
         ...state,
         'isLoading': payload
+      };
+    case types.SET_SERVICE_TICKET_STREAM:
+      return {
+        ...state,
+        'stream': payload
       };
     case types.SET_REFRESH_SERVICE_TICKET_STATUS:
       return {
