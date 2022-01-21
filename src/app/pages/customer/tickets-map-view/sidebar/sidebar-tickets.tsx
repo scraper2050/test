@@ -23,7 +23,6 @@ interface SidebarTicketsProps {
   classes: any;
   tickets:any[];
   isLoading: boolean;
-  totalTicketsCount: number;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -75,17 +74,20 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: SidebarTicketsProps) {
+function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
-  const [isStreaming, setStreaming] = useState(true);
 
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
   const totalOpenTickets = tickets.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
+  const { streaming } = useSelector(
+    ({ serviceTicket }: any) => ({
+      streaming: serviceTicket.stream,
+    }));
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -122,14 +124,13 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
   };
 
   useEffect(() => {
-    if (!isStreaming) dispatch(setTicketSelected({_id: ''}));
+    if (!streaming) dispatch(setTicketSelected({_id: ''}));
     if (page === 1) {
       const firstPage = tickets.slice(0, PAGE_SIZE);
       setPaginatedTickets(firstPage);
     } else {
       setPage(1)
     }
-    if (totalOpenTickets === totalTicketsCount) setStreaming(false);
   }, [tickets]);
 
   useEffect(() => {
@@ -238,7 +239,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
               />
               )}
 
-            <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
+            {/*<Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} left={'40%'} bottom={10}>
               <Typography variant="caption" component="div" color="textSecondary">Total Tickets</Typography>
               <Box position="relative" flexDirection={'row'} alignSelf={'center'} display="inline-flex">
                 <CircularProgress
@@ -258,7 +259,7 @@ function SidebarTickets({ classes, tickets, isLoading, totalTicketsCount = 1 }: 
                   <Typography variant="caption" component="div" color="textSecondary">{`${totalOpenTickets}`}</Typography>
                 </Box>
               </Box>
-            </Box>
+            </Box>*/}
           </Grid>
         </Grid>
       </Drawer>

@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { Grid, withStyles } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 
 import '../ticket-map-view.scss';
@@ -11,9 +11,14 @@ import Config from "../../../../../config";
 import {SocketMessage} from "../../../../../helpers/contants";
 import {getOpenServiceTicketsStream} from "../../../../../api/service-tickets.api";
 import {parseISOMoment} from "../../../../../helpers/format";
-import preloader from '../../../../../assets/img/preloader/loading-icon2.gif';
+import {
+  refreshServiceTickets,
+  setServiceTicket,
+  streamServiceTickets
+} from "../../../../../actions/service-ticket/service-ticket.action";
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
+  const dispatch = useDispatch();
   const { token } = useSelector(({ auth }: any) => auth);
   const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({ticket2Job: serviceTicket.ticket2Job}));
 
@@ -52,6 +57,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
 
     socket.on("connect", () => {
       getOpenServiceTicketsStream();
+      dispatch(streamServiceTickets(true));
     });
 
     socket.on(SocketMessage.SERVICE_TICKETS, data => {
@@ -60,13 +66,14 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         tempTokens.current.push(serviceTicket);
         if (count % 25 === 0 || count === total) {
           totalTickets.current = total;
-          //setIsLoading(false);
-          setAllTickets(tempTokens.current);
-          setFilteredTickets([...tempTokens.current]);
+          setIsLoading(false);
+          setAllTickets([...tempTokens.current]);
         }
         if (count === total) {
           socket.close();
-          setIsLoading(false);
+          dispatch(streamServiceTickets(false));
+          dispatch(setServiceTicket(tempTokens.current));
+          dispatch(refreshServiceTickets(false));
         }
       }
     });
@@ -77,17 +84,14 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }, [token]);
 
   useEffect(() => {
-    const tempFiltered = filteredTickets.filter((ticket: any) => ticket._id !== ticket2Job);
-    setFilteredTickets(tempFiltered);
+    setFilteredTickets(filterOpenTickets(allTickets));
+  }, [allTickets, selectedDate, filterTickets])
 
+  useEffect(() => {
     const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
     setAllTickets(tempAll);
 
   }, [ticket2Job])
-
-  useEffect(() => {
-    setFilteredTickets(filterOpenTickets(allTickets));
-  }, [selectedDate, filterTickets])
 
   return (
     <Grid container item lg={12}>
@@ -103,12 +107,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         />
       </Grid>
 
-      <SidebarTickets totalTicketsCount={totalTickets.current} tickets={filteredTickets} isLoading={isLoading}/>
-      {isLoading &&
-      <div className={classes.loaderWrapper}>
-        <img src={preloader}/>
-      </div>
-      }
+      <SidebarTickets tickets={filteredTickets} isLoading={isLoading}/>
     </Grid>
   );
 }

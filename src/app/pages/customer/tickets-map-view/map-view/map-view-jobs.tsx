@@ -48,15 +48,9 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     });
   };
 
-  useEffect(() => setJobs(filterScheduledJobs(allJobs)), [allJobs])
-
   useEffect(() => {
     setJobs(filterScheduledJobs(allJobs));
-  }, [selectedDate])
-
-  useEffect(() => {
-    setJobs(filterScheduledJobs(allJobs));
-  }, [filterJobs])
+  }, [allJobs, selectedDate, filterJobs])
 
   return (
     <Grid

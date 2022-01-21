@@ -26,8 +26,11 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData }: BCTabsProps):
       {tabsData.map((item: any, idx: number) => {
         return <Tab
           key={idx}
-          label={item.label}
+          label={item.icon ? undefined : item.label}
           value={item.value}
+          icon= {item.icon ?
+            <ImageWrapper><img src={item.icon}/><span>{item.label}</span></ImageWrapper>:
+          undefined}
         />;
       })}
     </StyledTabs>
@@ -49,4 +52,29 @@ const StyledTabs = styled(Tabs)`
     height: 6px;
   }
 `;
+
+const ImageWrapper = styled('div')`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 42px;
+      height: 42px;
+    }
+
+    @keyframes example {
+      from {color: #474747;}
+      to {color: #0082c3;}
+    }
+
+    span {
+      animation-name: example;
+      animation-duration: 2s;
+      animation-iteration-count: infinite;
+    }
+
+}
+
+`
 export default BCTabs;
