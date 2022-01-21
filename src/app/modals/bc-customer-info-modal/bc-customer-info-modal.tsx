@@ -415,7 +415,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={6}>
-                        <FormGroup className={'required'}>
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Contact Name'}
                           </InputLabel>
@@ -424,7 +424,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             handleChange={formikChange}
                             placeholder={'Contact Name'}
                             value={FormikValues.contactName}
-                            required
                             dense={true}
                           />
                         </FormGroup>
@@ -433,7 +432,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={6}>
-                        <FormGroup className='required'>
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
@@ -443,7 +442,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                               event.target.value = getMaskString(event.target.value);
                               formikChange(event);
                             }}
-                            required
                             type={"text"}
                             placeholder={'Phone Number'}
                             value={getMaskString(FormikValues.phone)}
