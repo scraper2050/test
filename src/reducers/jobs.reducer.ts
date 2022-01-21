@@ -7,6 +7,7 @@ const initialJob: JobsState = {
   data: [],
   isLoading: false,
   refresh: true,
+  streaming: false,
 
   jobObj: {
     _id: "",
@@ -123,6 +124,11 @@ export const jobReducer: Reducer<any> = (
       return {
         ...state,
         refresh: payload,
+      };
+    case types.SET_STREAM_JOB_STATUS:
+      return {
+        ...state,
+        streaming: payload,
       };
     case types.SET_SINGLE_JOB:
       return {

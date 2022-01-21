@@ -219,7 +219,6 @@ function ServiceTicket({ classes }: any) {
   };
 
   return (
-
     <DataContainer
       id={'0'}>
       <BCTableContainer

@@ -23,7 +23,6 @@ interface SidebarTicketsProps {
   classes: any;
   tickets:any[];
   isLoading: boolean;
-  isStreaming: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -75,7 +74,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, tickets, isLoading, isStreaming }: SidebarTicketsProps) {
+function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -85,6 +84,10 @@ function SidebarTickets({ classes, tickets, isLoading, isStreaming }: SidebarTic
   const [paginatedTickets, setPaginatedTickets] = useState<any>([]);
   const totalOpenTickets = tickets.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
+  const { streaming } = useSelector(
+    ({ serviceTicket }: any) => ({
+      streaming: serviceTicket.stream,
+    }));
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -121,7 +124,7 @@ function SidebarTickets({ classes, tickets, isLoading, isStreaming }: SidebarTic
   };
 
   useEffect(() => {
-    if (!isStreaming) dispatch(setTicketSelected({_id: ''}));
+    if (!streaming) dispatch(setTicketSelected({_id: ''}));
     if (page === 1) {
       const firstPage = tickets.slice(0, PAGE_SIZE);
       setPaginatedTickets(firstPage);
