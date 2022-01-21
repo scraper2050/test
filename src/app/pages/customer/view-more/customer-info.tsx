@@ -94,7 +94,7 @@ function CustomerInfoPage({ classes }: any) {
         baseObj.contact !== undefined &&
         baseObj.contact.phone !== ''
         ? baseObj.contact.phone
-        : 'N/A';
+        : '';
     const location = baseObj && baseObj.location ? baseObj.location : [];
     const itemTierId = baseObj?.itemTier?._id;
 

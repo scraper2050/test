@@ -94,7 +94,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
     }
 
     let fullAddr = '';
-    fullAddr = fullAddr.concat(street ? street : values.address.street, ' ', city ? city : values.address.city, ' ', stateVal, ' ', zipCode ? zipCode : values.address.zipcode, ' ', 'USA');
+    fullAddr = fullAddr.concat(street ? street : (values.address.street || ''), ' ', city ? city : (values.address.city || ''), ' ', stateVal, ' ', zipCode ? zipCode : (values.address.zipcode || ''), ' ', 'USA');
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
@@ -104,10 +104,9 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
           'lat': lat
         });
       },
-      (error: any) => {
+      (error) => {
         console.error(error);
-      }
-    );
+      });
   };
 
   const updateMapFromLatLng = (name: string, value: any): void => {
@@ -160,6 +159,13 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
       setLongLabelState(false);
 
     }
+
+    const parsedContact:{ phone: string } = JSON.parse(requestObj.contact)
+    if (parsedContact.phone && parsedContact.phone.length !== 10) {
+      dispatch(error('Please enter a valid phone number.'))
+      validateFlag = false;
+    }
+
     return validateFlag;
   }
 
@@ -237,6 +243,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                         setSubmitting(false);
                       }))
                   }
+                } else {
+                  setSubmitting(false);
                 }
               }, 400)}
               validateOnChange>
@@ -317,9 +325,9 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 name={'contact.phone'}
                                 placeholder={'Phone Number'}
                                 disabled={jobLocationInfo?._id}
-                                type={'number'}
+                                type={'tel'}
                                 onChange={(e: any) => {
-                                  setFieldValue('contact.phone', e.target.value)
+                                  setFieldValue('contact.phone', e.target.value.replace(/[^0-9]/g,''))
                                 }}
                               />
                             </FormGroup>

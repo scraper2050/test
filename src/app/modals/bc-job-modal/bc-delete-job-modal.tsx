@@ -1,18 +1,16 @@
-import * as CONSTANTS from "../../../constants";
-import BCTextField from "../../components/bc-text-field/bc-text-field";
 import styles from './bc-job-modal.styles';
 import {
   DialogActions,
-  Fab,
   Grid,
-  InputLabel,
   withStyles,
-  FormGroup,
-  Typography,
+  Typography, Button,
 } from '@material-ui/core';
-import { Form, Formik } from "formik";
 import React, { useState } from 'react';
-import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import {
+  closeModalAction,
+  openModalAction,
+  setModalDataAction
+} from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
 import { callUpdateJobAPI } from "api/job.api";
@@ -27,8 +25,10 @@ function BCDeleteJobModal({
   props
 }: any): JSX.Element {
   const dispatch = useDispatch();
-
   const { job, jobOnly } = props;
+  const canEdit = job.status === 0 || job.status === 4;
+  const [isSubmitting, SetIsSubmitting] = useState(false);
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -52,7 +52,24 @@ function BCDeleteJobModal({
     );
   };
 
+  const openDetailJobModal = (job: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          removeFooter: false,
+          maxHeight: '100%',
+        },
+        type: modalTypes.VIEW_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   const handleCancel = async () => {
+    SetIsSubmitting(true);
     const requestJobObj = {
       jobId: job._id,
       status: 3,
@@ -62,7 +79,6 @@ function BCDeleteJobModal({
     const response: any = await callUpdateJobAPI(requestJobObj);
 
     if (response.status) {
-
       if (!jobOnly) {
         const requestTicketObj = {
           ticketId: job.ticket._id,
@@ -70,115 +86,58 @@ function BCDeleteJobModal({
         }
 
         const responseTicket: any = await callEditServiceTicket(requestTicketObj);
-
         if (responseTicket.status) {
-
-          await dispatch(refreshJobs(true));
-          await dispatch(refreshServiceTickets(true));
+          dispatch(refreshJobs(true));
+          dispatch(refreshServiceTickets(true));
           await closeModal();
-
           dispatch(success(`${job.jobId} and ${job.ticket.ticketId} successfully canceled!`));
         } else {
-
+          SetIsSubmitting(false);
           dispatch(error("Something went wrong!"));
         }
-
-        console.log(responseTicket)
+        //console.log(responseTicket)
       } else {
-
         await dispatch(refreshServiceTickets(true));
         await dispatch(refreshJobs(true));
         await closeModal();
-
         dispatch(success(`${job.jobId} successfully canceled!`));
       }
     } else {
+      SetIsSubmitting(false);
       dispatch(error("Something went wrong!"));
     }
-
-
   }
 
 
   return (
-    <>
-      <DataContainer >
-        <Grid container direction="column" alignItems="center">
-
-          <Typography>{`Are you sure you want to cancel `}
-            <strong>{job.jobId}</strong>
-            {!jobOnly ? <>{` and `}<strong>{job.ticket.ticketId}</strong></> : ''}?
-          </Typography>
-
-        </Grid>
-      </DataContainer>
+    <DataContainer className={'new-modal-design'} >
+      <Grid container className={'modalContent'} justify={'space-around'}>
+        <Typography>{`Are you sure you want to cancel `}
+          <strong>{job.jobId}</strong>
+          {!jobOnly ? <>{` and `}<strong>{job.ticket.ticketId}</strong></> : ''}?
+        </Typography>
+      </Grid>
       <DialogActions classes={{
         'root': classes.dialogActions
       }}>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            'root': classes.fabRoot
-          }}
-          style={{
-            marginRight: 40
-          }}
-          color={'secondary'}
-          onClick={() => openEditJobModal(job)}
-          variant={'extended'}>
-          {'Go Back Edit'}
-        </Fab>
-        <Fab
-          aria-label={'create-job'}
-          classes={{
-            root: classes.deleteButton
-          }}
-          // classes={{
-          //   'root': classes.fabRoot
-          // }}
-          style={{
-          }}
+        <Button
+          disabled={isSubmitting}
+          onClick={() => canEdit ? openEditJobModal(job) : openDetailJobModal(job)}
+          variant={'outlined'}
+        >Go Back</Button>
+        <Button
+          color={'primary'}
+          disabled={isSubmitting}
           onClick={handleCancel}
-          variant={'extended'}>
-          {'Cancel'}
-        </Fab>
+          variant={'contained'}
+        >Cancel</Button>
       </DialogActions>
-    </>
+    </DataContainer>
   );
 }
 
 const DataContainer = styled.div`
-  display: flex;
-  height: 100px;
-  justify-content: center;
-  flex-direction: column;
-  padding: 12px;
-  margin-top: 12px;
-  border-radius: 10px;
-  background-color: ${CONSTANTS.PRIMARY_WHITE};
-
-  .MuiFormLabel-root {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    line-height: 30px;
-    color: ${CONSTANTS.PRIMARY_DARK};
-    margin-bottom: 6px;
-  }
-  .MuiInputBase-input {
-    color: #383838;
-    font-size: 16px;
-    padding: 12px 14px;
-  }
-  .required > label:after {
-    margin-left: 3px;
-    content: "*";
-    color: red;
-  }
-  .save-customer-button {
-    margin-right: 16px;
-    color: ${CONSTANTS.PRIMARY_WHITE};
-  }
+  margin: auto 0;
 `;
 
 

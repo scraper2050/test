@@ -36,7 +36,7 @@ function MapViewRoutesScreen({selectedDate, filter: routeFilter}: any) {
 
   const getRoute = async () => {
     setIsLoading(true);
-    const dateString = moment(selectedDate).utc().format('YYYY-MM-DD');
+    const dateString = moment(selectedDate).format('YYYY-MM-DD');
     const response: any = await getAllRoutes(dateString);
 
     const { data } = response;

@@ -74,7 +74,7 @@ function BillingMethodsPage({ classes }: Props) {
   }
 
   const onDelete = (id:string, ending: string) => {
-    
+
     dispatch(
       setModalDataAction({
         'data': {
@@ -98,7 +98,7 @@ function BillingMethodsPage({ classes }: Props) {
       <div className={classes.pageMainContainer}>
         <div className={classes.pageContainer}>
           <div className={classes.pageContent}>
-            <div style={{ marginTop: '1rem' }}>
+            <div style={{ marginTop: '1.25rem' }}>
               <BCBackButton link={"/main/admin/billing"} />
             </div>
 
@@ -181,7 +181,7 @@ export const DataContainer = styled.div`
     border: '1px solid #C4C4C4';
   }
   .add-credit-card {
-    
+
     &:hover {
       background-color: #f5f5f5 !important;
       border-radius: .5rem;
