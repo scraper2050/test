@@ -29,7 +29,7 @@ import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   getCustomerDetailAction,
   loadingSingleCustomers,
@@ -38,12 +38,8 @@ import {
 import '../../../scss/index.scss';
 import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-marker';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { success } from 'actions/snackbar/snackbar.action';
+import {error, success} from 'actions/snackbar/snackbar.action';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
-
-interface Props {
-  classes: any;
-}
 
 interface AllStateTypes {
   abbreviation: string,
@@ -108,7 +104,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
         customerInfo.customerAddress &&
         customerInfo.customerAddress.state
           ? allStates.findIndex(x => x.name === customerInfo.customerAddress.state)
-          : 0
+          : -1
     },
     'unit':
       customerInfo?.customerAddress?.unit
@@ -246,7 +242,23 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
     setFieldValue,
   } = useFormik({
     initialValues,
-    onSubmit: async (values, {setSubmitting}) => {
+    onSubmit: async (values) => {
+      const val = values?.phone;
+      let count = 0;
+      for (let i = 0; i < val.length; i++)
+        if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
+          count++
+      const isValid = (count === 0 || count === 10) ? true : false;
+
+      if(!isValid) {
+        dispatch(error('Please enter a valid phone number.'));
+        return;
+      }
+
+      if(count === 0) {
+        values.phone = '';
+      }
+
       const updateCustomerrequest = {
         ...values,
         'state': ''
@@ -320,6 +332,23 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   }, [FormikValues.street, FormikValues.city, FormikValues.state, FormikValues.zipCode])
 
 
+  const getMaskString = (str: string): string => {
+    const x = str
+      .replace(
+        /\D/gu,
+        ''
+      )
+      .match(/(\d{0,3})(\d{0,3})(\d{0,4})/u);
+    if (!x) {
+      return '';
+    }
+    return !x[2]
+      ? x[1]
+      : `(${x[1]}) ${x[2]}${x[3]
+        ? `-${x[3]}`
+        : ''}`;
+  };
+
   return (
     <MainContainer>
       <PageContainer>
@@ -386,7 +415,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={6}>
-                        <FormGroup className={'required'}>
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Contact Name'}
                           </InputLabel>
@@ -395,7 +424,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                             handleChange={formikChange}
                             placeholder={'Contact Name'}
                             value={FormikValues.contactName}
-                            required
                             dense={true}
                           />
                         </FormGroup>
@@ -404,17 +432,19 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                         className={classes.paper}
                         item
                         sm={6}>
-                        <FormGroup className='required'>
+                        <FormGroup>
                           <InputLabel className={classes.label}>
                             {'Phone Number'}
                           </InputLabel>
                           <BCInput
                             name={'phone'}
-                            handleChange={formikChange}
-                            required
-                            type={"tel"}
+                            handleChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+                              event.target.value = getMaskString(event.target.value);
+                              formikChange(event);
+                            }}
+                            type={"text"}
                             placeholder={'Phone Number'}
-                            value={FormikValues.phone}
+                            value={getMaskString(FormikValues.phone)}
                             dense={true}
                           />
                         </FormGroup>

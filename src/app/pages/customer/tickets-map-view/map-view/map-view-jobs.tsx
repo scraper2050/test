@@ -4,11 +4,9 @@ import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-mark
 import '../ticket-map-view.scss';
 import styles from '../ticket-map-view.style';
 import SidebarJobs from "../sidebar/sidebar-jobs";
-import {getSearchJobs} from "../../../../../api/job.api";
-import moment from "moment";
 import {FilterJobs} from "../tickets-map-view";
 import {useDispatch, useSelector} from "react-redux";
-import {refreshJobs} from "../../../../../actions/job/job.action";
+import {parseISOMoment} from "../../../../../helpers/format";
 
 interface Props {
   classes: any;
@@ -17,14 +15,13 @@ interface Props {
 }
 
 function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props) {
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [allJobs, setAllJobs] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
-  const { refresh = false } = useSelector(
+  const { isLoading = true, jobs: allJobs } = useSelector(
     ({ jobState }: any) => ({
-      refresh: jobState.refresh,
-    }));
+      isLoading: jobState.isLoading,
+      jobs: jobState.data,
+    })
+  );
 
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -45,54 +42,15 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       }
 
       if(selectedDate) {
-        filter = filter && moment.utc(job.scheduleDate).isSame(selectedDate, 'day');
+        filter = filter && parseISOMoment(job.scheduleDate).isSame(selectedDate, 'day');
       }
       return filter;
     });
   };
 
-  const getScheduledJobs = async (
-    requestObj: {
-      page?: number,
-      pageSize?: number,
-      customerNames?: any,
-      jobId?: string,
-    }
-  ) => {
-    setIsLoading(true);
-    const response: any = await getSearchJobs(requestObj);
-
-    const { data } = response;
-
-    if (data.status) {
-      setAllJobs(data.jobs);
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     setJobs(filterScheduledJobs(allJobs));
   }, [allJobs, selectedDate, filterJobs])
-
-  useEffect(() => {
-    const rawData = {
-      customerNames: '',
-      jobId:  '',
-    }
-
-    const requestObj = {
-      ...rawData,
-      page: 1,
-      pageSize: 0,
-    };
-    if (refresh) {
-      getScheduledJobs(requestObj);
-      dispatch(refreshJobs(false));
-    }
-  }, [refresh]);
-
 
   return (
     <Grid

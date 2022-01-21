@@ -15,14 +15,17 @@ import MapViewTicketsScreen from './map-view/map-view-tickets';
 import MapViewTodayJobsScreen from './map-view/map-view-today-jobs';
 import MapViewJobsScreen from './map-view/map-view-jobs';
 import MapViewRoutesScreen from './map-view/map-view-routes';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
 import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
 import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
 import { getCustomers } from "../../../../actions/customer/customer.action";
-import {getAllJobTypesAPI} from "../../../../api/job.api";
+import {
+  getAllJobsAPI,
+  getAllJobTypesAPI
+} from "../../../../api/job.api";
 import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
 import {getVendors} from "../../../../actions/vendor/vendor.action";
 
@@ -75,6 +78,10 @@ function TicketsWithMapView({ classes }: any) {
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
   const [curTab, setCurTab] = useState(0);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
+  const { refresh = true } = useSelector(
+    ({ jobState }: any) => ({
+      refresh: jobState.refresh,
+    }));
 
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
     'customerNames': null,
@@ -114,6 +121,12 @@ function TicketsWithMapView({ classes }: any) {
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
   }, []);
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsAPI());
+    }
+  }, [refresh]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);

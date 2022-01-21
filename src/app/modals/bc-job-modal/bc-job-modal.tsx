@@ -23,13 +23,11 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   callCreateJobAPI,
-  callEditJobAPI,
+  callEditJobAPI, callUpdateJobAPI,
   getAllJobTypesAPI,
 } from 'api/job.api';
-import { callEditTicketAPI } from 'api/service-tickets.api';
 import {
   closeModalAction,
-  openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
@@ -364,9 +362,9 @@ function BCJobModal({
           contacts.find((contact: any) =>
             [
               job?.customerContactId?._id,
+              job?.customerContactId,
               ticket?.customerContactId?._id,
               ticket?.customerContactId,
-              ticket?.customer,
             ].includes(contact._id)
           )
         );
@@ -429,10 +427,8 @@ function BCJobModal({
         : jobValue.ticket.jobSite
         ? jobValue.ticket.jobSite._id || jobValue.ticket.jobSite
         : '',
-      //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
-      customerContactId: jobValue.customerContactId
-        ? jobValue.customerContactId._id
-        : ticket.customerContactId || '',
+      customerContactId: jobValue.customerContactId?._id || jobValue.customerContactId ||
+        ticket?.customerContactId?._id || ticket.customerContactId || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue.images !== undefined ? jobValue.images : ticket.images || [],
     },
@@ -471,8 +467,13 @@ function BCJobModal({
       const requestObj = formatRequestObj(tempData)
       //console.log({requestObj,}, JSON.stringify(tasks));
 
-      const editJob = (tempData: any) => {
+      const editJob = async(tempData: any) => {
         tempData.jobId = job._id;
+        // if incomplete make pending
+        if (job.status === 6) {
+          const data = {jobId: job._id, status: 0};
+          await callUpdateJobAPI(data)
+        }
         return callEditJobAPI(tempData);
       };
 
@@ -656,7 +657,10 @@ function BCJobModal({
 
   return (
     <DataContainer className={'new-modal-design'}>
-      <form onSubmit={FormikSubmit}>
+      {job._id &&
+      <Typography variant={'caption'} className={'jobIdText'}>{job.jobId}</Typography>
+      }
+        <form onSubmit={FormikSubmit}>
         <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
           <Grid item xs={3}>
             <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
@@ -677,6 +681,8 @@ function BCJobModal({
               minDateMessage={form.errors.scheduleDate}
               value={FormikValues.scheduleDate}
               errorText={FormikErrors.scheduleDate}
+              required={true}
+              showRequired={true}
             />
           </Grid>
           <Grid item xs={2}>

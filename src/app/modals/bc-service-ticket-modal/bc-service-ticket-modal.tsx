@@ -1,7 +1,7 @@
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import React, {useEffect, useRef, useState} from 'react';
-import { formatDateYMD } from 'helpers/format';
+import {formatDateYMD, parseISODate} from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
@@ -197,7 +197,7 @@ function BCServiceTicketModal({
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : '',
       'note': ticket.note,
-      'dueDate': ticket.dueDate,
+      'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
       'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : '',

@@ -36,7 +36,7 @@ function BCMapFilterRoute({
   vendors.forEach((vendor: any) => {
     if (vendor.status === 1) technicians.push({
       _id: vendor._id,
-      name: vendor.company.info.companyName,
+      name: vendor.contractor.admin.profile.displayName,
       type: true,
     });
   })
