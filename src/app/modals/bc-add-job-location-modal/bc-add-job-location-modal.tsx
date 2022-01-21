@@ -162,7 +162,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
 
     const parsedContact:{ phone: string } = JSON.parse(requestObj.contact)
     if (parsedContact.phone && parsedContact.phone.length !== 10) {
-      dispatch(error('Please enter a valid phone number.'))
+      dispatch(error('Please enter a valid phone number. (10 Characters)'))
       validateFlag = false;
     }
 
@@ -327,7 +327,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                 disabled={jobLocationInfo?._id}
                                 type={'tel'}
                                 onChange={(e: any) => {
-                                  setFieldValue('contact.phone', e.target.value.replace(/[^0-9]/g,''))
+                                  setFieldValue('contact.phone', e.target.value.replace(/[^0-9]/g,'').slice(0,10))
                                 }}
                               />
                             </FormGroup>
