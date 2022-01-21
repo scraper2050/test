@@ -24,6 +24,7 @@ import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import MaskedInput from 'react-text-mask';
 
 interface Props {
   classes: any;
@@ -122,6 +123,23 @@ function NewCustomerPage({classes}: Props) {
     }
   };
 
+  const getMaskString = (str: string): string => {
+    const x = str
+      .replace(
+        /\D/gu,
+        ''
+      )
+      .match(/(\d{0,3})(\d{0,3})(\d{0,4})/u);
+    if (!x) {
+      return '';
+    }
+    return !x[2]
+      ? x[1]
+      : `(${x[1]}) ${x[2]}${x[3]
+        ? `-${x[3]}`
+        : ''}`;
+  };
+
   const handleCancelForm = (setFieldValue: any) => {
     setFieldValue('name', '');
     setFieldValue('email', '');
@@ -152,6 +170,21 @@ function NewCustomerPage({classes}: Props) {
           <Formik
             initialValues={initialValues}
             onSubmit={async (values) => {
+              const val = values.phone;
+              let count = 0;
+              for (let i = 0; i < val.length; i++)
+                if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
+                  count++
+              const isValid = (count === 0 || count === 10) ? true : false;
+
+              if(!isValid) {
+                dispatch(error('Please enter a valid phone number.'));
+                return;
+              }
+
+              if(count === 0) {
+                values.phone = '';
+              }
               const state = values.state.id;
               values.latitude = positionValue.lat;
               values.longitude = positionValue.lang;
@@ -265,9 +298,12 @@ function NewCustomerPage({classes}: Props) {
                           </InputLabel>
                           <BCTextField
                             name={'phone'}
-                            onChange={handleChange}
+                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+                              event.target.value = getMaskString(event.target.value);
+                              handleChange(event);
+                            }}
                             placeholder={'Phone Number'}
-                            type={'number'}
+                            type={'text'}
                           />
                         </FormGroup>
                       </Grid>

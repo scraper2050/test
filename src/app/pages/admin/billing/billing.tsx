@@ -52,7 +52,7 @@ function BillingPage() {
               <BCAdminCard
                 cardText={'History'}
                 color={'secondary'}
-                link={'/main/admin/billing/billing-history'}>
+                func={() => renderViewMore("billing-history")}>
                 <HistoryIcon />
               </BCAdminCard>
             </Grid>
@@ -61,7 +61,7 @@ function BillingPage() {
               <BCAdminCard
                 cardText={'Subscriptions'}
                 color={'info'}
-                link={'/main/admin/billing/subscription'}>
+                func={() => renderViewMore("subscription")}>
                 <SubscriptionsIcon />
               </BCAdminCard>
             </Grid>
