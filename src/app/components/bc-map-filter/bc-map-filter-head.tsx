@@ -6,7 +6,6 @@ import React, {useEffect, useState} from "react";
 import {ClickAwayListener, withStyles} from "@material-ui/core";
 import styles from "./bc-map-filter.styles";
 import {makeStyles} from "@material-ui/core/styles";
-import {formatDateYMD} from "../../../helpers/format";
 import BCMapFilter from "./bc-map-filter";
 import BCMapFilterRoute from "./bc-map-filter-route";
 

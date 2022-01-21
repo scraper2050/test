@@ -657,7 +657,10 @@ function BCJobModal({
 
   return (
     <DataContainer className={'new-modal-design'}>
-      <form onSubmit={FormikSubmit}>
+      {job._id &&
+      <Typography variant={'caption'} className={'jobIdText'}>{job.jobId}</Typography>
+      }
+        <form onSubmit={FormikSubmit}>
         <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
           <Grid item xs={3}>
             <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>

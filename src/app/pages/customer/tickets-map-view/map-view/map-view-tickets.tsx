@@ -10,7 +10,7 @@ import {io} from "socket.io-client";
 import Config from "../../../../../config";
 import {SocketMessage} from "../../../../../helpers/contants";
 import {getOpenServiceTicketsStream} from "../../../../../api/service-tickets.api";
-import moment from "moment";
+import {parseISOMoment} from "../../../../../helpers/format";
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
   const { token } = useSelector(({ auth }: any) => auth);
@@ -38,7 +38,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       }
 
       if(selectedDate) {
-        filter = filter && moment(ticket.dueDate).isSame(selectedDate, 'day');
+        filter = filter && parseISOMoment(ticket.dueDate).isSame(selectedDate, 'day');
       }
       return filter;
     });

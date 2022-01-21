@@ -38,7 +38,7 @@ export default (theme: Theme): any => ({
   },
   task: {
     padding: '0 0 5px 0 !important',
-    borderBottom: '0.5px solid #E0E0E0',
+    // borderBottom: '0.5px solid #E0E0E0',
   },
   editButtonPadding: {
     paddingTop: 20,
