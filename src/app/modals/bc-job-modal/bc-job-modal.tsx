@@ -362,9 +362,9 @@ function BCJobModal({
           contacts.find((contact: any) =>
             [
               job?.customerContactId?._id,
+              job?.customerContactId,
               ticket?.customerContactId?._id,
               ticket?.customerContactId,
-              ticket?.customer,
             ].includes(contact._id)
           )
         );
@@ -427,10 +427,8 @@ function BCJobModal({
         : jobValue.ticket.jobSite
         ? jobValue.ticket.jobSite._id || jobValue.ticket.jobSite
         : '',
-      //'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
-      customerContactId: jobValue.customerContactId
-        ? jobValue.customerContactId._id
-        : ticket.customerContactId || '',
+      customerContactId: jobValue.customerContactId?._id || jobValue.customerContactId ||
+        ticket?.customerContactId?._id || ticket.customerContactId || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue.images !== undefined ? jobValue.images : ticket.images || [],
     },
@@ -659,7 +657,10 @@ function BCJobModal({
 
   return (
     <DataContainer className={'new-modal-design'}>
-      <form onSubmit={FormikSubmit}>
+      {job._id &&
+      <Typography variant={'caption'} className={'jobIdText'}>{job.jobId}</Typography>
+      }
+        <form onSubmit={FormikSubmit}>
         <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
           <Grid item xs={3}>
             <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>

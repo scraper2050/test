@@ -22,6 +22,12 @@ export const formatDatTimell = (time: Date) => moment(time).format('ll');
 export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
 
+export const parseISOMoment = (date: string) => {
+  const offset = moment.parseZone().utcOffset();
+  const dateObj = moment(date).subtract(offset, 'minutes');
+  return dateObj;
+}
+
 export const parseISODate = (date: string) => {
   const offset = moment.parseZone().utcOffset();
   const dateObj = moment(date).subtract(offset, 'minutes').toDate();

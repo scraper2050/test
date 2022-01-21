@@ -30,6 +30,7 @@ import {getContacts} from "../../../api/contacts.api";
 import {callUpdateJobAPI} from "../../../api/job.api";
 import {refreshJobs} from "../../../actions/job/job.action";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
+import BCJobStatus from "../../components/bc-job-status";
 
 const initialJobState = {
   customer: {
@@ -238,7 +239,7 @@ function BCViewJobModal({
               classes={{root: classes.editButton, label: classes.editButtonText}}
               startIcon={<EditIcon />}
               onClick={openEditJobModal}
-            >Edit Job</Button><br/></>
+            >Edit Job {job.jobId.replace('Job ', '#')}</Button><br/></>
           }
           <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
           <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
@@ -257,31 +258,38 @@ function BCViewJobModal({
         </Grid>
       </Grid>
       <div className={'modalDataContainer'}>
-        <Grid container className={'modalContent'} justify={'space-around'}>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>technician type</Typography>
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>technician name</Typography>
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
-          </Grid>
-        </Grid>
         {job.tasks.map((task: any) =>
-          <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
-            <Grid container className={classNames(classes.task)}>
+          <>
+            <Grid container className={'modalContent'} justify={'space-around'}>
             <Grid item xs>
-              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1, borderColor: 'black'}}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
+              <Typography variant={'caption'} className={'previewCaption'}>technician type</Typography>
             </Grid>
             <Grid item xs>
-              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
+              <Typography variant={'caption'} className={'previewCaption'}>technician name</Typography>
             </Grid>
             <Grid item xs>
-              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{calculateJobType(task).map((type:string) => <span className={'jobTypeText'}>{type}</span>)}</Typography>
+              <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
             </Grid>
+            <Grid item style={{width: 100}}>
             </Grid>
           </Grid>
+            <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
+              <Grid container className={classNames(classes.task)}>
+              <Grid item xs>
+                <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1, borderColor: 'black'}}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
+              </Grid>
+              <Grid item xs>
+                <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
+              </Grid>
+              <Grid item xs>
+                <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{calculateJobType(task).map((type:string) => <span className={'jobTypeText'}>{type}</span>)}</Typography>
+              </Grid>
+              <Grid item style={{width: 100}}>
+                <BCJobStatus status={task.status || 0} size={'small'}/>
+              </Grid>
+              </Grid>
+            </Grid>
+          </>
         )}
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
