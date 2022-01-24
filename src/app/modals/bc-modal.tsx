@@ -2,6 +2,7 @@ import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
+import BCMarkCompleteJobModal from './bc-job-modal/bc-mark-complete-job-modal';
 import BCModalTransition from './bc-modal-transition';
 import BCServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-modal';
 import BCCancelTicketModal from './bc-service-ticket-modal/bc-cancel-ticket-modal';
@@ -171,6 +172,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCDeleteJobModal props={data} />);
+        break;
+      case modalTypes.MARK_COMPLETE_JOB_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCMarkCompleteJobModal props={data} />);
         break;
       case modalTypes.RESCEDULE_JOB_MODAL:
         setModalOptions({
