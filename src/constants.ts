@@ -38,6 +38,7 @@ export const modalTypes = {
   'EDIT_JOB_MODAL': 'edit-job-modal',
   'VIEW_JOB_MODAL': 'view-job-modal',
   'CANCEL_JOB_MODAL': 'cancel-job-modal',
+  'MARK_COMPLETE_JOB_MODAL': 'mark-complete-job-modal',
   'EDIT_TICKET_MODAL': 'edit-ticket-modal',
   'CANCEL_SERVICE_TICKET_MODAL': 'cancel-service-ticket-modal',
   'VIEW_SERVICE_TICKET_MODAL': 'view-service-ticket-modal',

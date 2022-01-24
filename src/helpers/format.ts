@@ -64,3 +64,11 @@ export const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}
 
 
 export const digitsOnly = /^\d+$/;
+
+export const shortenStringWithElipsis = (input: string, targetLength = 24):string => {
+  if(input.length < targetLength) {
+    return input
+  } else {
+    return `${input.slice(0,targetLength)}...`
+  }
+}

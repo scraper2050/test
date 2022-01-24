@@ -21,6 +21,7 @@ export default (theme: Theme): any => ({
   lastContent: {
     marginTop: -10,
     marginBottom: 35,
+    padding: '10px 16px',
   },
   innerRow: {
     paddingTop: 15,
@@ -48,5 +49,15 @@ export default (theme: Theme): any => ({
   },
   editButtonText: {
     textTransform: 'none',
-  }
+  },
+  markCompleteContainer: {
+    flex: 1, 
+    textAlign: 'left'
+  },
+  actionsContainer: {
+    flex: 2, 
+  },
+  tableContainer: {
+    'maxHeight': '30rem',
+  },
 });

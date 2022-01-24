@@ -91,6 +91,11 @@
       overflow-y: auto;
       max-height: 72vh;
 
+      @media only screen and (max-height: 767px) {
+        overflow-y: auto;
+        max-height: 60vh;
+      }
+
       &::-webkit-scrollbar {
         width: 8px;
       }
