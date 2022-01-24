@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
+import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import { getInventory } from 'actions/inventory/inventory.action';
 import { refreshJobs } from 'actions/job/job.action';
 import {
@@ -36,6 +37,7 @@ import {
   formatDate,
   formatISOToDateString,
   formatToMilitaryTime, parseISODate,
+  shortenStringWithElipsis,
 } from 'helpers/format';
 import styled from 'styled-components';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
@@ -670,6 +672,84 @@ function BCJobModal({
 
   //const headerError = FormikErrors.scheduleDate || FormikErrors.scheduledStartTime || FormikErrors.scheduledEndTime || '';
 
+  const columns: any = [
+    {
+      Header: 'User',
+      id: 'user',
+      sortable: false,
+      Cell({row}: any) {
+        const user = employeesForJob.filter(
+          (employee: any) => employee._id === row.original.user
+        )[0];
+        const vendor = vendorsList.find((v: any) => v.admin._id === row.original.user);
+        const { displayName } = user?.profile || vendor?.admin.profile || '';
+        return <div>{displayName}</div>;
+      },
+    },
+    {
+      Header: 'Date',
+      id: 'date',
+      sortable: false,
+      Cell({ row }: any) {
+        const dataTime = moment(new Date(row.original.date)).format(
+          'MM/DD/YYYY h:mm A'
+        );
+        return (
+          <div style={{ color: 'gray', fontStyle: 'italic' }}>
+            {`${dataTime}`}
+          </div>
+        );
+      },
+    },
+    {
+      Header: 'Notes',
+      id: 'note',
+      sortable: false,
+      Cell({ row }: { row:{ original: { note: string } } }) {
+        const [clipped, setClipped] = useState(true);
+        const originalString = row.original.note;
+        const clippedString = shortenStringWithElipsis(originalString, 50);
+        return (
+          <div>
+            <ul className={classes.actionsList}>
+              <li style={{maxWidth: 200}}>
+                {originalString.length < 50 
+                  ? originalString
+                  : clipped 
+                    ? (
+                      <>
+                        {clippedString}
+                        <span 
+                          onClick={() => setClipped(!clipped)}
+                          style={{fontWeight: 800, textDecoration: 'underline'}}
+                        >
+                          more
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {originalString.split(/((?:[a-zA-Z.,!]+ ){9})/g).map((v,i)=><div key={i}>{v}</div>)}
+                        <span 
+                          onClick={() => setClipped(!clipped)}
+                          style={{fontWeight: 800, textDecoration: 'underline'}}
+                        >
+                          less
+                        </span>
+                      </>
+                    )
+                }
+              </li>
+            </ul>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const filteredJobRescheduleHistory: any[] = job.track 
+    ? job.track.filter((history: {action: string;}) => history.action.includes('Rescheduling the job')) 
+    : []
+
   return (
     <DataContainer className={'new-modal-design'}>
       {job._id &&
@@ -1089,6 +1169,26 @@ function BCJobModal({
             <Grid item container xs={4} style={{paddingTop: 16}}>
               <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)}  onDelete={handleRemoveImage}/>
             </Grid>
+            {job.status === 4 && (
+              <Grid container className={classes.lastContent} justify={'space-between'}>
+                <Grid item style={{width: '100%'}}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Job Reschedule History</Typography>
+                  <BCTableContainer
+                    className={classes.tableContainer}
+                    columns={columns}
+                    initialMsg={'No history yet'}
+                    isDefault
+                    isLoading={loading}
+                    onRowClick={() => null}
+                    pageSize={5}
+                    pagination={true}
+                    stickyHeader
+                    tableData={filteredJobRescheduleHistory}
+                  />
+                </Grid>
+                <Grid item style={{width: '32%'}} />
+              </Grid>
+            )}
           </Grid>
 
           <DialogActions>
@@ -1150,8 +1250,8 @@ const DataContainer = styled.div`
   .MuiGrid-spacing-xs-4 > .MuiGrid-spacing-xs-4 {
     margin: 0;
   }
-  .MuiGrid-grid-xs-12 {
-    margin-top: -16px;
+  .MuiGrid-root.MuiGrid-item > .MuiGrid-root.MuiGrid-container {
+    padding: 0;
   }
   .MuiGrid-grid-xs-true {
     padding: 10px 16px;
