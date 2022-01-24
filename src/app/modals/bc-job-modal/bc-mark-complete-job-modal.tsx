@@ -19,7 +19,6 @@ import { callUpdateJobAPI } from "api/job.api";
 import { modalTypes } from "../../../constants";
 import { refreshServiceTickets, } from 'actions/service-ticket/service-ticket.action';
 import { refreshJobs } from 'actions/job/job.action';
-import { Job } from 'actions/job/job.types';
 import { success, error } from 'actions/snackbar/snackbar.action';
 
 
