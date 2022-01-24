@@ -243,6 +243,21 @@ function BCJobModal({
       })
     );
   };
+  /**
+   * Handle mark complete job modal
+   */
+  const openMarkCompleteJobModal = async (job: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          modalTitle: `Mark Job as Complete`,
+          removeFooter: false,
+        },
+        type: modalTypes.MARK_COMPLETE_JOB_MODAL,
+      })
+    );
+  };
 
   /**
    * Handle job site changes field
@@ -1077,35 +1092,48 @@ function BCJobModal({
           </Grid>
 
           <DialogActions>
-            <Button
-              disabled={isSubmitting}
-              onClick={() => closeModal()}
-              variant={'outlined'}
-            >Close</Button>
-            {job._id &&
-              <>
+            {job.status === 0 &&(
+              <div className={classes.markCompleteContainer}>
                 <Button
-                  color={'secondary'}
+                  color={'primary'}
                   disabled={isSubmitting}
-                  onClick={() => openCancelJobModal(job, true)}
-                  style={{}}
+                  onClick={() => openMarkCompleteJobModal(job)}
+                  style={{marginLeft: 0}}
                   variant={'contained'}
-                >Cancel Job</Button>
-                <Button
-                  color={'secondary'}
-                  disabled={isSubmitting}
-                  onClick={() => openCancelJobModal(job, false)}
-                  style={{}}
-                  variant={'contained'}
-                >Cancel Job and Service Ticket</Button>
-              </>
-            }
-            <Button
-              color={'primary'}
-              disabled={isSubmitting}
-              type={'submit'}
-              variant={'contained'}
-            >{job._id ? 'Update' : 'Submit'}</Button>
+                >Mark as Complete</Button>
+              </div>
+            )}
+            <div className={classes.actionsContainer}>
+              <Button
+                disabled={isSubmitting}
+                onClick={() => closeModal()}
+                variant={'outlined'}
+              >Close</Button>
+              {job._id &&
+                <>
+                  <Button
+                    color={'secondary'}
+                    disabled={isSubmitting}
+                    onClick={() => openCancelJobModal(job, true)}
+                    style={{}}
+                    variant={'contained'}
+                  >Cancel Job</Button>
+                  <Button
+                    color={'secondary'}
+                    disabled={isSubmitting}
+                    onClick={() => openCancelJobModal(job, false)}
+                    style={{}}
+                    variant={'contained'}
+                  >Cancel Job and Service Ticket</Button>
+                </>
+              }
+              <Button
+                color={'primary'}
+                disabled={isSubmitting}
+                type={'submit'}
+                variant={'contained'}
+              >{job._id ? 'Update' : 'Submit'}</Button>
+            </div>
           </DialogActions>
         </div>
       </form>

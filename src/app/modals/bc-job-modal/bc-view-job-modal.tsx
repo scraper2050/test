@@ -31,6 +31,7 @@ import {callUpdateJobAPI} from "../../../api/job.api";
 import {refreshJobs} from "../../../actions/job/job.action";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
 import BCJobStatus from "../../components/bc-job-status";
+import { Job } from 'actions/job/job.types';
 
 const initialJobState = {
   customer: {
@@ -203,6 +204,19 @@ function BCViewJobModal({
     );
   };
 
+  const openMarkCompleteJobModal = async (job: Job) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          modalTitle: `Mark Job as Complete`,
+          removeFooter: false,
+        },
+        type: modalTypes.MARK_COMPLETE_JOB_MODAL,
+      })
+    );
+  };
+
   const completeJob= () => {
     SetIsSubmitting(true);
     const data = {jobId: job._id, status: 2};
@@ -350,6 +364,19 @@ function BCViewJobModal({
             </div>
           </Grid>
         </Grid>
+        {job.status === 1 && (
+          <DialogActions>
+            <div className={classes.markCompleteContainer}>
+              <Button
+                color={'primary'}
+                disabled={isSubmitting}
+                onClick={() => openMarkCompleteJobModal(job)}
+                style={{marginLeft: 0}}
+                variant={'contained'}
+              >Mark as Complete</Button>
+            </div>
+          </DialogActions>
+        )}
         {job.status === 6 &&
         <DialogActions>
           <Button

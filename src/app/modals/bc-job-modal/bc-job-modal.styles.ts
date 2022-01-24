@@ -48,5 +48,12 @@ export default (theme: Theme): any => ({
   },
   editButtonText: {
     textTransform: 'none',
-  }
+  },
+  markCompleteContainer: {
+    flex: 1, 
+    textAlign: 'left'
+  },
+  actionsContainer: {
+    flex: 2, 
+  },
 });
