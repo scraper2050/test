@@ -2,7 +2,7 @@ import ReplayIcon from '@material-ui/icons/Replay';
 import { MenuItem } from '@material-ui/core';
 import { NotificationItem } from '../bc-header-notification';
 import React from 'react';
-import { fromNow } from 'helpers/format';
+import { fromNow, shortenStringWithElipsis } from 'helpers/format';
 import { modalTypes } from '../../../../constants';
 import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -30,7 +30,8 @@ export default function JobRescheduledNotication(item :NotificationItem) {
       dispatch(openModalAction());
     }, 200);
   };
-
+  const filteredHistory: {note: string}[] = item.metadata.track.filter(history=>history.action.includes('Rescheduling the job'))
+  const rescheduleNote: string = filteredHistory.length ? filteredHistory[filteredHistory.length-1].note: '-'
   return <MenuItem
     className={readStatus.isRead
       ? ''
@@ -44,6 +45,9 @@ export default function JobRescheduledNotication(item :NotificationItem) {
       <strong>
         {metadata.jobId}
       </strong>
+      <span className='note'>
+        {`Note: ${shortenStringWithElipsis(rescheduleNote, 24)}`}
+      </span>
       <span>
         {fromNow(new Date(createdAt))}
       </span>

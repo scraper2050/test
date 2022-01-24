@@ -21,6 +21,7 @@ export default (theme: Theme): any => ({
   lastContent: {
     marginTop: -10,
     marginBottom: 35,
+    padding: '10px 16px',
   },
   innerRow: {
     paddingTop: 15,
@@ -55,5 +56,8 @@ export default (theme: Theme): any => ({
   },
   actionsContainer: {
     flex: 2, 
+  },
+  tableContainer: {
+    'maxHeight': '30rem',
   },
 });

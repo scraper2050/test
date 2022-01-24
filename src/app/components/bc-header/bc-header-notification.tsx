@@ -7,7 +7,7 @@ import JobRescheduledNotication from './header-notifications/bc-header-job-resch
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { Button, MenuList } from '@material-ui/core';
-import { SECONDARY_CARD_BLUE, SECONDARY_DARK_GREY, SECONDARY_GREY } from '../../../constants';
+import { SECONDARY_CARD_BLUE, SECONDARY_DARK_GREY, SECONDARY_GREY, PRIMARY_DARK } from '../../../constants';
 
 
 export type NotificationItem = Notification
@@ -85,6 +85,9 @@ const HeaderNotificationContainer = styled(MenuList)`
             display: block;
             font-size: 13px;
             color: ${SECONDARY_CARD_BLUE}
+        }
+        span.note {
+          color: ${PRIMARY_DARK}
         }
     }
 

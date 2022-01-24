@@ -15,6 +15,7 @@ type ServiceTicketNotification = {
   company: string;
   ticketId: string;
   jobId: string;
+  track: any[];
 };
 
 export enum NotificationTypeTypes {
