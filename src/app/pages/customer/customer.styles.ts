@@ -46,4 +46,33 @@ export default (theme: Theme): any => ({
   capitalize: {
     textTransform: 'capitalize'
   },
+  'filterMenuItemRoot': {
+    'backgroundColor': '#FFFFFF !important',
+    'fontSize': 12,
+  },
+  'filterMenuItemSelected': {
+    'backgroundColor': '#E5F7FF !important',
+  },
+  'filterMenu': {
+    'height': 'calc(100% - 10px)',
+    'marginTop': 5,
+    'marginBottom': 5,
+    'display': 'flex',
+    'alignItems': 'center',
+    'fontWeight': 400,
+    'fontFamily': 'Roboto, Helvetica, Arial, sans-serif',
+    'fontSize': 14,
+  },
+  'filterMenuLabel': { 
+    fontSize: 16, 
+    marginRight: 13
+  },
+  'filterMenuContainer': {
+    'width': 128,
+    'borderBottom':'1px solid #BDBDBD',
+    'cursor': 'pointer',
+  },
+  'filterIcon': {
+    'marginRight': 10,
+  },
 });
