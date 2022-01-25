@@ -173,7 +173,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     },
     {
       Cell({ row }: any) {
-        return <BCJobStatus status={row.original.status} />;
+        return <BCJobStatus status={row.original.status} data={row.original} />;
       },
       Header: 'Status',
       accessor: 'status',
