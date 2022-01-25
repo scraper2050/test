@@ -287,8 +287,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
           className={classNames(classes.filterMenu, classes.filterMenuContainer)}
         >
           {
-            Boolean(statusReference[selectedStatus]) && 
-            Boolean(statusReference[selectedStatus].icon) &&
+            statusReference[selectedStatus] &&
             IconComponent &&
             <IconComponent className={classes.filterIcon}/>
           }
@@ -296,7 +295,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             style={{color: statusReference[selectedStatus] && statusReference[selectedStatus].color || 'inherit'}}
           >
             {
-              Boolean(statusReference[selectedStatus]) 
+              statusReference[selectedStatus] 
                 ? statusReference[selectedStatus].text 
                 : selectedStatus === '-1'
                   ? 'All'

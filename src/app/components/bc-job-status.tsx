@@ -9,7 +9,6 @@ import {ReactComponent as IconRescheduled} from 'assets/img/icons/map/icon-resch
 import {ReactComponent as IconPaused} from 'assets/img/icons/map/icon-paused.svg';
 import {ReactComponent as IconIncomplete} from 'assets/img/icons/map/icon-incomplete.svg';
 import {ReactComponent as IconPending} from 'assets/img/icons/map/icon-pending.svg';
-import { string } from 'yup';
 interface Props {
   status: number;
   size?: string;
@@ -82,13 +81,13 @@ function BCJobStatus({status, size= 'normal', data}:Props) {
   const StatusIcon = currentStatus.icon;
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    if(Boolean(data)){
+    if(data){
       setAnchorEl(event.currentTarget);
     }
   };
 
   const handlePopoverClose = () => {
-    if(Boolean(data)){
+    if(data){
       setAnchorEl(null);
     }
   };
