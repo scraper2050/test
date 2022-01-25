@@ -49,7 +49,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   };
 
   const filteredJobs = jobs.filter(
-    (job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0
+    (job: any) => [0, 1, 4, 5, 6].indexOf(job.status) >= 0
   );
 
   function getVendor (originalRow: any, rowIndex: number) {
