@@ -37,7 +37,7 @@ const useStyles = makeStyles(() =>
       minWidth: 390, 
       display: 'flex', 
       alignItems: 'center', 
-      fontWeight: 300, 
+      fontWeight: 700, 
       fontSize: 14,
     },
     scrollableTable: {
