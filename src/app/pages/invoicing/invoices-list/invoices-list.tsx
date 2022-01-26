@@ -9,13 +9,19 @@ import React, { useEffect, useState } from 'react';
 import { CSButton } from "../../../../helpers/custom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getInvoicingList } from "../../../../actions/invoicing/invoicing.action";
+import TableFilterService from "../../../../utils/table-filter";
+
+const getFilteredList = (state: any) => {
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  return sortedInvoices.filter((invoice: any) => invoice?.isDraft);
+};
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
   const [curTab, setCurTab] = useState(0);
   const theme = useTheme();
   const history = useHistory();
-  const {data} = useSelector((state: any) => state?.invoiceList);
+  const invoiceList = useSelector(getFilteredList);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -57,7 +63,7 @@ function InvoiceList({ classes }: any) {
                 'label': 'Drafts',
                 'value': 1,
                 'chip': true,
-                'chipValue': data?.length || 0
+                'chipValue': invoiceList?.length || 0
               }
             ]}
           />
