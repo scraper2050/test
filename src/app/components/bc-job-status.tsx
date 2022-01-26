@@ -1,14 +1,7 @@
 import React from 'react';
-import { Popover, Table, TableBody, TableHead,TableRow, TableCell } from '@material-ui/core';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import {STATUSES} from "../../helpers/contants";
-import {ReactComponent as IconStarted} from 'assets/img/icons/map/icon-started.svg';
-import {ReactComponent as IconCompleted} from 'assets/img/icons/map/icon-completed.svg';
-import {ReactComponent as IconCancelled} from 'assets/img/icons/map/icon-cancelled.svg';
-import {ReactComponent as IconRescheduled} from 'assets/img/icons/map/icon-rescheduled.svg';
-import {ReactComponent as IconPaused} from 'assets/img/icons/map/icon-paused.svg';
-import {ReactComponent as IconIncomplete} from 'assets/img/icons/map/icon-incomplete.svg';
-import {ReactComponent as IconPending} from 'assets/img/icons/map/icon-pending.svg';
+import { Popper, Table, TableBody, TableHead,TableRow, TableCell } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
+import {STATUSES, statusReference} from "../../helpers/contants";
 interface Props {
   status: number;
   size?: string;
@@ -18,30 +11,15 @@ interface Props {
   };
 }
 
-const statusReference: { 
-  [key: string]: {
-    text: string; 
-    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>; 
-    color: string;
-    statusNumber: string;
-  }; 
-} = {
-  '0': {text: 'Pending', icon: IconPending, color: '#828282', statusNumber: '0'},
-  '1': {text: 'Started', icon: IconStarted, color: '#00AAFF', statusNumber: '1'},
-  '5': {text: 'Paused', icon: IconPaused, color: '#FA8029', statusNumber: '5'},
-  '2': {text: 'Completed', icon: IconCompleted, color: '#50AE55', statusNumber: '2'},
-  '3': {text: 'Canceled', icon: IconCancelled, color: '#A107FF', statusNumber: '3'},
-  '4': {text: 'Rescheduled', icon: IconRescheduled, color: '#828282', statusNumber: '4'},
-  '6': {text: 'Incomplete', icon: IconIncomplete, color: '#F50057', statusNumber: '6'}
-}
-
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
-    popover: {
-      pointerEvents: 'none',
-    },
-    paper: {
-      padding: theme.spacing(1),
+    popper: {
+      backgroundColor: '#FFFFFF',
+      padding: 20,
+      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)',
+      borderRadius: 5,
+      position: 'relative',
+      zIndex: 9999,
     },
     iconStatus: {
       marginRight: 13,
@@ -54,17 +32,27 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 700,
     },
     statusText: {
-      padding: 24, 
-      paddingTop: 30, 
-      width: 390, 
+      padding: '10px 24px', 
+      paddingTop: 20, 
+      minWidth: 390, 
       display: 'flex', 
-      alignItems: 
-      'center', 
-      fontWeight: 300, 
+      alignItems: 'center', 
+      fontWeight: 700, 
       fontSize: 14,
     },
-    root: {
-      marginTop: 15,
+    scrollableTable: {
+      maxHeight: 200,
+      overflowY: 'auto',
+    },
+    rootHead: {
+      position: 'sticky', 
+      top: 0, 
+      backgroundColor: '#FFFFFF'
+    },
+    rootCell: {
+      padding: '5px 16px',
+      height: 22,
+      boxSizing: 'content-box'
     },
   }),
 );
@@ -80,26 +68,26 @@ function BCJobStatus({status, size= 'normal', data}:Props) {
 
   const StatusIcon = currentStatus.icon;
 
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const handlePopperOpen = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if(data){
       setAnchorEl(event.currentTarget);
     }
   };
 
-  const handlePopoverClose = () => {
+  const handlePopperClose = () => {
     if(data){
       setAnchorEl(null);
     }
   };
   const open = Boolean(anchorEl);
-  // console.log(data)
 
-  const tasks: {
+  interface Task {
     technician: string;
     jobTitle: string;
     jobStatus: number;
     icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string | undefined; }>;
-  }[] = []
+  }
+  const tasks: Task[] = []
 
   if(data && data.tasks){
     data.tasks.forEach(task=>{
@@ -117,11 +105,9 @@ function BCJobStatus({status, size= 'normal', data}:Props) {
   return (
     <div 
       className={classes.statusContainer}
-      style={{color: currentStatus.color}}
-      aria-owns={open ? 'mouse-over-popover' : undefined}
-      aria-haspopup="true"
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
+      style={{color: currentStatus.color, fontSize}}
+      onMouseEnter={handlePopperOpen}
+      onMouseLeave={handlePopperClose}
     >
       <StatusIcon style={{
         width: dimensions,
@@ -129,53 +115,48 @@ function BCJobStatus({status, size= 'normal', data}:Props) {
         marginRight: 13,
       }} />{currentStatus.title}
       {!!data && (
-        <Popover
-          id="mouse-over-popover"
-          className={classes.popover}
-          classes={{
-            paper: classes.paper,
-            root: classes.root
-          }}
+        <Popper
+          id="mouse-over-Popper"
+          className={classes.popper}
           open={open}
           anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+          placement='bottom-start'
+          disablePortal
+          modifiers={{
+            flip: {
+              enabled: false,
+            },
           }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          onClose={handlePopoverClose}
-          disableRestoreFocus
         >
           <div className={classes.statusText}>
             <StatusIcon className={classes.iconStatus} />{data.jobId}
           </div>
           {tasks.length && (
-            <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>TASK(S)</TableCell>
-                <TableCell>TECHNICIAN</TableCell>
-                <TableCell>STATUS</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tasks.map((task, index) => (
-                <TableRow key={index}>
-                  <TableCell>{task.jobTitle}</TableCell>
-                  <TableCell>{task.technician}</TableCell>
-                  <TableCell style={{color: statusReference[`${task.jobStatus}`].color, backgroundColor: '#FFFFFF', display: 'flex'}}>
-                    <task.icon style={{marginRight: 13}}/>
-                    {statusReference[`${task.jobStatus}`].text}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+            <div className={classes.scrollableTable}>
+              <Table>
+                <TableHead classes={{root:classes.rootHead}}>
+                  <TableRow>
+                    <TableCell>TASK(S)</TableCell>
+                    <TableCell>TECHNICIAN</TableCell>
+                    <TableCell>STATUS</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {tasks.map((task, index) => (
+                    <TableRow key={index}>
+                      <TableCell classes={{root:classes.rootCell}}>{task.jobTitle}</TableCell>
+                      <TableCell classes={{root:classes.rootCell}}>{task.technician}</TableCell>
+                      <TableCell classes={{root:classes.rootCell}} style={{color: statusReference[`${task.jobStatus}`].color}}>
+                        <task.icon style={{marginRight: 13, verticalAlign: 'middle'}}/>
+                        <span style={{verticalAlign: 'middle'}}>{statusReference[`${task.jobStatus}`].text}</span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
-        </Popover>
+        </Popper>
       )}
     </div>
   );
