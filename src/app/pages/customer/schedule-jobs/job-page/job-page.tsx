@@ -7,13 +7,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { getAllJobsAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
-import {ReactComponent as IconStarted} from 'assets/img/icons/map/icon-started.svg';
-import {ReactComponent as IconCompleted} from 'assets/img/icons/map/icon-completed.svg';
-import {ReactComponent as IconCancelled} from 'assets/img/icons/map/icon-cancelled.svg';
-import {ReactComponent as IconRescheduled} from 'assets/img/icons/map/icon-rescheduled.svg';
-import {ReactComponent as IconPaused} from 'assets/img/icons/map/icon-paused.svg';
-import {ReactComponent as IconIncomplete} from 'assets/img/icons/map/icon-incomplete.svg';
-import {ReactComponent as IconPending} from 'assets/img/icons/map/icon-pending.svg';
+import { statusReference } from 'helpers/contants';
 import { convertMilitaryTime, formatDate } from 'helpers/format';
 import {
   openModalAction,
@@ -221,23 +215,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       width: 40,
     },
   ];
-
-  const statusReference: { 
-    [key: string]: {
-      text: string; 
-      icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>; 
-      color: string;
-      statusNumber: string;
-    }; 
-  } = {
-    '0': {text: 'Pending', icon: IconPending, color: '#828282', statusNumber: '0'},
-    '1': {text: 'Started', icon: IconStarted, color: '#00AAFF', statusNumber: '1'},
-    '5': {text: 'Paused', icon: IconPaused, color: '#FA8029', statusNumber: '5'},
-    '2': {text: 'Completed', icon: IconCompleted, color: '#50AE55', statusNumber: '2'},
-    '3': {text: 'Canceled', icon: IconCancelled, color: '#A107FF', statusNumber: '3'},
-    '4': {text: 'Rescheduled', icon: IconRescheduled, color: '#828282', statusNumber: '4'},
-    '6': {text: 'Incomplete', icon: IconIncomplete, color: '#F50057', statusNumber: '6'}
-  }
 
   function Toolbar() {
     type IconComponentType = React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
