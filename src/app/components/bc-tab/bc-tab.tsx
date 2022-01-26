@@ -35,7 +35,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false }:
           icon= {item.icon ?
             <ImageWrapper><img src={item.icon}/><span>{item.label}</span></ImageWrapper>:
             item.chip ? <div><span>{item.label}</span>
-              <Chip
+              { item.chipValue ? <Chip
                 label={item.chipValue}
                 style={{
                   'backgroundColor': CONSTANTS.INVOICE_TOP,
@@ -43,7 +43,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false }:
                   'marginLeft': '10px',
                   'padding': '0px 6x'
                 }}
-              /> </div>: undefined
+              />: undefined } </div>: undefined
           }
         />;
       })}
