@@ -287,7 +287,6 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                       id="one"
                       name="price"
                       type="number"
-                      inputProps={{ min: 0 }}
                       value={rowData?.price}
                       error={!!errors.price}
                       onChange={(e: any) => handleItemChange(e.target.value, rowIndex, 'price')}

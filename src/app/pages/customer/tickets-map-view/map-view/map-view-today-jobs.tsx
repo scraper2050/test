@@ -52,7 +52,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   }, [allJobs])
 
   useEffect(() => {
-    setJobs(filterScheduledJobs(allJobs));
+    setJobs(filterScheduledJobs(allJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))));
   }, [filterJobs]);
 
 

@@ -1,10 +1,13 @@
+import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
+import styled from 'styled-components';
+import { Checkbox, FormControlLabel, withStyles, Menu, MenuItem } from '@material-ui/core';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import { getAllJobsAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
-import styled from 'styled-components';
 import styles from '../../customer.styles';
-import { Checkbox, FormControlLabel, withStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { statusReference } from 'helpers/contants';
 import { convertMilitaryTime, formatDate } from 'helpers/format';
 import {
   openModalAction,
@@ -26,9 +29,21 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       refresh: jobState.refresh,
     })
   );
+  
+  const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>('-2');
+
+  const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    setFilterMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleSelectStatusFilter = (statusNumber:string) => {
+    setSelectedStatus(statusNumber);
+    setFilterMenuAnchorEl(null);
+  };
 
   const filteredJobs = jobs.filter(
-    (job: any) => [0, 1, 3, 5, 6].indexOf(job.status) >= 0
+    (job: any) => [0, 1, 4, 5, 6].indexOf(job.status) >= 0
   );
 
   function getVendor (originalRow: any, rowIndex: number) {
@@ -152,7 +167,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     },
     {
       Cell({ row }: any) {
-        return <BCJobStatus status={row.original.status} />;
+        return <BCJobStatus status={row.original.status} data={row.original} />;
       },
       Header: 'Status',
       accessor: 'status',
@@ -202,19 +217,106 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   ];
 
   function Toolbar() {
+    type IconComponentType = React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
+    const [IconComponent, setIconComponent] = useState<null | IconComponentType>(null);
+    
+    const handleCheckBoxChange = () => {
+      toggleShowAllJobs((current) => {
+        if(current === false){
+          setSelectedStatus('-1');
+        } else {
+          setSelectedStatus('-2');
+        }
+        return !current;
+      });
+    };
+
+    useEffect(() => {
+      if(selectedStatus !== '-1' && selectedStatus !== '-2'){
+        setIconComponent(statusReference[selectedStatus].icon);
+        toggleShowAllJobs(false);
+      } else if(selectedStatus === '-1'){
+        toggleShowAllJobs(true);
+        setIconComponent(null);
+      } else {
+        setIconComponent(null);
+      }
+    }, [selectedStatus]);
+    
     return (
       <>
         <FormControlLabel
           control={
             <Checkbox
               checked={showAllJobs}
-              onChange={() => toggleShowAllJobs(!showAllJobs)}
+              onChange={handleCheckBoxChange}
               name="checkedB"
               color="primary"
             />
           }
           label="Display All Jobs"
         />
+        <div className={classNames(classes.filterMenu, classes.filterMenuLabel)}>
+          View:
+        </div>
+        <div 
+          onClick={handleFilterClick}
+          className={classNames(classes.filterMenu, classes.filterMenuContainer)}
+        >
+          {
+            statusReference[selectedStatus] &&
+            IconComponent &&
+            <IconComponent className={classes.filterIcon}/>
+          }
+          <span 
+            style={{color: statusReference[selectedStatus] && statusReference[selectedStatus].color || 'inherit'}}
+          >
+            {
+              statusReference[selectedStatus] 
+                ? statusReference[selectedStatus].text 
+                : selectedStatus === '-1'
+                  ? 'All'
+                  : 'Default'
+            }
+          </span>
+          <span style={{flex: 1, textAlign: 'right'}}>
+            <ArrowDropDownIcon />
+          </span>
+        </div>
+        <Menu
+          id="filter-by-status-menu"
+          variant="menu"
+          anchorEl={filterMenuAnchorEl}
+          keepMounted
+          open={Boolean(filterMenuAnchorEl)}
+          onClose={() => setFilterMenuAnchorEl(null)}
+        >
+          <MenuItem 
+            classes={{
+              root: classes.filterMenuItemRoot,
+              selected: classes.filterMenuItemSelected
+            }}
+            selected={selectedStatus === '-1'}
+            onClick={() => handleSelectStatusFilter('-1')}
+          >
+            All
+          </MenuItem>
+          {Object.values(statusReference).map(statusObj => (
+            <MenuItem 
+              key={statusObj.statusNumber}
+              classes={{
+                root: classes.filterMenuItemRoot,
+                selected: classes.filterMenuItemSelected
+              }}
+              style={{color: statusObj.color || 'inherit'}}
+              selected={statusObj.statusNumber === selectedStatus}
+              onClick={() => handleSelectStatusFilter(statusObj.statusNumber)}
+            >
+              <statusObj.icon className={classes.filterIcon}/>
+              {statusObj.text}
+            </MenuItem>
+          ))}
+        </Menu>
       </>
     );
   }
@@ -245,7 +347,15 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Jobs...'}
-        tableData={showAllJobs ? jobs : filteredJobs}
+        tableData={
+          showAllJobs 
+            ? jobs 
+            : selectedStatus === '-2'
+              ? filteredJobs
+              : jobs.filter(
+                (job: any) =>  job.status === Number(selectedStatus)
+              )
+        }
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
       />

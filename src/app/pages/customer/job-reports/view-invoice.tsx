@@ -136,7 +136,7 @@ function ViewInvoice({ classes, theme }: any) {
             >
               <ArrowBackIcon/>
             </IconButton>
-            {invoiceDetail.isDraft &&
+            {invoiceDetail?.isDraft &&
             <CSChip
               label={'Draft'}
               className={invoiceStyles.draftChip}
@@ -144,37 +144,41 @@ function ViewInvoice({ classes, theme }: any) {
             }
           </div>
           <div>
-            <EmailInvoiceButton
+            {invoiceDetail && <EmailInvoiceButton
               showLoader={false}
               Component={<Button
                 variant="outlined"
                 color="default"
                 className={invoiceStyles.margin}
-                startIcon={<EmailIcon />}
+                startIcon={<EmailIcon/>}
               >
                 Email
               </Button>}
               invoice={invoiceDetail}
             />
-            <Button
+            }
+            {
+              invoiceDetail && <Button
               variant="outlined"
               color="default"
               className={invoiceStyles.margin}
               onClick={() => window.print()}
-              startIcon={<PrintIcon />}
-            >
-              Print
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={invoiceDetail.paid}
-              className={classNames(invoiceStyles.margin, invoiceStyles.white)}
-              onClick={goToEdit}
-            >
-              Edit
-            </Button>
-            {invoiceDetail.isDraft &&
+              startIcon={<PrintIcon/>}
+              >Print
+              </Button>
+            }
+            {
+              invoiceDetail && <Button
+                variant="contained"
+                color="primary"
+                disabled={invoiceDetail?.paid}
+                className={classNames(invoiceStyles.margin, invoiceStyles.white)}
+                onClick={goToEdit}
+              >
+                Edit
+              </Button>
+            }
+            {invoiceDetail?.isDraft &&
             <Button
               variant="contained"
               color="primary"
@@ -187,7 +191,7 @@ function ViewInvoice({ classes, theme }: any) {
             }
           </div>
         </PageHeader>
-        <BCInvoice invoiceDetail={invoiceDetail}/>
+        { invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail}/> }
       </PageContainer>
     </MainContainer>
   )
@@ -210,7 +214,7 @@ export const PageContainer = styled.div`
   padding-left: 65px;
   padding-right: 65px;
   margin: 0 auto;
-  
+
   @media (max-width: 768px) {
     padding: 18px;
   }

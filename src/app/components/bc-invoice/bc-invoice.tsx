@@ -462,9 +462,6 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
             </div>
           </div>
         </div>
-        <div className={invoiceStyles.invoiceBottomInfo}>
-          <p>Please pay within 15 days.</p>
-        </div>
         <Divider/>
       </div>
     </DataContainer>
