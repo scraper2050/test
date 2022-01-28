@@ -311,7 +311,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                 <small>CONTACT DETAILS</small>
                 {invoiceDetail?.customerContactId 
                   ? composeContactDetail().split('\n').map((detail,index)=>(
-                    <p>{detail}</p>
+                    <p key={index}>{detail}</p>
                   )) : (
                     <h4>no contact found</h4>
                   )
