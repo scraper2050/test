@@ -273,6 +273,14 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     return address;
   }
 
+  const composeContactDetail = () => {
+    let contactDetail = '';
+    if (invoiceDetail?.customerContactId?.name)  contactDetail+= invoiceDetail?.customerContactId?.name + '\n';
+    if (invoiceDetail?.customerContactId?.phone)  contactDetail+= invoiceDetail?.customerContactId?.phone + '\n';
+    if (invoiceDetail?.customerContactId?.email)  contactDetail+= invoiceDetail?.customerContactId?.email + '\n';
+    return contactDetail;
+  }
+
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
@@ -301,7 +309,13 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
               </div>
               <div className={invoiceStyles.companyInfo}>
                 <small>CONTACT DETAILS</small>
-                <h4>{invoiceDetail?.customer?.contactName ? invoiceDetail?.customer?.contactName : 'no contact found'}</h4>
+                {invoiceDetail?.customerContactId 
+                  ? composeContactDetail().split('\n').map((detail,index)=>(
+                    <p key={index}>{detail}</p>
+                  )) : (
+                    <h4>no contact found</h4>
+                  )
+                }
               </div>
             </div>
           </Grid>
