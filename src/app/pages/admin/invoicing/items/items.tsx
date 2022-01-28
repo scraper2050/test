@@ -173,7 +173,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
           variant={'contained'}>
           {'Add Tier'}
         </CSButton>
-        <CSButton
+        {/* <CSButton
           disabled={updating}
           disableElevation
           onClick={() => setEditMode(true)}
@@ -182,7 +182,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
             'color': 'white' }}
           variant={'contained'}>
           {'Edit Prices'}
-        </CSButton>
+        </CSButton> */}
       </>;
   }
 
