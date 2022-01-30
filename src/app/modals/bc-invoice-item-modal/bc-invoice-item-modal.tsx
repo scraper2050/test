@@ -87,6 +87,10 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
   const dispatch = useDispatch();
 
   const closeModal = () => {
+    dispatch(setModalDataAction({
+      'data': {},
+      'type': '',
+    }));
     dispatch(closeModalAction());
   };
 
@@ -121,7 +125,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
       const tierArr = Object.values(tiers).map(tier => ({
         tierId: tier._id, 
         charge: tier.charge ? parseFloat(tier.charge) : 0
-      })).filter(tier => tier.charge > 0)
+      }))
       const itemObject = {
         itemId: values.itemId,
         name: values.name,
@@ -135,8 +139,8 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
         dispatch(errorSnackBar(err.message));
       });
       if (response) {
-        dispatch(success('Items successfully updated'));
         dispatch(loadInvoiceItems.fetch());
+        dispatch(success('Items successfully updated'));
         closeModal();
       }
       setIsSubmitting(false);
