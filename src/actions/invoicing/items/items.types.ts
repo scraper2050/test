@@ -10,7 +10,9 @@ export interface Item {
     name: string;
     description: string;
     isFixed: boolean;
+    isJobType: boolean;
     charges: number;
     tax: number;
     company: string;
+    tiers: any;
 }

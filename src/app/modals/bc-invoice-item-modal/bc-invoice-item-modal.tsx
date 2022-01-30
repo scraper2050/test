@@ -1,8 +1,19 @@
 /* eslint-disable react/jsx-handler-names */
 import * as yup from 'yup';
-import { Button, FormControl, MenuItem, Select, Grid, DialogContent, DialogActions, InputBase } from '@material-ui/core';
+import { Button,
+  FormControl,
+  MenuItem,
+  Select,
+  Grid,
+  DialogContent,
+  DialogActions,
+  InputBase,
+  InputAdornment,
+  FormControlLabel,
+  Checkbox,
+} from '@material-ui/core';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,16 +25,20 @@ import { RootState } from 'reducers';
 import { error as errorSnackBar, success } from 'actions/snackbar/snackbar.action';
 import * as CONSTANTS from "../../../constants";
 import styles from './bc-invoice-item-modal.styles'
+import { updateItems } from 'api/items.api';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 
 const EditItemValidation = yup.object().shape({
   'name': yup
     .string()
     .required(),
+  'description': yup
+    .string(),
   'isFixed': yup
     .boolean()
     .required(),
-  'charges': yup
-    .number()
+  'isJobType': yup
+    .boolean()
     .required(),
   'tax': yup
     .string()
@@ -35,6 +50,7 @@ const StyledInput = withStyles((theme: Theme) =>
   createStyles({
     root: {
       marginTop: 10,
+      marginBottom: 10,
     },
     input: {
       width: 130,
@@ -64,38 +80,71 @@ interface ModalProps {
 }
 
 function BCInvoiceEditModal({ item, classes }:ModalProps) {
-  const { _id, name, isFixed, charges, description, tax } = item;
+  const { _id, name, isFixed, isJobType, description, tax, tiers } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
 
   const closeModal = () => {
     dispatch(closeModalAction());
   };
 
+  const activeTiers = Object.keys(tiers)
+    .map(tier_id => ({...tiers[tier_id].tier, charge: tiers[tier_id].charge ? `${tiers[tier_id].charge}` : ''}))
+    .filter(tier => tier.isActive)
+
   const formik = useFormik({
     'initialValues': {
       'itemId': _id,
       'name': name,
       'description': description,
-      'isFixed': isFixed,
+      'isFixed': `${isFixed}`,
+      'isJobType': isJobType,
       'tax': tax
         ? 1
-        : 0
+        : 0,
+      'tiers': activeTiers.reduce((total, currentValue) => ({
+        ...total,
+        [currentValue._id]: currentValue,
+      }), {})
     },
-    'onSubmit': values => {
+    'onSubmit': async values => {
+      setIsSubmitting(true)
       if (Number(values.tax) === 1) {
         values.tax = taxes[0].tax;
       } else {
         values.tax = 0;
       }
-      dispatch(updateInvoiceItem.fetch(values));
+      // dispatch(updateInvoiceItem.fetch(values));
+      const tiers: {['string']:{_id: string; charge: string;}} = values.tiers;
+      const tierArr = Object.values(tiers).map(tier => ({
+        tierId: tier._id, 
+        charge: tier.charge ? parseFloat(tier.charge) : 0
+      })).filter(tier => tier.charge > 0)
+      const itemObject = {
+        itemId: values.itemId,
+        name: values.name,
+        description: values.description || '',
+        isFixed: values.isFixed === 'true' ? true : false,
+        isJobType: values.isJobType,
+        tax: values.tax,
+        tiers: tierArr
+      }
+      const response = await updateItems([itemObject]).catch((err: { message: any; }) => {
+        dispatch(errorSnackBar(err.message));
+      });
+      if (response) {
+        dispatch(success('Items successfully updated'));
+        dispatch(loadInvoiceItems.fetch());
+        closeModal();
+      }
+      setIsSubmitting(false);
     },
     'validateOnBlur': false,
     'validateOnChange': true,
     'validationSchema': EditItemValidation
   });
-
 
   useEffect(() => {
     if (error) {
@@ -141,11 +190,9 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
           </Grid>
           <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
             <BCInput
-              // disabled
               error={formik.touched.name && Boolean(formik.errors.name)}
               handleChange={formik.handleChange}
               helperText={formik.touched.name && formik.errors.name}
-              // label={'Name'}
               name={'name'}
               value={formik.values.name}
               margin={'none'}
@@ -162,8 +209,6 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               }}
             />
           </Grid>
-        </Grid>
-        <Grid container alignItems={'flex-start'}>
           <Grid
             item
             xs={12}
@@ -177,11 +222,9 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
           </Grid>
           <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
             <BCInput
-              // disabled
               error={formik.touched.description && Boolean(formik.errors.description)}
               handleChange={formik.handleChange}
               helperText={formik.touched.description && formik.errors.description}
-              // label={'Description'}
               name={'description'}
               value={formik.values.description}
               multiline
@@ -199,8 +242,30 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               }}
             />
           </Grid>
-        </Grid>
-        <Grid container alignItems={'center'}>
+          <Grid
+            item
+            xs={12}
+            sm={3}
+            container
+            alignItems={'center'}
+            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
+            style={{padding: '0 7px'}}
+          />
+          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+            <FormControlLabel
+              classes={{label: classes.checkboxLabel}}
+              control={
+                <Checkbox
+                  color={'primary'}
+                  checked={formik.values.isJobType}
+                  onChange={formik.handleChange}
+                  name="isJobType"
+                  classes={{root: classes.checkboxInput}}
+                />
+              }
+              label={`This Item is also a Job Type`}
+            />
+          </Grid>
           <Grid
             item
             xs={12}
@@ -210,7 +275,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
             justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
             style={{padding: '0 7px'}}
           >
-            <span style={{color: '#4F4F4F', fontWeight: 500}}>CHARGE TYPE</span>
+            <span style={{color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap'}}>CHARGE TYPE</span>
           </Grid>
           <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
             <Select
@@ -227,8 +292,6 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               </MenuItem>
             </Select>
           </Grid>
-        </Grid>
-        <Grid container alignItems={'center'}>
           <Grid
             item
             xs={12}
@@ -257,45 +320,46 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               </Select>
             </FormControl>
           </Grid>
-        </Grid>
-        <Grid container alignItems={'center'}>
-          <Grid
-            item
-            xs={12}
-            sm={3}
-            container
-            alignItems={'center'}
-            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
-            style={{padding: '0 7px'}}
-          >
-            <span style={{color: '#4F4F4F', fontWeight: 500}}>TIER</span>
-          </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
-            <FormControl>
-              <BCInput
-                // disabled
-                error={formik.touched.description && Boolean(formik.errors.description)}
-                handleChange={formik.handleChange}
-                helperText={formik.touched.description && formik.errors.description}
-                // label={'Description'}
-                name={'Tier 1'}
-                value={formik.values.description}
-                margin={'none'}
-                inputProps={{
-                  style : {
-                    padding: '12px 14px',
-                    width: 130,
-                  },
-                }}
-                InputProps={{
-                  style:{
-                    borderRadius: 8,
-                    marginTop: 10,
-                  },
-                }}
-              />
-            </FormControl>
-          </Grid>
+          {activeTiers.map(tier => (
+            <>
+              <Grid
+                item
+                xs={12}
+                sm={3}
+                container
+                alignItems={'center'}
+                justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
+                style={{padding: '0 7px'}}
+              >
+                <span style={{color: '#4F4F4F', fontWeight: 500}}>TIER {tier.name}</span>
+              </Grid>
+              <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+                <FormControl>
+                  <BCInput
+                    handleChange={(e: {target: {value: string;}}) => {
+                      formik.setFieldValue(`tiers.${tier._id}.charge`, e.target.value.replace(/[^0-9]/g,''))
+                    }}
+                    name={`tiers.${tier._id}.charge`}
+                    value={`${formik.values.tiers[tier._id].charge}`}
+                    margin={'none'}
+                    inputProps={{
+                      style : {
+                        padding: '12px 14px',
+                        width: 110,
+                      },
+                    }}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                      style:{
+                        borderRadius: 8,
+                        marginTop: 10,
+                      },
+                    }}
+                  />
+                </FormControl>
+              </Grid>
+            </>
+          ))}
         </Grid>
       </DialogContent>
       <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
@@ -308,6 +372,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
           <Grid item />
           <Grid item>
             <Button
+              disabled={isSubmitting}
               aria-label={'record-payment'}
               onClick={closeModal}
               classes={{
@@ -317,6 +382,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               Cancel
             </Button>
             <Button
+              disabled={isSubmitting}
               aria-label={'create-job'}
               classes={{
                 root: classes.submitButton,

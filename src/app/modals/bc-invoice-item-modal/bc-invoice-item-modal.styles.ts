@@ -19,8 +19,7 @@ export default (theme: Theme): any => ({
     color: '#4F4F4F',
   },
   checkboxInput: {
-    paddingTop: 0,
-    marginTop: '-6px',
+    paddingTop: 10,
   },
   closeButton: {
     color: '#4F4F4F',
