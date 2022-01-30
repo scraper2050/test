@@ -384,7 +384,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'xs'
+          'maxWidth': 'sm'
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
