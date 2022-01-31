@@ -26,11 +26,13 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
   const data = {
     'modalTitle': 'Send this invoice',
     'customer': customer?.profile?.displayName,
-    'customerEmail': customer?.info?.email,
+    // 'customerEmail': customer?.info?.email,
+    'customerEmail': invoice.customerContactId?.email || customer?.info?.email,
     'handleClick': sendInvoice,
     'id': _id,
     'typeText': 'Invoice',
     'className': 'wideModalTitle',
+    'customerId': customer?._id,
   };
 
   return <EmailButton
