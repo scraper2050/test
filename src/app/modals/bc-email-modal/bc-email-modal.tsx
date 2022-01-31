@@ -59,7 +59,7 @@ p {
 }
 `;
 
-function EmailJobReportModal({classes, data: {id, customerEmail, customer, onClick, typeText, emailDefault, customerId}}: any) {
+function EmailJobReportModal({classes, data: {id, customerEmail, customer, emailDefault, customerId}}: any) {
   const {sent, loading, error} = useSelector(({email}: any) => email);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
@@ -84,7 +84,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
           }
         }
       })
-      .catch(err=>{
+      .catch(()=>{
         dispatch(SnackBarError('Something went wrong when fetching Customer\'s contacts. Please try again.'))
       })
     }
@@ -238,6 +238,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
                           tagValue.map((option, index) => {
                             return (
                               <Chip
+                                key={index}
                                 label={`${option.email}`}
                                 {...getTagProps({ index })}
                               />
