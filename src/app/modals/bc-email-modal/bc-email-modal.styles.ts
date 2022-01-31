@@ -7,7 +7,14 @@ export default (theme: Theme): any => ({
     backgroundColor: 'auto'
   },
   dialogContent: {
-    padding: '20px 80px !important',
+    padding: '20px 40px !important',
+  },
+  inputRootSingle: {
+    height: 54,
+  },
+  inputRoot: {
+    minHeight: 94,
+    alignItems: 'flex-start',
   },
   messageBox: {
     height: '400px',
@@ -19,7 +26,6 @@ export default (theme: Theme): any => ({
     color: '#4F4F4F',
   },
   checkboxInput: {
-    paddingTop: 0,
     marginTop: '-6px',
   },
   closeButton: {
