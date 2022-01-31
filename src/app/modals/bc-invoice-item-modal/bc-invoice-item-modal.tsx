@@ -126,6 +126,10 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
         tierId: tier._id, 
         charge: tier.charge ? parseFloat(tier.charge) : 0
       }))
+      if(tierArr.filter((tier)=> !tier.charge).length){
+        dispatch(errorSnackBar('Tier Prices cannot be empty'));
+        return setIsSubmitting(false);
+      }
       const itemObject = {
         itemId: values.itemId,
         name: values.name,
