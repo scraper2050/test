@@ -29,6 +29,9 @@ const emailTypes:any = {
 export function *handleEmail({ 'payload': { email, type, data } }:handleEmailProps) {
   try {
     const result = yield call(emailTypes[type].api, data);
+    if(result.status !== 1){
+      throw result.message
+    }
     const id: string = data.id;
     yield put(sendEmailAction.success(result));
     yield put(updateEmailHistory({ email, id }));
