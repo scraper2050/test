@@ -143,7 +143,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
         invoicePdf: true,
       };
       dispatch(sendEmailAction.fetch({
-        'email': customer?.info?.email,
+        'email': values.to.map((recipient:any) => recipient.email).join(',') || customer?.info?.email,
         data: params,
         type: 'invoice'
       }));
