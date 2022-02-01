@@ -7,9 +7,11 @@ import {
   Grid,
   TextField,
   Typography,
-  withStyles
+  withStyles,
+  Chip,
 } from '@material-ui/core';
-import React from 'react';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import React, {useState, useEffect} from 'react';
 import {closeModalAction} from 'actions/bc-modal/bc-modal.action';
 import styled from 'styled-components';
 import styles from './bc-email-modal.styles';
@@ -20,6 +22,9 @@ import {CompanyProfileStateType} from "../../../actions/user/user.types";
 import {sendEmailAction} from "../../../actions/email/email.action";
 import BCCircularLoader from "../../components/bc-circular-loader/bc-circular-loader";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import {getCustomersContact} from 'api/customer.api';
+import {stringSortCaseInsensitive} from 'helpers/sort';
+import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 
 const EmailJobReportModalContainer = styled.div`
 display: flex;
@@ -54,13 +59,62 @@ p {
 }
 `;
 
-function EmailJobReportModal({classes, data: {id, customerEmail, customer, onClick, typeText, emailDefault}}: any) {
+function EmailJobReportModal({classes, data: {id, customerEmail, customer, emailDefault, customerId}}: any) {
   const {sent, loading, error} = useSelector(({email}: any) => email);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const [customerContacts, setCustomerContacts] = useState<any[]>([]);
   const dispatch = useDispatch();
 
   const closeModal = () => {
     dispatch(closeModalAction());
+  };
+
+  
+  useEffect(() => {
+    if(customerId){
+      getCustomersContact(customerId)
+      .then(res => {
+        if(res.status === 1){
+          setCustomerContacts(res.contacts.filter((contact:any) => !!contact.email))
+          if(res.contacts.length){
+            const initialContact = res.contacts.filter((contact:any) => customerEmail === contact.email)
+            if(initialContact){
+              FormikSetFieldValue('to', initialContact)
+            }
+          }
+        }
+      })
+      .catch(()=>{
+        dispatch(SnackBarError('Something went wrong when fetching Customer\'s contacts. Please try again.'))
+      })
+    }
+  }, [customerId]);
+
+  useEffect(() => {
+    if(error){
+      dispatch(SnackBarError('Something went wrong'));
+    }
+  }, [error]);
+
+  const handleRecipientChange = (fieldName: string, data: any) => {
+    if(typeof data[data.length-1] === 'string'){
+      const trimmedInput = data[data.length-1].trim();
+      const test = trimmedInput
+                  .toLowerCase()
+                  .match(
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                  );
+      if(!test){
+        return 
+      }
+    }
+    FormikSetFieldValue(fieldName, data.map((datum:any)=>{
+      if(typeof datum === 'string'){
+        return {email: datum.trim()}
+      } else {
+        return datum
+      }
+    }));
   };
 
   const emailSent = () => {
@@ -73,23 +127,23 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
   const form = useFormik({
     initialValues: {
       from: profileState.companyEmail,
-      to: customerEmail,
+      to: [{email: customerEmail}],
       subject: emailDefault.subject,
       message: emailDefault.message,
       sendToMe: false,
     },
     onSubmit: (values: any, {setSubmitting}: any) => {
-      //setSubmitting(true);
-
       const params: any = {
         id: id,
         invoiceId: id,
+        recipients: JSON.stringify(values.to.map((recipient:any) => recipient.email)),
         subject: values.subject,
         message: values.message,
-        //invoicePdf
-      }
+        copyToMyself: values.sendToMe,
+        invoicePdf: true,
+      };
       dispatch(sendEmailAction.fetch({
-        'email': customer?.info?.email,
+        'email': values.to.map((recipient:any) => recipient.email).join(',') || customer?.info?.email,
         data: params,
         type: 'invoice'
       }));
@@ -102,7 +156,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
     'values': FormikValues,
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
-    //setFieldValue,
+    setFieldValue: FormikSetFieldValue,
     //getFieldMeta,
     //isSubmitting
   } = form;
@@ -120,10 +174,10 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
             <Grid container direction={'column'} spacing={1}>
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={2}>
                     <Typography variant={'button'}>FROM</Typography>
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid item xs={10}>
                     <TextField
                       disabled
                       autoComplete={'off'}
@@ -140,31 +194,77 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
 
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={2}>
                     <Typography variant={'button'}>TO</Typography>
                   </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      disabled
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'to'}
-                      name={'to'}
-                      onChange={(e: any) => formikChange(e)}
-                      value={FormikValues.to}
-                      variant={'outlined'}
-                      placeholder='Select payment method'
-                    />
+                  <Grid item xs={10}>
+                    {!customerContacts.length ? (
+                      <TextField
+                        disabled
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'to'}
+                        name={'to'}
+                        onChange={(e: any) => formikChange(e)}
+                        value={FormikValues.to[0].email}
+                        variant={'outlined'}
+                        placeholder='Select payment method'
+                      />
+                    ) : (
+                      <Autocomplete
+                        classes={{inputRoot: FormikValues.to.length > 1 ? classes.inputRoot : classes.inputRootSingle}}
+                        freeSolo
+                        clearOnBlur
+                        fullWidth
+                        autoSelect
+                        getOptionLabel={(option) => {
+                          const { name, email } = option;
+                          return `${name}, ${email}`;
+                        }}
+                        multiple
+                        onInputChange={(ev: any, newValue: any) => {
+                          if(newValue.endsWith(',') || newValue.endsWith(';') || newValue.endsWith(' ')){
+                            ev?.target.blur();
+                            ev?.target.focus();
+                          }
+                        }}
+                        onChange={(ev: any, newValue: any) => handleRecipientChange('to', newValue)}
+                        options={
+                          customerContacts && customerContacts.length !== 0
+                            ? stringSortCaseInsensitive(customerContacts, 'name')
+                            : []
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant={'outlined'}
+                            required={!customerContacts.length}
+                          />
+                        )}
+                        renderTags={(tagValue, getTagProps) =>
+                          tagValue.map((option, index) => {
+                            return (
+                              <Chip
+                                key={index}
+                                label={`${option.email}`}
+                                {...getTagProps({ index })}
+                              />
+                            );
+                          })
+                        }
+                        value={FormikValues.to}
+                      />
+                    )}
                   </Grid>
                 </Grid>
               </Grid>
 
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={2}>
                     <Typography variant={'button'}>SUBJECT</Typography>
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid item xs={10}>
                     <TextField
                       autoFocus
                       autoComplete={'off'}
@@ -182,10 +282,10 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
 
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={3}>
+                  <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={2}>
                     <Typography variant={'button'} style={{marginTop: '10px'}}>MESSAGE</Typography>
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid item xs={10}>
                     <TextField
                       autoComplete={'off'}
                       className={classes.fullWidth}
@@ -204,10 +304,10 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, onCli
 
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={3}>
+                  <Grid container item justify={'flex-end'} alignItems={'flex-start'} xs={2}>
 
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid item xs={10}>
                     <FormControlLabel
                       classes={{label: classes.checkboxLabel}}
                       control={

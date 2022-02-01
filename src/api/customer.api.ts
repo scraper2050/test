@@ -29,6 +29,33 @@ export const getCustomers = async (active = true, inactive = false) => {
   return responseData;
 };
 
+export const getCustomersContact = async (customerId:string) => {
+  const body = {
+    'customerId': customerId,
+  };
+  let responseData;
+  try {
+    const response: any = await request('/getCustomerAllContacts', 'OPTIONS', body, false);
+
+    responseData = response.data;
+    if (response.status === 200) {
+      responseData = {
+        ...response.data,
+      };
+    }
+  } catch (err) {
+    responseData = err.data;
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+  return responseData;
+};
+
 export const getCustomerDetail = async (data: any) => {
   const body = {
     'customerId': data.customerId,
