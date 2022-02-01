@@ -139,7 +139,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
         recipients: JSON.stringify(values.to.map((recipient:any) => recipient.email)),
         subject: values.subject,
         message: values.message,
-        copyToMySelf: values.sendToMe,
+        copyToMyself: values.sendToMe,
         invoicePdf: true,
       };
       dispatch(sendEmailAction.fetch({
