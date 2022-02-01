@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './items.styles';
 import { Button, Fab, Grid, withStyles } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
@@ -183,6 +184,17 @@ function AdminInvoicingItemsPage({ classes }:Props) {
           variant={'contained'}>
           {'Edit Prices'}
         </CSButton> */}
+        <CSButton
+          color={'primary'}
+          disabled={updating}
+          disableElevation
+          onClick={renderAdd}
+          size={'small'}
+          style={{
+            'color': 'white' }}
+          variant={'contained'}>
+          {'New Item'}
+        </CSButton>
       </>;
   }
 
@@ -210,6 +222,29 @@ function AdminInvoicingItemsPage({ classes }:Props) {
     }, 200);
   };
 
+  const renderAdd = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        item: {
+          name: '',
+          description: '',
+          isFixed: true,
+          isJobType: true,
+          tax: 0,
+          tiers: activeTiers.reduce((total:any, currentValue:any) => ({
+            ...total,
+            [currentValue.tier._id]: currentValue,
+          }), {}),
+        },
+        'modalTitle': 'New Item'
+      },
+      'type': modalTypes.ADD_ITEM_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
 
   useEffect(() => {
     if (tiers.length || items) {
@@ -225,9 +260,10 @@ function AdminInvoicingItemsPage({ classes }:Props) {
                   size={'small'}
                   style={{
                     'marginRight': 10,
-                    'width': 60
+                    'minWidth': 35,
+                    'padding': '5px 10px',
                   }}>
-                  {'Edit'}
+                  <EditIcon />
                 </CSButtonSmall>
               </div>
             );

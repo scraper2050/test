@@ -390,6 +390,17 @@ function BCModal() {
           item={data.item}
         />);
         break;
+      case modalTypes.ADD_ITEM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCInvoiceEditModal
+          item={data.item}
+        />);
+        break;
       case modalTypes.SALES_TAX_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
