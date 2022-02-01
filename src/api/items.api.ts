@@ -97,7 +97,7 @@ export const updateItems = async (items:any) => {
 
 export const addItem = async (item:any) => {
   try {
-    const response: any = await request('/createItem', 'POST', {title: item.name}, false);
+    const response: any = await request('/createJobType', 'POST', {title: item.name, description: item.description}, false);
     if(response.data.status === 0){
       throw new Error(response.data.message);
     }
