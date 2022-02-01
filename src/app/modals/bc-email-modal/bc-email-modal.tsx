@@ -139,11 +139,11 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
         recipients: JSON.stringify(values.to.map((recipient:any) => recipient.email)),
         subject: values.subject,
         message: values.message,
-        copyToMySelf: values.sendToMe,
+        copyToMyself: values.sendToMe,
         invoicePdf: true,
       };
       dispatch(sendEmailAction.fetch({
-        'email': customer?.info?.email,
+        'email': values.to.map((recipient:any) => recipient.email).join(',') || customer?.info?.email,
         data: params,
         type: 'invoice'
       }));
@@ -216,11 +216,18 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
                         freeSolo
                         clearOnBlur
                         fullWidth
+                        autoSelect
                         getOptionLabel={(option) => {
                           const { name, email } = option;
                           return `${name}, ${email}`;
                         }}
                         multiple
+                        onInputChange={(ev: any, newValue: any) => {
+                          if(newValue.endsWith(',') || newValue.endsWith(';') || newValue.endsWith(' ')){
+                            ev?.target.blur();
+                            ev?.target.focus();
+                          }
+                        }}
                         onChange={(ev: any, newValue: any) => handleRecipientChange('to', newValue)}
                         options={
                           customerContacts && customerContacts.length !== 0
