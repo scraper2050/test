@@ -216,11 +216,18 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
                         freeSolo
                         clearOnBlur
                         fullWidth
+                        autoSelect
                         getOptionLabel={(option) => {
                           const { name, email } = option;
                           return `${name}, ${email}`;
                         }}
                         multiple
+                        onInputChange={(ev: any, newValue: any) => {
+                          if(newValue.endsWith(',') || newValue.endsWith(';') || newValue.endsWith(' ')){
+                            ev?.target.blur();
+                            ev?.target.focus();
+                          }
+                        }}
                         onChange={(ev: any, newValue: any) => handleRecipientChange('to', newValue)}
                         options={
                           customerContacts && customerContacts.length !== 0
