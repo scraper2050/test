@@ -21,7 +21,7 @@ import {
 import { Field, Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { createJobSiteAction, getJobSites, updateJobSiteAction } from 'actions/job-site/job-site.action';
 import { useHistory, useLocation } from 'react-router-dom';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
@@ -45,7 +45,6 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
-  const { customerObj } = useSelector((state: any) => state.customers);
   const [positionValue, setPositionValue] = useState({
     'long': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.long ? jobSiteInfo.location.long : '',
     'lat': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.lat ? jobSiteInfo.location.lat : '',
