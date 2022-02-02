@@ -23,7 +23,7 @@ import React, { useState } from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import { createJobSiteAction, getJobSites, updateJobSiteAction } from 'actions/job-site/job-site.action';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import { success } from 'actions/snackbar/snackbar.action';
 import debounce from 'lodash.debounce';
@@ -44,6 +44,7 @@ interface AllStateTypes {
 function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const [positionValue, setPositionValue] = useState({
     'long': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.long ? jobSiteInfo.location.long : '',
     'lat': jobSiteInfo && jobSiteInfo.location && jobSiteInfo.location.lat ? jobSiteInfo.location.lat : '',
@@ -139,22 +140,6 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     } else {
       setNameLabelState(false);
     }
-
-    if (requestObj.location.lat === 0) {
-      setLatLabelState(true);
-      validateFlag = false;
-    } else {
-      setLatLabelState(false);
-
-    }
-
-    if (requestObj.location.long === 0) {
-      setLongLabelState(true);
-      validateFlag = false;
-    } else {
-      setLongLabelState(false);
-
-    }
     return validateFlag;
   }
 
@@ -192,6 +177,16 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                     requestObj.address.street = values.address.street;
                     requestObj.address.zipcode = values.address.zipcode;
                     if (isValidate(requestObj)) {
+                      if  (
+                        requestObj.location.lat === '' ||
+                        requestObj.location.long === '' ||
+                        requestObj.location.lat === 0 ||
+                        requestObj.location.long === 0 
+                      ) {
+                        const baseObj: any = location.state
+                        requestObj.location.lat = baseObj.location?.coordinates[1];
+                        requestObj.location.long = baseObj.location?.coordinates[0];
+                      }
                       if (jobSiteInfo.update) {
                         await dispatch(updateJobSiteAction(requestObj, () => {
                           closeModal();
@@ -391,7 +386,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                             className={classes.paper}
                             item
                             sm={6}>
-                            <FormGroup className={'required'}>
+                            <FormGroup>
                               <InputLabel className={classes.label}>
                                 {'Latitude'}
                               </InputLabel>
@@ -402,7 +397,6 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                                 variant={'outlined'}
                                 type={'number'}
                                 value={positionValue.lat}
-                                required
                               />
                               {latLabelState ? <label>Required</label> : null}
                             </FormGroup>
@@ -411,7 +405,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                             className={classes.paper}
                             item
                             sm={6}>
-                            <FormGroup className={'required'}>
+                            <FormGroup>
                               <InputLabel className={classes.label}>
                                 {'Longitude'}
                               </InputLabel>
@@ -421,7 +415,6 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                                   updateMapFromLatLng('lng', e.target.value)
                                 }}
                                 type={'number'}
-                                required
                                 placeholder={'Longitude'}
                                 variant={'outlined'}
                                 value={positionValue.long}
