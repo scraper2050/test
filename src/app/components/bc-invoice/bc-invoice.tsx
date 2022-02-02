@@ -420,7 +420,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>{row?.quantity}</span>
+                  )}>{row?.isFixed ? 'Fixed' : 'Hourly'}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
