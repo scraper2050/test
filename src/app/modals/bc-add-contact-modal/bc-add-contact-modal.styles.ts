@@ -2,8 +2,9 @@ import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
 export default (theme: Theme): any => ({
   'dialogActions': {
-    'margin-top': '10px',
-    'padding': '15px 24px !important'
+    'margin-top': '55px',
+    'padding': '28px 44px !important',
+    'border-top': '1px solid #D0D3DC'
   },
   'dialogContent': {
     'padding': '8px 24px !important'
@@ -28,16 +29,25 @@ export default (theme: Theme): any => ({
     'minWidth': '70%'
   },
   'deleteButton': {
-    'background': '#C00707 !important',
-    // 'borderRadius': '30px',
-    'width': '130px !important',
-    'height': '34px',
+    'background': CONSTANTS.PRIMARY_WHITE,
+    'color': CONSTANTS.INVOICE_HEADING,
     'fontStyle': 'normal',
     'fontWeight': 'normal',
-    'fontSize': '20px',
-    'lineHeight': '30px',
-    'marginBottom': '6px',
+    'fontSize': '14px',
+    'lineHeight': '27px',
+    'border': '1px solid #4F4F4F',
+    'border-radius': '8px',
+    'textTransform': 'none'
+  },
+  'saveButton': {
     'color': CONSTANTS.PRIMARY_WHITE,
+    'fontStyle': 'normal',
+    'fontWeight': 'normal',
+    'fontSize': '14px',
+    'lineHeight': '30px',
+    'border-radius': '8px',
+    'textTransform': 'none',
+    'width': '80px'
   },
   selectContainer: {
     display: 'flex',
@@ -47,6 +57,9 @@ export default (theme: Theme): any => ({
     'fontSize': '16px !important',
     'fontWeight': 'bold',
     'color': '#000000 !important'
+  },
+  'contact-modal-title': {
+    padding: '150px 0px'
   }
 
 });
