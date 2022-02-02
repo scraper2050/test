@@ -25,7 +25,7 @@ import { RootState } from 'reducers';
 import { error as errorSnackBar, success } from 'actions/snackbar/snackbar.action';
 import * as CONSTANTS from "../../../constants";
 import styles from './bc-invoice-item-modal.styles'
-import { updateItems } from 'api/items.api';
+import { updateItems, addItem } from 'api/items.api';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 
 const EditItemValidation = yup.object().shape({
@@ -85,6 +85,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
+  const isAdd = _id ? false : true;
 
   const closeModal = () => {
     dispatch(setModalDataAction({
@@ -111,7 +112,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
       'tiers': activeTiers.reduce((total, currentValue) => ({
         ...total,
         [currentValue._id]: currentValue,
-      }), {})
+      }), {}),
     },
     'onSubmit': async values => {
       setIsSubmitting(true)
@@ -139,12 +140,19 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
         tax: values.tax,
         tiers: tierArr
       }
-      const response = await updateItems([itemObject]).catch((err: { message: any; }) => {
-        dispatch(errorSnackBar(err.message));
-      });
+      let response;
+      if(isAdd){
+        response = await addItem(itemObject).catch((err: { message: any; }) => {
+          dispatch(errorSnackBar(err.message));
+        });
+      } else {
+        response = await updateItems([itemObject]).catch((err: { message: any; }) => {
+          dispatch(errorSnackBar(err.message));
+        });
+      }
       if (response) {
         dispatch(loadInvoiceItems.fetch());
-        dispatch(success('Items successfully updated'));
+        dispatch(success(`Items successfully ${isAdd ? 'added' : 'updated'}`));
         closeModal();
       }
       setIsSubmitting(false);

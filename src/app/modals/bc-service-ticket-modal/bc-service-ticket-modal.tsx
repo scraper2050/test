@@ -358,7 +358,7 @@ function BCServiceTicketModal({
     if (ticket.customer?._id) {
       const jobLocation = jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0];
 
-      if (jobLocation) {
+      if (jobLocation && ticket?.customer?._id === FormikValues.customerId) {
         setJobLocationValue(jobLocation);
         if (jobLocation.isActive) {
           dispatch(getJobSites({
@@ -383,7 +383,7 @@ function BCServiceTicketModal({
 
   useEffect(() => {
     if (ticket.customer?._id !== '') {
-      if (jobSites.length !== 0) {
+      if (jobSites.length !== 0 && jobLocationValue._id && ticket?.customer?._id === FormikValues.customerId) {
         setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0]);
       }
     }
