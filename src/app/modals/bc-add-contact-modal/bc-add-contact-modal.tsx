@@ -348,7 +348,7 @@ function BCAddContactModal({
                         id="tags-standard"
                         options={contacts && contacts.length !== 0 ? contacts.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0)) : []}
                         getOptionLabel={(option) => option.name}
-                        onChange={(ev: React.ChangeEvent<{}>, newValue: string) => handleSelect(ev, setFieldValue, newValue)}
+                        onChange={(ev: React.ChangeEvent<Record<string, unknown>>, newValue: string) => handleSelect(ev, setFieldValue, newValue)}
                         renderInput={(params) => (
                           <>
                             <TextField
