@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, {useState, useEffect} from 'react';
-import {closeModalAction} from 'actions/bc-modal/bc-modal.action';
+import {closeModalAction, setModalDataAction} from 'actions/bc-modal/bc-modal.action';
 import styled from 'styled-components';
 import styles from './bc-email-modal.styles';
 import {useDispatch, useSelector} from 'react-redux';
@@ -67,6 +67,12 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
 
   const closeModal = () => {
     dispatch(closeModalAction());
+    setTimeout(() => {
+      dispatch(setModalDataAction({
+        'data': {},
+        'type': ''
+      }));
+    }, 200);
   };
 
   
