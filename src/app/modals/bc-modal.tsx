@@ -214,7 +214,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'md'
+          'maxWidth': 'sm'
         });
         setComponent(<BCAddContactModal props={data.data} />);
         break;
