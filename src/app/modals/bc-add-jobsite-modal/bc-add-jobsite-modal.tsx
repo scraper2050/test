@@ -66,7 +66,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     "address": {
       "city": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.city ? jobSiteInfo.address.city : '',
       'state': {
-        'id': jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.state ? allStates.findIndex(x => x.name === jobSiteInfo.address.state) : 0
+        'id': jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.state ? allStates.findIndex(x => x.name === jobSiteInfo.address.state) : -1
       },
       "street": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.street ? jobSiteInfo.address.street : '',
       "zipcode": jobSiteInfo && jobSiteInfo.address && jobSiteInfo.address.zipcode ? jobSiteInfo.address.zipcode : ''
@@ -173,7 +173,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                       }
                     };
                     requestObj.address.city = values.address.city;
-                    requestObj.address.state = allStates[state].name;
+                    requestObj.address.state = allStates[state]?.name || '';
                     requestObj.address.street = values.address.street;
                     requestObj.address.zipcode = values.address.zipcode;
                     if (isValidate(requestObj)) {
@@ -186,6 +186,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         const baseObj: any = location.state
                         requestObj.location.lat = baseObj.location?.coordinates[1];
                         requestObj.location.long = baseObj.location?.coordinates[0];
+                        requestObj.address.state = ''
                       }
                       if (jobSiteInfo.update) {
                         await dispatch(updateJobSiteAction(requestObj, () => {
