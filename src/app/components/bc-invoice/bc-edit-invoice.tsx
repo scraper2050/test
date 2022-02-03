@@ -533,7 +533,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
               'id': invoiceData._id,
               'typeText': 'Invoice',
               'className': 'wideModalTitle',
-              emailDefault
+              emailDefault,
+              customerId: customer._id
           },
           'type': modalTypes.EMAIL_JOB_REPORT_MODAL
         }));
