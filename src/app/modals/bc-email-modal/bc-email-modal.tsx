@@ -139,6 +139,10 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
       sendToMe: false,
     },
     onSubmit: (values: any, {setSubmitting}: any) => {
+      if(!values.to.length){
+        dispatch(SnackBarError('Please Add Recipient(s)'));
+        return
+      }
       const params: any = {
         id: id,
         invoiceId: id,
