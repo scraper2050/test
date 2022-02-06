@@ -579,7 +579,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
-        history.push('/main/invoicing/invoices-list');
+        history.push(`/main/invoicing/view/${data.invoice_id}`);
         return resolve(response);
       })
         .catch((err: any) => {
