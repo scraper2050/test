@@ -546,7 +546,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         dispatch(error(message));
       }
     } catch (e) {
-      dispatch(errorSnackBar(e));
+      dispatch(errorSnackBar('Something went wrong. Please try again'));
       console.log(e);
     }
   }
