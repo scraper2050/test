@@ -114,7 +114,7 @@ const StyledTabs = styled(Tabs)<{chip: boolean}>`
 
     &:last-of-type {
       .MuiTab-wrapper {
-        align-items: ${props => props.chip ? 'end' : 'center'};;
+        align-items: ${props => props.chip ? 'end' : 'center'};
       }
     }
   }
@@ -126,6 +126,11 @@ const StyledTabs = styled(Tabs)<{chip: boolean}>`
 
   .MuiTabs-indicator {
     height: 6px;
+  }
+
+  .MuiTab-wrapper {
+    align-items: ${props => props.chip ? 'end' : 'center'};
+    white-space: nowrap;
   }
 `;
 
