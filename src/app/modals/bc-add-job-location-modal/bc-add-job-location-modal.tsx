@@ -28,6 +28,9 @@ import {
   refreshJobLocation,
   updateJobLocationAction
 } from 'actions/job-location/job-location.action';
+import {
+  Position,
+} from 'actions/job-location/job-location.types';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {error, success} from 'actions/snackbar/snackbar.action';
 import {useHistory, useLocation} from 'react-router-dom';
@@ -50,21 +53,16 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
-
-  const [positionValue, setPositionValue] = useState({
+  const [positionValue, setPositionValue] = useState<Position>({
     'long': jobLocationInfo?.location?.coordinates?.[0] ?? '',
     'lat': jobLocationInfo.location?.coordinates?.[1] ?? ''
   });
+  const [localLocationObj, setLocalLocationObj] = useState<any>(null);
   const [nameLabelState, setNameLabelState] = useState(false);
   const [latLabelState, setLatLabelState] = useState(false);
   const [longLabelState, setLongLabelState] = useState(false);
   const initialValues = {
     "name": jobLocationInfo?.name,
-    "contact": {
-      "name": jobLocationInfo?.contacts?.[0]?.name,
-      "phone": jobLocationInfo?.contacts?.[0]?.phone,
-      "email": jobLocationInfo?.contacts?.[0]?.email,
-    },
     "locationLat": 0,
     "locationLong": 0,
     "address": {
@@ -103,6 +101,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
           'long': lng,
           'lat': lat
         });
+        setLocalLocationObj(null);
       },
       (error) => {
         console.error(error);
@@ -111,19 +110,35 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
 
   const updateMapFromLatLng = (name: string, value: any): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if (name === 'lat') {
-      setPositionValue({
-        'long': positionValue.long,
-        'lat': value ? parseFloat(value) : value === 0 ? 0 : ''
-      });
 
-    } else {
-      setPositionValue({
-        'long': value ? parseFloat(value) : value === 0 ? 0 : '',
-        'lat': positionValue.lat
+    const newPosition: Position = {...positionValue};
+    newPosition[name === 'lng' ? 'long' : name] = value ? parseFloat(value) : value === 0 ? 0 : ''
+    setPositionValue(newPosition);
+    Geocode.fromLatLng(`${newPosition.lat}`,`${newPosition.long}`).then(
+      (response) => {
+        const index = response.results.length > 1 && response.results[0].types[0] === 'plus_code' ? 1 : 0;
+        const tempLocation = response.results[index];
+        const tempObj = {
+          street: tempLocation.formatted_address.split(',')[0],
+          city: tempLocation.address_components.filter((loc: any) => loc.types[0] === 'locality')[0]?.long_name || '',
+          state: tempLocation.address_components.filter((loc: any) => loc.types[0] === 'administrative_area_level_1')[0]?.long_name || '',
+          zipcode: tempLocation.address_components.filter((loc: any) => loc.types[0] === 'postal_code')[0]?.long_name || '',
+        };
+        setLocalLocationObj(tempObj);
+      },
+      (error) => {
+        console.error(error);
       });
-    }
   };
+
+  const acceptChanges = (setFieldValue: any, values: any) => {
+    const index = allStates.findIndex((state: AllStateTypes) => state.name.toLowerCase() === localLocationObj.state.toLowerCase());
+    updateMap(values, localLocationObj.street, localLocationObj.street, localLocationObj.zipcode, index);
+    setFieldValue('address.state.id', index);
+    setFieldValue('address.street', localLocationObj.street);
+    setFieldValue('address.city', localLocationObj.city);
+    setFieldValue('address.zipcode', localLocationObj.zipcode);
+  }
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -158,12 +173,6 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
     } else {
       setLongLabelState(false);
 
-    }
-
-    const parsedContact:{ phone: string } = JSON.parse(requestObj.contact)
-    if (parsedContact.phone && parsedContact.phone.length !== 10) {
-      dispatch(error('Please enter a valid phone number. (10 Characters)'))
-      validateFlag = false;
     }
 
     return validateFlag;
@@ -210,12 +219,10 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                 requestObj.state = state >= 0 ? allStates[state].name : '';
                 requestObj.street = values.address.street;
                 requestObj.zipcode = values.address.zipcode;
-                requestObj.contact = JSON.stringify(values.contact);
                 delete requestObj.address;
 
                 if (isValidate(requestObj)) {
                   if (jobLocationInfo._id) {
-                    delete requestObj.contact;
                     await dispatch(updateJobLocationAction(requestObj,
                       ({status, message, jobLocation}: { status: number, message: string, jobLocation: any }) => {
                         if (status === 1) {
@@ -272,69 +279,6 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           {nameLabelState ? <label>Required</label> : ''}
                         </FormGroup>
                       </Grid>
-                      <>
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={12}>
-                          <FormGroup>
-                            <InputLabel className={classes.label}>
-                              {'Email'}
-                            </InputLabel>
-                            <BCTextField
-                              name={'contact.email'}
-                              placeholder={'Email'}
-                              disabled={jobLocationInfo?._id}
-                              type={'email'}
-                              onChange={(e: any) => {
-                                setFieldValue('contact.email', e.target.value)
-                              }}
-
-                            />
-                          </FormGroup>
-                        </Grid>
-
-                        <Grid container>
-                          <Grid
-                            className={classes.paper}
-                            item
-                            sm={6}>
-                            <FormGroup>
-                              <InputLabel className={classes.label}>
-                                {'Contact Name'}
-                              </InputLabel>
-                              <BCTextField
-                                name={'contact.name'}
-                                placeholder={'Contact Name'}
-                                disabled={jobLocationInfo?._id}
-                                onChange={(e: any) => {
-                                  setFieldValue('contact.name', e.target.value)
-                                }}
-                              />
-                            </FormGroup>
-                          </Grid>
-                          <Grid
-                            className={classes.paper}
-                            item
-                            sm={6}>
-                            <FormGroup>
-                              <InputLabel className={classes.label}>
-                                {'Phone Number'}
-                              </InputLabel>
-                              <BCTextField
-                                name={'contact.phone'}
-                                placeholder={'Phone Number'}
-                                disabled={jobLocationInfo?._id}
-                                type={'tel'}
-                                onChange={(e: any) => {
-                                  setFieldValue('contact.phone', e.target.value.replace(/[^0-9]/g,'').slice(0,10))
-                                }}
-                              />
-                            </FormGroup>
-                          </Grid>
-                        </Grid>
-                      </>
-
                       <Grid container>
                         <Grid
                           className={classes.paper}
@@ -418,6 +362,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                   setFieldValue,
                                   values
                                 )}
+                                getOptionSelected={(option, value) => option.name.toLowerCase() === allStates[values.address.state.id]?.name.toLowerCase()}
+                                value={allStates[values.address.state.id] || ''}
                                 renderInput={(params) => (
                                   <>
                                     <InputLabel className={`${classes.label} state-label`}>
@@ -478,31 +424,81 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                             }
                         </Grid>
                         }
+                        {localLocationObj && (
+                          <> 
+                            <InfoContainer>
+                              <div>You've manually changed latitude/longitude</div>
+                              <div>Do you want to reflect this address changes based on coordinates?</div>
+                              <InfoRow>
+                                <InfoTitle>Street:</InfoTitle>
+                                <InfoContent>{localLocationObj.street}</InfoContent>
+                              </InfoRow>
+                              <InfoRow>
+                                <InfoTitle>City:</InfoTitle>
+                                <InfoContent>{localLocationObj.city}</InfoContent>
+                              </InfoRow>
+                              <InfoRow>
+                                <InfoTitle>State:</InfoTitle>
+                                <InfoContent>{localLocationObj.state}</InfoContent>
+                              </InfoRow>
+                              <InfoRow>
+                                <InfoTitle>Zip Code:</InfoTitle>
+                                <InfoContent>{localLocationObj.zipcode}</InfoContent>
+                              </InfoRow>
+                            </InfoContainer>
+                            <Grid container>
+                              <Grid
+                                className={classNames(classes.paper, 'form_button_wrapper-desktop')}
+                                item
+                                md={12}>
+                                <Box mt={2}>
+                                  <Button
+                                    className={'save-customer-button'}
+                                    color={'primary'}
+                                    onClick={() => acceptChanges(setFieldValue, values)}
+                                    variant={'contained'}>
+                                    Accept Changes
+                                  </Button>
+                                  <Button
+                                    className={'cancel-customer-button'}
+                                    disabled={isSubmitting}
+                                    onClick={() => setLocalLocationObj(null)}
+                                    color={'secondary'}
+                                    variant={'contained'}>
+                                    Dismiss
+                                  </Button>
+                                </Box>
+                              </Grid>
+                            </Grid>
+                          </>
+                        )}
                       </Grid>
 
-                      <Grid
-                        className={classNames(classes.paper, 'form_button_wrapper-desktop')}
-                        item
-                        md={12}>
-                        <Box mt={2}>
-                          <Button
-                            className={'save-customer-button'}
-                            disabled={isSubmitting}
-                            color={'primary'}
-                            type={'submit'}
-                            variant={'contained'}>
-                            {jobLocationInfo && jobLocationInfo.update ? 'Update' : 'Save'}
-                          </Button>
-                          <Button
-                            className={'cancel-customer-button'}
-                            disabled={isSubmitting}
-                            onClick={() => closeModal()}
-                            color={'secondary'}
-                            variant={'contained'}>
-                            {'Cancel'}
-                          </Button>
-                        </Box>
-                      </Grid>
+                      {!localLocationObj && (
+                        <Grid
+                          className={classNames(classes.paper, 'form_button_wrapper-desktop')}
+                          item
+                          md={12}>
+                          <Box mt={2}>
+                            <Button
+                              className={'save-customer-button'}
+                              disabled={isSubmitting}
+                              color={'primary'}
+                              type={'submit'}
+                              variant={'contained'}>
+                              {jobLocationInfo && jobLocationInfo.update ? 'Update' : 'Save'}
+                            </Button>
+                            <Button
+                              className={'cancel-customer-button'}
+                              disabled={isSubmitting}
+                              onClick={() => closeModal()}
+                              color={'secondary'}
+                              variant={'contained'}>
+                              {'Cancel'}
+                            </Button>
+                          </Box>
+                        </Grid>
+                      )}
                     </Grid>
                     <Grid container item xs={6}>
                       <Grid
@@ -632,6 +628,22 @@ const DataContainer = styled.div`
     color: ${CONSTANTS.PRIMARY_WHITE};
   }
 `;
+
+const InfoContainer = styled.div`
+  padding: 4px 8px;
+  background-color: #f2f2f2;
+`
+const InfoRow = styled.div`
+  display: flex;
+`
+
+const InfoTitle = styled.span`
+  flex: 1;
+  font-weight: bold
+`
+const InfoContent = styled.span`
+  flex: 3;
+`
 
 export default withStyles(
   styles,

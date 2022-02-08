@@ -22,3 +22,7 @@ export enum JobLocationActionType {
   CLEAR_JOB_LOCATION_STORE = 'clearJobLocationStore',
   SET_REFRESH_JOB_LOCATION_STATUS = 'setRefreshJobLocationStatus'
 }
+
+export interface Position {
+  [key:string]:any;
+}
