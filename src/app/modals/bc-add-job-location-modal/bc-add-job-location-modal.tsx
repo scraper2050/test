@@ -362,7 +362,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                                   setFieldValue,
                                   values
                                 )}
-                                getOptionSelected={(option, value) => option.name.toLowerCase() === allStates[values.address.state.id]?.name.toLowerCase()}
+                                getOptionSelected={(option) => option.name.toLowerCase() === allStates[values.address.state.id]?.name.toLowerCase()}
                                 value={allStates[values.address.state.id] || ''}
                                 renderInput={(params) => (
                                   <>
