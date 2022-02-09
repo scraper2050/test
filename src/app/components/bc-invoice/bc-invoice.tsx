@@ -281,6 +281,26 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     return contactDetail;
   }
 
+  let serviceAddressLocation: any = invoiceDetail?.job?.jobLocation ? ({
+    name: invoiceDetail?.job?.jobLocation?.name || '',
+    street: invoiceDetail?.job?.jobLocation?.address?.street || '',
+    city: invoiceDetail?.job?.jobLocation?.address?.city || '',
+    state: invoiceDetail?.job?.jobLocation?.address?.state || '',
+    zipcode: invoiceDetail?.job?.jobLocation?.address?.zipcode || '',
+  }) : null;
+  serviceAddressLocation = serviceAddressLocation ? Object.values(serviceAddressLocation).filter(key=>!!key) : '';
+
+  let serviceAddressSite: any = invoiceDetail?.job?.jobSite ? ({
+    name: invoiceDetail?.job?.jobSite?.name || '',
+    street: invoiceDetail?.job?.jobSite?.address?.street || '',
+    city: invoiceDetail?.job?.jobSite?.address?.city || '',
+    state: invoiceDetail?.job?.jobSite?.address?.state || '',
+    zipcode: invoiceDetail?.job?.jobSite?.address?.zipcode || '',
+  }) : null;
+  serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
+  console.log('ini itu serviceAddressLocation', serviceAddressLocation)
+  console.log('ini itu serviceAddressSite', serviceAddressSite)
+
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
@@ -295,6 +315,14 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                 <small>BILL TO</small>
                 <h4>{invoiceDetail?.customer?.profile?.displayName}</h4>
                 <span>{composeAddress()}</span>
+                <small style={{marginTop: 30}}>CONTACT DETAILS</small>
+                {invoiceDetail?.customerContactId 
+                  ? composeContactDetail().split('\n').map((detail,index)=>(
+                    <p key={index}>{detail}</p>
+                  )) : (
+                    <h4>no contact found</h4>
+                  )
+                }
               </div>
             </div>
           </Grid>
@@ -307,16 +335,19 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                 <span>{invoiceDetail?.company?.address?.street}</span>
                 <span>{invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span>
               </div>
-              <div className={invoiceStyles.companyInfo}>
-                <small>CONTACT DETAILS</small>
-                {invoiceDetail?.customerContactId 
-                  ? composeContactDetail().split('\n').map((detail,index)=>(
-                    <p key={index}>{detail}</p>
-                  )) : (
-                    <h4>no contact found</h4>
-                  )
-                }
-              </div>
+              {(serviceAddressSite || serviceAddressLocation) && (
+                <div className={invoiceStyles.companyInfo} style={{marginBottom: 10}}>
+                  <div style={{
+                    fontSize: '10px',
+                    lineHeight: '12px',
+                    textTransform: 'uppercase',
+                    color: '#828282',
+                    marginBottom: 5,
+                  }}>service address</div>
+                  <span style={{fontSize: 12, fontWeight: 'bold', color: '#000000'}}>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</span>
+                  <span style={{fontSize: 12}}>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span>
+                </div>
+              )}
             </div>
           </Grid>
           <Grid item xs={12} sm={6}>

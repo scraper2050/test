@@ -72,7 +72,7 @@ function BCDeleteContactModal({
       <DataContainer >
         <Grid container direction="column" alignItems="center" spacing={2}>
 
-          <Typography variant={"h6"}>{`Are you sure you want to delete "${contact.name}"?`}</Typography>
+          <Typography variant={"h6"}>{`Are you sure you want to remove "${contact.name}"?`}</Typography>
 
         </Grid>
       </DataContainer>

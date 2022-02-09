@@ -511,6 +511,24 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
 
   const [options, setOptions] =  React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
 
+  let serviceAddressLocation: any = invoiceData?.job?.jobLocation ? ({
+    name: invoiceData?.job?.jobLocation?.name || '',
+    street: invoiceData?.job?.jobLocation?.address?.street || '',
+    city: invoiceData?.job?.jobLocation?.address?.city || '',
+    state: invoiceData?.job?.jobLocation?.address?.state || '',
+    zipcode: invoiceData?.job?.jobLocation?.address?.zipcode || '',
+  }) : null;
+  serviceAddressLocation = serviceAddressLocation ? Object.values(serviceAddressLocation).filter(key=>!!key) : '';
+
+  let serviceAddressSite: any = invoiceData?.job?.jobSite ? ({
+    name: invoiceData?.job?.jobSite?.name || '',
+    street: invoiceData?.job?.jobSite?.address?.street || '',
+    city: invoiceData?.job?.jobSite?.address?.city || '',
+    state: invoiceData?.job?.jobSite?.address?.state || '',
+    zipcode: invoiceData?.job?.jobSite?.address?.zipcode || '',
+  }) : null;
+  serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
+
   const sendInvoice = () => {
     dispatch(sendEmailAction.fetch({ 'email': customer?.info?.email,
       'id': invoiceData._id,
@@ -546,7 +564,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
         dispatch(error(message));
       }
     } catch (e) {
-      dispatch(errorSnackBar(e));
+      dispatch(errorSnackBar('Something went wrong. Please try again'));
       console.log(e);
     }
   }
@@ -579,7 +597,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
-        history.push('/main/invoicing/invoices-list');
+        history.push(`/main/invoicing/view/${data.invoice_id}`);
         return resolve(response);
       })
         .catch((err: any) => {
@@ -1094,7 +1112,11 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
 
                           </Grid>
                           <Grid item xs={5}>
-                            <div className={invoiceStyles.serviceAdd}>service address</div>
+                            <div>
+                              <div className={invoiceStyles.serviceAdd}>service address</div>
+                              <div><span>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</span></div>
+                              <div><span>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span></div>
+                            </div>
                           </Grid>
                         </Grid>
                       </CardContent>
