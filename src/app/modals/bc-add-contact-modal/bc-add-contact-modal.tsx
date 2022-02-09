@@ -458,6 +458,7 @@ const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
+  max-width: 96%;
   background-color: ${CONSTANTS.PRIMARY_WHITE};
 
   .MuiInput-underline:before,
