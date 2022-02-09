@@ -116,7 +116,7 @@ const getJobData = (ids: any, jobTypes: any) => {
   if (!ids) {
     return;
   }
-  return jobTypes.filter((job: any) => ids.includes(job._id));
+  return ids.map((id: any)=> jobTypes.filter((job: any) => job._id === id)[0]);
 };
 
 /**
@@ -937,6 +937,7 @@ function BCJobModal({
                     })
                   }
                   value={task.jobTypes}
+                  getOptionSelected={() => false}
                 />
               </Grid>
               {index > 0 && !jobTypesLoading &&
