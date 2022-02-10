@@ -12,7 +12,9 @@ export const getContacts = (data: any) => {
       request('/getContacts', 'OPTIONS', data, false)
         .then(async (res: any) => {
           try {
-            await dispatch(setContacts(res.data.result));
+            if(res.data.result){
+              await dispatch(setContacts(res.data.result));
+            }
             await dispatch(setContactsLoading(false));
             return resolve(res.data);
           } catch {

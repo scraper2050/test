@@ -204,12 +204,11 @@ function BCServiceTicketModal({
       'images': ticket.images !== undefined ? ticket.images : []
     },
     'onSubmit': (values, { setSubmitting }) => {
-      values.jobTypes = JSON.stringify(values.jobTypes);
-
       const tempData = {
         ...ticket,
         ...values
       };
+      tempData.jobTypes = JSON.stringify(tempData.jobTypes);
       tempData.images = tempData.images.filter((image: any) => image instanceof File);
 
       const editTicketObj = { ...values,
