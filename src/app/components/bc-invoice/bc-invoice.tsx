@@ -298,8 +298,6 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     zipcode: invoiceDetail?.job?.jobSite?.address?.zipcode || '',
   }) : null;
   serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
-  console.log('ini itu serviceAddressLocation', serviceAddressLocation)
-  console.log('ini itu serviceAddressSite', serviceAddressSite)
 
   return (
     <DataContainer>
