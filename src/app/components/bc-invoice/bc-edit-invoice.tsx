@@ -1112,11 +1112,13 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
 
                           </Grid>
                           <Grid item xs={5}>
+                          {(serviceAddressSite || serviceAddressLocation) && (
                             <div>
                               <div className={invoiceStyles.serviceAdd}>service address</div>
                               <div><span>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</span></div>
                               <div><span>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span></div>
                             </div>
+                          )}
                           </Grid>
                         </Grid>
                       </CardContent>
