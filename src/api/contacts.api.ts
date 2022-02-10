@@ -14,6 +14,8 @@ export const getContacts = (data: any) => {
           try {
             if(res.data.result){
               await dispatch(setContacts(res.data.result));
+            } else {
+              await dispatch(setContacts([]));
             }
             await dispatch(setContactsLoading(false));
             return resolve(res.data);
