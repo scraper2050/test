@@ -95,7 +95,7 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       margin: '0 20px',
     },
     invoiceInfoContainer: {
-      flex: 1,
+      flex: 3,
       marginBottom: 20,
     },
     totalContainer: {
@@ -360,10 +360,8 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
               <Grid item xs={12}>
                 <div className={invoiceStyles.companyDetails}>
                   <div className={invoiceStyles.companyInfo}>
-                    <small>TECHNICIAN NOTES</small>
-                    {invoiceDetail?.job?.track?.length && invoiceDetail.job.track.filter((detail:{note?: string}) => detail.note).map((detail:{note?: string},index:number)=>(
-                      <span key={index} style={{color: '#000000'}}>{`${detail.note}`}</span>
-                    ))}
+                    <small>NOTES/SPECIAL INSTRUCTIONS</small>
+                    {invoiceDetail?.job?.ticket?.note && <span style={{color: '#000000'}}>{invoiceDetail.job.ticket.note}</span>}
                   </div>
                 </div>
               </Grid>
@@ -371,7 +369,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <div className={invoiceStyles.invoiceDetails}>
-              <div className={invoiceStyles.companyDetails} style={{flex: 0.5, alignItems: 'center'}}>
+              <div className={invoiceStyles.companyDetails} style={{flex: 2, alignItems: 'center'}}>
                 <div className={invoiceStyles.companyInfo}>
                   <small>VENDOR NUMBER</small>
                   <h4>{invoiceDetail.vendorId}</h4>
