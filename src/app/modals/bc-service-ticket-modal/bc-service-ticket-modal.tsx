@@ -221,6 +221,7 @@ function BCServiceTicketModal({
           if (formatedRequest.dueDate) {
             formatedRequest.dueDate = formatDateYMD(formatedRequest.dueDate);
           }
+          formatedRequest.jobTypes = JSON.stringify(formatedRequest.jobTypes);
 
           callEditTicketAPI(formatedRequest).then((response: any) => {
             if (response.status === 0) {
