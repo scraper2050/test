@@ -28,21 +28,21 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     companyDetails: {
       display: 'flex',
       flex: '1 1 0%',
-      flexDirection: 'column',
+      flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
-      minHeight: 350,
+      width: '100%',
     },
     companyLogo: {
-      width: '40%',
+      width: '100%',
       '& > img': {
         width: '100%',
-      }
+      },
     },
     companyInfo: {
       '& > span': {
-        color: CONSTANTS.PRIMARY_DARK_GREY,
+        color: CONSTANTS.PRIMARY_DARK,
         display: 'flex',
       },
       '& > small': {
@@ -52,16 +52,17 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
         marginBottom: 5
       },
       '& > h4': {
-        marginTop: 0
-      }
+        marginTop: 0,
+      },
+      flex: 1,
     },
     invoiceDetails: {
+      height: '100%',
       display: 'flex',
       flex: '1 1 0%',
       flexDirection: 'column',
       justifyContent: 'space-between',
       alignItems: 'flex-end',
-      minHeight: 350,
       '& > div': {
         '& > h2': {
           color: CONSTANTS.INVOICE_HEADING,
@@ -93,6 +94,10 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     divider: {
       margin: '0 20px',
     },
+    invoiceInfoContainer: {
+      flex: 3,
+      marginBottom: 20,
+    },
     totalContainer: {
       backgroundColor: CONSTANTS.INVOICE_TOTAL_CONTAINER,
       width: '100%',
@@ -109,6 +114,7 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
           marginBottom: 5
         },
       },
+      flex: 1,
     },
     totalEnd: {
       display: 'flex',
@@ -298,81 +304,98 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     zipcode: invoiceDetail?.job?.jobSite?.address?.zipcode || '',
   }) : null;
   serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
-  console.log('ini itu serviceAddressLocation', serviceAddressLocation)
-  console.log('ini itu serviceAddressSite', serviceAddressSite)
 
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={3}>
-            <div className={invoiceStyles.companyDetails}>
-              <div className={invoiceStyles.companyLogo}>
-                <img src={invoiceDetail?.company?.info?.logoUrl}/>
-              </div>
-              <div></div>
-              <div className={invoiceStyles.companyInfo}>
-                <small>BILL TO</small>
-                <h4>{invoiceDetail?.customer?.profile?.displayName}</h4>
-                <span>{composeAddress()}</span>
-                <small style={{marginTop: 30}}>CONTACT DETAILS</small>
-                {invoiceDetail?.customerContactId 
-                  ? composeContactDetail().split('\n').map((detail,index)=>(
-                    <p key={index}>{detail}</p>
-                  )) : (
-                    <h4>no contact found</h4>
-                  )
-                }
-              </div>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <div className={invoiceStyles.companyDetails}>
-              <div className={invoiceStyles.companyInfo}>
-                <h4>{invoiceDetail?.company?.info?.companyName}</h4>
-                <span>{invoiceDetail?.company?.contact?.phone}</span>
-                <span>{invoiceDetail?.company?.info?.companyEmail}</span>
-                <span>{invoiceDetail?.company?.address?.street}</span>
-                <span>{invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span>
-              </div>
-              {(serviceAddressSite || serviceAddressLocation) && (
-                <div className={invoiceStyles.companyInfo} style={{marginBottom: 10}}>
-                  <div style={{
-                    fontSize: '10px',
-                    lineHeight: '12px',
-                    textTransform: 'uppercase',
-                    color: '#828282',
-                    marginBottom: 5,
-                  }}>service address</div>
-                  <span style={{fontSize: 12, fontWeight: 'bold', color: '#000000'}}>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</span>
-                  <span style={{fontSize: 12}}>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span>
+        <Grid container>
+          <Grid item xs={12} sm={6}>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <div className={invoiceStyles.companyDetails} style={{alignItems: 'center'}}>
+                  <div className={invoiceStyles.companyInfo}>
+                    <div className={invoiceStyles.companyLogo}>
+                      <img src={invoiceDetail?.company?.info?.logoUrl}/>
+                    </div>
+                  </div>
+                  <div className={invoiceStyles.companyDetails}>
+                    <div className={invoiceStyles.companyInfo}>
+                      <h4>{invoiceDetail?.company?.info?.companyName}</h4>
+                      <span>{invoiceDetail?.company?.contact?.phone}</span>
+                      <span>{invoiceDetail?.company?.info?.companyEmail}</span>
+                      <span>{invoiceDetail?.company?.address?.street}</span>
+                      <span>{invoiceDetail?.company?.address?.city}, {invoiceDetail?.company?.address?.state} {invoiceDetail?.company?.address?.zipCode}</span>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
+              </Grid>
+              <Grid item xs={12}>
+                <div className={invoiceStyles.companyDetails}>
+                  <div className={invoiceStyles.companyInfo}>
+                    <small>BILL TO</small>
+                    <h4>{invoiceDetail?.customer?.profile?.displayName}</h4>
+                    <span>{composeAddress()}</span>
+                  </div>
+                  <div className={invoiceStyles.companyInfo}>
+                    <small>SERVICE ADDRESS</small>
+                    {(serviceAddressSite || serviceAddressLocation) && (
+                      <>
+                        <h4 style={{fontWeight: 400}}>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</h4>
+                        <span>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12}>
+                <div className={invoiceStyles.companyDetails}>
+                  <div className={invoiceStyles.companyInfo}>
+                    <small>CONTACT DETAILS</small>
+                    {invoiceDetail?.customerContactId && composeContactDetail().split('\n').map((detail,index)=>(
+                      <span key={index} style={{color: '#000000'}}>{detail}</span>
+                    ))}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12}>
+                <div className={invoiceStyles.companyDetails}>
+                  <div className={invoiceStyles.companyInfo}>
+                    <small>NOTES/SPECIAL INSTRUCTIONS</small>
+                    {invoiceDetail?.job?.ticket?.note && <span style={{color: '#000000'}}>{invoiceDetail.job.ticket.note}</span>}
+                  </div>
+                </div>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item xs={12} sm={6}>
             <div className={invoiceStyles.invoiceDetails}>
-              {!invoiceDetail.isDraft &&
-              <div>
-                {invoiceDetail.paid
-                  ? <Chip
-                    label={'Paid'}
-                    style={{
-                      'backgroundColor': CONSTANTS.PRIMARY_GREEN,
-                      'color': '#fff'
-                    }}
-                  />
-                  : <Chip
-                    style={{
-                      textTransform: 'capitalize',
-                      backgroundColor: invoiceDetail?.status === 'UNPAID' ? '#F50057' : '#FA8029',
-                      color: '#fff'
-                    }}
-                    label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
-                  />}
+              <div className={invoiceStyles.companyDetails} style={{flex: 2, alignItems: 'center'}}>
+                <div className={invoiceStyles.companyInfo}>
+                  <small>VENDOR NUMBER</small>
+                  <h4>{invoiceDetail.vendorId}</h4>
+                </div>
+                {!invoiceDetail.isDraft &&
+                <div className={invoiceStyles.companyInfo} style={{textAlign: 'right'}}>
+                  {invoiceDetail.paid
+                    ? <Chip
+                      label={'Paid'}
+                      style={{
+                        'backgroundColor': CONSTANTS.PRIMARY_GREEN,
+                        'color': '#fff'
+                      }}
+                    />
+                    : <Chip
+                      style={{
+                        textTransform: 'capitalize',
+                        backgroundColor: invoiceDetail?.status === 'UNPAID' ? '#F50057' : '#FA8029',
+                        color: '#fff'
+                      }}
+                      label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
+                    />}
+                </div>
+                }
               </div>
-              }
-              <div>
+              <div className={invoiceStyles.invoiceInfoContainer}>
                 <h2>INVOICE</h2>
                 <div className={invoiceStyles.dateContainer}>
                   <div>
