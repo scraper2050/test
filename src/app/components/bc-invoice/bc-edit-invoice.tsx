@@ -733,7 +733,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           invoice_title: 'INVOICE',
           invoiceId: invoiceData?.invoiceId,
           customer_po: invoiceData?.customerPO || '',
-          invoice_date: invoiceData.createdAt,
+          invoice_date: invoiceData.issueDate,
           due_date: invoiceData.dueDate ? invoiceData.dueDate : calculateInitialDueDate(),
           paymentTerm: currentPaymentTerm,
           note: invoiceData?.note,
