@@ -30,6 +30,7 @@ import '../../scss/index.scss';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ViewJobReportsPage from '../../app/pages/customer/job-reports/view-job-report';
+import SaveInvoiceAndEmailModal from './bc-save-invoice-and-email-modal/bc-save-invoice-and-email-modal';
 import EmailModal from './bc-email-modal/bc-email-modal';
 import EmailModalOld from './bc-email-modal/bc-email-modal_old';
 import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-view-modal';
@@ -316,6 +317,16 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<ViewJobReportsPage />);
+        break;
+      case modalTypes.SAVE_INVOICE_AND_EMAIL_JOB_REPORT_MODAL:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<SaveInvoiceAndEmailModal
+          data = {data}
+        />);
         break;
       case modalTypes.EMAIL_JOB_REPORT_MODAL:
         setModalOptions({

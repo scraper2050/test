@@ -33,6 +33,7 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
     'typeText': 'Invoice',
     'className': 'wideModalTitle',
     'customerId': customer?._id,
+    'invoice': invoice,
   };
 
   return <EmailButton

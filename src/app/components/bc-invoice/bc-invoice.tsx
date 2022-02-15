@@ -405,7 +405,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   </div>
                   <Divider className={invoiceStyles.divider} orientation="vertical" flexItem />
                   <div>
-                    <label>INVOICE DATE #: <span>{moment(invoiceDetail.createdAt).format('MMM. DD, YYYY')}</span></label>
+                    <label>INVOICE DATE #: <span>{moment(invoiceDetail.issuedDate).format('MMM. DD, YYYY')}</span></label>
                     <label>DUE DATE #: <span>{moment(invoiceDetail.dueDate).format('MMM. DD, YYYY')}</span></label>
                   </div>
                 </div>
