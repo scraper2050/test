@@ -81,11 +81,18 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
       getCustomersContact(customerId)
       .then(res => {
         if(res.status === 1){
-          setCustomerContacts(res.contacts.filter((contact:any) => !!contact.email))
-          if(res.contacts.length){
-            const initialContact = res.contacts.filter((contact:any) => customerEmail === contact.email)
+          const custContacts = res.contacts
+          .filter((contact:{email:string}) => !!contact.email)
+          .filter((contact:{email:string}, index: number, self:{email:string}[]) =>
+            index === self.findIndex((t) => 
+              t.email === contact.email
+            )
+          );
+          setCustomerContacts(custContacts);
+          if(custContacts.length){
+            const initialContact = custContacts.filter((contact:any) => customerEmail === contact.email);
             if(initialContact){
-              FormikSetFieldValue('to', initialContact)
+              FormikSetFieldValue('to', initialContact);
             }
           }
         }
@@ -226,7 +233,6 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
                         freeSolo
                         clearOnBlur
                         fullWidth
-                        autoSelect
                         getOptionLabel={(option) => {
                           const { name, email } = option;
                           return `${name}, ${email}`;
