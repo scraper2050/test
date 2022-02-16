@@ -21,6 +21,7 @@ import InputBase from "@material-ui/core/InputBase";
 import classNames from "classnames";
 import FormControl from "@material-ui/core/FormControl";
 import {makeStyles, Theme} from "@material-ui/core/styles";
+import {updateContact} from "../../../api/contacts.api";
 
 const contactSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
@@ -222,12 +223,13 @@ function BCAddContactModal({
   }, [])
 
   const [initValues, setInitValues] = useState<any>(null);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
 
   const handleSelect = (event: any, setFieldValue: any, newValue: any) => {
     event.preventDefault();
 
     let baseValue = newValue;
-
+    setSelectedContact(baseValue);
 
     try {
       setInitValues(true)
@@ -285,6 +287,14 @@ function BCAddContactModal({
           }
 
           if (initValues) {
+            if(selectedContact?.name !== data?.name || selectedContact?.email !== data?.email || selectedContact?.phone !== data?.phone) {
+              await dispatch(updateContact({
+                _id: data?.contactId,
+                email: data?.email,
+                name: data?.name,
+                phone: data?.phone
+              }));
+            }
             delete data['name'];
             delete data['email'];
             delete data['phone'];
