@@ -29,14 +29,25 @@ export default function EmailButton({ data, Component, showLoader = true }: Emai
         setIsLoading(false);
         const {emailTemplate: emailDefault, status, message} = response.data
         if (status === 1) {
-          dispatch(setModalDataAction({
-            data: {...data, emailDefault},
-            'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-          }));
-          dispatch(resetEmailState());
-          setTimeout(() => {
-            dispatch(openModalAction());
-          }, 200);
+          if(data?.invoice?.isDraft){
+            dispatch(setModalDataAction({
+              data: {...data, emailDefault, modalTitle: 'Save & Send'},
+              'type': modalTypes.SAVE_INVOICE_AND_EMAIL_JOB_REPORT_MODAL
+            }));
+            dispatch(resetEmailState());
+            setTimeout(() => {
+              dispatch(openModalAction());
+            }, 200);
+          } else {
+            dispatch(setModalDataAction({
+              data: {...data, emailDefault},
+              'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+            }));
+            dispatch(resetEmailState());
+            setTimeout(() => {
+              dispatch(openModalAction());
+            }, 200);
+          }
         } else {
           dispatch(error(message));
         }

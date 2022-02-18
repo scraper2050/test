@@ -433,7 +433,7 @@ function BCServiceTicketModal({
     if (jobTypes?.length !== 0) {
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
-        return jobTypes.filter((job:any) => ids.includes(job._id));
+        return ids.map((id: any)=> jobTypes.filter((job: any) => job._id === id)[0]);
       }
       if (ticket?.jobType) {
         return [jobTypes.filter((job:any) => job._id === ticket.jobType)[0]];
@@ -553,6 +553,7 @@ function BCServiceTicketModal({
                   variant={'outlined'}
                 />
               }
+              getOptionSelected={() => false}
             />
           </Grid>
         </Grid>

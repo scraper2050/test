@@ -573,8 +573,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
     return new Promise((resolve, reject) => {
       const params: any = {
         invoiceId: data.invoice_id,
-        issueDate: data.invoice_date,
-        dueDate: data.due_date,
+        issuedDate: new Date(data.invoice_date).toISOString(),
+        dueDate: new Date(data.due_date).toISOString(),
         paymentTermId: data.paymentTerm,
         note: data.note,
         isDraft: data.isDraft,
@@ -733,7 +733,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           invoice_title: 'INVOICE',
           invoiceId: invoiceData?.invoiceId,
           customer_po: invoiceData?.customerPO || '',
-          invoice_date: invoiceData.createdAt,
+          invoice_date: invoiceData.issuedDate || invoiceData.createdAt,
           due_date: invoiceData.dueDate ? invoiceData.dueDate : calculateInitialDueDate(),
           paymentTerm: currentPaymentTerm,
           note: invoiceData?.note,
