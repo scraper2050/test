@@ -3,6 +3,7 @@ import {
   Typography, Button,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import moment from 'moment';
 import {
   closeModalAction,
   openModalAction,
@@ -41,6 +42,13 @@ function BCDeleteJobModal({
       }));
     }, 200);
   };
+  
+  const calculateDueDate = () => {
+    if (invoice?.paymentTerm) {
+      return moment(new Date()).add(invoice.paymentTerm.dueDays, 'day').toISOString();
+    }
+    return invoice.createdAt.toISOString();
+  }
 
   const saveAndEmailInvoice = () => {
     setIsSubmitting(true);
@@ -50,7 +58,7 @@ function BCDeleteJobModal({
       charges: 0,
       items: JSON.stringify(invoice.items),
       issuedDate: new Date().toISOString(),
-      dueDate: new Date().toISOString(),
+      dueDate: calculateDueDate(),
     };
 
     updateInvoice(params).then((response: any) => {
