@@ -433,7 +433,7 @@ function BCServiceTicketModal({
     if (jobTypes?.length !== 0) {
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
-        return ids.map((id: any)=> jobTypes.filter((job: any) => job._id === id)[0]);
+        return ids.map((id: string)=> jobTypes.filter((job: {_id: string}) => job._id === id)[0]).filter((jobType:string) => jobType);
       }
       if (ticket?.jobType) {
         return [jobTypes.filter((job:any) => job._id === ticket.jobType)[0]];

@@ -116,7 +116,7 @@ const getJobData = (ids: any, jobTypes: any) => {
   if (!ids) {
     return;
   }
-  return ids.map((id: any)=> jobTypes.filter((job: any) => job._id === id)[0]);
+  return ids.map((id: string)=> jobTypes.filter((job: {_id:string}) => job._id === id)[0]).filter((jobType:string)=>jobType);
 };
 
 /**
