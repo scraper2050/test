@@ -233,6 +233,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
                         freeSolo
                         clearOnBlur
                         fullWidth
+                        autoSelect
                         getOptionLabel={(option) => {
                           const { name, email } = option;
                           return `${name}, ${email}`;
