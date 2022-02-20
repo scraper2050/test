@@ -536,23 +536,22 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
     }));
   };
 
-  const showSendInvoiceModal = async() => {
+  const showSendInvoiceModal = async(invoiceId: string, customerId: string) => {
     try {
-      const response = await getInvoiceEmailTemplate(invoiceData._id);
+      const response = await getInvoiceEmailTemplate(invoiceId || invoiceData._id);
       const {emailTemplate: emailDefault, status, message} = response.data;
-      console.log({emailDefault})
       if (status === 1) {
         dispatch(setModalDataAction({
           data: {
               'modalTitle': 'Send this invoice',
               'customer': customer?.profile?.displayName,
-              'customerEmail': customer?.info?.email,
+              'customerEmail': emailDefault?.to || customer?.info?.email,
               'handleClick': sendInvoice,
-              'id': invoiceData._id,
+              'id': invoiceId || invoiceData._id,
               'typeText': 'Invoice',
               'className': 'wideModalTitle',
               emailDefault,
-              customerId: customer._id
+              customerId: customerId || customer._id
           },
           'type': modalTypes.EMAIL_JOB_REPORT_MODAL
         }));
@@ -561,7 +560,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
           dispatch(openModalAction());
         }, 200);
       } else {
-        dispatch(error(message));
+        dispatch(errorSnackBar(message));
       }
     } catch (e) {
       dispatch(errorSnackBar('Something went wrong. Please try again'));
@@ -762,9 +761,9 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
               handleFormSubmit(values);
               break;
             case 1:
-              handleFormSubmit(values).then(() => {
+              handleFormSubmit(values).then((response:any) => {
                 actions.setSubmitting(false);
-                showSendInvoiceModal();
+                showSendInvoiceModal(response?.invoice?._id, response?.invoice?.customer?._id);
               });
               break;
             default:
@@ -1084,8 +1083,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                                 }}
                                 error={!!errors.company}/>}
                             >
-                              {customers.map((customer: any) => (
-                                <MenuItem value={customer._id}>
+                              {customers.map((customer: {_id: string | number; profile:{displayName:string}}, index:number) => (
+                                <MenuItem key={index} value={customer._id}>
                                   <em>{customer.profile.displayName}</em>
                                 </MenuItem>
                               ))}
@@ -1093,7 +1092,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                           }
                         </FormControl>
                         <Grid container spacing={1} className={invoiceStyles.customerBox}>
-                          <Grid item xs={3} justify="flex-end">
+                          <Grid item xs={3} justify="flex-end" container>
                             <div>
                               <div><span><PhoneIcon className={invoiceStyles.storeIcons}/></span></div>
                               <div><span><MailOutlineIcon className={invoiceStyles.storeIcons}/></span></div>

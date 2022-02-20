@@ -225,7 +225,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
                         onChange={(e: any) => formikChange(e)}
                         value={FormikValues.to[0].email}
                         variant={'outlined'}
-                        placeholder='Select payment method'
+                        placeholder='getting contact, please wait...'
                       />
                     ) : (
                       <Autocomplete
