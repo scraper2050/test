@@ -79,8 +79,23 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   };
 
   const generateInvoice = async () => {
-    const result:any = await callCreateInvoiceAPI({ 'jobId': job._id,
-      'customerId': job.customer._id });
+    const invoiceObj: {
+      jobId: string;
+      customerId: string;
+      customerContactId?: string;
+      customerPO?: string;
+    } = { 
+      'jobId': job._id,
+      'customerId': job.customer._id,
+    };
+
+    if(job?.customerContactId?._id) {
+      invoiceObj.customerContactId = job.customerContactId._id;
+    }
+    if(job?.customerPO) {
+      invoiceObj.customerPO = job.customerPO;
+    }
+    const result:any = await callCreateInvoiceAPI(invoiceObj);
     if (result && result?.status !== 0) {
       const { 'invoice': newInvoice } = result;
       dispatch(loadJobReportActions.success({ ...jobReportData,
