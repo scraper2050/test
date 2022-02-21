@@ -399,9 +399,9 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                 <h2>INVOICE</h2>
                 <div className={invoiceStyles.dateContainer}>
                   <div>
-                    <label>INVOICE #: <span style={{display: 'inline-block', width: 100}}>{invoiceDetail.invoiceId}</span></label>
-                    <label>CUSTOMER P.O. : <span style={{display: 'inline-block', width: 100}}>{invoiceDetail.customerPO}</span></label>
-                    <label>Payment Terms : <span style={{display: 'inline-block', width: 100}}>{invoiceDetail?.paymentTerm?.name}</span></label>
+                    <VerticalCenterLabel>INVOICE #: <FixedWidthSpan>{invoiceDetail.invoiceId}</FixedWidthSpan></VerticalCenterLabel>
+                    <VerticalCenterLabel>CUSTOMER P.O. : <FixedWidthSpan>{invoiceDetail.customerPO}</FixedWidthSpan></VerticalCenterLabel>
+                    <VerticalCenterLabel>Payment Terms : <FixedWidthSpan>{invoiceDetail?.paymentTerm?.name}</FixedWidthSpan></VerticalCenterLabel>
                   </div>
                   <Divider className={invoiceStyles.divider} orientation="vertical" flexItem />
                   <div>
@@ -542,6 +542,17 @@ export const DataContainer = styled.div`
   margin-top: 12px;
   background-color: ${CONSTANTS.PRIMARY_WHITE};
   border: 1px solid ${CONSTANTS.INVOICE_BORDER};
+`;
+
+export const VerticalCenterLabel = styled.label`
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between;
+`;
+
+export const FixedWidthSpan = styled.span`
+  display: inline-block !important;
+  width: 100px !important;
 `;
 
 
