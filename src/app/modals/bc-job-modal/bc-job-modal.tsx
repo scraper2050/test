@@ -922,7 +922,7 @@ function BCJobModal({
                   onChange={(ev: any, newValue: any) => handleTaskChange('jobTypes', newValue, index)}
                   options={
                     items && items.length !== 0
-                      ? stringSortCaseInsensitive(items.map((item:any)=>({...item, title:item.name,_id:item.jobType})), 'title')
+                      ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
                         .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
                       : []
                   }

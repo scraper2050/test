@@ -221,7 +221,7 @@ function BCServiceTicketModal({
           if (formatedRequest.dueDate) {
             formatedRequest.dueDate = formatDateYMD(formatedRequest.dueDate);
           }
-          formatedRequest.jobTypes = JSON.stringify(formatedRequest.jobTypes.map((jt:any) => ({jobTypeId:jt.jobTypeId||jt._id})));
+          formatedRequest.jobTypes = JSON.stringify(formatedRequest.jobTypes.map((jt:{jobTypeId?:string;_id:string}) => ({jobTypeId:jt.jobTypeId||jt._id})));
 
           callEditTicketAPI(formatedRequest).then((response: any) => {
             if (response.status === 0) {
@@ -439,7 +439,7 @@ function BCServiceTicketModal({
           const currentItem = items.filter((item: {jobType: string}) => item.jobType === id)[0];
           return {_id:currentItem?.jobType, title:currentItem?.name, description:currentItem?.description}
         });
-        let newValue = result.map((val:any) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));
+        const newValue = result.map((val:{_id:string;title:string;description:string}) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));
         setFieldValue('jobTypes', newValue);
       }
       if (ticket?.jobType) {
@@ -558,12 +558,12 @@ function BCServiceTicketModal({
               onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
               options={
                 items && items.length !== 0 
-                ? stringSortCaseInsensitive(items.map((item:any)=>({...item, title:item.name,_id:item.jobType})), 'title')
+                ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
                   .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1) 
                 : []
               }
               classes={{popper: classes.popper}}
-              renderOption={(option:any,state)=>{
+              renderOption={(option:{title:string; description:string; isJobType:string})=>{
                 const {title, description, isJobType} = option;
                 if(!isJobType){
                   return ''
