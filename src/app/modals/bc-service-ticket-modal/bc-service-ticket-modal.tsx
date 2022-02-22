@@ -132,7 +132,7 @@ function BCServiceTicketModal({
 
   const handleJobTypeChange = (event: any, setFieldValue: any, newValue: any) => {
     let jobType = '';
-    jobType = newValue.map((val:any) => ({ 'jobTypeId': val._id }));
+    jobType = newValue.map((val:any) => ({ _id: val._id || val.jobTypeId, title:val.title, description:val.description }));
     setFieldValue('jobTypes', jobType);
   };
 
@@ -178,7 +178,7 @@ function BCServiceTicketModal({
     if (tasks)
       return tasks.map((t: any) => { return ({ jobTypeId: t.jobType }) })
     else
-      return '';
+      return [];
   }
 
   const {
@@ -195,12 +195,12 @@ function BCServiceTicketModal({
       'source': 'blueclerk',
       'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
       'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
-      'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : '',
+      'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : [],
       'note': ticket.note,
       'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
       'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
-      'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : '',
+      'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       'images': ticket.images !== undefined ? ticket.images : []
     },
     'onSubmit': (values, { setSubmitting }) => {
@@ -221,7 +221,7 @@ function BCServiceTicketModal({
           if (formatedRequest.dueDate) {
             formatedRequest.dueDate = formatDateYMD(formatedRequest.dueDate);
           }
-          formatedRequest.jobTypes = JSON.stringify(formatedRequest.jobTypes);
+          formatedRequest.jobTypes = JSON.stringify(formatedRequest.jobTypes.map((jt:{jobTypeId?:string;_id:string}) => ({jobTypeId:jt.jobTypeId||jt._id})));
 
           callEditTicketAPI(formatedRequest).then((response: any) => {
             if (response.status === 0) {
@@ -260,6 +260,7 @@ function BCServiceTicketModal({
       } else {
         delete tempData.customer;
         const formatedRequest = { ...formatRequestObj(tempData) };
+        formatedRequest.jobTypes = JSON.stringify(JSON.parse(formatedRequest.jobTypes).map((jt:any) => ({jobTypeId:jt._id})));
         callCreateTicketAPI(formatedRequest).then((response: any) => {
           if (response.status === 0) {
             dispatch(SnackBarError(response.message));
@@ -310,6 +311,7 @@ function BCServiceTicketModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
+  const items = useSelector((state: any) => state.invoiceItems.items);
   const { contacts } = useSelector((state: any) => state.contacts);
 
   const dateChangeHandler = (date: string) => {
@@ -430,10 +432,15 @@ function BCServiceTicketModal({
   }
 
   const getJobType = () => {
-    if (jobTypes?.length !== 0) {
+    if (jobTypes?.length && items?.length) {
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
-        return ids.map((id: string)=> jobTypes.filter((job: {_id: string}) => job._id === id)[0]).filter((jobType:string) => jobType);
+        const result = ids.map((id: string)=> {
+          const currentItem = items.filter((item: {jobType: string}) => item.jobType === id)[0];
+          return {_id:currentItem?.jobType, title:currentItem?.name, description:currentItem?.description}
+        });
+        const newValue = result.map((val:{_id:string;title:string;description:string}) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));
+        setFieldValue('jobTypes', newValue);
       }
       if (ticket?.jobType) {
         return [jobTypes.filter((job:any) => job._id === ticket.jobType)[0]];
@@ -442,7 +449,10 @@ function BCServiceTicketModal({
     return [];
   };
 
-  const defaultJobTypeValue = getJobType();
+  useEffect(() => {
+    getJobType()
+  }, [items])
+  
 
   if (error.status) {
     return (
@@ -536,16 +546,31 @@ function BCServiceTicketModal({
             <Typography variant={'caption'} className={`required ${'previewCaption'}`}>job type</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
-              defaultValue={defaultJobTypeValue}
+              value={FormikValues.jobTypes}
+              getOptionDisabled={(option)=>!option.isJobType}
               disabled={detail}
               getOptionLabel={option => {
                 const {title, description} = option;
-                return `${title}${description ? ' - '+description: ''}`
+                return `${title || '...'}${description ? ' - '+description: ''}`
               }}
               id={'tags-standard'}
               multiple
               onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
-              options={jobTypes && jobTypes.length !== 0 ? stringSortCaseInsensitive(jobTypes, 'title') : []}
+              options={
+                items && items.length !== 0 
+                ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
+                  .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1) 
+                : []
+              }
+              classes={{popper: classes.popper}}
+              renderOption={(option:{title:string; description:string; isJobType:string})=>{
+                const {title, description, isJobType} = option;
+                if(!isJobType){
+                  return ''
+                } else {
+                  return `${title || '...'}${description ? ' - '+description: ''}`
+                }
+              }}
               renderInput={params =>
                 <TextField
                   {...params}
