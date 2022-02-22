@@ -22,6 +22,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import {STATUSES} from "../../../../helpers/contants";
 import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
 import { getCustomers } from "../../../../actions/customer/customer.action";
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import {
   getAllJobsAPI,
   getAllJobTypesAPI
@@ -120,6 +121,7 @@ function TicketsWithMapView({ classes }: any) {
   useEffect(() => {
     dispatch(getCustomers());
     dispatch(getAllJobTypesAPI());
+    dispatch(loadInvoiceItems.fetch());
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
   }, []);
