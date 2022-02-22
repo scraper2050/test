@@ -303,10 +303,11 @@ function BCJobModal({
    */
   const dateChangeHandler = (date: string, fieldName: string) => {
     setFieldValue(fieldName, date);
-    if (fieldName === 'scheduleDate') FormikErrors[fieldName] = '';
-    else if(fieldName === 'scheduledStartTime' || fieldName === 'scheduledEndTime') {
-      FormikErrors.scheduledStartTime = ''
-      FormikErrors.scheduledEndTime = ''
+    if (fieldName === 'scheduleDate') {
+      delete FormikErrors.scheduleDate;
+    } else if(fieldName === 'scheduledStartTime' || fieldName === 'scheduledEndTime') {
+      delete FormikErrors.scheduledStartTime;
+      delete FormikErrors.scheduledEndTime;
     }
   };
 
