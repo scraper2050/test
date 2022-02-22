@@ -562,6 +562,7 @@ function BCServiceTicketModal({
                   .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1) 
                 : []
               }
+              classes={{popper: classes.popper}}
               renderOption={(option:any,state)=>{
                 const {title, description, isJobType} = option;
                 if(!isJobType){
