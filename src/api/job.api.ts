@@ -55,7 +55,7 @@ export const getAllJobsAPI = () => {
       dispatch(setJobLoading(true));
       request(`/getJobs`, 'post', null)
         .then((res: any) => {
-          let tempJobs = res.data.jobs?.filter((job: any) => job.status !== 3);
+          let tempJobs = res.data.jobs?.filter((job: {status:number}) => job.status !== 3);
           tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
             ...tempJob, 
             updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
