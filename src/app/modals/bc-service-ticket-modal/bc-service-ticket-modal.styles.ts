@@ -65,4 +65,10 @@ export default (theme: Theme): any => ({
     'textTransform': 'capitalize',
     'marginRight': '1.5rem',
   },
+  popper: {
+    '& li[aria-disabled="true"]': {
+      paddingTop: 0,
+      paddingBottom: 0,
+    }
+  },
 });

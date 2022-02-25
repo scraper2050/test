@@ -9,6 +9,7 @@ import { Button, Fab, useTheme, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { info, error } from 'actions/snackbar/snackbar.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
@@ -36,6 +37,7 @@ function ScheduleJobsPage({ classes }: any) {
 
   useEffect(() => {
     dispatch(getCustomers());
+    dispatch(loadInvoiceItems.fetch());
     dispatch(getAllJobTypesAPI());
   }, []);
 

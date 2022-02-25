@@ -9,10 +9,10 @@ import {
 import { refreshJobs, setJobLoading, setJobs } from 'actions/job/job.action';
 
 const compareByDate = (a: any, b: any) => {
-  if (new Date(a.scheduleDate) > new Date(b.scheduleDate)) {
+  if (new Date(a.updatedAt) > new Date(b.updatedAt)) {
     return 1;
   }
-  if (new Date(a.scheduleDate) < new Date(b.scheduleDate)) {
+  if (new Date(a.updatedAt) < new Date(b.updatedAt)) {
     return -1;
   }
   return 0;
@@ -55,7 +55,11 @@ export const getAllJobsAPI = () => {
       dispatch(setJobLoading(true));
       request(`/getJobs`, 'post', null)
         .then((res: any) => {
-          const tempJobs = res.data.jobs?.filter((job: any) => job.status !== 3);
+          let tempJobs = res.data.jobs?.filter((job: {status:number}) => job.status !== 3);
+          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+            ...tempJob, 
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
+          }));
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
           dispatch(setJobLoading(false));

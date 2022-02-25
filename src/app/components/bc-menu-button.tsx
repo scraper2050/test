@@ -122,8 +122,8 @@ export default function CustomizedMenus({status, handleClick}:ButtonProps) {
       open={Boolean(anchorEl)}
       onClose={handleClose}
       >
-        {defaultItems.map((item: any) => <StyledMenuItem>
-            <ListItemText primary={item.title} onClick={(e) => _handleListClick(e, item.id)}/>
+        {defaultItems.map((item: {title:string;id:number}, index:number) => <StyledMenuItem>
+            <ListItemText key={index} primary={item.title} onClick={(e) => _handleListClick(e, item.id)}/>
           </StyledMenuItem>
         )}
       </StyledMenu>

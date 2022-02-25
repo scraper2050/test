@@ -181,6 +181,30 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }
     return text;
 }
+  interface Task {
+    employeeType:boolean;
+    contractor?: {
+      info: {
+        companyName: string;
+        companyEmail: string
+      };
+    };
+    technician?: {
+      profile: {
+        displayName: string;
+      }
+    }
+  }
+
+  const techs = ticket.tasks.map((task:Task):string=>{
+    let tech = '';
+    if(task.employeeType && task.contractor){
+      tech = `${task.contractor.info.companyName}`
+    } else if(task.technician){
+      tech = `${task.technician.profile.displayName}`
+    }
+    return tech
+  })
 
   return <div
     className={classes.marker}
@@ -230,6 +254,11 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       {!isTicket &&
       <span className={'note'}><strong>Suggested Time: </strong>{jobTime()}</span>
       }
+      {techs.map((tech:string, index:number) => (
+        <div key={index}>
+          <span><strong>{tech}</strong></span>
+        </div>
+      ))}
       {isTicket && ticket.customer?._id &&
         <div className={'button-wrapper'}>
           <Button onClick={() => openCreateJobModal()}>Create Job</Button>

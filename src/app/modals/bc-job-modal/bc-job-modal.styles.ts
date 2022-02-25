@@ -60,4 +60,10 @@ export default (theme: Theme): any => ({
   tableContainer: {
     'maxHeight': '30rem',
   },
+  popper: {
+    '& li[aria-disabled="true"]': {
+      paddingTop: 0,
+      paddingBottom: 0,
+    }
+  }
 });
