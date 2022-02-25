@@ -240,11 +240,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'icon': <LibraryBooksIcon/>,
       'link': '/main/admin/invoicing'
     },
-    {
-      'label': 'Job Types',
-      'icon': <WorkIcon/>,
-      'link': '/main/admin/job-types'
-    },
+    // {
+    //   'label': 'Job Types',
+    //   'icon': <WorkIcon/>,
+    //   'link': '/main/admin/job-types'
+    // },
     {
       'label': 'Report Number',
       'icon': <ReportIcon/>,
