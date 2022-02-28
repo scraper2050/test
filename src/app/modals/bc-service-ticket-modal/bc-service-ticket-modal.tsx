@@ -447,8 +447,8 @@ function BCServiceTicketModal({
     if (jobTypes?.length && items?.length) {
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
-        const result = ids.map((id: string)=> {
-          const currentItem = items.filter((item: {jobType: string}) => item.jobType === id)[0];
+        const result = ids.map((id: any)=> {
+          const currentItem = items.filter((item: {jobType: string}) => (item.jobType === id || item.jobType === id._id))[0];
           return {_id:currentItem?.jobType, title:currentItem?.name, description:currentItem?.description}
         });
         const newValue = result.map((val:{_id:string;title:string;description:string}) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));
