@@ -71,4 +71,30 @@ export default (theme: Theme): any => ({
       paddingBottom: 0,
     }
   },
+  'dialogActionsConfirmation': {
+    'margin-top': '55px',
+    'padding': '28px 44px !important',
+    'border-top': '1px solid #D0D3DC'
+  },
+  'cancelButton': {
+    'background': CONSTANTS.PRIMARY_WHITE,
+    'color': CONSTANTS.INVOICE_HEADING,
+    'fontStyle': 'normal',
+    'fontWeight': 'normal',
+    'fontSize': '14px',
+    'lineHeight': '27px',
+    'border': '1px solid #4F4F4F',
+    'border-radius': '8px',
+    'textTransform': 'none'
+  },
+  'proceedButton': {
+    'color': CONSTANTS.PRIMARY_WHITE,
+    'fontStyle': 'normal',
+    'fontWeight': 'normal',
+    'fontSize': '14px',
+    'lineHeight': '30px',
+    'border-radius': '8px',
+    'textTransform': 'none',
+    'width': '160px'
+  },
 });
