@@ -16,7 +16,7 @@ import { modalTypes } from "../../../constants";
 
 function BCEditTicketConfirmationModal({
   classes,
-  props
+  props,
 }: any): JSX.Element {
   const dispatch = useDispatch();
 
@@ -26,7 +26,7 @@ function BCEditTicketConfirmationModal({
     setTimeout(() => {
       dispatch(setModalDataAction({
         'data': {},
-        'type': ''
+        'type': '',
       }));
     }, 200);
   };
@@ -42,7 +42,7 @@ function BCEditTicketConfirmationModal({
         'height': '100%',
         'allowEditWithJob': true,
       },
-      'type': modalTypes.EDIT_TICKET_MODAL
+      'type': modalTypes.EDIT_TICKET_MODAL,
     }));
   };
 
@@ -121,5 +121,5 @@ const DataContainer = styled.div`
 
 export default withStyles(
   styles,
-  { 'withTheme': true }
+  { 'withTheme': true },
 )(BCEditTicketConfirmationModal);
