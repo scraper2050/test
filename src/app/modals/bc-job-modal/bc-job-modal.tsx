@@ -371,7 +371,7 @@ function BCJobModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (jobSites.length !== 0) {
-        const jobSiteId = job._id ? job.jobSite?._id : ticket.jobSite?._id || ticket.jobSite;
+        const jobSiteId = job._id && job?.jobSite?._id ? job.jobSite._id : ticket?.jobSite?._id || ticket?.jobSite;
         const jobSite = jobSites.find((jobSite: any) => jobSite._id === jobSiteId);
         setJobSiteValue(jobSite);
       }
@@ -453,7 +453,7 @@ function BCJobModal({
       customerContactId: jobValue.customerContactId?._id || jobValue.customerContactId ||
         ticket?.customerContactId?._id || ticket.customerContactId || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
-      images: jobValue.images !== undefined ? jobValue.images : ticket.images || [],
+      images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
     },
     validateOnMount: false,
     validateOnChange: false,
