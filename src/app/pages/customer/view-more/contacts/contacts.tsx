@@ -77,7 +77,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
             color={'secondary'}
             onClick={() => openDeleteContactModal(row)}
             variant={'contained'}>
-            {'Remove'}
+            {row['original']?.isActive ? 'Deactivate': 'Activate'}
           </CSButtonSmall>
         </div>
       },
@@ -112,7 +112,8 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const handleDeleteContact = async (values: any) => {
 
     try {
-      const response = await dispatch(removeContact(values));
+      //const response = await dispatch(removeContact(values));
+      const response = await dispatch(updateContact(values));
       return response;
     } catch (err) {
       throw new Error(err);
@@ -187,6 +188,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
             name: origRow['name'],
             email: origRow['email'],
             phone: origRow['phone'],
+            isActive: origRow['isActive'],
             _id: origRow['_id'],
             type,
             referenceNumber: id,
