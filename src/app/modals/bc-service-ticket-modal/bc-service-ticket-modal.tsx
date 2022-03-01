@@ -205,13 +205,19 @@ function BCServiceTicketModal({
     'initialValues': {
       'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
-      'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
-      'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
+      'jobSiteId': ticket.jobSite 
+        ? ticket.jobSite._id || ticket.jobSite
+        : '',
+      'jobLocationId': ticket.jobLocation 
+        ? ticket.jobLocation._id || ticket.jobLocation
+        : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : [],
       'note': ticket.note,
       'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
-      'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
+      'customerContactId': ticket.customerContactId !== undefined 
+        ? ticket.customerContactId._id || ticket.customerContactId 
+        : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       'images': ticket.images !== undefined ? ticket.images : []
     },
@@ -370,14 +376,14 @@ function BCServiceTicketModal({
 
   useEffect(() => {
     if (ticket.customer?._id) {
-      const jobLocation = jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0];
+      const jobLocation = jobLocations.filter((jobLocation: any) => (jobLocation._id === ticket.jobLocation || jobLocation._id === ticket?.jobLocation?._id))[0];
 
       if (jobLocation && ticket?.customer?._id === FormikValues.customerId) {
         setJobLocationValue(jobLocation);
         if (jobLocation.isActive) {
           dispatch(getJobSites({
             'customerId': ticket.customer._id,
-            'locationId': ticket.jobLocation
+            'locationId': ticket?.jobLocation?._id || ticket.jobLocation
           }));
         }
       }
@@ -390,7 +396,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
-        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0]);
+        setContactValue(contacts.filter((contact: any) => (contact._id === ticket.customerContactId || contact._id === ticket?.customerContactId?._id))[0]);
       }
     }
   }, [contacts]);
@@ -398,10 +404,10 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (jobSites.length !== 0 && jobLocationValue._id && ticket?.customer?._id === FormikValues.customerId) {
-        setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0]);
+        setJobSiteValue(jobSites.filter((jobSite: any) => (jobSite._id === ticket.jobSite || jobSite._id === ticket?.jobSite?._id))[0]);
       }
     }
-  }, [jobSites]);
+  }, [jobSites, jobLocationValue]);
 
   useEffect(() => {
     if (FormikValues.images) {
