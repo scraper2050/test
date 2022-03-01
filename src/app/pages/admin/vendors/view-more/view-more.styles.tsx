@@ -8,4 +8,16 @@ export default (theme: Theme): any => ({
   ...topActionBar,
   ...dataContainer,
   ...swipe_wrapper,
+
+  rangePickerContainer: {
+    position: 'relative',
+  },
+  rangePickerButton: {
+    textTransform: 'none',
+    borderRadius: 8,
+  },
+  rangePickerPopup: {
+    zIndex: 1,
+    //borderRadius: 8,
+  },
 });
