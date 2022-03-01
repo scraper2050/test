@@ -482,7 +482,7 @@ function BCServiceTicketModal({
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
-              disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail || isFieldsDisabled}
+              disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail || !!ticket.jobCreated}
               getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
               id={'tags-standard'}
               onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
