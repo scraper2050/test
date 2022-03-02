@@ -94,15 +94,17 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   };
 
   const openDetailJobModal = (job: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'detail': true,
-        'job': job,
-        'modalTitle': 'View Job',
-        'removeFooter': false
-      },
-      'type': modalTypes.EDIT_JOB_MODAL
-    }));
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: 'View Job',
+        },
+        type: modalTypes.VIEW_JOB_MODAL,
+      })
+    );
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
