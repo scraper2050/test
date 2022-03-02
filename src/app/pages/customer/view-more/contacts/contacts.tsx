@@ -195,7 +195,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
           },
           apply: (values: any) => handleDeleteContact(values)
         },
-        'modalTitle': 'Delete Contact',
+        'modalTitle': 'Remove Contact',
         'removeFooter': false
       },
       'type': modalTypes.DELETE_CONTACT_MODAL

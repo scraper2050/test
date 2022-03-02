@@ -77,7 +77,8 @@ function BCDeleteContactModal({
       <DataContainer >
         <Grid container direction="column" alignItems="center" spacing={2}>
 
-          <Typography variant={"h6"}>{`Are you sure you want to ${contact?.isActive ? 'deactivate' : 'activate'} "${contact.name}"?`}</Typography>
+          { contact.type !== 'JobLocation' && <Typography variant={"h6"}>{`Are you sure you want to ${contact?.isActive ? 'deactivate' : 'activate'} "${contact.name}"?`}</Typography>}
+          { contact.type === 'JobLocation' && <Typography variant={"h6"}>{`Are you sure you want to remove this contact from this specific location?`}</Typography>}
 
         </Grid>
       </DataContainer>
