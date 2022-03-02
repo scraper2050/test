@@ -206,17 +206,17 @@ function BCServiceTicketModal({
       'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
       'jobSiteId': ticket.jobSite 
-        ? ticket.jobSite._id || ticket.jobSite
+        ? ticket?.jobSite?._id || ticket.jobSite
         : '',
       'jobLocationId': ticket.jobLocation 
-        ? ticket.jobLocation._id || ticket.jobLocation
+        ? ticket?.jobLocation?._id || ticket.jobLocation
         : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : [],
       'note': ticket.note,
       'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
       'customerContactId': ticket.customerContactId !== undefined 
-        ? ticket.customerContactId._id || ticket.customerContactId 
+        ? ticket?.customerContactId?._id || ticket.customerContactId 
         : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       'images': ticket.images !== undefined ? ticket.images : []
