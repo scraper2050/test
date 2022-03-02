@@ -566,7 +566,7 @@ function BCServiceTicketModal({
               className={detail ? 'detail-only' : ''}
               value={FormikValues.jobTypes}
               getOptionDisabled={(option)=>!option.isJobType}
-              disabled={detail || isFieldsDisabled}
+              disabled={detail || !!ticket.jobCreated}
               getOptionLabel={option => {
                 const {title, description} = option;
                 return `${title || '...'}${description ? ' - '+description: ''}`
