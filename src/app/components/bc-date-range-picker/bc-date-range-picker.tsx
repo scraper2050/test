@@ -11,7 +11,8 @@ import {DateRangePicker} from "react-date-range";
 import {CSButtonSmall} from "../../../helpers/custom";
 import {PRIMARY_BLUE} from "../../../constants";
 import Popper from "@material-ui/core/Popper";
-
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 interface Range {
   startDate: Date;
   endDate: Date;
