@@ -41,6 +41,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import ReportIcon from '@material-ui/icons/Report';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import StorefrontIcon from '@material-ui/icons/Storefront';
+import PaymentIcon from '@material-ui/icons/Payment';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -230,6 +231,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'label': 'Vendors',
       'icon': <StorefrontIcon/>,
       'link': '/main/admin/vendors'
+    },
+    {
+      'label': 'Payroll',
+      'icon': <PaymentIcon/>,
+      'link': '/main/admin/payroll'
     },
     {
       'label': 'Integrations',

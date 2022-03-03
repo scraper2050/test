@@ -45,6 +45,8 @@ import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
 import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update-payment-terms-modal";
 import BCQbDisconnectModal from "./bc-integration-modal/bc-disconnect-modal";
 import BCRescheduleJobModal from "./bc-job-modal/bc-reschedule-job-modal";
+import BcEditCommissionModal from "./bc-edit-commission-modal/bc-edit-commission-modal";
+
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -471,6 +473,19 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCEditTiersModal />);
+        break;
+      case modalTypes.EDIT_COMMISSION_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcEditCommissionModal
+          vendorCommission={data.vendorCommission}
+          // payment={data.payment}
+          // fromHistory={!!data.fromHistory}
+        />);
         break;
 
 

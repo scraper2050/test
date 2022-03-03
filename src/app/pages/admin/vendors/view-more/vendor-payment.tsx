@@ -16,6 +16,8 @@ import Paper from "@material-ui/core/Paper";
 import Fade from "@material-ui/core/Fade";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener"
 import Popper from "@material-ui/core/Popper";
+import {CSButtonSmall} from "../../../../../helpers/custom";
+import {PRIMARY_BLUE} from "../../../../../constants";
 // import './picker.css';
 
 
@@ -34,8 +36,12 @@ const ITEMS = [
 
 function VendorPayment({classes}: Props) {
   const [tableData, setTableData] = useState<any[]>([]);
-  const [showDateRangePicker, setDateRangePicker] = useState(false);
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [selectionRange, setSelectionRange] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+  const [tempSelectionRange, setTempSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
   });
@@ -72,6 +78,34 @@ function VendorPayment({classes}: Props) {
     },{
       vendorName: 'Test Vendor',
       paymentDate: '2022-02-15',
+      amount: 130,
+      method: 'ACH',
+      reference: '44444444444444',
+      notes: 'Yes no, yes no, yes no'
+    },{
+      vendorName: 'Test Vendor',
+      paymentDate: '2022-02-14',
+      amount: 130,
+      method: 'ACH',
+      reference: '44444444444444',
+      notes: 'Yes no, yes no, yes no'
+    },{
+      vendorName: 'Test Vendor',
+      paymentDate: '2022-02-14',
+      amount: 130,
+      method: 'ACH',
+      reference: '44444444444444',
+      notes: 'Yes no, yes no, yes no'
+    },{
+      vendorName: 'Test Vendor',
+      paymentDate: '2022-02-14',
+      amount: 130,
+      method: 'ACH',
+      reference: '44444444444444',
+      notes: 'Yes no, yes no, yes no'
+    },{
+      vendorName: 'Test Vendor',
+      paymentDate: '2022-02-14',
       amount: 130,
       method: 'ACH',
       reference: '44444444444444',
@@ -149,30 +183,36 @@ function VendorPayment({classes}: Props) {
   ];
 
   const handleSelect = (date: any) => {
-    console.log({date})
-    setSelectionRange(date.range1 || date);
-    // setDateRangePicker(false);
+    setTempSelectionRange(date.range1 || date);
   }
 
   function renderDateRangePicker () {
     return (
-      <div
-        className={classes.rangePickerContainer}
+      <Button
+        ref={buttonRef}
+        variant={'outlined'}
+        className={classes.rangePickerButton}
+        startIcon={<IconCalendar />}
+        onClick={openDateRangePicker}
       >
-        <Button
-          ref={buttonRef}
-          variant={'outlined'}
-          className={classes.rangePickerButton}
-          startIcon={<IconCalendar />}
-          onClick={(e) => setDateRangePicker(!showDateRangePicker)}
-        >
-          {formatShortDate(selectionRange.startDate)} - {formatShortDate(selectionRange.endDate)}
-        </Button>
-      </div>
+        {formatShortDate(selectionRange.startDate)} - {formatShortDate(selectionRange.endDate)}
+      </Button>
     )
   }
 
+  const openDateRangePicker = () => {
+    setTempSelectionRange(selectionRange);
+    setShowDateRangePicker(true);
+  }
 
+  const closeDateRangePicker = () => {
+    setShowDateRangePicker(false);
+  }
+
+  const saveDateRange = () => {
+    setSelectionRange(tempSelectionRange);
+    setShowDateRangePicker(false);
+  }
 
 
   return (
@@ -186,16 +226,32 @@ function VendorPayment({classes}: Props) {
         <Fade timeout={500}
           {...TransitionProps}
         >
-          <Paper>
-            <ClickAwayListener onClickAway={() => setDateRangePicker(false)}>
+          <Paper elevation={0}>
+            <ClickAwayListener onClickAway={closeDateRangePicker}>
+              <div className={classes.rangePickerWrapper}>
               <DateRangePicker
-                ranges={[selectionRange]}
+                ranges={[tempSelectionRange]}
                 onChange={handleSelect}
+                className={classes.rangePicker}
                 // moveRangeOnFirstSelection={true}
                 // retainEndDateOnFirstSelection={true}
                 months={2}
                 direction={'horizontal'}
               />
+                <div className={classes.buttonsWrapper}>
+                  <CSButtonSmall
+                    style={{
+                      color: PRIMARY_BLUE,
+                      backgroundColor: 'white',
+                      border: `1px solid ${PRIMARY_BLUE}`
+                    }}
+                    onClick={closeDateRangePicker}
+                  >Cancel</CSButtonSmall>
+                  <CSButtonSmall
+                    onClick={saveDateRange}
+                  >OK</CSButtonSmall>
+                </div>
+            </div>
             </ClickAwayListener>
           </Paper>
         </Fade>

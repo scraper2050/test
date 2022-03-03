@@ -9,6 +9,7 @@ export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 export const PRIMARY_ORANGE = '#FE5500';
 export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
 export const PRIMARY_CARD_BLUE = '#66B8F9';
+export const ERROR_RED = '#FF0000';
 
 export const ADMIN_SIDEBAR_WIDTH = 240;
 export const ADMIN_SIDEBAR_WIDTH_MINI = 76;
@@ -73,4 +74,5 @@ export const modalTypes = {
   'PAYMENT_HISTORY_MODAL': 'payment_history_modal',
   'EDIT_TIERS_MODAL': 'edit-tiers-modal',
   'RESCEDULE_JOB_MODAL': 'reschedule_job_modal',
+  'EDIT_COMMISSION_MODAL': 'edit_commission_modal',
 };
