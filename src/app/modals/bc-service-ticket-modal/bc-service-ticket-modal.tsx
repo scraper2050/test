@@ -527,7 +527,7 @@ function BCServiceTicketModal({
             <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
             <Autocomplete
               defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
-              disabled={FormikValues.customerId === '' || isLoadingDatas || detail || isFieldsDisabled}
+              disabled={FormikValues.customerId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
               getOptionLabel={option => option.name ? option.name : ''}
               getOptionDisabled={(option) => !option.isActive}
               id={'tags-standard'}
@@ -546,7 +546,7 @@ function BCServiceTicketModal({
             <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
-              disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || isFieldsDisabled}
+              disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
               getOptionLabel={option => option.name ? option.name : ''}
               id={'tags-standard'}
               onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
@@ -658,7 +658,7 @@ function BCServiceTicketModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 0}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} onDelete={handleRemoveImage} readonly={isFieldsDisabled} />
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} onDelete={handleRemoveImage} readonly={!!ticket.jobCreated} />
           </Grid>
         </Grid>
 

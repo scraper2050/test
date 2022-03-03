@@ -86,6 +86,12 @@ function TicketsWithMapView({ classes }: any) {
       streaming: serviceTicket.stream,
     }));
 
+  useEffect(() => {
+    return () => {
+      localStorage.setItem('prevPage', 'ticket-map-view')
+    }
+  }, [])
+
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
     'customerNames': null,
     'jobId': '',
