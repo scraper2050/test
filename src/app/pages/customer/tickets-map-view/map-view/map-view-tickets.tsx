@@ -21,10 +21,11 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const dispatch = useDispatch();
   const { token } = useSelector(({ auth }: any) => auth);
   const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({ticket2Job: serviceTicket.ticket2Job}));
+  const { refresh } = useSelector(({ serviceTicket }: any) => ({refresh: serviceTicket.refresh}));
 
   const tempTokens = useRef<any[]>([]);
   const totalTickets = useRef<number>(1);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
 
@@ -51,37 +52,51 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   };
 
   useEffect(() => {
-    const socket = io(`${Config.socketSever}`, {
-      'extraHeaders': { 'Authorization': token }
-    });
-
-    socket.on("connect", () => {
-      getOpenServiceTicketsStream();
-      dispatch(streamServiceTickets(true));
-    });
-
-    socket.on(SocketMessage.SERVICE_TICKETS, data => {
-      const {count, serviceTicket, total} = data;
-      if (serviceTicket) {
-        tempTokens.current.push(serviceTicket);
-        if (count % 25 === 0 || count === total) {
-          totalTickets.current = total;
-          setIsLoading(false);
-          setAllTickets([...tempTokens.current]);
-        }
-        if (count === total) {
-          socket.close();
-          dispatch(streamServiceTickets(false));
-          dispatch(setServiceTicket(tempTokens.current));
-          dispatch(refreshServiceTickets(false));
-        }
-      }
-    });
-
+    dispatch(refreshServiceTickets(true));
     return () => {
-      socket.close();
-    };
-  }, [token]);
+      dispatch(refreshServiceTickets(false));
+    }
+  }, [])
+  
+
+  useEffect(() => {
+    if(refresh){
+      setIsLoading(true);
+      setAllTickets([]);
+      tempTokens.current = [];
+      const socket = io(`${Config.socketSever}`, {
+        'extraHeaders': { 'Authorization': token }
+      });
+  
+      socket.on("connect", () => {
+        getOpenServiceTicketsStream();
+        dispatch(streamServiceTickets(true));
+      });
+  
+      socket.on(SocketMessage.SERVICE_TICKETS, data => {
+        const {count, serviceTicket, total} = data;
+        if (serviceTicket) {
+          tempTokens.current.push(serviceTicket);
+          if (count % 25 === 0 || count === total) {
+            totalTickets.current = total;
+            setIsLoading(false);
+            setAllTickets([...tempTokens.current]);
+          }
+          if (count === total) {
+            socket.close();
+            dispatch(streamServiceTickets(false));
+            dispatch(setServiceTicket(tempTokens.current));
+            dispatch(refreshServiceTickets(false));
+          }
+        }
+      });
+  
+      return () => {
+        socket.close();
+        setIsLoading(false);
+      };
+    }
+  }, [refresh]);
 
   useEffect(() => {
     setFilteredTickets(filterOpenTickets(allTickets));
