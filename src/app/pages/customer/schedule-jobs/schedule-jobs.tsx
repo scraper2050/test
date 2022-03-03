@@ -16,6 +16,7 @@ import "../../../../scss/popup.scss";
 import { useLocation, useHistory } from 'react-router-dom';
 import * as CONSTANTS from "../../../../constants";
 import { CSButton } from "../../../../helpers/custom";
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -36,6 +37,10 @@ function ScheduleJobsPage({ classes }: any) {
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
 
   useEffect(() => {
+    if(localStorage.getItem('prevPage') === 'ticket-map-view'){
+      dispatch(refreshServiceTickets(true));
+      localStorage.setItem('prevPage', '')
+    }
     dispatch(getCustomers());
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllJobTypesAPI());
