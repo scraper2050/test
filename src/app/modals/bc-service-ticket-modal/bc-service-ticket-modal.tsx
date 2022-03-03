@@ -63,7 +63,8 @@ function BCServiceTicketModal({
     'message': ''
   },
   onSubmit,
-  detail = false
+  detail = false,
+  allowEditWithJob = false
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
@@ -72,6 +73,7 @@ function BCServiceTicketModal({
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumbs, setThumbs] = useState<any[]>([]);
+  const isFieldsDisabled = !!ticket.jobCreated && !allowEditWithJob;
 
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = [...data];
@@ -167,6 +169,16 @@ function BCServiceTicketModal({
     }));
   };
 
+  const openEditTicketConfirmationModal = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'ticket': ticket,
+        'modalTitle': `Edit Service Ticket`,
+      },
+      'type': modalTypes.EDIT_SERVICE_TICKET_CONFIRMATION_MODAL
+    }));
+  }
+
   useEffect(() => {
     if (!ticket.updateFlag) {
       dispatch(clearJobLocationStore());
@@ -193,13 +205,19 @@ function BCServiceTicketModal({
     'initialValues': {
       'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
-      'jobSiteId': ticket.jobSite ? ticket.jobSite : '',
-      'jobLocationId': ticket.jobLocation ? ticket.jobLocation : '',
+      'jobSiteId': ticket.jobSite 
+        ? ticket?.jobSite?._id || ticket.jobSite
+        : '',
+      'jobLocationId': ticket.jobLocation 
+        ? ticket?.jobLocation?._id || ticket.jobLocation
+        : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : [],
       'note': ticket.note,
       'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
-      'customerContactId': ticket.customerContactId !== undefined ? ticket.customerContactId : '',
+      'customerContactId': ticket.customerContactId !== undefined 
+        ? ticket?.customerContactId?._id || ticket.customerContactId 
+        : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       'images': ticket.images !== undefined ? ticket.images : []
     },
@@ -358,14 +376,14 @@ function BCServiceTicketModal({
 
   useEffect(() => {
     if (ticket.customer?._id) {
-      const jobLocation = jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0];
+      const jobLocation = jobLocations.filter((jobLocation: any) => (jobLocation._id === ticket.jobLocation || jobLocation._id === ticket?.jobLocation?._id))[0];
 
       if (jobLocation && ticket?.customer?._id === FormikValues.customerId) {
         setJobLocationValue(jobLocation);
         if (jobLocation.isActive) {
           dispatch(getJobSites({
             'customerId': ticket.customer._id,
-            'locationId': ticket.jobLocation
+            'locationId': ticket?.jobLocation?._id || ticket.jobLocation
           }));
         }
       }
@@ -378,7 +396,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
-        setContactValue(contacts.filter((contact: any) => contact._id === ticket.customerContactId)[0]);
+        setContactValue(contacts.filter((contact: any) => (contact._id === ticket.customerContactId || contact._id === ticket?.customerContactId?._id))[0]);
       }
     }
   }, [contacts]);
@@ -386,10 +404,10 @@ function BCServiceTicketModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (jobSites.length !== 0 && jobLocationValue._id && ticket?.customer?._id === FormikValues.customerId) {
-        setJobSiteValue(jobSites.filter((jobSite: any) => jobSite._id === ticket.jobSite)[0]);
+        setJobSiteValue(jobSites.filter((jobSite: any) => (jobSite._id === ticket.jobSite || jobSite._id === ticket?.jobSite?._id))[0]);
       }
     }
-  }, [jobSites]);
+  }, [jobSites, jobLocationValue]);
 
   useEffect(() => {
     if (FormikValues.images) {
@@ -435,8 +453,8 @@ function BCServiceTicketModal({
     if (jobTypes?.length && items?.length) {
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
-        const result = ids.map((id: string)=> {
-          const currentItem = items.filter((item: {jobType: string}) => item.jobType === id)[0];
+        const result = ids.map((id: any)=> {
+          const currentItem = items.filter((item: {jobType: string}) => (item.jobType === id || item.jobType === id._id))[0];
           return {_id:currentItem?.jobType, title:currentItem?.name, description:currentItem?.description}
         });
         const newValue = result.map((val:{_id:string;title:string;description:string}) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));
@@ -470,7 +488,7 @@ function BCServiceTicketModal({
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               defaultValue={ticket.customer && customers.length !== 0 && customers.filter((customer: any) => customer?._id === ticket.customer?._id)[0]}
-              disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail}
+              disabled={ticket.customer?.source === 'blueclerk' || isLoadingDatas || detail || !!ticket.jobCreated}
               getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
               id={'tags-standard'}
               onChange={(ev: any, newValue: any) => handleCustomerChange(ev, 'customerId', setFieldValue, newValue)}
@@ -491,14 +509,14 @@ function BCServiceTicketModal({
             <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
             <BCDateTimePicker
               className={'due_date'}
-              disabled={detail}
+              disabled={detail || isFieldsDisabled}
               disablePast
               handleChange={dateChangeHandler}
               name={'dueDate'}
               id={'dueDate'}
               placeholder={'Date'}
               value={FormikValues.dueDate}
-              errorText={FormikErrors.dueDate}
+              errorText={!isFieldsDisabled && FormikErrors.dueDate}
             />
           </Grid>
           <Grid item xs={4} />
@@ -509,7 +527,7 @@ function BCServiceTicketModal({
             <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
             <Autocomplete
               defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
-              disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
+              disabled={FormikValues.customerId === '' || isLoadingDatas || detail || isFieldsDisabled}
               getOptionLabel={option => option.name ? option.name : ''}
               getOptionDisabled={(option) => !option.isActive}
               id={'tags-standard'}
@@ -528,7 +546,7 @@ function BCServiceTicketModal({
             <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
-              disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail}
+              disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || isFieldsDisabled}
               getOptionLabel={option => option.name ? option.name : ''}
               id={'tags-standard'}
               onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
@@ -548,7 +566,7 @@ function BCServiceTicketModal({
               className={detail ? 'detail-only' : ''}
               value={FormikValues.jobTypes}
               getOptionDisabled={(option)=>!option.isJobType}
-              disabled={detail}
+              disabled={detail || !!ticket.jobCreated}
               getOptionLabel={option => {
                 const {title, description} = option;
                 return `${title || '...'}${description ? ' - '+description: ''}`
@@ -589,7 +607,7 @@ function BCServiceTicketModal({
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
                 <Autocomplete
-                  disabled={FormikValues.customerId === '' || isLoadingDatas || detail}
+                  disabled={FormikValues.customerId === '' || isLoadingDatas || detail || isFieldsDisabled}
                   getOptionLabel={option => option.name ? option.name : ''}
                   id={'tags-standard'}
                   onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
@@ -615,7 +633,7 @@ function BCServiceTicketModal({
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>customer PO</Typography>
                 <BCInput
-                  disabled={detail}
+                  disabled={detail || isFieldsDisabled}
                   handleChange={formikChange}
                   name={'customerPO'}
                   value={FormikValues.customerPO}
@@ -627,7 +645,7 @@ function BCServiceTicketModal({
                 <Typography variant={'caption'} className={'previewCaption'}>notes / special instructions</Typography>
                 <BCInput
                   className={'serviceTicketLabel'}
-                  disabled={detail}
+                  disabled={detail || isFieldsDisabled}
                   handleChange={formikChange}
                   multiline
                   name={'note'}
@@ -640,7 +658,7 @@ function BCServiceTicketModal({
             </Grid>
           </Grid>
           <Grid item container xs={4} style={{paddingTop: 0}}>
-            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} onDelete={handleRemoveImage}/>
+            <BCDragAndDrop images={thumbs} onDrop={(files) => handleImageDrop(files)} onDelete={handleRemoveImage} readonly={isFieldsDisabled} />
           </Grid>
         </Grid>
 
@@ -653,7 +671,7 @@ function BCServiceTicketModal({
             ticket._id &&
             <Button
               color={'secondary'}
-              disabled={isSubmitting || isLoadingDatas}
+              disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
               onClick={() => openCancelTicketModal(ticket)}
               variant={'contained'}>
               {'Cancel Ticket'}
@@ -661,9 +679,18 @@ function BCServiceTicketModal({
           }
           <Button color={'primary'}
                   disableElevation={true}
-                  disabled={isSubmitting || isLoadingDatas}
+                  disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
                   type={'submit'}
                   variant={'contained'}>Submit</Button>
+          {isFieldsDisabled && (
+            <Button color={'primary'}
+              disableElevation={true}
+              onClick={() => openEditTicketConfirmationModal()}
+              variant={'contained'}
+            >
+              Edit Ticket
+            </Button>
+          )}
         </DialogActions>
       </form>
     </DataContainer >

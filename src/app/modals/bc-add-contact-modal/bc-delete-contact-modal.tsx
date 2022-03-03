@@ -50,8 +50,13 @@ function BCDeleteContactModal({
     try {
       const response = await apply({
         contactId: contact._id,
+        _id: contact._id,
         type: contact.type,
         referenceNumber: contact.referenceNumber,
+        email: contact?.email,
+        name: contact?.name,
+        phone: contact?.phone,
+        isActive: !contact?.isActive
       });
       if (response.status <= 400 && response.status !== 0) {
         dispatch(success(`${contact.name} successfully deleted!`));
@@ -72,7 +77,8 @@ function BCDeleteContactModal({
       <DataContainer >
         <Grid container direction="column" alignItems="center" spacing={2}>
 
-          <Typography variant={"h6"}>{`Are you sure you want to remove "${contact.name}"?`}</Typography>
+          { contact.type !== 'JobLocation' && <Typography variant={"h6"}>{`Are you sure you want to ${contact?.isActive ? 'deactivate' : 'activate'} "${contact.name}"?`}</Typography>}
+          { contact.type === 'JobLocation' && <Typography variant={"h6"}>{`Are you sure you want to remove this contact from this specific location?`}</Typography>}
 
         </Grid>
       </DataContainer>
@@ -104,7 +110,7 @@ function BCDeleteContactModal({
           }}
           onClick={handleDelete}
           variant={'extended'}>
-          {'Delete'}
+          {contact?.isActive ? 'Deactivate' : 'Activate'}
         </Fab>
       </DialogActions>
     </>

@@ -109,6 +109,9 @@ function BCViewJobModal({
       id: 'user',
       sortable: true,
       Cell({ row }: any) {
+        if(row.original.user === 'tech'){
+          return <div>{'Technician\'s comment'}</div>
+        }
         const user = employeesForJob.filter(
           (employee: any) => employee._id === row.original.user
         )[0];
@@ -122,9 +125,9 @@ function BCViewJobModal({
       id: 'date',
       sortable: true,
       Cell({ row }: any) {
-        const dataTime = moment(new Date(row.original.date)).format(
+        const dataTime = row.original.date ? moment(new Date(row.original.date)).format(
           'MM/DD/YYYY h:mm A'
-        );
+        ) : '-';
         return (
           <div style={{ color: 'gray', fontStyle: 'italic' }}>
             {`${dataTime}`}
@@ -139,6 +142,9 @@ function BCViewJobModal({
       Cell({ row }: any) {
         const splittedActions = row.original.action.split('|');
         const actions = splittedActions.filter((action: any) => action !== '');
+        if(row.original.note){
+          actions.push(`Note: ${row.original.note}` );
+        }
         return (
           <>
             {actions.length === 0 ? (
@@ -160,6 +166,15 @@ function BCViewJobModal({
   const startTime = job.scheduledStartTime ? formatTime(job.scheduledStartTime) : 'N/A';
   const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
+  let jobImages = job?.images?.length ? [...job.images] : [];
+  jobImages = job?.technicianImages?.length ? [...jobImages, ...job.technicianImages] : jobImages;
+  let technicianNotes = job?.tasks?.length ?  job.tasks.filter((task: any) => task.comment).map((task: any) => {
+    return {
+      user: 'tech', 
+      action: task.comment,
+      date: '',
+    }
+  }) : [];
 
   const rescheduleJob= () => {
     dispatch(
@@ -341,7 +356,7 @@ function BCViewJobModal({
           <Grid item container xs={4}>
             <Grid item xs>
               <Typography variant={'caption'} className={'previewCaption'}>photo(s);</Typography>
-              <BCDragAndDrop images={job.images.map((image: any) => image.imageUrl)} readonly={true}  />
+              <BCDragAndDrop images={jobImages.map((image: any) => image.imageUrl)} readonly={true}  />
             </Grid>
           </Grid>
         </Grid>
@@ -359,7 +374,7 @@ function BCViewJobModal({
                 pageSize={5}
                 pagination={true}
                 stickyHeader
-                tableData={job.track}
+                tableData={[...job.track, ...technicianNotes]}
               />
             </div>
           </Grid>
