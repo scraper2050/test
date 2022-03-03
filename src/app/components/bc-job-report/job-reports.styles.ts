@@ -36,6 +36,9 @@ export default (theme: Theme): any => ({
     'marginTop': '0px',
     'paddingRight': '15px'
   },
+  'noMarginBottom': {
+    'marginBottom': '0px',
+  },
 
   'addMargin': {
     'marginTop': '15px',
