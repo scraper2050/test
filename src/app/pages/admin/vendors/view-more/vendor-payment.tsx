@@ -18,6 +18,8 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener"
 import Popper from "@material-ui/core/Popper";
 import {CSButtonSmall} from "../../../../../helpers/custom";
 import {PRIMARY_BLUE} from "../../../../../constants";
+import BCDateRangePicker
+  from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 // import './picker.css';
 
 
@@ -36,12 +38,7 @@ const ITEMS = [
 
 function VendorPayment({classes}: Props) {
   const [tableData, setTableData] = useState<any[]>([]);
-  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [selectionRange, setSelectionRange] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
-  const [tempSelectionRange, setTempSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
   });
@@ -182,95 +179,34 @@ function VendorPayment({classes}: Props) {
     },
   ];
 
-  const handleSelect = (date: any) => {
-    setTempSelectionRange(date.range1 || date);
-  }
-
-  function renderDateRangePicker () {
-    return (
-      <Button
-        ref={buttonRef}
-        variant={'outlined'}
-        className={classes.rangePickerButton}
-        startIcon={<IconCalendar />}
-        onClick={openDateRangePicker}
-      >
-        {formatShortDate(selectionRange.startDate)} - {formatShortDate(selectionRange.endDate)}
-      </Button>
-    )
-  }
-
-  const openDateRangePicker = () => {
-    setTempSelectionRange(selectionRange);
-    setShowDateRangePicker(true);
-  }
-
-  const closeDateRangePicker = () => {
-    setShowDateRangePicker(false);
-  }
-
-  const saveDateRange = () => {
-    setSelectionRange(tempSelectionRange);
-    setShowDateRangePicker(false);
-  }
-
+  // function renderDateRangePicker () {
+  //   return tableData.length > 0 ? (
+  //     <BCDateRangePicker
+  //       startDate={new Date(tableData[tableData.length - 1].paymentDate)}
+  //       endDate={new Date(tableData[0].paymentDate)}
+  //       onChange={openDateRangePicker}
+  //   />) : null;
+  // }
 
   return (
-    <div style={{height: '100%'}}>
-    <Popper
-      className={classes.rangePickerPopup}
-      open={showDateRangePicker}
-      anchorEl={buttonRef.current}
-      role={undefined} transition disablePortal>
-      {({ TransitionProps, placement }) => (
-        <Fade timeout={500}
-          {...TransitionProps}
-        >
-          <Paper elevation={0}>
-            <ClickAwayListener onClickAway={closeDateRangePicker}>
-              <div className={classes.rangePickerWrapper}>
-              <DateRangePicker
-                ranges={[tempSelectionRange]}
-                onChange={handleSelect}
-                className={classes.rangePicker}
-                // moveRangeOnFirstSelection={true}
-                // retainEndDateOnFirstSelection={true}
-                months={2}
-                direction={'horizontal'}
-              />
-                <div className={classes.buttonsWrapper}>
-                  <CSButtonSmall
-                    style={{
-                      color: PRIMARY_BLUE,
-                      backgroundColor: 'white',
-                      border: `1px solid ${PRIMARY_BLUE}`
-                    }}
-                    onClick={closeDateRangePicker}
-                  >Cancel</CSButtonSmall>
-                  <CSButtonSmall
-                    onClick={saveDateRange}
-                  >OK</CSButtonSmall>
-                </div>
-            </div>
-            </ClickAwayListener>
-          </Paper>
-        </Fade>
-      )}
-    </Popper>
-
-    <BCTableContainer
-      columns={columns}
-      currentPage={currentPage}
-      //isLoading={vendors.loading}
-      //onRowClick={handleRowClick}
-      search
-      searchPlaceholder = 'Search Payments...'
-      setPage={setCurrentPage}
-      tableData={tableData}
-      toolbarPositionLeft={true}
-      toolbar={renderDateRangePicker()}
-    />
-  </div>
+    <div style={{height: '100%', position: 'relative'}}>
+      {tableData.length > 0 && <BCDateRangePicker
+        range={selectionRange}
+        onChange={setSelectionRange}
+      />}
+      <BCTableContainer
+        columns={columns}
+        currentPage={currentPage}
+        //isLoading={vendors.loading}
+        //onRowClick={handleRowClick}
+        search
+        searchPlaceholder = 'Search Payments...'
+        setPage={setCurrentPage}
+        tableData={tableData}
+        //toolbarPositionLeft={true}
+        toolbar={<span />}
+      />
+    </div>
   )
 }
 
