@@ -59,7 +59,7 @@ function BCDeleteContactModal({
         isActive: !contact?.isActive
       });
       if (response.status <= 400 && response.status !== 0) {
-        dispatch(success(`${contact.name} successfully deleted!`));
+        dispatch(success(`${contact.name} successfully ${contact.type === 'JobLocation' ? 'removed' : contact?.isActive ? 'deactivated' : 'activated'}!`));
       } else {
         dispatch(error("Something went wrong!"));
       }
@@ -110,7 +110,7 @@ function BCDeleteContactModal({
           }}
           onClick={handleDelete}
           variant={'extended'}>
-          {contact?.isActive ? 'Deactivate' : 'Activate'}
+          {contact.type === 'JobLocation' ? 'Remove' : contact?.isActive ? 'Deactivate' : 'Activate'}
         </Fab>
       </DialogActions>
     </>

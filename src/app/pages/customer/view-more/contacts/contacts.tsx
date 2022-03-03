@@ -77,7 +77,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
             color={'secondary'}
             onClick={() => openDeleteContactModal(row)}
             variant={'contained'}>
-            {row['original']?.isActive ? 'Deactivate': 'Activate'}
+            { type === 'JobLocation' ? 'Remove' : row['original']?.isActive ? 'Deactivate': 'Activate'}
           </CSButtonSmall>
         </div>
       },
@@ -112,9 +112,14 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
   const handleDeleteContact = async (values: any) => {
 
     try {
-      //const response = await dispatch(removeContact(values));
-      const response = await dispatch(updateContact(values));
-      return response;
+      if(values.type === "JobLocation") {
+        const response = await dispatch(removeContact(values));
+        return response;
+      }
+      else {
+        const response = await dispatch(updateContact(values));
+        return response;
+      }
     } catch (err) {
       throw new Error(err);
     }
@@ -195,7 +200,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
           },
           apply: (values: any) => handleDeleteContact(values)
         },
-        'modalTitle': 'Remove Contact',
+        'modalTitle': type === "JobLocation" ? 'Remove Contact' : origRow['isActive'] ? 'Deactivate Contact' : 'Activate Contact',
         'removeFooter': false
       },
       'type': modalTypes.DELETE_CONTACT_MODAL
