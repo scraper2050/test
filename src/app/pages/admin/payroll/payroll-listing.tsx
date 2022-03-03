@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {Button, withStyles} from "@material-ui/core";
+import {Button, IconButton, Tooltip, withStyles} from "@material-ui/core";
 import styles from './payroll.styles';
 import {useLocation} from "react-router-dom";
 import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
@@ -13,7 +13,9 @@ import {
   setModalDataAction
 } from "../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../constants";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {getContractors} from "../../../../actions/payroll/payroll.action";
+import HelpIcon from "@material-ui/icons/HelpOutline";
 
 interface Props {
   classes: any;
@@ -27,6 +29,7 @@ const ITEMS = [
 function Payroll({classes}: Props) {
   const dispatch = useDispatch();
   const location = useLocation<any>();
+  const { loading, contractors } = useSelector((state: any) => state.payroll);
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
@@ -38,12 +41,12 @@ function Payroll({classes}: Props) {
   });
 
   useEffect(() => {
-    getData();
+    dispatch(getContractors());
   }, []);
 
   const renderCommission = (vendor: any) => {
     if (vendor.commission) {
-      return (<span>{`${vendor.commission * 100}%`}</span>);
+      return (<span>{`${vendor.commission}%`}</span>);
     }
 
     return (
@@ -72,36 +75,6 @@ function Payroll({classes}: Props) {
     }, 200);
   }
 
-  const getData = () => {
-    const tempData = [{
-      vendorName: 'Test Vendor',
-      commission: 0.2,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
-    },{
-      vendorName: 'Test Vendor',
-      commission: null,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
-    },{
-      vendorName: 'Test Vendor',
-      commission: 0.2,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
-    },{
-      vendorName: 'Test Vendor',
-      commission: 0.2,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
-    },
-    ];
-    setTableData(tempData);
-  }
-
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
     switch (id) {
@@ -114,14 +87,23 @@ function Payroll({classes}: Props) {
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': 'vendorName',
+      'accessor': 'vendor',
       'className': 'font-bold',
       'sortable': true,
     },
     { Cell({ row }: any) {
         return renderCommission(row.original)
       },
-      'Header': 'Commission',
+      'Header': (
+        <div style={{display: 'inline'}}>
+          <span>Commission</span>
+          <Tooltip title="Percentage rate is based on the invoice total"  placement="top-start" arrow>
+            <IconButton aria-label="delete" style={{padding: 4}}>
+              <HelpIcon fontSize={'small'} style={{color: '#BDBDBD'}} />
+            </IconButton>
+          </Tooltip>
+      </div>
+      ),
       'accessor': 'commission',
       'className': 'font-bold',
       'sortable': true,
@@ -159,17 +141,16 @@ function Payroll({classes}: Props) {
     },
   ];
 
-
   return (
     <BCTableContainer
       columns={columns}
       currentPage={currentPage}
-      //isLoading={vendors.loading}
+      isLoading={loading}
       //onRowClick={handleRowClick}
       search
       searchPlaceholder = 'Search Vendor List...'
       setPage={setCurrentPage}
-      tableData={tableData}
+      tableData={contractors}
     />
   )
 }

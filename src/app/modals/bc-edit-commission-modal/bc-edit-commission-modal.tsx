@@ -1,5 +1,3 @@
-// Import * as Yup from 'yup';
-import {modalTypes} from '../../../constants';
 import BCSent from '../../components/bc-sent';
 import {
   Button,
@@ -18,26 +16,23 @@ import {useDispatch} from 'react-redux';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../constants";
 import styles from './bc-edit-commission-modal.styles';
+import {updateCommissionAPI} from "../../../api/payroll.api";
+import {error as snackError, success} from "../../../actions/snackbar/snackbar.action";
+import {setContractor} from "../../../actions/payroll/payroll.action";
+import {Contractor} from "../../../actions/payroll/payroll.types";
 
-interface ApiProps {
-  vendorId: string,
-  type: string,
-  name: string,
-  commission: number,
-  contact?: string,
-  email?: string,
-  phone?: string
+interface Props {
+  classes: any;
+  vendorCommission: Contractor;
 }
 
 function BcEditCommissionModal({
                                  classes,
-                                 invoice,
                                  vendorCommission,
-                                 fromHistory,
-                               }: any): JSX.Element {
+                               }: Props): JSX.Element {
   const [error, setError] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
-  const [commission, setCommission] = useState<string>(vendorCommission.commission ? (vendorCommission.commission * 100).toString() : '');
+  const [commission, setCommission] = useState<number>(vendorCommission.commission);
   const dispatch = useDispatch();
 
 
@@ -55,11 +50,26 @@ function BcEditCommissionModal({
     }, 200);
   };
 
-  const submit = () => {
-    const commissionInt = parseInt(commission);
+  const submit = async() => {
+    const commissionInt = (commission);
     if (commissionInt < 1 || commissionInt >= 100) {
       setError(true);
       return;
+    }
+    setSubmitting(true);
+    const params = {
+      id: vendorCommission._id,
+      type: vendorCommission.type,
+      commission,
+    }
+    const contractor = await updateCommissionAPI(params);
+    if (contractor.status === 0) {
+      dispatch(snackError(contractor.message));
+      setSubmitting(false);
+    } else {
+      dispatch(success(contractor.message));
+      dispatch(setContractor(contractor.data));
+      closeModal();
     }
   }
 
@@ -82,7 +92,7 @@ function BcEditCommissionModal({
                 </Grid>
                 <Grid item xs={9}>
                   <Typography
-                    variant={'body2'}>{vendorCommission.vendorName}</Typography>
+                    variant={'body2'}>{vendorCommission.vendor}</Typography>
                 </Grid>
               </Grid>
             </Grid>

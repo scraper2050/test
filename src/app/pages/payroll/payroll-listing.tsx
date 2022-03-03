@@ -14,6 +14,11 @@ import {
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
 import {useDispatch} from "react-redux";
+import {
+  formatCurrency,
+  formatDate,
+  formatShortDateNoDay
+} from "../../../helpers/format";
 
 interface Props {
   classes: any;
@@ -75,28 +80,20 @@ function Payroll({classes}: Props) {
   const getData = () => {
     const tempData = [{
       vendorName: 'Test Vendor',
-      commission: 0.2,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
+      totalAmount: 325.33,
+      dueDate: new Date(),
     },{
       vendorName: 'Test Vendor',
-      commission: null,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
+      totalAmount: 20,
+      dueDate: new Date(),
     },{
       vendorName: 'Test Vendor',
-      commission: 0.2,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
+      totalAmount: 3500,
+      dueDate: new Date(),
     },{
       vendorName: 'Test Vendor',
-      commission: 0.2,
-      contact: " John Doe",
-      email: 'abc@email.com',
-      phone: '(888) 888-8888',
+      totalAmount: 1500,
+      dueDate: new Date(),
     },
     ];
     setTableData(tempData);
@@ -118,29 +115,15 @@ function Payroll({classes}: Props) {
       'className': 'font-bold',
       'sortable': true,
     },
-    { Cell({ row }: any) {
-        return renderCommission(row.original)
-      },
-      'Header': 'Commission',
-      'accessor': 'commission',
+    {
+      'Header': 'Total Amount',
+      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.totalAmount),
       'className': 'font-bold',
       'sortable': true,
     },
     {
-      'Header': 'Contact',
-      'accessor': 'contact',
-      'className': 'font-bold',
-      'sortable': true,
-    },
-    {
-      'Header': 'Email',
-      'accessor': 'email',
-      'className': 'font-bold',
-      'sortable': true,
-    },
-    {
-      'Header': 'Phone',
-      'accessor': 'phone',
+      'Header': 'Due Date',
+      'accessor': (originalRow: any, rowIndex: number) => formatShortDateNoDay(originalRow.dueDate),
       'className': 'font-bold',
       'sortable': true,
     },
@@ -167,7 +150,7 @@ function Payroll({classes}: Props) {
       //isLoading={vendors.loading}
       //onRowClick={handleRowClick}
       search
-      searchPlaceholder = 'Search Vendor List...'
+      searchPlaceholder = 'Search Vendor...'
       setPage={setCurrentPage}
       tableData={tableData}
     />

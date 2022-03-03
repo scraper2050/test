@@ -10,6 +10,7 @@ import { contactsReducer as contacts } from './contacts.reducer';
 import { ImageReducer as image } from './image.reducer';
 import { EmployeesReducer as employees } from './employee.reducer';
 import { jobReducer as jobState } from './jobs.reducer';
+import { PayrollReducer as payroll } from './payroll.reducer';
 import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
@@ -54,6 +55,7 @@ import { InvoiceItemsState
   , InvoiceItemsTierList as invoiceItemsTiers } from './items.reducer';
 import { EmailState, EmailReducer as email } from './email.reducer';
 import {removeQBAuthStateLocalStorage} from "../utils/local-storage.service";
+import {PayrollState} from "../actions/payroll/payroll.types";
 
 
 export interface ReducerParamsInterface {
@@ -72,6 +74,7 @@ export interface RootState {
   email: EmailState;
   quickbooks: QuickbooksState;
   map: mapState;
+  payroll: PayrollState;
 }
 
 
@@ -120,6 +123,7 @@ const appReducer = combineReducers({
   technicians,
   vendors,
   map,
+  payroll,
 });
 
 const rootReducer = (state: any, action: any) => {
