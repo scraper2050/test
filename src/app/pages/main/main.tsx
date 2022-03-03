@@ -57,6 +57,7 @@ const AdminIntegrationsPage = React.lazy(() => import('../admin/integrations/int
 const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
+const PayrollPage = React.lazy(() => import('../payroll/payroll'));
 const BlueTagsPage = React.lazy(() => import('../tags/blue-tags/blue-tags'));
 const CreateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/create-invoice/create-invoice'));
 const CreatePurchaseOrderPage = React.lazy(() =>
@@ -112,6 +113,12 @@ function Main(): any {
                   Component={PurchasedTagsPage}
                   exact
                   path={'/main/tags/purchasedtag'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={PayrollPage}
+                  exact
+                  path={'/main/payroll'}
                   title={'Tags'}
                 />
                 <AuthRoute

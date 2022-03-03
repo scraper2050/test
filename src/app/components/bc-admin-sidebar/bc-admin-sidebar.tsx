@@ -156,6 +156,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'icon': <DescriptionIcon/>,
       'link': '/main/customers/job-reports'
     },
+    {
+      'label': 'Payroll List',
+      'icon': <PaymentIcon/>,
+      'link': '/main/payroll'
+    },
     /*
      * {
      *   'label': "Todo's",

@@ -93,6 +93,10 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
       'label': 'Tags',
       'link': '/main/tags/purchasedtag'
     },
+    {
+      'label': 'Payroll',
+      'link': '/main/payroll'
+    },
     /*
      * {
      *   'label': 'Inventory',
