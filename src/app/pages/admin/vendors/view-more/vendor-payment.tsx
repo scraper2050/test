@@ -6,29 +6,12 @@ import BCTableContainer
   from "../../../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../../components/bc-menu-more";
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
-import { DateRangePicker  } from 'react-date-range';
-import {ReactComponent as IconCalendar} from "../../../../../assets/img/icons/map/icon-calendar.svg";
-import {formatShortDate} from "../../../../../helpers/format";
-import Grow from "@material-ui/core/Grow";
-import Paper from "@material-ui/core/Paper";
-import Fade from "@material-ui/core/Fade";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener"
-import Popper from "@material-ui/core/Popper";
-import {CSButtonSmall} from "../../../../../helpers/custom";
-import {PRIMARY_BLUE} from "../../../../../constants";
 import BCDateRangePicker
   from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-// import './picker.css';
 
 
 interface Props {
   classes: any;
-  /*profile: {
-    companyName?: string;
-  }
-  back: () => void;*/
 }
 
 const ITEMS = [
