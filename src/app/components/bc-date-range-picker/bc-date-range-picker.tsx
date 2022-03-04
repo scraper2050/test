@@ -13,13 +13,13 @@ import {PRIMARY_BLUE} from "../../../constants";
 import Popper from "@material-ui/core/Popper";
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-interface Range {
+export interface Range {
   startDate: Date;
   endDate: Date;
 }
 
 interface Props {
-  range: Range;
+  range: Range|null;
   onChange: (range: Range) => void;
 }
 
@@ -55,14 +55,17 @@ function BCDateRangePicker({range, onChange}: Props) {
   const classes = useStyles();
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [selectionRange, setSelectionRange] = useState(range);
-  const [tempSelectionRange, setTempSelectionRange] = useState(range);
+  const [tempSelectionRange, setTempSelectionRange] = useState(range ? range : {
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
   const handleSelect = (date: any) => {
     setTempSelectionRange(date.range1 || date);
   }
 
   const openDateRangePicker = () => {
-    setTempSelectionRange(selectionRange);
+    if (selectionRange) setTempSelectionRange(selectionRange);
     setShowDateRangePicker(true);
   }
 
@@ -86,7 +89,10 @@ function BCDateRangePicker({range, onChange}: Props) {
         startIcon={<IconCalendar />}
         onClick={openDateRangePicker}
       >
-        {formatShortDate(selectionRange.startDate)} - {formatShortDate(selectionRange.endDate)}
+        {selectionRange ?
+          formatShortDate(selectionRange.startDate) + ' - ' + formatShortDate(selectionRange.endDate)
+          : 'Not Set'
+        }
       </Button>
 
       <Popper

@@ -1,5 +1,9 @@
 import {types} from './payroll.types';
-import {getContractorsAPI, getPaymentsByContractorAPI} from 'api/payroll.api';
+import {
+  getContractorsAPI,
+  getPaymentsByContractorAPI,
+  getPayrollBalanceAPI
+} from 'api/payroll.api';
 import {error} from "../snackbar/snackbar.action";
 
 
@@ -14,6 +18,20 @@ export const getContractors = () => {
   return async (dispatch: any) => {
     dispatch(setContractorsLoading(true));
     const contractors: any = await getContractorsAPI();
+    if (contractors.status === 0) {
+      dispatch(error(contractors.message));
+      dispatch(setContractors([]));
+      dispatch(setContractorsLoading(false));
+    } else {
+      dispatch(setContractors(contractors.data));
+    }
+  };
+};
+
+export const getPayrollBalance = (startDate: string|null = null, endDate: string|null = null) => {
+  return async (dispatch: any) => {
+    dispatch(setContractorsLoading(true));
+    const contractors: any = await getPayrollBalanceAPI(startDate, endDate);
     if (contractors.status === 0) {
       dispatch(error(contractors.message));
       dispatch(setContractors([]));

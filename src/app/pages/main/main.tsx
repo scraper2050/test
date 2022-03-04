@@ -130,6 +130,12 @@ function Main(): any {
                   title={'Tags'}
                 />
                 <AuthRoute
+                  Component={PastPaymentPage}
+                  exact
+                  path={'/main/payroll/pastpayment/:contractorName'}
+                  title={'Tags'}
+                />
+                <AuthRoute
                   Component={BlueTagsPage}
                   exact
                   path={'/main/tags/bluetag'}

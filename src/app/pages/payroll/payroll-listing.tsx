@@ -4,7 +4,7 @@ import {
   withStyles
 } from "@material-ui/core";
 import styles from './payroll.styles';
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import BCTableContainer  from "../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../components/bc-menu-more";
@@ -13,77 +13,59 @@ import {
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
-  formatCurrency,
+  formatCurrency, formatDateYMD,
   formatShortDateNoDay
 } from "../../../helpers/format";
 import BCDateRangePicker
-  from "../../components/bc-date-range-picker/bc-date-range-picker";
+  , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";
 import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
+import {getPayrollBalance} from "../../../actions/payroll/payroll.action";
+import {Contractor} from "../../../actions/payroll/payroll.types";
 
 interface Props {
   classes: any;
 }
 
 const ITEMS = [
-  {id: 0, title:'Edit Commisssion'},
-  {id: 1, title:'Payment History'},
+  {id: 0, title:'Record Payment'},
+  {id: 1, title:'Past Payment'},
+  {id: 2, title:'View Details'},
 ]
-
-const TEMP_DATA = [{
-  _id: '1',
-  vendorName: 'Test Vendor 1',
-  totalAmount: 325.33,
-  dueDate: new Date(),
-},{
-  _id: '2',
-  vendorName: 'Test Vendor 2',
-  totalAmount: 20,
-  dueDate: new Date(),
-},{
-  _id: '3',
-  vendorName: 'Test Vendor 3',
-  totalAmount: 3500,
-  dueDate: new Date(),
-},{
-  _id: '4',
-  vendorName: 'Test Vendor 4',
-  totalAmount: 1500,
-  dueDate: new Date(),
-},
-];
 
 function Payroll({classes}: Props) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const location = useLocation<any>();
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+  const { loading, contractors } = useSelector((state: any) => state.payroll);
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
-  const [selectionRange, setSelectionRange] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
-
+  const [selectionRange, setSelectionRange] = useState<Range|null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (selectionRange) {
+      dispatch(getPayrollBalance(formatDateYMD(selectionRange.startDate), formatDateYMD(selectionRange.endDate)));
+    } else {
+      dispatch(getPayrollBalance());
+    }
+  }, [selectionRange]);
 
   useEffect(() => {
     setTableData(selectedIDs.length > 0 ?
-      TEMP_DATA.filter((item: any) => selectedIDs.indexOf(item._id) >=0) : TEMP_DATA);
-  }, [selectedIDs])
+      contractors.filter((item: any) => selectedIDs.indexOf(item._id) >=0) : contractors);
+  }, [selectedIDs, contractors])
 
 
-  const editCommission = (vendor: any) => {
+  const recorPayment = (vendor: any) => {
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Edit Commission',
@@ -97,15 +79,22 @@ function Payroll({classes}: Props) {
     }, 200);
   }
 
-  const getData = () => {
-    setTableData(TEMP_DATA);
-  }
-
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
     switch (id) {
       case 0:
-        editCommission(row);
+        recorPayment(row);
+        break;
+      case 1:
+        const contractorName = row.vendor.replace(/[\/ ]/g, '');
+        localStorage.setItem('nestedRouteKey', `${contractorName}`);
+        history.push({
+          'pathname': `payroll/pastpayment/${contractorName}`,
+          'state': {
+            contractor: row,
+            currentPage
+          }
+        });
         break;
     }
   }
@@ -113,22 +102,22 @@ function Payroll({classes}: Props) {
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': 'vendorName',
+      'accessor': 'vendor',
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Total Amount',
-      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.totalAmount),
+      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.commissionTotal),
       'className': 'font-bold',
       'sortable': true,
     },
-    {
-      'Header': 'Due Date',
-      'accessor': (originalRow: any, rowIndex: number) => formatShortDateNoDay(originalRow.dueDate),
-      'className': 'font-bold',
-      'sortable': true,
-    },
+    // {
+    //   'Header': 'Due Date',
+    //   'accessor': (originalRow: any, rowIndex: number) => formatShortDateNoDay(new Date()),
+    //   'className': 'font-bold',
+    //   'sortable': true,
+    // },
     { Cell({ row }: any) {
         return (
           <BCMenuButton
@@ -148,14 +137,14 @@ function Payroll({classes}: Props) {
     return tableData.length > 0 ? (
       <BCDateRangePicker
         range={selectionRange}
-        onChange={setSelectionRange}
+        onChange={(range) => setSelectionRange(range)}
     />) : null;
   }
 
   function renderMenu () {
     return (
       <BCItemsFilter
-        items={TEMP_DATA.map((item) => ({id: item._id, value: item.vendorName}))}
+        items={contractors.map((item: Contractor) => ({id: item._id, value: item.vendor}))}
         selected={selectedIDs}
         onApply={setSelectedIDs}
         />
@@ -178,7 +167,7 @@ function Payroll({classes}: Props) {
     <BCTableContainer
       columns={columns}
       currentPage={currentPage}
-      //isLoading={vendors.loading}
+      isLoading={loading}
       //onRowClick={handleRowClick}
       search
       searchPlaceholder = 'Search Vendor...'

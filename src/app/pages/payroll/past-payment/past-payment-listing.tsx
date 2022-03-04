@@ -71,8 +71,8 @@ function PastPayments({classes}: Props) {
   useEffect(() => {
     const obj: any = location.state;
     if (obj?.contractor) {
-      dispatch(getContractorPayments(obj.contractor));
-      setSelectedIDs([obj.contractor.id]);
+      dispatch(getContractorPayments({id: obj.contractor._id, type: obj.contractor.type}));
+      setSelectedIDs([obj.contractor._id]);
     } else {
       if (contractors.length > 0) {
         setSelectedIDs([contractors[0]._id]);

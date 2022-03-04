@@ -22,6 +22,8 @@ export interface Contractor {
   };
   balance: number;
   commission: number;
+  commissionTotal: number;
+  invoiceIds: string[];
 }
 
 export interface ContractorPayment {

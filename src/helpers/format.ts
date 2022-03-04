@@ -42,7 +42,7 @@ export const parseISODate = (date: string) => {
 }
 
 export const formatCurrency = (value: number) => {
-  const formatted = value.toLocaleString('en-US', {minimumFractionDigits: 2});
+  const formatted = (value ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2});
   return `$${formatted}`;
 }
 

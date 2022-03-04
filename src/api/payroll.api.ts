@@ -38,6 +38,39 @@ export const updateCommissionAPI = async (params: {
   }
 }
 
+export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null) => {
+  try {
+    const offset = new Date().getTimezoneOffset() / 60;
+    const url = `/getPayrollBalance${startDate ? `?startDate=${startDate}&endDate=${endDate}&offset=${offset}` : ''}`
+    const response: any = await request(url, 'GET', {}, false);
+    const {status, message, vendors = [], employees = []} = response.data;
+    if (status === 1) {
+      const data = [
+        ...vendors.map((contractor: any) => {
+          const {commissionTotal, invoiceIds} = contractor;
+          return ({
+            ...normalizeData(contractor.contractor, 'vendor'),
+            commissionTotal,
+            invoiceIds,
+            })
+        }, ),
+        ...employees.map((technician: any) => {
+          const {commissionTotal, invoiceIds} = technician;
+          return ({
+            ...normalizeData(technician.employee, 'employee'),
+            commissionTotal,
+            invoiceIds,
+          })
+        }),
+      ];
+      return {data: sortByField(data, 'vendor','asc',false), status};
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
 export const getPaymentsByContractorAPI = async (type: string, id: string) => {
   try {
     const url = `/getPaymentsByContractor?id=${id}&type=${type}`

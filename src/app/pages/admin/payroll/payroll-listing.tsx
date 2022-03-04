@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {Button, IconButton, Tooltip, withStyles} from "@material-ui/core";
 import styles from './payroll.styles';
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../components/bc-menu-more";
@@ -22,12 +22,13 @@ interface Props {
 }
 
 const ITEMS = [
-  {id: 0, title:'Edit Commisssion'},
+  {id: 0, title:'Edit Commission'},
   {id: 1, title:'Payment History'},
 ]
 
 function Payroll({classes}: Props) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const location = useLocation<any>();
   const { loading, contractors } = useSelector((state: any) => state.payroll);
   const locationState = location.state;
@@ -80,6 +81,18 @@ function Payroll({classes}: Props) {
     switch (id) {
       case 0:
         editCommission(row);
+        break;
+      case 1:
+        const contractorName = row.vendor.replace(/[\/ ]/g, '');
+        localStorage.setItem('nestedRouteKey', `${contractorName}`);
+        console.log({row})
+        history.push({
+          'pathname': `/main/payroll/pastpayment/${contractorName}`,
+          'state': {
+            contractor: row,
+            currentPage
+          }
+        });
         break;
     }
   }
