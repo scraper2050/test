@@ -57,7 +57,6 @@ const AdminIntegrationsPage = React.lazy(() => import('../admin/integrations/int
 const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
-const PayrollPage = React.lazy(() => import('../payroll/payroll'));
 const BlueTagsPage = React.lazy(() => import('../tags/blue-tags/blue-tags'));
 const CreateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/create-invoice/create-invoice'));
 const CreatePurchaseOrderPage = React.lazy(() =>
@@ -70,6 +69,9 @@ const NotificationPage = React.lazy(() => import('../notifications/notifications
 
 const EmployeeProfilePage = React.lazy(() => import('../admin/employees/view-more/view-more'));
 const ChangePasswordPage = React.lazy(() => import('../profile/change-password/change-password'));
+
+const PayrollPage = React.lazy(() => import('../payroll/payroll'));
+const PastPaymentPage = React.lazy(() => import('../payroll/past-payment/past-payment'));
 
 function Main(): any {
 
@@ -119,6 +121,12 @@ function Main(): any {
                   Component={PayrollPage}
                   exact
                   path={'/main/payroll'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={PastPaymentPage}
+                  exact
+                  path={'/main/payroll/pastpayment'}
                   title={'Tags'}
                 />
                 <AuthRoute

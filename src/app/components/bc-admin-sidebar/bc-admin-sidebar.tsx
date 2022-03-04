@@ -52,6 +52,7 @@ import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import ContactsIcon from '@material-ui/icons/Contacts';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
+import HistoryIcon from '@material-ui/icons/History';
 import { CompanyProfileStateType } from "../../../actions/user/user.types";
 import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
 
@@ -160,6 +161,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'label': 'Payroll List',
       'icon': <PaymentIcon/>,
       'link': '/main/payroll'
+    },
+    {
+      'label': 'Past Payments',
+      'icon': <HistoryIcon/>,
+      'link': '/main/payroll/pastpayment'
     },
     /*
      * {
