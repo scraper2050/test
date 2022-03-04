@@ -24,11 +24,6 @@ interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
-  rangePickerContainer: {
-    position: 'absolute',
-    left: '40%',
-    top: 6,
-  },
   rangePickerButton: {
     textTransform: 'none',
     borderRadius: 8,
@@ -83,7 +78,7 @@ function BCDateRangePicker({range, onChange}: Props) {
 
 
   return (
-    <div className={classes.rangePickerContainer}>
+    <>
       <Button
         ref={buttonRef}
         variant={'outlined'}
@@ -98,7 +93,7 @@ function BCDateRangePicker({range, onChange}: Props) {
         className={classes.rangePickerPopup}
         open={showDateRangePicker}
         anchorEl={buttonRef.current}
-        role={undefined} transition disablePortal>
+        role={undefined} transition>
         {({ TransitionProps, placement }) => (
           <Fade timeout={500}
                 {...TransitionProps}
@@ -134,7 +129,7 @@ function BCDateRangePicker({range, onChange}: Props) {
           </Fade>
         )}
       </Popper>
-    </div>
+    </>
   )
 }
 

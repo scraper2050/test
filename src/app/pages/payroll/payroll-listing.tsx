@@ -19,6 +19,8 @@ import {
   formatDate,
   formatShortDateNoDay
 } from "../../../helpers/format";
+import BCDateRangePicker
+  from "../../components/bc-date-range-picker/bc-date-range-picker";
 
 interface Props {
   classes: any;
@@ -41,27 +43,15 @@ function Payroll({classes}: Props) {
     'pageSize': prevPage ? prevPage.pageSize : 10,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
+  const [selectionRange, setSelectionRange] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
   useEffect(() => {
     getData();
   }, []);
 
-  const renderCommission = (vendor: any) => {
-    if (vendor.commission) {
-      return (<span>{`${vendor.commission * 100}%`}</span>);
-    }
-
-    return (
-      <Button
-        variant="text"
-        className={classes.commissionAdd}
-        onClick={() => editCommission(vendor)}
-      >
-        <IconEdit />
-        <span className={classes.commissionAddText}>Not set</span>
-      </Button>
-    )
-  }
 
   const editCommission = (vendor: any) => {
     dispatch(setModalDataAction({
@@ -142,6 +132,13 @@ function Payroll({classes}: Props) {
     },
   ];
 
+  function renderDateRangePicker () {
+    return tableData.length > 0 ? (
+      <BCDateRangePicker
+        range={selectionRange}
+        onChange={setSelectionRange}
+    />) : null;
+  }
 
   return (
     <BCTableContainer
@@ -153,6 +150,8 @@ function Payroll({classes}: Props) {
       searchPlaceholder = 'Search Vendor...'
       setPage={setCurrentPage}
       tableData={tableData}
+      toolbarPositionLeft={true}
+      toolbar={renderDateRangePicker()}
     />
   )
 }

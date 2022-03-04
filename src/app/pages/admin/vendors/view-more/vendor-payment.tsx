@@ -162,14 +162,13 @@ function VendorPayment({classes}: Props) {
     },
   ];
 
-  // function renderDateRangePicker () {
-  //   return tableData.length > 0 ? (
-  //     <BCDateRangePicker
-  //       startDate={new Date(tableData[tableData.length - 1].paymentDate)}
-  //       endDate={new Date(tableData[0].paymentDate)}
-  //       onChange={openDateRangePicker}
-  //   />) : null;
-  // }
+  function renderDateRangePicker () {
+    return tableData.length > 0 ? (
+      <BCDateRangePicker
+        range={selectionRange}
+        onChange={setSelectionRange}
+      />) : null;
+  }
 
   return (
     <div style={{height: '100%', position: 'relative'}}>
@@ -186,8 +185,8 @@ function VendorPayment({classes}: Props) {
         searchPlaceholder = 'Search Payments...'
         setPage={setCurrentPage}
         tableData={tableData}
-        //toolbarPositionLeft={true}
-        toolbar={<span />}
+        toolbarPositionLeft={true}
+        toolbar={renderDateRangePicker()}
       />
     </div>
   )
