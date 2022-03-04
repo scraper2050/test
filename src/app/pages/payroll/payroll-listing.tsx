@@ -167,6 +167,7 @@ function Payroll({classes}: Props) {
     return (
       <BCItemsFilter
         items={TEMP_DATA.map((item) => ({id: item._id, value: item.vendorName}))}
+        selected={selectedIDs}
         onApply={setSelectedIDs}
         />
     )
