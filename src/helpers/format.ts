@@ -42,8 +42,20 @@ export const parseISODate = (date: string) => {
 }
 
 export const formatCurrency = (value: number) => {
-  const formatted = (value ?? 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+  const formatted = (value ?? 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true,
+  });
   return `$${formatted}`;
+}
+
+const formatNumber = (number: number) => {
+  return number.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true,
+  })
 }
 
 export const convertMilitaryTime = (time: string) => {

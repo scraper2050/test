@@ -27,10 +27,16 @@ export const PayrollReducer: Reducer<any> = (state = initialPayroll, {type, payl
         loading: false,
       };
     case (types.SET_CONTRACTOR):
+    case (types.REMOVE_CONTRACTOR):
+      console.log({type})
       const contractors = [...state.contractors];
       const i = contractors.findIndex((contractor: Contractor) => contractor._id === payload._id);
-      if (i >= 0) contractors[i] = payload;
-      console.log({i})
+      if (i >= 0) {
+        if (type === types.SET_CONTRACTOR)
+          contractors[i] = payload;
+        else
+          contractors.splice(i, 1);
+      }
       return {
         ...state,
         contractors,

@@ -212,6 +212,29 @@ export const allStates = [
   },
 ];
 
+export const PAYMENT_TYPES = [
+  {
+    '_id': 0,
+    'name': 'ACH'
+  },
+  {
+    '_id': 1,
+    'name': 'Bank Wire'
+  },
+  {
+    '_id': 2,
+    'name': 'Credit Card/Debit Card'
+  },
+  {
+    '_id': 3,
+    'name': 'Check'
+  },
+  {
+    '_id': 4,
+    'name': 'Cash'
+  }
+];
+
 export const DEFAULT_COORD = {lat: 32.3888811, lng: -98.6732501};
 
 export const NEW_JOB_MODE = {

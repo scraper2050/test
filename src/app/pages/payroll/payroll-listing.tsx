@@ -65,13 +65,14 @@ function Payroll({classes}: Props) {
   }, [selectedIDs, contractors])
 
 
-  const recorPayment = (vendor: any) => {
+  const recordPayment = (vendor: any) => {
     dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Edit Commission',
-        'vendorCommission': vendor,
+      data: {
+        modalTitle: 'Record Payment',
+        payroll: vendor,
+        dateRange: selectionRange,
       },
-      'type': modalTypes.EDIT_COMMISSION_MODAL
+      'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
     }));
 
     setTimeout(() => {
@@ -83,7 +84,7 @@ function Payroll({classes}: Props) {
     event.stopPropagation();
     switch (id) {
       case 0:
-        recorPayment(row);
+        recordPayment(row);
         break;
       case 1:
         const contractorName = row.vendor.replace(/[\/ ]/g, '');
@@ -134,11 +135,11 @@ function Payroll({classes}: Props) {
   ];
 
   function renderDateRangePicker () {
-    return tableData.length > 0 ? (
-      <BCDateRangePicker
-        range={selectionRange}
-        onChange={(range) => setSelectionRange(range)}
-    />) : null;
+    return <BCDateRangePicker
+      range={selectionRange}
+      disabled={loading}
+      onChange={(range) => setSelectionRange(range)}
+    />;
   }
 
   function renderMenu () {

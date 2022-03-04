@@ -5,6 +5,7 @@ export const types = {
   'UPDATE_CONTRACTOR': 'updateContractor',
   'SET_CONTRACTOR_LOADING': 'setContractorLoading',
   'SET_CONTRACTOR_PAYMENTS': 'setContractorPayments',
+  'REMOVE_CONTRACTOR': 'removeContractor',
 };
 
 export interface Contractor {

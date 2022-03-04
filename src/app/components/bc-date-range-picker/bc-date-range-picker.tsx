@@ -20,13 +20,17 @@ export interface Range {
 
 interface Props {
   range: Range|null;
-  onChange: (range: Range) => void;
+  disabled?: boolean;
+  onChange?: (range: Range) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
   rangePickerButton: {
     textTransform: 'none',
     borderRadius: 8,
+    '& .MuiButton-startIcon': {
+      marginTop: -4,
+    }
   },
   rangePickerPopup: {
     zIndex: 1,
@@ -50,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function BCDateRangePicker({range, onChange}: Props) {
+function BCDateRangePicker({range, disabled = false, onChange}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const classes = useStyles();
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
@@ -76,7 +80,7 @@ function BCDateRangePicker({range, onChange}: Props) {
   const saveDateRange = () => {
     setSelectionRange(tempSelectionRange);
     setShowDateRangePicker(false);
-    onChange(tempSelectionRange);
+    if (onChange) onChange(tempSelectionRange);
   }
 
 
@@ -85,8 +89,9 @@ function BCDateRangePicker({range, onChange}: Props) {
       <Button
         ref={buttonRef}
         variant={'outlined'}
+        disabled={disabled}
         className={classes.rangePickerButton}
-        startIcon={<IconCalendar />}
+        startIcon={<IconCalendar style={{fontSize: 14}}/>}
         onClick={openDateRangePicker}
       >
         {selectionRange ?
