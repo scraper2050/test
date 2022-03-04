@@ -214,7 +214,7 @@ function BCAddContactModal({
         .then((res: any) => {
           try {
             const unSelectedContacts = res?.data?.result?.filter((selectedContact: Record<string, string>) => !props?.contacts?.find((unSelectedContact: Record<string, string>) => selectedContact._id === unSelectedContact._id ));
-            setContacts(unSelectedContacts)
+            setContacts(unSelectedContacts.filter((contact: Record<string, string>) => contact?.isActive ))
           } catch (err) {
             console.log(err)
           }
