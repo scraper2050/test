@@ -123,7 +123,7 @@ function Payroll({classes}: Props) {
     },
     {
       'Header': 'Contact',
-      'accessor': 'contact',
+      'accessor': 'contact.displayName',
       'className': 'font-bold',
       'sortable': true,
     },

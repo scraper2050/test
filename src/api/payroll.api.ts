@@ -110,7 +110,12 @@ const normalizeData = (item: any, type: string) => {
           email: item.info.companyEmail,
         phone: item.contact?.phone || '',
         address: item.address,
-        contact: '',
+        contact: {
+          displayName: item.admin?.profile?.displayName,
+          _id: item.admin?._id,
+          email:  item.admin?.auth?.email,
+          phone:  item.admin?.contact?.phone,
+        },
         commission: item.commission,
         balance: item.balance,
         _id: item._id,
