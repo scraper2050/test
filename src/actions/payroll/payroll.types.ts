@@ -29,18 +29,21 @@ export interface Contractor {
 
 export interface ContractorPayment {
   _id: string;
-  vendor: {
-    vendor: string;
-    type: string;
-    _id:string;
-  };
-  date: string;
-  amount: number;
-  method: string;
-  reference: string;
+  paidAt: string;
+  startDate: string;
+  endDate: string;
+  referenceNumber: string;
+  paymentType: string;
+  invoices: any[];
+  amountPaid: number;
   notes: string;
-  balance: number;
-  commission: number;
+  employee: string;
+  company: {
+    _id: string;
+    info: {
+      companyName: string;
+    }
+  };
 }
 
 export interface PayrollState {

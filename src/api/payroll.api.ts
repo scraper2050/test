@@ -1,5 +1,5 @@
 import request from '../utils/http.service';
-import {sortByField} from "../utils/sort";
+import {sortByField} from "../helpers/sort";
 
 export const getContractorsAPI = async () => {
   try {

@@ -41,8 +41,9 @@ interface Props {
 }
 
 const ITEMS = [
-  {id: 0, title:'Edit Commisssion'},
-  {id: 1, title:'Payment History'},
+  {id: 0, title:'Edit'},
+  {id: 1, title:'Delete'},
+  {id: 2, title:'Send Receipt'},
 ]
 
 function PastPayments({classes}: Props) {
@@ -51,6 +52,7 @@ function PastPayments({classes}: Props) {
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
   const { loading, payments, contractors } = useSelector((state: any) => state.payroll);
+  const [contractor, setContractor] = useState<Contractor|null>(null)
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
@@ -73,9 +75,11 @@ function PastPayments({classes}: Props) {
     if (obj?.contractor) {
       dispatch(getContractorPayments({id: obj.contractor._id, type: obj.contractor.type}));
       setSelectedIDs([obj.contractor._id]);
+      setContractor(obj.contractor);
     } else {
       if (contractors.length > 0) {
         setSelectedIDs([contractors[0]._id]);
+        setContractor(contractors[0]);
         dispatch(getContractorPayments({id: contractors[0]._id, type: contractors[0].type}));
       }
     }
@@ -86,33 +90,17 @@ function PastPayments({classes}: Props) {
   }, [payments]);
 
   useEffect(() => {
-    const contractor = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
-    if (contractor) {
-      dispatch(getContractorPayments({id: contractor._id, type: contractor.type}));
+    const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
+    if (cont) {
+      setContractor(cont);
+      dispatch(getContractorPayments({id: cont._id, type: cont.type}));
     }
 
   }, [selectedIDs])
 
-
-  const editCommission = (vendor: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Edit Commission',
-        'vendorCommission': vendor,
-      },
-      'type': modalTypes.EDIT_COMMISSION_MODAL
-    }));
-
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
-
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
-    event.stopPropagation();
     switch (id) {
       case 0:
-        editCommission(row);
         break;
     }
   }
@@ -120,31 +108,31 @@ function PastPayments({classes}: Props) {
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': 'vendor.vendor',
+      'accessor': (originalRow: any) => <span>{contractor?.vendor}</span>,
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Payment Date',
-      'accessor': (originalRow: any) => new Date(originalRow.date),
+      'accessor': (originalRow: any) => formatDateYMD(new Date(originalRow.paidAt)),
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Amount',
-      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.amount),
+      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.amountPaid),
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Method',
-      'accessor': 'method',
+      'accessor': 'paymentType',
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Reference No.',
-      'accessor': 'reference',
+      'accessor': 'referenceNumber',
       'className': 'font-bold',
       'sortable': true,
     },
