@@ -1,6 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import { swipe_wrapper, dataContainer, fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
-import {PRIMARY_BLUE} from "../../../constants";
+import {MENU_TEXT_COLOR, PRIMARY_BLUE} from "../../../constants";
 export default (theme: Theme): any => ({
   ...fabRoot,
   ...pageContent,
@@ -23,4 +23,9 @@ export default (theme: Theme): any => ({
     textDecoration: 'underline',
     color: PRIMARY_BLUE,
   },
+  filterClearButton: {
+  fontSize: 10,
+    color: PRIMARY_BLUE,
+    textTransform: 'none',
+}
 });

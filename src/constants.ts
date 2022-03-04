@@ -27,6 +27,7 @@ export const INVOICE_BORDER = '#BDBDBD';
 export const INVOICE_TOTAL_CONTAINER = '#D0D3DC';
 export const INVOICE_HEADING = '#4F4F4F';
 export const INVOICE_TABLE_HEADING = '#828282';
+export const MENU_TEXT_COLOR = '#828282';
 
 export const TABLE_HOVER = 'rgba(0,170,255,0.34)';
 export const TABLE_ACTION_BUTTON = '#00AAFF';
