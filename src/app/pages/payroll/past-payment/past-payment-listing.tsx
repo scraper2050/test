@@ -3,7 +3,7 @@ import {
   Button,
   withStyles
 } from "@material-ui/core";
-import styles from './payroll.styles';
+import styles from '../payroll.styles';
 import {useLocation} from "react-router-dom";
 import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -13,16 +13,28 @@ import {
   setModalDataAction
 } from "../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../constants";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
   formatCurrency,
-
+  formatDateYMD,
   formatShortDateNoDay
 } from "../../../../helpers/format";
-import BCDateRangePicker
-  from "../../../components/bc-date-range-picker/bc-date-range-picker";
+import BCDateRangePicker from "../../../components/bc-date-range-picker/bc-date-range-picker";
 import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
+import {
+  getVendorDetailAction,
+  loadingSingleVender
+} from "../../../../actions/vendor/vendor.action";
+import {
+  getContractorPayments,
+  getContractors
+} from "../../../../actions/payroll/payroll.action";
+import {
+  Contractor,
+  ContractorPayment
+} from "../../../../actions/payroll/payroll.types";
+import userEvent from "@testing-library/user-event";
 
 interface Props {
   classes: any;
@@ -33,34 +45,12 @@ const ITEMS = [
   {id: 1, title:'Payment History'},
 ]
 
-const TEMP_DATA = [{
-  _id: '1',
-  vendorName: 'Test Vendor 1',
-  totalAmount: 325.33,
-  dueDate: new Date(),
-},{
-  _id: '2',
-  vendorName: 'Test Vendor 2',
-  totalAmount: 20,
-  dueDate: new Date(),
-},{
-  _id: '3',
-  vendorName: 'Test Vendor 3',
-  totalAmount: 3500,
-  dueDate: new Date(),
-},{
-  _id: '4',
-  vendorName: 'Test Vendor 4',
-  totalAmount: 1500,
-  dueDate: new Date(),
-},
-];
-
-function Payroll({classes}: Props) {
+function PastPayments({classes}: Props) {
   const dispatch = useDispatch();
   const location = useLocation<any>();
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
+  const { loading, payments, contractors } = useSelector((state: any) => state.payroll);
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
@@ -75,12 +65,32 @@ function Payroll({classes}: Props) {
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
   useEffect(() => {
-    getData();
+      dispatch(getContractors());
   }, []);
 
   useEffect(() => {
-    setTableData(selectedIDs.length > 0 ?
-      TEMP_DATA.filter((item: any) => selectedIDs.indexOf(item._id) >=0) : TEMP_DATA);
+    const obj: any = location.state;
+    if (obj?.contractor) {
+      dispatch(getContractorPayments(obj.contractor));
+      setSelectedIDs([obj.contractor.id]);
+    } else {
+      if (contractors.length > 0) {
+        setSelectedIDs([contractors[0]._id]);
+        dispatch(getContractorPayments({id: contractors[0]._id, type: contractors[0].type}));
+      }
+    }
+  }, [contractors]);
+
+  useEffect(() => {
+    setTableData(payments);
+  }, [payments]);
+
+  useEffect(() => {
+    const contractor = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
+    if (contractor) {
+      dispatch(getContractorPayments({id: contractor._id, type: contractor.type}));
+    }
+
   }, [selectedIDs])
 
 
@@ -98,10 +108,6 @@ function Payroll({classes}: Props) {
     }, 200);
   }
 
-  const getData = () => {
-    setTableData(TEMP_DATA);
-  }
-
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
     switch (id) {
@@ -114,19 +120,37 @@ function Payroll({classes}: Props) {
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': 'vendorName',
+      'accessor': 'vendor.vendor',
       'className': 'font-bold',
       'sortable': true,
     },
     {
-      'Header': 'Total Amount',
-      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.totalAmount),
+      'Header': 'Payment Date',
+      'accessor': (originalRow: any) => new Date(originalRow.date),
       'className': 'font-bold',
       'sortable': true,
     },
     {
-      'Header': 'Due Date',
-      'accessor': (originalRow: any, rowIndex: number) => formatShortDateNoDay(originalRow.dueDate),
+      'Header': 'Amount',
+      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.amount),
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Method',
+      'accessor': 'method',
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Reference No.',
+      'accessor': 'reference',
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Notes',
+      'accessor': 'notes',
       'className': 'font-bold',
       'sortable': true,
     },
@@ -156,8 +180,9 @@ function Payroll({classes}: Props) {
   function renderMenu () {
     return (
       <BCItemsFilter
-        items={TEMP_DATA.map((item) => ({id: item._id, value: item.vendorName}))}
+        items={contractors.map((item: Contractor) => ({id: item._id, value: item.vendor}))}
         selected={selectedIDs}
+        single={true}
         onApply={setSelectedIDs}
         />
     )
@@ -179,14 +204,14 @@ function Payroll({classes}: Props) {
     <BCTableContainer
       columns={columns}
       currentPage={currentPage}
-      //isLoading={vendors.loading}
+      isLoading={loading}
       //onRowClick={handleRowClick}
       search
       searchPlaceholder = 'Search Vendor...'
       setPage={setCurrentPage}
       tableData={tableData}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker(), renderClearFilterButton()]}
+      toolbar={[renderMenu(), renderDateRangePicker()]}
     />
   )
 }
@@ -194,4 +219,4 @@ function Payroll({classes}: Props) {
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(Payroll);
+)(PastPayments);

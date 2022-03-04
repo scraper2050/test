@@ -1,10 +1,10 @@
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
-import styles from './payroll.styles';
+import styles from '../payroll.styles';
 import { withStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 
-import PayrollListing from "./payroll-listing";
+import PayrollListing from "./past-payment-listing";
 
 function PayrollPastPaymentPage({ classes }: any) {
   const [curTab, setCurTab] = useState(0);

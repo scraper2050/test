@@ -38,6 +38,21 @@ export const updateCommissionAPI = async (params: {
   }
 }
 
+export const getPaymentsByContractorAPI = async (type: string, id: string) => {
+  try {
+    const url = `/getPaymentsByContractor?id=${id}&type=${type}`
+    const response: any = await request(url, 'GET', {}, false);
+    const {status, message, payment} = response.data;
+    if (status === 1) {
+      return {payment, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
 const normalizeData = (item: any, type: string) => {
   switch (type) {
     case 'vendor':

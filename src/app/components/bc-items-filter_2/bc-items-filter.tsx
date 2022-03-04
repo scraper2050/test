@@ -6,14 +6,14 @@ import {MENU_TEXT_COLOR, PRIMARY_BLUE} from "../../../constants";
 import classNames from "classnames";
 import {ArrowDropDown} from "@material-ui/icons";
 
-interface Item {
+export interface Item {
   id: string;
   value: string;
 }
 
 interface Props {
   items: Item[];
-  selected: string[];
+  selected: Item[];
   single?: boolean;
   onApply: (ids: string[]) => void;
 }
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
 function BCItemsFilter({items, selected, single = false, onApply}: Props) {
   const classes = useStyles();
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedIDs, setSelectedIDs] = useState<string[]>(selected);
+  const [selectedIDs, setSelectedIDs] = useState<Item[]>(selected);
 
   useEffect(() => {
     setSelectedIDs(selected);
@@ -91,19 +91,14 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
     setFilterMenuAnchorEl(event.currentTarget);
   };
 
-  const handleSelectStatusFilter = (id:string) => {
-    if (single) {
-      setFilterMenuAnchorEl(null);
-      onApply([id]);
-    }
-
-    if (id) {
-      const i = selectedIDs.indexOf(id);
+  const handleSelectStatusFilter = (item: Item| null) => {
+    if (item) {
+      const i = selectedIDs.indexOf(item);
       if (i >= 0) {
         selectedIDs.splice(i, 1);
         setSelectedIDs([...selectedIDs]);
       } else
-        setSelectedIDs([...selectedIDs, id]);
+        setSelectedIDs([...selectedIDs, item]);
     } else {
       setSelectedIDs([]);
     }
@@ -111,14 +106,7 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
 
   const saveFilterSelection = () => {
     setFilterMenuAnchorEl(null);
-    onApply(selectedIDs);
-  }
-
-  const getText = () => {
-    if (single) {
-      return items.find(item => item.id === selectedIDs[0])?.value;
-    }
-    return selectedIDs.length === 0 ? 'All' : 'Custom';
+    onApply(selectedIDs.map(item => item.id));
   }
 
   return (
@@ -130,8 +118,8 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
         onClick={handleFilterClick}
         className={classNames(classes.filterMenu, classes.filterMenuContainer)}
       >
-        <span>{getText()}</span>
-        {selectedIDs.length > 0 &&!single && <div className={classes.filterBadge}>{selectedIDs.length}</div>}
+        <span>{selectedIDs.length === 0 ? 'All' : 'Custom'}</span>
+        {selectedIDs.length > 0 && <div className={classes.filterBadge}>{selectedIDs.length}</div>}
         <span style={{flex: 1, textAlign: 'right'}}>
             <ArrowDropDown />
           </span>
@@ -144,48 +132,42 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
         open={Boolean(filterMenuAnchorEl)}
         onClose={() => setFilterMenuAnchorEl(null)}
       >
-        {!single &&
-          <MenuItem
-            className={classes.filterMenuItemRoot}
-            onClick={() => handleSelectStatusFilter('')}
-          >
-            <span>All</span>
-            <Checkbox
-              classes={{root: classes.filterMenuCheckbox}}
-              checked={selectedIDs.length === 0}
-              color={'primary'}
-            />
-          </MenuItem>
-        }
+        <MenuItem
+          className={classes.filterMenuItemRoot}
+          onClick={() => handleSelectStatusFilter(null)}
+        >
+          <span>All</span>
+          <Checkbox
+            classes={{root: classes.filterMenuCheckbox}}
+            checked={selectedIDs.length === 0}
+            color={'primary'}
+          />
+        </MenuItem>
         {items.map((item: Item) => (
           <MenuItem
             key={item.id}
             className={classes.filterMenuItemRoot}
-            onClick={() => handleSelectStatusFilter(item.id)}
+            onClick={() => handleSelectStatusFilter(item)}
           >
             <span>{item.value}</span>
-            {!single &&
-              <Checkbox
-                classes={{root: classes.filterMenuCheckbox}}
-                color={'primary'}
-                checked={selectedIDs.indexOf(item.id) >= 0}
-              />
-            }
+            <Checkbox
+              classes={{root: classes.filterMenuCheckbox}}
+              color={'primary'}
+              checked={selectedIDs.indexOf(item) >= 0}
+            />
           </MenuItem>
         ))}
-        {!single &&
-          <div className={classes.filterButtonContainer}>
-            <CSButtonSmall
-              onClick={saveFilterSelection}
-            >Apply</CSButtonSmall>
-            <Button
-              variant={'text'}
-              className={classes.filterClearButton}
-              disabled={selectedIDs.length === 0}
-              onClick={() => setSelectedIDs([])}
-            >Clear Selection</Button>
-          </div>
-        }
+        <div className={classes.filterButtonContainer}>
+          <CSButtonSmall
+            onClick={saveFilterSelection}
+          >Apply</CSButtonSmall>
+          <Button
+            variant={'text'}
+            className={classes.filterClearButton}
+            disabled={selectedIDs.length === 0}
+            onClick={() => setSelectedIDs([])}
+          >Clear Selection</Button>
+        </div>
       </Menu>
     </>
   )

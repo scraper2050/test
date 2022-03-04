@@ -1,10 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {
   Button,
-  Checkbox,
-  IconButton,
-  Menu,
-  MenuItem,
   withStyles
 } from "@material-ui/core";
 import styles from './payroll.styles';
@@ -12,8 +8,6 @@ import {useLocation} from "react-router-dom";
 import BCTableContainer  from "../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../components/bc-menu-more";
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
 import {
   openModalAction,
   setModalDataAction
@@ -22,16 +16,11 @@ import {modalTypes} from "../../../constants";
 import {useDispatch} from "react-redux";
 import {
   formatCurrency,
-  formatDate,
   formatShortDateNoDay
 } from "../../../helpers/format";
 import BCDateRangePicker
   from "../../components/bc-date-range-picker/bc-date-range-picker";
-import classNames from "classnames";
-import {statusReference} from "../../../helpers/contants";
-import {ArrowDropDown, HighlightOff} from "@material-ui/icons";
-import {CSButtonSmall} from "../../../helpers/custom";
-import userEvent from "@testing-library/user-event";
+import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
 
 interface Props {

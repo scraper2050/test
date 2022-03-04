@@ -1,8 +1,5 @@
-import {PayrollActionType, types} from './payroll.types';
-
-
-import {getContractorsAPI, updateCommissionAPI} from 'api/payroll.api';
-import { Contractor } from './payroll.types';
+import {types} from './payroll.types';
+import {getContractorsAPI, getPaymentsByContractorAPI} from 'api/payroll.api';
 import {error} from "../snackbar/snackbar.action";
 
 
@@ -27,20 +24,18 @@ export const getContractors = () => {
   };
 };
 
-/*export const updateCommission = (params: {
-  type: string;
-  id: string;
-  commission: number;
-}) => {
+export const getContractorPayments = (params: {type: string; id: string}) => {
   return async (dispatch: any) => {
-    const contractor: any = await updateCommissionAPI(params);
-    if (contractor.status === 0) {
-      dispatch(error(contractor.message));
+    dispatch(setContractorsLoading(true));
+    const payments: any = await getPaymentsByContractorAPI(params.type, params.id);
+    if (payments.status === 0) {
+      dispatch(error(payments.message));
     } else {
-      dispatch(setContractors(contractor.data));
+      dispatch(setContractorPayments(payments.payment));
     }
+    dispatch(setContractorsLoading(false));
   };
-};*/
+};
 
 export const setContractors = (contractors: any) => {
   return {
@@ -50,10 +45,16 @@ export const setContractors = (contractors: any) => {
 };
 
 export const setContractor = (contractor: any) => {
-  console.log('ffffffffffff')
   return {
     'type': types.SET_CONTRACTOR,
     'payload': contractor
+  };
+};
+
+export const setContractorPayments = (payments: any) => {
+  return {
+    'type': types.SET_CONTRACTOR_PAYMENTS,
+    'payload': payments
   };
 };
 

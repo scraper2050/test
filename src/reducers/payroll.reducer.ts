@@ -10,6 +10,7 @@ import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
 const initialPayroll: PayrollState = {
   loading: false,
   contractors: [],
+  payments: [],
 };
 
 export const PayrollReducer: Reducer<any> = (state = initialPayroll, {type, payload}) => {
@@ -33,6 +34,12 @@ export const PayrollReducer: Reducer<any> = (state = initialPayroll, {type, payl
       return {
         ...state,
         contractors,
+      };
+    case (types.SET_CONTRACTOR_PAYMENTS):
+      return {
+        ...state,
+        payments: payload,
+        loading: false,
       };
     default:
       return state;

@@ -3,7 +3,8 @@ export const types = {
   'SET_CONTRACTORS': 'setContractors',
   'SET_CONTRACTOR': 'setContractor',
   'UPDATE_CONTRACTOR': 'updateContractor',
-  'SET_CONTRACTOR_LOADING': 'setContractorLoading'
+  'SET_CONTRACTOR_LOADING': 'setContractorLoading',
+  'SET_CONTRACTOR_PAYMENTS': 'setContractorPayments',
 };
 
 export interface Contractor {
@@ -23,9 +24,26 @@ export interface Contractor {
   commission: number;
 }
 
+export interface ContractorPayment {
+  _id: string;
+  vendor: {
+    vendor: string;
+    type: string;
+    _id:string;
+  };
+  date: string;
+  amount: number;
+  method: string;
+  reference: string;
+  notes: string;
+  balance: number;
+  commission: number;
+}
+
 export interface PayrollState {
   readonly loading: boolean
   readonly contractors: Contractor[]
+  readonly payments: ContractorPayment[]
   readonly data?: any[]
   readonly error?: string
   //readonly response?: string
