@@ -23,6 +23,7 @@ import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-bu
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../../constants';
 import { CSButton } from "../../../../../helpers/custom";
+import VendorPayment from "./vendor-payment";
 
 
 function CompanyProfilePage({ classes }: any) {
@@ -171,6 +172,10 @@ function CompanyProfilePage({ classes }: any) {
                     {
                       'label': 'JOBS/REPORTS INFO',
                       'value': 1
+                    },
+                    {
+                      'label': 'Payments',
+                      'value': 2
                     }
                   ]}
                 />
@@ -338,6 +343,14 @@ function CompanyProfilePage({ classes }: any) {
                     </Grid>
 
                   </Grid>
+                </div>
+                <div
+                  hidden={curTab !== 2}
+                  style={{
+                    'padding': '40px'
+                  }}
+                  id={'2'}>
+                  <VendorPayment />
                 </div>
 
               </SwipeableViews>

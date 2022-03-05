@@ -11,6 +11,10 @@ export const fromNow = (date: Date) => moment(date).subtract('seconds', 60)
 
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 
+export const formatShortDate = (date: Date) => moment(date).format('ddd, MMM. DD, YYYY');
+
+export const formatShortDateNoDay = (date: Date) => moment(date).format('MMM. DD, YYYY');
+
 export const formatTime = (time: Date) => moment(time).utc().format('hh:mm a');
 
 export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:ss');
@@ -35,6 +39,23 @@ export const parseISODate = (date: string) => {
 /*  const dateObj = new Date(date)
   const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
   return new Date(dateObj.getTime() + userTimezoneOffset);*/
+}
+
+export const formatCurrency = (value: number) => {
+  const formatted = (value ?? 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true,
+  });
+  return `$${formatted}`;
+}
+
+const formatNumber = (number: number) => {
+  return number.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true,
+  })
 }
 
 export const convertMilitaryTime = (time: string) => {
