@@ -85,7 +85,7 @@ function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMa
     // longitudeDelta: longMax === longMin ? 0.005 : (longMax - longMin) * 1.3,
     // latitudeDelta: latMax === latMin ? 0.004 : (latMax - latMin) * 1.3,
 
-  if (map) {
+  if (map && maps) {
     lines.current.forEach(line => line.setMap(null));
     lines.current = [];
     const newLines: any[] = [];

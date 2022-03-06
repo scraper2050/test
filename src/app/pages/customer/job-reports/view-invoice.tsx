@@ -136,12 +136,22 @@ function ViewInvoice({ classes, theme }: any) {
             >
               <ArrowBackIcon/>
             </IconButton>
-            {invoiceDetail?.isDraft &&
-            <CSChip
-              label={'Draft'}
-              className={invoiceStyles.draftChip}
-            />
-            }
+            {invoiceDetail?.isDraft ? (
+              <CSChip
+                label={'Draft'}
+                className={invoiceStyles.draftChip}
+              />
+            ) : !invoiceDetail?.emailHistory?.length ? (
+              <CSChip
+                label={'Not Sent'}
+                className={invoiceStyles.draftChip}
+              />
+            ) : (
+              <CSChip
+                label={'Sent'}
+                className={invoiceStyles.draftChip}
+              />
+            )}
           </div>
           <div>
             {invoiceDetail && <EmailInvoiceButton

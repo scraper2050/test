@@ -213,7 +213,8 @@ function BCAddContactModal({
       request('/getContacts', 'OPTIONS', data, false)
         .then((res: any) => {
           try {
-            setContacts(res.data.result)
+            const unSelectedContacts = res?.data?.result?.filter((selectedContact: Record<string, string>) => !props?.contacts?.find((unSelectedContact: Record<string, string>) => selectedContact._id === unSelectedContact._id ));
+            setContacts(unSelectedContacts.filter((contact: Record<string, string>) => contact?.isActive ))
           } catch (err) {
             console.log(err)
           }
@@ -380,7 +381,7 @@ function BCAddContactModal({
                   <InputBase
                     id="name"
                     name="name"
-                    disabled={false}
+                    disabled={initialValues.type !== 'Customer' && !onEdit}
                     value={values.name}
                     placeholder={'Name'}
                     error={!!errors.name}
@@ -400,7 +401,7 @@ function BCAddContactModal({
                   <InputBase
                     id="email"
                     name="email"
-                    disabled={false}
+                    disabled={initialValues.type !== 'Customer' && !onEdit}
                     value={values.email}
                     placeholder={'Email'}
                     error={!!errors.email}
@@ -421,7 +422,7 @@ function BCAddContactModal({
                   <InputBase
                     id="phone"
                     name="phone"
-                    disabled={false}
+                    disabled={initialValues.type !== 'Customer' && !onEdit}
                     value={getMaskString(values.phone)}
                     placeholder={'Phone'}
                     error={!!errors.phone}

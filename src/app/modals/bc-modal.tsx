@@ -6,6 +6,7 @@ import BCMarkCompleteJobModal from './bc-job-modal/bc-mark-complete-job-modal';
 import BCModalTransition from './bc-modal-transition';
 import BCServiceTicketModal from './bc-service-ticket-modal/bc-service-ticket-modal';
 import BCCancelTicketModal from './bc-service-ticket-modal/bc-cancel-ticket-modal';
+import BCEditTicketConfirmationModal from './bc-service-ticket-modal/bc-edit-ticket-confirmation-modal';
 import BCAddBrandsModal from './bc-add-brands-modal/bc-add-brands-modal';
 import BCAddContactModal from './bc-add-contact-modal/bc-add-contact-modal';
 import BCDeleteContactModal from './bc-add-contact-modal/bc-delete-contact-modal';
@@ -98,6 +99,7 @@ function BCModal() {
           detail={data.detail}
           onSubmit={data.onSubmit}
           ticket={data.ticketData}
+          allowEditWithJob={data.allowEditWithJob}
         />);
         break;
       case modalTypes.VIEW_SERVICE_TICKET_MODAL:
@@ -120,6 +122,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCCancelTicketModal props={data} />);
+        break;
+      case modalTypes.EDIT_SERVICE_TICKET_CONFIRMATION_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCEditTicketConfirmationModal props={data} />);
         break;
       case modalTypes.QUICKBOOKS_DISCONNECT_MODAL:
         setModalOptions({

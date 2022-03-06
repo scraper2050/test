@@ -43,6 +43,7 @@ export const modalTypes = {
   'MARK_COMPLETE_JOB_MODAL': 'mark-complete-job-modal',
   'EDIT_TICKET_MODAL': 'edit-ticket-modal',
   'CANCEL_SERVICE_TICKET_MODAL': 'cancel-service-ticket-modal',
+  'EDIT_SERVICE_TICKET_CONFIRMATION_MODAL': 'edit-service-ticket-confirmation-modal',
   'VIEW_SERVICE_TICKET_MODAL': 'view-service-ticket-modal',
   'TERMS_AND_CONDITION_MODAL': 'terms-and-condition',
   'ADD_BRAND': 'add-brand',
