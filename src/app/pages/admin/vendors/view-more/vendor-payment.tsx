@@ -7,7 +7,11 @@ import BCTableContainer
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../../components/bc-menu-more";
 import BCDateRangePicker
-  from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+import {useSelector} from "react-redux";
+import {
+  formatCurrency, formatDate,
+} from "../../../../../helpers/format";
 
 
 interface Props {
@@ -20,13 +24,9 @@ const ITEMS = [
 ]
 
 function VendorPayment({classes}: Props) {
-  const [tableData, setTableData] = useState<any[]>([]);
-  const [selectionRange, setSelectionRange] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const location = useLocation<any>();
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { vendorObj, vendorPayments } = useSelector((state: any) => state.vendors)
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
 
@@ -35,109 +35,58 @@ function VendorPayment({classes}: Props) {
     'pageSize': prevPage ? prevPage.pageSize : 10,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
-  useEffect(() => {
-    getData();
-  }, []);
-
-
-  const getData = () => {
-    const tempData = [{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-17',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-16',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-15',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },
-    ];
-    setTableData(tempData);
-    setSelectionRange({
-      startDate: new Date(tempData[tempData.length - 1].paymentDate),
-      endDate: new Date(tempData[0].paymentDate),
-    })
-  }
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
   }
 
+  const calculateDefaultRange = () => {
+    const range = vendorPayments.reduce((acc: any, payment: any) => {
+      const s = new Date(payment.startDate);
+      const e = new Date(payment.endDate);
+      const newRange = {
+        startDate: s < acc.startDate ? s : acc.startDate,
+        endDate: e > acc.endDate ? e : acc.endDate,
+      }
+      return newRange;
+    }, {startDate: new Date('2099-12-31'), endDate: new Date('1999-12-31')});
+
+    return range;
+  }
+
+  useEffect(() => {
+    const range = calculateDefaultRange();
+    setSelectionRange(range);
+  }, [vendorPayments]);
+
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': 'vendorName',
+      'accessor': (originalRow: any) => vendorObj.info.companyName,
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Payment Date',
-      'accessor': 'paymentDate',
+      'accessor': (originalRow: any) => formatDate(originalRow.paidAt),
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Amount',
-      'accessor': 'amount',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.amountPaid),
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Method',
-      'accessor': 'method',
+      'accessor': 'paymentType',
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Reference No.',
-      'accessor': 'reference',
+      'accessor': 'referenceNumber',
       'className': 'font-bold',
       'sortable': true,
     },
@@ -163,7 +112,7 @@ function VendorPayment({classes}: Props) {
   ];
 
   function renderDateRangePicker () {
-    return tableData.length > 0 ? (
+    return vendorPayments.length > 0 ? (
       <BCDateRangePicker
         range={selectionRange}
         onChange={setSelectionRange}
@@ -171,24 +120,18 @@ function VendorPayment({classes}: Props) {
   }
 
   return (
-    <div style={{height: '100%', position: 'relative'}}>
-      {tableData.length > 0 && <BCDateRangePicker
-        range={selectionRange}
-        onChange={setSelectionRange}
-      />}
-      <BCTableContainer
-        columns={columns}
-        currentPage={currentPage}
-        //isLoading={vendors.loading}
-        //onRowClick={handleRowClick}
-        search
-        searchPlaceholder = 'Search Payments...'
-        setPage={setCurrentPage}
-        tableData={tableData}
-        toolbarPositionLeft={true}
-        toolbar={renderDateRangePicker()}
-      />
-    </div>
+    <BCTableContainer
+      columns={columns}
+      currentPage={currentPage}
+      //isLoading={vendors.loading}
+      //onRowClick={handleRowClick}
+      search
+      searchPlaceholder = 'Search Payments...'
+      setPage={setCurrentPage}
+      tableData={vendorPayments}
+      toolbarPositionLeft={true}
+      toolbar={renderDateRangePicker()}
+    />
   )
 }
 

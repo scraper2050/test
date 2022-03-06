@@ -15,7 +15,7 @@ import {
 import {modalTypes} from "../../../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {
-  formatCurrency,
+  formatCurrency, formatDate,
   formatDateYMD,
   formatShortDateNoDay
 } from "../../../../helpers/format";
@@ -114,7 +114,7 @@ function PastPayments({classes}: Props) {
     },
     {
       'Header': 'Payment Date',
-      'accessor': (originalRow: any) => formatDateYMD(new Date(originalRow.paidAt)),
+      'accessor': (originalRow: any) => formatDate(originalRow.paidAt),
       'className': 'font-bold',
       'sortable': true,
     },

@@ -14,7 +14,12 @@ export interface Contractor {
   vendor: string;
   email: string;
   phone: string;
-  contact: string;
+  contact: {
+    displayName: string;
+    _id: string;
+    email:  string;
+    phone: string;
+  };
   address: {
     street: string;
     city: string;
