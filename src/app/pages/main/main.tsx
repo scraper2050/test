@@ -52,6 +52,7 @@ const RolesManagerPage = React.lazy(() => import('../admin/roles-permissions/man
 const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/technician/technician'));
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
+const AdminPayrollPage = React.lazy(() => import('../admin/payroll/payroll'));
 const AdminIntegrationsPage = React.lazy(() => import('../admin/integrations/integrations'));
 const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
@@ -68,6 +69,9 @@ const NotificationPage = React.lazy(() => import('../notifications/notifications
 
 const EmployeeProfilePage = React.lazy(() => import('../admin/employees/view-more/view-more'));
 const ChangePasswordPage = React.lazy(() => import('../profile/change-password/change-password'));
+
+const PayrollPage = React.lazy(() => import('../payroll/payroll'));
+const PastPaymentPage = React.lazy(() => import('../payroll/past-payment/past-payment'));
 
 function Main(): any {
 
@@ -111,6 +115,24 @@ function Main(): any {
                   Component={PurchasedTagsPage}
                   exact
                   path={'/main/tags/purchasedtag'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={PayrollPage}
+                  exact
+                  path={'/main/payroll'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={PastPaymentPage}
+                  exact
+                  path={'/main/payroll/pastpayment'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={PastPaymentPage}
+                  exact
+                  path={'/main/payroll/pastpayment/:contractorName'}
                   title={'Tags'}
                 />
                 <AuthRoute
@@ -474,6 +496,12 @@ function Main(): any {
                   Component={AdminVendorsPage}
                   exact
                   path={'/main/admin/vendors'}
+                  title={'Admin'}
+                />
+                <AuthRoute
+                  Component={AdminPayrollPage}
+                  exact
+                  path={'/main/admin/payroll'}
                   title={'Admin'}
                 />
                 <AuthRoute

@@ -196,6 +196,10 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
       'label': 'Tags',
       'link': '/main/tags/purchasedtag'
     },
+    {
+      'label': 'Payroll',
+      'link': '/main/payroll'
+    },
     /*
      * {
      *   'label': 'Inventory',

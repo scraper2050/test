@@ -17,6 +17,8 @@ import {error, success} from "../../../actions/snackbar/snackbar.action";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {getJobTypesFromJob} from "../../../helpers/utils";
+import classNames from "classnames";
+import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop'
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -50,6 +52,11 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   if (!jobReportData || !job) {
     return null;
   }
+
+  const technicianNotes = job?.tasks?.length ?  job.tasks.filter((task: any) => task.comment).map((task: any) => {
+    return task.comment;
+  }) : [];
+  const technicianImages = job?.technicianImages?.length ? job.technicianImages : [];
 
   const jobs = job.tasks.length
     ? getJobs(job.tasks, jobTypes)
@@ -467,6 +474,33 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                     </p>
                   </div>
                 </Grid>
+                <Grid
+                  item
+                  xs={6}>
+                  <div className={classes.addMargin}>
+                    <strong>
+                      {'Technician\'s Comment'}
+                    </strong>
+                    {
+                      technicianNotes.length 
+                        ? technicianNotes.map((note:string, index:number) => 
+                          <p key={index} className={classNames(classes.noMargin, classes.noMarginBottom)}>{note}</p>) 
+                        : <p className={classNames(classes.noMargin)}>{'N/A'}</p>
+                    }
+                  </div>
+                </Grid>
+                {!!technicianImages.length && (
+                  <Grid
+                    item
+                    xs={12}>
+                    <div className={classes.addMargin}>
+                      <strong>
+                        {'Technician\'s Photos'}
+                      </strong>
+                      <BCDragAndDrop images={technicianImages.map((image: {imageUrl:string}) => image.imageUrl)} readonly={true}  />
+                    </div>
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>

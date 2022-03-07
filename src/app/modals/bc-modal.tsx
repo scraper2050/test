@@ -15,6 +15,8 @@ import BCAddJobTypeModal from './bc-add-job-type-modal/bc-add-job-type-modal';
 import BCAddEquipmentTypeModal from './bc-add-equipment-type-modal/bc-add-equipment-type-modal';
 import BCAddJobSiteModal from './bc-add-jobsite-modal/bc-add-jobsite-modal';
 import BCAddJobLocationModal from './bc-add-job-location-modal/bc-add-job-location-modal';
+import BCActivateJobLocationModal from './bc-activate-job-location-modal/bc-activate-job-location-modal';
+import BCActivateJobSiteModal from './bc-activate-job-site-modal/bc-activate-job-site-modal';
 import BCMapFilterModal from './bc-map-filter/bc-map-filter-popup';
 import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-modal';
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
@@ -46,6 +48,9 @@ import BCEditTiersModal from './bc-edit-tiers-modal/bc-edit-tiers.modal';
 import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update-payment-terms-modal";
 import BCQbDisconnectModal from "./bc-integration-modal/bc-disconnect-modal";
 import BCRescheduleJobModal from "./bc-job-modal/bc-reschedule-job-modal";
+import BcEditCommissionModal from "./bc-edit-commission-modal/bc-edit-commission-modal";
+import BcPayrollPaymentRecordModal from "./bc-payroll-payment-record-modal/bc-payroll-payment-record-modal";
+
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -293,6 +298,15 @@ function BCModal() {
         });
         setComponent(<BCAddJobSiteModal jobSiteInfo={data.jobSiteInfo} />);
         break;
+      case modalTypes.ACTIVATE_JOB_SITE:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BCActivateJobSiteModal jobSiteInfo={data.siteObj} />);
+          break;
       case modalTypes.EDIT_CUSTOMER_INFO:
         setModalOptions({
           'disableBackdropClick': true,
@@ -310,6 +324,15 @@ function BCModal() {
           'maxWidth': 'md'
         });
         setComponent(<BCAddJobLocationModal jobLocationInfo={data.locationObj} />);
+        break;
+      case modalTypes.ACTIVATE_JOB_LOCATION:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCActivateJobLocationModal jobLocationInfo={data.locationObj} />);
         break;
       case modalTypes.SHOW_MAP_FILTER_POPUP:
         setModalOptions({
@@ -483,7 +506,32 @@ function BCModal() {
         });
         setComponent(<BCEditTiersModal />);
         break;
-
+      case modalTypes.EDIT_COMMISSION_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcEditCommissionModal
+          vendorCommission={data.vendorCommission}
+          // payment={data.payment}
+          // fromHistory={!!data.fromHistory}
+        />);
+        break;
+      case modalTypes.PAYROLL_RECORD_PAYMENT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BcPayrollPaymentRecordModal
+          payroll={data.payroll}
+          payment={data.payment}
+          dateRange={data.dateRange}
+        />);
+        break;
 
       default:
         setComponent(null);
@@ -510,6 +558,7 @@ function BCModal() {
         fullWidth={modalOptions.fullWidth}
         maxWidth={modalOptions.maxWidth}
         onClose={handleClose}
+        // disableEnforceFocus
         open={open}
         PaperProps={{
           'style': {

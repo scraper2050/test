@@ -23,10 +23,12 @@ import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
 import Pricing from './pricing/pricing';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
-import {CSButton} from "../../../../helpers/custom";
+import {CSButton, CSIconButton, useCustomStyles} from "helpers/custom";
+import EditIcon from '@material-ui/icons/Edit';
 
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
+  const customStyles = useCustomStyles();
   const jobLocations = useSelector((state: any) => state.jobLocations);
   const customerState = useSelector((state: any) => state.customers);
   const location = useLocation<any>();
@@ -157,9 +159,31 @@ function ViewMorePage({ classes }: any) {
             {`${row.value ? 'Active' : 'Inactive'}`}
           </div>
         );
-       },
+      },
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      width: 40,
+    },
+    {
+      'Cell'({ row }: any) {
+        return (
+          <CSButton
+            color="primary"
+            size="small"
+            aria-label={'edit-job-location'}
+            onClick={(e) => {
+              e.stopPropagation();
+              openLocationActivationModal(row.original);
+            }}
+          >
+            {row?.original?.isActive ? 'Deactivate' : 'Activate'}
+          </CSButton>
+        );
+      },
+      'Header': 'Actions',
+      'id': 'action-edit-job-location',
+      'sortable': false,
+      'width': 40,
     },
   ];
 
@@ -202,6 +226,19 @@ function ViewMorePage({ classes }: any) {
     setCurTab(newValue);
   };
 
+  const openLocationActivationModal = (row: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'locationObj': row,
+        'modalTitle': '',
+        'removeFooter': false
+      },
+      'type': modalTypes.ACTIVATE_JOB_LOCATION
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   const openJobLocationModal = () => {
     dispatch(setModalDataAction({

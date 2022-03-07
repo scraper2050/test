@@ -41,6 +41,7 @@ import GroupIcon from '@material-ui/icons/Group';
 import ReportIcon from '@material-ui/icons/Report';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import StorefrontIcon from '@material-ui/icons/Storefront';
+import PaymentIcon from '@material-ui/icons/Payment';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -51,6 +52,7 @@ import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import ContactsIcon from '@material-ui/icons/Contacts';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
+import HistoryIcon from '@material-ui/icons/History';
 import { CompanyProfileStateType } from "../../../actions/user/user.types";
 import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
 
@@ -155,6 +157,16 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'icon': <DescriptionIcon/>,
       'link': '/main/customers/job-reports'
     },
+    {
+      'label': 'Payroll List',
+      'icon': <PaymentIcon/>,
+      'link': '/main/payroll'
+    },
+    {
+      'label': 'Past Payments',
+      'icon': <HistoryIcon/>,
+      'link': '/main/payroll/pastpayment'
+    },
     /*
      * {
      *   'label': "Todo's",
@@ -230,6 +242,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'label': 'Vendors',
       'icon': <StorefrontIcon/>,
       'link': '/main/admin/vendors'
+    },
+    {
+      'label': 'Payroll',
+      'icon': <PaymentIcon/>,
+      'link': '/main/admin/payroll'
     },
     {
       'label': 'Integrations',

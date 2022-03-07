@@ -7,5 +7,5 @@ export default (theme: Theme): any => ({
   ...pageContainer,
   ...topActionBar,
   ...dataContainer,
-  ...swipe_wrapper
+  ...swipe_wrapper,
 });

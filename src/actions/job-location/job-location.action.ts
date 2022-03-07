@@ -56,6 +56,8 @@ export const updateJobLocationAction = (data: any, callback: any) => {
     const jobLocationUpdated: any = await updateJobLocation(data);
     if (jobLocationUpdated.status === 0) {
       dispatch({ type: JobLocationActionType.UPDATE_JOB_LOCATION_FAILED, payload: jobLocationUpdated.message });
+      const {status, message, jobLocation} = jobLocationUpdated;
+      callback({status, message, jobLocation});
     } else {
       const {status, message, jobLocation} = jobLocationUpdated;
       dispatch(updateJobLocationOld(jobLocationUpdated));

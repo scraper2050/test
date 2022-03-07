@@ -31,6 +31,7 @@ import {openDetailTicketModal} from "../../pages/notifications/notification-clic
 import {RootState} from "../../../reducers";
 import {setTicketSelected} from "../../../actions/map/map.actions";
 import {getServiceTicketDetail} from "../../../api/service-tickets.api";
+import { getAllJobTypesAPI } from 'api/job.api';
 import {formatDate, formatTime} from "../../../helpers/format";
 import {
   getJobTypesFromJob,
@@ -121,6 +122,34 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }, 200);
   };
 
+  const openEditTicketModal = (ticket: any) => {
+    const reqObj = {
+      customerId: ticket.customer?._id,
+      locationId: ticket.jobLocation
+    }
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    } else {
+      dispatch(clearJobSiteStore());
+    }
+    dispatch(getAllJobTypesAPI());
+    ticket.updateFlag = true;
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Edit Service Ticket',
+        'removeFooter': false,
+        'ticketData': ticket,
+        'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+      },
+      'type': modalTypes.EDIT_TICKET_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const openDetailJobModal = (job: any) => {
     dispatch(setModalDataAction({
       'data': {
@@ -136,7 +165,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }, 200);
   };
 
-  const openEditTicketModal = async(ticket: any) => {
+  const openViewTicketModal = async(ticket: any) => {
     let data = {...ticket, images: []};
     try {
       const {status, serviceTicket} = await getServiceTicketDetail(ticket._id);
@@ -244,7 +273,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
             </span>
           <InfoIcon
             className={'info-button'}
-            onClick={() => isTicket ? openEditTicketModal(ticket) : openDetailJobModal(ticket)}
+            onClick={() => isTicket ? openViewTicketModal(ticket) : openDetailJobModal(ticket)}
           />
         </div>
       </div>
@@ -260,8 +289,13 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
         </div>
       ))}
       {isTicket && ticket.customer?._id &&
-        <div className={'button-wrapper'}>
-          <Button onClick={() => openCreateJobModal()}>Create Job</Button>
+        <div className={'button-wrapper-ticket'}>
+          <div>
+            <Button onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>
+          </div>
+          <div>
+            <Button onClick={() => openCreateJobModal()}>Create Job</Button>
+          </div>
         </div>
       }
     </div>}
