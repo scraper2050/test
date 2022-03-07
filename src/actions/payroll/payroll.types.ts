@@ -42,7 +42,8 @@ export interface ContractorPayment {
   invoices: any[];
   amountPaid: number;
   notes: string;
-  employee: string;
+  contractor?: string;
+  employee?: string;
   company: {
     _id: string;
     info: {

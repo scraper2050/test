@@ -12,6 +12,8 @@ import {useSelector} from "react-redux";
 import {
   formatCurrency, formatDate,
 } from "../../../../../helpers/format";
+import {ContractorPayment} from "../../../../../actions/payroll/payroll.types";
+import moment from "moment";
 
 
 interface Props {
@@ -29,7 +31,7 @@ function VendorPayment({classes}: Props) {
   const { vendorObj, vendorPayments } = useSelector((state: any) => state.vendors)
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
-
+  const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([])
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
@@ -41,23 +43,29 @@ function VendorPayment({classes}: Props) {
   }
 
   const calculateDefaultRange = () => {
-    const range = vendorPayments.reduce((acc: any, payment: any) => {
-      const s = new Date(payment.startDate);
-      const e = new Date(payment.endDate);
-      const newRange = {
-        startDate: s < acc.startDate ? s : acc.startDate,
-        endDate: e > acc.endDate ? e : acc.endDate,
-      }
-      return newRange;
-    }, {startDate: new Date('2099-12-31'), endDate: new Date('1999-12-31')});
-
-    return range;
+    const paymentDates = vendorPayments.map((payment: any) =>  (new Date(payment.paidAt)).getTime());
+    const newRange = {
+      startDate: new Date(Math.min(...paymentDates)),
+      endDate: new Date(Math.max(...paymentDates)),
+    }
+    return newRange;
   }
 
   useEffect(() => {
     const range = calculateDefaultRange();
     setSelectionRange(range);
   }, [vendorPayments]);
+
+  useEffect(() => {
+    if (selectionRange) {
+      const filtered = vendorPayments.filter((payment: ContractorPayment) =>
+        moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
+      );
+      setFilteredPayments(filtered);
+    } else {
+      setFilteredPayments(vendorPayments);
+    }
+  }, [selectionRange])
 
   const columns: any = [
     {
@@ -128,7 +136,7 @@ function VendorPayment({classes}: Props) {
       search
       searchPlaceholder = 'Search Payments...'
       setPage={setCurrentPage}
-      tableData={vendorPayments}
+      tableData={filteredPayments}
       toolbarPositionLeft={true}
       toolbar={renderDateRangePicker()}
     />
