@@ -67,7 +67,7 @@ function BcPayrollPaymentRecordModal({
         type: payroll.type,
         amount: FormikValues.amount ?? 0,
         paidAt: formatDateYMD(FormikValues.paymentDate),
-        note: FormikValues.notes,
+        notes: FormikValues.notes,
         invoiceIds: `["${payroll.invoiceIds.join('","')}"]`,
       }
 
