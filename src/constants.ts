@@ -52,6 +52,8 @@ export const modalTypes = {
   'ADD_JOB_SITE': 'add-job-site',
   'EDIT_CUSTOMER_INFO': 'edit-customer-info',
   'ADD_JOB_LOCATION': 'add-job-location',
+  'ACTIVATE_JOB_LOCATION': 'activate-job-location',
+  'ACTIVATE_JOB_SITE': 'activate-job-site',
   'SHOW_MAP_FILTER_POPUP': 'show-map-filter-popup',
   'JOB_REPORTS_MODAL': 'job-reports-modal',
   'ADD_BILLING_MODAL': 'add-billing-modal',
