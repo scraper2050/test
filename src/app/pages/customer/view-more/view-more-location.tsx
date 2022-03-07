@@ -32,6 +32,20 @@ function ViewMoreLocationPage({ classes }: any) {
   const customerName = location.state && location.state.customerName;
   const locationName = location.state && location.state.name;
 
+  const openSiteActivationModal = (row: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'siteObj': row,
+        'modalTitle': '',
+        'removeFooter': false
+      },
+      'type': modalTypes.ACTIVATE_JOB_SITE
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   const openEditJobSiteModal = (jobSite: any) => {
     let updateJobSiteObj = { ...jobSite, location: { lat: jobSite.location.coordinates[1], long: jobSite.location.coordinates[0] }, update: true }
     dispatch(setModalDataAction({
@@ -115,7 +129,42 @@ function ViewMoreLocationPage({ classes }: any) {
       'className': 'font-bold',
       'sortable': false,
       'width': 40
-    }
+    },
+    {
+      'Header': 'Status',
+      'accessor': 'isActive',
+      'Cell': function (row: any) {
+        return (
+          <div className={`${row.value ? '' : classes.inactiveStyle}`}>
+            {`${row.value ? 'Active' : 'Inactive'}`}
+          </div>
+        );
+      },
+      'className': 'font-bold',
+      'sortable': true,
+      width: 40,
+    },
+    {
+      'Cell'({ row }: any) {
+        return (
+          <CSButton
+            color="primary"
+            size="small"
+            aria-label={'edit-job-location'}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSiteActivationModal(row.original);
+            }}
+          >
+            {row?.original?.isActive ? 'Deactivate' : 'Activate'}
+          </CSButton>
+        );
+      },
+      'Header': 'Actions',
+      'id': 'action-edit-job-location',
+      'sortable': false,
+      'width': 40,
+    },
   ];
 
 
