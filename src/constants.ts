@@ -80,4 +80,5 @@ export const modalTypes = {
   'RESCEDULE_JOB_MODAL': 'reschedule_job_modal',
   'EDIT_COMMISSION_MODAL': 'edit_commission_modal',
   'PAYROLL_RECORD_PAYMENT_MODAL': 'payroll_record_payment_modal',
+  'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
 };

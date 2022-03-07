@@ -18,9 +18,11 @@ export const getCompanyContracts = async () => {
   return responseData;
 };
 
-export const getContractorDetail = async (data: any) => {
+export const getContractorDetail = async (data: any, type: string = 'vendor') => {
   const body = {
-    'contractorId': data
+    type,
+    contractorId: type === 'vendor' ? data : undefined,
+    employeeId: type === 'vendor' ? undefined : data,
   };
   let responseData;
   try {
@@ -36,7 +38,7 @@ export const getContractorDetail = async (data: any) => {
       throw new Error(`Something went wrong`);
     }
   }
-  return responseData.details;
+  return responseData;
 };
 
 export const callSearchVendorAPI = (data: any) => {

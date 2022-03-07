@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {Button, withStyles} from "@material-ui/core";
+import {withStyles} from "@material-ui/core";
 import styles from './view-more.styles';
 import {useLocation} from "react-router-dom";
 import BCTableContainer
@@ -7,7 +7,18 @@ import BCTableContainer
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../../components/bc-menu-more";
 import BCDateRangePicker
-  from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+import {useDispatch, useSelector} from "react-redux";
+import {
+  formatCurrency, formatDate,
+} from "../../../../../helpers/format";
+import {ContractorPayment} from "../../../../../actions/payroll/payroll.types";
+import moment from "moment";
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../../constants";
 
 
 interface Props {
@@ -17,135 +28,110 @@ interface Props {
 const ITEMS = [
   {id: 0, title:'Edit'},
   {id: 1, title:'Delete'},
+  {id: 2, title:'View Details'},
 ]
 
 function VendorPayment({classes}: Props) {
-  const [tableData, setTableData] = useState<any[]>([]);
-  const [selectionRange, setSelectionRange] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
+  const dispatch = useDispatch();
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const location = useLocation<any>();
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { vendorObj, vendorPayments } = useSelector((state: any) => state.vendors);
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
-
+  const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([])
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
-  useEffect(() => {
-    getData();
-  }, []);
 
+  const viewPayment = (payment: any) => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Payroll Details',
+        vendor: vendorObj,
+        payment,
+      },
+      'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL
+    }));
 
-  const getData = () => {
-    const tempData = [{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-17',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-16',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-15',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },{
-      vendorName: 'Test Vendor',
-      paymentDate: '2022-02-14',
-      amount: 130,
-      method: 'ACH',
-      reference: '44444444444444',
-      notes: 'Yes no, yes no, yes no'
-    },
-    ];
-    setTableData(tempData);
-    setSelectionRange({
-      startDate: new Date(tempData[tempData.length - 1].paymentDate),
-      endDate: new Date(tempData[0].paymentDate),
-    })
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
-    event.stopPropagation();
+    switch(id) {
+      case 2:
+        viewPayment(row);
+        break;
+    }
   }
+
+  const calculateDefaultRange = () => {
+    const paymentDates = vendorPayments.map((payment: any) =>  (new Date(payment.paidAt)).getTime());
+    const newRange = {
+      startDate: new Date(Math.min(...paymentDates)),
+      endDate: new Date(Math.max(...paymentDates)),
+    }
+    return newRange;
+  }
+
+  useEffect(() => {
+    const range = calculateDefaultRange();
+    setSelectionRange(range);
+  }, [vendorPayments]);
+
+  useEffect(() => {
+    if (selectionRange) {
+      const filtered = vendorPayments.filter((payment: ContractorPayment) =>
+        moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
+      );
+      setFilteredPayments(filtered);
+    } else {
+      setFilteredPayments(vendorPayments);
+    }
+  }, [selectionRange])
 
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': 'vendorName',
+      'accessor': (originalRow: any) => vendorObj.info.companyName,
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Payment Date',
-      'accessor': 'paymentDate',
+      'accessor': (originalRow: any) => formatDate(originalRow.paidAt),
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Amount',
-      'accessor': 'amount',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.amountPaid),
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Method',
-      'accessor': 'method',
+      'accessor': 'paymentType',
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Reference No.',
-      'accessor': 'reference',
+      'accessor': 'referenceNumber',
       'className': 'font-bold',
       'sortable': true,
     },
     {
       'Header': 'Notes',
-      'accessor': 'notes',
-      'className': 'font-bold',
+      'accessor': (originalRow: any) =>
+        originalRow.note ?
+          (originalRow.note.length < 100 ? originalRow.note : originalRow.note.substring(0, 100)+'...')
+          : '',
       'sortable': true,
+      'className': classes.tableCellWrap,
     },
     { Cell({ row }: any) {
         return (
@@ -163,7 +149,7 @@ function VendorPayment({classes}: Props) {
   ];
 
   function renderDateRangePicker () {
-    return tableData.length > 0 ? (
+    return vendorPayments.length > 0 ? (
       <BCDateRangePicker
         range={selectionRange}
         onChange={setSelectionRange}
@@ -171,24 +157,18 @@ function VendorPayment({classes}: Props) {
   }
 
   return (
-    <div style={{height: '100%', position: 'relative'}}>
-      {tableData.length > 0 && <BCDateRangePicker
-        range={selectionRange}
-        onChange={setSelectionRange}
-      />}
-      <BCTableContainer
-        columns={columns}
-        currentPage={currentPage}
-        //isLoading={vendors.loading}
-        //onRowClick={handleRowClick}
-        search
-        searchPlaceholder = 'Search Payments...'
-        setPage={setCurrentPage}
-        tableData={tableData}
-        toolbarPositionLeft={true}
-        toolbar={renderDateRangePicker()}
-      />
-    </div>
+    <BCTableContainer
+      columns={columns}
+      currentPage={currentPage}
+      //isLoading={vendors.loading}
+      //onRowClick={handleRowClick}
+      search
+      searchPlaceholder = 'Search Payments...'
+      setPage={setCurrentPage}
+      tableData={filteredPayments}
+      toolbarPositionLeft={true}
+      toolbar={renderDateRangePicker()}
+    />
   )
 }
 

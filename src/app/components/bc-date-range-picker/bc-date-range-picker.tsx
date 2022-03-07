@@ -2,7 +2,7 @@ import BCDateTimePicker from "../bc-date-time-picker/bc-date-time-picker";
 import {ReactComponent as IconCalendar} from "../../../assets/img/icons/map/icon-calendar.svg";
 import {formatShortDate} from "../../../helpers/format";
 import {Button} from "@material-ui/core";
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import Fade from "@material-ui/core/Fade";
 import Paper from "@material-ui/core/Paper";
@@ -63,6 +63,10 @@ function BCDateRangePicker({range, disabled = false, onChange}: Props) {
     startDate: new Date(),
     endDate: new Date(),
   });
+
+  useEffect(() => {
+    setSelectionRange(range);
+  }, [range]);
 
   const handleSelect = (date: any) => {
     setTempSelectionRange(date.range1 || date);

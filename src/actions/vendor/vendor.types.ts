@@ -32,6 +32,7 @@ export interface VendorsState {
   readonly error?: string
   readonly response?: string
   readonly vendorObj?: Vendor | {}
+  readonly vendorPayments?: any[]
 }
 
 export enum VendorActionType {

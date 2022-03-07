@@ -35,7 +35,6 @@ function BcEditCommissionModal({
   const [commission, setCommission] = useState<number>(vendorCommission.commission);
   const dispatch = useDispatch();
 
-
   const closeModal = () => {
     if (error) {
       setError(false);
@@ -133,7 +132,7 @@ function BcEditCommissionModal({
                 </Grid>
                 <Grid item xs={9}>
                   <Typography
-                    variant={'body2'}>{vendorCommission.contact}</Typography>
+                    variant={'body2'}>{vendorCommission.contact.displayName}</Typography>
                 </Grid>
               </Grid>
             </Grid>
