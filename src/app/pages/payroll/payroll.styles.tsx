@@ -24,8 +24,13 @@ export default (theme: Theme): any => ({
     color: PRIMARY_BLUE,
   },
   filterClearButton: {
-  fontSize: 10,
+    fontSize: 10,
     color: PRIMARY_BLUE,
     textTransform: 'none',
-}
+  },
+  tableCellWrap: {
+    whiteSpace: 'normal',
+    wordWrap: 'break-word',
+    minWidth: 250,
+  },
 });

@@ -74,13 +74,17 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'none',
     marginTop: 10,
     marginBottom: -10,
-  }
+  },
+  filterMenuItemSelected: {
+    backgroundColor: '#E5F7FF !important',
+  },
 }));
 
 
 function BCItemsFilter({items, selected, single = false, onApply}: Props) {
   const classes = useStyles();
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [tempSelectedIDs, setTempSelectedIDs] = useState<string[]>(selected);
   const [selectedIDs, setSelectedIDs] = useState<string[]>(selected);
 
   useEffect(() => {
@@ -89,6 +93,7 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
 
   const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setFilterMenuAnchorEl(event.currentTarget);
+    setTempSelectedIDs(selectedIDs);
   };
 
   const handleSelectStatusFilter = (id:string) => {
@@ -98,20 +103,21 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
     }
 
     if (id) {
-      const i = selectedIDs.indexOf(id);
+      const i = tempSelectedIDs.indexOf(id);
       if (i >= 0) {
-        selectedIDs.splice(i, 1);
-        setSelectedIDs([...selectedIDs]);
+        tempSelectedIDs.splice(i, 1);
+        setTempSelectedIDs([...tempSelectedIDs]);
       } else
-        setSelectedIDs([...selectedIDs, id]);
+        setTempSelectedIDs([...tempSelectedIDs, id]);
     } else {
-      setSelectedIDs([]);
+      setTempSelectedIDs([]);
     }
   };
 
   const saveFilterSelection = () => {
     setFilterMenuAnchorEl(null);
-    onApply(selectedIDs);
+    setSelectedIDs(tempSelectedIDs);
+    onApply(tempSelectedIDs);
   }
 
   const getText = () => {
@@ -152,7 +158,7 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
             <span>All</span>
             <Checkbox
               classes={{root: classes.filterMenuCheckbox}}
-              checked={selectedIDs.length === 0}
+              checked={tempSelectedIDs.length === 0}
               color={'primary'}
             />
           </MenuItem>
@@ -160,7 +166,11 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
         {items.map((item: Item) => (
           <MenuItem
             key={item.id}
-            className={classes.filterMenuItemRoot}
+            classes={{
+              root: classes.filterMenuItemRoot,
+              selected: single ? classes.filterMenuItemSelected : ''
+            }}
+            selected={tempSelectedIDs.indexOf(item.id) >= 0 && single}
             onClick={() => handleSelectStatusFilter(item.id)}
           >
             <span>{item.value}</span>
@@ -168,7 +178,7 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
               <Checkbox
                 classes={{root: classes.filterMenuCheckbox}}
                 color={'primary'}
-                checked={selectedIDs.indexOf(item.id) >= 0}
+                checked={tempSelectedIDs.indexOf(item.id) >= 0}
               />
             }
           </MenuItem>
@@ -181,8 +191,8 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
             <Button
               variant={'text'}
               className={classes.filterClearButton}
-              disabled={selectedIDs.length === 0}
-              onClick={() => setSelectedIDs([])}
+              disabled={tempSelectedIDs.length === 0}
+              onClick={() => setTempSelectedIDs([])}
             >Clear Selection</Button>
           </div>
         }

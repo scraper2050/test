@@ -153,7 +153,6 @@ function AdminVendorsPage({ classes }: any) {
 
   useEffect(() => {
     if (vendors) {
-      console.log(activeVendors)
       setTableData(activeVendors);
     }
   }, [vendors]);

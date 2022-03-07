@@ -14,7 +14,12 @@ export interface Contractor {
   vendor: string;
   email: string;
   phone: string;
-  contact: string;
+  contact: {
+    displayName: string;
+    _id: string;
+    email:  string;
+    phone: string;
+  };
   address: {
     street: string;
     city: string;
@@ -37,7 +42,8 @@ export interface ContractorPayment {
   invoices: any[];
   amountPaid: number;
   notes: string;
-  employee: string;
+  contractor?: string;
+  employee?: string;
   company: {
     _id: string;
     info: {

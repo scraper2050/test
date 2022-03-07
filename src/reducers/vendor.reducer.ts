@@ -3,8 +3,10 @@ import { Reducer } from 'redux';
 import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
 
 const initialVendors: VendorsState = {
-  'loading': false,
-  'data': []
+  loading: false,
+  data: [],
+  vendorObj: undefined,
+  vendorPayments: [],
 };
 
 export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => {
@@ -51,7 +53,8 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
       return {
         ...state,
         'loading': false,
-        'vendorObj': action.payload
+        'vendorObj': action.payload.details,
+        'vendorPayments': action.payload.payments,
       };
     case VendorActionType.SET:
       return {

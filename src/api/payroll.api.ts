@@ -8,7 +8,7 @@ export const getContractorsAPI = async () => {
     if (status === 1) {
       const data = [
           ...contractors.map((contractor: any) => normalizeData(contractor, 'vendor')),
-          ...technicians.map((technician: any) => normalizeData(technician, 'employee')),
+          //...technicians.map((technician: any) => normalizeData(technician, 'employee')),
       ];
       return {data: sortByField(data, 'vendor','asc',false), status};
     } else {
@@ -54,14 +54,14 @@ export const getPayrollBalanceAPI = async (startDate: string|null, endDate: stri
             invoiceIds,
             })
         }, ),
-        ...employees.map((technician: any) => {
-          const {commissionTotal, invoiceIds} = technician;
-          return ({
-            ...normalizeData(technician.employee, 'employee'),
-            commissionTotal: Math.round(commissionTotal * 100) / 100,
-            invoiceIds,
-          })
-        }),
+        // ...employees.map((technician: any) => {
+        //   const {commissionTotal, invoiceIds} = technician;
+        //   return ({
+        //     ...normalizeData(technician.employee, 'employee'),
+        //     commissionTotal: Math.round(commissionTotal * 100) / 100,
+        //     invoiceIds,
+        //   })
+        // }),
       ];
       return {data: sortByField(data, 'vendor','asc',false), status};
     } else {
@@ -107,7 +107,7 @@ const normalizeData = (item: any, type: string) => {
     case 'contractor':
       return ({
         vendor: item.info.companyName,
-          email: item.info.companyEmail,
+        email: item.info.companyEmail,
         phone: item.contact?.phone || '',
         address: item.address,
         contact: {
