@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {Button, withStyles} from "@material-ui/core";
+import {withStyles} from "@material-ui/core";
 import styles from './view-more.styles';
 import {useLocation} from "react-router-dom";
 import BCTableContainer
@@ -8,12 +8,17 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../../components/bc-menu-more";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
   formatCurrency, formatDate,
 } from "../../../../../helpers/format";
 import {ContractorPayment} from "../../../../../actions/payroll/payroll.types";
 import moment from "moment";
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../../constants";
 
 
 interface Props {
@@ -23,12 +28,14 @@ interface Props {
 const ITEMS = [
   {id: 0, title:'Edit'},
   {id: 1, title:'Delete'},
+  {id: 2, title:'View Details'},
 ]
 
 function VendorPayment({classes}: Props) {
+  const dispatch = useDispatch();
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const location = useLocation<any>();
-  const { vendorObj, vendorPayments } = useSelector((state: any) => state.vendors)
+  const { vendorObj, vendorPayments } = useSelector((state: any) => state.vendors);
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
   const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([])
@@ -38,8 +45,27 @@ function VendorPayment({classes}: Props) {
     'sortBy': prevPage ? prevPage.sortBy : []
   });
 
+  const viewPayment = (payment: any) => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Payroll Details',
+        vendor: vendorObj,
+        payment,
+      },
+      'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
-    event.stopPropagation();
+    switch(id) {
+      case 2:
+        viewPayment(row);
+        break;
+    }
   }
 
   const calculateDefaultRange = () => {
@@ -100,9 +126,12 @@ function VendorPayment({classes}: Props) {
     },
     {
       'Header': 'Notes',
-      'accessor': 'notes',
-      'className': 'font-bold',
+      'accessor': (originalRow: any) =>
+        originalRow.note ?
+          (originalRow.note.length < 100 ? originalRow.note : originalRow.note.substring(0, 100)+'...')
+          : '',
       'sortable': true,
+      'className': classes.tableCellWrap,
     },
     { Cell({ row }: any) {
         return (

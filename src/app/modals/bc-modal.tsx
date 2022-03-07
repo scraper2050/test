@@ -47,7 +47,8 @@ import BcUpdatePaymentTermsModal from "./bc-update-payment-terms-modal/bc-update
 import BCQbDisconnectModal from "./bc-integration-modal/bc-disconnect-modal";
 import BCRescheduleJobModal from "./bc-job-modal/bc-reschedule-job-modal";
 import BcEditCommissionModal from "./bc-edit-commission-modal/bc-edit-commission-modal";
-import BcPayrollPaymentRecordModal from "./bc-payroll-payment-record-modal/bc-payroll-payment-record-modal";
+import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-payment-record-modal";
+import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -508,6 +509,20 @@ function BCModal() {
         });
         setComponent(<BcPayrollPaymentRecordModal
           payroll={data.payroll}
+          payment={data.payment}
+          dateRange={data.dateRange}
+        />);
+        break;
+      case modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        data.maxHeight='100%';
+        setComponent(<BcPayrollPaymentDetailModal
+          vendor={data.vendor}
           payment={data.payment}
           dateRange={data.dateRange}
         />);

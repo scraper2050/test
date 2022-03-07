@@ -8,4 +8,10 @@ export default (theme: Theme): any => ({
   ...topActionBar,
   ...dataContainer,
   ...swipe_wrapper,
+
+  tableCellWrap: {
+    whiteSpace: 'normal',
+    wordWrap: 'break-word',
+    minWidth: 250,
+  }
 });

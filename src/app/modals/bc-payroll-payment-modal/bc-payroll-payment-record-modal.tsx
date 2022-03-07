@@ -2,7 +2,7 @@
 import * as CONSTANTS from '../../../constants';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCSent from '../../components/bc-sent';
-import styles from './bc-payroll-payment-record-modal.styles';
+import styles from './bc-payroll-payment-modal.styles';
 import { useFormik } from 'formik';
 import AttachMoney from '@material-ui/icons/AttachMoney';
 import {
