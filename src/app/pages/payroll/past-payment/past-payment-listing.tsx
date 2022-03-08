@@ -23,10 +23,6 @@ import BCDateRangePicker, {Range} from "../../../components/bc-date-range-picker
 import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
 import {
-  getVendorDetailAction,
-  loadingSingleVender
-} from "../../../../actions/vendor/vendor.action";
-import {
   getContractorPayments,
   getContractors
 } from "../../../../actions/payroll/payroll.action";
@@ -51,10 +47,9 @@ function PastPayments({classes}: Props) {
   const location = useLocation<any>();
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
-  const { payments, contractors } = useSelector((state: any) => state.payroll);
-  const { loading, vendorObj, vendorPayments } = useSelector((state: any) => state.vendors);
-  const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([])
-  const [contractor, setContractor] = useState<Contractor|null>(null)
+  const { loading, payments, contractors } = useSelector((state: any) => state.payroll);
+
+  const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
@@ -69,63 +64,54 @@ function PastPayments({classes}: Props) {
 
   useEffect(() => {
     const obj: any = location.state;
-    dispatch(loadingSingleVender());
     if (obj?.contractor) {
-      //dispatch(getContractorPayments({id: obj.contractor._id, type: obj.contractor.type}));
-      dispatch(getVendorDetailAction(obj.contractor._id));
       setSelectedIDs([obj.contractor._id]);
-      setContractor(obj.contractor);
     } else {
       if (contractors.length > 0) {
-        setSelectedIDs([contractors[0]._id]);
-        setContractor(contractors[0]);
-        //dispatch(getContractorPayments({id: contractors[0]._id, type: contractors[0].type}));
-        dispatch(getVendorDetailAction(contractors[0]._id));
+        dispatch(getContractorPayments());
       }
     }
   }, [contractors]);
 
   useEffect(() => {
-    const range = calculateDefaultRange();
-    setSelectionRange(range);
-  }, [vendorPayments]);
-
-  useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
     if (cont) {
-      setContractor(cont);
-      //dispatch(getContractorPayments({id: cont._id, type: cont.type}));
-      dispatch(loadingSingleVender());
-      dispatch(getVendorDetailAction(cont._id));
+      dispatch(getContractorPayments({id: cont._id, type: cont.type}));
     }
   }, [selectedIDs]);
 
   useEffect(() => {
     if (selectionRange) {
-      const filtered = vendorPayments.filter((payment: ContractorPayment) =>
+      const filtered = payments.filter((payment: ContractorPayment) =>
         moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
       );
       setFilteredPayments(filtered);
     } else {
-      setFilteredPayments(vendorPayments);
+      setFilteredPayments(payments);
     }
-  }, [selectionRange])
+  }, [selectionRange, payments]);
 
-  const calculateDefaultRange = () => {
-    if (vendorPayments.length === 0) return null
-    const paymentDates = vendorPayments.map((payment: any) =>  (new Date(payment.paidAt)).getTime());
-    const newRange = {
-      startDate: new Date(Math.min(...paymentDates)),
-      endDate: new Date(Math.max(...paymentDates)),
-    }
-    return newRange;
+  const editPayment = (payment: any) => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Edit Payment',
+        payment,
+
+        // dateRange: selectionRange,
+      },
+      'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
   const viewPayment = (payment: any) => {
     dispatch(setModalDataAction({
       data: {
         modalTitle: 'Payroll Details',
-        vendor: vendorObj,
+        vendor: payment,
         payment,
       },
       'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL
@@ -149,7 +135,7 @@ function PastPayments({classes}: Props) {
   const columns: any = [
     {
       'Header': 'Vendor',
-      'accessor': (originalRow: any) => vendorObj.info.companyName,
+      'accessor': (originalRow: any) => originalRow.payedPerson.vendor,
       'className': 'font-bold',
       'sortable': true,
     },

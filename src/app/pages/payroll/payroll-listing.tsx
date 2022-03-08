@@ -64,7 +64,6 @@ function Payroll({classes}: Props) {
       contractors.filter((item: any) => selectedIDs.indexOf(item._id) >=0) : contractors);
   }, [selectedIDs, contractors])
 
-
   const recordPayment = (vendor: any) => {
     dispatch(setModalDataAction({
       data: {

@@ -54,14 +54,14 @@ export const recordPaymentContractor = (params: any) => {
   };
 };
 
-export const getContractorPayments = (params: {type: string; id: string}) => {
+export const getContractorPayments = (params?: {type: string; id: string}) => {
   return async (dispatch: any) => {
     dispatch(setContractorsLoading(true));
-    const payments: any = await getPaymentsByContractorAPI(params.type, params.id);
-    if (payments.status === 0) {
-      dispatch(error(payments.message));
+    const response: any = await getPaymentsByContractorAPI(params?.type, params?.id);
+    if (response.status === 0) {
+      dispatch(error(response.message));
     } else {
-      dispatch(setContractorPayments(payments.payment));
+      dispatch(setContractorPayments(response.payments));
     }
     dispatch(setContractorsLoading(false));
   };
