@@ -49,6 +49,19 @@ function AdminInvoicingPage({ token, user }: any) {
     }, 200);
   };
 
+  const editInvoiceNumber = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Edit Invoice Number & Prefix'
+      },
+      'type': modalTypes.EDIT_INVOICE_NUMBER_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   return (
     <>
       {/* <BCSubHeader title={'Admin'}>
@@ -95,8 +108,8 @@ function AdminInvoicingPage({ token, user }: any) {
               item>
               <BCAdminCard
                 cardText={'Invoice Number'}
-                color={'info'}
-                link={''}>
+                color={'secondary'}
+                func={editInvoiceNumber}>
                 <InsertDriveFileIcon />
               </BCAdminCard>
             </Grid>

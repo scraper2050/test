@@ -15,6 +15,8 @@ import BCAddJobTypeModal from './bc-add-job-type-modal/bc-add-job-type-modal';
 import BCAddEquipmentTypeModal from './bc-add-equipment-type-modal/bc-add-equipment-type-modal';
 import BCAddJobSiteModal from './bc-add-jobsite-modal/bc-add-jobsite-modal';
 import BCAddJobLocationModal from './bc-add-job-location-modal/bc-add-job-location-modal';
+import BCActivateJobLocationModal from './bc-activate-job-location-modal/bc-activate-job-location-modal';
+import BCActivateJobSiteModal from './bc-activate-job-site-modal/bc-activate-job-site-modal';
 import BCMapFilterModal from './bc-map-filter/bc-map-filter-popup';
 import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-modal';
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
@@ -49,6 +51,7 @@ import BCRescheduleJobModal from "./bc-job-modal/bc-reschedule-job-modal";
 import BcEditCommissionModal from "./bc-edit-commission-modal/bc-edit-commission-modal";
 import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-payment-record-modal";
 import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
+import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
 import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
@@ -298,6 +301,15 @@ function BCModal() {
         });
         setComponent(<BCAddJobSiteModal jobSiteInfo={data.jobSiteInfo} />);
         break;
+      case modalTypes.ACTIVATE_JOB_SITE:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BCActivateJobSiteModal jobSiteInfo={data.siteObj} />);
+          break;
       case modalTypes.EDIT_CUSTOMER_INFO:
         setModalOptions({
           'disableBackdropClick': true,
@@ -315,6 +327,15 @@ function BCModal() {
           'maxWidth': 'md'
         });
         setComponent(<BCAddJobLocationModal jobLocationInfo={data.locationObj} />);
+        break;
+      case modalTypes.ACTIVATE_JOB_LOCATION:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCActivateJobLocationModal jobLocationInfo={data.locationObj} />);
         break;
       case modalTypes.SHOW_MAP_FILTER_POPUP:
         setModalOptions({
@@ -437,6 +458,15 @@ function BCModal() {
         });
         setComponent(<BCSalesTaxModal />);
         break;
+      case modalTypes.EDIT_INVOICE_NUMBER_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BCEditInvoiceNumber />);
+          break;
       case modalTypes.PAYMENT_TERMS_MODAL:
         setModalOptions({
           'disableBackdropClick': true,

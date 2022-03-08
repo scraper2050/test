@@ -1,4 +1,4 @@
-import {ReactComponent as IconPending} from "../assets/img/icons/map/icon-pending.svg";
+import {ReactComponent as IconScheduled} from "../assets/img/icons/map/icon-pending.svg";
 import {ReactComponent as IconStarted} from "../assets/img/icons/map/icon-started.svg";
 import {ReactComponent as IconPaused} from "../assets/img/icons/map/icon-paused.svg";
 import {ReactComponent as IconCompleted} from "../assets/img/icons/map/icon-completed.svg";
@@ -13,7 +13,7 @@ export enum SocketMessage {
 }
 
 export const STATUSES = [
-  { id: 0, title: 'Pending', icon: IconPending, color: '#828282' },
+  { id: 0, title: 'Scheduled', icon: IconScheduled, color: '#828282' },
   { id: 1, title: 'Started', icon: IconStarted, color: '#00AAFF' },
   { id: 5, title: 'Paused', icon: IconPaused, color: '#FA8029'},
   { id: 2, title: 'Completed', icon: IconCompleted, color: '#50AE55'},
@@ -30,7 +30,7 @@ export const statusReference: {
     statusNumber: string;
   }; 
 } = {
-  '0': {text: 'Pending', icon: IconPending, color: '#828282', statusNumber: '0'},
+  '0': {text: 'Scheduled', icon: IconScheduled, color: '#828282', statusNumber: '0'},
   '1': {text: 'Started', icon: IconStarted, color: '#00AAFF', statusNumber: '1'},
   '2': {text: 'Completed', icon: IconCompleted, color: '#50AE55', statusNumber: '2'},
   '3': {text: 'Canceled', icon: IconCancelled, color: '#A107FF', statusNumber: '3'},
