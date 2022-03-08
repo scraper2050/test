@@ -146,9 +146,8 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
       try {
         const submissionData = {
           invoicePrefix: values.invoicePrefix, 
-          invoiceNumber: parseInt(values.invoiceNumber, 10),
+          invoiceNumber: parseInt(values.invoiceNumber, 10)-1,
         };
-        console.log('this is payload',submissionData)
         const {status, message} = await setCustomInvoiceNumber(submissionData);
         if(status === 1) {
           dispatch(success(message));
@@ -157,7 +156,6 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
         } else {
           dispatch(error("Something went wrong!"));
           setSubmitting(false);
-          console.log('response message:', message);
         }
       } catch (err) {
         dispatch(error("Something went wrong!"));
