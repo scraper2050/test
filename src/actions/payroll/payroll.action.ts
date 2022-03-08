@@ -88,14 +88,24 @@ export const removeContractor = (contractor: Contractor) => {
   };
 };
 
-
-
-
-
 export const setContractorPayments = (payments: any) => {
   return {
     'type': types.SET_CONTRACTOR_PAYMENTS,
     'payload': payments
+  };
+};
+
+export const updateContractorPayments = (payment: any) => {
+  return {
+    'type': types.UPDATE_CONTRACTOR_PAYMENT,
+    'payload': payment,
+  };
+};
+
+export const removeContractorPayments = (payment: any) => {
+  return {
+    'type': types.REMOVE_CONTRACTOR_PAYMENT,
+    'payload': payment,
   };
 };
 

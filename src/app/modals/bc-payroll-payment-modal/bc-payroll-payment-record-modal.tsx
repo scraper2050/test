@@ -15,7 +15,7 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -27,9 +27,12 @@ import BCDateRangePicker
   from "../../components/bc-date-range-picker/bc-date-range-picker";
 import {
   recordPaymentContractor,
-  removeContractor
+  removeContractor, updateContractorPayments
 } from "../../../actions/payroll/payroll.action";
-import {recordPaymentContractorAPI} from "../../../api/payroll.api";
+import {
+  recordPaymentContractorAPI,
+  updatePaymentContractorAPI
+} from "../../../api/payroll.api";
 
 function BcPayrollPaymentRecordModal({
   classes,
@@ -59,7 +62,7 @@ function BcPayrollPaymentRecordModal({
       referenceNumber: payment?.referenceNumber || '',
       notes: payment?.note || ''
     },
-    onSubmit: (values: any, { setSubmitting }: any) => {
+    onSubmit: async(values: any, { setSubmitting }: any) => {
       setSubmitting(true);
 
       const params: any = {
@@ -67,8 +70,7 @@ function BcPayrollPaymentRecordModal({
         type: payroll.type,
         amount: FormikValues.amount ?? 0,
         paidAt: formatDateYMD(FormikValues.paymentDate),
-        notes: FormikValues.notes,
-        invoiceIds: `["${payroll.invoiceIds.join('","')}"]`,
+        note: FormikValues.notes,
       }
 
       if (FormikValues.referenceNumber)
@@ -82,19 +84,31 @@ function BcPayrollPaymentRecordModal({
         params.endDate = formatDateYMD(dateRange.endDate);
       }
 
-      recordPaymentContractorAPI(params).then((response: any) => {
-        if (response.status === 1) {
-          setSent(true);
-          dispatch(removeContractor(payroll));
+      try {
+        if (payment) {
+          params.paymentId = payment._id;
+          const response = await updatePaymentContractorAPI(params);
+          if (response.status === 1) {
+            setSent(true);
+            dispatch(updateContractorPayments(response.payment));
+          } else {
+            dispatch(error(response.message))
+          }
         } else {
-          dispatch(error(response.message))
+          params.invoiceIds = `["${payroll.invoiceIds.join('","')}"]`;
+          const response = await recordPaymentContractorAPI(params);
+          if (response.status === 1) {
+            setSent(true);
+            dispatch(removeContractor(payroll));
+          } else {
+            dispatch(error(response.message))
+          }
         }
         setSubmitting(false);
-      }).catch((e: any) => {
-        console.log(e.message);
+      } catch(e) {
         dispatch(error(e.message));
         setSubmitting(false);
-      })
+      }
     }
   });
 
@@ -105,7 +119,6 @@ function BcPayrollPaymentRecordModal({
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
     setFieldValue,
-    getFieldMeta,
     isSubmitting
   } = form;
 
@@ -131,7 +144,9 @@ function BcPayrollPaymentRecordModal({
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-            <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(payroll.commissionTotal)}</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>
+              {formatCurrency(payroll.commissionTotal || payment?.amountPaid)}
+            </Typography>
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>TIME PERIOD</Typography>
@@ -177,7 +192,6 @@ function BcPayrollPaymentRecordModal({
                     <TextField
                       autoFocus
                       autoComplete={'off'}
-                      disabled={true}
                       className={classes.fullWidth}
                       id={'outlined-textarea'}
                       label={''}
@@ -300,7 +314,7 @@ function BcPayrollPaymentRecordModal({
             color="primary"
             type={'submit'}
             variant={'contained'}>
-            Submit
+            Save
           </Button>
           }
 
@@ -310,14 +324,7 @@ function BcPayrollPaymentRecordModal({
     </DataContainer >
   );
 }
-
-const Label = styled.div`
-  color: red;
-  font-size: 15px;
-`;
-
 const DataContainer = styled.div`
-
   margin: auto 0;
 
   .MuiFormLabel-root {

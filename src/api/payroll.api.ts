@@ -116,6 +116,26 @@ export const recordPaymentContractorAPI = async (params: any) => {
   }
 }
 
+export const updatePaymentContractorAPI = async (params: any) => {
+  try {
+    const response: any = await request("/updatePaymentContractor ", 'PUT', params, false);
+    const {status, message, payment} = response.data;
+    if (status === 1) {
+      return {
+        payment: {
+          ...payment,
+          contractor: undefined,
+          employee: undefined,
+        }, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch(e) {
+    console.log(e.message);
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
 const normalizeData = (item: any, type: string) => {
   switch (type) {
     case 'vendor':

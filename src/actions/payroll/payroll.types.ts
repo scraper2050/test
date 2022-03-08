@@ -3,9 +3,11 @@ export const types = {
   'SET_CONTRACTORS': 'setContractors',
   'SET_CONTRACTOR': 'setContractor',
   'UPDATE_CONTRACTOR': 'updateContractor',
+  'REMOVE_CONTRACTOR': 'removeContractor',
   'SET_CONTRACTOR_LOADING': 'setContractorLoading',
   'SET_CONTRACTOR_PAYMENTS': 'setContractorPayments',
-  'REMOVE_CONTRACTOR': 'removeContractor',
+  'UPDATE_CONTRACTOR_PAYMENT': 'updateContractorPayment',
+  'REMOVE_CONTRACTOR_PAYMENT': 'removeContractorPayment',
 };
 
 export interface Contractor {
@@ -44,6 +46,7 @@ export interface ContractorPayment {
   notes: string;
   contractor?: string;
   employee?: string;
+  payedPerson?: Contractor,
   company: {
     _id: string;
     info: {

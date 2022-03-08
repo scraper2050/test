@@ -96,8 +96,8 @@ function PastPayments({classes}: Props) {
       data: {
         modalTitle: 'Edit Payment',
         payment,
-
-        // dateRange: selectionRange,
+        payroll: payment.payedPerson,
+        dateRange: {startDate: payment.startDate, endDate: payment.endDate},
       },
       'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
     }));
@@ -125,6 +125,7 @@ function PastPayments({classes}: Props) {
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     switch (id) {
       case 0:
+        editPayment(row);
         break;
       case 2:
         viewPayment(row);
