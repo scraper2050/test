@@ -136,6 +136,41 @@ export const updatePaymentContractorAPI = async (params: any) => {
   }
 }
 
+export const getPayrollReportAPI = async (type?: string, id?: string) => {
+  try {
+    const url = `/getPayrollReport${type ? `?id=${id}&type=${type}`:''}`
+    const response: any = await request(url, 'GET', {}, false);
+    const {status, message, vendors = [], employees = []} = response.data;
+    if (status === 1) {
+      const data = [
+        ...vendors.map((vendor: any) => {
+          const {commissionAmount, contractor, invoice} = vendor;
+          return ({
+            payedPerson: normalizeData(contractor, 'vendor'),
+            commissionAmount,
+            invoice,
+          })
+        }),
+      // ...employees.map((technician: any) => {
+      //   const {commissionAmount, invoice, employee} = technician;
+      //   return ({
+      //     payedPerson: normalizeData(technician.employee, 'employee'),
+      //     commissionAmount,
+      //     invoice,
+      //   })
+      // }),
+      ]
+
+
+      return {data, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
 export const normalizeData = (item: any, type: string) => {
   switch (type) {
     case 'vendor':
