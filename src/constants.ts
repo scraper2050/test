@@ -72,6 +72,7 @@ export const modalTypes = {
   'EDIT_ITEM_MODAL': 'edit-item-modal',
   'ADD_ITEM_MODAL': 'add-item-modal',
   'SALES_TAX_MODAL': 'sales-tax-modal',
+  'EDIT_INVOICE_NUMBER_MODAL': 'edit-invoice-number-modal',
   'PAYMENT_TERMS_MODAL': 'payment-terms-modal',
   'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
   'PAYMENT_RECORD_MODAL': 'payment_record_modal',
