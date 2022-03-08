@@ -19,7 +19,7 @@ import {
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../../constants";
-
+import {deleteVendorPayment} from "../../../../../actions/vendor/vendor.action";
 
 interface Props {
   classes: any;
@@ -45,6 +45,39 @@ function VendorPayment({classes}: Props) {
     'sortBy': prevPage ? prevPage.sortBy : []
   });
 
+  const editPayment = (payment: any) => {
+    console.log({payment});
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Edit Payment',
+        payment,
+        payroll: payment.payedPerson,
+        dateRange: {startDate: payment.startDate, endDate: payment.endDate},
+      },
+      'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const deletePayment = (payment: any) => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: '         ',
+        message: 'Are you sure you want to delete this Payment Record?',
+        subMessage: 'This action cannot be undone.',
+        action: deleteVendorPayment(payment),
+      },
+      'type': modalTypes.WARNING_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const viewPayment = (payment: any) => {
     dispatch(setModalDataAction({
       data: {
@@ -62,6 +95,12 @@ function VendorPayment({classes}: Props) {
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     switch(id) {
+      case 0:
+        editPayment(row);
+        break;
+      case 1:
+        deletePayment(row);
+        break;
       case 2:
         viewPayment(row);
         break;

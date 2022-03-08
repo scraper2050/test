@@ -72,17 +72,32 @@ export const getPayrollBalanceAPI = async (startDate: string|null, endDate: stri
   }
 }
 
-export const getPaymentsByContractorAPI = async (type: string, id: string) => {
+export const getPaymentsByContractorAPI = async (type?: string, id?: string) => {
   try {
-    const url = `/getPaymentsByContractor?id=${id}&type=${type}`
+    const url = `/getPaymentsByContractor${type ? `?id=${id}&type=${type}`:''}`;
     const response: any = await request(url, 'GET', {}, false);
-    const {status, message, payment} = response.data;
+    const {status, message, payments} = response.data;
     if (status === 1) {
-      return {payment, status, message};
+      const normalized = payments.map((payment: any) => {
+        if (payment.contractor) {
+          return {...payment,
+            payedPerson: normalizeData(payment.contractor, 'contractor'),
+            contractor: undefined,
+          }
+        } else {
+          return {...payment,
+            payedPerson: normalizeData(payment.employee, 'employee'),
+            employee: undefined,
+          }
+        }
+      })
+      return {payments: normalized.filter((payment: any) => payment.__t === 'PaymentVendor')
+        , status, message};
     } else {
       return {status, message};
     }
-  } catch {
+  } catch(e) {
+    console.log(e.message);
     return {status: 0, message: `Something went wrong`};
   }
 }
@@ -101,7 +116,62 @@ export const recordPaymentContractorAPI = async (params: any) => {
   }
 }
 
-const normalizeData = (item: any, type: string) => {
+export const updatePaymentContractorAPI = async (params: any) => {
+  try {
+    const response: any = await request("/updatePaymentContractor ", 'PUT', params, false);
+    const {status, message, payment} = response.data;
+    if (status === 1) {
+      return {
+        payment: {
+          ...payment,
+          contractor: undefined,
+          employee: undefined,
+        }, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch(e) {
+    console.log(e.message);
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const getPayrollReportAPI = async (type?: string, id?: string) => {
+  try {
+    const url = `/getPayrollReport${type ? `?id=${id}&type=${type}`:''}`
+    const response: any = await request(url, 'GET', {}, false);
+    const {status, message, vendors = [], employees = []} = response.data;
+    if (status === 1) {
+      const data = [
+        ...vendors.map((vendor: any) => {
+          const {commissionAmount, contractor, invoice} = vendor;
+          return ({
+            payedPerson: normalizeData(contractor, 'vendor'),
+            commissionAmount,
+            invoice,
+          })
+        }),
+      // ...employees.map((technician: any) => {
+      //   const {commissionAmount, invoice, employee} = technician;
+      //   return ({
+      //     payedPerson: normalizeData(technician.employee, 'employee'),
+      //     commissionAmount,
+      //     invoice,
+      //   })
+      // }),
+      ]
+
+
+      return {data, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const normalizeData = (item: any, type: string) => {
   switch (type) {
     case 'vendor':
     case 'contractor':

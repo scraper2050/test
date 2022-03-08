@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {
-  Button,
+  Button, Chip,
   withStyles
 } from "@material-ui/core";
 import styles from '../payroll.styles';
@@ -31,25 +31,24 @@ import {
   ContractorPayment
 } from "../../../../actions/payroll/payroll.types";
 import moment from "moment";
+import {getPayrollReportAPI} from "../../../../api/payroll.api";
+import {error} from "../../../../actions/snackbar/snackbar.action";
+import classNames from "classnames";
 
 interface Props {
   classes: any;
 }
-
-const ITEMS = [
-  {id: 0, title:'Edit'},
-  {id: 1, title:'Delete'},
-  {id: 2, title:'View Detail'},
-]
-
-function PastPayments({classes}: Props) {
+function PayrollInvoices({classes}: Props) {
   const dispatch = useDispatch();
   const location = useLocation<any>();
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
-  const { loading, payments, contractors } = useSelector((state: any) => state.payroll);
+  const { contractors } = useSelector((state: any) => state.payroll);
+  // const [contractors, setContractors] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([]);
+  const [filteredInvoices, setFilteredInvoices] = useState<ContractorPayment[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 10,
@@ -58,16 +57,22 @@ function PastPayments({classes}: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
+  const getData = async(type?: string, id?: string) => {
+    setLoading(true);
+    const response: any = await getPayrollReportAPI();
+    if (response.status === 1) {
+      setInvoices(response.data);
+      //const contractors = response.data.map((item: any) => item.payedPerson);
+      //setContractors(contractors);
+    } else {
+      dispatch(error(response.message));
+    }
+    setLoading(false);
+  }
+
   useEffect(() => {
     dispatch(getContractors());
-    const obj: any = location.state;
-    if (obj?.contractor) {
-      setSelectedIDs([obj.contractor._id]);
-    } else {
-      if (contractors.length > 0) {
-        dispatch(getContractorPayments());
-      }
-    }
+    getData();
   }, []);
 
   useEffect(() => {
@@ -78,78 +83,27 @@ function PastPayments({classes}: Props) {
   }, [selectedIDs]);
 
   useEffect(() => {
-    if (selectionRange) {
-      const filtered = payments.filter((payment: ContractorPayment) =>
-        moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
-      );
-      setFilteredPayments(filtered);
-    } else {
-      setFilteredPayments(payments);
-    }
-  }, [selectionRange, payments]);
-
-  const editPayment = (payment: any) => {
-    dispatch(setModalDataAction({
-      data: {
-        modalTitle: 'Edit Payment',
-        payment,
-        payroll: payment.payedPerson,
-        dateRange: {startDate: payment.startDate, endDate: payment.endDate},
-      },
-      'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
-    }));
-
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
-
-  const deletePayment = (payment: any) => {
-    dispatch(setModalDataAction({
-      data: {
-        modalTitle: '         ',
-        message: 'Are you sure you want to delete this Payment Record?',
-        subMessage: 'This action cannot be undone.',
-        action: removeContractorPayment(payment),
-      },
-      'type': modalTypes.WARNING_MODAL
-    }));
-
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
-
-  const viewPayment = (payment: any) => {
-    dispatch(setModalDataAction({
-      data: {
-        modalTitle: 'Payroll Details',
-        vendor: payment,
-        payment,
-      },
-      'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL
-    }));
-
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
-
-  const handleMenuButtonClick = (event: any, id: number, row:any) => {
-    switch (id) {
-      case 0:
-        editPayment(row);
-        break;
-      case 1:
-        deletePayment(row);
-        break;
-      case 2:
-        viewPayment(row);
-        break;
-    }
-  }
+    const filtered = invoices.filter((item: any) => {
+      let cond = true;
+      if (selectionRange) {
+        cond = cond &&
+          moment(item.invoice.dueDate).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]');
+      }
+      if (selectedIDs.length > 0) {
+        cond = cond && selectedIDs.indexOf(item.payedPerson._id) >= 0;
+      }
+      return cond;
+    });
+    setFilteredInvoices(filtered);
+  }, [selectionRange, invoices, selectedIDs]);
 
   const columns: any = [
+    {
+      'Header': 'Invoice',
+      'accessor': (originalRow: any) => originalRow.invoice.invoiceId,
+      'className': 'font-bold',
+      'sortable': true,
+    },
     {
       'Header': 'Vendor',
       'accessor': (originalRow: any) => originalRow.payedPerson.vendor,
@@ -157,28 +111,29 @@ function PastPayments({classes}: Props) {
       'sortable': true,
     },
     {
-      'Header': 'Payment Date',
-      'accessor': (originalRow: any) => formatDate(originalRow.paidAt),
+      'Header': 'Invoice Amount',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.invoice.balanceDue),
       'className': 'font-bold',
       'sortable': true,
     },
     {
-      'Header': 'Amount',
-      'accessor': (originalRow: any) => formatCurrency(originalRow.amountPaid),
+      'Header': 'Date',
+      'accessor': (originalRow: any) => formatShortDateNoDay(originalRow.invoice.dueDate),
       'className': 'font-bold',
       'sortable': true,
     },
-    {
-      'Header': 'Method',
-      'accessor': 'paymentType',
+    { Cell({ row }: any) {
+        return (
+          <Chip
+            label={row.original.invoice.paid ? 'Paid' : 'Unpaid'}
+            className={classNames({[classes.statusChip]: true, [classes.unPaidChip]: !row.original.invoice.paid})}
+          />
+        )
+      },
+      'Header': 'Status',
       'className': 'font-bold',
-      'sortable': true,
-    },
-    {
-      'Header': 'Reference No.',
-      'accessor': 'referenceNumber',
-      'className': 'font-bold',
-      'sortable': true,
+      'sortable': false,
+      'width': 100
     },
     {
       'Header': 'Notes',
@@ -188,19 +143,6 @@ function PastPayments({classes}: Props) {
           : '',
       'sortable': true,
       'className': classes.tableCellWrap,
-    },
-    { Cell({ row }: any) {
-        return (
-          <BCMenuButton
-            icon={MoreHorizIcon}
-            items={ITEMS}
-            handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)}/>
-        )
-      },
-      'Header': 'Actions',
-      'className': 'font-bold',
-      'sortable': false,
-      'width': 100
     },
   ];
 
@@ -213,7 +155,6 @@ function PastPayments({classes}: Props) {
       <BCItemsFilter
         items={contractors.map((item: Contractor) => ({id: item._id, value: item.vendor}))}
         selected={selectedIDs}
-        single={true}
         onApply={setSelectedIDs}
         />
     )
@@ -236,11 +177,8 @@ function PastPayments({classes}: Props) {
       columns={columns}
       currentPage={currentPage}
       isLoading={loading}
-      //onRowClick={handleRowClick}
-      search
-      searchPlaceholder = 'Search Vendor...'
       setPage={setCurrentPage}
-      tableData={filteredPayments}
+      tableData={filteredInvoices}
       toolbarPositionLeft={true}
       toolbar={[renderMenu(), renderDateRangePicker()]}
     />
@@ -250,4 +188,4 @@ function PastPayments({classes}: Props) {
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(PastPayments);
+)(PayrollInvoices);

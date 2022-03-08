@@ -52,6 +52,8 @@ import BcEditCommissionModal from "./bc-edit-commission-modal/bc-edit-commission
 import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-payment-record-modal";
 import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
 import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
+import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
+
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -554,6 +556,19 @@ function BCModal() {
           vendor={data.vendor}
           payment={data.payment}
           dateRange={data.dateRange}
+        />);
+        break;
+      case modalTypes.WARNING_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcWarningModal
+          message={data.message}
+          subMessage={data.subMessage}
+          action={data.action}
         />);
         break;
 

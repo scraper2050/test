@@ -167,6 +167,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'icon': <HistoryIcon/>,
       'link': '/main/payroll/pastpayment'
     },
+    {
+      'label': 'Reports',
+      'icon': <DescriptionIcon/>,
+      'link': '/main/payroll/reports'
+    },
     /*
      * {
      *   'label': "Todo's",

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 13
   },
   filterMenuContainer: {
-    width: 128,
+    minWidth: 178,
     borderBottom:'1px solid #BDBDBD',
     cursor: 'pointer',
   },
@@ -144,6 +144,7 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
       </div>
       <Menu
         id="filter-by-status-menu"
+        style={{minWidth: 100}}
         variant="menu"
         anchorEl={filterMenuAnchorEl}
         keepMounted

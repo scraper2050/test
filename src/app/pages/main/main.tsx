@@ -72,6 +72,7 @@ const ChangePasswordPage = React.lazy(() => import('../profile/change-password/c
 
 const PayrollPage = React.lazy(() => import('../payroll/payroll'));
 const PastPaymentPage = React.lazy(() => import('../payroll/past-payment/past-payment'));
+const ReportsPage = React.lazy(() => import('../payroll/reports/reports'));
 
 function Main(): any {
 
@@ -133,6 +134,12 @@ function Main(): any {
                   Component={PastPaymentPage}
                   exact
                   path={'/main/payroll/pastpayment/:contractorName'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={ReportsPage}
+                  exact
+                  path={'/main/payroll/reports'}
                   title={'Tags'}
                 />
                 <AuthRoute

@@ -82,4 +82,5 @@ export const modalTypes = {
   'EDIT_COMMISSION_MODAL': 'edit_commission_modal',
   'PAYROLL_RECORD_PAYMENT_MODAL': 'payroll_record_payment_modal',
   'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
+  'WARNING_MODAL': 'warning_modal',
 };
