@@ -26,13 +26,13 @@ import {formatCurrency, formatDateYMD} from "../../../helpers/format";
 import BCDateRangePicker
   from "../../components/bc-date-range-picker/bc-date-range-picker";
 import {
-  recordPaymentContractor,
-  removeContractor, updateContractorPayments
+  removeContractor, updateContractorPayment
 } from "../../../actions/payroll/payroll.action";
 import {
   recordPaymentContractorAPI,
   updatePaymentContractorAPI
 } from "../../../api/payroll.api";
+import {updateVendorPayment} from "../../../actions/vendor/vendor.action";
 
 function BcPayrollPaymentRecordModal({
   classes,
@@ -90,7 +90,8 @@ function BcPayrollPaymentRecordModal({
           const response = await updatePaymentContractorAPI(params);
           if (response.status === 1) {
             setSent(true);
-            dispatch(updateContractorPayments(response.payment));
+            dispatch(updateContractorPayment(response.payment));
+            dispatch(updateVendorPayment(response.payment));
           } else {
             dispatch(error(response.message))
           }

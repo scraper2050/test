@@ -45,6 +45,23 @@ function VendorPayment({classes}: Props) {
     'sortBy': prevPage ? prevPage.sortBy : []
   });
 
+  const editPayment = (payment: any) => {
+    console.log({payment});
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Edit Payment',
+        payment,
+        payroll: payment.payedPerson,
+        dateRange: {startDate: payment.startDate, endDate: payment.endDate},
+      },
+      'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const viewPayment = (payment: any) => {
     dispatch(setModalDataAction({
       data: {
@@ -62,6 +79,9 @@ function VendorPayment({classes}: Props) {
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     switch(id) {
+      case 0:
+        editPayment(row);
+        break;
       case 2:
         viewPayment(row);
         break;

@@ -43,4 +43,11 @@ export const setVendors = (vendors: any) => {
   };
 };
 
+export const updateVendorPayment = (payment: any) => {
+  return {
+    'type': VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT,
+    'payload': payment,
+  };
+};
+
 

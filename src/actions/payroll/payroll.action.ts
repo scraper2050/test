@@ -95,7 +95,7 @@ export const setContractorPayments = (payments: any) => {
   };
 };
 
-export const updateContractorPayments = (payment: any) => {
+export const updateContractorPayment = (payment: any) => {
   return {
     'type': types.UPDATE_CONTRACTOR_PAYMENT,
     'payload': payment,

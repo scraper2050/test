@@ -136,7 +136,7 @@ export const updatePaymentContractorAPI = async (params: any) => {
   }
 }
 
-const normalizeData = (item: any, type: string) => {
+export const normalizeData = (item: any, type: string) => {
   switch (type) {
     case 'vendor':
     case 'contractor':

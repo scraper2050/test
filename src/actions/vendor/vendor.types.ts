@@ -42,6 +42,7 @@ export enum VendorActionType {
   FAILED = 'getVendorsFailed',
   SET_SINGLE_VENDOR = 'setSingleVender',
   GET_SINGLE_VENDOR = 'getSingleVendor',
+  UPDATE_SINGLE_VENDOR_PAYMENT = 'updateSingleVendorPayment',
 }
 
 export const vendorStatusToNumber:any = {
