@@ -403,7 +403,7 @@ function BCServiceTicketModal({
 
   useEffect(() => {
     if (ticket.customer?._id !== '') {
-      if (jobSites.length !== 0 && jobLocationValue._id && ticket?.customer?._id === FormikValues.customerId) {
+      if (jobSites.length !== 0 && jobLocationValue?._id && ticket?.customer?._id === FormikValues.customerId) {
         setJobSiteValue(jobSites.filter((jobSite: any) => (jobSite._id === ticket.jobSite || jobSite._id === ticket?.jobSite?._id))[0]);
       }
     }
