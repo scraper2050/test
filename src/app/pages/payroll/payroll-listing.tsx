@@ -16,7 +16,6 @@ import {modalTypes} from "../../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {
   formatCurrency, formatDateYMD,
-  formatShortDateNoDay
 } from "../../../helpers/format";
 import BCDateRangePicker
   , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";

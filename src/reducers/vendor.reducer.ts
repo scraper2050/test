@@ -58,11 +58,17 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
         'vendorPayments': action.payload.payments,
       };
     case VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT:
+    case VendorActionType.DELETE_SINGLE_VENDOR_PAYMENT:
       const payments = [...state.vendorPayments];
-      const index = payments.findIndex((payment: ContractorPayment) => payment._id === action.payload._id);
+      let index;
+      index = payments.findIndex((payment: ContractorPayment) => payment._id === action.payload._id);
       if (index >= 0) {
-        payments[index] = {...payments[index], ...action.payload};
+        if (action.type === VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT)
+          payments[index] = {...payments[index], ...action.payload};
+        else
+          payments.splice(index, 1);
       }
+
       return {
         ...state,
         'vendorPayments': payments,

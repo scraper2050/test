@@ -50,4 +50,11 @@ export const updateVendorPayment = (payment: any) => {
   };
 };
 
+export const deleteVendorPayment = (payment: any) => {
+  return {
+    'type': VendorActionType.DELETE_SINGLE_VENDOR_PAYMENT,
+    'payload': payment,
+  };
+};
+
 

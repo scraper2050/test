@@ -24,7 +24,7 @@ import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
 import {
   getContractorPayments,
-  getContractors
+  getContractors, removeContractorPayment
 } from "../../../../actions/payroll/payroll.action";
 import {
   Contractor,
@@ -59,10 +59,7 @@ function PastPayments({classes}: Props) {
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
   useEffect(() => {
-      dispatch(getContractors());
-  }, []);
-
-  useEffect(() => {
+    dispatch(getContractors());
     const obj: any = location.state;
     if (obj?.contractor) {
       setSelectedIDs([obj.contractor._id]);
@@ -71,7 +68,7 @@ function PastPayments({classes}: Props) {
         dispatch(getContractorPayments());
       }
     }
-  }, [contractors]);
+  }, []);
 
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
@@ -107,6 +104,22 @@ function PastPayments({classes}: Props) {
     }, 200);
   }
 
+  const deletePayment = (payment: any) => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: '         ',
+        message: 'Are you sure you want to delete this Payment Record?',
+        subMessage: 'This action cannot be undone.',
+        action: removeContractorPayment(payment),
+      },
+      'type': modalTypes.WARNING_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const viewPayment = (payment: any) => {
     dispatch(setModalDataAction({
       data: {
@@ -126,6 +139,9 @@ function PastPayments({classes}: Props) {
     switch (id) {
       case 0:
         editPayment(row);
+        break;
+      case 1:
+        deletePayment(row);
         break;
       case 2:
         viewPayment(row);

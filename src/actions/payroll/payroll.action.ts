@@ -102,7 +102,7 @@ export const updateContractorPayment = (payment: any) => {
   };
 };
 
-export const removeContractorPayments = (payment: any) => {
+export const removeContractorPayment = (payment: any) => {
   return {
     'type': types.REMOVE_CONTRACTOR_PAYMENT,
     'payload': payment,
