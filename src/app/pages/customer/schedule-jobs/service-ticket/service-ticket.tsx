@@ -142,12 +142,12 @@ function ServiceTicket({ classes }: any) {
       'sortable': true
     },
     {
-      'Header': 'Created On',
-      'accessor': 'createdAt',
+      'Header': 'Due Date',
+      'accessor': 'dueDate',
       'className': 'font-bold',
       'sortable': true,
       'Cell'({ row }: any) {
-        let formattedDate = formatDate(row.original.createdAt);
+        let formattedDate = row.original.dueDate ? formatDate(row.original.dueDate) : '-';
         return (
           <div>
             {formattedDate}

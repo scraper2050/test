@@ -82,6 +82,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     return allTypes.length === 1 ? allTypes[0].toLowerCase() : 'multiple jobs';
   }
 
+  function getJobLocation(originalRow: any, rowIndex: number) {
+    return originalRow?.jobLocation?.name || '-'
+  }
+
   function getJobTime(originalRow: any, rowIndex: number) {
     let startTime = 'N/A';
     let endTime = 'N/A';
@@ -191,10 +195,9 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       sortable: true,
     },
     {
-      Header: 'Type',
-      id: 'job-type',
-      accessor: getJobType,
-      className: classes.capitalize,
+      Header: 'Job Location',
+      id: 'job-location',
+      accessor: getJobLocation,
       sortable: true,
     },
     {
