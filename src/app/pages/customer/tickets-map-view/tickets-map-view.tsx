@@ -63,15 +63,19 @@ const StatusContainer = withTheme(styled('div')`
   }
   .infoLegend {
     color: ${(props) => props.theme.palette.primary.main};
+    cursor: pointer;
   }
 
   @media(max-width: 1200px) {
-    position: relative;
-    top: 0;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    right: 0;
-    justify-content: flex-end;
+    // position: relative;
+    // top: 0;
+    // margin-top: 10px;
+    // margin-bottom: 5px;
+    // right: 0;
+    // justify-content: flex-end;
+    .buttonLegend {
+      display: none;
+    }
   }
 `);
 
@@ -174,6 +178,70 @@ function TicketsWithMapView({ classes }: any) {
     setAllDates(tempDates);
   }
 
+  const ConfirmationNumberIcon = (props: {fillColor:string}) => (
+    <svg
+      width={20}
+      height={20}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M18.333 8.333V5c0-.925-.75-1.667-1.666-1.667H3.333A1.66 1.66 0 0 0 1.675 5v3.333c.917 0 1.658.75 1.658 1.667 0 .916-.741 1.666-1.666 1.666V15c0 .916.75 1.666 1.666 1.666h13.334c.916 0 1.666-.75 1.666-1.666v-3.334c-.916 0-1.666-.75-1.666-1.666 0-.917.75-1.667 1.666-1.667Zm-7.5 6.25H9.167v-1.667h1.666v1.667Zm0-3.75H9.167V9.166h1.666v1.667Zm0-3.75H9.167V5.416h1.666v1.667Z"
+        fill={props.fillColor || "#828282"}
+      />
+    </svg>
+  );
+  
+  const ScheduleIcon = (props: {fillColor:string}) => (
+    <svg
+      width={20}
+      height={20}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M9.992 1.667c-4.6 0-8.325 3.733-8.325 8.333s3.725 8.334 8.325 8.334c4.608 0 8.341-3.734 8.341-8.334S14.6 1.667 9.992 1.667Zm.008 15A6.665 6.665 0 0 1 3.333 10 6.665 6.665 0 0 1 10 3.334 6.665 6.665 0 0 1 16.667 10 6.665 6.665 0 0 1 10 16.667Z"
+        fill={props.fillColor || "#828282"}
+      />
+      <path
+        d="M10.417 5.833h-1.25v5l4.375 2.625.625-1.025-3.75-2.225V5.833Z"
+        fill={props.fillColor || "#828282"}
+      />
+    </svg>
+  );
+  
+  const WorkIcon = (props: {fillColor:string}) => (
+    <svg
+      width={20}
+      height={20}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M16.667 5h-3.334V3.334a1.66 1.66 0 0 0-1.666-1.667H8.333a1.66 1.66 0 0 0-1.666 1.667V5H3.333c-.925 0-1.658.742-1.658 1.667l-.008 9.167A1.66 1.66 0 0 0 3.333 17.5h13.334a1.66 1.66 0 0 0 1.666-1.666V6.667A1.66 1.66 0 0 0 16.667 5Zm-5 0H8.333V3.334h3.334V5Z"
+        fill={props.fillColor || "#828282"}
+      />
+    </svg>
+  );
+  
+  const RouteIcon = (props: {fillColor:string}) => (
+    <svg
+      width={20}
+      height={20}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M15.833 12.65V5.833a3.332 3.332 0 1 0-6.667 0v8.334c0 .916-.75 1.666-1.666 1.666-.917 0-1.667-.75-1.667-1.666V7.35A2.509 2.509 0 0 0 7.5 5c0-1.383-1.117-2.5-2.5-2.5A2.497 2.497 0 0 0 2.5 5c0 1.083.7 2 1.667 2.35v6.817a3.332 3.332 0 1 0 6.666 0V5.833c0-.916.75-1.666 1.667-1.666s1.667.75 1.667 1.666v6.817A2.497 2.497 0 0 0 15 17.5c1.383 0 2.5-1.117 2.5-2.5 0-1.083-.7-2-1.667-2.35Z"
+        fill={props.fillColor || "#828282"}
+      />
+    </svg>
+  );
+  
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -182,23 +250,27 @@ function TicketsWithMapView({ classes }: any) {
             curTab={curTab}
             indicatorColor={'primary'}
             onChangeTab={handleTabChange}
+            responsiveLabel
             tabsData={[
               {
                 'label': 'Open Tickets',
                 'value': 0,
-                'icon': streaming ? preloader : null,
+                'icon': streaming ? preloader : ConfirmationNumberIcon,
               },
               {
                 'label': 'Today\'s Jobs',
-                'value': 1
+                'value': 1,
+                'icon': WorkIcon,
               },
               {
                 'label': 'Scheduled Jobs',
-                'value': 2
+                'value': 2,
+                'icon': ScheduleIcon,
               },
               {
                 'label': 'Routes',
                 'value': 3,
+                'icon': RouteIcon,
               },
             ]}
           />
@@ -213,7 +285,7 @@ function TicketsWithMapView({ classes }: any) {
               filterType={curTab === 0 ? 'ticket' : curTab === 3 ? 'route' : 'job'}
             />
             <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
-            <Info className={'infoLegend'} fontSize={'small'}/>
+            <Info className={'infoLegend'} fontSize={'default'} onClick={() => setShowLegendDialog(true)}/>
           </StatusContainer>
           <SwipeableViews index={curTab}>
             <div

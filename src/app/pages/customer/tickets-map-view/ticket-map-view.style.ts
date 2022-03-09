@@ -11,6 +11,12 @@ export default (theme: Theme): any => ({
     width: '25%',
     padding: 25,
   },
+  '@media (max-width: 1200px)': {
+    dialog: {
+      width: '50%',
+      padding: 25,
+    },
+  },
   dialogTitle: {
     paddingBottom: '25px !important',
     borderBottom: '2px solid #eee',
