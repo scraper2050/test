@@ -13,6 +13,8 @@ import {PRIMARY_BLUE} from "../../../constants";
 import Popper from "@material-ui/core/Popper";
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+
 export interface Range {
   startDate: Date;
   endDate: Date;
@@ -21,17 +23,20 @@ export interface Range {
 interface Props {
   range: Range|null;
   disabled?: boolean;
-  onChange?: (range: Range) => void;
+  showClearButton?: boolean,
+  onChange?: (range: Range | null) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
-  rangePickerButton: {
+  rangePickerButton: (props: any) => ({
     textTransform: 'none',
     borderRadius: 8,
     '& .MuiButton-startIcon': {
       marginTop: -4,
-    }
-  },
+    },
+    width: props.showClearButton ? 350 : 315,
+    justifyContent: 'flex-start',
+  }),
   rangePickerPopup: {
     zIndex: 1,
     padding: 4,
@@ -50,13 +55,23 @@ const useStyles = makeStyles((theme) => ({
   buttonsWrapper: {
     alignSelf: 'flex-end',
     padding: 16,
+  },
+  clearRangeButton: {
+    position: 'absolute',
+    right: '1rem',
+    color: 'grey',
   }
 }));
 
+const DEFAULT_RANGE = {
+  startDate: new Date(),
+  endDate: new Date(),
+}
 
-function BCDateRangePicker({range, disabled = false, onChange}: Props) {
+
+function BCDateRangePicker({range, disabled = false, showClearButton = false, onChange}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const classes = useStyles();
+  const classes = useStyles({showClearButton});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [selectionRange, setSelectionRange] = useState(range);
   const [tempSelectionRange, setTempSelectionRange] = useState(range ? range : {
@@ -73,7 +88,11 @@ function BCDateRangePicker({range, disabled = false, onChange}: Props) {
   }
 
   const openDateRangePicker = () => {
-    if (selectionRange) setTempSelectionRange(selectionRange);
+    if (selectionRange) {
+      setTempSelectionRange(selectionRange);
+    } else {
+      setTempSelectionRange(DEFAULT_RANGE);
+    }
     setShowDateRangePicker(true);
   }
 
@@ -87,23 +106,33 @@ function BCDateRangePicker({range, disabled = false, onChange}: Props) {
     if (onChange) onChange(tempSelectionRange);
   }
 
+  const clearRange = (e: any) => {
+    e.stopPropagation();
+    if (selectionRange) {
+      setSelectionRange(null);
+      if (onChange) onChange(null);
+    }
+  }
+
 
   return (
     <>
-      <Button
-        ref={buttonRef}
-        variant={'outlined'}
-        disabled={disabled}
-        className={classes.rangePickerButton}
-        startIcon={<IconCalendar style={{fontSize: 14}}/>}
-        onClick={openDateRangePicker}
-      >
-        {selectionRange ?
-          formatShortDate(selectionRange.startDate) + ' - ' + formatShortDate(selectionRange.endDate)
-          : 'Not Set'
-        }
-      </Button>
-
+      <div>
+        <Button
+          ref={buttonRef}
+          variant={'outlined'}
+          disabled={disabled}
+          classes={{root: classes.rangePickerButton, endIcon: classes.clearRangeButton}}
+          startIcon={<IconCalendar style={{fontSize: 14}}/>}
+          endIcon={showClearButton ? <HighlightOffIcon onClick={clearRange}/> : null}
+          onClick={openDateRangePicker}
+        >
+          {selectionRange ?
+            formatShortDate(selectionRange.startDate) + ' - ' + formatShortDate(selectionRange.endDate)
+            : 'Pick a range...'
+          }
+        </Button>
+      </div>
       <Popper
         className={classes.rangePickerPopup}
         open={showDateRangePicker}

@@ -25,6 +25,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import {getCustomersContact} from 'api/customer.api';
 import {stringSortCaseInsensitive} from 'helpers/sort';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
+import {PRIMARY_GREEN} from "../../../constants";
 
 const EmailJobReportModalContainer = styled.div`
 display: flex;
@@ -45,7 +46,7 @@ p {
     font-weight: 800;
     font-size: 22px;
   }
-} 
+}
 > div {
     margin-top: 30px;
     display: flex;
@@ -75,7 +76,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
     }, 200);
   };
 
-  
+
   useEffect(() => {
     if(customerId){
       getCustomersContact(customerId)
@@ -84,7 +85,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
           const custContacts = res.contacts
           .filter((contact:{email:string}) => !!contact.email)
           .filter((contact:{email:string}, index: number, self:{email:string}[]) =>
-            index === self.findIndex((t) => 
+            index === self.findIndex((t) =>
               t.email === contact.email
             )
           );
@@ -118,7 +119,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
                     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                   );
       if(!test){
-        return 
+        return
       }
     }
     FormikSetFieldValue(fieldName, data.map((datum:any)=>{
@@ -132,7 +133,7 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
 
   const emailSent = () => {
     return <div style={{textAlign: 'center', height: '20vh'}}>
-      <CheckCircleIcon style={{color: '#50AE55', fontSize: 100}}/><br/>
+      <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/><br/>
       <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>This invoice was sent</span>
     </div>
   }

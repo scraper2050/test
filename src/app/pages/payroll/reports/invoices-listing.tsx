@@ -6,18 +6,9 @@ import {
 import styles from '../payroll.styles';
 import {useLocation} from "react-router-dom";
 import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import BCMenuButton from "../../../components/bc-menu-more";
-import {
-  openModalAction,
-  setModalDataAction
-} from "../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {
-  formatCurrency, formatDate,
-  formatDateYMD,
-  formatShortDateNoDay
+  formatCurrency, formatShortDateNoDay
 } from "../../../../helpers/format";
 import BCDateRangePicker, {Range} from "../../../components/bc-date-range-picker/bc-date-range-picker";
 import {HighlightOff} from "@material-ui/icons";
@@ -34,6 +25,8 @@ import moment from "moment";
 import {getPayrollReportAPI} from "../../../../api/payroll.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import classNames from "classnames";
+import filterImage from '../../../../assets/img/filter.png';
+import QbIcon from "../../../../assets/img/img/intuitt_green.png";
 
 interface Props {
   classes: any;
@@ -56,14 +49,15 @@ function PayrollInvoices({classes}: Props) {
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+  const [totals, setTotals] = useState({invoices: 0, commissions: 0});
+
+  const isFiltered =  selectedIDs.length > 0 || selectionRange;
 
   const getData = async(type?: string, id?: string) => {
     setLoading(true);
     const response: any = await getPayrollReportAPI();
     if (response.status === 1) {
       setInvoices(response.data);
-      //const contractors = response.data.map((item: any) => item.payedPerson);
-      //setContractors(contractors);
     } else {
       dispatch(error(response.message));
     }
@@ -83,6 +77,8 @@ function PayrollInvoices({classes}: Props) {
   }, [selectedIDs]);
 
   useEffect(() => {
+    let totalInvoicesAmount = 0;
+    let totalCommissions = 0;
     const filtered = invoices.filter((item: any) => {
       let cond = true;
       if (selectionRange) {
@@ -92,9 +88,14 @@ function PayrollInvoices({classes}: Props) {
       if (selectedIDs.length > 0) {
         cond = cond && selectedIDs.indexOf(item.payedPerson._id) >= 0;
       }
+      if (cond) {
+        totalInvoicesAmount += item.invoice.balanceDue;
+        totalCommissions += item.commissionAmount;
+      }
+      setTotals({invoices: totalInvoicesAmount, commissions: totalCommissions});
       return cond;
     });
-    setFilteredInvoices(filtered);
+    setFilteredInvoices(isFiltered ? filtered : []);
   }, [selectionRange, invoices, selectedIDs]);
 
   const columns: any = [
@@ -147,7 +148,7 @@ function PayrollInvoices({classes}: Props) {
   ];
 
   function renderDateRangePicker () {
-    return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} />
+    return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
   }
 
   function renderMenu () {
@@ -157,6 +158,26 @@ function PayrollInvoices({classes}: Props) {
         selected={selectedIDs}
         onApply={setSelectedIDs}
         />
+    )
+  }
+
+  function renderTotals () {
+    return (
+      loading || !isFiltered ? null :
+        <div className={classes.totalContainer}>
+          <div style={{display: 'flex', flex: 1}}>
+            <span className={classes.totalText}>Total Amount</span>
+            <span
+              className={classes.totalValue}>{formatCurrency(totals.invoices)}</span>
+          </div>
+          <div style={{display: 'flex', flex: 1}}>
+            <span
+              className={classNames(classes.totalText, classes.totalTextSmall)}>Commissions</span>
+            <span
+              className={classNames(classes.totalValue, classes.totalTextSmall)}>{formatCurrency(totals.commissions)}</span>
+          </div>
+        </div>
+
     )
   }
 
@@ -176,11 +197,14 @@ function PayrollInvoices({classes}: Props) {
     <BCTableContainer
       columns={columns}
       currentPage={currentPage}
+      initialMsg={isFiltered ? 'No records found!' : 'Please filter to view report'}
+      search
+      searchPlaceholder = 'Search Invoices...'
       isLoading={loading}
       setPage={setCurrentPage}
       tableData={filteredInvoices}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker()]}
+      toolbar={[renderMenu(), renderDateRangePicker(), renderTotals()]}
     />
   )
 }

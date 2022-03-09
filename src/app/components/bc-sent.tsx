@@ -3,7 +3,7 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import WarningIcon from "@material-ui/icons/Warning";
 import {createStyles} from "@material-ui/core/styles";
 import {makeStyles, Theme} from "@material-ui/core/styles";
-import {ERROR_RED} from "../../constants";
+import {ERROR_RED, PRIMARY_GREEN} from "../../constants";
 
 interface Props {
   title: string;
@@ -19,7 +19,7 @@ export default function BCSent({title, type = 'success', subtitle, showLine = tr
     {showLine && <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>}
     <div className={componentStyles.container}>
       {type === 'success' ?
-        <CheckCircleIcon style={{color: '#50AE55', fontSize: 100}}/>
+        <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/>
         :
         <WarningIcon style={{color: ERROR_RED, fontSize: 100}}/>
       }
