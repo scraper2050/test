@@ -76,7 +76,7 @@ const useSearchStyles = makeStyles((theme: Theme) =>
       marginLeft: 0,
       width: '100%',
       [theme.breakpoints.up('sm')]: {
-        width: 'auto',
+        minWidth: '200px',
       },
     },
     searchIcon: {
