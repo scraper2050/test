@@ -6,18 +6,9 @@ import {
 import styles from '../payroll.styles';
 import {useLocation} from "react-router-dom";
 import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import BCMenuButton from "../../../components/bc-menu-more";
-import {
-  openModalAction,
-  setModalDataAction
-} from "../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {
-  formatCurrency, formatDate,
-  formatDateYMD,
-  formatShortDateNoDay
+  formatCurrency, formatShortDateNoDay
 } from "../../../../helpers/format";
 import BCDateRangePicker, {Range} from "../../../components/bc-date-range-picker/bc-date-range-picker";
 import {HighlightOff} from "@material-ui/icons";
@@ -34,6 +25,8 @@ import moment from "moment";
 import {getPayrollReportAPI} from "../../../../api/payroll.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import classNames from "classnames";
+import filterImage from '../../../../assets/img/filter.png';
+import QbIcon from "../../../../assets/img/img/intuitt_green.png";
 
 interface Props {
   classes: any;
@@ -57,6 +50,8 @@ function PayrollInvoices({classes}: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
   const [totals, setTotals] = useState({invoices: 0, commissions: 0});
+
+  const isFiltered =  selectedIDs.length > 0 || selectionRange;
 
   const getData = async(type?: string, id?: string) => {
     setLoading(true);
@@ -100,7 +95,7 @@ function PayrollInvoices({classes}: Props) {
       setTotals({invoices: totalInvoicesAmount, commissions: totalCommissions});
       return cond;
     });
-    setFilteredInvoices(filtered);
+    setFilteredInvoices(isFiltered ? filtered : []);
   }, [selectionRange, invoices, selectedIDs]);
 
   const columns: any = [
@@ -168,7 +163,7 @@ function PayrollInvoices({classes}: Props) {
 
   function renderTotals () {
     return (
-      loading ? null :
+      loading || !isFiltered ? null :
         <div className={classes.totalContainer}>
           <div style={{display: 'flex', flex: 1}}>
             <span className={classes.totalText}>Total Amount</span>
@@ -202,6 +197,9 @@ function PayrollInvoices({classes}: Props) {
     <BCTableContainer
       columns={columns}
       currentPage={currentPage}
+      initialMsg={isFiltered ? 'No records found!' : 'Please filter to view report'}
+      search
+      searchPlaceholder = 'Search Invoices...'
       isLoading={loading}
       setPage={setCurrentPage}
       tableData={filteredInvoices}
