@@ -115,7 +115,9 @@ function BCServiceTicketModal({
 
     await setFieldValue(fieldName, '');
     await setFieldValue('jobSiteId', '');
+    await setFieldValue('customerContactId', '');
     await setJobSiteValue([]);
+    await setContactValue([]);
     await setJobLocationValue(newValue);
     if (locationId !== '') {
       await dispatch(getJobSites({ customerId,
@@ -611,7 +613,21 @@ function BCServiceTicketModal({
                   getOptionLabel={option => option.name ? option.name : ''}
                   id={'tags-standard'}
                   onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
-                  options={contacts && contacts.length !== 0 ? contacts.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+                  options={
+                    contacts && contacts.length !== 0
+                      ? FormikValues.jobLocationId && jobLocationValue && jobLocationValue.contacts 
+                        ? jobLocationValue.contacts.filter((contact:any) => 
+                            contact.isActive
+                          ).sort((a: any, b: any) =>
+                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                          )
+                        : contacts.filter((contact:any) => 
+                            contact.isActive
+                          ).sort((a: any, b: any) =>
+                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                          )
+                      : []
+                  }
                   renderInput={params =>
                     <TextField
                       {...params}
