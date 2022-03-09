@@ -56,14 +56,13 @@ function PayrollInvoices({classes}: Props) {
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+  const [totals, setTotals] = useState({invoices: 0, commissions: 0});
 
   const getData = async(type?: string, id?: string) => {
     setLoading(true);
     const response: any = await getPayrollReportAPI();
     if (response.status === 1) {
       setInvoices(response.data);
-      //const contractors = response.data.map((item: any) => item.payedPerson);
-      //setContractors(contractors);
     } else {
       dispatch(error(response.message));
     }
@@ -83,6 +82,8 @@ function PayrollInvoices({classes}: Props) {
   }, [selectedIDs]);
 
   useEffect(() => {
+    let totalInvoicesAmount = 0;
+    let totalCommissions = 0;
     const filtered = invoices.filter((item: any) => {
       let cond = true;
       if (selectionRange) {
@@ -92,6 +93,11 @@ function PayrollInvoices({classes}: Props) {
       if (selectedIDs.length > 0) {
         cond = cond && selectedIDs.indexOf(item.payedPerson._id) >= 0;
       }
+      if (cond) {
+        totalInvoicesAmount += item.invoice.balanceDue;
+        totalCommissions += item.commissionAmount;
+      }
+      setTotals({invoices: totalInvoicesAmount, commissions: totalCommissions});
       return cond;
     });
     setFilteredInvoices(filtered);
@@ -147,7 +153,7 @@ function PayrollInvoices({classes}: Props) {
   ];
 
   function renderDateRangePicker () {
-    return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} />
+    return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
   }
 
   function renderMenu () {
@@ -157,6 +163,26 @@ function PayrollInvoices({classes}: Props) {
         selected={selectedIDs}
         onApply={setSelectedIDs}
         />
+    )
+  }
+
+  function renderTotals () {
+    return (
+      loading ? null :
+        <div className={classes.totalContainer}>
+          <div style={{display: 'flex', flex: 1}}>
+            <span className={classes.totalText}>Total Amount</span>
+            <span
+              className={classes.totalValue}>{formatCurrency(totals.invoices)}</span>
+          </div>
+          <div style={{display: 'flex', flex: 1}}>
+            <span
+              className={classNames(classes.totalText, classes.totalTextSmall)}>Commissions</span>
+            <span
+              className={classNames(classes.totalValue, classes.totalTextSmall)}>{formatCurrency(totals.commissions)}</span>
+          </div>
+        </div>
+
     )
   }
 
@@ -180,7 +206,7 @@ function PayrollInvoices({classes}: Props) {
       setPage={setCurrentPage}
       tableData={filteredInvoices}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker()]}
+      toolbar={[renderMenu(), renderDateRangePicker(), renderTotals()]}
     />
   )
 }
