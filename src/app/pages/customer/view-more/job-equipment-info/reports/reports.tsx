@@ -42,7 +42,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
 
   const handleFilterData = (jobs: any, location: LocationStateTypes) => {
     const filteredJobs = jobs.filter((resJob: any) =>
-      resJob.job.customer === location.customerId);
+      resJob.job?.customer?._id === location.customerId);
     setFilterJobs(filteredJobs);
   }
 
