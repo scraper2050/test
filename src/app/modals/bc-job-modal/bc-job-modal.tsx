@@ -517,7 +517,9 @@ function BCJobModal({
           /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
             await callEditTicketAPI(formatedTicketRequest);
           }*/
-          dispatch(refreshServiceTickets(true));
+          if(!job.jobFromMap){
+            dispatch(refreshServiceTickets(true));
+          }
           dispatch(setTicket2JobID(response.job?.ticket));
           dispatch(refreshJobs(true));
           dispatch(closeModalAction());
@@ -534,7 +536,6 @@ function BCJobModal({
               .then((response: any) => {
                 dispatch(setOpenServiceTicketLoading(false));
                 dispatch(setOpenServiceTicket(response));
-                dispatch(refreshServiceTickets(true));
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
