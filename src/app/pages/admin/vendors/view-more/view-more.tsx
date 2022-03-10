@@ -21,6 +21,7 @@ import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { finishVendorApi } from 'api/vendor.api';
 import { modalTypes } from '../../../../../constants';
 import { CSButton } from "../../../../../helpers/custom";
 import VendorPayment from "./vendor-payment";
@@ -128,15 +129,16 @@ function CompanyProfilePage({ classes }: any) {
 
   }
 
-  const editVendor = () => {
+  const editVendor = async () => {
     const companyContractId = localStorage.getItem('companyContractId');
+    const result: any = await finishVendorApi({ contractId: companyContractId || '', status: 'finish'});
     dispatch(setModalDataAction({
       'data': {
         'removeFooter': false,
         'maxHeight': '450px',
         'height': '100%',
         'message': {
-          'title': `Finish contract with ${companyName}`
+          'title': result?.status !== 0 ? `Finish contract with ${companyName}` : result.message
         },
         'contractId': companyContractId,
         'notificationType': 'ContractInvitation'
