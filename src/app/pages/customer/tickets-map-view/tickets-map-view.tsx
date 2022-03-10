@@ -73,6 +73,8 @@ const StatusContainer = withTheme(styled('div')`
     // margin-bottom: 5px;
     // right: 0;
     // justify-content: flex-end;
+  }
+  @media(max-width: 1420px) {
     .buttonLegend {
       display: none;
     }
