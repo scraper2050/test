@@ -105,6 +105,7 @@ function BCModal() {
           onSubmit={data.onSubmit}
           ticket={data.ticketData}
           allowEditWithJob={data.allowEditWithJob}
+          refreshTicketAfterEditing={data.refreshTicketAfterEditing}
         />);
         break;
       case modalTypes.VIEW_SERVICE_TICKET_MODAL:

@@ -20,6 +20,9 @@ import {
   openModalAction,
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
+import {
+  setServiceTicket,
+} from "actions/service-ticket/service-ticket.action";
 import {modalTypes} from "../../../constants";
 import {Button, IconButton} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
@@ -57,6 +60,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const note = ticket.description || ticket.note || 'N/A';
   const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
+  const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
 
   useEffect(() => {
     if (selected._id === ticket._id) {
@@ -142,6 +146,35 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
         'maxHeight': '754px',
+        'refreshTicketAfterEditing': false,
+        'onSubmit': async (response: any, ticketId: string) => {
+          closeInfo();
+          let data = {...ticket, images: []};
+          const {status, serviceTicket} = await getServiceTicketDetail(ticket._id);
+          if (status === 1) {
+            data = serviceTicket;
+          }
+          const { customer, customerContactId, customerPO, dueDate, images, jobLocation, jobSite, note, tasks, track } = data;
+          const updatedTickets = tickets.map((ticket:any, index: number)=>{
+            if(ticket._id === ticketId){
+              return ({
+                ...ticket,
+                customer: ticket?.customer?._id === customer?._id ? ticket.customer : customer,
+                customerContactId,
+                customerPO,
+                dueDate,
+                images,
+                jobLocation: ticket?.jobLocation?._id === jobLocation?._id ? ticket.jobLocation : jobLocation,
+                jobSite: ticket?.jobSite?._id === jobSite?._id ? ticket.jobSite : jobSite,
+                note,
+                tasks,
+                track,
+              });
+            }
+            return ticket
+          });
+          dispatch(setServiceTicket(updatedTickets));
+        }
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
