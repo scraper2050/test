@@ -22,8 +22,10 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const { token } = useSelector(({ auth }: any) => auth);
   const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({ticket2Job: serviceTicket.ticket2Job}));
   const { refresh } = useSelector(({ serviceTicket }: any) => ({refresh: serviceTicket.refresh}));
+  const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
 
   const tempTokens = useRef<any[]>([]);
+  const loadCount = useRef<number>(0);
   const totalTickets = useRef<number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [allTickets, setAllTickets] = useState<any[]>([]);
@@ -87,6 +89,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
             dispatch(streamServiceTickets(false));
             dispatch(setServiceTicket(tempTokens.current));
             dispatch(refreshServiceTickets(false));
+            loadCount.current++;
           }
         }
       });
@@ -107,6 +110,12 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
     setAllTickets(tempAll);
 
   }, [ticket2Job])
+
+  useEffect(() => {
+    if(loadCount.current !== 0){
+      setAllTickets(tickets);
+    }
+  }, [tickets]);
 
   return (
     <Grid container item lg={12}>

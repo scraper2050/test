@@ -64,7 +64,8 @@ function BCServiceTicketModal({
   },
   onSubmit,
   detail = false,
-  allowEditWithJob = false
+  allowEditWithJob = false,
+  refreshTicketAfterEditing = true,
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
@@ -249,7 +250,9 @@ function BCServiceTicketModal({
               setSubmitting(false);
               return;
             }
-            dispatch(refreshServiceTickets(true));
+            if(refreshTicketAfterEditing){
+              dispatch(refreshServiceTickets(true));
+            }
             dispatch(refreshJobs(true));
             dispatch(closeModalAction());
             setTimeout(() => {
@@ -265,7 +268,7 @@ function BCServiceTicketModal({
 
               if (typeof onSubmit == 'function') {
                 setTimeout(() => {
-                  onSubmit(response);
+                  onSubmit(response, ticket._id);
                 }, 500);
               }
             }

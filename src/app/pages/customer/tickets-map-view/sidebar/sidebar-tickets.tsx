@@ -103,7 +103,7 @@ function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
     } else {
       const location =
         (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
-        (openTicketObj.jobLocation?.location || openTicketObj.jobLocation?.location.coordinates.length > 0) ||
+        (openTicketObj.jobLocation?.location && openTicketObj.jobLocation?.location.coordinates.length > 0) ||
         (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
 
       if (!location){
