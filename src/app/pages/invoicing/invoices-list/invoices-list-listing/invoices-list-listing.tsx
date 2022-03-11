@@ -240,7 +240,13 @@ function InvoicingListListing({ classes, theme }: any) {
   }) : invoiceList;
 
   function Toolbar() {
-    return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
+    return <BCDateRangePicker
+      range={selectionRange}
+      onChange={setSelectionRange}
+      showClearButton={true}
+      title={'Filter by Invoice Date...'}
+      classes={{button: classes.noLeftMargin}}
+    />
   }
 
   return (

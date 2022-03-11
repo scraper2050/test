@@ -35,6 +35,7 @@ export const CSButton = withStyles({
     fontSize: 13,
     padding: '5px 15px',
     //lineHeight: 1.5,
+    borderRadius: 8,
     minWidth: '136px',
     height: '34px',
     margin: '0 5px 0 0',

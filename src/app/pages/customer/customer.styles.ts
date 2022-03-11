@@ -77,5 +77,8 @@ export default (theme: Theme): any => ({
   },
   noMarginRight: {
     marginRight: 0,
+  },
+  noLeftMargin: {
+    marginLeft: '0 !important',
   }
 });

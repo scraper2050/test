@@ -338,7 +338,12 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             </MenuItem>
           ))}
         </Menu>
-        <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
+        <BCDateRangePicker
+          range={selectionRange}
+          onChange={setSelectionRange}
+          showClearButton={true}
+          title='Filter by Schedule Date...'
+        />
       </>
     );
   }

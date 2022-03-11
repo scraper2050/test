@@ -92,7 +92,12 @@ function ServiceTicket({ classes }: any) {
         }
         label="Display All Tickets"
       />
-      <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
+      <BCDateRangePicker
+        range={selectionRange}
+        onChange={setSelectionRange}
+        showClearButton={true}
+        title={'Filter by Due Date...'}
+      />
     </>
   }
 
