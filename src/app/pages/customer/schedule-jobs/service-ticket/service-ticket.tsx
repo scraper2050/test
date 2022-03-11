@@ -8,13 +8,12 @@ import { modalTypes } from '../../../../../constants';
 import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
-import {Button, Checkbox, FormControlLabel, withStyles} from "@material-ui/core";
+import {Checkbox, FormControlLabel, withStyles} from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
-import { getJobLocationsAction, loadingJobLocations } from 'actions/job-location/job-location.action';
 import "../../../../../scss/popup.scss";
 import EditIcon from '@material-ui/icons/Edit';
 import {
@@ -23,17 +22,31 @@ import {
   useCustomStyles
 } from "../../../../../helpers/custom";
 import {error} from "../../../../../actions/snackbar/snackbar.action";
+import BCDateRangePicker, {Range}
+  from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+import moment from "moment";
 
 function ServiceTicket({ classes }: any) {
+  console.log({classes})
   const dispatch = useDispatch();
   const [showAllTickets, toggleShowAllTickets] = useState(false);
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const customStyles = useCustomStyles();
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
     'tickets': serviceTicket.tickets
   }));
-  const filteredTickets = tickets.filter((ticket: any) => ticket.status !== 2 && !ticket.jobCreated)
+  const filteredTickets = tickets.filter((ticket: any) => {
+    let cond = true
+
+    if (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
+    if (selectionRange) {
+      cond = cond &&
+        moment(ticket.dueDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    }
+    return cond;
+  })
 
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
@@ -68,6 +81,7 @@ function ServiceTicket({ classes }: any) {
   function Toolbar() {
     return <>
       <FormControlLabel
+        classes={{root: classes.noMarginRight}}
         control={
           <Checkbox
             checked={showAllTickets}
@@ -77,6 +91,12 @@ function ServiceTicket({ classes }: any) {
           />
         }
         label="Display All Tickets"
+      />
+      <BCDateRangePicker
+        range={selectionRange}
+        onChange={setSelectionRange}
+        showClearButton={true}
+        title={'Filter by Due Date...'}
       />
     </>
   }
@@ -227,7 +247,7 @@ function ServiceTicket({ classes }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Tickets...'}
-        tableData={showAllTickets ? tickets : filteredTickets}
+        tableData={filteredTickets}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
       />
