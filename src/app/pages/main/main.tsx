@@ -305,6 +305,13 @@ function Main(): any {
                     title={'View Invoice'}
                   />
 
+                  <AuthRoute
+                    Component={ViewInvoicePage}
+                    exact
+                    path={'/main/customers/:customername/job-equipment-info/job-report/view/:invoice'}
+                    title={'View Invoice'}
+                  />
+
 {/*                  <AuthRoute
                     Component={EditInvoicePage}
                     exact
