@@ -64,9 +64,7 @@ function PastPayments({classes}: Props) {
     if (obj?.contractor) {
       setSelectedIDs([obj.contractor._id]);
     } else {
-      if (contractors.length > 0) {
-        dispatch(getContractorPayments());
-      }
+      dispatch(getContractorPayments());
     }
   }, []);
 
@@ -124,7 +122,6 @@ function PastPayments({classes}: Props) {
     dispatch(setModalDataAction({
       data: {
         modalTitle: 'Payroll Details',
-        vendor: payment,
         payment,
       },
       'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL

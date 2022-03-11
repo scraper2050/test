@@ -554,7 +554,6 @@ function BCModal() {
         });
         data.maxHeight='100%';
         setComponent(<BcPayrollPaymentDetailModal
-          vendor={data.vendor}
           payment={data.payment}
           dateRange={data.dateRange}
         />);
