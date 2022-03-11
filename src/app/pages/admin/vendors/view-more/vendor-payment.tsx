@@ -82,7 +82,6 @@ function VendorPayment({classes}: Props) {
     dispatch(setModalDataAction({
       data: {
         modalTitle: 'Payroll Details',
-        vendor: vendorObj,
         payment,
       },
       'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL

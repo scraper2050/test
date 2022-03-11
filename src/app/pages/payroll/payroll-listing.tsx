@@ -31,7 +31,7 @@ interface Props {
 const ITEMS = [
   {id: 0, title:'Record Payment'},
   {id: 1, title:'Past Payment'},
-  {id: 2, title:'View Details'},
+  // {id: 2, title:'View Details'},
 ]
 
 function Payroll({classes}: Props) {
