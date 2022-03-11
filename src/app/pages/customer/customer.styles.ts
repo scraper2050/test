@@ -63,8 +63,8 @@ export default (theme: Theme): any => ({
     'fontFamily': 'Roboto, Helvetica, Arial, sans-serif',
     'fontSize': 14,
   },
-  'filterMenuLabel': { 
-    fontSize: 16, 
+  'filterMenuLabel': {
+    fontSize: 16,
     marginRight: 13
   },
   'filterMenuContainer': {
@@ -75,4 +75,7 @@ export default (theme: Theme): any => ({
   'filterIcon': {
     'marginRight': 10,
   },
+  noMarginRight: {
+    marginRight: 0,
+  }
 });

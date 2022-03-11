@@ -17,10 +17,14 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import BCJobStatus from '../../../../components/bc-job-status';
+import BCDateRangePicker
+  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+import moment from "moment";
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
-  const [showAllJobs, toggleShowAllJobs] = useState(false);
+  const customers = useSelector(({ customers }: any) => customers.data);
+  // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
   const { isLoading = true, jobs, refresh = true } = useSelector(
     ({ jobState }: any) => ({
@@ -29,9 +33,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       refresh: jobState.refresh,
     })
   );
-  
+
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string>('-2');
+  const [selectedStatus, setSelectedStatus] = useState<string>('-1');
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setFilterMenuAnchorEl(event.currentTarget);
@@ -42,9 +47,21 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     setFilterMenuAnchorEl(null);
   };
 
-  const filteredJobs = jobs.filter(
-    (job: any) => [0, 1, 4, 5, 6].indexOf(job.status) >= 0
-  );
+  // const filteredJobs = jobs.filter(
+  //   (job: any) => [0, 1, 4, 5, 6].indexOf(job.status) >= 0
+  // );
+
+  const filteredJobs = jobs.filter((job: any) =>  {
+    let cond = true;
+    if (selectionRange) {
+      cond = cond &&
+        moment(job.scheduleDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    }
+    if (Number(selectedStatus) >= 0) {
+      cond = cond && job.status === Number(selectedStatus)
+    }
+    return cond;
+  })
 
   function getVendor (originalRow: any, rowIndex: number) {
     const {tasks} = originalRow;
@@ -223,8 +240,8 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   function Toolbar() {
     type IconComponentType = React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
     const [IconComponent, setIconComponent] = useState<null | IconComponentType>(null);
-    
-    const handleCheckBoxChange = () => {
+
+/*    const handleCheckBoxChange = () => {
       toggleShowAllJobs((current) => {
         if(current === false){
           setSelectedStatus('-1');
@@ -233,23 +250,23 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         }
         return !current;
       });
-    };
+    };*/
 
     useEffect(() => {
       if(selectedStatus !== '-1' && selectedStatus !== '-2'){
         setIconComponent(statusReference[selectedStatus].icon);
-        toggleShowAllJobs(false);
+        // toggleShowAllJobs(false);
       } else if(selectedStatus === '-1'){
-        toggleShowAllJobs(true);
+        // toggleShowAllJobs(true);
         setIconComponent(null);
       } else {
         setIconComponent(null);
       }
     }, [selectedStatus]);
-    
+
     return (
       <>
-        <FormControlLabel
+{/*        <FormControlLabel
           control={
             <Checkbox
               checked={showAllJobs}
@@ -259,11 +276,11 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             />
           }
           label="Display All Jobs"
-        />
+        />*/}
         <div className={classNames(classes.filterMenu, classes.filterMenuLabel)}>
           View:
         </div>
-        <div 
+        <div
           onClick={handleFilterClick}
           className={classNames(classes.filterMenu, classes.filterMenuContainer)}
         >
@@ -272,12 +289,12 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             IconComponent &&
             <IconComponent className={classes.filterIcon}/>
           }
-          <span 
+          <span
             style={{color: statusReference[selectedStatus] && statusReference[selectedStatus].color || 'inherit'}}
           >
             {
-              statusReference[selectedStatus] 
-                ? statusReference[selectedStatus].text 
+              statusReference[selectedStatus]
+                ? statusReference[selectedStatus].text
                 : selectedStatus === '-1'
                   ? 'All'
                   : 'Default'
@@ -295,7 +312,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
           open={Boolean(filterMenuAnchorEl)}
           onClose={() => setFilterMenuAnchorEl(null)}
         >
-          <MenuItem 
+          <MenuItem
             classes={{
               root: classes.filterMenuItemRoot,
               selected: classes.filterMenuItemSelected
@@ -306,7 +323,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             All
           </MenuItem>
           {Object.values(statusReference).map(statusObj => (
-            <MenuItem 
+            <MenuItem
               key={statusObj.statusNumber}
               classes={{
                 root: classes.filterMenuItemRoot,
@@ -321,6 +338,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
             </MenuItem>
           ))}
         </Menu>
+        <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
       </>
     );
   }
@@ -351,15 +369,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Jobs...'}
-        tableData={
-          showAllJobs 
-            ? jobs 
-            : selectedStatus === '-2'
-              ? filteredJobs
-              : jobs.filter(
-                (job: any) =>  job.status === Number(selectedStatus)
-              )
-        }
+        tableData={filteredJobs}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
       />
