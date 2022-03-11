@@ -7,8 +7,9 @@ import { Job } from '../../../../../actions/job/job.types';
 import SidebarTodayJobs from '../sidebar/sidebar-today-jobs';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import {FilterJobs} from "../tickets-map-view";
-import { useSelector} from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
 import {parseISOMoment} from "../../../../../helpers/format";
+import { getAllJobsAPI } from "api/job.api";
 
 interface Props {
   classes: any;
@@ -16,11 +17,13 @@ interface Props {
 }
 
 function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
+  const dispatch = useDispatch();
   const [jobs, setJobs] = useState<Job[]>([]);
-  const { isLoading = true, jobs: allJobs } = useSelector(
+  const { isLoading = true, jobs: allJobs, refresh } = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
+      refresh: jobState.refresh,
     })
   );
 
@@ -54,6 +57,12 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   useEffect(() => {
     setJobs(filterScheduledJobs(allJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))));
   }, [filterJobs]);
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsAPI());
+    }
+  }, [refresh]);
 
 
   return (
