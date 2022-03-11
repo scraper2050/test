@@ -526,7 +526,7 @@ function BCServiceTicketModal({
           </Grid>
           <Grid item xs={4} />
         </Grid>
-
+        <div className={'modalDataContainer'}>
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
@@ -711,6 +711,7 @@ function BCServiceTicketModal({
             </Button>
           )}
         </DialogActions>
+        </div>
       </form>
     </DataContainer >
   );

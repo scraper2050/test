@@ -7,6 +7,7 @@ import SidebarJobs from "../sidebar/sidebar-jobs";
 import {FilterJobs} from "../tickets-map-view";
 import {useDispatch, useSelector} from "react-redux";
 import {parseISOMoment} from "../../../../../helpers/format";
+import { getAllJobsAPI } from "api/job.api";
 
 interface Props {
   classes: any;
@@ -15,11 +16,13 @@ interface Props {
 }
 
 function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props) {
+  const dispatch = useDispatch();
   const [jobs, setJobs] = useState<any[]>([]);
-  const { isLoading = true, jobs: allJobs } = useSelector(
+  const { isLoading = true, jobs: allJobs, refresh } = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
+      refresh: jobState.refresh,
     })
   );
 
@@ -47,6 +50,12 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       return filter;
     });
   };
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsAPI());
+    }
+  }, [refresh]);
 
   useEffect(() => {
     setJobs(filterScheduledJobs(allJobs));
