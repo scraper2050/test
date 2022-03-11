@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
   }),
   rangePickerPopup: {
     zIndex: 1,
-    padding: 4,
-    borderRadius: 8,
+    //padding: 4,
+    //borderRadius: 8,
     border: '1px solid #E0E0E0',
     boxShadow: '3px 3px 3px #E0E0E088',
     backgroundColor: 'white',

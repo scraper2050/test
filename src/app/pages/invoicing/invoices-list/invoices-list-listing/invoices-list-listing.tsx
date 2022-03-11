@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   getInvoicingList,
   loadingInvoicingList
@@ -19,6 +19,9 @@ import {openModalAction, setModalDataAction} from "../../../../../actions/bc-mod
 import {modalTypes} from "../../../../../constants";
 import BCMenuButton from "../../../../components/bc-menu-button";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
+import BCDateRangePicker
+  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+import moment from "moment";
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -31,6 +34,7 @@ function InvoicingListListing({ classes, theme }: any) {
   const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
   const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const showInvoiceDetail = (id:string) => {
 /*    dispatch(setModalDataAction({
       'data': {
@@ -231,6 +235,14 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
+  const filteredInvoices = selectionRange ? invoiceList.filter((invoice: any) =>  {
+    return moment(invoice.createdAt).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+  }) : invoiceList;
+
+  function Toolbar() {
+    return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} showClearButton={true} />
+  }
+
   return (
     <DataContainer id={'0'}>
       <BCTableContainer
@@ -239,7 +251,9 @@ function InvoicingListListing({ classes, theme }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Invoices...'}
-        tableData={invoiceList}
+        tableData={filteredInvoices}
+        toolbarPositionLeft={true}
+        toolbar={Toolbar()}
       />
     </DataContainer>
   );
