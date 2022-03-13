@@ -16,7 +16,6 @@ import {modalTypes} from "../../../constants";
 import {useDispatch, useSelector} from "react-redux";
 import {
   formatCurrency, formatDateYMD,
-  formatShortDateNoDay
 } from "../../../helpers/format";
 import BCDateRangePicker
   , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";
@@ -32,7 +31,7 @@ interface Props {
 const ITEMS = [
   {id: 0, title:'Record Payment'},
   {id: 1, title:'Past Payment'},
-  {id: 2, title:'View Details'},
+  // {id: 2, title:'View Details'},
 ]
 
 function Payroll({classes}: Props) {
@@ -63,7 +62,6 @@ function Payroll({classes}: Props) {
     setTableData(selectedIDs.length > 0 ?
       contractors.filter((item: any) => selectedIDs.indexOf(item._id) >=0) : contractors);
   }, [selectedIDs, contractors])
-
 
   const recordPayment = (vendor: any) => {
     dispatch(setModalDataAction({

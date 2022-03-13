@@ -287,7 +287,9 @@ function BCJobModal({
 
     await setFieldValue(fieldName, '');
     await setFieldValue('jobSiteId', '');
+    await setFieldValue('customerContactId', '');
     await setJobSiteValue([]);
+    await setContactValue([]);
     await setJobLocationValue(newValue);
 
     if (locationId !== '') {
@@ -515,7 +517,9 @@ function BCJobModal({
           /*if (response.message === 'Job created successfully.' || response.message === 'Job edited successfully.') {
             await callEditTicketAPI(formatedTicketRequest);
           }*/
-          dispatch(refreshServiceTickets(true));
+          if(!job.jobFromMap){
+            dispatch(refreshServiceTickets(true));
+          }
           dispatch(setTicket2JobID(response.job?.ticket));
           dispatch(refreshJobs(true));
           dispatch(closeModalAction());
@@ -532,7 +536,6 @@ function BCJobModal({
               .then((response: any) => {
                 dispatch(setOpenServiceTicketLoading(false));
                 dispatch(setOpenServiceTicket(response));
-                dispatch(refreshServiceTickets(true));
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
@@ -1125,9 +1128,17 @@ function BCJobModal({
                     }
                     options={
                       contacts && contacts.length !== 0
-                        ? contacts.sort((a: any, b: any) =>
-                          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                        )
+                        ? FormikValues.jobLocationId && jobLocationValue && jobLocationValue.contacts 
+                          ? jobLocationValue.contacts.filter((contact:any) => 
+                              contact.isActive
+                            ).sort((a: any, b: any) =>
+                              a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                            )
+                          : contacts.filter((contact:any) => 
+                              contact.isActive
+                            ).sort((a: any, b: any) =>
+                              a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                            )
                         : []
                     }
                     renderInput={(params) => (

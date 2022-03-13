@@ -5,16 +5,14 @@ import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './schedule-jobs.styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Fab, useTheme, withStyles } from "@material-ui/core";
+import { useTheme, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
-import { info, error } from 'actions/snackbar/snackbar.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
 import { useLocation, useHistory } from 'react-router-dom';
-import * as CONSTANTS from "../../../../constants";
 import { CSButton } from "../../../../helpers/custom";
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 
@@ -25,15 +23,6 @@ function ScheduleJobsPage({ classes }: any) {
   const location = useLocation<any>();
   const history = useHistory();
   const locationState = location.state;
-
-
-  const [currentPage, setCurrentPage] = useState({
-    page: 0,
-    pageSize: 10,
-    sortBy: [],
-  });
-
-
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
 
   useEffect(() => {
@@ -47,13 +36,8 @@ function ScheduleJobsPage({ classes }: any) {
   }, []);
 
   const handleTabChange = (newValue: number) => {
-
-
     let tempLocationState = { ...locationState };
-
     delete tempLocationState["onUpdatePage"];
-
-
 
     history.replace({
       ...history.location,
@@ -67,7 +51,6 @@ function ScheduleJobsPage({ classes }: any) {
   };
 
   const customers = useSelector(({ customers }: any) => customers.data);
-  const jobTypes = useSelector((state: any) => state.jobTypes.data);
 
   const openCreateTicketModal = () => {
     if (customers.length !== 0) {

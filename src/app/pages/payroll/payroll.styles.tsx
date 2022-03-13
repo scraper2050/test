@@ -1,6 +1,7 @@
 import { Theme } from '@material-ui/core/styles';
 import { swipe_wrapper, dataContainer, fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
-import {MENU_TEXT_COLOR, PRIMARY_BLUE} from "../../../constants";
+import {PRIMARY_BLUE, PRIMARY_GREEN} from "../../../constants";
+
 export default (theme: Theme): any => ({
   ...fabRoot,
   ...pageContent,
@@ -32,5 +33,40 @@ export default (theme: Theme): any => ({
     whiteSpace: 'normal',
     wordWrap: 'break-word',
     minWidth: 250,
+  },
+  statusChip: {
+    textTransform: 'none',
+    fontSize: 14,
+    borderRadius: 8,
+    width: 80,
+    height: '30px',
+    backgroundColor: `${PRIMARY_GREEN}44`,
+  },
+  unPaidChip: {
+    backgroundColor: '#F5005744',
+  },
+  totalContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 200,
+    marginLeft: 10,
+  },
+  totalText: {
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  totalValue: {
+    fontSize: 18,
+    flex: 1,
+    color: PRIMARY_GREEN,
+  },
+  totalTextSmall: {
+    fontSize: 12,
+  },
+  totalValueSmall: {
+    fontSize: 16,
   },
 });

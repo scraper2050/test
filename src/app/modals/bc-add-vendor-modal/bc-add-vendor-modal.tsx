@@ -18,7 +18,7 @@ function BCAddVendorModal({
   const [isLoading, setLoading] = useState<boolean>(false);
   const [contractors, setContractors] = useState<any>(null);
   const [resStatus, setResStatus] = useState<any>(null);
-  
+
   const {
     'values': FormikValues,
     'handleChange': formikChange,
@@ -53,8 +53,8 @@ function BCAddVendorModal({
             }, 200);
           }
             setSubmitting(false);
-          
-          // Dispatch(refreshVendor(true));          
+
+          // Dispatch(refreshVendor(true));
         })
           .catch((err: any) => {
             setSubmitting(false);
@@ -151,6 +151,7 @@ function BCAddVendorModal({
               placeholder={'Search Vendor'}
               type={'email'}
               value={FormikValues.email}
+              autoFocus
             />
             <Divider
               className={classes.formDivider}
@@ -180,7 +181,7 @@ function BCAddVendorModal({
                       {'This account is not found. Click on Invite to invite this user to BlueClerk'}
                     </Typography>
                   : null}
-                {resStatus === 0 && 
+                {resStatus === 0 &&
                 <Typography
                   gutterBottom
                   variant={'subtitle1'}>

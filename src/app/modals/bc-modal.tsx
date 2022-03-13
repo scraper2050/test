@@ -51,6 +51,8 @@ import BCRescheduleJobModal from "./bc-job-modal/bc-reschedule-job-modal";
 import BcEditCommissionModal from "./bc-edit-commission-modal/bc-edit-commission-modal";
 import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-payment-record-modal";
 import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
+import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
+import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -103,6 +105,7 @@ function BCModal() {
           onSubmit={data.onSubmit}
           ticket={data.ticketData}
           allowEditWithJob={data.allowEditWithJob}
+          refreshTicketAfterEditing={data.refreshTicketAfterEditing}
         />);
         break;
       case modalTypes.VIEW_SERVICE_TICKET_MODAL:
@@ -456,6 +459,15 @@ function BCModal() {
         });
         setComponent(<BCSalesTaxModal />);
         break;
+      case modalTypes.EDIT_INVOICE_NUMBER_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BCEditInvoiceNumber />);
+          break;
       case modalTypes.PAYMENT_TERMS_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
@@ -542,9 +554,21 @@ function BCModal() {
         });
         data.maxHeight='100%';
         setComponent(<BcPayrollPaymentDetailModal
-          vendor={data.vendor}
           payment={data.payment}
           dateRange={data.dateRange}
+        />);
+        break;
+      case modalTypes.WARNING_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcWarningModal
+          message={data.message}
+          subMessage={data.subMessage}
+          action={data.action}
         />);
         break;
 

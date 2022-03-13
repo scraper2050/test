@@ -7,7 +7,8 @@ export const SECONDARY_GREY = '#c4c4c4';
 export const PRIMARY_DARK_GREY = 'rgba(0, 0, 0, 0.5)';
 export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 export const PRIMARY_ORANGE = '#FE5500';
-export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
+// export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
+export const PRIMARY_GREEN = '#50AE55';
 export const PRIMARY_CARD_BLUE = '#66B8F9';
 export const ERROR_RED = '#FF0000';
 
@@ -72,6 +73,7 @@ export const modalTypes = {
   'EDIT_ITEM_MODAL': 'edit-item-modal',
   'ADD_ITEM_MODAL': 'add-item-modal',
   'SALES_TAX_MODAL': 'sales-tax-modal',
+  'EDIT_INVOICE_NUMBER_MODAL': 'edit-invoice-number-modal',
   'PAYMENT_TERMS_MODAL': 'payment-terms-modal',
   'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
   'PAYMENT_RECORD_MODAL': 'payment_record_modal',
@@ -81,4 +83,5 @@ export const modalTypes = {
   'EDIT_COMMISSION_MODAL': 'edit_commission_modal',
   'PAYROLL_RECORD_PAYMENT_MODAL': 'payroll_record_payment_modal',
   'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
+  'WARNING_MODAL': 'warning_modal',
 };

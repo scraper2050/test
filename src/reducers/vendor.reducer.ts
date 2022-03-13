@@ -1,6 +1,7 @@
 import { VendorActionType, VendorsState } from 'actions/vendor/vendor.types';
 import { Reducer } from 'redux';
 import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
+import {ContractorPayment} from "../actions/payroll/payroll.types";
 
 const initialVendors: VendorsState = {
   loading: false,
@@ -55,6 +56,22 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
         'loading': false,
         'vendorObj': action.payload.details,
         'vendorPayments': action.payload.payments,
+      };
+    case VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT:
+    case VendorActionType.DELETE_SINGLE_VENDOR_PAYMENT:
+      const payments = [...state.vendorPayments];
+      let index;
+      index = payments.findIndex((payment: ContractorPayment) => payment._id === action.payload._id);
+      if (index >= 0) {
+        if (action.type === VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT)
+          payments[index] = {...payments[index], ...action.payload};
+        else
+          payments.splice(index, 1);
+      }
+
+      return {
+        ...state,
+        'vendorPayments': payments,
       };
     case VendorActionType.SET:
       return {

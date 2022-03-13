@@ -1,4 +1,6 @@
 import request from 'utils/http.service';
+import {normalizeData} from "./payroll.api";
+import {ContractorPayment} from "../actions/payroll/payroll.types";
 
 export const getCompanyContracts = async () => {
   let responseData = null;
@@ -27,9 +29,18 @@ export const getContractorDetail = async (data: any, type: string = 'vendor') =>
   let responseData;
   try {
     const response: any = await request('/getContractorDetail', 'POST', body, false);
-    responseData = response.data;
+    const {details, payments} = response.data;
+    responseData = {
+      details,
+      payments: payments.map((payment: ContractorPayment) => ({
+        ...payment,
+        payedPerson: normalizeData(payment.contractor, 'contractor'),
+        contractor: undefined,
+        })
+      )
+    }
   } catch (err) {
-    responseData = err.data;
+    console.log(err);
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||

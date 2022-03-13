@@ -22,14 +22,10 @@ import {PRIMARY_BLUE, PRIMARY_RED} from "../../../constants";
 
 function BcPayrollPaymentDetailModal({
                                        classes,
-                                       vendor,
                                        payment,
                                }: any): JSX.Element {
   const dispatch = useDispatch();
   const history = useHistory();
-
-  useEffect(() => {
-  }, []);
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -66,7 +62,7 @@ function BcPayrollPaymentDetailModal({
       <Grid container className={classes.modalPreview} justify={'space-around'}>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>VENDOR</Typography>
-          <Typography variant={'h6'} className={classes.previewText}>{vendor.info.companyName}</Typography>
+          <Typography variant={'h6'} className={classes.previewText}>{payment.payedPerson.vendor}</Typography>
         </Grid>
         <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>

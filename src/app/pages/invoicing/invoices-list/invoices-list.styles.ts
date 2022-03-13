@@ -19,5 +19,8 @@ export default (theme: Theme): any => ({
   currencySign: {
     'position': 'relative',
     'top': '-1px',
+  },
+  noLeftMargin: {
+    marginLeft: '0 !important',
   }
 });

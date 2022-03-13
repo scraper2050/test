@@ -64,7 +64,8 @@ function BCServiceTicketModal({
   },
   onSubmit,
   detail = false,
-  allowEditWithJob = false
+  allowEditWithJob = false,
+  refreshTicketAfterEditing = true,
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
@@ -115,7 +116,9 @@ function BCServiceTicketModal({
 
     await setFieldValue(fieldName, '');
     await setFieldValue('jobSiteId', '');
+    await setFieldValue('customerContactId', '');
     await setJobSiteValue([]);
+    await setContactValue([]);
     await setJobLocationValue(newValue);
     if (locationId !== '') {
       await dispatch(getJobSites({ customerId,
@@ -247,7 +250,9 @@ function BCServiceTicketModal({
               setSubmitting(false);
               return;
             }
-            dispatch(refreshServiceTickets(true));
+            if(refreshTicketAfterEditing){
+              dispatch(refreshServiceTickets(true));
+            }
             dispatch(refreshJobs(true));
             dispatch(closeModalAction());
             setTimeout(() => {
@@ -263,7 +268,7 @@ function BCServiceTicketModal({
 
               if (typeof onSubmit == 'function') {
                 setTimeout(() => {
-                  onSubmit(response);
+                  onSubmit(response, ticket._id);
                 }, 500);
               }
             }
@@ -403,7 +408,7 @@ function BCServiceTicketModal({
 
   useEffect(() => {
     if (ticket.customer?._id !== '') {
-      if (jobSites.length !== 0 && jobLocationValue._id && ticket?.customer?._id === FormikValues.customerId) {
+      if (jobSites.length !== 0 && jobLocationValue?._id && ticket?.customer?._id === FormikValues.customerId) {
         setJobSiteValue(jobSites.filter((jobSite: any) => (jobSite._id === ticket.jobSite || jobSite._id === ticket?.jobSite?._id))[0]);
       }
     }
@@ -521,7 +526,7 @@ function BCServiceTicketModal({
           </Grid>
           <Grid item xs={4} />
         </Grid>
-
+        <div className={'modalDataContainer'}>
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
@@ -611,7 +616,21 @@ function BCServiceTicketModal({
                   getOptionLabel={option => option.name ? option.name : ''}
                   id={'tags-standard'}
                   onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
-                  options={contacts && contacts.length !== 0 ? contacts.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+                  options={
+                    contacts && contacts.length !== 0
+                      ? FormikValues.jobLocationId && jobLocationValue && jobLocationValue.contacts 
+                        ? jobLocationValue.contacts.filter((contact:any) => 
+                            contact.isActive
+                          ).sort((a: any, b: any) =>
+                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                          )
+                        : contacts.filter((contact:any) => 
+                            contact.isActive
+                          ).sort((a: any, b: any) =>
+                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                          )
+                      : []
+                  }
                   renderInput={params =>
                     <TextField
                       {...params}
@@ -692,6 +711,7 @@ function BCServiceTicketModal({
             </Button>
           )}
         </DialogActions>
+        </div>
       </form>
     </DataContainer >
   );

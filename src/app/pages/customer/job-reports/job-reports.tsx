@@ -11,13 +11,16 @@ import { useHistory, useLocation } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
+import moment from "moment";
+import BCDateRangePicker, {Range}
+  from "../../../components/bc-date-range-picker/bc-date-range-picker";
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
   const customStyles = useCustomStyles();
   const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
-
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
 
@@ -128,6 +131,9 @@ function JobReportsPage({ classes, theme }: any) {
     }
   ];
 
+  const filteredReports = selectionRange ? jobReports.filter((report: any) => {
+    return moment(report.jobDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+  }) : jobReports;
 
   useEffect(() => {
     dispatch(loadJobReportsActions.fetch());
@@ -150,6 +156,16 @@ function JobReportsPage({ classes, theme }: any) {
   };
 
   const handleRowClick = (event: any, row: any) => handleViewMore(row);
+
+  function Toolbar() {
+    return  <BCDateRangePicker
+      range={selectionRange}
+      onChange={setSelectionRange}
+      showClearButton={true}
+      title={'Filter by Job Date...'}
+      classes={{button: classes.noLeftMargin}}
+    />
+  }
 
   return (
     <div className={classes.pageMainContainer}>
@@ -188,7 +204,9 @@ function JobReportsPage({ classes, theme }: any) {
                 search
                 searchPlaceholder={'Search Job Reports...'}
                 setPage={setCurrentPage}
-                tableData={jobReports}
+                tableData={filteredReports}
+                toolbarPositionLeft={true}
+                toolbar={Toolbar()}
               />
             </div>
             <div

@@ -41,6 +41,7 @@ function BCMapFilterHead({
   const mapStyles = useStyles();
   const [dateValue, setDateValue] = useState<any>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     setDateValue(startDate)
@@ -148,7 +149,7 @@ function BCMapFilterHead({
           <i className="material-icons">keyboard_arrow_left</i>
         </button>
 
-        <IconCalendar className="calendar_icon"/>
+        <IconCalendar className="calendar_icon" onClick={() => setIsCalendarOpen(true)} />
         <DatePicker
           autoOk
           disabled={disableDate}
@@ -165,6 +166,9 @@ function BCMapFilterHead({
           required={false}
           value={dateValue}
           variant={"inline"}
+          open={isCalendarOpen}
+          onOpen={() => setIsCalendarOpen(true)}
+          onClose={() => setIsCalendarOpen(false)}
         />
         <button
           className="next_btn"
