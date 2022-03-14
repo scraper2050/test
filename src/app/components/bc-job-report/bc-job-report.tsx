@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Button, Grid, withStyles } from '@material-ui/core';
 import { formatDatTimell, formatDatTimelll, formatTime } from 'helpers/format';
@@ -10,7 +10,7 @@ import styles, {
 import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
 import EmailHistory from './email-history';
 import { useDispatch } from 'react-redux';
-import { callCreateInvoiceAPI } from 'api/invoicing.api';
+import { callCreateInvoiceAPI, getInvoiceDetail } from 'api/invoicing.api';
 import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import {CSButton} from "../../../helpers/custom";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
@@ -45,9 +45,20 @@ const getJobs = (tasks:any = [], jobTypes:any) => {
 function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   const history = useHistory();
   const dispatch = useDispatch();
+  const [invoiceDetailResult, setInvoiceDetailResult] = useState<boolean>(false);
 
   const { job, invoiceCreated, invoice } = jobReportData;
   //console.log({jobReportData});
+
+  useEffect(() => {
+    if(invoice) {
+      getInvoiceDetail(invoice._id).then((response) => {
+        if (response.status === 1) {
+          setInvoiceDetailResult(true);
+        }
+      })
+    }
+  }, []);
 
   if (!jobReportData || !job) {
     return null;
@@ -91,7 +102,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
       customerId: string;
       customerContactId?: string;
       customerPO?: string;
-    } = { 
+    } = {
       'jobId': job._id,
       'customerId': job.customer._id,
     };
@@ -482,9 +493,9 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Technician\'s Comment'}
                     </strong>
                     {
-                      technicianNotes.length 
-                        ? technicianNotes.map((note:string, index:number) => 
-                          <p key={index} className={classNames(classes.noMargin, classes.noMarginBottom)}>{note}</p>) 
+                      technicianNotes.length
+                        ? technicianNotes.map((note:string, index:number) =>
+                          <p key={index} className={classNames(classes.noMargin, classes.noMarginBottom)}>{note}</p>)
                         : <p className={classNames(classes.noMargin)}>{'N/A'}</p>
                     }
                   </div>
@@ -733,11 +744,11 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
           />
           {
             invoiceCreated
-              ? <CSButton
+              ? (invoice?.isDraft || invoiceDetailResult) && <CSButton
                 variant="contained"
                 onClick={showInvoice}
                 color="primary">
-                {invoice?.isDraft ? 'View Draft' : 'View Invoice'}
+                {invoice?.isDraft ? 'View Draft' : (invoiceDetailResult ? 'View Invoice' : '')}
               </CSButton>
               : <CSButton
                 variant="contained"
