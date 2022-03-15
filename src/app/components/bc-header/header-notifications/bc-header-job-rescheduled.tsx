@@ -46,7 +46,7 @@ export default function JobRescheduledNotication(item :NotificationItem) {
         {metadata.jobId}
       </strong>
       <span className='note'>
-        {`Note: ${shortenStringWithElipsis(rescheduleNote, 24)}`}
+        {`Note: ${shortenStringWithElipsis(rescheduleNote || '', 24)}`}
       </span>
       <span>
         {fromNow(new Date(createdAt))}
