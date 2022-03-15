@@ -287,9 +287,7 @@ function BCJobModal({
 
     await setFieldValue(fieldName, '');
     await setFieldValue('jobSiteId', '');
-    await setFieldValue('customerContactId', '');
     await setJobSiteValue([]);
-    await setContactValue([]);
     await setJobLocationValue(newValue);
 
     if (locationId !== '') {
@@ -1128,17 +1126,9 @@ function BCJobModal({
                     }
                     options={
                       contacts && contacts.length !== 0
-                        ? FormikValues.jobLocationId && jobLocationValue && jobLocationValue.contacts 
-                          ? jobLocationValue.contacts.filter((contact:any) => 
-                              contact.isActive
-                            ).sort((a: any, b: any) =>
-                              a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                            )
-                          : contacts.filter((contact:any) => 
-                              contact.isActive
-                            ).sort((a: any, b: any) =>
-                              a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                            )
+                        ? contacts.sort((a: any, b: any) =>
+                          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                        )
                         : []
                     }
                     renderInput={(params) => (
