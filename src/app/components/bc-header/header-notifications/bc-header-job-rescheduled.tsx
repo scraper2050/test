@@ -30,7 +30,7 @@ export default function JobRescheduledNotication(item :NotificationItem) {
       dispatch(openModalAction());
     }, 200);
   };
-  const filteredHistory: {note: string}[] = item.metadata.track.filter(history=>history.action.includes('Rescheduling the job'))
+  const filteredHistory: {note: string}[] = item.metadata.track.filter(history=>history.action.includes('rescheduling'))
   const rescheduleNote: string = filteredHistory.length ? filteredHistory[filteredHistory.length-1].note: '-'
   return <MenuItem
     className={readStatus.isRead
@@ -46,7 +46,7 @@ export default function JobRescheduledNotication(item :NotificationItem) {
         {metadata.jobId}
       </strong>
       <span className='note'>
-        {`Note: ${shortenStringWithElipsis(rescheduleNote, 24)}`}
+        {`Note: ${shortenStringWithElipsis(rescheduleNote || '', 24)}`}
       </span>
       <span>
         {fromNow(new Date(createdAt))}
