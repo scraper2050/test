@@ -754,7 +754,7 @@ function BCJobModal({
   ];
 
   const filteredJobRescheduleHistory: any[] = job.track 
-    ? job.track.filter((history: {action: string;}) => history.action.includes('Rescheduling the job')) 
+    ? job.track.filter((history: {action: string;}) => history.action.includes('rescheduling')) 
     : []
 
   return (
