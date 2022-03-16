@@ -287,8 +287,6 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     return contactDetail;
   }
 
-  console.log('ini itu invoiceDetail', invoiceDetail);
-
   let customerAddress: any = invoiceDetail?.customer?.address ? ({
     street: invoiceDetail?.customer?.address?.street || '',
     city: invoiceDetail?.customer?.address?.city || '',
