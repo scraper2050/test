@@ -287,6 +287,16 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     return contactDetail;
   }
 
+  console.log('ini itu invoiceDetail', invoiceDetail);
+
+  let customerAddress: any = invoiceDetail?.customer?.address ? ({
+    street: invoiceDetail?.customer?.address?.street || '',
+    city: invoiceDetail?.customer?.address?.city || '',
+    state: invoiceDetail?.customer?.address?.state || '',
+    zipcode: invoiceDetail?.customer?.address?.zipcode || '',
+  }) : null;
+  customerAddress = customerAddress ? Object.values(customerAddress).filter(key=>!!key) : '';
+  
   let serviceAddressLocation: any = invoiceDetail?.job?.jobLocation ? ({
     name: invoiceDetail?.job?.jobLocation?.name || '',
     street: invoiceDetail?.job?.jobLocation?.address?.street || '',
@@ -337,18 +347,25 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                     <span>{composeAddress()}</span>
                   </div>
                   <div className={invoiceStyles.companyInfo}>
-                    <small>JOB LOCATION</small>
-                    {serviceAddressLocation && (
+                    {!serviceAddressLocation &&!serviceAddressSite ? (
                       <>
+                        <small>SERVICE ADDRESS</small>
+                        <span>{customerAddress.length && Array.isArray(customerAddress) ? customerAddress.join(', ') : ''}</span>
+                      </>
+                    ) : serviceAddressSite && serviceAddressLocation ? (
+                      <>
+                        <small>SERVICE ADDRESS</small>
+                        <span>{serviceAddressSite[0]}</span>
+                        <span>{serviceAddressSite.slice(1).join(', ')}</span>
+                        <small style={{marginTop: 20}}>JOB LOCATION</small>
                         <span>{serviceAddressLocation[0]}</span>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                       </>
-                    )}
-                    <small style={{marginTop: 20}}>SERVICE ADDRESS</small>
-                    {serviceAddressSite && (
+                    ) : serviceAddressLocation && (
                       <>
-                        <span>{serviceAddressSite[0]}</span>
-                        <span>{serviceAddressSite.slice(1).join(', ')}</span>
+                        <small>SERVICE ADDRESS</small>
+                        <span>{serviceAddressLocation[0]}</span>
+                        <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                       </>
                     )}
                   </div>
