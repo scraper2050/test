@@ -337,11 +337,18 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                     <span>{composeAddress()}</span>
                   </div>
                   <div className={invoiceStyles.companyInfo}>
-                    <small>SERVICE ADDRESS</small>
-                    {(serviceAddressSite || serviceAddressLocation) && (
+                    <small>JOB LOCATION</small>
+                    {serviceAddressLocation && (
                       <>
-                        <h4 style={{fontWeight: 400}}>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</h4>
-                        <span>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span>
+                        <span>{serviceAddressLocation[0]}</span>
+                        <span>{serviceAddressLocation.slice(1).join(', ')}</span>
+                      </>
+                    )}
+                    <small style={{marginTop: 20}}>SERVICE ADDRESS</small>
+                    {serviceAddressSite && (
+                      <>
+                        <span>{serviceAddressSite[0]}</span>
+                        <span>{serviceAddressSite.slice(1).join(', ')}</span>
                       </>
                     )}
                   </div>
