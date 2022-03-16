@@ -169,7 +169,7 @@ function Payroll({classes}: Props) {
       isLoading={loading}
       //onRowClick={handleRowClick}
       search
-      searchPlaceholder = 'Search Vendor...'
+      searchPlaceholder = 'Search...'
       setPage={setCurrentPage}
       tableData={tableData}
       toolbarPositionLeft={true}
