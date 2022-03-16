@@ -35,6 +35,8 @@ import {RootState} from "../../../reducers";
 import {setTicketSelected} from "../../../actions/map/map.actions";
 import {getServiceTicketDetail} from "../../../api/service-tickets.api";
 import { getAllJobTypesAPI } from 'api/job.api';
+import { getJobLocation } from 'api/job-location.api';
+import { getJobSite } from 'api/job-site.api';
 import {formatDate, formatTime} from "../../../helpers/format";
 import {
   getJobTypesFromJob,
@@ -154,22 +156,45 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
           if (status === 1) {
             data = serviceTicket;
           }
-          const { customer, customerContactId, customerPO, dueDate, images, jobLocation, jobSite, note, tasks, track } = data;
+          let updatedJobLocation: any;
+          if(data?.jobLocation?._id){
+            const response = await getJobLocation(data?.jobLocation?._id);
+            if(response.length && response[0]?.location?.coordinates?.length){
+              updatedJobLocation = {...data.jobLocation, location: response[0].location}
+            } else {
+              updatedJobLocation = {...data.jobLocation}
+            }
+          }
+          let updatedJobSite: any;
+          if(data?.jobSite?._id){
+            const response = await getJobSite(data?.jobSite?._id);
+            if(response.length && response[0]?.location?.coordinates?.length){
+              updatedJobSite = {...data.jobSite, location: response[0].location}
+            } else {
+              updatedJobSite = {...data.jobSite}
+            }
+          }
+          const { customer, customerContactId, customerPO, dueDate, images, note, tasks, track } = data;
           const updatedTickets = tickets.map((ticket:any, index: number)=>{
             if(ticket._id === ticketId){
-              return ({
+              const newTicket = {
                 ...ticket,
-                customer: ticket?.customer?._id === customer?._id ? ticket.customer : customer,
+                customer,
                 customerContactId,
                 customerPO,
                 dueDate,
                 images,
-                jobLocation: ticket?.jobLocation?._id === jobLocation?._id ? ticket.jobLocation : jobLocation,
-                jobSite: ticket?.jobSite?._id === jobSite?._id ? ticket.jobSite : jobSite,
                 note,
                 tasks,
                 track,
-              });
+              };
+              if(updatedJobLocation){
+                newTicket.jobLocation = updatedJobLocation;
+              }
+              if(updatedJobSite){
+                newTicket.jobSite = updatedJobSite;
+              }
+              return newTicket;
             }
             return ticket
           });
