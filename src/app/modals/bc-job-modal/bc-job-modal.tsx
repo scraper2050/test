@@ -1126,7 +1126,9 @@ function BCJobModal({
                     }
                     options={
                       contacts && contacts.length !== 0
-                        ? contacts.sort((a: any, b: any) =>
+                        ? contacts.filter((contact:any) => 
+                          contact.isActive
+                        ).sort((a: any, b: any) =>
                           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
                         )
                         : []
