@@ -102,9 +102,9 @@ function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
       dispatch(setTicketSelected({_id: ''}));
     } else {
       const location =
-        (openTicketObj.jobSite?.location &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
-        (openTicketObj.jobLocation?.location && openTicketObj.jobLocation?.location.coordinates.length > 0) ||
-        (openTicketObj.customer?.location && openTicketObj.customer?.location.coordinates.length > 0);
+        (openTicketObj.jobSite?.location?.coordinates &&  openTicketObj.jobSite?.location.coordinates.length > 0) ||
+        (openTicketObj.jobLocation?.location?.coordinates && openTicketObj.jobLocation?.location.coordinates.length > 0) ||
+        (openTicketObj.customer?.location?.coordinates && openTicketObj.customer?.location.coordinates.length > 0);
 
       if (!location){
         dispatch(warning("There's no address on this ticket."));
