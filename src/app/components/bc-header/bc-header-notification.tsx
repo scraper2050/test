@@ -120,7 +120,12 @@ export default function HeaderNotifications({ items, close, loading }: HeaderNot
     {!items.length && <h4>
       {'No notifications'}
     </h4>}
-    {items && items.slice(0, 5).map((item:NotificationItem, index:number) => {
+    {items && items.filter((item:NotificationItem) => {
+      if(item.notificationType === 'JobRescheduled' && item.metadata && item.metadata.status !== 4){
+        return false;
+      }
+      return true;
+    }).slice(0, 5).map((item:NotificationItem, index:number) => {
       return renderItem(item, index);
     })}
     <Button
