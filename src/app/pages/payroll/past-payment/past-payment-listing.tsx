@@ -235,7 +235,7 @@ function PastPayments({classes}: Props) {
       isLoading={loading}
       //onRowClick={handleRowClick}
       search
-      searchPlaceholder = 'Search Vendor...'
+      searchPlaceholder = 'Search...'
       setPage={setCurrentPage}
       tableData={filteredPayments}
       toolbarPositionLeft={true}
