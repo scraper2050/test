@@ -16,6 +16,7 @@ type ServiceTicketNotification = {
   ticketId: string;
   jobId: string;
   track: any[];
+  status?: number;
 };
 
 export enum NotificationTypeTypes {
@@ -117,6 +118,7 @@ export interface NotificationState {
     error: string;
     response: string;
   }
+  notificationOpen: boolean;
 }
 
 

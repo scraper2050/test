@@ -1,6 +1,12 @@
 import { NotificationState } from './notifications.types';
 import { Reducer } from 'redux';
-import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
+import { 
+  acceptOrRejectContractNotificationAction, 
+  dismissNotificationAction, 
+  loadNotificationsActions, 
+  markNotificationAsRead, 
+  showNotificationPopup,
+} from 'actions/notifications/notifications.action';
 import { NotificationItem } from 'app/components/bc-header/bc-header-notification';
 import { types } from 'actions/auth/auth.types';
 import { NotificationActionTypes } from 'actions/notifications/notifications.types';
@@ -13,7 +19,8 @@ const initialNotificationState: NotificationState = {
     'loading': false,
     'response': ''
   },
-  'notifications': []
+  'notifications': [],
+  'notificationOpen': false,
 
 };
 
@@ -104,6 +111,11 @@ export const NotificationsReducer: Reducer<any> = (
           'error': action.payload,
           'loading': false
         }
+      };
+    case showNotificationPopup.toString():
+      return {
+        ...state,
+        'notificationOpen': action.payload,
       };
 
     default:
