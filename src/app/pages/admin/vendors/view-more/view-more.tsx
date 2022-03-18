@@ -132,15 +132,15 @@ function CompanyProfilePage({ classes }: any) {
   const editVendor = async () => {
     const companyContractId = localStorage.getItem('companyContractId');
     const result: any = await finishVendorApi({ contractId: companyContractId || '', status: 'finish'});
-    setVendorStatus(result?.status !== 0);
-    localStorage.setItem('companyContractStatus', (result?.status !== 0).toString());
+    setVendorStatus(result?.status === 0);
+    localStorage.setItem('companyContractStatus', (result?.status === 0).toString());
     dispatch(setModalDataAction({
       'data': {
         'removeFooter': false,
         'maxHeight': '450px',
         'height': '100%',
         'message': {
-          'title': result?.status !== 0 ? `Finish contract with ${companyName}` : result.message
+          'title': result?.status !== 0 ? `Contract finished with ${companyName}` : result.message
         },
         'contractId': companyContractId,
         'notificationType': 'ContractInvitation'
