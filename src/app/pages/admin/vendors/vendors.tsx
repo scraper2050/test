@@ -14,6 +14,8 @@ import { editableStatus } from 'app/models/contract';
 import styled from 'styled-components';
 import Tooltip from '@material-ui/core/Tooltip';
 import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
+import {remindVendorApi} from "../../../../api/vendor.api";
+import {error, info} from "../../../../actions/snackbar/snackbar.action";
 
 interface StatusTypes {
   status: number;
@@ -91,6 +93,16 @@ function AdminVendorsPage({ classes }: any) {
     'sortBy': prevPage ? prevPage.sortBy : []
   });
 
+  function callRemind(row: any) {
+      remindVendorApi({contractId: row.original?._id, status: 'remind'}).then((response: any) => {
+      if (response.status === 0) {
+        dispatch(error(response.message));
+      } else {
+        dispatch(info(response.message));
+      }
+    });
+  }
+
   const columns: any = [
     /*
      * {
@@ -139,6 +151,7 @@ function AdminVendorsPage({ classes }: any) {
               <CSButtonSmall
                 aria-label={'remind'}
                 color={'primary'}
+                onClick={() => callRemind(row)}
                 variant={'contained'}>
                 {'Remind'}
               </CSButtonSmall>
