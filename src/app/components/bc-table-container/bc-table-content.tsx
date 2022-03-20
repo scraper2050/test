@@ -60,7 +60,14 @@ function BCTableContent({
                           pagination = true,
                           invoiceTable = false,
                           setPage,
-                          cellSize
+                          cellSize,
+                          manualPagination = false,
+                          fetchFunction = () => {},
+                          total,
+                          currentPageIndex,
+                          setCurrentPageIndexFunction = () => {},
+                          currentPageSize,
+                          setCurrentPageSizeFunction = () => {},
                         }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -94,9 +101,12 @@ function BCTableContent({
       data,
       'initialState': {
         'sortBy': isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
-        'pageIndex': isDefault ? 0 : !onUpdatePage ? initialPageIndex : onUpdatePage.page > data.length / onUpdatePage.pageSize ? 0 : onUpdatePage.page,
-        'pageSize': isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
+        'pageIndex': manualPagination ? currentPageIndex : isDefault ? 0 : !onUpdatePage ? initialPageIndex : onUpdatePage.page > data.length / onUpdatePage.pageSize ? 0 : onUpdatePage.page,
+        'pageSize': manualPagination ? currentPageSize : isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
+      pageCount: manualPagination ? Math.ceil(total/currentPageSize) : Math.ceil(total/initialPageSize),
+      manualPagination,
+      autoResetPage: manualPagination ? false : true,
       'getSubRows': (row: any) => row && row.subRows || []
     },
     useGlobalFilter,
@@ -111,6 +121,10 @@ function BCTableContent({
   const handleChangePage = (event: any, newPage: any): any => {
     window.scrollTo(0, 20);
 
+    if(manualPagination){
+      fetchFunction(pageSize, newPage < pageIndex, newPage > pageIndex);
+    }
+
     if (setPage !== undefined) {
       setPage({
         pageSize,
@@ -119,17 +133,19 @@ function BCTableContent({
       });
     }
 
-    history.replace({
-      ...history.location,
-      'state': {
-        ...locationState,
-        'onUpdatePage': {
-          pageSize,
-          sortBy,
-          'page': newPage
+    if(!manualPagination){
+      history.replace({
+        ...history.location,
+        'state': {
+          ...locationState,
+          'onUpdatePage': {
+            pageSize,
+            sortBy,
+            'page': newPage
+          }
         }
-      }
-    });
+      });
+    }
 
     if (prevPage) {
       history.replace({
@@ -146,9 +162,18 @@ function BCTableContent({
       });
     }
     gotoPage(newPage);
+    if(manualPagination){
+      setCurrentPageIndexFunction(newPage);
+    }
   };
 
   const handleChangeRowsPerPage = (event: any) => {
+    if(manualPagination){
+      fetchFunction(Number(event.target.value));
+      setCurrentPageSizeFunction(Number(event.target.value))
+      setCurrentPageIndexFunction(0);
+    }
+
     const delay = 100;
     setTimeout(function () {
       scrollTop();
@@ -163,18 +188,19 @@ function BCTableContent({
       });
     }
 
-
-    history.replace({
-      ...history.location,
-      'state': {
-        ...locationState,
-        'onUpdatePage': {
-          'page': pageIndex,
-          sortBy,
-          'pageSize': Number(event.target.value)
+    if(!manualPagination){
+      history.replace({
+        ...history.location,
+        'state': {
+          ...locationState,
+          'onUpdatePage': {
+            'page': pageIndex,
+            sortBy,
+            'pageSize': Number(event.target.value)
+          }
         }
-      }
-    });
+      });
+    }
 
 
     if (prevPage) {
@@ -258,7 +284,7 @@ function BCTableContent({
   }, []);
 
   useEffect(() => {
-    if (!onUpdatePage) {
+    if (!onUpdatePage && !manualPagination) {
       if (curTab !== undefined) {
         setPageSize(10);
         gotoPage(0);
@@ -369,7 +395,7 @@ function BCTableContent({
                     'spacer': 'w-0 max-w-0'
                   }}
                   //colSpan={5}
-                  count={data.length}
+                  count={manualPagination ? total : data.length}
                   onChangePage={handleChangePage}
                   onChangeRowsPerPage={handleChangeRowsPerPage}
                   page={pageIndex}
@@ -377,7 +403,7 @@ function BCTableContent({
                   rowsPerPageOptions={[
                     5, 10, 25, {
                       'label': 'All',
-                      'value': data.length + 1
+                      'value': manualPagination ? total : data.length + 1
                     }
                   ]}
                   SelectProps={{
