@@ -44,6 +44,13 @@ function BCTableContainer({
   toolbar,
   noPadding = false,
   toolbarPositionLeft = false,
+  manualPagination = false,
+  fetchFunction = () => {},
+  total,
+  currentPageIndex,
+  setCurrentPageIndexFunction = () => {},
+  currentPageSize,
+  setCurrentPageSizeFunction = () => {},
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -159,6 +166,13 @@ function BCTableContainer({
               pagination={pagination}
               setPage={setPage}
               stickyHeader={stickyHeader}
+              manualPagination={manualPagination}
+              fetchFunction={fetchFunction}
+              total={total}
+              currentPageIndex={currentPageIndex}
+              setCurrentPageIndexFunction={setCurrentPageIndexFunction}
+              currentPageSize={currentPageSize}
+              setCurrentPageSizeFunction={setCurrentPageSizeFunction}
             />
         }
       </Grid>

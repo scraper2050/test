@@ -272,10 +272,10 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     let address = '';
     if (invoiceDetail?.customer?.contact?.phone)  address+= invoiceDetail?.customer?.contact?.phone + '\n';
     if (invoiceDetail?.customer?.info?.email)  address+= invoiceDetail?.customer?.info?.email + '\n';
-    if (invoiceDetail?.customer?.contact?.street)  address+= invoiceDetail?.customer?.contact?.street + '\n';
-    if (invoiceDetail?.customer?.contact?.city)  address+= invoiceDetail?.customer?.contact?.city + ',';
-    if (invoiceDetail?.customer?.contact?.state)  address+= invoiceDetail?.customer?.contact?.state;
-    if (invoiceDetail?.customer?.contact?.zipCode)  address+= invoiceDetail?.customer?.contact?.zipCode ;
+    if (invoiceDetail?.customer?.address?.street)  address+= invoiceDetail?.customer?.address?.street + '\n';
+    if (invoiceDetail?.customer?.address?.city)  address+= invoiceDetail?.customer?.address?.city + ', ';
+    if (invoiceDetail?.customer?.address?.state)  address+= invoiceDetail?.customer?.address?.state + ' ';
+    if (invoiceDetail?.customer?.address?.zipCode)  address+= invoiceDetail?.customer?.address?.zipCode + ' ' ;
     return address;
   }
 
@@ -291,7 +291,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     street: invoiceDetail?.customer?.address?.street || '',
     city: invoiceDetail?.customer?.address?.city || '',
     state: invoiceDetail?.customer?.address?.state || '',
-    zipcode: invoiceDetail?.customer?.address?.zipcode || '',
+    zipCode: invoiceDetail?.customer?.address?.zipCode || '',
   }) : null;
   customerAddress = customerAddress ? Object.values(customerAddress).filter(key=>!!key) : '';
   
@@ -352,17 +352,17 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                       </>
                     ) : serviceAddressSite && serviceAddressLocation ? (
                       <>
-                        <small>SERVICE ADDRESS</small>
-                        <span>{serviceAddressSite[0]}</span>
-                        <span>{serviceAddressSite.slice(1).join(', ')}</span>
-                        <small style={{marginTop: 20}}>JOB LOCATION</small>
-                        <span>{serviceAddressLocation[0]}</span>
+                        <small>JOB LOCATION</small>
+                        <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
+                        <small style={{marginTop: 20}}>SERVICE ADDRESS</small>
+                        <h4 style={{marginBottom: 0}}>{serviceAddressSite[0]}</h4>
+                        <span>{serviceAddressSite.slice(1).join(', ')}</span>
                       </>
                     ) : serviceAddressLocation && (
                       <>
                         <small>SERVICE ADDRESS</small>
-                        <span>{serviceAddressLocation[0]}</span>
+                        <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                       </>
                     )}

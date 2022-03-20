@@ -117,4 +117,16 @@ export const finishVendorApi = ({ contractId }:AcceptRejectContractProps) => {
   });
 };
 
+export const remindVendorApi = ({ contractId }:AcceptRejectContractProps) => {
+  return new Promise((resolve, reject) => {
+    request(`/remindContractor`, 'post', { contractId })
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 

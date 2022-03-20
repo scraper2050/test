@@ -17,6 +17,7 @@ import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
 import MapIcon from '@material-ui/icons/Map';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { getCompanyProfileAction } from "../../../actions/user/user.action";
+import { showNotificationPopup } from "actions/notifications/notifications.action";
 import SearchIcon from '@material-ui/icons/Search';
 import { logoutAction, resetStore } from "../../../actions/auth/auth.action";
 import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
@@ -331,6 +332,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
   }, [user]);
 
   const onClickLink = (strLink: string): void => {
+    dispatch(showNotificationPopup(false));
     history.push(strLink);
   };
 

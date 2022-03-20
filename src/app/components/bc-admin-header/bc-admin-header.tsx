@@ -13,7 +13,8 @@ import { computeUnreadNotifications } from "../bc-header/util";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import HeaderNotifications, { NotificationItem } from "../bc-header/bc-header-notification";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { loadNotificationsActions } from "../../../actions/notifications/notifications.action";
+import { loadNotificationsActions, showNotificationPopup } from "actions/notifications/notifications.action";
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import * as CONSTANTS from "../../../constants";
 import classnames from "classnames";
 import SearchIcon from '@material-ui/icons/Search';
@@ -133,7 +134,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
   const headerStyles = useHeaderStyles();
   const searchStyles = useSearchStyles();
 
-  const { notifications, error, loading } = useSelector((state: any) => state.notifications);
+  const { notifications, error, loading, notificationOpen } = useSelector((state: any) => state.notifications);
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -141,19 +142,21 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
+  // const [showNotification, setShowNotification] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(menuAnchorEl);
 
   useEffect(() => {
     dispatch(loadNotificationsActions.fetch());
+    dispatch(loadInvoiceItems.fetch());
   }, []);
 
   const showNotificationDetails = () => {
-    setShowNotification(!showNotification);
+    // setShowNotification(!showNotification);
+    dispatch(showNotificationPopup(!notificationOpen));
   };
 
-  const notificationPopover = showNotification ? 'notification-popper' : undefined;
+  const notificationPopover = notificationOpen ? 'notification-popper' : undefined;
 
   const popperId = profileOpen
     ? 'profile-popper'
@@ -167,7 +170,8 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
 
   const handleClose = () => {
     setProfileOpen(false);
-    setShowNotification(false);
+    // setShowNotification(false);
+    dispatch(showNotificationPopup(false));
     setAnchorEl(null);
   };
 
@@ -235,6 +239,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
 
         <div className="bcNavMenu">
           <Link
+            onClick={handleClose}
             className={classes.bcAdminHeaderLogo}
             to={'/main/dashboard'}>
             <img
@@ -254,7 +259,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
                     })}
                     key={idx}
                     tabIndex={0}>
-                    <Link to={item.link}>
+                    <Link to={item.link} onClick={handleClose}>
                       {item.label}
                     </Link>
                   </li>
@@ -286,7 +291,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
                     [classes.bcAdminHeaderPopupItem]: true,
                     [classes.bcAdminHeaderPopupItemActive]: pathName.indexOf(item.link) === 0
                   })}>
-                    <Link to={item.link} >
+                    <Link to={item.link} onClick={handleClose}>
                       {item.label}
                     </Link>
                   </MenuItem>
@@ -343,20 +348,21 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
           <Popper
             anchorEl={notificationEl}
             className={classNames({
-              [classes.bcAdminPopperClose]: !showNotification,
+              [classes.bcAdminPopperClose]: !notificationOpen,
               [classes.bcAdminPopperResponsive]: true,
               [classes.bcAdminPopperNav]: true
             })}
             disablePortal
             id={notificationPopover}
-            open={showNotification}
+            open={notificationOpen}
             placement={'bottom'}
             transition>
             {({ TransitionProps, placement }) =>
               <Grow
                 {...TransitionProps}
                 style={{ 'transformOrigin': '0 0 0' }}>
-                <ClickAwayListener onClickAway={handleClose}>
+                <>
+                {/* <ClickAwayListener onClickAway={handleClose}> */}
                   <Paper className={classes.bcAdminDropdown}>
                     <HeaderNotifications
                       close={handleClose}
@@ -364,7 +370,8 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
                       loading={loading}
                     />
                   </Paper>
-                </ClickAwayListener>
+                {/* </ClickAwayListener> */}
+                </>
               </Grow>
             }
           </Popper>
