@@ -273,9 +273,9 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     if (invoiceDetail?.customer?.contact?.phone)  address+= invoiceDetail?.customer?.contact?.phone + '\n';
     if (invoiceDetail?.customer?.info?.email)  address+= invoiceDetail?.customer?.info?.email + '\n';
     if (invoiceDetail?.customer?.address?.street)  address+= invoiceDetail?.customer?.address?.street + '\n';
-    if (invoiceDetail?.customer?.address?.city)  address+= invoiceDetail?.customer?.address?.city + ',';
-    if (invoiceDetail?.customer?.address?.state)  address+= invoiceDetail?.customer?.address?.state;
-    if (invoiceDetail?.customer?.address?.zipCode)  address+= invoiceDetail?.customer?.address?.zipCode ;
+    if (invoiceDetail?.customer?.address?.city)  address+= invoiceDetail?.customer?.address?.city + ', ';
+    if (invoiceDetail?.customer?.address?.state)  address+= invoiceDetail?.customer?.address?.state + ' ';
+    if (invoiceDetail?.customer?.address?.zipCode)  address+= invoiceDetail?.customer?.address?.zipCode + ' ' ;
     return address;
   }
 
