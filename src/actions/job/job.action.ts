@@ -18,6 +18,36 @@ export const setJobs = (jobs: any) => {
     'type': types.SET_JOBS
   };
 };
+export const setPreviousJobsCursor = (prevCursor: string) => {
+  return {
+    'payload': prevCursor,
+    'type': types.SET_PREVIOUS_JOBS_CURSOR
+  };
+};
+export const setNextJobsCursor = (nextCursor: string) => {
+  return {
+    'payload': nextCursor,
+    'type': types.SET_NEXT_JOBS_CURSOR
+  };
+};
+export const setTotal = (total: number) => {
+  return {
+    'payload': total,
+    'type': types.SET_TOTAL
+  };
+};
+export const setCurrentPageIndex = (currentPageIndex: number) => {
+  return {
+    'payload': currentPageIndex,
+    'type': types.SET_CURRENT_PAGE_INDEX
+  };
+};
+export const setCurrentPageSize = (currentPageSize: number) => {
+  return {
+    'payload': currentPageSize,
+    'type': types.SET_CURRENT_PAGE_SIZE
+  };
+};
 export const setJobLoading = (isLoading: any) => {
   return {
     'payload': isLoading,

@@ -6,7 +6,7 @@ import {
   setJobTypes,
   setJobTypesLoading
 } from 'actions/job-type/job-type.action';
-import { refreshJobs, setJobLoading, setJobs } from 'actions/job/job.action';
+import { refreshJobs, setJobLoading, setJobs, setPreviousJobsCursor, setNextJobsCursor, setTotal } from 'actions/job/job.action';
 
 const compareByDate = (a: any, b: any) => {
   if (new Date(a.updatedAt) > new Date(b.updatedAt)) {
@@ -49,11 +49,11 @@ export const getAllJobTypes = () => {
   });
 };
 
-export const getAllJobsAPI = () => {
+export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '') => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
-      request(`/getJobs`, 'post', null)
+      request(`/getJobs`, 'post', {pageSize, previousCursor, nextCursor})
         .then((res: any) => {
           let tempJobs = res.data.jobs?.filter((job: {status:number}) => job.status !== 3);
           tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
@@ -62,6 +62,9 @@ export const getAllJobsAPI = () => {
           }));
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
+          dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
+          dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
+          dispatch(setTotal(res.data.total ? res.data.total : 0));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
           return resolve(res.data);

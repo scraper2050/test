@@ -13,6 +13,7 @@ import {
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
+import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job/job.action';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -26,11 +27,16 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const { isLoading = true, jobs, refresh = true } = useSelector(
+  const { isLoading = true, jobs, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize} = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
       refresh: jobState.refresh,
+      prevCursor: jobState.prevCursor,
+      nextCursor: jobState.nextCursor,
+      total: jobState.total,
+      currentPageIndex: jobState.currentPageIndex,
+      currentPageSize: jobState.currentPageSize,
     })
   );
 
@@ -377,6 +383,13 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         tableData={filteredJobs}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
+        manualPagination
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean) => dispatch(getAllJobsAPI(num, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined))}
+        total={2020}
+        currentPageIndex={currentPageIndex}
+        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+        currentPageSize={currentPageSize}
+        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
       />
     </DataContainer>
   );
