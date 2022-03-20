@@ -84,6 +84,11 @@ const initialJob: JobsState = {
     timeSpent: 0,
     tasks:[],
   },
+  prevCursor: '',
+  nextCursor: '',
+  total: 0,
+  currentPageIndex: 0,
+  currentPageSize: 10,
 };
 
 export const jobReducer: Reducer<any> = (
@@ -108,6 +113,31 @@ export const jobReducer: Reducer<any> = (
         ...state,
         'isLoading': false,
         data: [...payload],
+      };
+    case types.SET_PREVIOUS_JOBS_CURSOR:
+      return {
+        ...state,
+        prevCursor: payload,
+      };
+    case types.SET_NEXT_JOBS_CURSOR:
+      return {
+        ...state,
+        nextCursor: payload,
+      };
+    case types.SET_TOTAL:
+      return {
+        ...state,
+        total: payload,
+      };
+    case types.SET_CURRENT_PAGE_INDEX:
+      return {
+        ...state,
+        currentPageIndex: payload,
+      };
+    case types.SET_CURRENT_PAGE_SIZE:
+      return {
+        ...state,
+        currentPageSize: payload,
       };
     case JobActionType.FAILED:
       return {
