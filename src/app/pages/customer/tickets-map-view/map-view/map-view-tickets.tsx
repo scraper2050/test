@@ -95,7 +95,11 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       });
   
       return () => {
-        socket.close();
+        if(localStorage.getItem('prevPage') !== 'schedule'){
+          socket.close();
+          dispatch(streamServiceTickets(false));
+          dispatch(refreshServiceTickets(false));
+        }
         setIsLoading(false);
       };
     }

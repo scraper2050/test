@@ -28,11 +28,14 @@ function ScheduleJobsPage({ classes }: any) {
   useEffect(() => {
     if(localStorage.getItem('prevPage') === 'ticket-map-view'){
       dispatch(refreshServiceTickets(true));
-      localStorage.setItem('prevPage', '')
+      localStorage.setItem('prevPage', 'schedule')
     }
     dispatch(getCustomers());
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllJobTypesAPI());
+    return () => {
+      dispatch(refreshServiceTickets(false));
+    }
   }, []);
 
   const handleTabChange = (newValue: number) => {
