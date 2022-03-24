@@ -11,6 +11,7 @@ import { ImageReducer as image } from './image.reducer';
 import { EmployeesReducer as employees } from './employee.reducer';
 import { jobReducer as jobState } from './jobs.reducer';
 import { PayrollReducer as payroll } from './payroll.reducer';
+import { CalendarReducer as calendar } from './calendar.reducer';
 import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
@@ -56,6 +57,7 @@ import { InvoiceItemsState
 import { EmailState, EmailReducer as email } from './email.reducer';
 import {removeQBAuthStateLocalStorage} from "../utils/local-storage.service";
 import {PayrollState} from "../actions/payroll/payroll.types";
+import {CalendarState} from "../actions/calendar/bc-calendar.types";
 
 
 export interface ReducerParamsInterface {
@@ -75,6 +77,7 @@ export interface RootState {
   quickbooks: QuickbooksState;
   map: mapState;
   payroll: PayrollState;
+  calendar: CalendarState;
 }
 
 
@@ -124,6 +127,7 @@ const appReducer = combineReducers({
   vendors,
   map,
   payroll,
+  calendar,
 });
 
 const rootReducer = (state: any, action: any) => {

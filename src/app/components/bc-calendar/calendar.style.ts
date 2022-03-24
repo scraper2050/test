@@ -135,6 +135,5 @@ export default (): any => ({
   eventTime: {
     fontSize: 10,
     color:'#4F4F4F',
-    flex: 1,
   }
 });
