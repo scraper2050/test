@@ -1,10 +1,12 @@
 export const types = {
   'SET_JOBS': 'SET_JOB',
+  'SET_SCHEDULED_JOBS': 'SET_SCHEDULED_JOBS',
   'SET_PREVIOUS_JOBS_CURSOR': 'SET_PREVIOUS_JOBS_CURSOR',
   'SET_NEXT_JOBS_CURSOR': 'SET_NEXT_JOBS_CURSOR',
   'SET_TOTAL': 'SET_TOTAL',
   'SET_CURRENT_PAGE_INDEX': 'SET_CURRENT_PAGE_INDEX',
   'SET_CURRENT_PAGE_SIZE': 'SET_CURRENT_PAGE_SIZE',
+  'SET_SEARCH_KEYWORD': 'SET_SEARCH_KEYWORD',
   'JOB_LOADING': 'JOB_LOADING',
   'SET_REFRESH_JOB_STATUS': 'SET_REFRESH_JOB_STATUS',
   'SET_STREAM_JOB_STATUS': 'SET_STREAM_JOB_STATUS',
@@ -107,12 +109,14 @@ export interface JobsState {
   streaming?: boolean;
   readonly refresh: boolean;
   readonly data?: Job[];
+  readonly scheduledJobs?: Job[];
   readonly jobObj?: Job;
   prevCursor: string;
   nextCursor: string;
   total: number;
   currentPageIndex: number;
   currentPageSize: number;
+  keyword: string;
 }
 
 export enum JobActionType {

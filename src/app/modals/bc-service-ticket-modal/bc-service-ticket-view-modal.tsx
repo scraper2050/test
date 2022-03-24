@@ -185,7 +185,7 @@ function BCViewServiceTicketModal({
         <Grid container className={classNames('modalContent', classes.lastContent)} justify={'space-between'}>
           <Grid item style={{width: '30%'}}>
             <Typography variant={'caption'} className={'previewCaption'}>&nbsp;</Typography>
-            <BCDragAndDrop images={job.images.map((image: any) => image.imageUrl)} readonly={true}  />
+            <BCDragAndDrop images={job.images?.map((image: any) => image.imageUrl) || []} readonly={true}  />
           </Grid>
           <Grid item style={{width: '68%'}}>
             <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;ticket history</Typography>

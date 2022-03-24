@@ -84,6 +84,10 @@ function SidebarJobs({ classes, jobs, isLoading }: SidebarJobsProps) {
   const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
   const totalJobs = jobs.length;
   const selectedTicket = useSelector((state: RootState) => state.map.ticketSelected);
+  const { streaming } = useSelector(
+    ({ jobState }: any) => ({
+      streaming: jobState.streaming,
+    }));
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -122,7 +126,7 @@ function SidebarJobs({ classes, jobs, isLoading }: SidebarJobsProps) {
   };
 
   useEffect(() => {
-    dispatch(setTicketSelected({_id: ''}));
+    if (!streaming) dispatch(setTicketSelected({_id: ''}));
     if (page === 1) {
       const firstPage = jobs.slice(0, PAGE_SIZE);
       setPaginatedJobs(firstPage);

@@ -11,7 +11,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { formatDate, convertMilitaryTime } from "helpers/format";
 import { openModalAction, setModalDataAction, } from "actions/bc-modal/bc-modal.action";
 import { modalTypes } from "../../../../../../constants";
-import { getAllJobsAPI } from "api/job.api";
+import { getAllJobsByCustomerAPI } from "api/job.api";
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { Job } from 'actions/job/job.types';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
@@ -266,12 +266,14 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   }
 
   useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
-    }
-
     if (jobs) {
       handleFilterData(jobs, location.state);
+    }
+  }, [jobs]);
+
+  useEffect(() => {
+    if (refresh) {
+      dispatch(getAllJobsByCustomerAPI(undefined, customerObj._id || location.state?.customerId));
     }
 
     if (customerObj._id === '') {
@@ -282,6 +284,20 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
     }
   }, [refresh]);
 
+  useEffect(() => {
+    if (!refresh) {
+      dispatch(getAllJobsByCustomerAPI(undefined, customerObj._id || location.state?.customerId));
+    }
+
+    if (customerObj._id === '') {
+      const obj: any = location.state;
+      const customerId = obj.customerId;
+      dispatch(loadingSingleCustomers());
+      dispatch(getCustomerDetailAction({ customerId }));
+    }
+
+    localStorage.setItem('prevPage', 'customer-jobs');
+  }, []);
 
 
   // const handleRowClick = (event: any, row: any) => { };

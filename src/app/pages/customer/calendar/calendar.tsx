@@ -1,21 +1,19 @@
 import BCTabs from '../../../components/bc-tab/bc-tab';
-import JobPage from './job-page/job-page';
-import ServiceTicket from './service-ticket/service-ticket';
 import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
-import styles from './schedule-jobs.styles';
+import styles from './calendar.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
-import { getAllJobTypesAPI, getAllJobsAPI } from 'api/job.api';
-import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job/job.action';
+import { getAllJobTypesAPI } from 'api/job.api';
 import "../../../../scss/popup.scss";
 import { useLocation, useHistory } from 'react-router-dom';
 import { CSButton } from "../../../../helpers/custom";
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import JobPage from "./job-page";
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -27,11 +25,8 @@ function ScheduleJobsPage({ classes }: any) {
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
 
   useEffect(() => {
-    if(localStorage.getItem('prevPage') === 'ticket-map-view' || localStorage.getItem('prevPage') === 'customer-jobs'){
+    if(localStorage.getItem('prevPage') === 'ticket-map-view'){
       dispatch(refreshServiceTickets(true));
-      dispatch(getAllJobsAPI());
-      dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
       localStorage.setItem('prevPage', 'schedule')
     }
     dispatch(getCustomers());
@@ -107,49 +102,44 @@ function ScheduleJobsPage({ classes }: any) {
   };
 
   return (
-    <div className={classes.pageMainContainer}>
-      <div className={classes.pageContainer}>
-
-        <div className={classes.pageContent}>
-          <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'Jobs',
-                'value': 0
-              },
-              {
-                'label': 'Service Tickets',
-                'value': 1
-              }
-            ]}
-          />
-          <div className={classes.addButtonArea}>
-            <CSButton
-              aria-label={'new-ticket'}
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => openCreateTicketModal()}>
-              {'New Ticket'}
-            </CSButton>
-          </div>
-          <SwipeableViews
-            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-            index={curTab}
-            disabled
-          >
-            <div className={classes.dataContainer} id={"0"}>
-              <JobPage hidden={curTab !== 0} />
-            </div>
-            <div className={classes.dataContainer} id={"1"}>
-              <ServiceTicket hidden={curTab !== 1} />
-            </div>
-          </SwipeableViews>
-        </div>
+    <div className={classes.pageContent}>
+      <BCTabs
+        curTab={curTab}
+        indicatorColor={'primary'}
+        onChangeTab={handleTabChange}
+        tabsData={[
+          {
+            'label': 'Jobs',
+            'value': 0
+          },
+          {
+            'label': 'Service Tickets',
+            'value': 1
+          }
+        ]}
+      />
+      <div className={classes.addButtonArea}>
+        <CSButton
+          aria-label={'new-ticket'}
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={() => openCreateTicketModal()}>
+          {'New Ticket'}
+        </CSButton>
       </div>
+      <SwipeableViews
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+        index={curTab}
+        disabled
+      >
+        <div className={classes.dataContainer} id={"0"}>
+          <JobPage />
+        </div>
+        <div className={classes.dataContainer} id={"1"}>
+          Tickets
+        </div>
+      </SwipeableViews>
     </div>
   );
 }

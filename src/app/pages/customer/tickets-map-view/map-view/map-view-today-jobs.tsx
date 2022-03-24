@@ -9,7 +9,6 @@ import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-mark
 import {FilterJobs} from "../tickets-map-view";
 import { useDispatch, useSelector} from "react-redux";
 import {parseISOMoment} from "../../../../../helpers/format";
-import { getAllJobsAPI } from "api/job.api";
 
 interface Props {
   classes: any;
@@ -19,11 +18,10 @@ interface Props {
 function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   const dispatch = useDispatch();
   const [jobs, setJobs] = useState<Job[]>([]);
-  const { isLoading = true, jobs: allJobs, refresh } = useSelector(
+  const { isLoading = true, scheduledJobs: scheduledJobs, } = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
-      jobs: jobState.data,
-      refresh: jobState.refresh,
+      scheduledJobs: jobState.scheduledJobs,
     })
   );
 
@@ -51,19 +49,12 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   };
 
   useEffect(() => {
-    setJobs(filterScheduledJobs(allJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))))
-  }, [allJobs])
+    setJobs(filterScheduledJobs(scheduledJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))))
+  }, [scheduledJobs])
 
   useEffect(() => {
-    setJobs(filterScheduledJobs(allJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))));
+    setJobs(filterScheduledJobs(scheduledJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))));
   }, [filterJobs]);
-
-  useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
-    }
-  }, [refresh]);
-
 
   return (
     <Grid container item lg={12} >

@@ -9,11 +9,12 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 import { Dispatch } from 'redux';
 import { setSearchTerm } from 'actions/searchTerm/searchTerm.action';
 import { connect, useDispatch } from 'react-redux';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import '../../../scss/index.scss';
 import styled from 'styled-components';
+import debounce from 'lodash.debounce';
 // Import console from "console";
 
 interface Props {
@@ -51,6 +52,7 @@ function BCTableContainer({
   setCurrentPageIndexFunction = () => {},
   currentPageSize,
   setCurrentPageSizeFunction = () => {},
+  setKeywordFunction = () => {},
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -70,22 +72,35 @@ function BCTableContainer({
 
   const [filteredData, setFilteredData] = useState([]);
 
+  const debouncedFetchFunction = useCallback(
+    debounce(value => {
+      setKeywordFunction(value);
+      fetchFunction(undefined, undefined, undefined, value)
+    }, 500),
+    [fetchFunction]
+  );
+
   const handleSearchChange = (event: any) => {
-    setSearchText(event.target.value);
-    if (setPage !== undefined) {
-      setPage({
-        ...currentPage,
-        'search': event.target.value
-      });
-    }
-    if (locationState && locationState.prevPage) {
-      history.replace({
-        ...history.location,
-        'state': {
+    if(manualPagination){
+      setSearchText(event.target.value);
+      debouncedFetchFunction(event.target.value);
+    } else {
+      setSearchText(event.target.value);
+      if (setPage !== undefined) {
+        setPage({
           ...currentPage,
           'search': event.target.value
-        }
-      });
+        });
+      }
+      if (locationState && locationState.prevPage) {
+        history.replace({
+          ...history.location,
+          'state': {
+            ...currentPage,
+            'search': event.target.value
+          }
+        });
+      }
     }
   };
 
@@ -106,8 +121,10 @@ function BCTableContainer({
   }, []);
 
   useEffect(() => {
-    if (tableData) {
+    if (tableData && !manualPagination) {
       setFilteredData(getFilteredArray(tableData, searchText));
+    } else if(tableData){
+      setFilteredData(tableData);
     }
   }, [tableData, searchText]);
 

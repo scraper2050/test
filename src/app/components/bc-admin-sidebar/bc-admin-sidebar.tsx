@@ -54,6 +54,7 @@ import ContactsIcon from '@material-ui/icons/Contacts';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
 import HistoryIcon from '@material-ui/icons/History';
+import CalendarIcon from '@material-ui/icons/CalendarToday';
 import { CompanyProfileStateType } from "../../../actions/user/user.types";
 import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
 
@@ -147,6 +148,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'label': 'Schedule/Jobs',
       'icon': <WatchLaterOutlinedIcon/>,
       'link': '/main/customers/schedule'
+    },
+    {
+      'label': 'Calendar',
+      'icon': <CalendarIcon/>,
+      'link': '/main/customers/calendar'
     },
     {
       'label': 'Map View',

@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
+import { io } from 'socket.io-client';
 import { Grid, withStyles } from '@material-ui/core';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import '../ticket-map-view.scss';
@@ -7,7 +8,10 @@ import SidebarJobs from "../sidebar/sidebar-jobs";
 import {FilterJobs} from "../tickets-map-view";
 import {useDispatch, useSelector} from "react-redux";
 import {parseISOMoment} from "../../../../../helpers/format";
-import { getAllJobsAPI } from "api/job.api";
+import { getScheduledJobsStream } from "api/job.api";
+import { setScheduledJobs, streamJobs, refreshJobs } from "actions/job/job.action";
+import Config from "config";
+import { SocketMessage } from "helpers/contants";
 
 interface Props {
   classes: any;
@@ -17,15 +21,19 @@ interface Props {
 
 function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props) {
   const dispatch = useDispatch();
-  const [jobs, setJobs] = useState<any[]>([]);
-  const { isLoading = true, jobs: allJobs, refresh } = useSelector(
+  const { token } = useSelector(({ auth }: any) => auth);
+  const { scheduledJobs, refresh} = useSelector(
     ({ jobState }: any) => ({
-      isLoading: jobState.isLoading,
-      jobs: jobState.data,
+      scheduledJobs: jobState.scheduledJobs,
       refresh: jobState.refresh,
     })
   );
 
+  const tempJobs = useRef<any[]>([]);
+  const totalJobs = useRef<number>(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
+    
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
       let filter = true;
@@ -51,15 +59,75 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     });
   };
 
+  // useEffect(() => {
+  //   if (refresh) {
+  //     dispatch(getAllJobsAPI(25));
+  //     dispatch(setCurrentPageIndex(0));
+  //     dispatch(setCurrentPageSize(25));
+  //   }
+  // }, [refresh]);
+
+  // useEffect(() => {
+  //   if (!refresh) {
+  //     dispatch(getAllJobsAPI(25));
+  //     dispatch(setCurrentPageIndex(0));
+  //     dispatch(setCurrentPageSize(25));
+  //   }
+  // }, []);
+
   useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
+    dispatch(refreshJobs(true));
+    return () => {
+      dispatch(refreshJobs(false));
+    }
+  }, [])
+
+  useEffect(() => {
+    if(refresh){
+      setIsLoading(true);
+      dispatch(setScheduledJobs([]));
+      tempJobs.current = [];
+      const socket = io(`${Config.socketSever}`, {
+        'extraHeaders': { 'Authorization': token }
+      });
+  
+      socket.on("connect", () => {
+        getScheduledJobsStream();
+        dispatch(streamJobs(true));
+      });
+  
+      socket.on(SocketMessage.ALL_SCHEDULED_JOBS, data => {
+        const {count, job, total} = data;
+        if (job) {
+          tempJobs.current.push(job);
+          if (count % 25 === 0 || count === total) {
+            totalJobs.current = total;
+            setIsLoading(false);
+            dispatch(setScheduledJobs(tempJobs.current));
+          }
+          if (count === total) {
+            socket.close();
+            dispatch(streamJobs(false));
+            dispatch(setScheduledJobs(tempJobs.current));
+            dispatch(refreshJobs(false));
+          }
+        }
+      });
+  
+      return () => {
+        if(localStorage.getItem('prevPage') !== 'schedule' && localStorage.getItem('prevPage') !== 'customer-jobs'){
+          socket.close();
+          dispatch(streamJobs(false));
+          dispatch(refreshJobs(false));
+        }
+        setIsLoading(false);
+      };
     }
   }, [refresh]);
 
   useEffect(() => {
-    setJobs(filterScheduledJobs(allJobs));
-  }, [allJobs, selectedDate, filterJobs])
+    setFilteredJobs(filterScheduledJobs(scheduledJobs));
+  }, [scheduledJobs, selectedDate, filterJobs])
 
   return (
     <Grid
@@ -74,12 +142,12 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       >
         {
           <MemoizedMap
-            list={jobs}
+            list={filteredJobs}
           />
         }
       </Grid>
 
-      <SidebarJobs jobs={jobs} isLoading={isLoading}/>
+      <SidebarJobs jobs={filteredJobs} isLoading={isLoading}/>
     </Grid>
   );
 }
