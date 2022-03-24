@@ -31,6 +31,7 @@ const InvoicingEstimatesPage = React.lazy(() => import('../invoicing/estimates/e
 const TechnicianPage = React.lazy(() => import('../employee/technicians/technicians'));
 const OfficeAdminPage = React.lazy(() => import('../employee/office-admin/office-admin'));
 const ScheduleJobsPage = React.lazy(() => import('../customer/schedule-jobs/schedule-jobs'));
+const CalendarPage = React.lazy(() => import('../customer/calendar/calendar'));
 const ManagersPage = React.lazy(() => import('../employee/managers/managers'));
 const GroupPage = React.lazy(() => import('../employee/group/group'));
 
@@ -193,6 +194,12 @@ function Main(): any {
                   Component={ScheduleJobsPage}
                   exact
                   path={'/main/customers/schedule'}
+                  title={'Customers'}
+                />
+                <AuthRoute
+                  Component={CalendarPage}
+                  exact
+                  path={'/main/customers/calendar'}
                   title={'Customers'}
                 />
                 <AuthRoute

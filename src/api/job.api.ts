@@ -68,7 +68,7 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
-            ...tempJob, 
+            ...tempJob,
             updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
           }));
           tempJobs.sort(compareByDate);
@@ -114,7 +114,7 @@ export const getAllJobsByCustomerAPI = (pageSize = 2020, customerId:string) => {
 };
 
 export const getAllJobAPI = async (param?: {}) => {
-  const body = {};
+  const body = param || {};
   let responseData;
   try {
     const response: any = await request('/getJobs', 'POST', body, false);

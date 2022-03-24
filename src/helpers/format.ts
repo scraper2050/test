@@ -15,6 +15,8 @@ export const formatShortDate = (date: Date) => moment(date).format('ddd, MMM. DD
 
 export const formatShortDateNoDay = (date: Date) => moment(date).format('MMM. DD, YYYY');
 
+export const formatShortDateNoYear = (date: Date) => moment(date).format('dddd, MMMM D');
+
 export const formatTime = (time: Date) => moment(time).utc().format('hh:mm a');
 
 export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:ss');
