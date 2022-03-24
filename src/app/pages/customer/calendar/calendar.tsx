@@ -102,49 +102,44 @@ function ScheduleJobsPage({ classes }: any) {
   };
 
   return (
-    <div className={classes.pageMainContainer}>
-      <div className={classes.pageContainer}>
-
-        <div className={classes.pageContent} style={{padding: '0 30px'}}>
-          <BCTabs
-            curTab={curTab}
-            indicatorColor={'primary'}
-            onChangeTab={handleTabChange}
-            tabsData={[
-              {
-                'label': 'Jobs',
-                'value': 0
-              },
-              {
-                'label': 'Service Tickets',
-                'value': 1
-              }
-            ]}
-          />
-          <div className={classes.addButtonArea}>
-            <CSButton
-              aria-label={'new-ticket'}
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => openCreateTicketModal()}>
-              {'New Ticket'}
-            </CSButton>
-          </div>
-          <SwipeableViews
-            axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-            index={curTab}
-            disabled
-          >
-            <div className={classes.dataContainer} id={"0"}>
-              <JobPage />
-            </div>
-            <div className={classes.dataContainer} id={"1"}>
-              Tickets
-            </div>
-          </SwipeableViews>
-        </div>
+    <div className={classes.pageContent}>
+      <BCTabs
+        curTab={curTab}
+        indicatorColor={'primary'}
+        onChangeTab={handleTabChange}
+        tabsData={[
+          {
+            'label': 'Jobs',
+            'value': 0
+          },
+          {
+            'label': 'Service Tickets',
+            'value': 1
+          }
+        ]}
+      />
+      <div className={classes.addButtonArea}>
+        <CSButton
+          aria-label={'new-ticket'}
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={() => openCreateTicketModal()}>
+          {'New Ticket'}
+        </CSButton>
       </div>
+      <SwipeableViews
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+        index={curTab}
+        disabled
+      >
+        <div className={classes.dataContainer} id={"0"}>
+          <JobPage />
+        </div>
+        <div className={classes.dataContainer} id={"1"}>
+          Tickets
+        </div>
+      </SwipeableViews>
     </div>
   );
 }

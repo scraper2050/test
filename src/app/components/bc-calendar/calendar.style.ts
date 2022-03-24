@@ -47,7 +47,7 @@ export default (): any => ({
     display: 'flex',
     flexDirection: 'column',
     width: '14.25%',
-    height: '12vh',
+    height: '12.5vh',
     overflow: 'hidden',
   },
   monthDayContainerLastRow: {

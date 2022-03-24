@@ -11,6 +11,7 @@ import {
   clearSelectedEvent,
   setSelectedEvent
 } from "../../../actions/calendar/bc-calendar.action";
+import {formatTime} from "../../../helpers/format";
 
 interface Props {
   classes: any,
@@ -33,13 +34,12 @@ function BCEvent({ event, classes }:Props) {
          ref={eventRef}
          style={{backgroundColor: `${status.color}1E`}}
          onClick={() => dispatch(isSelected ? clearSelectedEvent() :
-           setSelectedEvent({selectedEvent: event.id, anchor: eventRef.current, data: null})
+           setSelectedEvent({selectedEvent: event.id, anchor: eventRef.current, data: event.data})
          )}
     >
       <StatusIcon className={classes.eventIcon}/>
       <span className={classes.eventTitle}>{event.title}</span>
-      {event.hasTime && <span className={classes.eventTime}>
-        {moment(event.date).utc().format('h:mm A')}</span>}
+      {event.hasTime && <span className={classes.eventTime}>{formatTime(event.date)}</span>}
     </div>
   )
 }

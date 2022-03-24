@@ -59,7 +59,6 @@ function BCMonth({ classes, month, events, isLoading = false }: Props) {
       <BCCircularLoader heightValue={'70vh'} />
     </div>
     }
-
     <BCJobCard />
 
     <div className={classes.monthContainer}>

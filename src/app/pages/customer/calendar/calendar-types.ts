@@ -4,4 +4,5 @@ export interface BCEVENT {
   title: string,
   id: string,
   status: number,
+  data: any,
 }

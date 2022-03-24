@@ -1,51 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import classNames from 'classnames';
 import styled from 'styled-components';
-import { Checkbox, FormControlLabel, withStyles, Menu, MenuItem } from '@material-ui/core';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import {withStyles} from '@material-ui/core';
 import {getAllJobAPI, getAllJobsAPI} from 'api/job.api';
 import styles from './calendar.styles';
-import { statusReference } from 'helpers/contants';
-import { convertMilitaryTime, formatDate } from 'helpers/format';
-import {
-  openModalAction,
-  setModalDataAction,
-} from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job/job.action';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'reducers';
 import moment from "moment";
 import CalendarHeader from "../../../components/bc-calendar/calendar-header";
 import BCMonth from "../../../components/bc-calendar/calnedar-month";
-import BCSpinner from "../../../components/bc-spinner/bc-spinner";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import {Job} from "../../../../actions/job/job.types";
 import {BCEVENT} from "./calendar-types";
+import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 
-function JobPage({ classes, currentPage, setCurrentPage }: any) {
+function JobPage() {
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<BCEVENT[]>([]);
   const [refresh, setRefresh] = useState(true);
   const customers = useSelector(({ customers }: any) => customers.data);
-  // const [showAllJobs, toggleShowAllJobs] = useState(true);
-  const { _id } = useSelector(({ auth }: RootState) => auth);
-  // const { isLoading = true, jobs, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize} = useSelector(
-  //   ({ jobState }: any) => ({
-  //     isLoading: jobState.isLoading,
-  //     jobs: jobState.data,
-  //     refresh: jobState.refresh,
-  //     prevCursor: jobState.prevCursor,
-  //     nextCursor: jobState.nextCursor,
-  //     total: jobState.total,
-  //     currentPageIndex: jobState.currentPageIndex,
-  //     currentPageSize: jobState.currentPageSize,
-  //   })
-  //);
-
-  const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
-
 
   useEffect(() => {
     const params={
@@ -54,6 +27,8 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       pageSize: 1000,
     }
     setRefresh(true);
+    setEvents([]);
+    dispatch(clearSelectedEvent());
     getAllJobAPI(params).then((data) => {
       const {status, jobs, total} = data;
       if (status === 1) {
@@ -63,10 +38,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
           title: job.customer?.profile?.displayName,
           id: job._id,
           status: job.status,
+          data: job,
         }))
         setEvents(events);
       }
-
       setRefresh(false);
     }).catch((e) => {
       dispatch(error(e.message));
