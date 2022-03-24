@@ -13,7 +13,7 @@ import {
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job/job.action';
+import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -27,7 +27,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const { isLoading = true, jobs, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize} = useSelector(
+  const { isLoading = true, jobs, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
@@ -37,6 +37,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       total: jobState.total,
       currentPageIndex: jobState.currentPageIndex,
       currentPageSize: jobState.currentPageSize,
+      keyword: jobState.keyword,
     })
   );
 
@@ -268,6 +269,9 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       } else {
         setIconComponent(null);
       }
+      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
     }, [selectedStatus]);
 
     return (
@@ -356,9 +360,19 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobsAPI());
+      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
     }
   }, [refresh]);
+
+  useEffect(() => {
+    dispatch(setKeyword(''));
+    return () => {
+      dispatch(setKeyword(''));
+    }
+  }, [])
+  
 
   const handleRowClick = (event: any, row: any) => {
     if (
@@ -384,12 +398,15 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean) => dispatch(getAllJobsAPI(num, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined))}
-        total={2020}
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query || keyword))
+        }
+        total={total}
         currentPageIndex={currentPageIndex}
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+        setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>
   );
