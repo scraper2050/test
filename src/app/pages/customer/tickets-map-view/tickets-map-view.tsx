@@ -24,7 +24,6 @@ import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-hea
 import { getCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import {
-  getAllJobsAPI,
   getAllJobTypesAPI
 } from "../../../../api/job.api";
 import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
@@ -86,10 +85,10 @@ function TicketsWithMapView({ classes }: any) {
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
   const [curTab, setCurTab] = useState(0);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
-  const { refresh = true, streaming } = useSelector(
-    ({ serviceTicket }: any) => ({
-      refresh: serviceTicket.refresh,
+  const { streaming, streamingScheduledJobs } = useSelector(
+    ({ serviceTicket, jobState }: any) => ({
       streaming: serviceTicket.stream,
+      streamingScheduledJobs: jobState.streaming,
     }));
 
   useEffect(() => {
@@ -137,12 +136,6 @@ function TicketsWithMapView({ classes }: any) {
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
   }, []);
-
-  useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI());
-    }
-  }, [refresh]);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -262,12 +255,12 @@ function TicketsWithMapView({ classes }: any) {
               {
                 'label': 'Today\'s Jobs',
                 'value': 1,
-                'icon': WorkIcon,
+                'icon': streamingScheduledJobs ? preloader : WorkIcon,
               },
               {
                 'label': 'Scheduled Jobs',
                 'value': 2,
-                'icon': ScheduleIcon,
+                'icon': streamingScheduledJobs ? preloader : ScheduleIcon,
               },
               {
                 'label': 'Routes',
