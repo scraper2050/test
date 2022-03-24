@@ -10,7 +10,8 @@ import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
-import { getAllJobTypesAPI } from 'api/job.api';
+import { getAllJobTypesAPI, getAllJobsAPI } from 'api/job.api';
+import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job/job.action';
 import "../../../../scss/popup.scss";
 import { useLocation, useHistory } from 'react-router-dom';
 import { CSButton } from "../../../../helpers/custom";
@@ -26,8 +27,11 @@ function ScheduleJobsPage({ classes }: any) {
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
 
   useEffect(() => {
-    if(localStorage.getItem('prevPage') === 'ticket-map-view'){
+    if(localStorage.getItem('prevPage') === 'ticket-map-view' || localStorage.getItem('prevPage') === 'customer-jobs'){
       dispatch(refreshServiceTickets(true));
+      dispatch(getAllJobsAPI());
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
       localStorage.setItem('prevPage', 'schedule')
     }
     dispatch(getCustomers());

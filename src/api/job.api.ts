@@ -49,13 +49,24 @@ export const getAllJobTypes = () => {
   });
 };
 
-export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '') => {
+export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
-      request(`/getJobs`, 'post', {pageSize, previousCursor, nextCursor})
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor
+      };
+      if(status !== '-1'){
+        optionObj.status = Number(status);
+      }
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      request(`/getJobs`, 'post', optionObj)
         .then((res: any) => {
-          let tempJobs = res.data.jobs?.filter((job: {status:number}) => job.status !== 3);
+          let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
             ...tempJob, 
             updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
@@ -65,6 +76,31 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
           dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
           dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
+          dispatch(setJobLoading(false));
+          dispatch(refreshJobs(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setJobLoading(false));
+          return reject(err);
+        });
+    });
+  };
+};
+
+export const getAllJobsByCustomerAPI = (pageSize = 2020, customerId:string) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setJobLoading(true));
+      request(`/getJobs`, 'post', {customerId, pageSize})
+        .then((res: any) => {
+          let tempJobs = res.data.jobs;
+          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+            ...tempJob, 
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
+          }));
+          tempJobs.sort(compareByDate);
+          dispatch(setJobs(tempJobs.reverse()));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
           return resolve(res.data);
@@ -232,4 +268,14 @@ export const getSearchJobs = async (data: {
   });
 };
 
-
+export const getScheduledJobsStream :any = () => {
+  return new Promise((resolve, reject) => {
+    request(`/getScheduledJobsStream `, 'get', {}, false)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};

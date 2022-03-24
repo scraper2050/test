@@ -18,6 +18,12 @@ export const setJobs = (jobs: any) => {
     'type': types.SET_JOBS
   };
 };
+export const setScheduledJobs = (scheduledJobs: any) => {
+  return {
+    'payload': scheduledJobs,
+    'type': types.SET_SCHEDULED_JOBS
+  };
+};
 export const setPreviousJobsCursor = (prevCursor: string) => {
   return {
     'payload': prevCursor,
@@ -46,6 +52,12 @@ export const setCurrentPageSize = (currentPageSize: number) => {
   return {
     'payload': currentPageSize,
     'type': types.SET_CURRENT_PAGE_SIZE
+  };
+};
+export const setKeyword = (keyword: string) => {
+  return {
+    'payload': keyword,
+    'type': types.SET_SEARCH_KEYWORD
   };
 };
 export const setJobLoading = (isLoading: any) => {

@@ -5,6 +5,7 @@ import { JobActionType, JobsState, types } from "../actions/job/job.types";
 
 const initialJob: JobsState = {
   data: [],
+  scheduledJobs: [],
   isLoading: false,
   refresh: true,
   streaming: false,
@@ -89,6 +90,7 @@ const initialJob: JobsState = {
   total: 0,
   currentPageIndex: 0,
   currentPageSize: 10,
+  keyword: '',
 };
 
 export const jobReducer: Reducer<any> = (
@@ -114,6 +116,12 @@ export const jobReducer: Reducer<any> = (
         'isLoading': false,
         data: [...payload],
       };
+    case types.SET_SCHEDULED_JOBS:
+      return {
+        ...state,
+        'isLoading': false,
+        scheduledJobs: [...payload],
+      };
     case types.SET_PREVIOUS_JOBS_CURSOR:
       return {
         ...state,
@@ -138,6 +146,11 @@ export const jobReducer: Reducer<any> = (
       return {
         ...state,
         currentPageSize: payload,
+      };
+    case types.SET_SEARCH_KEYWORD:
+      return {
+        ...state,
+        keyword: payload,
       };
     case JobActionType.FAILED:
       return {
