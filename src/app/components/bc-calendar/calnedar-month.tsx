@@ -5,9 +5,7 @@ import styles from "./calendar.style";
 import moment from "moment";
 import BCCircularLoader from "../bc-circular-loader/bc-circular-loader";
 import {BCEVENT} from "../../pages/customer/calendar/calendar-types";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../reducers";
-import BCJobCard from "./bc-job-card";
+import BCCard from "./bc-card/bc-card";
 
 interface Props {
   classes: any,
@@ -59,7 +57,7 @@ function BCMonth({ classes, month, events, isLoading = false }: Props) {
       <BCCircularLoader heightValue={'70vh'} />
     </div>
     }
-    <BCJobCard />
+    <BCCard />
 
     <div className={classes.monthContainer}>
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day)=> (
