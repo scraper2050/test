@@ -1,5 +1,6 @@
 import request from 'utils/http.service';
 import { formatDateYMD } from 'helpers/format';
+import axios from 'axios';
 import buildFormData from 'utils/build-formdata';
 import {
   refreshJobTypes,
@@ -48,7 +49,7 @@ export const getAllJobTypes = () => {
       });
   });
 };
-
+let cancelTokenGetAllJobsAPI:any;
 export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
@@ -64,7 +65,16 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
       if(keyword){
         optionObj.keyword = keyword
       }
-      request(`/getJobs`, 'post', optionObj)
+      if(cancelTokenGetAllJobsAPI) {
+        cancelTokenGetAllJobsAPI.cancel();
+        setTimeout(() => {
+          dispatch(setJobLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllJobsAPI = axios.CancelToken.source();
+
+      request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
