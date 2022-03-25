@@ -75,7 +75,7 @@ function BCTableContainer({
   const debouncedFetchFunction = useCallback(
     debounce(value => {
       setKeywordFunction(value);
-      fetchFunction(undefined, undefined, undefined, value)
+      fetchFunction(undefined, undefined, undefined, value === '' ? undefined : value);
     }, 500),
     [fetchFunction]
   );

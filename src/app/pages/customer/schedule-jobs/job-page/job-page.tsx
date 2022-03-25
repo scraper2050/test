@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Checkbox, FormControlLabel, withStyles, Menu, MenuItem } from '@material-ui/core';
@@ -44,6 +44,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  const loadCount = useRef<number>(0);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setFilterMenuAnchorEl(event.currentTarget);
@@ -269,9 +270,11 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       } else {
         setIconComponent(null);
       }
-      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
-      dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      if(loadCount.current !== 0){
+        dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
+        dispatch(setCurrentPageIndex(0));
+        dispatch(setCurrentPageSize(10));
+      }
     }, [selectedStatus]);
 
     return (
@@ -363,6 +366,9 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
+      setTimeout(() => {
+        loadCount.current++;
+      }, 1000);
     }
   }, [refresh]);
 
@@ -399,7 +405,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
-          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query || keyword))
+          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === undefined ? '' : query || keyword))
         }
         total={total}
         currentPageIndex={currentPageIndex}
