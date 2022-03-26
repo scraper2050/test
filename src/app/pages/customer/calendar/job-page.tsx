@@ -20,6 +20,7 @@ function JobPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentStatus, setCurrentStatus] = useState(-1);
   const [currentTitle, setCurrentTitle] = useState('Customer');
+  const [searchText, setSearchText] = useState('');
   const [events, setEvents] = useState<BCEVENT[]>([]);
   const [refresh, setRefresh] = useState(true);
 
@@ -38,7 +39,13 @@ function JobPage() {
   }
 
   const filterEvents = () => {
-    return currentStatus === -1 ? events : events.filter((event) => event.status === currentStatus);
+    return events.filter((event) => {
+      let filter = currentStatus === -1 ? true : event.status === currentStatus;
+      if (filter && searchText.trim()) {
+        filter = event.title.toLowerCase().indexOf(searchText.toLowerCase()) >= 0;
+      }
+      return filter;
+    });
   }
 
   useEffect(() => {
@@ -85,6 +92,8 @@ function JobPage() {
         onDateChange={(date) => setCurrentDate(date)}
         onCalendarChange={(id, type) => console.log(type)}
         onTitleChange={onTitleChange}
+        searchLabel={'Search Jobs...'}
+        onSearchChange={setSearchText}
       >
         <BCJobFilter onStatusChange={setCurrentStatus} />
       </CalendarHeader>

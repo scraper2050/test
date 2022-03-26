@@ -21,7 +21,7 @@ interface ButtonProps {
   size?: string;
   handleClick: (id: number, title: string) => void;
 }
-const BUTTON_WIDTH = 134
+const BUTTON_WIDTH = 130;
 
 const StyledMenu = withStyles({
   list: {
