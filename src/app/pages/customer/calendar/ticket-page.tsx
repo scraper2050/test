@@ -14,6 +14,7 @@ function TicketPage() {
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentTitle, setCurrentTitle] = useState('Customer');
+  const [searchText, setSearchText] = useState('');
   const [events, setEvents] = useState<BCEVENT[]>([]);
 
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
@@ -63,6 +64,12 @@ function TicketPage() {
     setEvents(eventsTemp);
   };
 
+  const filterEvents = () => {
+    return searchText.trim() ? events.filter((event) =>
+        event.title.toLowerCase().indexOf(searchText.toLowerCase()) >= 0)
+    : events;
+  }
+
   return (
     <DataContainer id={'0'}>
       <CalendarHeader
@@ -71,8 +78,10 @@ function TicketPage() {
         onDateChange={(date) => setCurrentDate(date)}
         onCalendarChange={(id, type) => console.log(type)}
         onTitleChange={onTitleChange}
+        searchLabel={'Search Tickets...'}
+        onSearchChange={setSearchText}
       />
-      <BCMonth month={currentDate} isLoading={isLoading} events={events}/>
+      <BCMonth month={currentDate} isLoading={isLoading} events={filterEvents()}/>
     </DataContainer>
   );
 }

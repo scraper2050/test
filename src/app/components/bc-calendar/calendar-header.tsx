@@ -1,8 +1,13 @@
-import React, {useContext, useState} from "react";
-import {Button, IconButton, withStyles} from "@material-ui/core";
+import React, {useState} from "react";
+import {
+  Button,
+  IconButton,
+  InputBase,
+  withStyles
+} from "@material-ui/core";
 import styles from "./calendar.style";
 import moment from "moment";
-import {ChevronLeft, ChevronRight} from "@material-ui/icons";
+import {ChevronLeft, ChevronRight, Search} from "@material-ui/icons";
 import BCMenuButton, {MenuButtonItem} from "./bc-menu-button";
 import {GridOn, ViewWeek, CalendarViewDay} from '@material-ui/icons';
 
@@ -14,9 +19,14 @@ interface Props {
   onDateChange: (date: Date) => void;
   onCalendarChange: (id: number, title: string) => void;
   onTitleChange: (id: number, title: string) => void;
+  searchLabel?: string;
+  onSearchChange?: (text: string) => void;
 }
 
-function CalendarHeader({classes, children, date, titleItems, onDateChange, onCalendarChange, onTitleChange} : Props) {
+function CalendarHeader({
+                          classes, children, date, titleItems,
+                          onDateChange, onCalendarChange, onTitleChange,
+                          searchLabel = 'Search...', onSearchChange} : Props) {
   const [currentDate, setCurrentDate] = useState(date);
   const [currentCalender, setCurrentCalendar] = useState(0);
   const [currentTitle, setCurrentTitle] = useState(0);
@@ -93,7 +103,25 @@ function CalendarHeader({classes, children, date, titleItems, onDateChange, onCa
         Today
       </Button>
 
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+
+      {onSearchChange &&
+      <InputBase
+        onChange={e => onSearchChange(e.target.value)}
+        placeholder={searchLabel}
+        //value={searchStr}
+        endAdornment={
+          <Search style={{color: '#777777'}}/>
+        }
+        classes={{
+          root: classes.searchBox,
+          focused: classes.searchBoxFocused,
+          input: classes.searchBoxInput,
+        }}
+      />
+      }
+
+      &nbsp;&nbsp;&nbsp;&nbsp;
 
       {children ? children : null}
 
