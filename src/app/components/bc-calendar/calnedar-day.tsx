@@ -17,12 +17,7 @@ interface Props {
 }
 
 function BCDay({ day, events = [], row, column, isLastRow, classes }:Props) {
-  const [dayEvents, setDayEvents] = useState(events);
   const isToday = moment(day).isSame(new Date(), 'day');
-  console.log({events})
-  useEffect(() => {
-    //setDayEvents(events);
-  }, [events]);
 
   return (
     <div className={classNames({

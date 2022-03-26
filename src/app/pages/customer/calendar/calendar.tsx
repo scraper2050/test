@@ -14,6 +14,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { CSButton } from "../../../../helpers/custom";
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import JobPage from "./job-page";
+import TicketPage from "./ticket-page";
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -137,7 +138,7 @@ function ScheduleJobsPage({ classes }: any) {
           <JobPage />
         </div>
         <div className={classes.dataContainer} id={"1"}>
-          Tickets
+          <TicketPage />
         </div>
       </SwipeableViews>
     </div>

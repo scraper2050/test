@@ -1,6 +1,5 @@
 import React, {useRef} from "react";
 import classNames from "classnames";
-import moment from "moment";
 import styles from "./calendar.style";
 import {withStyles} from "@material-ui/core";
 import {BCEVENT} from "../../pages/customer/calendar/calendar-types";
@@ -23,7 +22,7 @@ function BCEvent({ event, classes }:Props) {
   const eventRef = useRef<HTMLDivElement>(null);
   const { selectedEvent } = useSelector((state: RootState) => state.calendar);
   const status = statusReference[event.status.toString()];
-  const StatusIcon = status.icon;
+  const StatusIcon =  status?.icon;
   const isSelected = selectedEvent === event.id;
 
   return (
@@ -32,12 +31,14 @@ function BCEvent({ event, classes }:Props) {
         [classes.eventContainerShadow]: isSelected,
       })}
          ref={eventRef}
-         style={{backgroundColor: `${status.color}1E`}}
+         style={{backgroundColor: status ? `${status.color}1E` : isSelected ? '#E5F7FF' : '#EAECF3'}}
          onClick={() => dispatch(isSelected ? clearSelectedEvent() :
            setSelectedEvent({selectedEvent: event.id, anchor: eventRef.current, data: event.data})
          )}
     >
-      <StatusIcon className={classes.eventIcon}/>
+      {status &&
+        <StatusIcon className={classes.eventIcon}/>
+      }
       <span className={classes.eventTitle}>{event.title}</span>
       {event.hasTime && <span className={classes.eventTime}>{formatTime(event.date)}</span>}
     </div>

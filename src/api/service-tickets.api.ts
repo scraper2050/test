@@ -67,7 +67,6 @@ export const callEditTicketAPI = (data: any) => {
   });
 };
 
-
 export const getOpenServiceTickets = (data: {
   pageNo?: number,
   pageSize?: number,

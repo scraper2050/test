@@ -1,4 +1,4 @@
-import {PRIMARY_BLUE} from "../../../constants";
+import {CALENDAR_BUTTON_COLOR, PRIMARY_BLUE} from "../../../constants";
 
 export default (): any => ({
   headerContainer: {
@@ -23,7 +23,7 @@ export default (): any => ({
     fontSize: 24,
   },
   headerTodayButton: {
-    marginLeft: 20,
+    color: CALENDAR_BUTTON_COLOR,
   },
 
   monthSpinnerContainer: {

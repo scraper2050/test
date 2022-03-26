@@ -34,6 +34,8 @@ export const TABLE_HOVER = 'rgba(0,170,255,0.34)';
 export const TABLE_ACTION_BUTTON = '#00AAFF';
 export const TABLE_ACTION_BUTTON_HOVER = '#45bfff';
 
+export const CALENDAR_BUTTON_COLOR = '#828282';
+
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',
   'CREATE_JOB_MODAL': 'create-job',

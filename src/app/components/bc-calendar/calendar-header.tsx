@@ -2,32 +2,49 @@ import React, {useContext, useState} from "react";
 import {Button, IconButton, withStyles} from "@material-ui/core";
 import styles from "./calendar.style";
 import moment from "moment";
-import {CSIconButton} from "../../../helpers/custom";
 import {ChevronLeft, ChevronRight} from "@material-ui/icons";
+import BCMenuButton, {MenuButtonItem} from "./bc-menu-button";
+import {GridOn, ViewWeek, CalendarViewDay} from '@material-ui/icons';
 
 interface Props {
   classes: any;
+  children?: React.ReactNode;
   date: Date;
-  onChange: (date: Date) => void;
+  titleItems: MenuButtonItem[];
+  onDateChange: (date: Date) => void;
+  onCalendarChange: (id: number, title: string) => void;
+  onTitleChange: (id: number, title: string) => void;
 }
 
-function CalendarHeader({classes, date, onChange} : Props) {
+function CalendarHeader({classes, children, date, titleItems, onDateChange, onCalendarChange, onTitleChange} : Props) {
   const [currentDate, setCurrentDate] = useState(date);
+  const [currentCalender, setCurrentCalendar] = useState(0);
+  const [currentTitle, setCurrentTitle] = useState(0);
 
   function handlePrevMonth() {
     const date = moment(currentDate).add(-1, 'month').toDate();
     setCurrentDate(date);
-    onChange(date);
+    onDateChange(date);
   }
   function handleNextMonth() {
     const date = moment(currentDate).add(1, 'month').toDate();
     setCurrentDate(date);
-    onChange(date);
+    onDateChange(date);
   }
   function handleReset() {
     const date = moment().toDate();
     setCurrentDate(date);
-    onChange(date);
+    onDateChange(date);
+  }
+
+  function _onCalendarChange(id: number, title: string) {
+    // setCurrentCalendar(id);
+    onCalendarChange(id, title);
+  }
+
+  function _onTitleChange(id: number, title: string) {
+    setCurrentTitle(id);
+    onTitleChange(id, title);
   }
 
   return (
@@ -50,6 +67,24 @@ function CalendarHeader({classes, date, onChange} : Props) {
         <ChevronRight className={classes.headerArrowIcon} />
       </IconButton>
 
+      &nbsp;&nbsp;
+
+      <BCMenuButton
+        items={[{title: 'Month', icon: GridOn}, {title: 'Week', icon: ViewWeek}, {title: 'Day', icon: CalendarViewDay}]}
+        selectedIndex={currentCalender}
+        handleClick={_onCalendarChange}
+      />
+
+      &nbsp;&nbsp;
+
+      <BCMenuButton
+        items={titleItems}
+        selectedIndex={currentTitle}
+        handleClick={_onTitleChange}
+      />
+
+      &nbsp;&nbsp;
+
       <Button
         onClick={handleReset}
         variant={'outlined'}
@@ -58,6 +93,9 @@ function CalendarHeader({classes, date, onChange} : Props) {
         Today
       </Button>
 
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      {children ? children : null}
 
     </div>
   );
