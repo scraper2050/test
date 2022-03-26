@@ -1,20 +1,13 @@
 import React from "react";
 import {
   formatShortDateNoYear,
-  formatTime
 } from "../../../../helpers/format";
 import {IconButton} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Popper from "@material-ui/core/Popper";
-import CloseIcon from "@material-ui/icons/Close";
-import {Job} from "../../../../actions/job/job.types";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../../reducers";
 import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
-import {statusReference} from "../../../../helpers/contants";
-import BCJobStatus from "../../bc-job-status";
 import {
   openModalAction,
   setModalDataAction

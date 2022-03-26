@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {withStyles} from '@material-ui/core';
-import {getAllJobAPI, getAllJobsAPI} from 'api/job.api';
 import styles from './calendar.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment";
 import CalendarHeader from "../../../components/bc-calendar/calendar-header";
 import BCMonth from "../../../components/bc-calendar/calnedar-month";
-import {error} from "../../../../actions/snackbar/snackbar.action";
-import {Job} from "../../../../actions/job/job.types";
 import {BCEVENT} from "./calendar-types";
-import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 import {getAllServiceTicketAPI} from "../../../../api/service-tickets.api";
 
 function TicketPage() {
@@ -25,6 +21,15 @@ function TicketPage() {
     'tickets': serviceTicket.tickets
   }));
 
+  const getTitle = (ticket: any, type: string) => {
+    switch (type) {
+      case 'Customer':
+        return ticket.customer?.profile?.displayName;
+      default:
+        return ticket.ticketId;
+    }
+  }
+
   useEffect(() => {
     const startDate = moment(currentDate).utc().startOf('month');
     const endDate = moment(currentDate).utc().endOf('month');
@@ -34,7 +39,7 @@ function TicketPage() {
         acc.push({
           date: ticket.dueDate,
           hasTime: false,
-          title: ticket.customer?.profile?.displayName,
+          title: getTitle(ticket, 'Customer'),
           id: ticket._id,
           status: -1,
           data: ticket,
@@ -51,43 +56,21 @@ function TicketPage() {
     }
   }, [refresh]);
 
-  // useEffect(() => {
-  //   const params={
-  //     startDate: moment(currentDate).utc().startOf('month').toDate(),
-  //     endDate: moment(currentDate).utc().endOf('month').toDate(),
-  //     pageSize: 1000,
-  //   }
-  //   setRefresh(true);
-  //   setEvents([]);
-  //   dispatch(clearSelectedEvent());
-  //   getAllJobAPI(params).then((data) => {
-  //     const {status, jobs, total} = data;
-  //     if (status === 1) {
-  //       const events = data.jobs.map((job: Job) => ({
-  //         date: job.scheduledStartTime ? new Date(job.scheduledStartTime) : new Date(job.scheduleDate),
-  //         hasTime: !!job.scheduledStartTime,
-  //         title: job.customer?.profile?.displayName,
-  //         id: job._id,
-  //         status: job.status,
-  //         data: job,
-  //       }))
-  //       setEvents(events);
-  //     }
-  //     setRefresh(false);
-  //   }).catch((e) => {
-  //     dispatch(error(e.message));
-  //     setRefresh(false);
-  //   })
-  // }, [currentDate]);
-
+  const onTitleChange = (id: number, type: string) => {
+    const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));
+    setEvents(eventsTemp);
+  };
 
   return (
     <DataContainer id={'0'}>
       <CalendarHeader
         date={currentDate}
-        onChange={(date) => setCurrentDate(date)}
+        titleItems={[{title: 'Customer'}, {title: 'Ticket ID'},]}
+        onDateChange={(date) => setCurrentDate(date)}
+        onCalendarChange={(id, type) => console.log(type)}
+        onTitleChange={onTitleChange}
       />
-      <BCMonth month={currentDate} isLoading={refresh} events={events}/>
+      <BCMonth month={currentDate} isLoading={isLoading} events={events}/>
     </DataContainer>
   );
 }

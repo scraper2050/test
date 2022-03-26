@@ -11,7 +11,6 @@ import {
   setSelectedEvent
 } from "../../../actions/calendar/bc-calendar.action";
 import {formatTime} from "../../../helpers/format";
-import {ReactComponent as IconScheduled} from "../../../assets/img/icons/map/icon-pending.svg";
 
 interface Props {
   classes: any,
@@ -23,7 +22,7 @@ function BCEvent({ event, classes }:Props) {
   const eventRef = useRef<HTMLDivElement>(null);
   const { selectedEvent } = useSelector((state: RootState) => state.calendar);
   const status = statusReference[event.status.toString()];
-  const StatusIcon = status ? status.icon : IconScheduled;
+  const StatusIcon =  status?.icon;
   const isSelected = selectedEvent === event.id;
 
   return (
