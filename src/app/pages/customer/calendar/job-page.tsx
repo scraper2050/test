@@ -19,6 +19,7 @@ function JobPage() {
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentStatus, setCurrentStatus] = useState(-1);
+  const [currentTitle, setCurrentTitle] = useState('Customer');
   const [events, setEvents] = useState<BCEVENT[]>([]);
   const [refresh, setRefresh] = useState(true);
 
@@ -55,14 +56,13 @@ function JobPage() {
         const events = jobs.map((job: Job) => ({
           date: job.scheduledStartTime ? new Date(job.scheduledStartTime) : new Date(job.scheduleDate),
           hasTime: !!job.scheduledStartTime,
-          title: getTitle(job, 'Customer'),
+          title: getTitle(job, currentTitle),
           id: job._id,
           status: job.status,
           data: job,
           })
         );
         setEvents(events);
-        filterEvents();
       }
       setRefresh(false);
     }).catch((e) => {
@@ -73,6 +73,7 @@ function JobPage() {
 
   const onTitleChange = (id: number, type: string) => {
     const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));
+    setCurrentTitle(type);
     setEvents(eventsTemp);
   }
 

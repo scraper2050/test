@@ -13,6 +13,7 @@ import {getAllServiceTicketAPI} from "../../../../api/service-tickets.api";
 function TicketPage() {
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentTitle, setCurrentTitle] = useState('Customer');
   const [events, setEvents] = useState<BCEVENT[]>([]);
 
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
@@ -39,7 +40,7 @@ function TicketPage() {
         acc.push({
           date: ticket.dueDate,
           hasTime: false,
-          title: getTitle(ticket, 'Customer'),
+          title: getTitle(ticket, currentTitle),
           id: ticket._id,
           status: -1,
           data: ticket,
@@ -58,6 +59,7 @@ function TicketPage() {
 
   const onTitleChange = (id: number, type: string) => {
     const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));
+    setCurrentTitle(type);
     setEvents(eventsTemp);
   };
 
