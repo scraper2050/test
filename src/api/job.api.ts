@@ -1,5 +1,6 @@
 import request from 'utils/http.service';
 import { formatDateYMD } from 'helpers/format';
+import moment from 'moment';
 import axios from 'axios';
 import buildFormData from 'utils/build-formdata';
 import {
@@ -50,7 +51,7 @@ export const getAllJobTypes = () => {
   });
 };
 let cancelTokenGetAllJobsAPI:any;
-export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string) => {
+export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
@@ -64,6 +65,10 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
       }
       if(keyword){
         optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
       if(cancelTokenGetAllJobsAPI) {
         cancelTokenGetAllJobsAPI.cancel();
