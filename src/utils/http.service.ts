@@ -1,6 +1,6 @@
 import config from 'config';
 import { getLocalStorageToken } from './local-storage.service';
-import axios, { AxiosRequestConfig, Method } from 'axios';
+import axios, { AxiosRequestConfig, Method, CancelTokenSource } from 'axios';
 
 const api = config.apiBaseURL;
 
@@ -12,7 +12,7 @@ const fetchToken = () => {
   return token;
 };
 
-export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "") => new Promise((resolve, reject) => {
+export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "", cancelTokenSource?: CancelTokenSource ) => new Promise((resolve, reject) => {
   let token = '';
 
   if (!noHeaders) {
@@ -35,6 +35,9 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean, enct
       ...request.headers,
       'Authorization': token,
     };
+  }
+  if(cancelTokenSource){
+    request.cancelToken = cancelTokenSource.token
   }
   axios(request)
     .then(res => {

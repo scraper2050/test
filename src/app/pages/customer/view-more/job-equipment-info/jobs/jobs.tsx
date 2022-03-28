@@ -295,8 +295,6 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction({ customerId }));
     }
-
-    localStorage.setItem('prevPage', 'customer-jobs');
   }, []);
 
 

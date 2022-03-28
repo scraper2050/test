@@ -4,7 +4,15 @@ export const types = {
   'LOAD_JOBREPORT': 'loadJobReportActions',
   'LOAD_JOBREPORTS': 'loadJobReportsActions',
   'RESET_EMAIL_STATE': 'RESET_EMAIL_STATE',
-  'UPDATE_EMAIL_HISTORY': 'UPDATE_EMAIL_HISTORY'
+  'UPDATE_EMAIL_HISTORY': 'UPDATE_EMAIL_HISTORY',
+  'SET_JOB_REPORT_LOADING': 'SET_JOB_REPORT_LOADING',
+  'SET_JOB_REPORT': 'SET_JOB_REPORT',
+  'SET_PREVIOUS_JOB_REPORTS_CURSOR': 'SET_PREVIOUS_JOB_REPORTS_CURSOR',
+  'SET_NEXT_JOB_REPORTS_CURSOR': 'SET_NEXT_JOB_REPORTS_CURSOR',
+  'SET_JOB_REPORTS_TOTAL': 'SET_JOB_REPORTS_TOTAL',
+  'SET_CURRENT_REPORTS_PAGE_INDEX': 'SET_CURRENT_REPORTS_PAGE_INDEX',
+  'SET_CURRENT_REPORTS_PAGE_SIZE': 'SET_CURRENT_REPORTS_PAGE_SIZE',
+  'SET_REPORT_SEARCH_KEYWORD': 'SET_REPORT_SEARCH_KEYWORD',
 };
 
 export interface JobReport {
@@ -128,6 +136,12 @@ export interface JobReportState {
   readonly jobReports?: JobReport[];
   readonly error?: string;
   readonly jobReportObj: JobReport;
+  prevCursor: string;
+  nextCursor: string;
+  total: number;
+  currentPageIndex: number;
+  currentPageSize: number;
+  keyword: string;
 }
 
 

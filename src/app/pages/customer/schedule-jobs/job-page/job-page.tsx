@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Checkbox, FormControlLabel, withStyles, Menu, MenuItem } from '@material-ui/core';
@@ -21,6 +21,7 @@ import BCJobStatus from '../../../../components/bc-job-status';
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import moment from "moment";
+import {getVendor} from "../../../../../helpers/job";
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  const loadCount = useRef<number>(0);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setFilterMenuAnchorEl(event.currentTarget);
@@ -60,51 +62,15 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   const filteredJobs = jobs.filter((job: any) =>  {
     let cond = true;
-    if (selectionRange) {
-      cond = cond &&
-        moment(job.scheduleDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
-    }
+    // if (selectionRange) {
+    //   cond = cond &&
+    //     moment(job.scheduleDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    // }
     if (Number(selectedStatus) >= 0) {
       cond = cond && job.status === Number(selectedStatus)
     }
     return cond;
   })
-
-  function getVendor (originalRow: any, rowIndex: number) {
-    const {tasks} = originalRow;
-    let value = '';
-    if (tasks) {
-      if (tasks.length === 0) return null;
-      else if (tasks.length > 1) value = 'Multiple Techs';
-      else if (tasks[0].vendor) {
-        value = tasks[0].vendor.profile
-          ? tasks[0].vendor.profile.displayName
-          : tasks[0].vendor.info.companyName;
-      } else if (tasks[0].technician) {
-        value =  tasks[0].technician.profile
-          ? tasks[0].technician.profile.displayName
-          : tasks[0].technician.info.companyName;
-      }
-    }
-    return value.toLowerCase();
-  }
-
-  function getJobType(originalRow: any, rowIndex: number) {
-    const allTypes = originalRow.tasks.reduce((acc: string[], task: any) => {
-      if (task.jobType?.title) {
-        if (acc.indexOf(task.jobType.title) === -1) acc.push(task.jobType.title);
-        return acc;
-      }
-
-      const all = task.jobTypes?.map((item: any) => item.jobType?.title);
-      all.forEach((item: string) => {
-        if (item && acc.indexOf(item) === -1) acc.push(item);
-      })
-      return acc;
-    }, []);
-
-    return allTypes.length === 1 ? allTypes[0].toLowerCase() : 'multiple jobs';
-  }
 
   function getJobLocation(originalRow: any, rowIndex: number) {
     return originalRow?.jobLocation?.name || '-'
@@ -269,10 +235,18 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       } else {
         setIconComponent(null);
       }
-      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
-      dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      if(loadCount.current !== 0){
+        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+        dispatch(setCurrentPageIndex(0));
+      }
     }, [selectedStatus]);
+
+    useEffect(() => {
+      if(loadCount.current !== 0){
+        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+        dispatch(setCurrentPageIndex(0));
+      }
+    }, [selectionRange]);
 
     return (
       <>
@@ -360,17 +334,20 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
+      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
   }, [refresh]);
 
   useEffect(() => {
+    dispatch(getAllJobsAPI());
     dispatch(setKeyword(''));
-    return () => {
-      dispatch(setKeyword(''));
-    }
+    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentPageSize(10));
   }, [])
   
 
@@ -399,13 +376,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
-          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query || keyword))
+          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
         currentPageIndex={currentPageIndex}
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+        keyword={keyword}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>

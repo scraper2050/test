@@ -1,12 +1,20 @@
 import request from 'utils/http.service';
 import { formatDateYMD } from 'helpers/format';
+import moment from 'moment';
+import axios from 'axios';
 import buildFormData from 'utils/build-formdata';
 import {
   refreshJobTypes,
   setJobTypes,
   setJobTypesLoading
 } from 'actions/job-type/job-type.action';
-import { refreshJobs, setJobLoading, setJobs, setPreviousJobsCursor, setNextJobsCursor, setTotal } from 'actions/job/job.action';
+import { refreshJobs,
+  setJobLoading,
+  setJobs,
+  setPreviousJobsCursor,
+  setNextJobsCursor,
+  setTotal
+} from 'actions/job/job.action';
 
 const compareByDate = (a: any, b: any) => {
   if (new Date(a.updatedAt) > new Date(b.updatedAt)) {
@@ -48,8 +56,8 @@ export const getAllJobTypes = () => {
       });
   });
 };
-
-export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string) => {
+let cancelTokenGetAllJobsAPI:any;
+export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
@@ -64,7 +72,20 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
       if(keyword){
         optionObj.keyword = keyword
       }
-      request(`/getJobs`, 'post', optionObj)
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
+      }
+      if(cancelTokenGetAllJobsAPI) {
+        cancelTokenGetAllJobsAPI.cancel();
+        setTimeout(() => {
+          dispatch(setJobLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllJobsAPI = axios.CancelToken.source();
+
+      request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
@@ -82,6 +103,7 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
         })
         .catch(err => {
           dispatch(setJobLoading(false));
+          dispatch(setJobs([]));
           return reject(err);
         });
     });

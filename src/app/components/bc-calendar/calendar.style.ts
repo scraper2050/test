@@ -1,4 +1,4 @@
-import {PRIMARY_BLUE} from "../../../constants";
+import {CALENDAR_BUTTON_COLOR, PRIMARY_BLUE} from "../../../constants";
 
 export default (): any => ({
   headerContainer: {
@@ -23,7 +23,8 @@ export default (): any => ({
     fontSize: 24,
   },
   headerTodayButton: {
-    marginLeft: 20,
+    color: CALENDAR_BUTTON_COLOR,
+    borderRadius: 8,
   },
 
   monthSpinnerContainer: {
@@ -135,5 +136,18 @@ export default (): any => ({
   eventTime: {
     fontSize: 10,
     color:'#4F4F4F',
+  },
+  searchBox: {
+    padding: '2px 5px',
+    //border: `1px solid ${CALENDAR_BUTTON_COLOR}`,
+    borderRadius: 8,
+    boxShadow: `0 1px 2px 1px ${CALENDAR_BUTTON_COLOR}82`,
+  },
+  searchBoxFocused: {
+    borderWidth: 2,
+    borderColor: PRIMARY_BLUE,
+  },
+  searchBoxInput: {
+    color: CALENDAR_BUTTON_COLOR,
   }
 });

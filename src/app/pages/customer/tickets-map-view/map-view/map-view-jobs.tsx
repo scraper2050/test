@@ -59,22 +59,6 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     });
   };
 
-  // useEffect(() => {
-  //   if (refresh) {
-  //     dispatch(getAllJobsAPI(25));
-  //     dispatch(setCurrentPageIndex(0));
-  //     dispatch(setCurrentPageSize(25));
-  //   }
-  // }, [refresh]);
-
-  // useEffect(() => {
-  //   if (!refresh) {
-  //     dispatch(getAllJobsAPI(25));
-  //     dispatch(setCurrentPageIndex(0));
-  //     dispatch(setCurrentPageSize(25));
-  //   }
-  // }, []);
-
   useEffect(() => {
     dispatch(refreshJobs(true));
     return () => {
