@@ -226,7 +226,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     };*/
 
     useEffect(() => {
-      console.log('ini itu loadCount', loadCount);
       if(selectedStatus !== '-1' && selectedStatus !== '-2'){
         setIconComponent(statusReference[selectedStatus].icon);
         // toggleShowAllJobs(false);

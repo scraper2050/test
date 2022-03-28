@@ -14,12 +14,30 @@ import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom
 import moment from "moment";
 import BCDateRangePicker, {Range}
   from "../../../components/bc-date-range-picker/bc-date-range-picker";
+import {getAllJobReportsAPI} from 'api/job-report.api'
+import {
+  setCurrentPageIndex,
+  setCurrentPageSize,
+  setKeyword
+} from 'actions/customer/job-report/job-report.action'
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
   const customStyles = useCustomStyles();
-  const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
-    jobReport);
+  // const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
+  //   jobReport);
+  const { loading, jobReports, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+    ({ jobReport }: any) => ({
+      loading: jobReport.loading,
+      jobReports: jobReport.jobReports,
+      prevCursor: jobReport.prevCursor,
+      nextCursor: jobReport.nextCursor,
+      total: jobReport.total,
+      currentPageIndex: jobReport.currentPageIndex,
+      currentPageSize: jobReport.currentPageSize,
+      keyword: jobReport.keyword,
+    })
+  );
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [curTab, setCurTab] = useState(0);
   const history = useHistory();
@@ -132,12 +150,19 @@ function JobReportsPage({ classes, theme }: any) {
   ];
 
   const filteredReports = selectionRange ? jobReports.filter((report: any) => {
-    return moment(report.jobDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    // return moment(report.jobDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    return true
   }) : jobReports;
 
   useEffect(() => {
-    dispatch(loadJobReportsActions.fetch());
+    // dispatch(loadJobReportsActions.fetch());
+    dispatch(getAllJobReportsAPI());
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllJobReportsAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
+    dispatch(setCurrentPageIndex(0));
+  }, [selectionRange]);
 
 
   const handleTabChange = (newValue: number) => {
@@ -207,6 +232,17 @@ function JobReportsPage({ classes, theme }: any) {
                 tableData={filteredReports}
                 toolbarPositionLeft={true}
                 toolbar={Toolbar()}
+                manualPagination
+                fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
+                }
+                total={total}
+                currentPageIndex={currentPageIndex}
+                setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+                currentPageSize={currentPageSize}
+                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+                keyword={keyword}
+                setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
               />
             </div>
             <div

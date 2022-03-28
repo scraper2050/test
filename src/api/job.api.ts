@@ -8,7 +8,13 @@ import {
   setJobTypes,
   setJobTypesLoading
 } from 'actions/job-type/job-type.action';
-import { refreshJobs, setJobLoading, setJobs, setPreviousJobsCursor, setNextJobsCursor, setTotal } from 'actions/job/job.action';
+import { refreshJobs,
+  setJobLoading,
+  setJobs,
+  setPreviousJobsCursor,
+  setNextJobsCursor,
+  setTotal
+} from 'actions/job/job.action';
 
 const compareByDate = (a: any, b: any) => {
   if (new Date(a.updatedAt) > new Date(b.updatedAt)) {
@@ -97,6 +103,7 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
         })
         .catch(err => {
           dispatch(setJobLoading(false));
+          dispatch(setJobs([]));
           return reject(err);
         });
     });
