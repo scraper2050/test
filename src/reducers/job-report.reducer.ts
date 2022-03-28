@@ -9,6 +9,12 @@ import { types } from 'reducers/job-report.types';
 const initialJobReport: JobReportState = {
   'loading': false,
   'jobReports': [],
+  prevCursor: '',
+  nextCursor: '',
+  total: 0,
+  currentPageIndex: 0,
+  currentPageSize: 10,
+  keyword: '',
 
   'jobReportObj': {
     '_id': '',
@@ -129,9 +135,9 @@ const initialJobReport: JobReportState = {
 
 export const JobReportReducer: Reducer<any> = (
   state = initialJobReport,
-  action
+  {payload, type}
 ) => {
-  switch (action.type) {
+  switch (type) {
     case loadJobReportsActions.cancelled.toString():
       return {
         ...state,
@@ -140,13 +146,13 @@ export const JobReportReducer: Reducer<any> = (
     case loadJobReportsActions.success.toString():
       return {
         ...state,
-        'jobReports': action.payload.reports.reverse(),
+        'jobReports': payload.reports.reverse(),
         'loading': false
       };
     case loadJobReportsActions.fault.toString():
       return {
         ...state,
-        'error': action.payload,
+        'error': payload,
         'loading': false
 
       };
@@ -164,13 +170,13 @@ export const JobReportReducer: Reducer<any> = (
     case loadJobReportActions.success.toString():
       return {
         ...state,
-        'jobReportObj': action.payload,
+        'jobReportObj': payload,
         'loading': false
       };
     case loadJobReportActions.fault.toString():
       return {
         ...state,
-        'error': action.payload,
+        'error': payload,
         'loading': false
 
       };
@@ -184,7 +190,7 @@ export const JobReportReducer: Reducer<any> = (
       return {
         ...state,
         'jobReports': state.jobReports.map((jobReport:any) => {
-          if (jobReport._id === action.payload.id) {
+          if (jobReport._id === payload.id) {
             return {
               ...jobReport,
               'emailHistory': [
@@ -199,16 +205,56 @@ export const JobReportReducer: Reducer<any> = (
         }),
         'jobReportObj': {
           ...state.jobReportObj,
-          'emailHistory': action.payload.email
+          'emailHistory': payload.email
             ? [
               ...state.jobReportObj.emailHistory,
               {
                 'sentAt': Date.now(),
-                'sentTo': action.payload.email
+                'sentTo': payload.email
               }
             ]
             : state.jobReportObj.emailHistory
         }
+      };
+    case types.SET_JOB_REPORT_LOADING:
+      return {
+        ...state,
+        'loading': payload,
+      };
+    case types.SET_JOB_REPORT:
+      return {
+        ...state,
+        'jobReports': payload,
+      };
+    case types.SET_PREVIOUS_JOB_REPORTS_CURSOR:
+      return {
+        ...state,
+        prevCursor: payload,
+      };
+    case types.SET_NEXT_JOB_REPORTS_CURSOR:
+      return {
+        ...state,
+        nextCursor: payload,
+      };
+    case types.SET_JOB_REPORTS_TOTAL:
+      return {
+        ...state,
+        total: payload,
+      };
+    case types.SET_CURRENT_REPORTS_PAGE_INDEX:
+      return {
+        ...state,
+        currentPageIndex: payload,
+      };
+    case types.SET_CURRENT_REPORTS_PAGE_SIZE:
+      return {
+        ...state,
+        currentPageSize: payload,
+      };
+    case types.SET_REPORT_SEARCH_KEYWORD:
+      return {
+        ...state,
+        keyword: payload,
       };
 
 

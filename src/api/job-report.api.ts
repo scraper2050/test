@@ -1,4 +1,57 @@
+import moment from 'moment';
+import axios from 'axios';
 import request from 'utils/http.service';
+import { 
+  setJobReportLoading,
+  setJobReport,
+  setPreviousJobReportsCursor,
+  setNextJobReportsCursor,
+  setJobReportsTotal
+} from 'actions/customer/job-report/job-report.action';
+
+let cancelTokenGetAllJobReportsAPI:any;
+export const getAllJobReportsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setJobReportLoading(true));
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor
+      };
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
+      }
+      if(cancelTokenGetAllJobReportsAPI) {
+        cancelTokenGetAllJobReportsAPI.cancel();
+        setTimeout(() => {
+          dispatch(setJobReportLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllJobReportsAPI = axios.CancelToken.source();
+      request(`/getAllJobReports`, 'OPTIONS', optionObj, undefined, undefined, cancelTokenGetAllJobReportsAPI)
+        .then((res: any) => {
+          let tempReports = res.data.reports;
+          dispatch(setJobReport(tempReports));
+          dispatch(setPreviousJobReportsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
+          dispatch(setNextJobReportsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
+          dispatch(setJobReportsTotal(res.data.total ? res.data.total : 0));
+          dispatch(setJobReportLoading(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setJobReportLoading(false));
+          dispatch(setJobReport([]));
+          return reject(err);
+        });
+    });
+  };
+};
 
 export const getJobReports = async (data: any) => {
   try {

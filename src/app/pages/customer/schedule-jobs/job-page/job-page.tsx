@@ -62,10 +62,10 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   const filteredJobs = jobs.filter((job: any) =>  {
     let cond = true;
-    if (selectionRange) {
-      cond = cond &&
-        moment(job.scheduleDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
-    }
+    // if (selectionRange) {
+    //   cond = cond &&
+    //     moment(job.scheduleDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    // }
     if (Number(selectedStatus) >= 0) {
       cond = cond && job.status === Number(selectedStatus)
     }
@@ -236,11 +236,17 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         setIconComponent(null);
       }
       if(loadCount.current !== 0){
-        dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
+        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
         dispatch(setCurrentPageIndex(0));
-        dispatch(setCurrentPageSize(10));
       }
     }, [selectedStatus]);
+
+    useEffect(() => {
+      if(loadCount.current !== 0){
+        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+        dispatch(setCurrentPageIndex(0));
+      }
+    }, [selectionRange]);
 
     return (
       <>
@@ -328,20 +334,20 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword));
+      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
-      setTimeout(() => {
-        loadCount.current++;
-      }, 1000);
     }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
   }, [refresh]);
 
   useEffect(() => {
+    dispatch(getAllJobsAPI());
     dispatch(setKeyword(''));
-    return () => {
-      dispatch(setKeyword(''));
-    }
+    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentPageSize(10));
   }, [])
   
 
@@ -370,13 +376,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
-          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === undefined ? '' : query || keyword))
+          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
         currentPageIndex={currentPageIndex}
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+        keyword={keyword}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>
