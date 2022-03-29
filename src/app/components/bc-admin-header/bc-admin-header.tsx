@@ -352,6 +352,11 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
               [classes.bcAdminPopperResponsive]: true,
               [classes.bcAdminPopperNav]: true
             })}
+            modifiers={{
+              flip: {
+                enabled: false,
+              },
+            }}
             disablePortal
             id={notificationPopover}
             open={notificationOpen}
