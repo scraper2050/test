@@ -149,7 +149,9 @@ export default (theme: Theme): any => ({
     'padding': '5px 0',
     'textAlign': 'left',
     'top': '100%',
-    'zIndex': '1000'
+    'zIndex': '1000',
+    'maxHeight': 'calc(100vh - 60px)',
+    'overflow': 'auto',
   },
   'bcAdminDropdownItem': {
     '-webkit-font-smoothing': 'subpixel-antialiased',
