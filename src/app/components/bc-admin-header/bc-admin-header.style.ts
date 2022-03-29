@@ -150,7 +150,7 @@ export default (theme: Theme): any => ({
     'textAlign': 'left',
     'top': '100%',
     'zIndex': '1000',
-    'maxHeight': 'calc(100vh - 100px)',
+    'maxHeight': 'calc(100vh - 60px)',
     'overflow': 'auto',
   },
   'bcAdminDropdownItem': {
