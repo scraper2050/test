@@ -35,6 +35,7 @@ export const parseISOMoment = (date: string) => {
 }
 
 export const parseISODate = (date: string) => {
+  if(!date) return date;
   const offset = moment.parseZone().utcOffset();
   const dateObj = moment(date).subtract(offset, 'minutes').toDate();
   return dateObj;
