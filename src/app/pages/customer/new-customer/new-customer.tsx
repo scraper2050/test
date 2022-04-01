@@ -214,7 +214,8 @@ function NewCustomerPage({classes}: Props) {
             {({
                 handleChange,
                 values,
-                setFieldValue
+                setFieldValue,
+                isSubmitting,
               }) =>
               <Form>
                 <Grid container>
@@ -533,6 +534,7 @@ function NewCustomerPage({classes}: Props) {
                         className={'save-customer-button'}
                         color={'primary'}
                         type={'submit'}
+                        disabled={isSubmitting}
                         variant={'contained'}>
                         {'Save'}
                       </Button>
