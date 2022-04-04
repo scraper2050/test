@@ -18,9 +18,15 @@ import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../../constants";
+import { getAllDraftInvoicesAPI } from 'api/invoicing.api';
+import { 
+  setCurrentDraftPageIndex,
+  setCurrentDraftPageSize,
+  setDraftKeyword,
+} from 'actions/invoicing/invoicing.action';
 
 const getFilteredList = (state: any) => {
-  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.draft);
   return sortedInvoices.filter((invoice: any) => invoice.isDraft);
 };
 
@@ -29,7 +35,18 @@ function InvoicingDraftListing({ classes, theme }: any) {
   const history = useHistory();
   const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
-  const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
+  // const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
+  const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+    ({ invoiceList }: any) => ({
+      loading: invoiceList.loadingDraft,
+      prevCursor: invoiceList.prevCursorDraft,
+      nextCursor: invoiceList.nextCursorDraft,
+      total: invoiceList.totalDraft,
+      currentPageIndex: invoiceList.currentPageIndexDraft,
+      currentPageSize: invoiceList.currentPageSizeDraft,
+      keyword: invoiceList.keywordDraft,
+    })
+  );
   const showInvoiceDetail = (id:string) => {
     history.push({
       'pathname': `view/${id}`,
@@ -69,8 +86,9 @@ function InvoicingDraftListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getInvoicingList());
-    dispatch(loadingInvoicingList());
+    // dispatch(getInvoicingList());
+    // dispatch(loadingInvoicingList());
+    dispatch(getAllDraftInvoicesAPI());
   }, []);
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
@@ -79,11 +97,22 @@ function InvoicingDraftListing({ classes, theme }: any) {
     <DataContainer id={'0'}>
       <BCTableContainer
         columns={columns}
-        isLoading={isLoading}
+        isLoading={loading}
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
+        manualPagination
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword))
+        }
+        total={total}
+        currentPageIndex={currentPageIndex}
+        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentDraftPageIndex(num))}
+        currentPageSize={currentPageSize}
+        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentDraftPageSize(num))}
+        keyword={keyword}
+        setKeywordFunction={(query: string) => dispatch(setDraftKeyword(query))}
       />
     </DataContainer>
   );
