@@ -40,7 +40,8 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
       const optionObj:any = {
         pageSize,
         previousCursor,
-        nextCursor
+        nextCursor,
+        isDraft: false,
       };
       if(keyword){
         optionObj.keyword = keyword
@@ -86,7 +87,8 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
       const optionObj:any = {
         pageSize,
         previousCursor,
-        nextCursor
+        nextCursor,
+        isDraft: true,
       };
       if(keyword){
         optionObj.keyword = keyword
