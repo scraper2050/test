@@ -10,7 +10,7 @@ export enum SocketMessage {
   CREATESERVICETICKET= 'createServiceTicketMsg',
   CREATENOTIFICATION = 'notification_center',
   SERVICE_TICKETS = 'all_open_service_tickets',
-  ALL_SCHEDULED_JOBS = 'all_scheduled_jobs',
+  ALL_JOBS = 'all_jobs',
 }
 
 export const STATUSES = [

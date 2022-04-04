@@ -290,9 +290,9 @@ export const getSearchJobs = async (data: {
   });
 };
 
-export const getScheduledJobsStream :any = () => {
+export const getJobsStream :any = () => {
   return new Promise((resolve, reject) => {
-    request(`/getScheduledJobsStream `, 'get', {}, false)
+    request(`/getJobsStream`, 'get', {}, false)
       .then((res: any) => {
         return resolve(res.data);
       })
