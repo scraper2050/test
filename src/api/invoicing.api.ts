@@ -83,7 +83,6 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setDraftInvoicesLoading(true));
-    console.log('ini itu jalan');
       const optionObj:any = {
         pageSize,
         previousCursor,

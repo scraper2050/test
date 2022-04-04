@@ -89,6 +89,11 @@ function InvoicingDraftListing({ classes, theme }: any) {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
     dispatch(getAllDraftInvoicesAPI());
+    return () => {
+      dispatch(setDraftKeyword(''));
+      dispatch(setCurrentDraftPageIndex(currentPageIndex));
+      dispatch(setCurrentDraftPageSize(currentPageSize));
+    }
   }, []);
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
@@ -111,7 +116,6 @@ function InvoicingDraftListing({ classes, theme }: any) {
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentDraftPageIndex(num))}
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentDraftPageSize(num))}
-        keyword={keyword}
         setKeywordFunction={(query: string) => dispatch(setDraftKeyword(query))}
       />
     </DataContainer>

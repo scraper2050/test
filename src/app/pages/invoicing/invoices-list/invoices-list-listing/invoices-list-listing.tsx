@@ -207,6 +207,11 @@ function InvoicingListListing({ classes, theme }: any) {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
     dispatch(getAllInvoicesAPI());
+    return () => {
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(currentPageIndex));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
   }, []);
 
   useEffect(() => {
@@ -293,7 +298,6 @@ function InvoicingListListing({ classes, theme }: any) {
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-        keyword={keyword}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>

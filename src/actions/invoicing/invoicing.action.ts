@@ -156,7 +156,6 @@ export const setKeyword = (keyword: string) => {
 };
 
 export const setDraftInvoicesLoading = (isLoading: any) => {
- console.log('ini itu isLoading', isLoading);
   return {
     'payload': isLoading,
     'type': InvoicingListActionType.SET_DRAFT_INVOICES_LOADING

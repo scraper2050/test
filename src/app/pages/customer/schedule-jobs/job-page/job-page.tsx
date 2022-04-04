@@ -383,7 +383,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-        keyword={keyword}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>
