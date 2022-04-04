@@ -41,9 +41,9 @@ function InvoiceList({ classes }: any) {
     });*/
   };
 
-  useEffect(() => {
-    dispatch(getInvoicingList());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getInvoicingList());
+  // }, []);
 
   return (
     <div className={classes.pageMainContainer}>

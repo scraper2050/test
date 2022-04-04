@@ -11,7 +11,21 @@ import { loadInvoiceDetail } from 'actions/invoicing/invoicing.action';
 
 const initialState: InvoicingState = {
   'loading': false,
-  'data': []
+  'data': [],
+  loadingDraft: false,
+  draft: [],
+  prevCursor: '',
+  nextCursor: '',
+  total: 0,
+  currentPageIndex: 0,
+  currentPageSize: 10,
+  keyword: '',
+  prevCursorDraft: '',
+  nextCursorDraft: '',
+  totalDraft: 0,
+  currentPageIndexDraft: 0,
+  currentPageSizeDraft: 10,
+  keywordDraft: '',
 };
 
 export const InvoicingTodoReducer: Reducer<any> = (state = initialState, action) => {
@@ -66,6 +80,86 @@ export const InvoicingListReducer: Reducer<any> = (state = initialState, action)
           }
           return invoice;
         })
+      };
+    case InvoicingListActionType.SET_INVOICES_LOADING:
+      return {
+        ...state,
+        loading: action.payload
+      };
+    case InvoicingListActionType.SET_INVOICES:
+      return {
+        ...state,
+        data: action.payload,
+      };
+    case InvoicingListActionType.SET_PREVIOUS_INVOICES_CURSOR:
+      return {
+        ...state,
+        prevCursor: action.payload,
+      };
+    case InvoicingListActionType.SET_NEXT_INVOICES_CURSOR:
+      return {
+        ...state,
+        nextCursor: action.payload,
+      };
+    case InvoicingListActionType.SET_INVOICES_TOTAL:
+      return {
+        ...state,
+        total: action.payload,
+      };
+    case InvoicingListActionType.SET_CURRENT_INVOICES_PAGE_INDEX:
+      return {
+        ...state,
+        currentPageIndex: action.payload,
+      };
+    case InvoicingListActionType.SET_CURRENT_INVOICES_PAGE_SIZE:
+      return {
+        ...state,
+        currentPageSize: action.payload,
+      };
+    case InvoicingListActionType.SET_INVOICES_SEARCH_KEYWORD:
+      return {
+        ...state,
+        keyword: action.payload,
+      };
+    case InvoicingListActionType.SET_DRAFT_INVOICES_LOADING:
+      return {
+        ...state,
+        loadingDraft: action.payload
+      };
+    case InvoicingListActionType.SET_DRAFT_INVOICES:
+      return {
+        ...state,
+        draft: action.payload,
+      };
+    case InvoicingListActionType.SET_PREVIOUS_DRAFT_INVOICES_CURSOR:
+      return {
+        ...state,
+        prevCursorDraft: action.payload,
+      };
+    case InvoicingListActionType.SET_NEXT_DRAFT_INVOICES_CURSOR:
+      return {
+        ...state,
+        nextCursorDraft: action.payload,
+      };
+    case InvoicingListActionType.SET_DRAFT_INVOICES_TOTAL:
+      return {
+        ...state,
+        totalDraft: action.payload,
+      };
+    case InvoicingListActionType.SET_CURRENT_DRAFT_INVOICES_PAGE_INDEX:
+      return {
+        ...state,
+        currentPageIndexDraft: action.payload,
+      };
+    case InvoicingListActionType.SET_CURRENT_DRAFT_INVOICES_PAGE_SIZE:
+      return {
+        ...state,
+        currentPageSizeDraft: action.payload,
+      };
+    case InvoicingListActionType.SET_DRAFT_INVOICES_SEARCH_KEYWORD:
+      return {
+        ...state,
+        keywordDraft: action.payload,
       };
   }
   return state;
