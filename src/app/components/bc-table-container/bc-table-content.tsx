@@ -100,7 +100,7 @@ function BCTableContent({
       columns,
       data,
       'initialState': {
-        'sortBy': isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
+        'sortBy': manualPagination ? [] : isDefault ? [] : onUpdatePage ? onUpdatePage.sortBy : initialSort,
         'pageIndex': manualPagination ? currentPageIndex : isDefault ? 0 : !onUpdatePage ? initialPageIndex : onUpdatePage.page > data.length / onUpdatePage.pageSize ? 0 : onUpdatePage.page,
         'pageSize': manualPagination ? currentPageSize : isDefault && defaultPageSize ? defaultPageSize : onUpdatePage ? onUpdatePage.pageSize : initialPageSize
       },
@@ -231,18 +231,19 @@ function BCTableContent({
       handleChangePage(null, 0);
     }
 
-
-    history.replace({
-      ...history.location,
-      'state': {
-        ...locationState,
-        'onUpdatePage': {
-          'page': 0,
-          pageSize,
-          sortBy
+    if(!manualPagination){
+      history.replace({
+        ...history.location,
+        'state': {
+          ...locationState,
+          'onUpdatePage': {
+            'page': 0,
+            pageSize,
+            sortBy
+          }
         }
-      }
-    });
+      });
+    }
 
     if (prevPage) {
       history.replace({
