@@ -1,4 +1,18 @@
+import axios from 'axios';
+import moment from 'moment';
 import request from 'utils/http.service';
+import {
+  setInvoicesLoading,
+  setInvoices,
+  setInvoicesTotal,
+  setNextInvoicesCursor,
+  setPreviousInvoicesCursor,
+  setDraftInvoicesLoading,
+  setDraftInvoices,
+  setDraftInvoicesTotal,
+  setNextDraftInvoicesCursor,
+  setPreviousDraftInvoicesCursor
+} from 'actions/invoicing/invoicing.action';
 
 export const getTodos = async (params = {}) => {
   let responseData;
@@ -16,6 +30,94 @@ export const getTodos = async (params = {}) => {
     }
   }
   return responseData.jobs;
+};
+
+let cancelTokenGetAllInvoicesAPI:any;
+export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setInvoicesLoading(true));
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor,
+        isDraft: false,
+      };
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).add(1,'day').format('YYYY-MM-DD');
+      }
+      if(cancelTokenGetAllInvoicesAPI) {
+        cancelTokenGetAllInvoicesAPI.cancel();
+        setTimeout(() => {
+          dispatch(setInvoicesLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllInvoicesAPI = axios.CancelToken.source();
+
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI)
+        .then((res: any) => {
+          let tempInvoices = res.data.invoices;
+          dispatch(setInvoices(tempInvoices.reverse()));
+          dispatch(setPreviousInvoicesCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
+          dispatch(setNextInvoicesCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
+          dispatch(setInvoicesTotal(res.data?.total ? res.data?.total : 0));
+          dispatch(setInvoicesLoading(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setInvoicesLoading(false));
+          dispatch(setInvoices([]));
+          return reject(err);
+        });
+    });
+  };
+};
+
+let cancelTokenGetAllDraftInvoicesAPI:any;
+export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setDraftInvoicesLoading(true));
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor,
+        isDraft: true,
+      };
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(cancelTokenGetAllDraftInvoicesAPI) {
+        cancelTokenGetAllDraftInvoicesAPI.cancel();
+        setTimeout(() => {
+          dispatch(setDraftInvoicesLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllDraftInvoicesAPI = axios.CancelToken.source();
+
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI)
+        .then((res: any) => {
+          let tempDraftInvoices = res.data.invoices;
+          dispatch(setDraftInvoices(tempDraftInvoices.reverse()));
+          dispatch(setPreviousDraftInvoicesCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
+          dispatch(setNextDraftInvoicesCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
+          dispatch(setDraftInvoicesTotal(res.data?.total ? res.data?.total : 0));
+          dispatch(setDraftInvoicesLoading(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setDraftInvoicesLoading(false));
+          dispatch(setDraftInvoices([]));
+          return reject(err);
+        });
+    });
+  };
 };
 
 export const getInvoicingList = async (params = {}) => {

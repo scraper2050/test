@@ -8,7 +8,7 @@ import SidebarJobs from "../sidebar/sidebar-jobs";
 import {FilterJobs} from "../tickets-map-view";
 import {useDispatch, useSelector} from "react-redux";
 import {parseISOMoment} from "../../../../../helpers/format";
-import { getScheduledJobsStream } from "api/job.api";
+import { getJobsStream } from "api/job.api";
 import { setScheduledJobs, streamJobs, refreshJobs } from "actions/job/job.action";
 import Config from "config";
 import { SocketMessage } from "helpers/contants";
@@ -76,11 +76,11 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       });
   
       socket.on("connect", () => {
-        getScheduledJobsStream();
+        getJobsStream();
         dispatch(streamJobs(true));
       });
   
-      socket.on(SocketMessage.ALL_SCHEDULED_JOBS, data => {
+      socket.on(SocketMessage.ALL_JOBS, data => {
         const {count, job, total} = data;
         if (job) {
           tempJobs.current.push(job);

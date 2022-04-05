@@ -24,9 +24,8 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const { refresh } = useSelector(({ serviceTicket }: any) => ({refresh: serviceTicket.refresh}));
   const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
 
-  const tempTokens = useRef<any[]>([]);
+  const tempRefTicket = useRef<any[]>([]);
   const loadCount = useRef<number>(0);
-  const totalTickets = useRef<number>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
@@ -65,7 +64,8 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
     if(refresh){
       setIsLoading(true);
       setAllTickets([]);
-      tempTokens.current = [];
+      // dispatch(setServiceTicket([]));
+      tempRefTicket.current = [];
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
       });
@@ -78,16 +78,15 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       socket.on(SocketMessage.SERVICE_TICKETS, data => {
         const {count, serviceTicket, total} = data;
         if (serviceTicket) {
-          tempTokens.current.push(serviceTicket);
+          tempRefTicket.current.push(serviceTicket);
           if (count % 25 === 0 || count === total) {
-            totalTickets.current = total;
             setIsLoading(false);
-            setAllTickets([...tempTokens.current]);
+            setAllTickets([...tempRefTicket.current]);
           }
           if (count === total) {
             socket.close();
             dispatch(streamServiceTickets(false));
-            dispatch(setServiceTicket(tempTokens.current));
+            dispatch(setServiceTicket(tempRefTicket.current));
             dispatch(refreshServiceTickets(false));
             loadCount.current++;
           }
@@ -112,6 +111,9 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   useEffect(() => {
     const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
     setAllTickets(tempAll);
+    const tempTickets = tickets.filter((ticket: any) => ticket._id !== ticket2Job);
+    dispatch(setServiceTicket(tempTickets));
+    tempRefTicket.current = tempRefTicket.current?.filter((ticket: any) => ticket._id !== ticket2Job);
 
   }, [ticket2Job])
 

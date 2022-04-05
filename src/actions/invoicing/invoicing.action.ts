@@ -104,3 +104,103 @@ export const updateInvoiceEmailHistory = (payload:any) => {
 
 export const loadInvoiceDetail = createApiAction(InvoiceActionType.LOAD_INVOICE_DETAIL);
 
+
+export const setInvoicesLoading = (isLoading: any) => {
+  return {
+    'payload': isLoading,
+    'type': InvoicingListActionType.SET_INVOICES_LOADING
+  };
+};
+
+export const setInvoices = (invoices: any) => {
+  return {
+    'payload': invoices,
+    'type': InvoicingListActionType.SET_INVOICES
+  };
+};
+export const setPreviousInvoicesCursor = (prevCursor: string) => {
+  return {
+    'payload': prevCursor,
+    'type': InvoicingListActionType.SET_PREVIOUS_INVOICES_CURSOR
+  };
+};
+export const setNextInvoicesCursor = (nextCursor: string) => {
+  return {
+    'payload': nextCursor,
+    'type': InvoicingListActionType.SET_NEXT_INVOICES_CURSOR
+  };
+};
+export const setInvoicesTotal = (total: number) => {
+  return {
+    'payload': total,
+    'type': InvoicingListActionType.SET_INVOICES_TOTAL
+  };
+};
+export const setCurrentPageIndex = (currentPageIndex: number) => {
+  return {
+    'payload': currentPageIndex,
+    'type': InvoicingListActionType.SET_CURRENT_INVOICES_PAGE_INDEX
+  };
+};
+export const setCurrentPageSize = (currentPageSize: number) => {
+  return {
+    'payload': currentPageSize,
+    'type': InvoicingListActionType.SET_CURRENT_INVOICES_PAGE_SIZE
+  };
+};
+export const setKeyword = (keyword: string) => {
+  return {
+    'payload': keyword,
+    'type': InvoicingListActionType.SET_INVOICES_SEARCH_KEYWORD
+  };
+};
+
+export const setDraftInvoicesLoading = (isLoading: any) => {
+  return {
+    'payload': isLoading,
+    'type': InvoicingListActionType.SET_DRAFT_INVOICES_LOADING
+  };
+};
+
+export const setDraftInvoices = (invoices: any) => {
+  return {
+    'payload': invoices,
+    'type': InvoicingListActionType.SET_DRAFT_INVOICES
+  };
+};
+export const setPreviousDraftInvoicesCursor = (prevCursor: string) => {
+  return {
+    'payload': prevCursor,
+    'type': InvoicingListActionType.SET_PREVIOUS_DRAFT_INVOICES_CURSOR
+  };
+};
+export const setNextDraftInvoicesCursor = (nextCursor: string) => {
+  return {
+    'payload': nextCursor,
+    'type': InvoicingListActionType.SET_NEXT_DRAFT_INVOICES_CURSOR
+  };
+};
+export const setDraftInvoicesTotal = (total: number) => {
+  return {
+    'payload': total,
+    'type': InvoicingListActionType.SET_DRAFT_INVOICES_TOTAL
+  };
+};
+export const setCurrentDraftPageIndex = (currentPageIndex: number) => {
+  return {
+    'payload': currentPageIndex,
+    'type': InvoicingListActionType.SET_CURRENT_DRAFT_INVOICES_PAGE_INDEX
+  };
+};
+export const setCurrentDraftPageSize = (currentPageSize: number) => {
+  return {
+    'payload': currentPageSize,
+    'type': InvoicingListActionType.SET_CURRENT_DRAFT_INVOICES_PAGE_SIZE
+  };
+};
+export const setDraftKeyword = (keyword: string) => {
+  return {
+    'payload': keyword,
+    'type': InvoicingListActionType.SET_DRAFT_INVOICES_SEARCH_KEYWORD
+  };
+};

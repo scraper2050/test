@@ -157,6 +157,11 @@ function JobReportsPage({ classes, theme }: any) {
   useEffect(() => {
     // dispatch(loadJobReportsActions.fetch());
     dispatch(getAllJobReportsAPI());
+    return () => {
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(currentPageIndex));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
   }, []);
 
   useEffect(() => {
@@ -174,9 +179,9 @@ function JobReportsPage({ classes, theme }: any) {
     localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
       'pathname': `job-reports/${jobReportId}`,
-      'state': {
-        currentPage
-      }
+      // 'state': {
+      //   currentPage
+      // }
     });
   };
 
@@ -222,13 +227,13 @@ function JobReportsPage({ classes, theme }: any) {
               id={'0'}>
               <BCTableContainer
                 columns={columns}
-                currentPage={currentPage}
+                // currentPage={currentPage}
                 initialMsg={'There are no Job Report List'}
                 isLoading={loading}
                 onRowClick={handleRowClick}
                 search
                 searchPlaceholder={'Search Job Reports...'}
-                setPage={setCurrentPage}
+                // setPage={setCurrentPage}
                 tableData={filteredReports}
                 toolbarPositionLeft={true}
                 toolbar={Toolbar()}
@@ -241,7 +246,6 @@ function JobReportsPage({ classes, theme }: any) {
                 setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-                keyword={keyword}
                 setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
               />
             </div>

@@ -21,7 +21,13 @@ import BCMenuButton from "../../../../components/bc-menu-button";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-import moment from "moment";
+// import moment from "moment";
+import { getAllInvoicesAPI } from 'api/invoicing.api';
+import { 
+  setCurrentPageIndex,
+  setCurrentPageSize,
+  setKeyword,
+} from 'actions/invoicing/invoicing.action';
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -33,7 +39,18 @@ function InvoicingListListing({ classes, theme }: any) {
   const history = useHistory();
   const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
-  const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
+  // const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
+  const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+    ({ invoiceList }: any) => ({
+      loading: invoiceList.loading,
+      prevCursor: invoiceList.prevCursor,
+      nextCursor: invoiceList.nextCursor,
+      total: invoiceList.total,
+      currentPageIndex: invoiceList.currentPageIndex,
+      currentPageSize: invoiceList.currentPageSize,
+      keyword: invoiceList.keyword,
+    })
+  );
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const showInvoiceDetail = (id:string) => {
 /*    dispatch(setModalDataAction({
@@ -109,6 +126,7 @@ function InvoicingListListing({ classes, theme }: any) {
           </span>
         </div>;
       },
+      'accessor': 'total',
       'Header': 'Total',
       'sortable': true,
       'width': 20
@@ -187,9 +205,20 @@ function InvoicingListListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getInvoicingList());
-    dispatch(loadingInvoicingList());
+    // dispatch(getInvoicingList());
+    // dispatch(loadingInvoicingList());
+    dispatch(getAllInvoicesAPI());
+    return () => {
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(currentPageIndex));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
+    dispatch(setCurrentPageIndex(0));
+  }, [selectionRange]);
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
@@ -236,7 +265,8 @@ function InvoicingListListing({ classes, theme }: any) {
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
   const filteredInvoices = selectionRange ? invoiceList.filter((invoice: any) =>  {
-    return moment(invoice.createdAt).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    // return moment(invoice.createdAt).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+    return true
   }) : invoiceList;
 
   function Toolbar() {
@@ -253,13 +283,23 @@ function InvoicingListListing({ classes, theme }: any) {
     <DataContainer id={'0'}>
       <BCTableContainer
         columns={columns}
-        isLoading={isLoading}
+        isLoading={loading}
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Invoices...'}
         tableData={filteredInvoices}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
+        manualPagination
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+          dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
+        }
+        total={total}
+        currentPageIndex={currentPageIndex}
+        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+        currentPageSize={currentPageSize}
+        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+        setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>
   );

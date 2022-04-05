@@ -1,7 +1,21 @@
 export interface InvoicingState {
     readonly loading: boolean
+    readonly loadingDraft: boolean
     readonly data?: any
+    readonly draft?: any
     readonly error?: string
+    prevCursor: string;
+    nextCursor: string;
+    total: number;
+    currentPageIndex: number;
+    currentPageSize: number;
+    keyword: string;
+    prevCursorDraft: string;
+    nextCursorDraft: string;
+    totalDraft: number;
+    currentPageIndexDraft: number;
+    currentPageSizeDraft: number;
+    keywordDraft: string;
 }
 
 export enum InvoicingTodosActionType {
@@ -16,6 +30,22 @@ export enum InvoicingListActionType {
     SET = 'setInvoicingList',
     SUCCESS = 'getInvoicingListSuccess',
     FAILED = 'getInvoicingListFailed',
+    SET_INVOICES_LOADING = 'SET_INVOICES_LOADING',
+    SET_INVOICES = 'SET_INVOICES',
+    SET_PREVIOUS_INVOICES_CURSOR = 'SET_PREVIOUS_INVOICES_CURSOR',
+    SET_NEXT_INVOICES_CURSOR = 'SET_NEXT_INVOICES_CURSOR',
+    SET_INVOICES_TOTAL = 'SET_INVOICES_TOTAL',
+    SET_CURRENT_INVOICES_PAGE_INDEX = 'SET_CURRENT_INVOICES_PAGE_INDEX',
+    SET_CURRENT_INVOICES_PAGE_SIZE = 'SET_CURRENT_INVOICES_PAGE_SIZE',
+    SET_INVOICES_SEARCH_KEYWORD = 'SET_INVOICES_SEARCH_KEYWORD',
+    SET_DRAFT_INVOICES_LOADING = 'SET_DRAFT_INVOICES_LOADING',
+    SET_DRAFT_INVOICES = 'SET_DRAFT_INVOICES',
+    SET_PREVIOUS_DRAFT_INVOICES_CURSOR = 'SET_PREVIOUS_DRAFT_INVOICES_CURSOR',
+    SET_NEXT_DRAFT_INVOICES_CURSOR = 'SET_NEXT_DRAFT_INVOICES_CURSOR',
+    SET_DRAFT_INVOICES_TOTAL = 'SET_DRAFT_INVOICES_TOTAL',
+    SET_CURRENT_DRAFT_INVOICES_PAGE_INDEX = 'SET_CURRENT_DRAFT_INVOICES_PAGE_INDEX',
+    SET_CURRENT_DRAFT_INVOICES_PAGE_SIZE = 'SET_CURRENT_DRAFT_INVOICES_PAGE_SIZE',
+    SET_DRAFT_INVOICES_SEARCH_KEYWORD = 'SET_DRAFT_INVOICES_SEARCH_KEYWORD',
 }
 
 export enum InvoicingPurchaseOrdersActionType {
