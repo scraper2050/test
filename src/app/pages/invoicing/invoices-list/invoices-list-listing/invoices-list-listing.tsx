@@ -126,6 +126,7 @@ function InvoicingListListing({ classes, theme }: any) {
           </span>
         </div>;
       },
+      'accessor': 'total',
       'Header': 'Total',
       'sortable': true,
       'width': 20
