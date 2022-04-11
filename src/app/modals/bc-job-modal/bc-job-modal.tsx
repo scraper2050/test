@@ -381,15 +381,12 @@ function BCJobModal({
   useEffect(() => {
     if (ticket.customer?._id !== '') {
       if (contacts.length !== 0) {
+        const jobCustomerContact_id = job?.customerContactId?._id && contacts.find((contact: any) => job?.customerContactId?._id === contact._id);
+        const jobCustomerContact = job?.customerContactId && contacts.find((contact: any) => job?.customerContactId === contact._id);
+        const ticketCustomerContact_id = ticket?.customerContactId?._id && contacts.find((contact: any) => ticket?.customerContactId?._id === contact._id);
+        const ticketCustomerContact = ticket?.customerContactId && contacts.find((contact: any) => ticket?.customerContactId === contact._id);
         setContactValue(
-          contacts.find((contact: any) =>
-            [
-              job?.customerContactId?._id,
-              job?.customerContactId,
-              ticket?.customerContactId?._id,
-              ticket?.customerContactId,
-            ].includes(contact._id)
-          )
+          jobCustomerContact_id || jobCustomerContact || ticketCustomerContact_id || ticketCustomerContact
         );
       }
     }
