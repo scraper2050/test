@@ -8,7 +8,7 @@ import SidebarTodayJobs from '../sidebar/sidebar-today-jobs';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import {FilterJobs} from "../tickets-map-view";
 import { useDispatch, useSelector} from "react-redux";
-import {parseISOMoment} from "../../../../../helpers/format";
+import { getTodaysJobsAPI } from "api/job.api";
 
 interface Props {
   classes: any;
@@ -18,10 +18,13 @@ interface Props {
 function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   const dispatch = useDispatch();
   const [jobs, setJobs] = useState<Job[]>([]);
-  const { isLoading = true, scheduledJobs: scheduledJobs, } = useSelector(
+  const [statusFilter, setStatusFilter] = useState('-1');
+  const [jobIdFilter, setJobIdFilter] = useState('')
+  const { isLoading = true, todaysJobs, refresh = true } = useSelector(
     ({ jobState }: any) => ({
-      isLoading: jobState.isLoading,
-      scheduledJobs: jobState.scheduledJobs,
+      isLoading: jobState.isTodaysJobLoading,
+      todaysJobs: jobState.todaysJobs,
+      refresh: jobState.refresh,
     })
   );
 
@@ -40,7 +43,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
       if (filterJobs.customerNames) {
         filter = filter && (job.customer._id === filterJobs.customerNames._id);
         if (filterJobs.contact) {
-          filter = filter && (job.customerContactId === filterJobs.contact._id);
+          filter = filter && (job.customerContactId?._id === filterJobs.contact._id);
         }
       }
 
@@ -49,12 +52,40 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   };
 
   useEffect(() => {
-    setJobs(filterScheduledJobs(scheduledJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))))
-  }, [scheduledJobs])
+    if(filterJobs.jobStatus.length === 1){
+      setStatusFilter(`${filterJobs.jobStatus[0]}`)
+    } else {
+      setStatusFilter('-1')
+    }
+    if(filterJobs.jobId){
+      setJobIdFilter(filterJobs.jobId)
+    } else {
+      setJobIdFilter('')
+    }
+  }, [filterJobs])
+
+  const getJobsData = () => {
+    dispatch(getTodaysJobsAPI(statusFilter, jobIdFilter));
+  }
+  
 
   useEffect(() => {
-    setJobs(filterScheduledJobs(scheduledJobs.filter((job: Job) =>  parseISOMoment(job.scheduleDate).isSame(new Date(), 'day'))));
-  }, [filterJobs]);
+    if (refresh) {
+      getJobsData();
+    }
+  }, [refresh]);
+
+  useEffect(() => {
+    getJobsData();
+  }, [statusFilter, jobIdFilter]);
+
+  useEffect(() => {
+    getJobsData();
+  }, [])
+
+  useEffect(() => {
+    setJobs(filterScheduledJobs(todaysJobs));
+  }, [todaysJobs, filterJobs]);
 
   return (
     <Grid container item lg={12} >

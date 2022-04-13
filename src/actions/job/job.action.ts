@@ -18,6 +18,12 @@ export const setJobs = (jobs: any) => {
     'type': types.SET_JOBS
   };
 };
+export const setTodaysJobs = (jobs: any) => {
+  return {
+    'payload': jobs,
+    'type': types.SET_TODAYS_JOBS
+  };
+};
 export const setScheduledJobs = (scheduledJobs: any) => {
   return {
     'payload': scheduledJobs,
@@ -64,6 +70,12 @@ export const setJobLoading = (isLoading: any) => {
   return {
     'payload': isLoading,
     'type': types.SET_JOB_LOADING
+  };
+};
+export const setTodaysJobLoading = (isLoading: any) => {
+  return {
+    'payload': isLoading,
+    'type': types.SET_TODAYS_JOB_LOADING
   };
 };
 

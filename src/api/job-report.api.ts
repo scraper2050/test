@@ -27,7 +27,7 @@ export const getAllJobReportsAPI = (pageSize = 10, previousCursor = '', nextCurs
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
       if(cancelTokenGetAllJobReportsAPI) {
-        cancelTokenGetAllJobReportsAPI.cancel();
+        cancelTokenGetAllJobReportsAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setJobReportLoading(true));
         }, 0);
@@ -47,7 +47,9 @@ export const getAllJobReportsAPI = (pageSize = 10, previousCursor = '', nextCurs
         .catch(err => {
           dispatch(setJobReportLoading(false));
           dispatch(setJobReport([]));
-          return reject(err);
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
         });
     });
   };
