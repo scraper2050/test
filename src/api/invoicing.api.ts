@@ -51,7 +51,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
         optionObj.endDate = moment(selectionRange.endDate).add(1,'day').format('YYYY-MM-DD');
       }
       if(cancelTokenGetAllInvoicesAPI) {
-        cancelTokenGetAllInvoicesAPI.cancel();
+        cancelTokenGetAllInvoicesAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setInvoicesLoading(true));
         }, 0);
@@ -72,7 +72,9 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
         .catch(err => {
           dispatch(setInvoicesLoading(false));
           dispatch(setInvoices([]));
-          return reject(err);
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
         });
     });
   };
@@ -93,7 +95,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
         optionObj.keyword = keyword
       }
       if(cancelTokenGetAllDraftInvoicesAPI) {
-        cancelTokenGetAllDraftInvoicesAPI.cancel();
+        cancelTokenGetAllDraftInvoicesAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setDraftInvoicesLoading(true));
         }, 0);
@@ -114,7 +116,9 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
         .catch(err => {
           dispatch(setDraftInvoicesLoading(false));
           dispatch(setDraftInvoices([]));
-          return reject(err);
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
         });
     });
   };

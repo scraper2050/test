@@ -1,5 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
-import { io } from 'socket.io-client';
+import React, {useEffect, useState} from 'react';
 import { Grid, withStyles } from '@material-ui/core';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
 import '../ticket-map-view.scss';
@@ -8,10 +7,12 @@ import SidebarJobs from "../sidebar/sidebar-jobs";
 import {FilterJobs} from "../tickets-map-view";
 import {useDispatch, useSelector} from "react-redux";
 import {parseISOMoment} from "../../../../../helpers/format";
-import { getJobsStream } from "api/job.api";
-import { setScheduledJobs, streamJobs, refreshJobs } from "actions/job/job.action";
-import Config from "config";
-import { SocketMessage } from "helpers/contants";
+import {  getAllJobsAPI } from "api/job.api";
+import {
+  setCurrentPageIndex,
+  setCurrentPageSize,
+  setKeyword,
+} from "actions/job/job.action";
 
 interface Props {
   classes: any;
@@ -21,18 +22,17 @@ interface Props {
 
 function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props) {
   const dispatch = useDispatch();
-  const { token } = useSelector(({ auth }: any) => auth);
-  const { scheduledJobs, refresh} = useSelector(
+  const { isLoading = true, jobs, refresh = true } = useSelector(
     ({ jobState }: any) => ({
-      scheduledJobs: jobState.scheduledJobs,
-      refresh: jobState.refresh,
+      isLoading: jobState.isLoading,
+      jobs: jobState.data,
+      refresh: jobState.refresh
     })
   );
 
-  const tempJobs = useRef<any[]>([]);
-  const totalJobs = useRef<number>(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
+  const [statusFilter, setStatusFilter] = useState('0');
+  const [jobIdFilter, setJobIdFilter] = useState('')
     
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -48,7 +48,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       if (filterJobs.customerNames) {
         filter = filter && (job.customer._id === filterJobs.customerNames._id);
         if (filterJobs.contact) {
-          filter = filter && (job.customerContactId === filterJobs.contact._id);
+          filter = filter && (job.customerContactId?._id === filterJobs.contact._id);
         }
       }
 
@@ -60,58 +60,43 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
   };
 
   useEffect(() => {
-    dispatch(refreshJobs(true));
-    return () => {
-      dispatch(refreshJobs(false));
+    if(filterJobs.jobStatus.length === 1){
+      setStatusFilter(`${filterJobs.jobStatus[0]}`)
+    } else {
+      setStatusFilter('-1')
     }
-  }, [])
+    if(filterJobs.jobId){
+      setJobIdFilter(filterJobs.jobId)
+    } else {
+      setJobIdFilter('')
+    }
+  }, [filterJobs])
+
+  const getJobsData = () => {
+    dispatch(getAllJobsAPI(2020, undefined, undefined, statusFilter, jobIdFilter));
+    dispatch(setKeyword(''));
+    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentPageSize(2020));
+  }
+  
 
   useEffect(() => {
-    if(refresh){
-      setIsLoading(true);
-      dispatch(setScheduledJobs([]));
-      tempJobs.current = [];
-      const socket = io(`${Config.socketSever}`, {
-        'extraHeaders': { 'Authorization': token }
-      });
-  
-      socket.on("connect", () => {
-        getJobsStream();
-        dispatch(streamJobs(true));
-      });
-  
-      socket.on(SocketMessage.ALL_JOBS, data => {
-        const {count, job, total} = data;
-        if (job) {
-          tempJobs.current.push(job);
-          if (count % 25 === 0 || count === total) {
-            totalJobs.current = total;
-            setIsLoading(false);
-            dispatch(setScheduledJobs(tempJobs.current));
-          }
-          if (count === total) {
-            socket.close();
-            dispatch(streamJobs(false));
-            dispatch(setScheduledJobs(tempJobs.current));
-            dispatch(refreshJobs(false));
-          }
-        }
-      });
-  
-      return () => {
-        if(localStorage.getItem('prevPage') !== 'schedule' && localStorage.getItem('prevPage') !== 'customer-jobs'){
-          socket.close();
-          dispatch(streamJobs(false));
-          dispatch(refreshJobs(false));
-        }
-        setIsLoading(false);
-      };
+    if (refresh) {
+      getJobsData();
     }
   }, [refresh]);
 
   useEffect(() => {
-    setFilteredJobs(filterScheduledJobs(scheduledJobs));
-  }, [scheduledJobs, selectedDate, filterJobs])
+    getJobsData();
+  }, [statusFilter, jobIdFilter]);
+
+  useEffect(() => {
+    getJobsData();
+  }, [])
+  
+  useEffect(() => {
+    setFilteredJobs(filterScheduledJobs(jobs));
+  }, [jobs, selectedDate, filterJobs])
 
   return (
     <Grid

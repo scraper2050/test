@@ -71,13 +71,16 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       });
   
       socket.on("connect", () => {
-        getOpenServiceTicketsStream();
+        getOpenServiceTicketsStream(socket.id);
+        // console.log('start stream')
+        // console.time('a')
         dispatch(streamServiceTickets(true));
       });
   
       socket.on(SocketMessage.SERVICE_TICKETS, data => {
         const {count, serviceTicket, total} = data;
         if (serviceTicket) {
+          // console.timeLog('a',count)
           tempRefTicket.current.push(serviceTicket);
           if (count % 25 === 0 || count === total) {
             setIsLoading(false);
