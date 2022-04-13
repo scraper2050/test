@@ -27,7 +27,7 @@ import BCDateRangePicker, {Range}
 import moment from "moment";
 
 function ServiceTicket({ classes }: any) {
-  console.log({classes})
+  // console.log({classes})
   const dispatch = useDispatch();
   const [showAllTickets, toggleShowAllTickets] = useState(false);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);

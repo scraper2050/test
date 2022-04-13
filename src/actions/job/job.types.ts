@@ -1,6 +1,7 @@
 export const types = {
   'SET_JOBS': 'SET_JOB',
   'SET_SCHEDULED_JOBS': 'SET_SCHEDULED_JOBS',
+  'SET_TODAYS_JOBS': 'SET_TODAYS_JOBS',
   'SET_PREVIOUS_JOBS_CURSOR': 'SET_PREVIOUS_JOBS_CURSOR',
   'SET_NEXT_JOBS_CURSOR': 'SET_NEXT_JOBS_CURSOR',
   'SET_TOTAL': 'SET_TOTAL',
@@ -12,7 +13,8 @@ export const types = {
   'SET_STREAM_JOB_STATUS': 'SET_STREAM_JOB_STATUS',
   'SET_SINGLE_JOB': 'SET_SINGLE_JOB',
   'GET_SINGLE_JOB': 'GET_SINGLE_JOB',
-  'SET_JOB_LOADING': 'SET_JOB_LOADING'
+  'SET_JOB_LOADING': 'SET_JOB_LOADING',
+  'SET_TODAYS_JOB_LOADING': 'SET_TODAYS_JOB_LOADING',
 };
 
 export interface Job {
@@ -106,10 +108,12 @@ export interface Job {
 
 export interface JobsState {
   readonly isLoading: boolean;
+  readonly isTodaysJobLoading: boolean;
   streaming?: boolean;
   readonly refresh: boolean;
   readonly data?: Job[];
   readonly scheduledJobs?: Job[];
+  readonly todaysJobs?: Job[];
   readonly jobObj?: Job;
   prevCursor: string;
   nextCursor: string;

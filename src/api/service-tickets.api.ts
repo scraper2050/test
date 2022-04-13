@@ -116,9 +116,9 @@ export const getServiceTicketDetail:any = (ticketId:string) => {
   });
 };
 
-export const getOpenServiceTicketsStream:any = () => {
+export const getOpenServiceTicketsStream:any = (actionId: string) => {
   return new Promise((resolve, reject) => {
-    request(`/getOpenServiceTicketsStream`, 'get', {}, false)
+    request(`/getOpenServiceTicketsStream`, 'OPTIONS', {actionId}, false)
       .then((res: any) => {
         return resolve(res.data);
       })

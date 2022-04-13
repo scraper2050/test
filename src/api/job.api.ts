@@ -11,6 +11,8 @@ import {
 import { refreshJobs,
   setJobLoading,
   setJobs,
+  setTodaysJobLoading,
+  setTodaysJobs,
   setPreviousJobsCursor,
   setNextJobsCursor,
   setTotal
@@ -77,7 +79,7 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
       if(cancelTokenGetAllJobsAPI) {
-        cancelTokenGetAllJobsAPI.cancel();
+        cancelTokenGetAllJobsAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setJobLoading(true));
         }, 0);
@@ -104,7 +106,57 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
         .catch(err => {
           dispatch(setJobLoading(false));
           dispatch(setJobs([]));
-          return reject(err);
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
+        });
+    });
+  };
+};
+
+let cancelTokenGetTodaysJobsAPI:any;
+export const getTodaysJobsAPI = (status = '-1', keyword?: string) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setTodaysJobLoading(true));
+      const optionObj:any = {};
+      if(status !== '-1'){
+        optionObj.status = Number(status);
+      }
+      if(keyword){
+        optionObj.keyword = keyword;
+      }
+      optionObj.pageSize = 2020;
+      optionObj.startDate = moment(new Date()).format('YYYY-MM-DD');
+      optionObj.endDate = moment(new Date()).format('YYYY-MM-DD');
+      if(cancelTokenGetTodaysJobsAPI) {
+        cancelTokenGetTodaysJobsAPI.cancel('axios canceled');
+        setTimeout(() => {
+          dispatch(setTodaysJobLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetTodaysJobsAPI = axios.CancelToken.source();
+
+      request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetTodaysJobsAPI)
+        .then((res: any) => {
+          let tempJobs = res.data.jobs;
+          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+            ...tempJob,
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
+          }));
+          tempJobs.sort(compareByDate);
+          dispatch(setTodaysJobs(tempJobs.reverse()));
+          dispatch(setTodaysJobLoading(false));
+          dispatch(refreshJobs(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setTodaysJobLoading(false));
+          dispatch(setTodaysJobs([]));
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
         });
     });
   };
@@ -290,9 +342,9 @@ export const getSearchJobs = async (data: {
   });
 };
 
-export const getJobsStream :any = () => {
+export const getJobsStream :any = (actionId: string) => {
   return new Promise((resolve, reject) => {
-    request(`/getJobsStream`, 'get', {}, false)
+    request(`/getJobsStream`, 'OPTIONS', {actionId}, false)
       .then((res: any) => {
         return resolve(res.data);
       })
