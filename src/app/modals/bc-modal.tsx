@@ -40,7 +40,7 @@ import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticke
 import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
 import BCSharedFormModal from './bc-shared-form-modal/bc-shared-form-modal';
 import BCInvoiceEditModal from './bc-invoice-item-modal/bc-invoice-item-modal';
-import BCDiscountEditModal from './bc-invoice-discount-modal/bc-invoice-discount-modal';
+import BCDiscountEditModal from './bc-discount-modal/bc-discount-modal';
 import BCSalesTaxModal from './bc-sales-tax-modal/bc-sales-tax-modal';
 import BcPaymentTermsModal from './bc-payment-terms-modal/bc-payment-terms-modal';
 import BcPaymentRecordModal from "./bc-payment-record-modal/bc-payment-record-modal";
@@ -459,7 +459,7 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<BCDiscountEditModal
-          item={data.item}
+          item={data.discountItem}
         />);
         break;
       case modalTypes.ADD_DISCOUNT_MODAL:
@@ -470,7 +470,7 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<BCDiscountEditModal
-          item={data.item}
+          item={data.discountItem}
         />);
         break;
       case modalTypes.SALES_TAX_MODAL:

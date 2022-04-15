@@ -58,6 +58,8 @@ import { EmailState, EmailReducer as email } from './email.reducer';
 import {removeQBAuthStateLocalStorage} from "../utils/local-storage.service";
 import {PayrollState} from "../actions/payroll/payroll.types";
 import {CalendarState} from "../actions/calendar/bc-calendar.types";
+import { DiscountItemsReducer as discountItems} from './discount.reducer'
+import { DiscountState } from 'actions/discount/discount.types';
 
 
 export interface ReducerParamsInterface {
@@ -78,6 +80,7 @@ export interface RootState {
   map: mapState;
   payroll: PayrollState;
   calendar: CalendarState;
+  discountItems: DiscountState;
 }
 
 
@@ -128,6 +131,7 @@ const appReducer = combineReducers({
   map,
   payroll,
   calendar,
+  discountItems,
 });
 
 const rootReducer = (state: any, action: any) => {
