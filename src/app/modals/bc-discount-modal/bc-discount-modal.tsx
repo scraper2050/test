@@ -21,14 +21,13 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import BCInput from 'app/components/bc-input/bc-input';
-import { DiscountItem } from 'actions/invoicing/items/items.types';
-import { updateInvoiceItem } from 'actions/invoicing/items/items.action';
+import { DiscountItem } from 'actions/discount/discount.types';
 import { RootState } from 'reducers';
 import { error as errorSnackBar, success } from 'actions/snackbar/snackbar.action';
 import * as CONSTANTS from "../../../constants";
-import styles from './bc-invoice-discount-modal.styles'
+import styles from './bc-discount-modal.styles'
 import { updateDiscount, addDiscount } from 'api/discount.api';
-import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import { getAllDiscountItemsAPI } from 'api/discount.api'
 
 const EditDiscountValidation = yup.object().shape({
   'name': yup
@@ -37,11 +36,10 @@ const EditDiscountValidation = yup.object().shape({
   'description': yup
     .string(),
   'tax': yup
-    .string()
-    .required(),
+    .string(),
   'charges': yup
     .string()
-    .required(),
+    .required('Amount is required'),
 });
 
 const StyledInput = withStyles((theme: Theme) =>
@@ -78,7 +76,7 @@ interface ModalProps {
 }
 
 function BCDiscountEditModal({ item, classes }:ModalProps) {
-  const { _id, name, description, tax, charges, customerId} = item;
+  const { _id, name, description, tax, charges, customer, noOfItems} = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const { 'data': customers} = useSelector(({ customers }: any) => customers);
@@ -94,61 +92,52 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
     dispatch(closeModalAction());
   };
 
-  const handleCustomerChange = (fieldName: any, newValue: any) => {
-    console.log(newValue)
-    formik.setFieldValue(fieldName, newValue);
-  };
-
   const formik = useFormik({
     'initialValues': {
-      'itemId': _id,
+      'discountItemId': _id,
       'name': name,
       'description': description,
       'tax': tax
         ? 1
         : 0,
       'charges': charges ? `${Math.abs(charges)}` : '',
-      'isCustomerSpecific': false,
-      'numberOfItems': 0,
-      'customerId': customerId ? customerId : '',
+      'isCustomerSpecific': !!customer?._id,
+      'noOfItems': noOfItems ||0,
+      'customer': customer || null,
     },
     'onSubmit': async values => {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
+      let tax = 0;
       if (Number(values.tax) === 1) {
-        values.tax = taxes[0].tax;
-      } else {
-        values.tax = 0;
+        tax = taxes[0].tax;
       }
       const discountObject: any = {
-        itemId: values.itemId,
-        name: values.name,
+        title: values.name,
         description: values.description || '',
-        isFixed: true,
-        isJobType: false,
-        tax: values.tax,
-        charges: values.charges ? -parseFloat(values.charges) : 0,
+        tax,
+        charges: values.charges ? -parseInt(values.charges) : 0,
+        noOfItems: values.noOfItems,
+        customerId: values?.customer?._id ? values.customer._id : '',
       }
-      if(values.isCustomerSpecific){
-        discountObject.customerId = values.customerId._id;
-        discountObject.numberOfItems = values.numberOfItems;
+      if(!isAdd){
+        discountObject.discountItemId = _id
       }
-      console.log('ini itu',discountObject)
-      // let response;
-      // if(isAdd){
-      //   response = await addDiscount(discountObject).catch((err: { message: any; }) => {
-      //     dispatch(errorSnackBar(err.message));
-      //   });
-      // } else {
-      //   response = await updateDiscount([discountObject]).catch((err: { message: any; }) => {
-      //     dispatch(errorSnackBar(err.message));
-      //   });
-      // }
-      // if (response) {
-      //   dispatch(loadInvoiceItems.fetch());
-      //   dispatch(success(`Items successfully ${isAdd ? 'added' : 'updated'}`));
-      //   closeModal();
-      // }
+      let response;
+      if(isAdd){
+        response = await addDiscount(discountObject).catch((err: { message: any; }) => {
+          dispatch(errorSnackBar(err.message));
+        });
+      } else {
+        response = await updateDiscount(discountObject).catch((err: { message: any; }) => {
+          dispatch(errorSnackBar(err.message));
+        });
+      }
       setIsSubmitting(false);
+      if (response) {
+        dispatch(success(`Discount item successfully ${isAdd ? 'added' : 'updated'}`));
+        dispatch(getAllDiscountItemsAPI());
+        closeModal();
+      }
     },
     'validateOnBlur': false,
     'validateOnChange': true,
@@ -156,29 +145,11 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
   });
 
   useEffect(() => {
-    if (error) {
-      dispatch(errorSnackBar('Something went wrong, failed to update item'));
-      return;
+    if(formik.values.isCustomerSpecific === false){
+      formik.setFieldValue('noOfItems', 0);
+      formik.setFieldValue('customer', null);
     }
-
-
-    if (itemObj && itemObj._id === _id && !loadingObj) {
-      dispatch(success('Item successfully updated'));
-      setTimeout(() => {
-        dispatch(closeModalAction());
-        setTimeout(() => {
-          dispatch(setModalDataAction({
-            'data': {},
-            'type': ''
-          }));
-        }, 200);
-      }, 100);
-
-      return () => {
-        dispatch(updateInvoiceItem.cancelled());
-      };
-    }
-  }, [itemObj]);
+  }, [formik.values.isCustomerSpecific]);
 
 
   return <DataContainer>
@@ -197,7 +168,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
           >
             <span style={{color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap'}}>DISCOUNT NAME</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
             <BCInput
               error={formik.touched.name && Boolean(formik.errors.name)}
               handleChange={formik.handleChange}
@@ -222,14 +193,14 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
             item
             xs={12}
             sm={3}
-            container
-            alignItems={'center'}
+            container 
+            alignItems={'center'} 
             justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'} 
             style={{padding: '0 7px'}}
           >
-            <span style={{color: '#4F4F4F', fontWeight: 500, marginTop: 20}}>DESCRIPTION</span>
+            <span style={{color: '#4F4F4F', fontWeight: 500}}>DESCRIPTION</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
             <BCInput
               error={formik.touched.description && Boolean(formik.errors.description)}
               handleChange={formik.handleChange}
@@ -262,7 +233,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
           >
             <span style={{color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap'}}>CHARGE TYPE</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '10px 10px'}}>
+          <Grid item xs={12} sm={9} style={{padding: '10px 10px'}}>
             <div>Fixed</div>
           </Grid>
           <Grid
@@ -276,7 +247,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
           >
             <span style={{color: '#4F4F4F', fontWeight: 500}}>TAX</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
             <FormControl>
               <Select
                 error={formik.touched.tax && Boolean(formik.errors.tax)}
@@ -304,7 +275,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
           >
             <span style={{color: '#4F4F4F', fontWeight: 500}}>AMOUNT</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
             <FormControl>
               <BCInput
                 error={formik.touched.charges && Boolean(formik.errors.charges)}
@@ -345,7 +316,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
               justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
               style={{padding: '0 7px'}}
             />
-            <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+            <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
               <FormControlLabel
                 classes={{label: classes.checkboxLabel}}
                 control={
@@ -373,11 +344,12 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
                 >
                   <span style={{color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap'}}>CUSTOMER</span>
                 </Grid>
-                <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+                <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
                   <Autocomplete
-                    defaultValue={customerId && customers.length !== 0 && customers.filter((customer: any) => customer?._id === customerId)[0]}
+                    value={formik.values.customer}
                     getOptionLabel={(option: any) => option.profile?.displayName ? option.profile.displayName : ''}
-                    onChange={(ev: any, newValue: any) => handleCustomerChange('customerId', newValue)}
+                    getOptionSelected={(option: any, value: any) => option._id === value._id}
+                    onChange={(ev: any, newValue: any) => formik.setFieldValue('customer', newValue)}
                     options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
                     renderInput={(params: any) =>
                       <TextField
@@ -400,14 +372,14 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
                 >
                   <span style={{color: '#4F4F4F', fontWeight: 500}}>NO. OF ITEMS</span>
                 </Grid>
-                <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+                <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
                   <FormControl>
                     <Select
-                      error={formik.touched.numberOfItems && Boolean(formik.errors.numberOfItems)}
+                      error={formik.touched.noOfItems && Boolean(formik.errors.noOfItems)}
                       input={<StyledInput />}
-                      name={'numberOfItems'}
+                      name={'noOfItems'}
                       onChange={formik.handleChange}
-                      value={formik.values.numberOfItems}>
+                      value={formik.values.noOfItems}>
                       <MenuItem value={4}>
                         4
                       </MenuItem>
@@ -431,7 +403,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
           </Grid>
         </DialogContent>
       </div>
-      {/* <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/> */}
+      <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px', margin: 0}}/>
       <DialogActions classes={{
         'root': classes.dialogActions
       }}>
