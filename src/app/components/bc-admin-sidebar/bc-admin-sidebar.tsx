@@ -231,15 +231,20 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'link': '/main/admin/groups'
     },
     {
+      'label': 'Services & Products',
+      'icon': <WorkIcon/>,
+      'link': '/main/admin/services-and-products'
+    },
+    {
       'label': 'Invoicing',
       'icon': <LibraryBooksIcon/>,
       'link': '/main/admin/invoicing'
     },
-    {
-      'label': 'Job Types',
-      'icon': <WorkIcon/>,
-      'link': '/main/admin/job-types'
-    },
+    // {
+    //   'label': 'Job Types',
+    //   'icon': <WorkIcon/>,
+    //   'link': '/main/admin/job-types'
+    // },
     {
       'label': 'Report Number',
       'icon': <ReportIcon/>,
@@ -476,7 +481,8 @@ const StyledListItem = styled(ListItem)`
   color: #000;
   border-radius: 7px;
   & > .menuLabel {
-    padding-left: 35px;
+    padding-left: 30px;
+    white-space: nowrap;
   };
   &.Mui-selected {
     color: #fff;
