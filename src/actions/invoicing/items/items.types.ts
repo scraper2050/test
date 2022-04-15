@@ -16,15 +16,3 @@ export interface Item {
     company: string;
     tiers: any;
 }
-
-export interface DiscountItem {
-    _id: string;
-    name: string;
-    description: string;
-    isFixed: boolean;
-    isJobType: boolean;
-    charges: number;
-    tax: number;
-    customerId: any;
-    numberOfItems: number;
-}
