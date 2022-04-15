@@ -2,6 +2,7 @@ import BCAdminCard from '../../../components/bc-admin-card/bc-admin-card';
 import { Grid } from '@material-ui/core';
 import React, { useEffect } from "react";
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import styled from 'styled-components';
 import { connect, useDispatch } from "react-redux";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
@@ -35,7 +36,7 @@ function AdminServicesAndProductsPage({ user }: any) {
                 cardText={'Discounts'}
                 color={'primary-red'}
                 link={'/main/admin/services-and-products/services/discounts'}>
-                <ReceiptIcon />
+                <LocalOfferIcon />
               </BCAdminCard>
             </Grid>
           </Grid>

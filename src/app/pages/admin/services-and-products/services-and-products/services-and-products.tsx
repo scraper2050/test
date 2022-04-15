@@ -35,7 +35,7 @@ const normalizeTiers = (tiers:any) => {
 };
 
 
-function AdminInvoicingItemsPage({ classes }:Props) {
+function AdminServiceAndProductsPage({ classes }:Props) {
   const dispatch = useDispatch();
   const { loading, error, items } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const [localItems, setLocalItems] = useState(stringSortCaseInsensitive(items, 'name'));
@@ -427,4 +427,4 @@ const PageContainer = styled.div`
 `;
 
 
-export default withStyles(styles, { 'withTheme': true })(AdminInvoicingItemsPage);
+export default withStyles(styles, { 'withTheme': true })(AdminServiceAndProductsPage);
