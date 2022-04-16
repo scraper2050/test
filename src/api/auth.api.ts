@@ -4,12 +4,15 @@ import { Auth, AuthInfo, ChangePassword } from 'app/models/user';
 const login = async (param: Auth) => {
   let loginData: AuthInfo = {
     'token': null,
+    'tokenCustomerAPI': null,
     'user': null
   };
 
   try {
     const response: any = await request('/login', 'POST', param, false);
     loginData = response.data;
+    const responseCustomerAPI: any = await request('/login', 'POST', param, false, undefined, undefined, true);
+    loginData = {...loginData, tokenCustomerAPI: responseCustomerAPI.data.token}
   } catch (err) {
     loginData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {

@@ -16,6 +16,7 @@ export interface Auth {
 
 export interface AuthInfo {
   token: string | null;
+  tokenCustomerAPI: string | null;
   user: Auth | null;
 }
 

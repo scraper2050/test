@@ -1,6 +1,8 @@
 import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
+import BCViewJobRequestModal from './bc-job-request-modal/bc-view-job-request-modal';
+import BCCancelJobRequestModal from './bc-job-request-modal/bc-cancel-job-request-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
 import BCMarkCompleteJobModal from './bc-job-modal/bc-mark-complete-job-modal';
 import BCModalTransition from './bc-modal-transition';
@@ -184,6 +186,29 @@ function BCModal() {
         setComponent(<BCViewJobModal
           job={data.job}
           isTicket={data.isTicket}
+        />);
+        break;
+      case modalTypes.VIEW_JOB_REQUEST_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCViewJobRequestModal
+          jobRequest={data.jobRequest}
+        />);
+        break;
+      case modalTypes.REJECT_JOB_REQUEST_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCCancelJobRequestModal
+          jobRequest={data.jobRequest}
         />);
         break;
       case modalTypes.CANCEL_JOB_MODAL:

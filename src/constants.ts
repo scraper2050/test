@@ -36,12 +36,17 @@ export const TABLE_ACTION_BUTTON_HOVER = '#45bfff';
 
 export const CALENDAR_BUTTON_COLOR = '#828282';
 
+export const BUTTON_PURPLE = '#A107FF';
+export const BUTTON_PURPLE_HOVER = '#6C02AD';
+
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',
   'CREATE_JOB_MODAL': 'create-job',
   'CREATE_TICKET_MODAL': 'create-ticket-modal',
   'EDIT_JOB_MODAL': 'edit-job-modal',
   'VIEW_JOB_MODAL': 'view-job-modal',
+  'VIEW_JOB_REQUEST_MODAL': 'view-job-request-modal',
+  'REJECT_JOB_REQUEST_MODAL': 'reject-job-request-modal',
   'CANCEL_JOB_MODAL': 'cancel-job-modal',
   'MARK_COMPLETE_JOB_MODAL': 'mark-complete-job-modal',
   'EDIT_TICKET_MODAL': 'edit-ticket-modal',
@@ -89,3 +94,18 @@ export const modalTypes = {
   'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
   'WARNING_MODAL': 'warning_modal',
 };
+
+export const rejectionReason = [
+  {
+    value: 'not-enough-time',
+    label: 'Not enough time',
+  },
+  {
+    value: 'out-of-scope',
+    label: 'Out of scope',
+  },
+  {
+    value: 'other',
+    label: 'Other',
+  },
+]
