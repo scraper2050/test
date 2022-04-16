@@ -10,6 +10,7 @@ import { contactsReducer as contacts } from './contacts.reducer';
 import { ImageReducer as image } from './image.reducer';
 import { EmployeesReducer as employees } from './employee.reducer';
 import { jobReducer as jobState } from './jobs.reducer';
+import {jobRequestsReducer as jobRequests} from './job-request.reducer'
 import { PayrollReducer as payroll } from './payroll.reducer';
 import { CalendarReducer as calendar } from './calendar.reducer';
 import jobTypes from './job-type.reducer';
@@ -106,6 +107,7 @@ const appReducer = combineReducers({
   invoiceList,
   invoiceTodos,
   jobLocations,
+  jobRequests,
   jobReport,
   jobSites,
   jobState,

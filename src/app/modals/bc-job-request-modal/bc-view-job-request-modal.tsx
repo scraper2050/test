@@ -119,7 +119,7 @@ function BCViewJobRequestModal({
           'technician': {
             '_id': ''
           },
-          ticket: {...jobRequest, tasks: []},
+          ticket: {...jobRequest, tasks: [], images: jobRequest.requests?.map((request:any)=>request.images||[]).flat(1) || []},
           'type': {
             '_id': ''
           }

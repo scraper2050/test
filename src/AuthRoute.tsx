@@ -9,6 +9,7 @@ import { AuthInfo } from "app/models/user";
 
 interface Props {
   token?: string;
+  tokenCustomerAPI?: string;
   Component: React.FC<RouteComponentProps>;
   path: string;
   exact?: boolean;
@@ -17,6 +18,7 @@ interface Props {
 
 const AuthRoute = ({
   token,
+  tokenCustomerAPI,
   Component,
   path,
   exact = false,
@@ -24,13 +26,17 @@ const AuthRoute = ({
 }: Props): JSX.Element | null => {
   const storageAuth: AuthInfo = {
     token: localStorage.getItem("token"),
+    tokenCustomerAPI: localStorage.getItem("tokenCustomerAPI"),
     user: JSON.parse(localStorage.getItem("user") || "{}"),
   };
 
   const loginFromStorage =
     (token === null || token === "") &&
+    (tokenCustomerAPI === null || tokenCustomerAPI === "") &&
     storageAuth.token !== null &&
     storageAuth.token !== "" &&
+    storageAuth.tokenCustomerAPI !== null &&
+    storageAuth.tokenCustomerAPI !== '' &&
     storageAuth.user !== null;
 
   useEffect(() => {
@@ -67,9 +73,11 @@ const AuthRoute = ({
 const mapStateToProps = (state: {
   auth: {
     token: string;
+    tokenCustomerAPI: string;
   };
 }) => ({
   token: state.auth.token,
+  tokenCustomerAPI: state.auth.tokenCustomerAPI,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

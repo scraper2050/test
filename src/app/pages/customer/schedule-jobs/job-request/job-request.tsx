@@ -75,14 +75,6 @@ function JobRequest({ classes }: any) {
     }, 200);
   };
 
-  const formatSchedulingTime = (time: string) => {
-    const timeAr = time.split('T');
-    const timeWithSeconds = timeAr[1].substring(0, 5);
-    const hours = timeWithSeconds.substring(0, 2);
-    const minutes = timeWithSeconds.substring(3, 5);
-    return { hours, minutes };
-  };
-
   const columns: any = [
     {
       Cell({ row }: any) {
@@ -145,7 +137,6 @@ function JobRequest({ classes }: any) {
       } else {
         setIconComponent(null);
       }
-      console.log('ini itu loadCount.current', loadCount.current);
       if(loadCount.current !== 0){
         dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
         dispatch(setCurrentPageIndex(0));
@@ -241,7 +232,6 @@ function JobRequest({ classes }: any) {
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
-    console.log('ini itu refresh', refresh);
     setTimeout(() => {
       loadCount.current++;
     }, 1000);

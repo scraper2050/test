@@ -123,7 +123,7 @@ function AdminDiscountPage({ classes }:Props) {
       Cell({ row }: any) {
         return (
           <div>
-            {row.original.charges}
+            {`-$ ${Math.abs(row.original.charges)}`}
           </div>
         );
       },

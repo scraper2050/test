@@ -58,7 +58,6 @@ export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCurs
             updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
           }));
           tempJobRequests.sort(compareByDate);
-          console.log('ini itu', tempJobRequests.filter((jR:any) => jR.customerContact))
           dispatch(setJobRequests(tempJobRequests.reverse()));
           dispatch(setPreviousJobRequestsCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
           dispatch(setNextJobRequestsCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));

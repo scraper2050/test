@@ -106,36 +106,36 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
         : 0,
     },
     'onSubmit': async values => {
-      setIsSubmitting(true)
-      if (Number(values.tax) === 1) {
-        values.tax = taxes[0].tax;
-      } else {
-        values.tax = 0;
-      }
-      const itemObject = {
-        itemId: values.itemId,
-        name: values.name,
-        description: values.description || '',
-        isFixed: values.isFixed === 'true' ? true : false,
-        isJobType: values.isJobType,
-        tax: values.tax,
-      }
-      let response;
-      if(isAdd){
-        response = await addItem(itemObject).catch((err: { message: any; }) => {
-          dispatch(errorSnackBar(err.message));
-        });
-      } else {
-        response = await updateItems([itemObject]).catch((err: { message: any; }) => {
-          dispatch(errorSnackBar(err.message));
-        });
-      }
-      if (response) {
-        dispatch(loadInvoiceItems.fetch());
-        dispatch(success(`Items successfully ${isAdd ? 'added' : 'updated'}`));
-        closeModal();
-      }
-      setIsSubmitting(false);
+      // setIsSubmitting(true)
+      // if (Number(values.tax) === 1) {
+      //   values.tax = taxes[0].tax;
+      // } else {
+      //   values.tax = 0;
+      // }
+      // const itemObject = {
+      //   itemId: values.itemId,
+      //   name: values.name,
+      //   description: values.description || '',
+      //   isFixed: values.isFixed === 'true' ? true : false,
+      //   isJobType: values.isJobType,
+      //   tax: values.tax,
+      // }
+      // let response;
+      // if(isAdd){
+      //   response = await addItem(itemObject).catch((err: { message: any; }) => {
+      //     dispatch(errorSnackBar(err.message));
+      //   });
+      // } else {
+      //   response = await updateItems([itemObject]).catch((err: { message: any; }) => {
+      //     dispatch(errorSnackBar(err.message));
+      //   });
+      // }
+      // if (response) {
+      //   dispatch(loadInvoiceItems.fetch());
+      //   dispatch(success(`Items successfully ${isAdd ? 'added' : 'updated'}`));
+      //   closeModal();
+      // }
+      // setIsSubmitting(false);
     },
     'validateOnBlur': false,
     'validateOnChange': true,
