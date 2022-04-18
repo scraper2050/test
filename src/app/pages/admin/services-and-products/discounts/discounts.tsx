@@ -139,12 +139,12 @@ function AdminDiscountPage({ classes }:Props) {
     {
       Cell({ row }: any) {
         return (
-          <div>
-            {row.original.noOfItems === 0 ? 'Any' : row.original.noOfItems}
+          <div style={{textAlign: 'center'}}>
+            {row.original.noOfItems || ''}
           </div>
         );
       },
-      'Header': 'No. of Items',
+      'Header': 'Minimum No. of Items',
       'accessor': 'noOfItems',
       'sortable': true
     },
