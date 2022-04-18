@@ -40,6 +40,14 @@ const EditDiscountValidation = yup.object().shape({
   'charges': yup
     .string()
     .required('Amount is required'),
+  'isCustomerSpecific': yup
+    .boolean(),
+  'noOfItems': yup
+    .number()
+    .when("isCustomerSpecific", {
+      is: true,
+      then: yup.number().min(1, 'At least 1 minimum number of items'),
+    }),
 });
 
 const StyledInput = withStyles((theme: Theme) =>
@@ -102,7 +110,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
         : 0,
       'charges': charges ? `${Math.abs(charges)}` : '',
       'isCustomerSpecific': !!customer?._id,
-      'noOfItems': noOfItems ||0,
+      'noOfItems': noOfItems || 0,
       'customer': customer || null,
     },
     'onSubmit': async values => {
@@ -356,7 +364,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
                         required
                         {...params}
                         variant={'outlined'}
-                        style={{backgroundColor: '#FFFFFF'}}
+                        style={{backgroundColor: '#FFFFFF', marginBottom: 10}}
                       />
                     }
                   />
@@ -370,32 +378,32 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
                   justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
                   style={{padding: '0 7px'}}
                 >
-                  <span style={{color: '#4F4F4F', fontWeight: 500}}>NO. OF ITEMS</span>
+                  <span style={{color: '#4F4F4F', fontWeight: 500, textAlign: 'end'}}>MINIMUM NO. OF ITEMS</span>
                 </Grid>
                 <Grid item xs={12} sm={9} style={{padding: '0 7px'}}>
                   <FormControl>
-                    <Select
+                    <BCInput
                       error={formik.touched.noOfItems && Boolean(formik.errors.noOfItems)}
-                      input={<StyledInput />}
+                      handleChange={(e: {target: {value: string;}}) => {
+                        formik.setFieldValue('noOfItems', parseInt(e.target.value.replace(/[^0-9]/g,'') || '0'));
+                      }}
+                      helperText={formik.touched.noOfItems && formik.errors.noOfItems}
                       name={'noOfItems'}
-                      onChange={formik.handleChange}
-                      value={formik.values.noOfItems}>
-                      <MenuItem value={4}>
-                        4
-                      </MenuItem>
-                      <MenuItem value={3}>
-                        3
-                      </MenuItem>
-                      <MenuItem value={2}>
-                        2
-                      </MenuItem>
-                      <MenuItem value={1}>
-                        1
-                      </MenuItem>
-                      <MenuItem value={0}>
-                        Any
-                      </MenuItem>
-                    </Select>
+                      value={formik.values.noOfItems}
+                      margin={'none'}
+                      inputProps={{
+                        style : {
+                          padding: '12px 14px',
+                          width: 100,
+                        },
+                      }}
+                      InputProps={{
+                        style:{
+                          borderRadius: 8,
+                          marginTop: 10,
+                        },
+                      }}
+                    />
                   </FormControl>
                 </Grid>
               </>
