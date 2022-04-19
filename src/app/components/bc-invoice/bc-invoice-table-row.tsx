@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { createMuiTheme, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   createStyles,
@@ -20,6 +21,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../reducers";
 import {Autocomplete} from "@material-ui/lab";
 import {useLocation} from "react-router-dom";
+import { getAllDiscountItemsAPI } from 'api/discount.api'
 
 
 const useInvoiceTableStyles = makeStyles((theme: Theme) =>
@@ -154,7 +156,9 @@ interface Props {
 }
 
 function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, itemTier, errors }: Props) {
+  const dispatch = useDispatch();
   const { 'items': serviceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  const { discountItems } = useSelector(({ discountItems }:RootState) => discountItems);
   serviceItems.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : a.name.toLowerCase() <b.name.toLowerCase() ? -1 : 0);
   const taxes = useSelector(({ tax }: any) => tax.data);
   const invoiceTableStyle = useInvoiceTableStyles();
@@ -224,6 +228,11 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
     }
   }, [itemTier])
 
+  useEffect(() => {
+    dispatch(getAllDiscountItemsAPI());
+  }, [])
+  
+
   return (
     <>
       <Grid container spacing={1} className={invoiceTableStyle.itemsTableHeader}>
@@ -244,7 +253,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
                     <Autocomplete
                       id="combo-box-demo"
-                      options={serviceItems}
+                      options={[...serviceItems, ...discountItems]}
                       onChange={(e, newValue) => handleServiceChange(newValue, rowIndex)}
                       value={rowData}
                       getOptionLabel={(option) => option.name}
@@ -356,7 +365,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                 </Grid>
                 <Grid item xs={1} className={invoiceTableStyle.textRight}>
             <span>
-              $ {rowData?.subTotal}
+              {rowData.subTotal && rowData.subTotal >= 0 ? `$ ${parseFloat(rowData.subTotal).toFixed(2)}` : `-$ ${Math.abs(parseFloat(rowData.subTotal)).toFixed(2)}`}
             </span>
                 </Grid>
                 <Grid item xs={1} className={invoiceTableStyle.textCenter}>

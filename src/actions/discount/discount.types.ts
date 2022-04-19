@@ -25,5 +25,5 @@ export interface DiscountItem {
 
 export interface DiscountState {
   readonly isLoading: boolean;
-  readonly discountItems?: DiscountItem[];
+  readonly discountItems: DiscountItem[];
 }
