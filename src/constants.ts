@@ -7,6 +7,7 @@ export const SECONDARY_GREY = '#c4c4c4';
 export const PRIMARY_DARK_GREY = 'rgba(0, 0, 0, 0.5)';
 export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 export const PRIMARY_ORANGE = '#FE5500';
+export const PRIMARY_YELLOW = '#FEBF00';
 // export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
 export const PRIMARY_GREEN = '#50AE55';
 export const PRIMARY_CARD_BLUE = '#66B8F9';
