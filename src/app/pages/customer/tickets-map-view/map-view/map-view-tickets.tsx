@@ -25,7 +25,6 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
 
   const tempRefTicket = useRef<any[]>([]);
-  const loadCount = useRef<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
@@ -64,7 +63,6 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
     if(refresh){
       setIsLoading(true);
       setAllTickets([]);
-      // dispatch(setServiceTicket([]));
       tempRefTicket.current = [];
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
@@ -72,15 +70,12 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   
       socket.on("connect", () => {
         getOpenServiceTicketsStream(socket.id);
-        // console.log('start stream')
-        // console.time('a')
         dispatch(streamServiceTickets(true));
       });
   
       socket.on(SocketMessage.SERVICE_TICKETS, data => {
         const {count, serviceTicket, total} = data;
         if (serviceTicket) {
-          // console.timeLog('a',count)
           tempRefTicket.current.push(serviceTicket);
           if (count % 25 === 0 || count === total) {
             setIsLoading(false);
@@ -91,7 +86,6 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
             dispatch(streamServiceTickets(false));
             dispatch(setServiceTicket(tempRefTicket.current));
             dispatch(refreshServiceTickets(false));
-            loadCount.current++;
           }
         }
       });
@@ -121,9 +115,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }, [ticket2Job])
 
   useEffect(() => {
-    if(loadCount.current !== 0){
-      setAllTickets(tickets);
-    }
+    setAllTickets(tickets);
   }, [tickets]);
 
   return (
