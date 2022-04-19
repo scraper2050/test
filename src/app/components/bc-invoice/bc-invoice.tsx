@@ -490,7 +490,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>${parseFloat(row?.price).toFixed(2)}</span>
+                  )}>{row.price && row.price >= 0 ? `$${parseFloat(row.price).toFixed(2)}` : `-$${Math.abs(parseFloat(row.price)).toFixed(2)}`}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
@@ -514,7 +514,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextRight
-                  )}>${parseFloat(row?.subTotal).toFixed(2)}</span>
+                  )}>{row.subTotal && row.subTotal >= 0 ? `$${parseFloat(row.subTotal).toFixed(2)}` : `-$${Math.abs(parseFloat(row.subTotal)).toFixed(2)}`}</span>
                 </Grid>
               </Grid>
               {row?.description &&
