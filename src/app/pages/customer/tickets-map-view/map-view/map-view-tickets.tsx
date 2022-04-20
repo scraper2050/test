@@ -14,7 +14,8 @@ import {parseISOMoment} from "../../../../../helpers/format";
 import {
   refreshServiceTickets,
   setServiceTicket,
-  streamServiceTickets
+  streamServiceTickets,
+  setTicket2JobID,
 } from "../../../../../actions/service-ticket/service-ticket.action";
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
@@ -106,12 +107,15 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }, [allTickets, selectedDate, filterTickets])
 
   useEffect(() => {
-    const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
-    setAllTickets(tempAll);
-    const tempTickets = tickets.filter((ticket: any) => ticket._id !== ticket2Job);
-    dispatch(setServiceTicket(tempTickets));
-    tempRefTicket.current = tempRefTicket.current?.filter((ticket: any) => ticket._id !== ticket2Job);
-
+    if(ticket2Job){
+      const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
+      setAllTickets(tempAll);
+      const tempTickets = tickets.filter((ticket: any) => ticket._id !== ticket2Job);
+  
+      dispatch(setServiceTicket(tempTickets));
+      tempRefTicket.current = tempRefTicket.current?.filter((ticket: any) => ticket._id !== ticket2Job);
+      dispatch(setTicket2JobID(''));
+    }
   }, [ticket2Job])
 
   useEffect(() => {

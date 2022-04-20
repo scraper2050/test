@@ -124,6 +124,11 @@
       color: #ffffff;
       text-transform: none;
     }
+    button:disabled {
+      background-color: rgb(208, 211, 220);
+      border: 2px solid rgb(208, 211, 220);
+      color: white;
+    }
   }
 }
 
