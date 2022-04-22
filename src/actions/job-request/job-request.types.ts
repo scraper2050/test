@@ -2,6 +2,7 @@ export const types = {
   'SET_JOB_REQUESTS': 'SET_JOB_REQUESTS',
   'SET_PREVIOUS_JOB_REQUESTS_CURSOR': 'SET_PREVIOUS_JOB_REQUESTS_CURSOR',
   'SET_NEXT_JOB_REQUESTS_CURSOR': 'SET_NEXT_JOB_REQUESTS_CURSOR',
+  'SET_LAST_PAGE_JOB_REQUESTS_CURSOR': 'SET_LAST_PAGE_JOB_REQUESTS_CURSOR',
   'SET_TOTAL': 'SET_TOTAL',
   'SET_CURRENT_PAGE_INDEX': 'SET_CURRENT_PAGE_INDEX',
   'SET_CURRENT_PAGE_SIZE': 'SET_CURRENT_PAGE_SIZE',
@@ -106,6 +107,7 @@ export interface JobRequestState {
   readonly jobRequests?: JobRequest[];
   prevCursor: string;
   nextCursor: string;
+  lastPageCursor: string;
   total: number;
   currentPageIndex: number;
   currentPageSize: number;

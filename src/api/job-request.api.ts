@@ -7,8 +7,9 @@ import {
   setJobRequests,
   setPreviousJobRequestsCursor,
   setNextJobRequestsCursor,
+  setLastPageJobRequestsCursor,
   setTotal,
-  setNumberOfJobRequest,
+  setNumberOfOpenJobRequest,
 } from 'actions/job-request/job-request.action';
 
 const compareByDate = (a: any, b: any) => {
@@ -22,7 +23,7 @@ const compareByDate = (a: any, b: any) => {
 };
 
 let cancelTokenGetAllJobRequestAPI:any;
-export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, lastPageCursor = '') => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobRequestsLoading(true));
@@ -31,6 +32,10 @@ export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCurs
         previousCursor,
         nextCursor
       };
+      if(lastPageCursor){
+        delete optionObj.previousCursor;
+        optionObj.nextCursor = lastPageCursor;
+      }
       if(status !== '-1'){
         optionObj.status = Number(status);
       }
@@ -61,8 +66,9 @@ export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCurs
           dispatch(setJobRequests(tempJobRequests.reverse()));
           dispatch(setPreviousJobRequestsCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
           dispatch(setNextJobRequestsCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
+          dispatch(setLastPageJobRequestsCursor(res.data?.pagination?.lastPageCursor ? res.data?.pagination?.lastPageCursor : ''));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
-          dispatch(setNumberOfJobRequest(res.data.total ? res.data.total : 0));
+          dispatch(setNumberOfOpenJobRequest(res.data.totalPending ? res.data.totalPending : 0));
           dispatch(setJobRequestsLoading(false));
           dispatch(refreshJobRequests(false));
           return resolve(res.data);

@@ -8,6 +8,7 @@ const initialJobRequests: JobRequestState = {
   refresh: true,
   prevCursor: '',
   nextCursor: '',
+  lastPageCursor: '',
   total: 0,
   currentPageIndex: 0,
   currentPageSize: 10,
@@ -35,6 +36,11 @@ export const jobRequestsReducer: Reducer<any> = (
       return {
         ...state,
         nextCursor: payload,
+      };
+    case types.SET_LAST_PAGE_JOB_REQUESTS_CURSOR:
+      return {
+        ...state,
+        lastPageCursor: payload,
       };
     case types.SET_TOTAL:
       return {

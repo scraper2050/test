@@ -122,7 +122,13 @@ function BCTableContent({
     window.scrollTo(0, 20);
 
     if(manualPagination){
-      fetchFunction(pageSize, newPage < pageIndex, newPage > pageIndex);
+      if(newPage === 0) {
+        fetchFunction(pageSize, undefined, undefined);
+      } else if (newPage === Math.max(0, Math.ceil(total / pageSize) - 1)) {
+        fetchFunction(pageSize, undefined, undefined, undefined, true);
+      } else {
+        fetchFunction(pageSize, newPage < pageIndex, newPage > pageIndex);
+      }
     }
 
     if (setPage !== undefined) {
