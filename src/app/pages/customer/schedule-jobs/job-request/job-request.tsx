@@ -22,13 +22,14 @@ import {getJobRequestDescription} from "../../../../../helpers/job";
 
 function JobRequest({ classes }: any) {
   const dispatch = useDispatch();
-  const { isLoading = true, jobRequests, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+  const { isLoading = true, jobRequests, refresh = true, total, prevCursor, nextCursor, lastPageCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ jobRequests }: any) => ({
       isLoading: jobRequests.isLoading,
       jobRequests: jobRequests.jobRequests,
       refresh: jobRequests.refresh,
       prevCursor: jobRequests.prevCursor,
       nextCursor: jobRequests.nextCursor,
+      lastPageCursor: jobRequests.lastPageCursor,
       total: jobRequests.total,
       currentPageIndex: jobRequests.currentPageIndex,
       currentPageSize: jobRequests.currentPageSize,
@@ -261,8 +262,8 @@ function JobRequest({ classes }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
-          dispatch(getAllJobRequestAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string, isLastPage: boolean) => 
+          dispatch(getAllJobRequestAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange , isLastPage ? lastPageCursor : undefined))
         }
         total={total}
         currentPageIndex={currentPageIndex}

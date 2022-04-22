@@ -18,6 +18,12 @@ export const setNextJobRequestsCursor = (nextCursor: string) => {
     'type': types.SET_NEXT_JOB_REQUESTS_CURSOR
   };
 };
+export const setLastPageJobRequestsCursor = (lastPageCursor: string) => {
+  return {
+    'payload': lastPageCursor,
+    'type': types.SET_LAST_PAGE_JOB_REQUESTS_CURSOR
+  };
+};
 export const setTotal = (total: number) => {
   return {
     'payload': total,
@@ -42,9 +48,9 @@ export const setKeyword = (keyword: string) => {
     'type': types.SET_SEARCH_KEYWORD
   };
 };
-export const setNumberOfJobRequest = (numberOfJobRequest: number) => {
+export const setNumberOfOpenJobRequest = (numberOfOpenJobRequest: number) => {
   return {
-    'payload': numberOfJobRequest,
+    'payload': numberOfOpenJobRequest,
     'type': types.SET_NUMBER_OF_OPEN_JOB_REQUEST
   };
 };
