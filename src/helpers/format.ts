@@ -6,12 +6,6 @@ export const formatDate = (date: string): string | undefined => {
   }
 };
 
-export const formatDateMMMDDYYYY = (date: string): string | undefined => {
-  if (typeof date !== undefined && date !== null) {
-    return moment.utc(date).format('MMM DD, YYYY');
-  }
-};
-
 export const fromNow = (date: Date) => moment(date).subtract('seconds', 60)
   .fromNow();
 

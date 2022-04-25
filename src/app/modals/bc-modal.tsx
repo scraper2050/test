@@ -1,8 +1,6 @@
 import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
-import BCViewJobRequestModal from './bc-job-request-modal/bc-view-job-request-modal';
-import BCCancelJobRequestModal from './bc-job-request-modal/bc-cancel-job-request-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
 import BCMarkCompleteJobModal from './bc-job-modal/bc-mark-complete-job-modal';
 import BCModalTransition from './bc-modal-transition';
@@ -42,7 +40,6 @@ import BCViewServiceTicketModal from './bc-service-ticket-modal/bc-service-ticke
 import BCContractViewModal from './bc-contract-modal/bc-contract-modal';
 import BCSharedFormModal from './bc-shared-form-modal/bc-shared-form-modal';
 import BCInvoiceEditModal from './bc-invoice-item-modal/bc-invoice-item-modal';
-import BCDiscountEditModal from './bc-discount-modal/bc-discount-modal';
 import BCSalesTaxModal from './bc-sales-tax-modal/bc-sales-tax-modal';
 import BcPaymentTermsModal from './bc-payment-terms-modal/bc-payment-terms-modal';
 import BcPaymentRecordModal from "./bc-payment-record-modal/bc-payment-record-modal";
@@ -186,29 +183,6 @@ function BCModal() {
         setComponent(<BCViewJobModal
           job={data.job}
           isTicket={data.isTicket}
-        />);
-        break;
-      case modalTypes.VIEW_JOB_REQUEST_MODAL:
-        setModalOptions({
-          'disableBackdropClick': true,
-          'disableEscapeKeyDown': true,
-          'newDesign': true,
-          'fullWidth': true,
-          'maxWidth': 'lg'
-        });
-        setComponent(<BCViewJobRequestModal
-          jobRequest={data.jobRequest}
-        />);
-        break;
-      case modalTypes.REJECT_JOB_REQUEST_MODAL:
-        setModalOptions({
-          'disableBackdropClick': true,
-          'disableEscapeKeyDown': true,
-          'fullWidth': true,
-          'maxWidth': 'sm'
-        });
-        setComponent(<BCCancelJobRequestModal
-          jobRequest={data.jobRequest}
         />);
         break;
       case modalTypes.CANCEL_JOB_MODAL:
@@ -474,28 +448,6 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
-        />);
-        break;
-      case modalTypes.EDIT_DISCOUNT_MODAL:
-        setModalOptions({
-          'disableBackdropClick': true,
-          'disableEscapeKeyDown': true,
-          'fullWidth': true,
-          'maxWidth': 'sm'
-        });
-        setComponent(<BCDiscountEditModal
-          item={data.discountItem}
-        />);
-        break;
-      case modalTypes.ADD_DISCOUNT_MODAL:
-        setModalOptions({
-          'disableBackdropClick': true,
-          'disableEscapeKeyDown': true,
-          'fullWidth': true,
-          'maxWidth': 'sm'
-        });
-        setComponent(<BCDiscountEditModal
-          item={data.discountItem}
         />);
         break;
       case modalTypes.SALES_TAX_MODAL:

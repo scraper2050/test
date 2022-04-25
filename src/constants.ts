@@ -7,7 +7,6 @@ export const SECONDARY_GREY = '#c4c4c4';
 export const PRIMARY_DARK_GREY = 'rgba(0, 0, 0, 0.5)';
 export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 export const PRIMARY_ORANGE = '#FE5500';
-export const PRIMARY_YELLOW = '#FEBF00';
 // export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
 export const PRIMARY_GREEN = '#50AE55';
 export const PRIMARY_CARD_BLUE = '#66B8F9';
@@ -37,17 +36,12 @@ export const TABLE_ACTION_BUTTON_HOVER = '#45bfff';
 
 export const CALENDAR_BUTTON_COLOR = '#828282';
 
-export const BUTTON_PURPLE = '#A107FF';
-export const BUTTON_PURPLE_HOVER = '#6C02AD';
-
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',
   'CREATE_JOB_MODAL': 'create-job',
   'CREATE_TICKET_MODAL': 'create-ticket-modal',
   'EDIT_JOB_MODAL': 'edit-job-modal',
   'VIEW_JOB_MODAL': 'view-job-modal',
-  'VIEW_JOB_REQUEST_MODAL': 'view-job-request-modal',
-  'REJECT_JOB_REQUEST_MODAL': 'reject-job-request-modal',
   'CANCEL_JOB_MODAL': 'cancel-job-modal',
   'MARK_COMPLETE_JOB_MODAL': 'mark-complete-job-modal',
   'EDIT_TICKET_MODAL': 'edit-ticket-modal',
@@ -80,8 +74,6 @@ export const modalTypes = {
   'SHARED_FORM_MODAL': 'shared-form-modal',
   'EDIT_ITEM_MODAL': 'edit-item-modal',
   'ADD_ITEM_MODAL': 'add-item-modal',
-  'EDIT_DISCOUNT_MODAL': 'edit-discount-modal',
-  'ADD_DISCOUNT_MODAL': 'add-discount-modal',
   'SALES_TAX_MODAL': 'sales-tax-modal',
   'EDIT_INVOICE_NUMBER_MODAL': 'edit-invoice-number-modal',
   'PAYMENT_TERMS_MODAL': 'payment-terms-modal',
@@ -95,18 +87,3 @@ export const modalTypes = {
   'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
   'WARNING_MODAL': 'warning_modal',
 };
-
-export const rejectionReason = [
-  {
-    value: 'not-enough-time',
-    label: 'Not enough time',
-  },
-  {
-    value: 'out-of-scope',
-    label: 'Out of scope',
-  },
-  {
-    value: 'other',
-    label: 'Other',
-  },
-]

@@ -40,7 +40,6 @@ interface Props {
   setAuthAction: (authInfo: AuthInfo) => Action<any>;
   isLoading: boolean;
   token: string;
-  tokenCustomerAPI: string;
   user: object;
   errMessage: string;
   classes: any;
@@ -56,7 +55,6 @@ function LoginPage({
   setAuthAction,
   isLoading,
   token,
-  tokenCustomerAPI,
   user,
   errMessage,
   classes
@@ -66,12 +64,11 @@ function LoginPage({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (token !== null && token !== '' && tokenCustomerAPI !== null && tokenCustomerAPI !== '') {
+    if (token !== null && token !== '') {
       localStorage.setItem('token', token || '');
-      localStorage.setItem('tokenCustomerAPI', tokenCustomerAPI || '');
       localStorage.setItem('user', JSON.stringify(user));
     }
-  }, [token,tokenCustomerAPI,  user]);
+  }, [token, user]);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -122,17 +119,13 @@ function LoginPage({
 
   const storageAuth: AuthInfo = {
     'token': localStorage.getItem('token'),
-    'tokenCustomerAPI': localStorage.getItem('tokenCustomerAPI'),
     'user': JSON.parse(localStorage.getItem('user') || '{}')
   };
 
   const loginFromStorage =
     (token === null || token === '') &&
-    (tokenCustomerAPI === null || tokenCustomerAPI === '') &&
     storageAuth.token !== null &&
     storageAuth.token !== '' &&
-    storageAuth.tokenCustomerAPI !== null &&
-    storageAuth.tokenCustomerAPI !== '' &&
     storageAuth.user !== null;
 
   const handleClickOpen = () => {
@@ -512,7 +505,6 @@ const mapStateToProps = (state: {
       msg: string;
     };
     token: string;
-    tokenCustomerAPI: string;
     user: object;
   };
 }) => {
@@ -520,7 +512,6 @@ const mapStateToProps = (state: {
     'errMessage': state.auth.loginApi.msg,
     'isLoading': state.auth.loginApi.isLoading,
     'token': state.auth.token,
-    'tokenCustomerAPI': state.auth.tokenCustomerAPI,
     'user': state.auth.user
   };
 };

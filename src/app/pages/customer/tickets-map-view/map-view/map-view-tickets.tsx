@@ -14,8 +14,7 @@ import {parseISOMoment} from "../../../../../helpers/format";
 import {
   refreshServiceTickets,
   setServiceTicket,
-  streamServiceTickets,
-  setTicket2JobID,
+  streamServiceTickets
 } from "../../../../../actions/service-ticket/service-ticket.action";
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
@@ -26,6 +25,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
 
   const tempRefTicket = useRef<any[]>([]);
+  const loadCount = useRef<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [allTickets, setAllTickets] = useState<any[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<any[]>([]);
@@ -64,6 +64,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
     if(refresh){
       setIsLoading(true);
       setAllTickets([]);
+      // dispatch(setServiceTicket([]));
       tempRefTicket.current = [];
       const socket = io(`${Config.socketSever}`, {
         'extraHeaders': { 'Authorization': token }
@@ -71,12 +72,15 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   
       socket.on("connect", () => {
         getOpenServiceTicketsStream(socket.id);
+        // console.log('start stream')
+        // console.time('a')
         dispatch(streamServiceTickets(true));
       });
   
       socket.on(SocketMessage.SERVICE_TICKETS, data => {
         const {count, serviceTicket, total} = data;
         if (serviceTicket) {
+          // console.timeLog('a',count)
           tempRefTicket.current.push(serviceTicket);
           if (count % 25 === 0 || count === total) {
             setIsLoading(false);
@@ -87,6 +91,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
             dispatch(streamServiceTickets(false));
             dispatch(setServiceTicket(tempRefTicket.current));
             dispatch(refreshServiceTickets(false));
+            loadCount.current++;
           }
         }
       });
@@ -107,19 +112,18 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }, [allTickets, selectedDate, filterTickets])
 
   useEffect(() => {
-    if(ticket2Job){
-      const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
-      setAllTickets(tempAll);
-      const tempTickets = tickets.filter((ticket: any) => ticket._id !== ticket2Job);
-  
-      dispatch(setServiceTicket(tempTickets));
-      tempRefTicket.current = tempRefTicket.current?.filter((ticket: any) => ticket._id !== ticket2Job);
-      dispatch(setTicket2JobID(''));
-    }
+    const tempAll = allTickets.filter((ticket: any) => ticket._id !== ticket2Job);
+    setAllTickets(tempAll);
+    const tempTickets = tickets.filter((ticket: any) => ticket._id !== ticket2Job);
+    dispatch(setServiceTicket(tempTickets));
+    tempRefTicket.current = tempRefTicket.current?.filter((ticket: any) => ticket._id !== ticket2Job);
+
   }, [ticket2Job])
 
   useEffect(() => {
-    setAllTickets(tickets);
+    if(loadCount.current !== 0){
+      setAllTickets(tickets);
+    }
   }, [tickets]);
 
   return (

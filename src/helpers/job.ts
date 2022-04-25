@@ -33,20 +33,3 @@ export function getJobType(job: any) {
 
   return allTypes.length === 1 ? allTypes[0].toLowerCase() : 'multiple jobs';
 }
-
-export function getJobRequestDescription (jobRequest: any) {
-  const {requests} = jobRequest;
-  let value = '';
-  if (requests) {
-    if (requests.length === 0) {
-      return null;
-    } else if (requests.length > 1) {
-      value = 'Multiple requests';
-    } else if (requests[0]) {
-      value = requests[0].category ? requests[0].category : '-'
-    } else {
-      value = '-'
-    }
-  }
-  return value.toLowerCase();
-}
