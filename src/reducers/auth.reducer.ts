@@ -16,6 +16,7 @@ const initialState = Record({
   })(),
 
   'token': null,
+  'tokenCustomerAPI': null,
   'user': null
 })();
 
@@ -99,12 +100,16 @@ export default handleActions(
     },
 
     [loginActions.success.toString()]: (state, action) => {
-      const { token, user } = action.payload;
+      const { token, tokenCustomerAPI, user } = action.payload;
 
       return state
         .setIn(
           ['token'],
           token
+        )
+        .setIn(
+          ['tokenCustomerAPI'],
+          tokenCustomerAPI
         )
         .setIn(
           ['user'],
@@ -138,6 +143,10 @@ export default handleActions(
         .setIn(
           ['token'],
           action.payload.token
+        )
+        .setIn(
+          ['tokenCustomerAPI'],
+          action.payload.tokenCustomerAPI
         )
         .setIn(
           ['user'],

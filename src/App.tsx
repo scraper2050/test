@@ -58,7 +58,7 @@ function App() {
       </Switch>;
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem('token') && localStorage.getItem('tokenCustomerAPI')) {
       setIsAuthenticated(true);
       setTimeout(() => {
         setLoading(false);

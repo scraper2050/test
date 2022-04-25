@@ -62,7 +62,14 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const note = ticket.description || ticket.note || 'N/A';
   const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
-  const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
+  const { tickets, stream } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets, stream: serviceTicket.stream}));
+
+  useEffect(() => {
+    if(!stream){
+      localStorage.removeItem('afterCancelJob')
+    }
+  }, [stream])
+  
 
   useEffect(() => {
     if (selected._id === ticket._id) {
@@ -131,7 +138,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
       customerId: ticket.customer?._id,
-      locationId: ticket.jobLocation
+      locationId: ticket.jobLocation?._id || ticket.jobLocation
     }
     if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
       dispatch(loadingJobSites());
@@ -349,7 +356,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       {isTicket && ticket.customer?._id &&
         <div className={'button-wrapper-ticket'}>
           <div>
-            <Button onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>
+            <Button disabled={stream && !!localStorage.getItem('afterCancelJob')} onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>
           </div>
           <div>
             <Button onClick={() => openCreateJobModal()}>Create Job</Button>

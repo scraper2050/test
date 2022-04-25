@@ -26,6 +26,7 @@ export enum NotificationTypeTypes {
   CONTRACT_INVITATION = 'ContractInvitation',
   CONTRACT_REJECTED = 'ContractRejected',
   SERVICE_TICKET_CREATED = 'ServiceTicketCreated',
+  JOB_REQUEST_CREATED = 'JobRequestCreated',
   JOB_RESCHEDULED = 'JobRescheduled'
 }
 
