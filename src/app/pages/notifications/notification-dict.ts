@@ -9,10 +9,6 @@ export const getNotificationValues = (notificationType: string, notification:Not
       'details': notification.metadata.ticketId,
       'typeText': 'Service Ticket'
     },
-    [NotificationTypeTypes.JOB_REQUEST_CREATED]: {
-      'details': notification.message?.body?.split(':')[1] || '',
-      'typeText': 'Job Request'
-    },
     [NotificationTypeTypes.JOB_RESCHEDULED]: {
       'details': notification.metadata.jobId,
       'typeText': 'Job Rescheduled'
@@ -45,7 +41,6 @@ export const getNotificationValues = (notificationType: string, notification:Not
 export const getNotificationMethods = (dispatch:Dispatch, notificationType: string, notification:Notification) => {
   const notificationTypes:any = {
     [NotificationTypeTypes.SERVICE_TICKET_CREATED]: () => openDetailJobModal(dispatch, notification),
-    [NotificationTypeTypes.JOB_REQUEST_CREATED]: () => {},
     [NotificationTypeTypes.JOB_RESCHEDULED]: () => openDetailTicketModal(dispatch, notification),
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: () => openContractModal(dispatch, notification),
     [NotificationTypeTypes.CONTRACT_INVITATION]: () => openContractModal(dispatch, notification),

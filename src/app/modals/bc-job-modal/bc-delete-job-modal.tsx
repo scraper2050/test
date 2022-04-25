@@ -104,7 +104,6 @@ function BCDeleteJobModal({
         await closeModal();
         dispatch(success(`${job.jobId} successfully canceled!`));
       }
-      localStorage.setItem('afterCancelJob','true')
     } else {
       SetIsSubmitting(false);
       dispatch(error("Something went wrong!"));

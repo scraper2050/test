@@ -9,7 +9,6 @@ import { setRouteDataAction, setRouteTitleAction } from 'actions/route/route.act
 
 interface Props {
   token?: string;
-  tokenCustomerAPI?: string;
   Component: React.FC<RouteComponentProps>;
   path: string;
   exact?: boolean;
@@ -23,7 +22,6 @@ interface Props {
 
 function AuthRoute({
   token,
-  tokenCustomerAPI,
   Component,
   path,
   title = '',
@@ -33,18 +31,10 @@ function AuthRoute({
 }: Props): JSX.Element | null {
   const storageAuth: AuthInfo = {
     'token': localStorage.getItem('token'),
-    'tokenCustomerAPI': localStorage.getItem('tokenCustomerAPI'),
     'user': JSON.parse(localStorage.getItem('user') || '{}')
   };
   const dispatch = useDispatch();
-  const loginFromStorage = 
-    (token === null || token === '') &&
-    (tokenCustomerAPI === null || tokenCustomerAPI === '') &&
-    storageAuth.token !== null &&
-    storageAuth.token !== '' &&
-    storageAuth.tokenCustomerAPI !== null &&
-    storageAuth.tokenCustomerAPI !== '' &&
-    storageAuth.user !== null;
+  const loginFromStorage = (token === null || token === '') && storageAuth.token !== null && storageAuth.token !== '' && storageAuth.user !== null;
 
   useEffect(
     () => {
@@ -92,11 +82,9 @@ function AuthRoute({
 const mapStateToProps = (state: {
   auth: {
     token: string;
-    tokenCustomerAPI: string;
   };
 }) => ({
-  'token': state.auth.token,
-  'tokenCustomerAPI': state.auth.tokenCustomerAPI,
+  'token': state.auth.token
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

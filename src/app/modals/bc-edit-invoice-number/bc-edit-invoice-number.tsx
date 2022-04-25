@@ -57,10 +57,6 @@ const invoiceNumberModalStyles = makeStyles((theme: Theme) =>
       borderRadius: 8,
       border: `1px solid ${CONSTANTS.PRIMARY_ORANGE}`,
     },
-    bootstrapRootWarning: {
-      borderRadius: 8,
-      border: `1px solid ${CONSTANTS.PRIMARY_YELLOW}`,
-    },
     bootstrapInput: {
       color: '#4F4F4F!important',
       fontWeight: 'normal',
@@ -104,8 +100,6 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
   const invoiceNumberStyles = invoiceNumberModalStyles();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const [currentInvoiceNumber, setCurrentInvoiceNumber] = useState<string|null>(null);
-  const [showInvoiceNumberWarning, setShowInvoiceNumberWarning] = useState(false)
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -121,7 +115,6 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
     getCurrentInvoiceNumber()
     .then((res:any)=>{
       if(res.status === 1){
-        setCurrentInvoiceNumber(`${res.currentInvoiceNumber+1}`)
         setFieldValue('invoiceNumber',`${res.currentInvoiceNumber+1}`);
         setFieldValue('invoicePrefix',res.invoicePrefix || '');
         setIsLoading(false);
@@ -181,15 +174,6 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
     handleSubmit,
   } = form
 
-
-  useEffect(() => {
-    if(values.invoiceNumber && currentInvoiceNumber && parseInt(currentInvoiceNumber) > parseInt(values.invoiceNumber)){
-      setShowInvoiceNumberWarning(true)
-    } else {
-      setShowInvoiceNumberWarning(false)
-    }
-  }, [values, currentInvoiceNumber])
-
   return isLoading ? (
     <DialogActions>
       <Grid container direction="column" alignItems="center" spacing={2}>
@@ -213,25 +197,21 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
             className={invoiceNumberStyles.bootstrapFormLabel}>
               Next Invoice Number
             </InputLabel>
-            <div style={{flex: 2}}>
-              <InputBase
-                id="invoiceNumber"
-                name="invoiceNumber"
-                disabled={false}
-                value={values.invoiceNumber}
-                placeholder={'Current Invoice Number'}
-                error={!!errors.invoiceNumber || showInvoiceNumberWarning}
-                onChange={handleInvoiceNumberChange}
-                classes={{
-                  root: classNames(invoiceNumberStyles.bootstrapRoot, {
-                    [invoiceNumberStyles.bootstrapRootError]: !!errors.invoiceNumber,
-                    [invoiceNumberStyles.bootstrapRootWarning]: showInvoiceNumberWarning,
-                  }),
-                  input: classNames(invoiceNumberStyles.bootstrapInput),
-                }}
-              />
-              <span style={{color: CONSTANTS.PRIMARY_YELLOW}}>{showInvoiceNumberWarning && `This invoice number is lower than the current one (${currentInvoiceNumber}), there's a possibility of invoice numbers duplications.`}</span>
-            </div>
+            <InputBase
+              id="invoiceNumber"
+              name="invoiceNumber"
+              disabled={false}
+              value={values.invoiceNumber}
+              placeholder={'Current Invoice Number'}
+              error={!!errors.invoiceNumber}
+              onChange={handleInvoiceNumberChange}
+              classes={{
+                root: classNames(invoiceNumberStyles.bootstrapRoot, {
+                  [invoiceNumberStyles.bootstrapRootError]: !!errors.invoiceNumber
+                }),
+                input: classNames(invoiceNumberStyles.bootstrapInput),
+              }}
+            />
           </FormControl>
           <FormControl className={invoiceNumberStyles.formField}>
             <InputLabel 
@@ -271,7 +251,7 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
         <Button
           aria-label={'edit-invoice-number'}
           color={'primary'}
-          disabled={isSubmitting || !!errors.invoiceNumber}
+          disabled={isSubmitting}
           onClick={() => handleSubmit()}
           className={classNames(classes.saveButton)}
           variant={'contained'}>Save</Button>

@@ -32,7 +32,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, r
       {tabsData.map((item: any, idx: number) => {
         return <Tab
           key={idx}
-          label={item.icon || item.chip || item.badgeContent ? undefined : item.label}
+          label={item.icon || item.chip ? undefined : item.label}
           value={item.value}
           icon= {item.icon ?
             typeof item.icon === 'string' ? (
@@ -73,21 +73,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, r
                   'marginLeft': '10px',
                   'padding': '0px 6x'
                 }}
-              />: undefined } </div>: 
-            item.badgeContent ? (
-              <div>
-                <span>{item.label}</span>
-                <Chip 
-                  label={item.badgeContent}
-                  color="secondary" 
-                  style={{
-                    'marginLeft': '10px',
-                    'padding': '0px 6x',
-                    'width': '50px',
-                  }}
-                />
-              </div>
-            ) : undefined
+              />: undefined } </div>: undefined
           }
         />;
       })}
@@ -128,7 +114,7 @@ const StyledTabs = styled(Tabs)<{chip: boolean}>`
 
     &:last-of-type {
       .MuiTab-wrapper {
-        align-items: ${props => props.chip ? 'end' : 'center'};
+        align-items: ${props => props.chip ? 'end' : 'center'};;
       }
     }
   }
@@ -140,11 +126,6 @@ const StyledTabs = styled(Tabs)<{chip: boolean}>`
 
   .MuiTabs-indicator {
     height: 6px;
-  }
-
-  .MuiTab-wrapper {
-    align-items: ${props => props.chip ? 'end' : 'center'};
-    white-space: nowrap;
   }
 `;
 

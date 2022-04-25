@@ -2,13 +2,9 @@ import { Item } from 'actions/invoicing/items/items.types';
 import request from 'utils/http.service';
 
 
-export const getItems = async (includeDiscountItems = false) => {
+export const getItems = async () => {
   try {
-    const requestObj:any = {}
-    if(includeDiscountItems){
-      requestObj.includeDiscountItems = true;
-    }
-    const response: any = await request('/getItems', 'POST', requestObj);
+    const response: any = await request('/getItems', 'POST', false);
     return response.data;
   } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {
