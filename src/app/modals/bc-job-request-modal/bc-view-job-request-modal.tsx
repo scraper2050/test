@@ -122,7 +122,8 @@ function BCViewJobRequestModal({
           ticket: {...jobRequest, tasks: [], images: jobRequest.requests?.map((request:any)=>request.images||[]).flat(1) || []},
           'type': {
             '_id': ''
-          }
+          },
+          'jobFromRequest': true,
         },
         'modalTitle': 'Create Job',
         'removeFooter': false,

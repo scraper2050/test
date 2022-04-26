@@ -7,6 +7,8 @@ import {ReactComponent as IconRescheduled} from "../../../assets/img/icons/map/i
 import {ReactComponent as IconPaused} from "../../../assets/img/icons/map/icon-paused.svg";
 import {ReactComponent as IconIncomplete} from "../../../assets/img/icons/map/icon-incomplete.svg";
 import {ReactComponent as IconPending} from "../../../assets/img/icons/map/icon-pending.svg";
+import {ReactComponent as IconJobRequest} from "../../../assets/img/icons/map/icon-job-request.svg";
+import {ReactComponent as IconOpenServiceTicket} from "../../../assets/img/icons/map/icon-open-service-ticket.svg";
 import {
   getJobLocationsAction,
   loadingJobLocations
@@ -83,6 +85,10 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
 
   const getStatusIcon = (status: number) => {
     switch (status) {
+      case -2:
+        return IconJobRequest;
+      case -1:
+        return IconOpenServiceTicket;
       case 1:
         return IconStarted;
       case 2:
@@ -306,7 +312,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     //onMouseLeave={() => setShowinfo(false)}
   >
     {(() => {
-      const status = ticket?.status;
+      const status = isTicket ? -1 : ticket?.status;
       CustomIcon = getStatusIcon(status);
     })()}
     <CustomIcon
