@@ -269,7 +269,7 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
           <Grid item>
             <Button
               disabled={isSubmitting}
-              aria-label={'record-payment'}
+              aria-label={'close-modal'}
               onClick={closeModal}
               classes={{
                 'root': classes.closeButton
@@ -279,7 +279,7 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
             </Button>
             <Button
               disabled={isSubmitting}
-              aria-label={'create-job'}
+              aria-label={'reject-job-request'}
               classes={{
                 root: classNames([classes.purpleButton, classes.submitButton]),
                 disabled: classes.submitButtonDisabled

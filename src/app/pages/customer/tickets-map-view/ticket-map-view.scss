@@ -87,6 +87,12 @@
     margin-right: 10px;
     border-radius: 10px;
     background-size: cover;
+    &_-2 {
+      background-image: url('../../../../assets/img/icons/map/icon-job-request.svg');
+    }
+    &_-1 {
+      background-image: url('../../../../assets/img/icons/map/icon-open-service-ticket.svg');
+    }
     &_0 {
       background-image: url('../../../../assets/img/icons/map/icon-pending.svg');
     }
