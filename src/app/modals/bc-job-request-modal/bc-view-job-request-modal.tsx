@@ -65,8 +65,8 @@ function BCViewJobRequestModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const { contacts } = useSelector((state: any) => state.contacts);
-  const customerContact = jobRequest.customerContactId?.name ||
-    contacts.find((contact :any) => contact._id === jobRequest.customerContactId)?.name;
+  const customerContact = 
+    jobRequest.customerContact && contacts.find((contact :any) => contact.userId === jobRequest.customerContact._id)?.name
 
   useEffect(() => {
     const data: any = {
@@ -119,7 +119,12 @@ function BCViewJobRequestModal({
           'technician': {
             '_id': ''
           },
-          ticket: {...jobRequest, tasks: [], images: jobRequest.requests?.map((request:any)=>request.images||[]).flat(1) || []},
+          ticket: {
+            ...jobRequest, 
+            tasks: [], 
+            note: jobRequest.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n'), 
+            images: jobRequest.requests?.map((request:any)=>request.images||[]).flat(1) || [],
+          },
           'type': {
             '_id': ''
           },
