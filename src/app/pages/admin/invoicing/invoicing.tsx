@@ -86,7 +86,7 @@ function AdminInvoicingPage({ token, user }: any) {
                 <MoneyIcon />
               </BCAdminCard>
             </Grid>
-            <Grid
+            {/* <Grid
               item>
               <BCAdminCard
                 cardText={'Items'}
@@ -94,7 +94,7 @@ function AdminInvoicingPage({ token, user }: any) {
                 link={'/main/admin/invoicing/items'}>
                 <ReceiptIcon />
               </BCAdminCard>
-            </Grid>
+            </Grid> */}
             <Grid
               item>
               <BCAdminCard

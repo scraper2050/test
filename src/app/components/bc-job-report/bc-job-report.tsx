@@ -50,6 +50,10 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   const { job, invoiceCreated, invoice } = jobReportData;
   //console.log({jobReportData});
 
+  if(job && !job.ticket){
+    job.ticket = {}
+  }
+
   useEffect(() => {
     if(invoice) {
       getInvoiceDetail(invoice._id).then((response) => {
@@ -456,7 +460,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Purchase Order'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.ticket.customerPO || 'N/A'}
+                      {job.customerPO || job.ticket.customerPO || 'N/A'}
                     </p>
                   </div>
                 </Grid>
@@ -468,7 +472,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Service Ticket Note'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.ticket.note || 'N/A'}
+                      {job.request.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n') || job.ticket.note || 'N/A'}
                     </p>
                   </div>
                 </Grid>

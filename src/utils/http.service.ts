@@ -3,8 +3,12 @@ import { getLocalStorageToken } from './local-storage.service';
 import axios, { AxiosRequestConfig, Method, CancelTokenSource } from 'axios';
 
 const api = config.apiBaseURL;
+const customerApi = config.apiCustomerURL;
 
-const fetchToken = () => {
+const fetchToken = (isCustomerAPI = false) => {
+  if(isCustomerAPI){
+    return localStorage.getItem('tokenCustomerAPI') || '';
+  }
   let token = '';
   if (getLocalStorageToken()) {
     token = getLocalStorageToken();
@@ -12,16 +16,16 @@ const fetchToken = () => {
   return token;
 };
 
-export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "", cancelTokenSource?: CancelTokenSource ) => new Promise((resolve, reject) => {
+export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "", cancelTokenSource?: CancelTokenSource, isCustomerAPI = false ) => new Promise((resolve, reject) => {
   let token = '';
 
   if (!noHeaders) {
-    token = fetchToken();
+    token = fetchToken(isCustomerAPI);
   }
   const request: AxiosRequestConfig = {
     'headers': {},
     'method': type === "OPTIONS" ? "get" : type,
-    'url': api + url
+    'url': isCustomerAPI ? customerApi + url : api + url
   };
   if (type !== 'get') {
     if (type === "OPTIONS") {

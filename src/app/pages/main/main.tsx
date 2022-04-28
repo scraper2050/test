@@ -44,6 +44,8 @@ const BrandsPage = React.lazy(() => import('../admin/brands/brands'));
 const CompanyProfilePage = React.lazy(() => import('../admin/company-profile/company-profile'));
 const EquipmentTypePage = React.lazy(() => import('../admin/equipment-type/equipment-type'));
 const AdminGroupsPage = React.lazy(() => import('../admin/groups/groups'));
+const AdminServiceAndProductsPage = React.lazy(() => import('../admin/services-and-products/services-and-products'));
+const AdminServiceAndProductsListPage = React.lazy(() => import('../admin/services-and-products/services-and-products-list'));
 const AdminInvoicingPage = React.lazy(() => import('../admin/invoicing/invoicing'));
 const AdminInvoicingItemsPage = React.lazy(() => import('../admin/invoicing/items/items'));
 const JobTypesPage = React.lazy(() => import('../admin/job-types/job-types'));
@@ -463,6 +465,18 @@ function Main(): any {
                   Component={AdminGroupsPage}
                   exact
                   path={'/main/admin/groups'}
+                  title={'Admin'}
+                />
+                <AuthRoute
+                  Component={AdminServiceAndProductsPage}
+                  exact
+                  path={'/main/admin/services-and-products'}
+                  title={'Admin'}
+                />
+                <AuthRoute
+                  Component={AdminServiceAndProductsListPage}
+                  exact
+                  path={'/main/admin/services-and-products/services/:type'}
                   title={'Admin'}
                 />
                 <AuthRoute

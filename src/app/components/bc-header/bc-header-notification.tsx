@@ -3,6 +3,7 @@ import ContractNotification from './header-notifications/bc-header-contract-noti
 import { Notification, NotificationTypeTypes } from 'reducers/notifications.types';
 import React from 'react';
 import ServiceTicketNotication from './header-notifications/bc-header-service-ticket-notification';
+import JobRequestNotication from './header-notifications/bc-header-job-request-notification';
 import JobRescheduledNotication from './header-notifications/bc-header-job-rescheduled';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
@@ -41,6 +42,10 @@ function renderItem(item:NotificationItem, index:number) {
       key={index}
     />,
     [NotificationTypeTypes.SERVICE_TICKET_CREATED]: <ServiceTicketNotication
+      {...item}
+      key={index}
+    />,
+    [NotificationTypeTypes.JOB_REQUEST_CREATED]: <JobRequestNotication
       {...item}
       key={index}
     />,

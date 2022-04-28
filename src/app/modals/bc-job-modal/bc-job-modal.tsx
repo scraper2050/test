@@ -10,6 +10,7 @@ import {
   setOpenServiceTicket,
   setOpenServiceTicketLoading,
 } from 'actions/service-ticket/service-ticket.action';
+import { refreshJobRequests } from 'actions/job-request/job-request.action'; 
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import {
@@ -183,7 +184,12 @@ function BCJobModal({
 
   //console.log({job})
 
-  const { ticket = {} } = job;
+  let { ticket = {} } = job;
+
+  if(job.request){
+    ticket = job.request;
+    job.ticket = job.request;
+  }
   const { customer = {} } = ticket;
 
   const { profile: { displayName = '' } = {} } = customer;
@@ -385,8 +391,12 @@ function BCJobModal({
         const jobCustomerContact = job?.customerContactId && contacts.find((contact: any) => job?.customerContactId === contact._id);
         const ticketCustomerContact_id = ticket?.customerContactId?._id && contacts.find((contact: any) => ticket?.customerContactId?._id === contact._id);
         const ticketCustomerContact = ticket?.customerContactId && contacts.find((contact: any) => ticket?.customerContactId === contact._id);
+        const requestCustomerContact_id = ticket?.customerContact?._id && contacts.find((contact: any) => ticket?.customerContact?._id === contact._id);
+        const requestCustomerContact = ticket?.customerContact && contacts.find((contact: any) => ticket?.customerContact === contact._id);
+        const requestCustomerContact_idUserId = ticket?.customerContact?._id && contacts.find((contact: any) => ticket?.customerContact?._id === contact.userId);
+        const requestCustomerContactUserId = ticket?.customerContact && contacts.find((contact: any) => ticket?.customerContact === contact.userId);
         setContactValue(
-          jobCustomerContact_id || jobCustomerContact || ticketCustomerContact_id || ticketCustomerContact
+          jobCustomerContact_id || jobCustomerContact || ticketCustomerContact_id || ticketCustomerContact || requestCustomerContact_id || requestCustomerContact || requestCustomerContact_idUserId || requestCustomerContactUserId
         );
       }
     }
@@ -448,7 +458,8 @@ function BCJobModal({
         ? jobValue.ticket.jobSite._id || jobValue.ticket.jobSite
         : '',
       customerContactId: jobValue.customerContactId?._id || jobValue.customerContactId ||
-        ticket?.customerContactId?._id || ticket.customerContactId || '',
+        ticket?.customerContactId?._id || ticket.customerContactId || 
+        ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
     },
@@ -484,6 +495,12 @@ function BCJobModal({
       }))
 
       tempData.tasks = tasks;
+
+      if(job.jobFromRequest || job.request){
+        tempData.jobRequestId = tempData.ticketId;
+        delete tempData.ticketId;
+      }
+
       const requestObj = formatRequestObj(tempData)
       //console.log({requestObj,}, JSON.stringify(tasks));
 
@@ -514,6 +531,7 @@ function BCJobModal({
           }*/
           if(!job.jobFromMap && !job._id){
             dispatch(refreshServiceTickets(true));
+            dispatch(refreshJobRequests(true));
           }
           dispatch(setTicket2JobID(response.job?.ticket));
           dispatch(refreshJobs(false));

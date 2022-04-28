@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { createMuiTheme, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   createStyles,
@@ -17,9 +18,9 @@ import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../reducers";
 import {Autocomplete} from "@material-ui/lab";
 import {useLocation} from "react-router-dom";
+import { getItems } from 'api/items.api'
 
 
 const useInvoiceTableStyles = makeStyles((theme: Theme) =>
@@ -154,8 +155,8 @@ interface Props {
 }
 
 function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, itemTier, errors }: Props) {
-  const { 'items': serviceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
-  serviceItems.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : a.name.toLowerCase() <b.name.toLowerCase() ? -1 : 0);
+  const dispatch = useDispatch();
+  const [serviceItems, setServiceItems] = useState<any>([])
   const taxes = useSelector(({ tax }: any) => tax.data);
   const invoiceTableStyle = useInvoiceTableStyles();
   const { state } = useLocation<any>();
@@ -175,7 +176,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
       };
       tempArray[index] = newItem;
     } else {
-      if (itemTier?._id) {
+      if (itemTier?._id && !item.isDiscountItem) {
         // @ts-ignore
         const customerTier = item?.tiers.find(({tier}) => tier._id === itemTier._id);
         tempArray[index].price = customerTier?.charge || 0;
@@ -223,6 +224,20 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
       })
     }
   }, [itemTier])
+
+  useEffect(() => {
+    getItems(true)
+      .then(res => {
+        const tempServiceItems = res.items;
+        tempServiceItems
+          .sort((a:any, b:any) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : a.name.toLowerCase() <b.name.toLowerCase() ? -1 : 0)
+          .sort((a:any, b:any) => !a.isDiscountItem && b.isDiscountItem ? 1 : -1)
+          .reverse();
+        setServiceItems(tempServiceItems)
+      })
+      .catch(console.log)
+  }, [])
+  
 
   return (
     <>
@@ -356,7 +371,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                 </Grid>
                 <Grid item xs={1} className={invoiceTableStyle.textRight}>
             <span>
-              $ {rowData?.subTotal}
+              {rowData.subTotal && rowData.subTotal >= 0 ? `$ ${parseFloat(rowData.subTotal).toFixed(2)}` : `-$ ${Math.abs(parseFloat(rowData.subTotal)).toFixed(2)}`}
             </span>
                 </Grid>
                 <Grid item xs={1} className={invoiceTableStyle.textCenter}>

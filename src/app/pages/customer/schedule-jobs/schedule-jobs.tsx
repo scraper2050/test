@@ -1,6 +1,7 @@
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import JobPage from './job-page/job-page';
 import ServiceTicket from './service-ticket/service-ticket';
+import JobRequest from './job-request/job-request';
 import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './schedule-jobs.styles';
@@ -24,6 +25,9 @@ function ScheduleJobsPage({ classes }: any) {
   const history = useHistory();
   const locationState = location.state;
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
+  const { numberOfJobRequest } = useSelector(({ jobRequests }: any) => ({
+    numberOfJobRequest: jobRequests.numberOfJobRequest
+  }));
 
   useEffect(() => {
     if(localStorage.getItem('prevPage') === 'ticket-map-view'){
@@ -119,19 +123,26 @@ function ScheduleJobsPage({ classes }: any) {
               {
                 'label': 'Service Tickets',
                 'value': 1
-              }
+              },
+              {
+                'label': 'Job Requests',
+                'value': 2,
+                'badgeContent': numberOfJobRequest,
+              },
             ]}
           />
-          <div className={classes.addButtonArea}>
-            <CSButton
-              aria-label={'new-ticket'}
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => openCreateTicketModal()}>
-              {'New Ticket'}
-            </CSButton>
-          </div>
+          {curTab !== 2 && (
+            <div className={classes.addButtonArea}>
+              <CSButton
+                aria-label={'new-ticket'}
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => openCreateTicketModal()}>
+                {'New Ticket'}
+              </CSButton>
+            </div>
+          )}
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={curTab}
@@ -142,6 +153,9 @@ function ScheduleJobsPage({ classes }: any) {
             </div>
             <div className={classes.dataContainer} id={"1"}>
               <ServiceTicket hidden={curTab !== 1} />
+            </div>
+            <div className={classes.dataContainer} id={"2"}>
+              <JobRequest hidden={curTab !== 2} />
             </div>
           </SwipeableViews>
         </div>

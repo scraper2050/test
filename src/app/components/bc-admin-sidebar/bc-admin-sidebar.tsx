@@ -23,6 +23,7 @@ import { logoutAction, resetStore } from "../../../actions/auth/auth.action";
 import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Badge from '@material-ui/core/Badge';
 
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ReceiptIcon from '@material-ui/icons/Receipt';
@@ -133,6 +134,9 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
   const location = useLocation();
   const pathName = location.pathname;
   const nestedRouteKey = localStorage.getItem('nestedRouteKey');
+  const { numberOfJobRequest } = useSelector(({ jobRequests }: any) => ({
+    numberOfJobRequest: jobRequests.numberOfJobRequest
+  }));
   const LINK_DATA = [
     {
       'label': 'Customer List',
@@ -146,7 +150,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
     },
     {
       'label': 'Schedule/Jobs',
-      'icon': <WatchLaterOutlinedIcon/>,
+      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><WatchLaterOutlinedIcon/></Badge>,
       'link': '/main/customers/schedule'
     },
     {
@@ -231,15 +235,20 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'link': '/main/admin/groups'
     },
     {
+      'label': 'Services & Products',
+      'icon': <WorkIcon/>,
+      'link': '/main/admin/services-and-products'
+    },
+    {
       'label': 'Invoicing',
       'icon': <LibraryBooksIcon/>,
       'link': '/main/admin/invoicing'
     },
-    {
-      'label': 'Job Types',
-      'icon': <WorkIcon/>,
-      'link': '/main/admin/job-types'
-    },
+    // {
+    //   'label': 'Job Types',
+    //   'icon': <WorkIcon/>,
+    //   'link': '/main/admin/job-types'
+    // },
     {
       'label': 'Report Number',
       'icon': <ReportIcon/>,
@@ -476,7 +485,8 @@ const StyledListItem = styled(ListItem)`
   color: #000;
   border-radius: 7px;
   & > .menuLabel {
-    padding-left: 35px;
+    padding-left: 30px;
+    white-space: nowrap;
   };
   &.Mui-selected {
     color: #fff;
