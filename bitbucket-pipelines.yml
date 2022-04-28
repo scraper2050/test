@@ -5,6 +5,16 @@
 # You can specify a custom docker image from Docker Hub as your build environment.
 image: node:10.15.3
 
+clone:
+  depth: full    # SonarCloud scanner needs the full history to assign issues properly
+  
+definitions:
+  services:
+    docker:
+      memory: 2048
+  caches:
+    sonar: ~/.sonar/cache  # Caching SonarCloud artifacts will speed up your build
+
 pipelines:
   branches:
     master:
@@ -38,6 +48,11 @@ pipelines:
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
               DISTRIBUTION_ID: 'E18B11G7D9D3CU'
+          - pipe: sonarsource/sonarcloud-scan:1.4.0
+            variables:
+              SONAR_TOKEN: ${SONAR_TOKEN}
+      #    - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
+
     dev:
     - step:
         name: Build
@@ -69,6 +84,9 @@ pipelines:
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
               DISTRIBUTION_ID: 'E17AYQHQYHYHNY'
+          - pipe: sonarsource/sonarcloud-scan:1.4.0
+         # - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
+
     testing:
     - step:
         name: Build
