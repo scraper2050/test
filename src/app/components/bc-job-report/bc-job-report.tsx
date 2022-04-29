@@ -472,7 +472,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                       {'Service Ticket Note'}
                     </strong>
                     <p className={classes.noMargin}>
-                      {job.request.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n') || job.ticket.note || 'N/A'}
+                      {job.request?.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n') || job.ticket?.note || 'N/A'}
                     </p>
                   </div>
                 </Grid>
