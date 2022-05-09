@@ -63,7 +63,9 @@
     "socket.io-client": "^4.0.0",
     "spinkit": "^2.0.1",
     "styled-components": "^5.1.1",
+    "supercluster": "^7.1.5",
     "typescript": "^3.9.5",
+    "use-supercluster": "^0.4.0",
     "validator": "^13.1.1",
     "yarn": "^1.22.10",
     "yup": "^0.29.3"
