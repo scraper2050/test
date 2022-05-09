@@ -1,3 +1,5 @@
+import { useRef, useState, useEffect } from 'react';
+import useSupercluster from "use-supercluster";
 import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
 import styles from './bc-map-with-marker-list.style';
@@ -27,31 +29,98 @@ function createMapOptions() {
   };
 }
 
+const Marker = ({ children } : any) => children;
+
 function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: BCMapWithMarkerListProps) {
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
   const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const mapRef = useRef<any>();
+  const [bounds, setBounds] = useState<any>(null);
+  const [zoom, setZoom] = useState(11);
 
   let centerLat = coordinates?.lat || DEFAULT_COORD.lat;
   let centerLng = coordinates?.lng || DEFAULT_COORD.lng;
 
-  if (selected._id !== '') {
-    if (selected.jobSite) {
-      centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : centerLat;
-      centerLng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : centerLng;
-      centerLat -= 0.004;
-      centerLng += 0.002;
-    } else if (selected.jobLocation) {
-      centerLat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : centerLat;
-      centerLng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : centerLng;
-      centerLat -= 0.004;
-      centerLng += 0.002;
-    } else if (selected.customer) {
-      centerLat = selected.customer.location && selected.customer.location.coordinates && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : centerLat;
-      centerLng = selected.customer.location && selected.customer.location.coordinates && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : centerLng;
-      centerLat -= 0.004;
-      centerLng += 0.002;
+  // if (selected._id !== '') {
+  //   if (selected.jobSite) {
+  //     centerLat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : centerLat;
+  //     centerLng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : centerLng;
+  //     centerLat -= 0.004;
+  //     centerLng += 0.002;
+  //   } else if (selected.jobLocation) {
+  //     centerLat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : centerLat;
+  //     centerLng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : centerLng;
+  //     centerLat -= 0.004;
+  //     centerLng += 0.002;
+  //   } else if (selected.customer) {
+  //     centerLat = selected.customer.location && selected.customer.location.coordinates && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : centerLat;
+  //     centerLng = selected.customer.location && selected.customer.location.coordinates && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : centerLng;
+  //     centerLat -= 0.004;
+  //     centerLng += 0.002;
+  //   }
+  // }
+
+  useEffect(() => {
+    if(mapRef.current){
+      if (selected._id) {
+        let lat = centerLat;
+        let lng = centerLng;
+        if (selected.jobSite) {
+          lat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : lat;
+          lng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : lng;
+          lat -= 0.002;
+          lng += 0.002;
+        } else if (selected.jobLocation) {
+          lat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : lat;
+          lng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : lng;
+          lat -= 0.002;
+          lng += 0.002;
+        } else if (selected.customer) {
+          lat = selected.customer.location && selected.customer.location.coordinates && selected.customer.location.coordinates[1] ? selected.customer.location.coordinates[1] : lat;
+          lng = selected.customer.location && selected.customer.location.coordinates && selected.customer.location?.coordinates[0] ? selected.customer.location.coordinates[0] : lng;
+          lat -= 0.002;
+          lng += 0.002;
+        }
+        mapRef.current.setZoom(16);
+        mapRef.current.panTo({ lat, lng })
+      }
     }
-  }
+  }, [selected])
+  
+  
+  const points = list.map((ticket: any) => {
+    let lat:any = centerLat;
+    let lng:any = centerLng;
+    if (ticket.jobSite) {
+      lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : centerLat;
+      lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : centerLng;
+    } else if (ticket.jobLocation) {
+      lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : centerLat;
+      lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : centerLng;
+    } else if (ticket.customer) {
+      lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : centerLat;
+      lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : centerLng;
+    }
+    return ({
+      type: "Feature",
+      properties: { cluster: false, ticketId: ticket._id, ticket },
+      geometry: {
+        type: "Point",
+        coordinates: [
+          parseFloat(lng),
+          parseFloat(lat)
+        ]
+      },
+    })
+  });
+
+  const { clusters, supercluster } = useSupercluster({
+    points,
+    bounds,
+    zoom,
+    options: { radius: 75, maxZoom: 15 }
+  });
+  
 
   return (
     <GoogleMapReact
@@ -60,30 +129,83 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
         'lng': centerLng }}
       defaultZoom={11}
       //onClick={event => console.log(event)}
+      yesIWantToUseGoogleMapApiInternals
+      onGoogleApiLoaded={({ map }) => {
+        mapRef.current = map;
+      }}
+      onChange={({ zoom, bounds }) => {
+        setZoom(zoom);
+        setBounds([
+          bounds.nw.lng,
+          bounds.se.lat,
+          bounds.se.lng,
+          bounds.nw.lat
+        ]);
+      }}
       options={createMapOptions}>
       {
-        list.map((ticket: any, index: number) => {
-          let lat = centerLat;
-          let lng = centerLng;
-          if (ticket.jobSite) {
-            lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : centerLat;
-            lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : centerLng;
-          } else if (ticket.jobLocation) {
-            lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : centerLat;
-            lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : centerLng;
-          } else if (ticket.customer) {
-            lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : centerLat;
-            lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : centerLng;
-          }
+        clusters.map((cluster) => {
+          const [lng, lat] = cluster.geometry.coordinates;
+          const ticket = cluster.properties.ticket;
+          const {
+            cluster: isCluster,
+            point_count: pointCount
+          } = cluster.properties;
 
-          return <BCMapMarker
-            classes={classes}
-            key={index}
-            lat={lat}
-            lng={lng}
-            ticket={ticket}
-            isTicket={isTicket}
-          />;
+          if (isCluster) {
+            return (
+              <Marker
+                key={`cluster-${cluster.id}`}
+                lat={lat}
+                lng={lng}
+              >
+                <div
+                  style={{
+                    width: 20,
+                    height: 20,
+                    backgroundColor: '#2477FF',
+                    borderRadius: '50%',
+                    padding: 10,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  onClick={() => {
+                    const expansionZoom = Math.min(
+                      supercluster.getClusterExpansionZoom(cluster.id),
+                      20
+                    );
+                    mapRef.current.setZoom(expansionZoom);
+                    mapRef.current.panTo({ lat, lng });
+                  }}
+                >
+                  <span 
+                    style={{
+                      color: '#2477FF',
+                      marginTop: -40,
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {pointCount}
+                  </span>
+                </div>
+              </Marker>
+            );
+          } else {
+            return (
+              <BCMapMarker
+                key={`cluster-${cluster.properties.ticketId}`}
+                lat={lat}
+                lng={lng}
+                ticket={ticket}
+                isTicket={true}
+              >
+                <button className="crime-marker">
+                  <img src="/custody.svg" alt="crime doesn't pay" />
+                </button>
+              </BCMapMarker>
+            );
+          }
         })
       }
 
