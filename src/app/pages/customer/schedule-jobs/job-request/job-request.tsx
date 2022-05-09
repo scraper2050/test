@@ -80,13 +80,24 @@ function JobRequest({ classes }: any) {
     {
       Cell({ row }: any) {
         const createdAt = formatDateMMMDDYYYY(row.original.createdAt);
-        return <div className={'flex items-center'}>{createdAt}</div>;
+        return <div>{createdAt}</div>;
       },
       Header: 'Request Date',
       accessor: 'createdAt',
       className: 'font-bold',
       sortable: true,
       width: 50,
+    },
+    {
+      Cell({ row }: any) {
+        const dueDate = formatDateMMMDDYYYY(row.original.dueDate);
+        return <div><b>{dueDate}</b></div>;
+      },
+      Header: 'Due Date',
+      id: 'due-date',
+      accessor: 'dueDate',
+      sortable: true,
+      width: 100,
     },
     {
       Header: 'Description',
@@ -98,7 +109,7 @@ function JobRequest({ classes }: any) {
     },
     {
       Header: 'Requested By',
-      accessor: 'customer.profile.displayName',
+      accessor: 'createdBy.profile.displayName',
       className: 'font-bold',
       sortable: true,
     },
@@ -114,17 +125,6 @@ function JobRequest({ classes }: any) {
       id: 'job-site',
       accessor: getJobSite,
       sortable: true,
-    },
-    {
-      Cell({ row }: any) {
-        const dueDate = formatDateMMMDDYYYY(row.original.dueDate);
-        return <div className={'flex items-center'}>{dueDate}</div>;
-      },
-      Header: 'Due Date',
-      id: 'due-date',
-      accessor: 'dueDate',
-      sortable: true,
-      width: 100,
     },
   ];
 
