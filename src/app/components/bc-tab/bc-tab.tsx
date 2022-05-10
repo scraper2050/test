@@ -27,7 +27,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, r
       value={curTab}
       variant="scrollable"
       scrollButtons="on"
-      chip={chip}
+      chip={chip ? 1 : 0}
     >
       {tabsData.map((item: any, idx: number) => {
         return <Tab
@@ -116,7 +116,7 @@ const FlexDiv = styled.div`
   }
 `
 
-const StyledTabs = styled(Tabs)<{chip: boolean}>`
+const StyledTabs = styled(Tabs)<{chip: boolean|number}>`
   border-bottom: 1px solid #C4C4C4;
   .MuiTab-root {
     font-size: 16px;
