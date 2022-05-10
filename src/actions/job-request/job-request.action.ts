@@ -27,25 +27,25 @@ export const setLastPageJobRequestsCursor = (lastPageCursor: string) => {
 export const setTotal = (total: number) => {
   return {
     'payload': total,
-    'type': types.SET_TOTAL
+    'type': types.SET_JOB_REQUESTS_TOTAL
   };
 };
 export const setCurrentPageIndex = (currentPageIndex: number) => {
   return {
     'payload': currentPageIndex,
-    'type': types.SET_CURRENT_PAGE_INDEX
+    'type': types.SET_CURRENT_JOB_REQUESTS_PAGE_INDEX
   };
 };
 export const setCurrentPageSize = (currentPageSize: number) => {
   return {
     'payload': currentPageSize,
-    'type': types.SET_CURRENT_PAGE_SIZE
+    'type': types.SET_CURRENT_JOB_REQUESTS_PAGE_SIZE
   };
 };
 export const setKeyword = (keyword: string) => {
   return {
     'payload': keyword,
-    'type': types.SET_SEARCH_KEYWORD
+    'type': types.SET_JOB_REQUESTS_SEARCH_KEYWORD
   };
 };
 export const setNumberOfOpenJobRequest = (numberOfOpenJobRequest: number) => {
