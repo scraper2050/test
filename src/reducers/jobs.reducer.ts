@@ -140,22 +140,22 @@ export const jobReducer: Reducer<any> = (
         ...state,
         nextCursor: payload,
       };
-    case types.SET_TOTAL:
+    case types.SET_JOBS_TOTAL:
       return {
         ...state,
         total: payload,
       };
-    case types.SET_CURRENT_PAGE_INDEX:
+    case types.SET_CURRENT_JOBS_PAGE_INDEX:
       return {
         ...state,
         currentPageIndex: payload,
       };
-    case types.SET_CURRENT_PAGE_SIZE:
+    case types.SET_CURRENT_JOBS_PAGE_SIZE:
       return {
         ...state,
         currentPageSize: payload,
       };
-    case types.SET_SEARCH_KEYWORD:
+    case types.SET_JOBS_SEARCH_KEYWORD:
       return {
         ...state,
         keyword: payload,

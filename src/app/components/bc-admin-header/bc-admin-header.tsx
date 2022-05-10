@@ -27,6 +27,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { getAllJobRequestAPI } from 'api/job-request.api';
 
 interface Props {
   token: string;
@@ -149,6 +150,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
   useEffect(() => {
     dispatch(loadNotificationsActions.fetch());
     dispatch(loadInvoiceItems.fetch());
+    dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
   }, []);
 
   const showNotificationDetails = () => {

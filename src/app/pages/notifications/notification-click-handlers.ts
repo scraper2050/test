@@ -2,6 +2,7 @@ import { Notification } from 'reducers/notifications.types';
 import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getjobDetailAPI } from 'api/job.api';
+import { getAllJobRequestAPI } from 'api/job-request.api';
 
 export const openDetailJobModal = (dispatch: (action:any)=>void, notification:Notification) => {
   dispatch(setModalDataAction({
@@ -57,4 +58,25 @@ export const openContractModal = (dispatch: (action:any)=>void, notification:Not
   setTimeout(() => {
     dispatch(openModalAction());
   }, 200);
+};
+
+export const openJobRequestModal = async (dispatch: (action:any)=>void, notification:Notification) => {
+  const result:any = await dispatch(getAllJobRequestAPI(30, undefined, undefined, '-1', '', undefined));
+  const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === notification.metadata)
+  if(matchedJobRequest && matchedJobRequest.length){
+    dispatch(
+      setModalDataAction({
+        data: {
+          jobRequest: matchedJobRequest[0],
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: 'Job Request',
+        },
+        type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
 };
