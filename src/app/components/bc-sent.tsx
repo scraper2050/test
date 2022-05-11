@@ -44,18 +44,19 @@ const styles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-
     },
     title: {
       color: '#4F4F4F',
       fontSize: 30,
       fontWeight: 'bold',
       textAlign: 'center',
+      padding: '0 80px',
     },
     subtitle: {
       color: '#4F4F4F',
       fontSize: 14,
       textAlign: 'center',
+      padding: '0 80px',
     }
   })
 )

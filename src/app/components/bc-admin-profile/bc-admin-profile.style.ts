@@ -1,4 +1,5 @@
 import { fabRoot } from 'app/pages/main/main.styles';
+import {LIGHT_GREY} from "../../../constants";
 
 export default (): any => ({
   ...fabRoot,
@@ -19,7 +20,8 @@ export default (): any => ({
   },
   'infoPane': {
     'display': 'flex',
-    'flex-direction': 'horizontal',
+    'border': `1px solid ${LIGHT_GREY}`,
+    'border-radius': '10px',
     'padding': '3rem',
     'min-height': '15rem',
     'align-items': 'center'

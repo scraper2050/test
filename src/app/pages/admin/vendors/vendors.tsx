@@ -2,7 +2,7 @@ import BCTableContainer from './../../../components/bc-table-container/bc-table-
 import BCTabs from './../../../components/bc-tab/bc-tab';
 import Fab from '@material-ui/core/Fab';
 import SwipeableViews from 'react-swipeable-views';
-import { modalTypes } from '../../../../constants';
+import {modalTypes} from '../../../../constants';
 import styles from './vendors.styles';
 import { Grid, MenuItem, Select, withStyles } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -16,6 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 import {remindVendorApi} from "../../../../api/vendor.api";
 import {error, info} from "../../../../actions/snackbar/snackbar.action";
+import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
 
 interface StatusTypes {
   status: number;
@@ -33,34 +34,14 @@ interface RowStatusTypes {
 
 const status = [
   {
-    'label': 'Active',
-    'value': 'active'
+    'id': 'active',
+    'value': 'Active'
   },
   {
-    'label': 'Inactive',
-    'value': 'inactive'
+    'id': 'inactive',
+    'value': 'Inactive'
   }
 ];
-
-const StyledSelect = styled(Select)`
-background: white;
-padding: 0 20px;
-height: 40px;
-width: 120px;`;
-
-
-function ToolBar({ handleChange, menuItems }:any) {
-  return <StyledSelect
-    defaultValue={'active'}
-    onChange={handleChange}>
-    {menuItems.map((item:any) => <MenuItem
-      key={item.value}
-      value={item.value}>
-      {item.label}
-    </MenuItem>)}
-  </StyledSelect>;
-}
-
 
 function AdminVendorsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -81,6 +62,16 @@ function AdminVendorsPage({ classes }: any) {
     return <div className={`${classes.Text} ${classNames[status]}`}>
       {textStatus}
     </div>;
+  }
+
+  function ToolBar({ handleChange }:any) {
+    return <BCItemsFilter
+      items={status}
+      single={true}
+      selected={[vendorStatus ? 'active' : 'inactive']}
+      onApply={handleChange}
+      type={'outlined'}
+    />
   }
 
   const locationState = location.state;
@@ -203,9 +194,9 @@ function AdminVendorsPage({ classes }: any) {
     }, 200);
   };
 
-  const handleFilterChange = (e:any) => {
+  const handleFilterChange = (ids:string[]) => {
     setVendorStatus(!vendorStatus);
-    if (e.target.value === 'active') {
+    if (ids[0] === 'active') {
       setTableData(activeVendors);
     } else {
       setTableData(nonActiveVendors);
@@ -261,14 +252,6 @@ function AdminVendorsPage({ classes }: any) {
               }
             ]}
           />
-          <div className={classes.addButtonArea} style={{top: 0}}>
-            {
-              <ToolBar
-                handleChange={handleFilterChange}
-                menuItems={status}
-              />
-            }
-          </div>
           <div className={classes.addButtonArea}>
             {
               curTab === 0
@@ -296,6 +279,8 @@ function AdminVendorsPage({ classes }: any) {
                 searchPlaceholder = 'Search Vendors...'
                 setPage={setCurrentPage}
                 tableData={tableData.reverse()}
+                toolbar={<ToolBar handleChange={handleFilterChange}/>}
+                toolbarPositionLeft={true}
               />
             </div>
 
