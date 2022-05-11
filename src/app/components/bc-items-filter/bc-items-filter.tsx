@@ -2,9 +2,14 @@ import {Button, Checkbox, Menu, MenuItem} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {CSButtonSmall} from "../../../helpers/custom";
-import {MENU_TEXT_COLOR, PRIMARY_BLUE} from "../../../constants";
+import {
+  MENU_TEXT_COLOR,
+  PRIMARY_BLUE,
+  PRIMARY_GRAY
+} from "../../../constants";
 import classNames from "classnames";
 import {ArrowDropDown} from "@material-ui/icons";
+import classnames from "classnames";
 
 interface Item {
   id: string;
@@ -16,9 +21,19 @@ interface Props {
   selected: string[];
   single?: boolean;
   onApply: (ids: string[]) => void;
+  type?: string;
 }
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  containerOutlined: {
+    border: `1px solid ${PRIMARY_GRAY}`,
+    borderRadius: 8,
+    padding: '0 10px',
+  },
   filterMenu: {
     height: 'calc(100% - 10px)',
     marginTop: 5,
@@ -35,8 +50,10 @@ const useStyles = makeStyles((theme) => ({
   },
   filterMenuContainer: {
     minWidth: 178,
-    borderBottom:'1px solid #BDBDBD',
     cursor: 'pointer',
+  },
+  filterMenuContainerUnderline: {
+    borderBottom:'1px solid #BDBDBD',
   },
   filterIcon: {
     marginRight: 10,
@@ -50,16 +67,19 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   filterMenuItemRoot: {
+    minWidth: 200,
     backgroundColor: '#FFFFFF !important',
     fontSize: 14,
     color: MENU_TEXT_COLOR,
     display: 'flex',
     justifyContent: 'space-between',
-  }, filterMenuCheckbox: {
+  },
+  filterMenuCheckbox: {
     padding: 4,
     marginLeft: 20,
     color: MENU_TEXT_COLOR,
-  }, filterMenuCheckboxChecked: {
+  },
+  filterMenuCheckboxChecked: {
     color: PRIMARY_BLUE,
   },
   filterButtonContainer: {
@@ -81,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function BCItemsFilter({items, selected, single = false, onApply}: Props) {
+function BCItemsFilter({items, selected, single = false, onApply, type='default'}: Props) {
   const classes = useStyles();
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [tempSelectedIDs, setTempSelectedIDs] = useState<string[]>(selected);
@@ -128,13 +148,15 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
   }
 
   return (
-    <>
+    <div className={classnames(classes.container, {
+      [classes.containerOutlined]: type === 'outlined',
+    })}>
       <div className={classNames(classes.filterMenu, classes.filterMenuLabel)}>
         View:
       </div>
       <div
         onClick={handleFilterClick}
-        className={classNames(classes.filterMenu, classes.filterMenuContainer)}
+        className={classNames(classes.filterMenu, classes.filterMenuContainer, {[classes.filterMenuContainerUnderline] : type==='default'})}
       >
         <span>{getText()}</span>
         {selectedIDs.length > 0 &&!single && <div className={classes.filterBadge}>{selectedIDs.length}</div>}
@@ -198,7 +220,7 @@ function BCItemsFilter({items, selected, single = false, onApply}: Props) {
           </div>
         }
       </Menu>
-    </>
+    </div>
   )
 }
 

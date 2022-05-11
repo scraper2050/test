@@ -533,7 +533,7 @@ function BCJobModal({
             dispatch(refreshServiceTickets(true));
             dispatch(refreshJobRequests(true));
           }
-          dispatch(setTicket2JobID(response.job?.ticket));
+          dispatch(setTicket2JobID(response?.createJob?.job?.ticket));
           dispatch(refreshJobs(false));
           dispatch(refreshJobs(true));
           dispatch(closeModalAction());
