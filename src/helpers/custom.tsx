@@ -61,7 +61,7 @@ export const CSButtonSmall = withStyles({
     textTransform: 'none',
     fontSize: 13,
     padding: '5px 15px',
-    //lineHeight: 1.5,
+    lineHeight: 1.5,
     borderRadius: '8px',
     minWidth: '134px',
     height: '30px',

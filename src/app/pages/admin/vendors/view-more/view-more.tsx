@@ -16,15 +16,15 @@ import { updateCompanyProfileAction } from 'actions/user/user.action';
 import { CompanyProfile } from 'actions/user/user.types'
 import { useLocation, useHistory } from "react-router-dom";
 import { getVendorDetailAction, loadingSingleVender } from 'actions/vendor/vendor.action';
-import { Grid, withStyles } from '@material-ui/core';
+import {Grid, Switch, withStyles} from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './view-more.styles';
 import BCBackButtonNoLink from '../../../../components/bc-back-button/bc-back-button-no-link';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { finishVendorApi } from 'api/vendor.api';
-import { modalTypes } from '../../../../../constants';
-import { CSButton } from "../../../../../helpers/custom";
+import {callAddVendorAPI, finishVendorApi} from 'api/vendor.api';
+import {LIGHT_GREY, modalTypes, PRIMARY_GREEN} from '../../../../../constants';
 import VendorPayment from "./vendor-payment";
+import {error as errorSnackBar} from "../../../../../actions/snackbar/snackbar.action";
 
 
 function CompanyProfilePage({ classes }: any) {
@@ -129,6 +129,57 @@ function CompanyProfilePage({ classes }: any) {
 
   }
 
+  const requestVendorAction = () => {
+    dispatch(setModalDataAction({
+      data: {
+        message: `Are you sure you want to ${vendorStatus ? 'deactivate' : 'activate'} this vendor?`,
+        action: vendorStatus ? finishVendor() : startVendor(),
+      },
+      'type': modalTypes.WARNING_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const finishVendor =  () => {
+    return async() => {
+      const companyContractId = localStorage.getItem('companyContractId');
+      const result: any = await finishVendorApi({
+        contractId: companyContractId || '',
+        status: 'finish'
+      });
+
+      if (result?.status === 1) {
+        setVendorStatus(false);
+      } else {
+        dispatch(errorSnackBar(result?.message || 'Something went wrong'));
+      }
+      return {
+        'type': null,
+        'payload': null,
+      };
+    }
+  }
+
+  const startVendor =  () => {
+    return async() => {
+      const result: any = await callAddVendorAPI({
+        contractorId: vendorObj._id,
+      });
+
+      if (result?.status === 1) {
+        setVendorStatus(true);
+      } else {
+        dispatch(errorSnackBar(result?.message || 'Something went wrong'));
+      }
+      return {
+        'type': null,
+        'payload': null,
+      };
+    }
+  }
+
   const editVendor = async () => {
     const companyContractId = localStorage.getItem('companyContractId');
     const result: any = await finishVendorApi({ contractId: companyContractId || '', status: 'finish'});
@@ -196,6 +247,25 @@ function CompanyProfilePage({ classes }: any) {
                   id={'0'}>
                   <MainContainer>
                     <PageContainer>
+                      <Grid
+                        container
+                        spacing={0}
+                        alignItems="center"
+                        justify="flex-end"
+                      >
+                        <Grid item className={classes.switchContainer}>
+                          <GreenSwitch
+                            checked={vendorStatus}
+                            onChange={requestVendorAction}
+                            name="checkedA"
+                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                          />
+                          <span
+                            className={vendorStatus ? classes.switchLabelActive : classes.switchLabelInActive}>
+                            {vendorStatus ? 'Active' : 'Inactive'}
+                          </span>
+                        </Grid>
+                      </Grid>
                       <BCAdminProfile
                         avatar={{
                           isEmpty: 'NO',
@@ -272,26 +342,7 @@ function CompanyProfilePage({ classes }: any) {
                             }
                           },
                         ]} />
-                        {vendorStatus && (
-                          <Grid
-                            container
-                            spacing={0}
-                            alignItems="center"
-                            justify="center"
-                          >
-                            <Grid item>
-                              <CSButton
-                                aria-label={'make-inactive'}
-                                className={'make-inactive'}
-                                variant="contained"
-                                color="primary"
-                                onClick={editVendor}
-                              >
-                                {'Make Inactive'}
-                              </CSButton>
-                            </Grid>
-                          </Grid>
-                        )}
+
                     </PageContainer>
 
                   </MainContainer>
@@ -390,6 +441,21 @@ const PageContainer = styled.div`
   }
 `;
 
+const GreenSwitch = withStyles({
+  switchBase: {
+    color: LIGHT_GREY,
+    '&$checked': {
+      color: PRIMARY_GREEN,
+    },
+    '&$checked + $track': {
+      backgroundColor: `${PRIMARY_GREEN}88`,
+    },
+  },
+  checked: {},
+  track: {
+    backgroundColor: `${LIGHT_GREY}88`,
+  },
+})(Switch);
 
 export default withStyles(
   styles,
