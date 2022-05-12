@@ -3,6 +3,7 @@ import { modalTypes } from '../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getjobDetailAPI } from 'api/job.api';
 import { getAllJobRequestAPI } from 'api/job-request.api';
+import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 
 export const openDetailJobModal = (dispatch: (action:any)=>void, notification:Notification) => {
   dispatch(setModalDataAction({
@@ -64,6 +65,9 @@ export const openJobRequestModal = async (dispatch: (action:any)=>void, notifica
   const result:any = await dispatch(getAllJobRequestAPI(30, undefined, undefined, '-1', '', undefined));
   const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === notification.metadata)
   if(matchedJobRequest && matchedJobRequest.length){
+    dispatch(
+      markNotificationAsRead.fetch({ id: notification?._id, isRead: true })
+    );
     dispatch(
       setModalDataAction({
         data: {

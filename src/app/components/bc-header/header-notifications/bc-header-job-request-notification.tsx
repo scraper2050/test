@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getAllJobRequestAPI } from 'api/job-request.api';
 import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job-request/job-request.action';
+import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 
 
 export default function JobRequestNotication(item :NotificationItem) {
@@ -31,6 +32,9 @@ export default function JobRequestNotication(item :NotificationItem) {
 
 
   const openDetailJobRequestModal = async () => {
+    dispatch(
+      markNotificationAsRead.fetch({ id: item?._id, isRead: true })
+    );
     if(jobRequestObject){
       dispatch(
         setModalDataAction({
