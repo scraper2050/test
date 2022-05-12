@@ -198,12 +198,9 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
                 lat={lat}
                 lng={lng}
                 ticket={ticket}
-                isTicket={true}
-              >
-                <button className="crime-marker">
-                  <img src="/custody.svg" alt="crime doesn't pay" />
-                </button>
-              </BCMapMarker>
+                isTicket={isTicket}
+                classes={classes}
+              />
             );
           }
         })
