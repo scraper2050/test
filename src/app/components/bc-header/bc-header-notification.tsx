@@ -62,6 +62,7 @@ function renderItem(item:NotificationItem, index:number) {
 
 const HeaderNotificationContainer = styled(MenuList)`
     padding: 5px 8px;
+    padding-bottom: 0;
     max-width: 300px;
     h3 {
       margin:0 0 16px 16px;
@@ -120,6 +121,15 @@ export default function HeaderNotifications({ items, close, loading }: HeaderNot
     <h3>
       {'Notifications'}
     </h3>
+    <Button
+      fullWidth
+      style={{marginBottom: 5}}
+      onClick={() => {
+        close();
+        history.push('/main/notifications');
+      }}>
+      {'View More'}
+    </Button>
     {loading && <BCCircularLoader />}
 
     {!items.length && <h4>
@@ -133,14 +143,6 @@ export default function HeaderNotifications({ items, close, loading }: HeaderNot
     }).slice(0, 5).map((item:NotificationItem, index:number) => {
       return renderItem(item, index);
     })}
-    <Button
-      fullWidth
-      onClick={() => {
-        close();
-        history.push('/main/notifications');
-      }}>
-      {'View More'}
-    </Button>
   </HeaderNotificationContainer>;
 }
 
