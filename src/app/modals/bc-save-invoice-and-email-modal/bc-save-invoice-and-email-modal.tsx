@@ -17,7 +17,7 @@ import { modalTypes } from "../../../constants";
 import {error, success} from "actions/snackbar/snackbar.action";
 import { loadInvoiceDetail } from "actions/invoicing/invoicing.action";
 
-function BCDeleteJobModal({
+function BCSaveInvoiceAndEmailModal({
   data: {
     customer,
     customerEmail,
@@ -125,4 +125,4 @@ const ContentContainer = styled.div`
 `
 
 
-export default BCDeleteJobModal;
+export default BCSaveInvoiceAndEmailModal;
