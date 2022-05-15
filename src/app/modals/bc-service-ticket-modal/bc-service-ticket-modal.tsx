@@ -206,18 +206,18 @@ function BCServiceTicketModal({
     'initialValues': {
       'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
-      'jobSiteId': ticket.jobSite 
+      'jobSiteId': ticket.jobSite
         ? ticket?.jobSite?._id || ticket.jobSite
         : '',
-      'jobLocationId': ticket.jobLocation 
+      'jobLocationId': ticket.jobLocation
         ? ticket?.jobLocation?._id || ticket.jobLocation
         : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : [],
       'note': ticket.note,
       'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
-      'customerContactId': ticket.customerContactId !== undefined 
-        ? ticket?.customerContactId?._id || ticket.customerContactId 
+      'customerContactId': ticket.customerContactId !== undefined
+        ? ticket?.customerContactId?._id || ticket.customerContactId
         : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       'images': ticket.images !== undefined ? ticket.images : []
@@ -473,7 +473,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     getJobType()
   }, [items])
-  
+
 
   if (error.status) {
     return (
@@ -527,7 +527,7 @@ function BCServiceTicketModal({
         <div className={'modalDataContainer'}>
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
             <Autocomplete
               defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
               disabled={FormikValues.customerId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
@@ -546,7 +546,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Address</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
@@ -578,9 +578,9 @@ function BCServiceTicketModal({
               multiple
               onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
               options={
-                items && items.length !== 0 
+                items && items.length !== 0
                 ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
-                  .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1) 
+                  .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
                 : []
               }
               classes={{popper: classes.popper}}
@@ -615,10 +615,10 @@ function BCServiceTicketModal({
                   id={'tags-standard'}
                   onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
                   options={
-                    contacts && contacts.length !== 0 
-                      ? contacts.filter((contact:any) => 
+                    contacts && contacts.length !== 0
+                      ? contacts.filter((contact:any) =>
                         contact.isActive
-                      ).sort((a: any, b: any) => 
+                      ).sort((a: any, b: any) =>
                         a.name > b.name ? 1 : b.name > a.name ? -1 : 0
                       )
                       : []

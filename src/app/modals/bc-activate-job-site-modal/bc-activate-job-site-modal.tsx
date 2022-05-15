@@ -55,7 +55,7 @@ function BCActivateJobSiteModal({
     try {
       await dispatch(updateJobSiteAction(requestObj, () => {
         closeModal();
-        dispatch(success("Update Job Site Successful!"));
+        dispatch(success("Update Address Successful!"));
         dispatch(getJobSites(requestObj));
         setIsSubmitting(false);
       }))
@@ -68,8 +68,8 @@ function BCActivateJobSiteModal({
 
   return (
     <DataContainer className={'new-modal-design'} >
-      <Grid 
-        container 
+      <Grid
+        container
         className={'modalContent'}
         direction={'column'}
         justify={'center'}
@@ -91,7 +91,7 @@ function BCActivateJobSiteModal({
           variant={'outlined'}
         >Cancel</Button>
         <Button
-          classes={{root: isSubmitting ? classes.submittingButton : jobSiteInfo.isActive ? classes.activeButton : classes.inactiveButton}} 
+          classes={{root: isSubmitting ? classes.submittingButton : jobSiteInfo.isActive ? classes.activeButton : classes.inactiveButton}}
           color={'primary'}
           disabled={isSubmitting}
           onClick={handleActivation}

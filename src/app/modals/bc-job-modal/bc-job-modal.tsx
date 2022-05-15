@@ -10,7 +10,7 @@ import {
   setOpenServiceTicket,
   setOpenServiceTicketLoading,
 } from 'actions/service-ticket/service-ticket.action';
-import { refreshJobRequests } from 'actions/job-request/job-request.action'; 
+import { refreshJobRequests } from 'actions/job-request/job-request.action';
 import styles from './bc-job-modal.styles';
 import { useFormik } from 'formik';
 import {
@@ -273,7 +273,7 @@ function BCJobModal({
   };
 
   /**
-   * Handle job site changes field
+   * Handle Address changes field
    */
   const handleJobSiteChange = (fieldName: any, newValue: any) => {
     const jobSiteId = newValue ? newValue._id : '';
@@ -458,7 +458,7 @@ function BCJobModal({
         ? jobValue.ticket.jobSite._id || jobValue.ticket.jobSite
         : '',
       customerContactId: jobValue.customerContactId?._id || jobValue.customerContactId ||
-        ticket?.customerContactId?._id || ticket.customerContactId || 
+        ticket?.customerContactId?._id || ticket.customerContactId ||
         ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
@@ -736,13 +736,13 @@ function BCJobModal({
           <div>
             <ul className={classes.actionsList}>
               <li style={{maxWidth: 200}}>
-                {originalString.length < 50 
+                {originalString.length < 50
                   ? originalString
-                  : clipped 
+                  : clipped
                     ? (
                       <>
                         {clippedString}
-                        <span 
+                        <span
                           onClick={() => setClipped(!clipped)}
                           style={{fontWeight: 800, textDecoration: 'underline'}}
                         >
@@ -752,7 +752,7 @@ function BCJobModal({
                     ) : (
                       <>
                         {originalString.split(/((?:[a-zA-Z.,!]+ ){9})/g).map((v,i)=><div key={i}>{v}</div>)}
-                        <span 
+                        <span
                           onClick={() => setClipped(!clipped)}
                           style={{fontWeight: 800, textDecoration: 'underline'}}
                         >
@@ -769,8 +769,8 @@ function BCJobModal({
     },
   ];
 
-  const filteredJobRescheduleHistory: any[] = job.track 
-    ? job.track.filter((history: {action: string;}) => history.action.includes('rescheduling')) 
+  const filteredJobRescheduleHistory: any[] = job.track
+    ? job.track.filter((history: {action: string;}) => history.action.includes('rescheduling'))
     : []
 
   return (
@@ -999,7 +999,7 @@ function BCJobModal({
           </Grid>
           <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
             <Grid item xs>
-              <Typography variant={'caption'} className={' previewCaption'}>job location</Typography>
+              <Typography variant={'caption'} className={' previewCaption'}>Subdivision</Typography>
               <Autocomplete
                 defaultValue={
                   ticket.jobLocation !== '' &&
@@ -1042,7 +1042,7 @@ function BCJobModal({
               />
             </Grid>
             <Grid item xs>
-              <Typography variant={'caption'} className={' previewCaption'}>job site</Typography>
+              <Typography variant={'caption'} className={' previewCaption'}>Address</Typography>
               <Autocomplete
                 defaultValue={
                   ticket.jobSite !== '' &&
@@ -1142,7 +1142,7 @@ function BCJobModal({
                     }
                     options={
                       contacts && contacts.length !== 0
-                        ? contacts.filter((contact:any) => 
+                        ? contacts.filter((contact:any) =>
                           contact.isActive
                         ).sort((a: any, b: any) =>
                           a.name > b.name ? 1 : b.name > a.name ? -1 : 0

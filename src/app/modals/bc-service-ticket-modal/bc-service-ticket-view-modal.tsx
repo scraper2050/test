@@ -131,14 +131,14 @@ function BCViewServiceTicketModal({
     },
   ];
 
-  const scheduleDate = job.dueDate;
+  const scheduleDate = job?.dueDate;
 
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid item style={{width: '40%'}}>
           <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
-          <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
+          <Typography variant={'h6'} className={'bigText'}>{job?.customer?.profile?.displayName || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
@@ -150,11 +150,11 @@ function BCViewServiceTicketModal({
       <div className={'modalDataContainer'}>
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Address</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>

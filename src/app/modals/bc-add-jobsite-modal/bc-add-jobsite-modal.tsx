@@ -181,7 +181,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         requestObj.location.lat === '' ||
                         requestObj.location.long === '' ||
                         requestObj.location.lat === 0 ||
-                        requestObj.location.long === 0 
+                        requestObj.location.long === 0
                       ) {
                         const baseObj: any = location.state
                         requestObj.location.lat = baseObj.location?.coordinates[1];
@@ -193,12 +193,12 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                           closeModal();
                           dispatch(getJobSites(requestObj))
                         }))
-                        dispatch(success("Update Job Site Successful!"));
+                        dispatch(success("Update Address Successful!"));
                       } else {
                         await dispatch(createJobSiteAction(requestObj, () => {
                           closeModal();
                         }))
-                        dispatch(success("Creating Job Site Successful!"));
+                        dispatch(success("Creating Address Successful!"));
                       }
                       setSubmitting(false);
                     }
@@ -218,12 +218,12 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         >
                           <FormGroup className={'required'}>
                             <InputLabel className={classes.label}>
-                              {'Job Site Name'}
+                              {'Address Name'}
                             </InputLabel>
 
                             <BCTextField
                               name={'name'}
-                              placeholder={'Job Site Name'}
+                              placeholder={'Address Name'}
                               required={true}
                               onChange={(e: any) => {
                                 setFieldValue('name', e.target.value)

@@ -137,7 +137,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
           contacts,
           customerId,
         },
-        'modalTitle': `${type === 'Customer' ? "Add Customer Contact" : "Add Job Location Contact"}`,
+        'modalTitle': `${type === 'Customer' ? "Add Customer Contact" : "Add Subdivision Contact"}`,
         'removeFooter': false
       },
       'type': modalTypes.ADD_CONTACT_MODAL

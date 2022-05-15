@@ -170,7 +170,7 @@ function BCViewJobModal({
   jobImages = job?.technicianImages?.length ? [...jobImages, ...job.technicianImages] : jobImages;
   let technicianNotes = job?.tasks?.length ?  job.tasks.filter((task: any) => task.comment).map((task: any) => {
     return {
-      user: 'tech', 
+      user: 'tech',
       action: task.comment,
       date: '',
     }
@@ -322,11 +322,11 @@ function BCViewJobModal({
         )}
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Address</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>

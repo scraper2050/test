@@ -185,7 +185,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
       sortable: true,
     },
     {
-      Header: 'Job Location',
+      Header: 'Subdivision',
       id: 'job-location',
       accessor: getJobLocation,
       sortable: true,
@@ -349,7 +349,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
   }, [])
-  
+
 
   const handleRowClick = (event: any, row: any) => {
     if (
@@ -375,7 +375,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
           dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
