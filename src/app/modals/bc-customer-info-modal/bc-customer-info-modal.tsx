@@ -210,7 +210,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This will make the Customer and all their Job Locations <b>Inactive</b> in BlueClerk,
+              This will make the Customer and all their Subdivisions <b>Inactive</b> in BlueClerk,
               but the customer will remain <b>active</b> in QuickBooks Online.<br/>
               Click yes if you would like to make this change.
             </DialogContentText>

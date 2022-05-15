@@ -105,7 +105,7 @@ function ViewMorePage({ classes }: any) {
 
   const columns: any = [
     {
-      'Header': 'Job Location',
+      'Header': 'Subdivision',
       'accessor': 'name',
       'className': 'font-bold',
       'sortable': true,
@@ -244,7 +244,7 @@ function ViewMorePage({ classes }: any) {
     dispatch(setModalDataAction({
       'data': {
         'locationObj': customerObj,
-        'modalTitle': 'New Job Location',
+        'modalTitle': 'New Subdivision',
         'removeFooter': false
       },
       'type': modalTypes.ADD_JOB_LOCATION
@@ -268,9 +268,9 @@ function ViewMorePage({ classes }: any) {
           label="Age"
           onChange={(event: any) => setShowLocation(event.target.value)}
         >
-          <MenuItem value={'active'}>Active Locations</MenuItem>
-          <MenuItem value={'inactive'}>Inactive Locations</MenuItem>
-          <MenuItem value={'all'}>All Locations</MenuItem>
+          <MenuItem value={'active'}>Active Subdivisions</MenuItem>
+          <MenuItem value={'inactive'}>Inactive Subdivisions</MenuItem>
+          <MenuItem value={'all'}>All Subdivisions</MenuItem>
         </Select>
       </FormControl>
     </div>
@@ -336,7 +336,7 @@ function ViewMorePage({ classes }: any) {
                       color={'primary'}
                       onClick={() => openJobLocationModal()}
                       variant={'contained'}>
-                      {'Add Job Location'}
+                      {'Add Subdivision'}
                     </CSButton>
                   </PageContainer>
 
@@ -344,11 +344,11 @@ function ViewMorePage({ classes }: any) {
                     columns={columns}
                     cellSize={"medium"}
                     currentPage={currentPage}
-                    initialMsg={'There are no job locations!'}
+                    initialMsg={'There are no Subdivisions!'}
                     isLoading={jobLocations.loading}
                     onRowClick={handleRowClick}
                     search
-                    searchPlaceholder={'Search Job Locations...'}
+                    searchPlaceholder={'Search Subdivisions...'}
                     setPage={setCurrentPage}
                     tableData={filteredJobLocations}
                     toolbarPositionLeft={true}

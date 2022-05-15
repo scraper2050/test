@@ -294,7 +294,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     zipCode: invoiceDetail?.customer?.address?.zipCode || '',
   }) : null;
   customerAddress = customerAddress ? Object.values(customerAddress).filter(key=>!!key) : '';
-  
+
   let serviceAddressLocation: any = invoiceDetail?.job?.jobLocation ? ({
     name: invoiceDetail?.job?.jobLocation?.name || '',
     street: invoiceDetail?.job?.jobLocation?.address?.street || '',
@@ -352,7 +352,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                       </>
                     ) : serviceAddressSite && serviceAddressLocation ? (
                       <>
-                        <small>JOB LOCATION</small>
+                        <small>SUBDIVISION</small>
                         <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                         <small style={{marginTop: 20}}>SERVICE ADDRESS</small>

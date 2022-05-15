@@ -265,12 +265,12 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                         sm={12}>
                         <FormGroup className={'required'}>
                           <InputLabel className={classes.label}>
-                            {'Job Location Name'}
+                            {'Subdivision Name'}
                           </InputLabel>
 
                           <BCTextField
                             name={'name'}
-                            placeholder={'Job Location Name'}
+                            placeholder={'Subdivision Name'}
                             required
                             onChange={(e: any) => {
                               setFieldValue('name', e.target.value)
@@ -425,7 +425,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                         </Grid>
                         }
                         {localLocationObj && (
-                          <> 
+                          <>
                             <InfoContainer>
                               <div>You've manually changed latitude/longitude</div>
                               <div>Do you want to reflect this address changes based on coordinates?</div>

@@ -21,7 +21,7 @@ interface Props {
   selected: string[];
   single?: boolean;
   onApply: (ids: string[]) => void;
-  type?: string;
+  type?: 'default' | 'outlined';
 }
 
 const useStyles = makeStyles((theme) => ({
