@@ -55,7 +55,7 @@ function BCActivateJobSiteModal({
     try {
       await dispatch(updateJobSiteAction(requestObj, () => {
         closeModal();
-        dispatch(success("Update Address Successful!"));
+        dispatch(success("Update Job Address Successful!"));
         dispatch(getJobSites(requestObj));
         setIsSubmitting(false);
       }))

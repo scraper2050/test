@@ -193,12 +193,12 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                           closeModal();
                           dispatch(getJobSites(requestObj))
                         }))
-                        dispatch(success("Update Address Successful!"));
+                        dispatch(success("Update Job Address Successful!"));
                       } else {
                         await dispatch(createJobSiteAction(requestObj, () => {
                           closeModal();
                         }))
-                        dispatch(success("Creating Address Successful!"));
+                        dispatch(success("Creating Job Address Successful!"));
                       }
                       setSubmitting(false);
                     }
@@ -218,12 +218,12 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         >
                           <FormGroup className={'required'}>
                             <InputLabel className={classes.label}>
-                              {'Address Name'}
+                              {'Job Address Name'}
                             </InputLabel>
 
                             <BCTextField
                               name={'name'}
-                              placeholder={'Address Name'}
+                              placeholder={'Job Address Name'}
                               required={true}
                               onChange={(e: any) => {
                                 setFieldValue('name', e.target.value)

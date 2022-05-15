@@ -326,7 +326,7 @@ function BCViewJobModal({
             <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Address</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Job Address</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>

@@ -402,7 +402,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                   xs={6}>
                   <div className={classes.addMargin}>
                     <strong>
-                      {'Address'}
+                      {'Job Address'}
                     </strong>
                     <p className={classes.noMargin}>
                       {job.jobSite.name}

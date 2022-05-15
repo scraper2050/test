@@ -273,7 +273,7 @@ function BCJobModal({
   };
 
   /**
-   * Handle Address changes field
+   * Handle Job Address changes field
    */
   const handleJobSiteChange = (fieldName: any, newValue: any) => {
     const jobSiteId = newValue ? newValue._id : '';
@@ -1042,7 +1042,7 @@ function BCJobModal({
               />
             </Grid>
             <Grid item xs>
-              <Typography variant={'caption'} className={' previewCaption'}>Address</Typography>
+              <Typography variant={'caption'} className={' previewCaption'}>Job Address</Typography>
               <Autocomplete
                 defaultValue={
                   ticket.jobSite !== '' &&

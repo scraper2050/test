@@ -546,7 +546,7 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Address</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Job Address</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}

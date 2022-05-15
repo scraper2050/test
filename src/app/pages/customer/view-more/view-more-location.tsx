@@ -51,7 +51,7 @@ function ViewMoreLocationPage({ classes }: any) {
     dispatch(setModalDataAction({
       'data': {
         'jobSiteInfo': updateJobSiteObj,
-        'modalTitle': 'Edit Address',
+        'modalTitle': 'Edit Job Address',
         'removeFooter': false
       },
       'type': modalTypes.ADD_JOB_SITE
@@ -94,7 +94,7 @@ function ViewMoreLocationPage({ classes }: any) {
   }
   const columns: any = [
     {
-      'Header': 'Address',
+      'Header': 'Job Address',
       'accessor': 'name',
       'className': 'font-bold',
       'sortable': true,
@@ -197,7 +197,7 @@ function ViewMoreLocationPage({ classes }: any) {
     dispatch(setModalDataAction({
       'data': {
         'jobSiteInfo': { locationId },
-        'modalTitle': 'New Address',
+        'modalTitle': 'New Job Address',
         'removeFooter': false
       },
       'type': modalTypes.ADD_JOB_SITE
@@ -258,7 +258,7 @@ function ViewMoreLocationPage({ classes }: any) {
                     color={'primary'}
                     onClick={() => openJobSiteModal()}
                     variant={'contained'}>
-                    {'Add Address'}
+                    {'Add Job Address'}
                   </CSButton>
                 </PageContainer>
 
@@ -267,9 +267,9 @@ function ViewMoreLocationPage({ classes }: any) {
                   isLoading={jobSites.loading}
                   onRowClick={handleRowClick}
                   search
-                  searchPlaceholder={"Search Addresss..."}
+                  searchPlaceholder={"Search Job Addresss..."}
                   tableData={jobSites.data}
-                  initialMsg="There are no addresss"
+                  initialMsg="There are no job addresses"
                 />
               </div>
 

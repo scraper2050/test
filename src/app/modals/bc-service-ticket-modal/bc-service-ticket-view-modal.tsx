@@ -150,11 +150,11 @@ function BCViewServiceTicketModal({
       <div className={'modalDataContainer'}>
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>subdivision</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Address</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>job address</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>

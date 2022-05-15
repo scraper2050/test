@@ -121,7 +121,7 @@ function JobRequest({ classes }: any) {
       width: 100,
     },
     {
-      Header: 'Address',
+      Header: 'Job Address',
       id: 'job-site',
       accessor: getJobSite,
       sortable: true,
