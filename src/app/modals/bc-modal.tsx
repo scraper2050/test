@@ -324,9 +324,9 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'md'
+          'maxWidth': 'md',
         });
-        setComponent(<BCAddJobSiteModal jobSiteInfo={data.jobSiteInfo} />);
+        setComponent(<BCAddJobSiteModal jobSiteInfo={data.jobSiteInfo} ticket={data.ticket}/>);
         break;
       case modalTypes.ACTIVATE_JOB_SITE:
           setModalOptions({

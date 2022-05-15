@@ -101,7 +101,7 @@ function ViewMoreLocationPage({ classes }: any) {
       'width': 60
     },
     {
-      'Header': 'Address',
+      'Header': 'Street Address',
       'accessor': 'address',
       Cell: (row: any) => {
         return (

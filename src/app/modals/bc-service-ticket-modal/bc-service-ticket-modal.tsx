@@ -38,7 +38,7 @@ import { modalTypes } from '../../../constants';
 import {refreshJobs} from "../../../actions/job/job.action";
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
-
+import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
 function BCServiceTicketModal({
   classes,
@@ -79,6 +79,8 @@ function BCServiceTicketModal({
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
+
+  const filter = createFilterOptions();
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
     const customerId = newValue ? newValue._id : '';
@@ -128,9 +130,34 @@ function BCServiceTicketModal({
   };
 
   const handleJobSiteChange = (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
-    const jobSiteId = newValue ? newValue._id : '';
-    setFieldValue(fieldName, jobSiteId);
-    setJobSiteValue(newValue);
+    if (newValue._id) {
+      setFieldValue(fieldName, newValue._id);
+      setJobSiteValue(newValue);
+    } else {
+      const tempTicket = {
+        ...ticket,
+        jobSite: FormikValues.jobSiteId,
+        jobLocation: FormikValues.jobLocationId,
+        note: FormikValues.note,
+        dueDate: FormikValues.dueDate,
+        customerContactId: FormikValues.customerContactId,
+        customerPO: FormikValues.customerPO,
+        images: FormikValues.images,
+        tasks: FormikValues.jobTypes.map((jobType: any) => ({jobType: jobType.jobTypeId || jobType._id})),
+        customer: customers.find((customer: any) => customer?._id === FormikValues.customerId),
+      }
+      // console.log({ticket, FormikValues, tempTicket});
+      dispatch(setModalDataAction({
+        'data': {
+          'ticket': tempTicket,
+          'jobSiteInfo': {name: newValue.inputValue, locationId: FormikValues.jobLocationId},
+          'modalTitle': `Add Job Address`,
+          'removeFooter': false,
+        },
+        'type': modalTypes.ADD_JOB_SITE
+      }));
+    }
+
   };
 
   const handleJobTypeChange = (event: any, setFieldValue: any, newValue: any) => {
@@ -552,6 +579,10 @@ function BCServiceTicketModal({
               disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
               getOptionLabel={option => option.name ? option.name : ''}
               id={'tags-standard'}
+              freeSolo
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
               onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
               options={jobSites && jobSites.length !== 0 ? jobSites.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
               renderInput={params =>
@@ -560,6 +591,19 @@ function BCServiceTicketModal({
                   variant={'outlined'}
                 />
               }
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+
+                // Suggest the creation of a new value
+                if (params.inputValue !== '' && filtered.length === 0) {
+                  filtered.push({
+                    inputValue: params.inputValue,
+                    name: `Add "${params.inputValue}"`,
+                  });
+                }
+
+                return filtered;
+              }}
               value={jobSiteValue}
             />
           </Grid>

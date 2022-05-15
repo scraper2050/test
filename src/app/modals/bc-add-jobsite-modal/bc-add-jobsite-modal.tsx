@@ -29,6 +29,7 @@ import { success } from 'actions/snackbar/snackbar.action';
 import debounce from 'lodash.debounce';
 
 import '../../../scss/index.scss';
+import {modalTypes} from "../../../constants";
 
 interface Props {
   classes: any
@@ -41,7 +42,7 @@ interface AllStateTypes {
 
 
 
-function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
+function BCAddJobSiteModal({ classes, jobSiteInfo, ticket }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
@@ -106,6 +107,23 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     );
   };
 
+  const openEditTicketModal = (jobSite: any) => {
+    const newTicket = {
+      ...ticket,
+      jobSite: jobSite ? jobSite._id : ticket.jobSite,
+    }
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Edit Service Ticket',
+        'removeFooter': false,
+        'ticketData': newTicket,
+        'className': 'serviceTicketTitle',
+        'maxHeight': '754px',
+      },
+      'type': modalTypes.EDIT_TICKET_MODAL
+    }));
+  };
+
   const updateMapFromLatLng = (name: string, value: any): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
     if (name === 'lat') {
@@ -122,15 +140,19 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
     }
   };
 
-  const closeModal = () => {
-    dispatch(closeModalAction());
-    setTimeout(() => {
-      dispatch(setModalDataAction({
-        'data': {},
-        'type': ''
-      }));
-    }, 200);
-  };
+  const closeModal = (jobSite: any = null) => {
+    if (ticket) {
+      openEditTicketModal(jobSite);
+    } else {
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    }
+  }
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -195,8 +217,8 @@ function BCAddJobSiteModal({ classes, jobSiteInfo }: any) {
                         }))
                         dispatch(success("Update Job Address Successful!"));
                       } else {
-                        await dispatch(createJobSiteAction(requestObj, () => {
-                          closeModal();
+                        await dispatch(createJobSiteAction(requestObj, (jobSite: any) => {
+                          closeModal(jobSite);
                         }))
                         dispatch(success("Creating Job Address Successful!"));
                       }
