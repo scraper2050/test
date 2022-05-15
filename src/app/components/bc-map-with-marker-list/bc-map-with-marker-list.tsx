@@ -161,11 +161,12 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
               >
                 <div
                   style={{
-                    width: 20,
-                    height: 20,
-                    backgroundColor: '#2477FF',
+                    width: 18,
+                    height: 18,
+                    backgroundColor: '#970505',
                     borderRadius: '50%',
-                    padding: 10,
+                    border: '3px solid #2477FF',
+                    padding: 8,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -181,7 +182,7 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
                 >
                   <span 
                     style={{
-                      color: '#2477FF',
+                      color: '#970505',
                       marginTop: -40,
                       fontWeight: 'bold',
                     }}
