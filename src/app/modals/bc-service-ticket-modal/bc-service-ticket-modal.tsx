@@ -43,6 +43,7 @@ import {refreshJobs} from "../../../actions/job/job.action";
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import {useHistory} from "react-router-dom";
 
 function BCServiceTicketModal({
   classes,
@@ -83,6 +84,7 @@ function BCServiceTicketModal({
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
+  const history = useHistory();
 
   const filter = createFilterOptions();
 
@@ -151,6 +153,11 @@ function BCServiceTicketModal({
         customer: customers.find((customer: any) => customer?._id === FormikValues.customerId),
       }
       // console.log({ticket, FormikValues, tempTicket});
+      history.push({
+        'state': {
+          ...jobLocationValue,
+        }
+      });
       dispatch(setModalDataAction({
         'data': {
           'ticket': tempTicket,
