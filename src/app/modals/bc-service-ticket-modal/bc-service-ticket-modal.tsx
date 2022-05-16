@@ -143,7 +143,7 @@ function BCServiceTicketModal({
         jobSite: FormikValues.jobSiteId,
         jobLocation: FormikValues.jobLocationId,
         note: FormikValues.note,
-        dueDate: `${formatDateTimeYMD(FormikValues.dueDate)}.000Z`,
+        dueDate: FormikValues.dueDate ? `${formatDateTimeYMD(FormikValues.dueDate)}.000Z` : null,
         customerContactId: FormikValues.customerContactId,
         customerPO: FormikValues.customerPO,
         images: FormikValues.images,
