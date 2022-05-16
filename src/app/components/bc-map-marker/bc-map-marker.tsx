@@ -106,7 +106,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }
   }
 
-  const openCreateJobModal = () => {
+  const openCreateJobModal = () => {  
     dispatch(setModalDataAction({
       'data': {
         'job': {
@@ -128,6 +128,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
           'type': {
             '_id': ''
           },
+          'jobFromRequest': !!ticket.requestId,
           'jobFromMap': true
         },
         'modalTitle': 'Create Job',
@@ -259,6 +260,23 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     }, 200);
   };
 
+  const openViewJobRequestModal = async(jobRequest: any) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          jobRequest: jobRequest,
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: 'Job Request',
+        },
+        type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   const closeInfo = () => {
     if (showInfo.inside) {
       setShowInfo({show: false, inside: true});
@@ -312,7 +330,11 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
     //onMouseLeave={() => setShowinfo(false)}
   >
     {(() => {
-      const status = isTicket ? -1 : ticket?.status;
+      const status = isTicket 
+        ? ticket?.ticketId 
+          ? -1
+          : -2 
+        : ticket?.status;
       CustomIcon = getStatusIcon(status);
     })()}
     <CustomIcon
@@ -344,7 +366,11 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
             </span>
           <InfoIcon
             className={'info-button'}
-            onClick={() => isTicket ? openViewTicketModal(ticket) : openDetailJobModal(ticket)}
+            onClick={() => isTicket 
+              ? ticket?.ticketId 
+                ? openViewTicketModal(ticket) 
+                : openViewJobRequestModal(ticket)
+              : openDetailJobModal(ticket)}
           />
         </div>
       </div>
@@ -362,7 +388,7 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
       {isTicket && ticket.customer?._id &&
         <div className={'button-wrapper-ticket'}>
           <div>
-            <Button disabled={stream && !!localStorage.getItem('afterCancelJob')} onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>
+            {ticket?.ticketId && <Button disabled={stream && !!localStorage.getItem('afterCancelJob')} onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>}
           </div>
           <div>
             <Button onClick={() => openCreateJobModal()}>Create Job</Button>

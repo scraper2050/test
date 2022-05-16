@@ -42,7 +42,7 @@ function LocationInfoPage({ classes }: any) {
     dispatch(setModalDataAction({
       'data': {
         'locationObj': location.state,
-        'modalTitle': 'Edit Job Location',
+        'modalTitle': 'Edit Subdivision',
         'removeFooter': false
       },
       'type': modalTypes.ADD_JOB_LOCATION

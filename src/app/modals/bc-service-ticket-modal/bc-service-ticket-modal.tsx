@@ -1,7 +1,11 @@
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import React, {useEffect, useRef, useState} from 'react';
-import {formatDateYMD, parseISODate} from 'helpers/format';
+import {
+  formatDateTimeYMD,
+  formatDateYMD,
+  parseISODate
+} from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
@@ -38,7 +42,8 @@ import { modalTypes } from '../../../constants';
 import {refreshJobs} from "../../../actions/job/job.action";
 import {stringSortCaseInsensitive} from "../../../helpers/sort";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
-
+import { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import {useHistory} from "react-router-dom";
 
 function BCServiceTicketModal({
   classes,
@@ -79,6 +84,9 @@ function BCServiceTicketModal({
   const { loading, data } = useSelector(({ employeesForJob }: any) => employeesForJob);
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
+  const history = useHistory();
+
+  const filter = createFilterOptions();
 
   const handleCustomerChange = async (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
     const customerId = newValue ? newValue._id : '';
@@ -128,9 +136,39 @@ function BCServiceTicketModal({
   };
 
   const handleJobSiteChange = (event: any, fieldName: any, setFieldValue: any, newValue: any) => {
-    const jobSiteId = newValue ? newValue._id : '';
-    setFieldValue(fieldName, jobSiteId);
-    setJobSiteValue(newValue);
+    if (newValue._id) {
+      setFieldValue(fieldName, newValue._id);
+      setJobSiteValue(newValue);
+    } else {
+      const tempTicket = {
+        ...ticket,
+        jobSite: FormikValues.jobSiteId,
+        jobLocation: FormikValues.jobLocationId,
+        note: FormikValues.note,
+        dueDate: FormikValues.dueDate ? `${formatDateTimeYMD(FormikValues.dueDate)}.000Z` : null,
+        customerContactId: FormikValues.customerContactId,
+        customerPO: FormikValues.customerPO,
+        images: FormikValues.images,
+        tasks: FormikValues.jobTypes.map((jobType: any) => ({jobType: jobType.jobTypeId || jobType._id})),
+        customer: customers.find((customer: any) => customer?._id === FormikValues.customerId),
+      }
+      // console.log({ticket, FormikValues, tempTicket});
+      history.push({
+        'state': {
+          ...jobLocationValue,
+        }
+      });
+      dispatch(setModalDataAction({
+        'data': {
+          'ticket': tempTicket,
+          'jobSiteInfo': {name: newValue.inputValue, locationId: FormikValues.jobLocationId},
+          'modalTitle': `Add Job Address`,
+          'removeFooter': false,
+        },
+        'type': modalTypes.ADD_JOB_SITE
+      }));
+    }
+
   };
 
   const handleJobTypeChange = (event: any, setFieldValue: any, newValue: any) => {
@@ -206,18 +244,18 @@ function BCServiceTicketModal({
     'initialValues': {
       'customerId': ticket?.customer?._id,
       'source': 'blueclerk',
-      'jobSiteId': ticket.jobSite 
+      'jobSiteId': ticket.jobSite
         ? ticket?.jobSite?._id || ticket.jobSite
         : '',
-      'jobLocationId': ticket.jobLocation 
+      'jobLocationId': ticket.jobLocation
         ? ticket?.jobLocation?._id || ticket.jobLocation
         : '',
       'jobTypes': ticket.tasks ? mapTask(ticket.tasks) : [],
       'note': ticket.note,
       'dueDate': parseISODate(ticket.dueDate),
       'updateFlag': ticket.updateFlag,
-      'customerContactId': ticket.customerContactId !== undefined 
-        ? ticket?.customerContactId?._id || ticket.customerContactId 
+      'customerContactId': ticket.customerContactId !== undefined
+        ? ticket?.customerContactId?._id || ticket.customerContactId
         : '',
       'customerPO': ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       'images': ticket.images !== undefined ? ticket.images : []
@@ -457,7 +495,7 @@ function BCServiceTicketModal({
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
         const result = ids.map((id: any)=> {
-          const currentItem = items.filter((item: {jobType: string}) => (item.jobType === id || item.jobType === id._id))[0];
+          const currentItem = items.filter((item: {jobType: string}) => (item.jobType && (item.jobType === id || item.jobType === id._id)))[0];
           return {_id:currentItem?.jobType, title:currentItem?.name, description:currentItem?.description}
         });
         const newValue = result.map((val:{_id:string;title:string;description:string}) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));
@@ -473,7 +511,7 @@ function BCServiceTicketModal({
   useEffect(() => {
     getJobType()
   }, [items])
-  
+
 
   if (error.status) {
     return (
@@ -527,7 +565,7 @@ function BCServiceTicketModal({
         <div className={'modalDataContainer'}>
         <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job location</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
             <Autocomplete
               defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
               disabled={FormikValues.customerId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
@@ -546,12 +584,16 @@ function BCServiceTicketModal({
             />
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>job site</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>Job Address</Typography>
             <Autocomplete
               className={detail ? 'detail-only' : ''}
               disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
               getOptionLabel={option => option.name ? option.name : ''}
               id={'tags-standard'}
+              freeSolo
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
               onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
               options={jobSites && jobSites.length !== 0 ? jobSites.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
               renderInput={params =>
@@ -560,6 +602,19 @@ function BCServiceTicketModal({
                   variant={'outlined'}
                 />
               }
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+
+                // Suggest the creation of a new value
+                if (params.inputValue !== '' && filtered.length === 0) {
+                  filtered.push({
+                    inputValue: params.inputValue,
+                    name: `Add "${params.inputValue}"`,
+                  });
+                }
+
+                return filtered;
+              }}
               value={jobSiteValue}
             />
           </Grid>
@@ -578,9 +633,9 @@ function BCServiceTicketModal({
               multiple
               onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
               options={
-                items && items.length !== 0 
+                items && items.length !== 0
                 ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
-                  .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1) 
+                  .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
                 : []
               }
               classes={{popper: classes.popper}}
@@ -615,10 +670,10 @@ function BCServiceTicketModal({
                   id={'tags-standard'}
                   onChange={(ev: any, newValue: any) => handleContactChange(ev, 'customerContactId', setFieldValue, newValue)}
                   options={
-                    contacts && contacts.length !== 0 
-                      ? contacts.filter((contact:any) => 
+                    contacts && contacts.length !== 0
+                      ? contacts.filter((contact:any) =>
                         contact.isActive
-                      ).sort((a: any, b: any) => 
+                      ).sort((a: any, b: any) =>
                         a.name > b.name ? 1 : b.name > a.name ? -1 : 0
                       )
                       : []

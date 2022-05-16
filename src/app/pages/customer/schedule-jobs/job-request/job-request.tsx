@@ -121,7 +121,7 @@ function JobRequest({ classes }: any) {
       width: 100,
     },
     {
-      Header: 'Job Site',
+      Header: 'Job Address',
       id: 'job-site',
       accessor: getJobSite,
       sortable: true,
@@ -244,7 +244,7 @@ function JobRequest({ classes }: any) {
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
   }, [])
-  
+
 
   const handleRowClick = (event: any, row: any) => {
     openDetailJobRequestModal(row.original);
@@ -262,7 +262,7 @@ function JobRequest({ classes }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string, isLastPage: boolean) => 
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string, isLastPage: boolean) =>
           dispatch(getAllJobRequestAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange , isLastPage ? lastPageCursor : undefined))
         }
         total={total}

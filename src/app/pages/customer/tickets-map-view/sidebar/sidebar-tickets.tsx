@@ -207,7 +207,7 @@ function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
                       >
                         <div className={'ticket_title'}>
                           <span
-                            className={`job-status job-status_${x.ticketId ? '-1' : x.status}`}/>
+                            className={`job-status job-status_${x.ticketId ? '-1' : x.requestId ? '-2' : x.status}`}/>
                           <h3>
                             {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
                           </h3>

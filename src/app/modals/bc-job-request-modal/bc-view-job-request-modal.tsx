@@ -65,7 +65,7 @@ function BCViewJobRequestModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const { contacts } = useSelector((state: any) => state.contacts);
-  const customerContact = 
+  const customerContact =
     jobRequest.customerContact && contacts.find((contact :any) => contact.userId === jobRequest.customerContact._id)?.name
 
   useEffect(() => {
@@ -120,9 +120,9 @@ function BCViewJobRequestModal({
             '_id': ''
           },
           ticket: {
-            ...jobRequest, 
-            tasks: [], 
-            note: jobRequest.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n'), 
+            ...jobRequest,
+            tasks: [],
+            note: jobRequest.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n'),
             images: jobRequest.requests?.map((request:any)=>request.images||[]).flat(1) || [],
           },
           'type': {
@@ -167,7 +167,7 @@ function BCViewJobRequestModal({
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs={12} sm={4}>
             <TopMarginedContainer>
-              <Typography variant={'caption'} className={'previewCaption'}>{'Job Location'}</Typography>
+              <Typography variant={'caption'} className={'previewCaption'}>{'Subdivision'}</Typography>
               <Typography>{jobRequest.jobLocation?.name || 'N/A'}</Typography>
             </TopMarginedContainer>
             <TopMarginedContainer>

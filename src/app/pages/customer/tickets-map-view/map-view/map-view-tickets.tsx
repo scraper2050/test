@@ -75,9 +75,27 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       });
   
       socket.on(SocketMessage.SERVICE_TICKETS, data => {
-        const {count, serviceTicket, total} = data;
+        const {count, serviceTicket, jobRequest, total} = data;
         if (serviceTicket) {
           tempRefTicket.current.push(serviceTicket);
+          if (count % 25 === 0 || count === total) {
+            setIsLoading(false);
+            setAllTickets([...tempRefTicket.current]);
+          }
+          if (count === total) {
+            socket.close();
+            dispatch(streamServiceTickets(false));
+            dispatch(setServiceTicket(tempRefTicket.current));
+            dispatch(refreshServiceTickets(false));
+          }
+        } else if (jobRequest) {
+          const tempJobRequestObj = {
+            ...jobRequest, 
+            tasks: [], 
+            note: jobRequest.requests?.filter((request:any)=>request.note).map((request:any)=>request.note).join('\n\n'), 
+            images: jobRequest.requests?.map((request:any)=>request.images||[]).flat(1) || [],
+          };
+          tempRefTicket.current.push(tempJobRequestObj);
           if (count % 25 === 0 || count === total) {
             setIsLoading(false);
             setAllTickets([...tempRefTicket.current]);
