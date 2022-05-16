@@ -1,7 +1,11 @@
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import React, {useEffect, useRef, useState} from 'react';
-import {formatDateYMD, parseISODate} from 'helpers/format';
+import {
+  formatDateTimeYMD,
+  formatDateYMD,
+  parseISODate
+} from 'helpers/format';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
 import { useFormik } from 'formik';
@@ -139,7 +143,7 @@ function BCServiceTicketModal({
         jobSite: FormikValues.jobSiteId,
         jobLocation: FormikValues.jobLocationId,
         note: FormikValues.note,
-        dueDate: FormikValues.dueDate,
+        dueDate: `${formatDateTimeYMD(FormikValues.dueDate)}.000Z`,
         customerContactId: FormikValues.customerContactId,
         customerPO: FormikValues.customerPO,
         images: FormikValues.images,
@@ -484,7 +488,7 @@ function BCServiceTicketModal({
       if (ticket?.tasks?.length) {
         const ids = ticket.tasks.map((ticket:any) => ticket.jobType);
         const result = ids.map((id: any)=> {
-          const currentItem = items.filter((item: {jobType: string}) => (item.jobType === id || item.jobType === id._id))[0];
+          const currentItem = items.filter((item: {jobType: string}) => (item.jobType && (item.jobType === id || item.jobType === id._id)))[0];
           return {_id:currentItem?.jobType, title:currentItem?.name, description:currentItem?.description}
         });
         const newValue = result.map((val:{_id:string;title:string;description:string}) => ({ 'jobTypeId': val._id, title: val.title, description: val.description }));

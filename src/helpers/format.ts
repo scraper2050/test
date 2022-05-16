@@ -17,6 +17,8 @@ export const fromNow = (date: Date) => moment(date).subtract('seconds', 60)
 
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 
+export const formatDateTimeYMD = (date: Date | string) => moment(date).format('YYYY-MM-DDTHH:mm:ss');
+
 export const formatShortDate = (date: Date) => moment(date).format('ddd, MMM. DD, YYYY');
 
 export const formatShortDateNoDay = (date: Date) => moment(date).format('MMM. DD, YYYY');
