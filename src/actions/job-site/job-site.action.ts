@@ -38,9 +38,9 @@ export const createJobSiteAction = (data: any, callback: any) => {
             dispatch({type: JobSiteActionType.ADD_NEW_JOB_FAILED,  payload: jobSite.msg });
         }else{
             dispatch(setJobSiteNew(jobSite));
-            callback();
-        }  
-        
+            callback(jobSite);
+        }
+
     }
 }
 

@@ -112,7 +112,7 @@ function ViewMorePage({ classes }: any) {
       'width': 50
     },
     {
-      'Header': 'Address',
+      'Header': 'Street Address',
       'accessor': 'address',
       'Cell': function (row: any) {
         return (
