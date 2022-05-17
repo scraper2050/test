@@ -31,6 +31,42 @@ function createMapOptions() {
 
 const Marker = ({ children } : any) => children;
 
+const superClusterOptions = { 
+  radius: 75,
+  maxZoom: 15,
+  map: (props:any) => ({
+    includeTicket: !!props.ticket?.ticketId,
+    includeRequest: !!props.ticket?.requestId,
+  }),
+  reduce: (acc:any, props:any) => {
+    if(!!props.includeTicket) {
+      acc.includeTicket = true;
+    }
+    if(!!props.includeRequest) {
+      acc.includeRequest = true;
+    }
+  },
+}
+
+const calculateColor = (cluster:any) => {
+  if(cluster.properties?.includeRequest){
+    return '#970505'
+  }
+  if(cluster.properties?.includeTicket){
+    return '#2477FF'
+  }
+  return 'rgb(130,130,130)'
+}
+const calculateBorder = (cluster:any) => {
+  if(cluster.properties?.includeTicket){
+    return '3px solid #2477FF'
+  }
+  if(cluster.properties?.includeRequest){
+    return '3px solid #970505'
+  }
+  return '3px solid rgb(130,130,130)'
+}
+
 function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: BCMapWithMarkerListProps) {
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
   const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
@@ -118,7 +154,7 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
     points,
     bounds,
     zoom,
-    options: { radius: 75, maxZoom: 15 }
+    options: superClusterOptions
   });
   
 
@@ -163,9 +199,9 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
                   style={{
                     width: 18,
                     height: 18,
-                    backgroundColor: '#970505',
+                    backgroundColor: calculateColor(cluster),
                     borderRadius: '50%',
-                    border: '3px solid #2477FF',
+                    border: calculateBorder(cluster),
                     padding: 8,
                     display: 'flex',
                     justifyContent: 'center',
@@ -182,7 +218,7 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
                 >
                   <span 
                     style={{
-                      color: '#970505',
+                      color: calculateColor(cluster),
                       marginTop: -40,
                       fontWeight: 'bold',
                     }}
