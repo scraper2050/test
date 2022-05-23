@@ -8,6 +8,11 @@ import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { CSButton } from "../../../../helpers/custom";
 import { useDispatch, useSelector } from 'react-redux';
+import BCMenuToolbarButton from 'app/components/bc-menu-toolbar-button';
+import { info } from 'actions/snackbar/snackbar.action';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../constants'
+import { getCustomers } from 'actions/customer/customer.action'
 // import { getInvoicingList } from "../../../../actions/invoicing/invoicing.action";
 // import TableFilterService from "../../../../utils/table-filter";
 
@@ -45,6 +50,38 @@ function InvoiceList({ classes }: any) {
   // useEffect(() => {
   //   dispatch(getInvoicingList());
   // }, []);
+  useEffect(() => {
+    dispatch(getCustomers());
+  }, []);
+
+  const items = [
+    {title:'Custom Invoice', id:0},
+    {title:'Payment', id:1},
+    {title:'Bulk Payment', id:2},
+  ];
+
+  const handleMenuToolbarListClick = (e: any, id: number) => {
+    switch (id) {
+      case 0:
+        openCreateInvoicePage();
+        break;
+      case 2:
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'Bulk Payment',
+            'removeFooter': false,
+            'className': 'serviceTicketTitle',
+          },
+          'type': modalTypes.PAYMENT_BULK_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+      default:
+        dispatch(info('This feature is still under development!'));
+    }
+  }
 
   return (
     <div className={classes.pageMainContainer}>
@@ -69,13 +106,18 @@ function InvoiceList({ classes }: any) {
             ]}
           />
           <div className={classes.addButtonArea}>
-          <CSButton
-            aria-label={'new-ticket'}
-            color={'primary'}
-            onClick={() => openCreateInvoicePage()}
-            variant={'contained'}>
-            {'Custom Invoice'}
-          </CSButton>
+            {/* <CSButton
+              aria-label={'new-ticket'}
+              color={'primary'}
+              onClick={() => openCreateInvoicePage()}
+              variant={'contained'}>
+              {'Custom Invoice'}
+            </CSButton> */}
+            <BCMenuToolbarButton 
+              buttonText='More Actions'
+              items={items}
+              handleClick={handleMenuToolbarListClick}
+            />
           </div>
           <SwipeableViews
             axis={
