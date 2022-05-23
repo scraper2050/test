@@ -98,6 +98,6 @@ export default (theme: Theme): any => ({
     backgroundColor: `${CONSTANTS.TABLE_HOVER} !important`,
   },
   mapWrapper: {
-    height: 200,
+    height: 270,
   },
 });
