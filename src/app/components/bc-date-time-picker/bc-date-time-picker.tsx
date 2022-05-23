@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
   fullWidth: {
     'margin-bottom': '5px',
     width: '100%',
+    '& .MuiTypography-gutterBottom': {
+      marginBottom: 0,
+    }
   },
 }));
 
@@ -42,7 +45,8 @@ function BCDateTimePicker({
   minDateMessage = 'Cannot select a date that has already passed',
   TextField,
   errorText = '',
-  showRequired = false
+  showRequired = false,
+  whiteBackground = false,
 }: any) {
   const classes = useStyles();
   return (
@@ -77,6 +81,9 @@ function BCDateTimePicker({
             minDateMessage={minDateMessage}
             helperText={errorText}
             error={errorText !== ''}
+            InputProps={{
+              style: whiteBackground ? { background: '#fff' } : {},
+            }}
           />
         ) : (
           <KeyboardTimePicker
