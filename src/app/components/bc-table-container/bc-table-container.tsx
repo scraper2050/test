@@ -46,6 +46,7 @@ function BCTableContainer({
   noPadding = false,
   toolbarPositionLeft = false,
   manualPagination = false,
+  lastPageCursorImplemented = false,
   fetchFunction = () => {},
   total,
   currentPageIndex,
@@ -185,6 +186,7 @@ function BCTableContainer({
               setPage={setPage}
               stickyHeader={stickyHeader}
               manualPagination={manualPagination}
+              lastPageCursorImplemented={lastPageCursorImplemented}
               fetchFunction={fetchFunction}
               total={total}
               currentPageIndex={currentPageIndex}

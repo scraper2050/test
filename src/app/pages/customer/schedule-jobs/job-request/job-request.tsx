@@ -262,6 +262,7 @@ function JobRequest({ classes }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
+        lastPageCursorImplemented
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string, isLastPage: boolean) =>
           dispatch(getAllJobRequestAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange , isLastPage ? lastPageCursor : undefined))
         }
