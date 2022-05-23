@@ -171,6 +171,10 @@ function BCViewJobRequestModal({
               <Typography>{jobRequest.jobLocation?.name || 'N/A'}</Typography>
             </TopMarginedContainer>
             <TopMarginedContainer>
+              <Typography variant={'caption'} className={'previewCaption'}>{'Address'}</Typography>
+              <Typography>{jobRequest.jobSite?.name || 'N/A'}</Typography>
+            </TopMarginedContainer>
+            <TopMarginedContainer>
               <Typography variant={'caption'} className={'previewCaption'}>{'Contact Associated'}</Typography>
               <Typography>{customerContact || 'N/A'}</Typography>
             </TopMarginedContainer>

@@ -56,6 +56,7 @@ import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-p
 import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
 import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
 import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
+import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -548,6 +549,15 @@ function BCModal() {
         setComponent(<BcPaymentHistoryModal
           invoiceID={data.invoiceID}
         />);
+        break;
+      case modalTypes.PAYMENT_BULK_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCBulkPaymentModal />);
         break;
       case modalTypes.UPDATE_PAYMENT_TERMS_MODAL:
         setModalOptions({
