@@ -58,6 +58,13 @@ function BcPaymentHistoryModal({
     })
   }
 
+  const getAmountPaid = (payment:any) => {
+    if(payment?.line?.length){
+      return formatNumber(payment.line.filter((record:any) => record.invoice === invoice._id)[0].amountPaid)
+    }
+    return formatNumber(payment.amountPaid)
+  }
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -165,7 +172,7 @@ function BcPaymentHistoryModal({
                     <TableCell>
                       {paymentDate.format('MM/DD/YYYY')}
                     </TableCell>
-                    <TableCell>${formatNumber(payment.amountPaid)}</TableCell>
+                    <TableCell>${getAmountPaid(payment)}</TableCell>
                     <TableCell style={{whiteSpace: 'nowrap'}}>{payment.paymentType}</TableCell>
                     <TableCell>{payment.referenceNumber}</TableCell>
                     <TableCell style={{width: '99%'}}>{payment.note}</TableCell>

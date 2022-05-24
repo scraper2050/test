@@ -234,11 +234,8 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
     setLocalInvoiceList(newInvoiceList);
   };
 
-  const handleAmountChange = (setCellValue: (text: string) => void, value: string) => {
-    const parsedValue = parseFloat(value);
-    if (!isNaN(parsedValue)) {
-      setCellValue(`${parsedValue}`)
-    } else {
+  const handleOnFocus = (setCellValue: (text: string) => void, value: string) => {
+    if(value === '0'){
       setCellValue('')
     }
   };
@@ -312,11 +309,20 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
       Cell({ row }: any) {
         return <div>
           <span>
+            {row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+          </span>
+        </div>;
+      },
+      'Header': 'Customer PO',
+    },
+    {
+      Cell({ row }: any) {
+        return <div>
+          <span>
             {`$${row.original.balanceDue}` || 0}
           </span>
         </div>;
       },
-      'accessor': 'balanceDue',
       'Header': 'Amount Due',
       'width': 20
     },
@@ -361,8 +367,9 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
             }}
             disabled={row.original.status === "PAID"}
             classes={{ root: debounceInputStyles.textField }}
+            onFocus={(event: any)=> handleOnFocus(setCellValue, event.target.value)}
             onBlur={(event: any) => handleAmountToBeAppliedChange(row.original._id, event.target.value)}
-            onChange={(event: any) => handleAmountChange(setCellValue, event.target.value)}
+            onChange={(event: any) => setCellValue(event.target.value)}
             type={'number'}
             value={cellValue}
             variant={'outlined'}
