@@ -181,7 +181,7 @@ function ViewInvoice({ classes, theme }: any) {
               invoiceDetail && <Button
                 variant="contained"
                 color="primary"
-                disabled={invoiceDetail?.paid}
+                // disabled={invoiceDetail?.paid}
                 className={classNames(invoiceStyles.margin, invoiceStyles.white)}
                 onClick={goToEdit}
               >
