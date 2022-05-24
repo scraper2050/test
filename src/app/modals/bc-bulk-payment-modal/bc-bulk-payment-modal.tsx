@@ -1,0 +1,608 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import debounce from 'lodash.debounce';
+import AttachMoney from '@material-ui/icons/AttachMoney';
+import {
+  Button,
+  DialogActions,
+  DialogContent,
+  Grid,
+  TextField,
+  Typography,
+  InputAdornment,
+  FormControl,
+  Select,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  withStyles,
+} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import styles from './bc-bulk-payment-modal.styles';
+import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
+import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
+import BCSent from 'app/components/bc-sent';
+import { createStyles, makeStyles } from '@material-ui/core';
+import styled from 'styled-components';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { CSButtonSmall } from "helpers/custom";
+import TableFilterService from 'utils/table-filter';
+import { formatShortDateNoDay } from 'helpers/format';
+import { getAllInvoicesAPI } from 'api/invoicing.api';
+import { recordPayment } from 'api/payment.api';
+import {
+  setCurrentPageIndex,
+  setCurrentPageSize,
+  setKeyword,
+} from 'actions/invoicing/invoicing.action';
+import { error } from "actions/snackbar/snackbar.action";
+
+const StyledGrid = withStyles(() => ({
+  item: {
+    '& .tes': {
+      maxWidth: 200,
+    }
+  },
+}))(Grid);
+
+const useDebounceInputStyles = makeStyles(() =>
+  createStyles({
+    textField: {
+      '& .MuiOutlinedInput-input': {
+        padding: '5px 10px',
+      }
+    }
+  })
+);
+
+const getFilteredList = (state: any) => {
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
+};
+
+function BCBulkPaymentModal({ classes }: any): JSX.Element {
+  const dispatch = useDispatch();
+  const [customerValue, setCustomerValue] = useState<any>(null);
+  const [localInvoiceList, setLocalInvoiceList] = useState<any[]>([]);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const customers = useSelector(({ customers }: any) => customers.data);
+  const debounceInputStyles = useDebounceInputStyles();
+
+  const invoiceList = useSelector(getFilteredList);
+  const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
+    ({ invoiceList }: any) => ({
+      loading: invoiceList.loading,
+      prevCursor: invoiceList.prevCursor,
+      nextCursor: invoiceList.nextCursor,
+      total: invoiceList.total,
+      currentPageIndex: invoiceList.currentPageIndex,
+      currentPageSize: invoiceList.currentPageSize,
+      keyword: invoiceList.keyword,
+    })
+  );
+
+  const paymentTypeReference = [
+    {
+      '_id': 0,
+      'label': 'ACH'
+    },
+    {
+      '_id': 1,
+      'label': 'Bank Wire'
+    },
+    {
+      '_id': 2,
+      'label': 'Credit Card/Debit Card'
+    },
+    {
+      '_id': 3,
+      'label': 'Check'
+    },
+    {
+      '_id': 4,
+      'label': 'Cash'
+    }
+  ];
+
+  const bgColors: { [index: string]: string } = { PAID: '#81c784', UNPAID: '#F50057', PARTIALLY_PAID: '#FA8029' };
+
+  const {
+    'values': FormikValues,
+    'handleChange': formikChange,
+    'handleSubmit': FormikSubmit,
+    setFieldValue,
+    isSubmitting,
+  } = useFormik({
+    'initialValues': {
+      'customerId': '',
+      'customerName': '',
+      'query': '',
+      'dueOnOrBefore': '',
+      'paymentType': '',
+      'paymentDate': new Date(),
+      'referenceNumber': '',
+      'showPaid': false,
+    },
+    'onSubmit': (values: any, { setSubmitting }: any) => {
+      setSubmitting(true);
+      const line:any = []
+      localInvoiceList.forEach(invoice => {
+        if(invoice.checked && invoice.amountToBeApplied){
+          const lineObject:any = {
+            invoiceId: invoice._id,
+            amountPaid: invoice.amountToBeApplied,
+          };
+          line.push(lineObject)
+        }
+      })
+      const paramObj:any = {
+        line: JSON.stringify(line),
+        customerId: values.customerId,
+        paidAt: values.paymentDate,
+        referenceNumber: values.referenceNumber,
+      };
+      if(values.paymentType !== ''){
+        paramObj.paymentType = paymentTypeReference.filter(type => type._id == values.paymentType)[0].label
+      }
+      dispatch(recordPayment(paramObj))
+        .then((response: any) => {
+          if (response.status === 1) {
+            setIsSuccess(true);
+            setSubmitting(false);
+          } else {
+            console.log(response.message);
+            dispatch(error(response.message))
+            setSubmitting(false);
+          }
+        }).catch((e: any) => {
+          console.log(e.message);
+          dispatch(error(e.message));
+          setSubmitting(false);
+        })
+    },
+  });
+
+
+  const isValidate = () => {
+    if(!FormikValues.customerId) {
+      return false;
+    }
+    if(localInvoiceList.filter(invoice => invoice.checked && !invoice.amountToBeApplied).length){
+      return false
+    }
+    if(localInvoiceList.filter(invoice => invoice.checked && invoice.amountToBeApplied).length === 0){
+      return false
+    }
+    return true;
+  };
+
+  const handleCustomerChange = (event: any, setFieldValue: any, newValue: any) => {
+    const customerId = newValue ? newValue._id : '';
+    const customerName = newValue?.profile?.displayName ? newValue.profile.displayName : '';
+    setFieldValue('customerId', customerId);
+    setFieldValue('customerName', customerName);
+    setCustomerValue(newValue);
+    if(customerName) {
+      setKeyword('');
+      setFieldValue('query', '');
+      dispatch(getAllInvoicesAPI(currentPageSize, '', '', customerName));
+      setCurrentPageIndex(0);
+    } else {
+      setKeyword('');
+      setFieldValue('query', '');
+      dispatch(getAllInvoicesAPI(currentPageSize, '', '', ''));
+      setCurrentPageIndex(0);
+    }
+  };
+
+  const handleDueDateChange = (date: string) => {
+    setFieldValue('dueOnOrBefore', date);
+  };
+
+  const handlePaymentDateChange = (date: string) => {
+    setFieldValue('paymentDate', date);
+  };
+
+  const handleQueryChange = (event: any) => {
+    setFieldValue('query', event.target.value);
+    debouncedFetchFunction(event.target.value);
+  };
+
+  const debouncedFetchFunction = useCallback(
+    debounce(value => {
+      setKeyword(value);
+      dispatch(getAllInvoicesAPI(currentPageSize, prevCursor, nextCursor, value))
+      setCurrentPageIndex(0);
+    }, 500),
+    []
+  );
+
+  const handleAmountToBeAppliedChange = (id: string, value: string) => {
+    let newInvoiceList: any = [...localInvoiceList];
+    const index = newInvoiceList.findIndex((invoice: any) => invoice._id === id);
+    newInvoiceList[index].amountToBeApplied = parseFloat(value);
+    const parsedValue = parseFloat(value);
+    if (!isNaN(parsedValue)) {
+      newInvoiceList[index].amountToBeApplied = parsedValue;
+    } else {
+      newInvoiceList[index].amountToBeApplied = 0;
+    }
+    newInvoiceList = newInvoiceList.map((invoice:any) => ({...invoice, checked: invoice.amountToBeApplied ? 1 : 0}));
+    newInvoiceList.sort((invoiceA: any, invoiceB: any) => invoiceB.checked - invoiceA.checked);
+    setLocalInvoiceList(newInvoiceList);
+  };
+
+  const handleOnFocus = (setCellValue: (text: string) => void, value: string) => {
+    if(value === '0'){
+      setCellValue('')
+    }
+  };
+
+  const handleCheckedChange = (id: string, checkedValue: boolean) => {
+    const newInvoiceList: any = [...localInvoiceList];
+    const index = newInvoiceList.findIndex((invoice: any) => invoice._id === id);
+    newInvoiceList[index].checked = checkedValue ? 1 : 0;
+    if(!checkedValue){
+      newInvoiceList[index].amountToBeApplied = 0;
+    }
+    newInvoiceList.sort((invoiceA: any, invoiceB: any) => invoiceB.checked - invoiceA.checked)
+    setLocalInvoiceList(newInvoiceList);
+  }
+
+  const closeModal = () => {
+    dispatch(closeModalAction());
+    setTimeout(() => {
+      dispatch(setModalDataAction({
+        'data': {},
+        'type': ''
+      }));
+    }, 200);
+  };
+
+  useEffect(() => {
+    dispatch(getAllInvoicesAPI());
+    return () => {
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(currentPageIndex));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
+  }, []);
+
+  const columns: any = [
+    {
+      Cell({ row }: any) {
+        return <div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                disabled={row.original.status === "PAID"}
+                checked={!!row.original.checked}
+                onChange={(event) => handleCheckedChange(row.original._id, event.target.checked)}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label=""
+          />
+          {row.original.dueDate
+            ? formatShortDateNoDay(row.original.dueDate)
+            : 'N/A'}
+        </div>
+      },
+      'Header': 'Due Date',
+      'accessor': 'dueDate',
+      'className': 'font-bold',
+    },
+    {
+      'Header': 'Invoice ID',
+      'accessor': 'invoiceId',
+      'className': 'font-bold',
+    },
+    {
+      'Header': 'Customer',
+      'accessor': 'customer.profile.displayName',
+      'className': 'font-bold',
+    },
+    {
+      Cell({ row }: any) {
+        return <div>
+          <span>
+            {row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+          </span>
+        </div>;
+      },
+      'Header': 'Customer PO',
+    },
+    {
+      Cell({ row }: any) {
+        return <div>
+          <span>
+            {`$${row.original.balanceDue}` || 0}
+          </span>
+        </div>;
+      },
+      'Header': 'Amount Due',
+      'width': 20
+    },
+    {
+      Cell({ row }: any) {
+        const { status = '' } = row.original;
+        const textStatus = status.split('_').join(' ').toLowerCase();
+        return (
+          <div>
+            <CSButtonSmall
+              variant="contained"
+              style={{
+                backgroundColor: bgColors[status],
+                color: '#fff',
+              }}
+            >
+              <span style={{ textTransform: 'capitalize' }}>{textStatus}</span>
+            </CSButtonSmall>
+          </div>
+
+        )
+      },
+      'Header': 'Payment Status',
+      'accessor': 'paid',
+    },
+    {
+      Cell({ row }: any) {
+        const [cellValue, setCellValue] = useState(row.original.amountToBeApplied)
+        useEffect(() => {
+          setCellValue(row.original.amountToBeApplied)
+        }, [row.original.amountToBeApplied])
+
+        return (
+          <TextField
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AttachMoney style={{color: '#BDBDBD'}}/>
+                </InputAdornment>
+              ),
+              style: { background: '#fff' },
+            }}
+            disabled={row.original.status === "PAID"}
+            classes={{ root: debounceInputStyles.textField }}
+            onFocus={(event: any)=> handleOnFocus(setCellValue, event.target.value)}
+            onBlur={(event: any) => handleAmountToBeAppliedChange(row.original._id, event.target.value)}
+            onChange={(event: any) => setCellValue(event.target.value)}
+            type={'number'}
+            value={cellValue}
+            variant={'outlined'}
+          />
+        )
+      },
+      'Header': 'Amount to be Applied',
+      'accessor': 'amountToBeApplied'
+    },
+  ];
+
+  useEffect(() => {
+    if (invoiceList.length > 0) {
+      const newInvoiceList = invoiceList.map((item: any) => ({
+        ...item,
+        'amountToBeApplied': 0,
+        'checked': 0,
+      }));
+      setLocalInvoiceList([...newInvoiceList]);
+    }
+  }, [invoiceList])
+
+  // useEffect(() => {
+  //   console.log('ini itu localInvoiceList', localInvoiceList)
+  // }, [localInvoiceList])
+
+  return (
+    <DataContainer className={'new-modal-design'}>
+      <form onSubmit={FormikSubmit}>
+        {isSuccess ? (
+          <BCSent title={'The payment was recorded.'}/>
+        ) : (
+          <>
+            <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
+              <Grid container item xs={10}>
+
+                <StyledGrid item xs={4}>
+                  <div className={'tes'} style={{ paddingBottom: 5 }}>
+                    <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
+                    <Autocomplete
+                      disabled={loading}
+                      getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
+                      getOptionDisabled={(option) => !option.isActive}
+                      id={'tags-standard'}
+                      onChange={(ev: any, newValue: any) => handleCustomerChange(ev, setFieldValue, newValue)}
+                      options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
+                      renderInput={params => <TextField
+                        {...params}
+                        InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
+                        variant={'outlined'}
+                      />
+                      }
+                      value={customerValue}
+                    />
+                  </div>
+                  <div className={'tes'}>
+                    <Typography variant={'caption'} className={'previewCaption'}>Search</Typography>
+                    <TextField
+                      fullWidth
+                      disabled={!!FormikValues.customerName}
+                      variant={'outlined'}
+                      name={'query'}
+                      onChange={handleQueryChange}
+                      InputProps={{
+                        style: { background: '#fff' },
+                        startAdornment: <InputAdornment position="start">
+                          <SearchIcon classes={{ root: classes.searchIconColor }} />
+                        </InputAdornment>,
+                      }}
+                      value={FormikValues.query}
+                    />
+                  </div>
+                </StyledGrid>
+                <StyledGrid item xs={4}>
+                  <div className={'tes'}>
+                    <Typography variant={'caption'} className={'previewCaption'}>Due on or before</Typography>
+                    <BCDateTimePicker
+                      disabled={loading}
+                      handleChange={handleDueDateChange}
+                      name={'dueOnOrBefore'}
+                      id={'dueOnOrBefore'}
+                      placeholder={'Date'}
+                      value={FormikValues.dueOnOrBefore}
+                      whiteBackground
+                    />
+                  </div>
+                  <div className={'tes'}>
+                    <Typography variant={'caption'} className={'previewCaption'}>Mode of Payment</Typography>
+                    <FormControl variant="outlined" fullWidth>
+                      <Select
+                        name={'paymentType'}
+                        value={FormikValues.paymentType}
+                        onChange={formikChange}
+                        style={{ background: '#fff' }}
+                        disabled={loading}
+                      >
+                        {paymentTypeReference.map(({ label, _id }: { label: string; _id: number }) => {
+                          return <MenuItem key={_id} value={_id}>{label}</MenuItem>
+                        })}
+                      </Select>
+                    </FormControl>
+                  </div>
+                </StyledGrid>
+                <StyledGrid item xs={4}>
+                  <div className={'tes'}>
+                    <Typography variant={'caption'} className={'previewCaption'}>Payment date</Typography>
+                    <BCDateTimePicker
+                      disabled={loading}
+                      handleChange={handlePaymentDateChange}
+                      name={'paymentDate'}
+                      id={'paymentDate'}
+                      placeholder={'Date'}
+                      value={FormikValues.paymentDate}
+                      whiteBackground
+                    />
+                  </div>
+                  <div className={'tes'}>
+                    <Typography variant={'caption'} className={'previewCaption'}>Reference No.</Typography>
+                    <TextField
+                      disabled={loading}
+                      fullWidth
+                      variant={'outlined'}
+                      name={'referenceNumber'}
+                      onChange={formikChange}
+                      InputProps={{
+                        style: { background: '#fff' },
+                      }}
+                      value={FormikValues.referenceNumber}
+                    />
+                  </div>
+                </StyledGrid>
+              </Grid>
+              <Grid container item xs={2}>
+                <Grid
+                  item
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-end',
+                    marginTop: 20
+                  }}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        disabled={loading}
+                        checked={FormikValues.showPaid}
+                        onChange={formikChange}
+                        name="showPaid"
+                        color="primary"
+                      />
+                    }
+                    label="Show Paid"
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <DialogContent>
+              <BCTableContainer
+                columns={columns}
+                isLoading={loading}
+                tableData={localInvoiceList}
+                manualPagination
+                fetchFunction={(num: number, isPrev: boolean, isNext: boolean) =>
+                  dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? FormikValues.customerName || '' : FormikValues.query || keyword))
+                }
+                total={total}
+                currentPageIndex={currentPageIndex}
+                setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+                currentPageSize={currentPageSize}
+                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+                setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
+              />
+            </DialogContent>
+          </>
+        )}
+        <div className={'modalDataContainer'}>
+          <DialogActions>
+            <Button
+              disabled={isSubmitting}
+              disableElevation={true}
+              onClick={() => closeModal()}
+              variant={'outlined'}
+            >
+              Close
+            </Button>
+            {!isSuccess && (
+              <Button
+                color={'primary'}
+                disableElevation={true}
+                disabled={isSubmitting || loading || !isValidate()}
+                type={'submit'}
+                variant={'contained'}
+              >
+                Submit All
+              </Button>
+            )}
+          </DialogActions>
+        </div>
+      </form>
+    </DataContainer >
+  );
+};
+
+const DataContainer = styled.div`
+  *:not(.MuiGrid-container) > .MuiGrid-container {
+    width: 100%;
+    padding: 10px 40px;
+  }
+  .MuiGrid-spacing-xs-4 > .MuiGrid-spacing-xs-4 {
+    margin: -16px 0;
+  }
+  .MuiGrid-grid-xs-true {
+    padding: 16px;
+  }
+  .MuiOutlinedInput-root {
+    border-radius: 8px;
+    padding: 2px;
+  }
+
+  .MuiOutlinedInput-input {
+    padding: 9.5px 4px;
+  }
+
+  span.required:after {
+    margin-left: 3px;
+    content: "*";
+    color: red;
+  }
+`;
+
+
+export default withStyles(
+  styles,
+  { 'withTheme': true }
+)(BCBulkPaymentModal);

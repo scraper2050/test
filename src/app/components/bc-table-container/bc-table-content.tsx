@@ -45,6 +45,9 @@ const useTableStyles = makeStyles(() =>
     /*    tableCell: {
           lineHeight: '30px',
         }*/
+    highlighted: {
+      backgroundColor: '#E5F7FF',
+    }
   }),
 );
 
@@ -62,6 +65,7 @@ function BCTableContent({
                           setPage,
                           cellSize,
                           manualPagination = false,
+                          lastPageCursorImplemented = false,
                           fetchFunction = () => {},
                           total,
                           currentPageIndex,
@@ -124,7 +128,7 @@ function BCTableContent({
     if(manualPagination){
       if(newPage === 0) {
         fetchFunction(pageSize, undefined, undefined);
-      } else if (newPage === Math.max(0, Math.ceil(total / pageSize) - 1)) {
+      } else if (newPage === Math.max(0, Math.ceil(total / pageSize) - 1) && lastPageCursorImplemented) {
         fetchFunction(pageSize, undefined, undefined, undefined, true);
       } else {
         fetchFunction(pageSize, newPage < pageIndex, newPage > pageIndex);
@@ -367,7 +371,7 @@ function BCTableContent({
                 {...row.getRowProps()}
                 className={`truncate${row.original.readStatus?.isRead
                   ? ''
-                  : ' unread'} ${tableStyles.tableRow}`}
+                  : ' unread'} ${tableStyles.tableRow} ${row.original.checked ? tableStyles.highlighted : ''}`}
                 hover={!invoiceTable}
                 onClick={(ev: any) => onRowClick(ev, row)}>
                 {row.cells.map((cell: any, cindex: number) => {

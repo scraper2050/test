@@ -33,6 +33,7 @@ interface ApiProps {
   referenceNumber?: string,
   paymentType?: string,
   note?: string
+  line?: string,
 }
 
 function BcPaymentRecordModal({
@@ -91,7 +92,7 @@ function BcPaymentRecordModal({
   const form = useFormik({
     initialValues: {
       paymentDate: payment ? new Date(payment.paidAt) : new Date(),
-      amount: payment?.amountPaid,
+      amount: payment?.line?.length ? payment.line.filter((record:any) => record.invoice === invoice._id)[0].amountPaid : payment?.amountPaid,
       paymentMethod: findPaymentTypeIndex(payment?.paymentType),
       referenceNumber: payment?.referenceNumber || '',
       notes: payment?.note || ''
@@ -108,6 +109,13 @@ function BcPaymentRecordModal({
 
       if (payment) {
         params.paymentId = payment._id;
+        params.line = payment?.line?.length ? JSON.stringify(payment.line.map((paymentObj:any) => {
+          const newPaymentObj = {...paymentObj};
+          if(paymentObj.invoice === invoice._id){
+            newPaymentObj.amountPaid = params.amount;
+          }
+          return newPaymentObj;
+        })) : '[]';
       } else {
         params.invoiceId= invoice._id;
       }
