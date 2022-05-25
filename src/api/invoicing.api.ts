@@ -57,7 +57,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
         optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
       }
       if(showPaid === false) {
-        optionObj.status = JSON.stringify(["UNPAID", "PARTIALLY PAID"]);
+        optionObj.status = JSON.stringify(["UNPAID", "PARTIALLY_PAID"]);
       }
       if(cancelTokenGetAllInvoicesAPI) {
         cancelTokenGetAllInvoicesAPI.cancel('axios canceled');
