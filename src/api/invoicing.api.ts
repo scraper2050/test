@@ -33,7 +33,7 @@ export const getTodos = async (params = {}) => {
 };
 
 let cancelTokenGetAllInvoicesAPI:any;
-export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, customerId?: string, dueDate?: Date|null, showPaid?: boolean) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesLoading(true));
@@ -49,6 +49,15 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
       if(selectionRange){
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).add(1,'day').format('YYYY-MM-DD');
+      }
+      if(customerId){
+        optionObj.customerId = customerId;
+      }
+      if(dueDate){
+        optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
+      }
+      if(showPaid === false) {
+        optionObj.status = JSON.stringify(["UNPAID", "PARTIALLY PAID"]);
       }
       if(cancelTokenGetAllInvoicesAPI) {
         cancelTokenGetAllInvoicesAPI.cancel('axios canceled');
