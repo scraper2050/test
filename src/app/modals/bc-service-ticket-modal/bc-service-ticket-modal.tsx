@@ -161,7 +161,7 @@ function BCServiceTicketModal({
       dispatch(setModalDataAction({
         'data': {
           'ticket': tempTicket,
-          'jobSiteInfo': {name: newValue.inputValue, locationId: FormikValues.jobLocationId},
+          'jobSiteInfo': {name: newValue.inputValue || newValue, locationId: FormikValues.jobLocationId},
           'modalTitle': `Add Job Address`,
           'removeFooter': false,
         },

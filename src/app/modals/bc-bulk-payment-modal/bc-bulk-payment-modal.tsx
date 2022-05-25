@@ -117,9 +117,8 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
   } = useFormik({
     'initialValues': {
       'customerId': '',
-      'customerName': '',
       'query': '',
-      'dueOnOrBefore': '',
+      'dueDate': null,
       'paymentType': '',
       'paymentDate': new Date(),
       'referenceNumber': '',
@@ -180,25 +179,12 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
 
   const handleCustomerChange = (event: any, setFieldValue: any, newValue: any) => {
     const customerId = newValue ? newValue._id : '';
-    const customerName = newValue?.profile?.displayName ? newValue.profile.displayName : '';
     setFieldValue('customerId', customerId);
-    setFieldValue('customerName', customerName);
     setCustomerValue(newValue);
-    if(customerName) {
-      setKeyword('');
-      setFieldValue('query', '');
-      dispatch(getAllInvoicesAPI(currentPageSize, '', '', customerName));
-      setCurrentPageIndex(0);
-    } else {
-      setKeyword('');
-      setFieldValue('query', '');
-      dispatch(getAllInvoicesAPI(currentPageSize, '', '', ''));
-      setCurrentPageIndex(0);
-    }
   };
 
   const handleDueDateChange = (date: string) => {
-    setFieldValue('dueOnOrBefore', date);
+    setFieldValue('dueDate', date);
   };
 
   const handlePaymentDateChange = (date: string) => {
@@ -207,13 +193,13 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
 
   const handleQueryChange = (event: any) => {
     setFieldValue('query', event.target.value);
-    debouncedFetchFunction(event.target.value);
+    debouncedFetchFunction(event.target.value, FormikValues);
   };
 
   const debouncedFetchFunction = useCallback(
-    debounce(value => {
+    debounce((value, FormikValues) => {
       setKeyword(value);
-      dispatch(getAllInvoicesAPI(currentPageSize, prevCursor, nextCursor, value))
+      dispatch(getAllInvoicesAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
       setCurrentPageIndex(0);
     }, 500),
     []
@@ -269,6 +255,11 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
       dispatch(setCurrentPageSize(currentPageSize));
     }
   }, []);
+  
+  useEffect(() => {
+    dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
+    setCurrentPageIndex(0);
+  }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
   const columns: any = [
     {
@@ -389,6 +380,8 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
         'checked': 0,
       }));
       setLocalInvoiceList([...newInvoiceList]);
+    } else {
+      setLocalInvoiceList([]);
     }
   }, [invoiceList])
 
@@ -429,7 +422,6 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
                     <Typography variant={'caption'} className={'previewCaption'}>Search</Typography>
                     <TextField
                       fullWidth
-                      disabled={!!FormikValues.customerName}
                       variant={'outlined'}
                       name={'query'}
                       onChange={handleQueryChange}
@@ -449,10 +441,10 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
                     <BCDateTimePicker
                       disabled={loading}
                       handleChange={handleDueDateChange}
-                      name={'dueOnOrBefore'}
-                      id={'dueOnOrBefore'}
+                      name={'dueDate'}
+                      id={'dueDate'}
                       placeholder={'Date'}
-                      value={FormikValues.dueOnOrBefore}
+                      value={FormikValues.dueDate}
                       whiteBackground
                     />
                   </div>
@@ -534,7 +526,7 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
                 tableData={localInvoiceList}
                 manualPagination
                 fetchFunction={(num: number, isPrev: boolean, isNext: boolean) =>
-                  dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? FormikValues.customerName || '' : FormikValues.query || keyword))
+                  dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
                 }
                 total={total}
                 currentPageIndex={currentPageIndex}
