@@ -56,7 +56,7 @@ function InvoiceList({ classes }: any) {
 
   const items = [
     {title:'Custom Invoice', id:0},
-    {title:'Payment', id:1},
+    // {title:'Payment', id:1},
     {title:'Bulk Payment', id:2},
   ];
 
