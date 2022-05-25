@@ -23,6 +23,8 @@ import {CSChip} from "../../../../helpers/custom";
 import {updateInvoice} from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
+import { modalTypes } from "../../../../constants";
+import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,7 +60,7 @@ function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceStyles = invoicePageStyles();
   let history = useHistory();
-  let { invoice } = useParams();
+  let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
 
@@ -78,16 +80,45 @@ function ViewInvoice({ classes, theme }: any) {
   }
 
   const goToEdit = () => {
-    history.push({
-      'pathname': `/main/invoicing/edit/${invoice}`,
-      'state': {
-        'customerId': invoiceDetail.customer?._id,
-        'customerName': invoiceDetail.customer?.profile?.displayName,
-        'invoiceId': invoiceDetail?._id,
-        'jobType': invoiceDetail.job?.type?._id,
-        'invoiceDetail': invoiceDetail
-      }
-    });
+    if(invoiceDetail?.paid) {
+      dispatch(
+        setModalDataAction({
+          'data': {
+            'data': {
+              handleOnConfirm: () => {
+                history.push({
+                  'pathname': `/main/invoicing/edit/${invoice}`,
+                  'state': {
+                    'customerId': invoiceDetail.customer?._id,
+                    'customerName': invoiceDetail.customer?.profile?.displayName,
+                    'invoiceId': invoiceDetail?._id,
+                    'jobType': invoiceDetail.job?.type?._id,
+                    'invoiceDetail': invoiceDetail
+                  }
+                });
+              }
+            },
+            'modalTitle': '',
+            'removeFooter': false
+          },
+          type: modalTypes.CONFIRM_EDIT_PAID_INVOICE_MODAL,
+        })
+      );
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      history.push({
+        'pathname': `/main/invoicing/edit/${invoice}`,
+        'state': {
+          'customerId': invoiceDetail.customer?._id,
+          'customerName': invoiceDetail.customer?.profile?.displayName,
+          'invoiceId': invoiceDetail?._id,
+          'jobType': invoiceDetail.job?.type?._id,
+          'invoiceDetail': invoiceDetail
+        }
+      });
+    }
   }
 
   const saveInvoice = () => {

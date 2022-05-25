@@ -28,7 +28,7 @@ interface ApiProps {
   customerId: string,
   invoiceId?:string,
   paymentId?:string,
-  amount: number,
+  amount?: number,
   paidAt: Date,
   referenceNumber?: string,
   paymentType?: string,
@@ -111,11 +111,17 @@ function BcPaymentRecordModal({
         params.paymentId = payment._id;
         params.line = payment?.line?.length ? JSON.stringify(payment.line.map((paymentObj:any) => {
           const newPaymentObj = {...paymentObj};
+          newPaymentObj.invoiceId = newPaymentObj.invoice;
+          delete newPaymentObj._id;
+          delete newPaymentObj.invoice;
           if(paymentObj.invoice === invoice._id){
             newPaymentObj.amountPaid = params.amount;
           }
           return newPaymentObj;
         })) : '[]';
+        if(params.line !== '[]'){
+          delete params.amount;
+        }
       } else {
         params.invoiceId= invoice._id;
       }
