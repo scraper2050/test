@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import debounce from 'lodash.debounce';
@@ -41,9 +41,10 @@ import { error } from "actions/snackbar/snackbar.action";
 
 const StyledGrid = withStyles(() => ({
   item: {
-    '& .tes': {
+    '& .form-filter-input': {
       maxWidth: 200,
-    }
+      margin: 'auto',
+    },
   },
 }))(Grid);
 
@@ -64,6 +65,7 @@ const getFilteredList = (state: any) => {
 
 function BCBulkPaymentModal({ classes }: any): JSX.Element {
   const dispatch = useDispatch();
+  const loadCount = useRef<number>(0);
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [localInvoiceList, setLocalInvoiceList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -123,9 +125,14 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
       'paymentDate': new Date(),
       'referenceNumber': '',
       'showPaid': false,
+      totalAmount: 0,
+      totalAmountToBePaid: 0,
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
+      if(!isValid()){
+        return setSubmitting(false);
+      }
       const line:any = []
       localInvoiceList.forEach(invoice => {
         if(invoice.checked && invoice.amountToBeApplied){
@@ -163,8 +170,9 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
     },
   });
 
+  const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(6) != parseFloat(`${FormikValues.totalAmount}`).toFixed(6)
 
-  const isValidate = () => {
+  const isValid = () => {
     if(!FormikValues.customerId) {
       return false;
     }
@@ -172,6 +180,9 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
       return false
     }
     if(localInvoiceList.filter(invoice => invoice.checked && invoice.amountToBeApplied).length === 0){
+      return false
+    }
+    if(isSumAmountDifferent()){
       return false
     }
     return true;
@@ -257,8 +268,10 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
   }, []);
   
   useEffect(() => {
-    dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
-    setCurrentPageIndex(0);
+    if(loadCount.current > 0){
+      dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
+      setCurrentPageIndex(0);
+    }
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
   const columns: any = [
@@ -385,9 +398,15 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
     }
   }, [invoiceList])
 
-  // useEffect(() => {
-  //   console.log('ini itu localInvoiceList', localInvoiceList)
-  // }, [localInvoiceList])
+  useEffect(() => {
+    // console.log('ini itu localInvoiceList', localInvoiceList)
+    if(localInvoiceList.length){
+      loadCount.current++;
+    }
+    setFieldValue('totalAmount', localInvoiceList.reduce((total, invoice) => {
+      return total + invoice.amountToBeApplied;
+    }, 0))
+  }, [localInvoiceList])
 
   return (
     <DataContainer className={'new-modal-design'}>
@@ -397,113 +416,123 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
         ) : (
           <>
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
-              <Grid container item xs={10}>
-
-                <StyledGrid item xs={4}>
-                  <div className={'tes'} style={{ paddingBottom: 5 }}>
-                    <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
-                    <Autocomplete
-                      disabled={loading}
-                      getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
-                      getOptionDisabled={(option) => !option.isActive}
-                      id={'tags-standard'}
-                      onChange={(ev: any, newValue: any) => handleCustomerChange(ev, setFieldValue, newValue)}
-                      options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
-                      renderInput={params => <TextField
-                        {...params}
-                        InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
-                        variant={'outlined'}
-                      />
+              <StyledGrid item xs={3}>
+                <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
+                  <Autocomplete
+                    disabled={loading}
+                    getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
+                    getOptionDisabled={(option) => !option.isActive}
+                    id={'tags-standard'}
+                    onChange={(ev: any, newValue: any) => handleCustomerChange(ev, setFieldValue, newValue)}
+                    options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
+                    renderInput={params => <TextField
+                      {...params}
+                      InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
+                      variant={'outlined'}
+                    />
+                    }
+                    value={customerValue}
+                  />
+                </div>
+                <div className={'form-filter-input'}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Search</Typography>
+                  <TextField
+                    fullWidth
+                    variant={'outlined'}
+                    name={'query'}
+                    onChange={handleQueryChange}
+                    InputProps={{
+                      style: { background: '#fff' },
+                      startAdornment: <InputAdornment position="start">
+                        <SearchIcon classes={{ root: classes.searchIconColor }} />
+                      </InputAdornment>,
+                    }}
+                    value={FormikValues.query}
+                  />
+                </div>
+              </StyledGrid>
+              <StyledGrid item xs={3}>
+                <div className={'form-filter-input'}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Due on or before</Typography>
+                  <BCDateTimePicker
+                    disabled={loading}
+                    handleChange={handleDueDateChange}
+                    name={'dueDate'}
+                    id={'dueDate'}
+                    placeholder={'Date'}
+                    value={FormikValues.dueDate}
+                    whiteBackground
+                  />
+                </div>
+                <div className={'form-filter-input'}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Total Amount To Be Paid</Typography>
+                  <TextField
+                    disabled={loading}
+                    fullWidth
+                    variant={'outlined'}
+                    type={'number'}
+                    name={'totalAmountToBePaid'}
+                    onFocus={(e) => {
+                      if(e.target.value === '0'){
+                        setFieldValue('totalAmountToBePaid', '')
                       }
-                      value={customerValue}
-                    />
-                  </div>
-                  <div className={'tes'}>
-                    <Typography variant={'caption'} className={'previewCaption'}>Search</Typography>
-                    <TextField
-                      fullWidth
-                      variant={'outlined'}
-                      name={'query'}
-                      onChange={handleQueryChange}
-                      InputProps={{
-                        style: { background: '#fff' },
-                        startAdornment: <InputAdornment position="start">
-                          <SearchIcon classes={{ root: classes.searchIconColor }} />
-                        </InputAdornment>,
-                      }}
-                      value={FormikValues.query}
-                    />
-                  </div>
-                </StyledGrid>
-                <StyledGrid item xs={4}>
-                  <div className={'tes'}>
-                    <Typography variant={'caption'} className={'previewCaption'}>Due on or before</Typography>
-                    <BCDateTimePicker
-                      disabled={loading}
-                      handleChange={handleDueDateChange}
-                      name={'dueDate'}
-                      id={'dueDate'}
-                      placeholder={'Date'}
-                      value={FormikValues.dueDate}
-                      whiteBackground
-                    />
-                  </div>
-                  <div className={'tes'}>
-                    <Typography variant={'caption'} className={'previewCaption'}>Mode of Payment</Typography>
-                    <FormControl variant="outlined" fullWidth>
-                      <Select
-                        name={'paymentType'}
-                        value={FormikValues.paymentType}
-                        onChange={formikChange}
-                        style={{ background: '#fff' }}
-                        disabled={loading}
-                      >
-                        {paymentTypeReference.map(({ label, _id }: { label: string; _id: number }) => {
-                          return <MenuItem key={_id} value={_id}>{label}</MenuItem>
-                        })}
-                      </Select>
-                    </FormControl>
-                  </div>
-                </StyledGrid>
-                <StyledGrid item xs={4}>
-                  <div className={'tes'}>
-                    <Typography variant={'caption'} className={'previewCaption'}>Payment date</Typography>
-                    <BCDateTimePicker
-                      disabled={loading}
-                      handleChange={handlePaymentDateChange}
-                      name={'paymentDate'}
-                      id={'paymentDate'}
-                      placeholder={'Date'}
-                      value={FormikValues.paymentDate}
-                      whiteBackground
-                    />
-                  </div>
-                  <div className={'tes'}>
-                    <Typography variant={'caption'} className={'previewCaption'}>Reference No.</Typography>
-                    <TextField
-                      disabled={loading}
-                      fullWidth
-                      variant={'outlined'}
-                      name={'referenceNumber'}
+                    }}
+                    onBlur={(e) => {
+                      const parsedValue = parseFloat(e.target.value);
+                      if (!isNaN(parsedValue)) {
+                        setFieldValue('totalAmountToBePaid', parsedValue);
+                      } else {
+                        setFieldValue('totalAmountToBePaid', 0);
+                      }
+                    }}
+                    onChange={formikChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AttachMoney style={{color: '#BDBDBD'}}/>
+                        </InputAdornment>
+                      ),
+                      style: { background: '#fff' },
+                    }}
+                    value={FormikValues.totalAmountToBePaid}
+                    error={isSumAmountDifferent()}
+                    helperText={isSumAmountDifferent() && 'The total amount is not the same as the sum of all invoice payments'}
+                  />
+                </div>
+              </StyledGrid>
+              <StyledGrid item xs={3}>
+                <div className={'form-filter-input'}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Payment date</Typography>
+                  <BCDateTimePicker
+                    disabled={loading}
+                    handleChange={handlePaymentDateChange}
+                    name={'paymentDate'}
+                    id={'paymentDate'}
+                    placeholder={'Date'}
+                    value={FormikValues.paymentDate}
+                    whiteBackground
+                  />
+                </div>
+                <div className={'form-filter-input'}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Mode of Payment</Typography>
+                  <FormControl variant="outlined" fullWidth>
+                    <Select
+                      name={'paymentType'}
+                      value={FormikValues.paymentType}
                       onChange={formikChange}
-                      InputProps={{
-                        style: { background: '#fff' },
-                      }}
-                      value={FormikValues.referenceNumber}
-                    />
-                  </div>
-                </StyledGrid>
-              </Grid>
-              <Grid container item xs={2}>
-                <Grid
-                  item
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-end',
-                    marginTop: 20
-                  }}
-                >
+                      style={{ background: '#fff' }}
+                      disabled={loading}
+                    >
+                      {paymentTypeReference.map(({ label, _id }: { label: string; _id: number }) => {
+                        return <MenuItem key={_id} value={_id}>{label}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+                </div>
+              </StyledGrid>
+              <StyledGrid item xs={3}>
+                <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -514,10 +543,26 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
                         color="primary"
                       />
                     }
+                    style={{marginTop: 21}}
                     label="Show Paid"
                   />
-                </Grid>
-              </Grid>
+                  
+                </div>
+                <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
+                  <Typography variant={'caption'} className={'previewCaption'}>Reference No.</Typography>
+                  <TextField
+                    disabled={loading}
+                    fullWidth
+                    variant={'outlined'}
+                    name={'referenceNumber'}
+                    onChange={formikChange}
+                    InputProps={{
+                      style: { background: '#fff' },
+                    }}
+                    value={FormikValues.referenceNumber}
+                  />
+                </div>
+              </StyledGrid>
             </Grid>
             <DialogContent>
               <BCTableContainer
@@ -540,6 +585,9 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
         )}
         <div className={'modalDataContainer'}>
           <DialogActions>
+            {/* <Typography variant={'h5'}>
+              {!!FormikValues.totalAmount && `Total Amount: $${FormikValues.totalAmount}`}
+            </Typography> */}
             <Button
               disabled={isSubmitting}
               disableElevation={true}
@@ -552,7 +600,7 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
               <Button
                 color={'primary'}
                 disableElevation={true}
-                disabled={isSubmitting || loading || !isValidate()}
+                disabled={isSubmitting || loading || !isValid()}
                 type={'submit'}
                 variant={'contained'}
               >
