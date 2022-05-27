@@ -90,7 +90,7 @@ function BcPaymentHistoryModal({
   }
 
   const editPayment = (payment: any) => {
-    dispatch(setModalDataAction({
+    const modalDataForEditPayment = {
       'data': {
         invoice,
         payment,
@@ -99,6 +99,12 @@ function BcPaymentHistoryModal({
         removeFooter: false,
       },
       'type': modalTypes.PAYMENT_RECORD_MODAL
+    };
+    dispatch(setModalDataAction({
+      'data': {
+        modalDataForEditPayment,
+      },
+      'type': modalTypes.CONFIRM_EDIT_SINGLE_PAYMENT_MODAL
     }));
   }
 
