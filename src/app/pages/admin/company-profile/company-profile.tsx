@@ -7,6 +7,8 @@ import { CompanyProfile, CompanyProfileStateType } from 'actions/user/user.types
 import { phoneRegExp, digitsOnly } from 'helpers/format';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
 import * as Yup from 'yup';
+import BCCompanyLocation
+  from "../../../components/bc-company-profile/bc-company-location";
 
 const companyProfileSchema = Yup.object().shape({
   companyName: Yup.string().required('Required'),
@@ -104,79 +106,17 @@ function CompanyProfilePage() {
       <PageContainer>
         {
           profileState.isLoading ? (
-            <BCCircularLoader />
-          ) : (
-              <BCAdminProfile
-                title="Edit Company Profile"
-                userProfile={false}
-                avatar={{
-                  isEmpty: 'NO',
-                  url: imageUrl === "" ? initialValues.logoUrl : imageUrl,
-                  imageUrl: imageUrl,
-                }}
-                apply={(value: any) => handleUpdateCompanyProfile(value)}
-                inputError={profileState.inputError}
-                initialValues={initialValues}
-                schema={companyProfileSchema}
-                fields={[
-                  {
-                    left: {
-                      id: 'companyName',
-                      label: 'Company Name:',
-                      placehold: 'Input Company Name',
-                      value: profileState.companyName,
-                    },
-                    right: {
-                      id: 'companyEmail',
-                      label: 'Company Email:',
-                      placehold: 'Input Company Email',
-                      value: profileState.companyEmail,
-                    },
-                  },
-                  {
-                    left: {
-                      id: 'phone',
-                      label: 'Phone:',
-                      placehold: 'Input Phone Number',
-                      value: profileState.phone,
-                    },
-                    right: {
-                      id: 'fax',
-                      label: 'Fax:',
-                      placehold: 'Input Fax',
-                      value: profileState.fax,
-                    }
-                  },
-                  {
-                    left: {
-                      id: 'street',
-                      label: 'Street:',
-                      placehold: 'Input Street',
-                      value: profileState.street,
-                    },
-                    right: {
-                      id: 'city',
-                      label: 'City:',
-                      placehold: 'Input City',
-                      value: profileState.city,
-                    }
-                  },
-                  {
-                    left: {
-                      id: 'state',
-                      label: 'State:',
-                      placehold: 'Input State',
-                      value: profileState.state,
-                    },
-                    right: {
-                      id: 'zipCode',
-                      label: 'Zip Code:',
-                      placehold: 'Input Zip Code',
-                      value: profileState.zipCode,
-                    }
-                  },
-                ]} />
-            )
+              <BCCircularLoader/>
+            ) :
+            <BCCompanyLocation
+              avatar={{
+                isEmpty: 'NO',
+                url: imageUrl === "" ? initialValues.logoUrl : imageUrl,
+                imageUrl: imageUrl,
+              }}
+              companyName={profileState.companyName}
+              companyID={'ffffffffffffff'}
+            />
         }
       </PageContainer>
     </MainContainer>
