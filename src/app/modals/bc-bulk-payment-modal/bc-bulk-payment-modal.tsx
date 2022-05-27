@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import debounce from 'lodash.debounce';
@@ -63,9 +63,8 @@ const getFilteredList = (state: any) => {
   return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
 };
 
-function BCBulkPaymentModal({ classes }: any): JSX.Element {
+function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JSX.Element {
   const dispatch = useDispatch();
-  const loadCount = useRef<number>(0);
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [localInvoiceList, setLocalInvoiceList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -157,6 +156,7 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
           if (response.status === 1) {
             setIsSuccess(true);
             setSubmitting(false);
+            setModalOptions({...modalOptions, maxWidth: 'sm'})
           } else {
             console.log(response.message);
             dispatch(error(response.message))
@@ -170,7 +170,9 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
     },
   });
 
-  const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(6) != parseFloat(`${FormikValues.totalAmount}`).toFixed(6)
+  const isCustomerErrorDisplayed = !FormikValues.customerId && (!!FormikValues.totalAmountToBePaid || !!FormikValues.totalAmount);
+
+  const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(6) != parseFloat(`${FormikValues.totalAmount}`).toFixed(6);
 
   const isValid = () => {
     if(!FormikValues.customerId) {
@@ -257,21 +259,10 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
       }));
     }, 200);
   };
-
-  useEffect(() => {
-    dispatch(getAllInvoicesAPI());
-    return () => {
-      dispatch(setKeyword(''));
-      dispatch(setCurrentPageIndex(currentPageIndex));
-      dispatch(setCurrentPageSize(currentPageSize));
-    }
-  }, []);
   
   useEffect(() => {
-    if(loadCount.current > 0){
-      dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
-      setCurrentPageIndex(0);
-    }
+    dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
+    setCurrentPageIndex(0);
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
   const columns: any = [
@@ -400,9 +391,6 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
 
   useEffect(() => {
     // console.log('ini itu localInvoiceList', localInvoiceList)
-    if(localInvoiceList.length){
-      loadCount.current++;
-    }
     setFieldValue('totalAmount', localInvoiceList.reduce((total, invoice) => {
       return total + invoice.amountToBeApplied;
     }, 0))
@@ -430,6 +418,8 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
                       {...params}
                       InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
                       variant={'outlined'}
+                      error={isCustomerErrorDisplayed}
+                      helperText={isCustomerErrorDisplayed && 'Please Select A Customer'}
                     />
                     }
                     value={customerValue}
@@ -445,7 +435,7 @@ function BCBulkPaymentModal({ classes }: any): JSX.Element {
                     InputProps={{
                       style: { background: '#fff' },
                       startAdornment: <InputAdornment position="start">
-                        <SearchIcon classes={{ root: classes.searchIconColor }} />
+                        <SearchIcon classes={{ root: classes.searchIcon }} />
                       </InputAdornment>,
                     }}
                     value={FormikValues.query}
