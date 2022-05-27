@@ -75,6 +75,7 @@ export const modalTypes = {
   'DELETE_BILLING_MODAL': 'delete-billing-modal',
   'MAKE_ADMIN_EMPLOYEE_MODAL': 'make-admin-employee-modal',
   'CONFIRM_EDIT_PAID_INVOICE_MODAL': 'confirm-edit-paid-invoice-modal',
+  'CONFIRM_EDIT_SINGLE_PAYMENT_MODAL': 'confirm-edit-single-payment-modal',
   'SAVE_INVOICE_AND_EMAIL_JOB_REPORT_MODAL': 'save-invoice-and-email-job-report-modal',
   'EMAIL_JOB_REPORT_MODAL': 'email-job-report-modal',
   'EMAIL_JOB_REPORT_MODAL_OLD': 'email-job-report-modal-old',
