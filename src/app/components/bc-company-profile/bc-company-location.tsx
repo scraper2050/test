@@ -60,7 +60,21 @@ function BCCompanyLocation(props: Props) {
     if (item.selectable) {
       setSelectedItem(item);
     } else {
-
+      if (item.id === '0') {
+        dispatch(
+          setModalDataAction({
+            data: {
+              companyLocation: null,
+              //modalTitle: 'Add New Location',
+              removeFooter: false,
+            },
+            type: modalTypes.COMPANY_LOCATION_MODAL,
+          })
+        );
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      }
     }
   }
 
