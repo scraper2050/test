@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./bc-edit-single-payment-confirm-modal.style";
+import styles from "./bc-edit-payment-confirm-modal.style";
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from "react-redux";
 import { setModalDataAction, closeModalAction } from "actions/bc-modal/bc-modal.action";
@@ -16,18 +16,29 @@ const useStyles = makeStyles({
   }
 })
 
-function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
+function BCEditPaymentConfirmModal({classes, data}: Props):JSX.Element {
   const dispatch = useDispatch();
+  const isBulk = data?.data?.isBulk;
   
   const closeModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        invoiceID: data.data.invoice._id,
-        modalTitle: 'Payment History',
-        removeFooter: false,
-      },
-      'type': modalTypes.PAYMENT_HISTORY_MODAL
-    }));
+    if(data?.data?.fromHistory){
+      dispatch(setModalDataAction({
+        'data': {
+          invoiceID: data.data.invoice._id,
+          modalTitle: 'Payment History',
+          removeFooter: false,
+        },
+        'type': modalTypes.PAYMENT_HISTORY_MODAL
+      }));
+    } else {
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    }
   }
   
   const onConfirm = () => {
@@ -37,7 +48,7 @@ function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
   return (
     <DialogContent classes={{ root: classes.dialogContent }}>
       <Typography className={classes.description}>
-        Are you sure you want to edit payment?
+        Are you sure you want to edit this {isBulk ? 'bulk ' : ''}payment?
       </Typography>
       <Box className={classes.buttons}>
         <Fab
@@ -66,4 +77,4 @@ function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
   )
 }
 
-export default withStyles(styles, { withTheme: true })(BCEditInvoiceConfirmModal);
+export default withStyles(styles, { withTheme: true })(BCEditPaymentConfirmModal);
