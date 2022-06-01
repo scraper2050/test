@@ -88,7 +88,7 @@ function BcPaymentHistoryModal({
         invoice,
         payment,
         fromHistory: true,
-        modalTitle: 'Record a Payment',
+        modalTitle: 'Edit Payment',
         removeFooter: false,
       },
       'type': modalTypes.PAYMENT_RECORD_MODAL

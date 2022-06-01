@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
-import debounce from 'lodash.debounce';
 import AttachMoney from '@material-ui/icons/AttachMoney';
 import {
   Button,
@@ -18,7 +17,6 @@ import {
   Checkbox,
   withStyles,
 } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import styles from './bc-bulk-payment-modal.styles';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
@@ -26,17 +24,9 @@ import BCTableContainer from 'app/components/bc-table-container/bc-table-contain
 import BCSent from 'app/components/bc-sent';
 import { createStyles, makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import { CSButtonSmall } from "helpers/custom";
-import TableFilterService from 'utils/table-filter';
 import { formatShortDateNoDay } from 'helpers/format';
-import { getAllInvoicesAPI } from 'api/invoicing.api';
-import { recordPayment } from 'api/payment.api';
-import {
-  setCurrentPageIndex,
-  setCurrentPageSize,
-  setKeyword,
-} from 'actions/invoicing/invoicing.action';
+import { updatePayment } from 'api/payment.api';
 import { error } from "actions/snackbar/snackbar.action";
 
 const StyledGrid = withStyles(() => ({
@@ -48,7 +38,7 @@ const StyledGrid = withStyles(() => ({
   },
 }))(Grid);
 
-const useDebounceInputStyles = makeStyles(() =>
+const useInputStyles = makeStyles(() =>
   createStyles({
     textField: {
       '& .MuiOutlinedInput-input': {
@@ -58,31 +48,13 @@ const useDebounceInputStyles = makeStyles(() =>
   })
 );
 
-const getFilteredList = (state: any) => {
-  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
-  return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
-};
-
-function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JSX.Element {
+function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }: any): JSX.Element {
   const dispatch = useDispatch();
-  const [customerValue, setCustomerValue] = useState<any>(null);
-  const [localInvoiceList, setLocalInvoiceList] = useState<any[]>([]);
+  const [localPaymentList, setLocalPaymentList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
-  const customers = useSelector(({ customers }: any) => customers.data);
-  const debounceInputStyles = useDebounceInputStyles();
+  const inputStyles = useInputStyles();
 
-  const invoiceList = useSelector(getFilteredList);
-  const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
-    ({ invoiceList }: any) => ({
-      loading: invoiceList.loading,
-      prevCursor: invoiceList.prevCursor,
-      nextCursor: invoiceList.nextCursor,
-      total: invoiceList.total,
-      currentPageIndex: invoiceList.currentPageIndex,
-      currentPageSize: invoiceList.currentPageSize,
-      keyword: invoiceList.keyword,
-    })
-  );
+  const paymentList = payments.line;
 
   const paymentTypeReference = [
     {
@@ -109,6 +81,10 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
 
   const bgColors: { [index: string]: string } = { PAID: '#81c784', UNPAID: '#F50057', PARTIALLY_PAID: '#FA8029' };
 
+  const initialTotalAmount = paymentList.reduce((total:number, payment:any) => {
+    return total + payment.amountPaid;
+  }, 0)
+
   const {
     'values': FormikValues,
     'handleChange': formikChange,
@@ -117,15 +93,14 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     isSubmitting,
   } = useFormik({
     'initialValues': {
-      'customerId': '',
-      'query': '',
-      'dueDate': null,
-      'paymentType': '',
-      'paymentDate': new Date(),
-      'referenceNumber': '',
+      'customerId': payments.customer._id,
+      'paymentId': payments._id,
+      'paymentType': paymentTypeReference.filter(type => type.label == payments.paymentType)[0]._id,
+      'paymentDate': new Date(payments.paidAt),
+      'referenceNumber': payments.referenceNumber,
       'showPaid': false,
-      totalAmount: 0,
-      totalAmountToBePaid: 0,
+      totalAmount: initialTotalAmount,
+      totalAmountToBePaid: initialTotalAmount,
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
@@ -133,11 +108,11 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
         return setSubmitting(false);
       }
       const line:any = []
-      localInvoiceList.forEach(invoice => {
-        if(invoice.checked && invoice.amountToBeApplied){
+      localPaymentList.forEach(payment => {
+        if(payment.checked && payment.amountToBeApplied){
           const lineObject:any = {
-            invoiceId: invoice._id,
-            amountPaid: invoice.amountToBeApplied,
+            invoiceId: payment.invoice._id,
+            amountPaid: payment.amountToBeApplied,
           };
           line.push(lineObject)
         }
@@ -147,11 +122,12 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
         customerId: values.customerId,
         paidAt: values.paymentDate,
         referenceNumber: values.referenceNumber,
+        paymentId: values.paymentId
       };
       if(values.paymentType !== ''){
         paramObj.paymentType = paymentTypeReference.filter(type => type._id == values.paymentType)[0].label
       }
-      dispatch(recordPayment(paramObj))
+      dispatch(updatePayment(paramObj))
         .then((response: any) => {
           if (response.status === 1) {
             setIsSuccess(true);
@@ -170,18 +146,16 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     },
   });
 
-  const isCustomerErrorDisplayed = !FormikValues.customerId && (!!FormikValues.totalAmountToBePaid || !!FormikValues.totalAmount);
-
   const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(6) != parseFloat(`${FormikValues.totalAmount}`).toFixed(6);
 
   const isValid = () => {
     if(!FormikValues.customerId) {
       return false;
     }
-    if(localInvoiceList.filter(invoice => invoice.checked && !invoice.amountToBeApplied).length){
-      return false
-    }
-    if(localInvoiceList.filter(invoice => invoice.checked && invoice.amountToBeApplied).length === 0){
+    // if(localPaymentList.filter(payment => payment.checked && !payment.amountToBeApplied).length){
+    //   return false
+    // }
+    if(localPaymentList.filter(payment => payment.checked && payment.amountToBeApplied).length === 0){
       return false
     }
     if(isSumAmountDifferent()){
@@ -190,47 +164,23 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     return true;
   };
 
-  const handleCustomerChange = (event: any, setFieldValue: any, newValue: any) => {
-    const customerId = newValue ? newValue._id : '';
-    setFieldValue('customerId', customerId);
-    setCustomerValue(newValue);
-  };
-
-  const handleDueDateChange = (date: string) => {
-    setFieldValue('dueDate', date);
-  };
-
   const handlePaymentDateChange = (date: string) => {
     setFieldValue('paymentDate', date);
   };
 
-  const handleQueryChange = (event: any) => {
-    setFieldValue('query', event.target.value);
-    debouncedFetchFunction(event.target.value, FormikValues);
-  };
-
-  const debouncedFetchFunction = useCallback(
-    debounce((value, FormikValues) => {
-      setKeyword(value);
-      dispatch(getAllInvoicesAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
-      setCurrentPageIndex(0);
-    }, 500),
-    []
-  );
-
   const handleAmountToBeAppliedChange = (id: string, value: string) => {
-    let newInvoiceList: any = [...localInvoiceList];
-    const index = newInvoiceList.findIndex((invoice: any) => invoice._id === id);
-    newInvoiceList[index].amountToBeApplied = parseFloat(value);
+    let newPaymentList: any = [...localPaymentList];
+    const index = newPaymentList.findIndex((payment: any) => payment._id === id);
+    newPaymentList[index].amountToBeApplied = parseFloat(value);
     const parsedValue = parseFloat(value);
     if (!isNaN(parsedValue)) {
-      newInvoiceList[index].amountToBeApplied = parsedValue;
+      newPaymentList[index].amountToBeApplied = parsedValue;
     } else {
-      newInvoiceList[index].amountToBeApplied = 0;
+      newPaymentList[index].amountToBeApplied = 0;
     }
-    newInvoiceList = newInvoiceList.map((invoice:any) => ({...invoice, checked: invoice.amountToBeApplied ? 1 : 0}));
-    newInvoiceList.sort((invoiceA: any, invoiceB: any) => invoiceB.checked - invoiceA.checked);
-    setLocalInvoiceList(newInvoiceList);
+    // newPaymentList = newPaymentList.map((payment:any) => ({...payment, checked: payment.amountToBeApplied ? 1 : 0}));
+    // newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked);
+    setLocalPaymentList(newPaymentList);
   };
 
   const handleOnFocus = (setCellValue: (text: string) => void, value: string) => {
@@ -239,16 +189,16 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     }
   };
 
-  const handleCheckedChange = (id: string, checkedValue: boolean) => {
-    const newInvoiceList: any = [...localInvoiceList];
-    const index = newInvoiceList.findIndex((invoice: any) => invoice._id === id);
-    newInvoiceList[index].checked = checkedValue ? 1 : 0;
-    if(!checkedValue){
-      newInvoiceList[index].amountToBeApplied = 0;
-    }
-    newInvoiceList.sort((invoiceA: any, invoiceB: any) => invoiceB.checked - invoiceA.checked)
-    setLocalInvoiceList(newInvoiceList);
-  }
+  // const handleCheckedChange = (id: string, checkedValue: boolean) => {
+  //   const newPaymentList: any = [...localPaymentList];
+  //   const index = newPaymentList.findIndex((payment: any) => payment._id === id);
+  //   newPaymentList[index].checked = checkedValue ? 1 : 0;
+  //   if(!checkedValue){
+  //     newPaymentList[index].amountToBeApplied = 0;
+  //   }
+  //   newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked)
+  //   setLocalPaymentList(newPaymentList);
+  // }
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -259,30 +209,25 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       }));
     }, 200);
   };
-  
-  useEffect(() => {
-    dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
-    setCurrentPageIndex(0);
-  }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
   const columns: any = [
     {
       Cell({ row }: any) {
         return <div>
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Checkbox
                 disabled={row.original.status === "PAID"}
                 checked={!!row.original.checked}
-                onChange={(event) => handleCheckedChange(row.original._id, event.target.checked)}
+                // onChange={(event) => handleCheckedChange(row.original._id, event.target.checked)}
                 name="checkedB"
                 color="primary"
               />
             }
             label=""
-          />
-          {row.original.dueDate
-            ? formatShortDateNoDay(row.original.dueDate)
+          /> */}
+          {row.original.invoice?.dueDate
+            ? formatShortDateNoDay(row.original.invoice.dueDate)
             : 'N/A'}
         </div>
       },
@@ -292,19 +237,21 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     },
     {
       'Header': 'Invoice ID',
-      'accessor': 'invoiceId',
+      'accessor': 'invoice.invoiceId',
       'className': 'font-bold',
     },
     {
+      Cell() {
+        return payments.customer.profile.displayName;
+      },
       'Header': 'Customer',
-      'accessor': 'customer.profile.displayName',
       'className': 'font-bold',
     },
     {
       Cell({ row }: any) {
         return <div>
           <span>
-            {row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+            {row.original.invoice?.customerPO || '-'}
           </span>
         </div>;
       },
@@ -314,7 +261,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       Cell({ row }: any) {
         return <div>
           <span>
-            {`$${row.original.balanceDue}` || 0}
+            {`$${row.original.invoice?.balanceDue}` || 0}
           </span>
         </div>;
       },
@@ -323,7 +270,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     },
     {
       Cell({ row }: any) {
-        const { status = '' } = row.original;
+        const { status = '' } = row.original.invoice;
         const textStatus = status.split('_').join(' ').toLowerCase();
         return (
           <div>
@@ -337,11 +284,21 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
               <span style={{ textTransform: 'capitalize' }}>{textStatus}</span>
             </CSButtonSmall>
           </div>
-
         )
       },
       'Header': 'Payment Status',
       'accessor': 'paid',
+    },
+    {
+      Cell({ row }: any) {
+        return <div>
+          <span>
+            {`$${row.original.amountPaid}` || 0}
+          </span>
+        </div>;
+      },
+      'Header': 'Current Amount',
+      'width': 20
     },
     {
       Cell({ row }: any) {
@@ -361,7 +318,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
               style: { background: '#fff' },
             }}
             disabled={row.original.status === "PAID"}
-            classes={{ root: debounceInputStyles.textField }}
+            classes={{ root: inputStyles.textField }}
             onFocus={(event: any)=> handleOnFocus(setCellValue, event.target.value)}
             onBlur={(event: any) => handleAmountToBeAppliedChange(row.original._id, event.target.value)}
             onChange={(event: any) => setCellValue(event.target.value)}
@@ -371,94 +328,63 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
           />
         )
       },
-      'Header': 'Amount to be Applied',
+      'Header': 'New Amount',
       'accessor': 'amountToBeApplied'
     },
   ];
 
   useEffect(() => {
-    if (invoiceList.length > 0) {
-      const newInvoiceList = invoiceList.map((item: any) => ({
+    if (paymentList.length > 0) {
+      const newPaymentList = paymentList.map((item: any) => ({
         ...item,
-        'amountToBeApplied': 0,
-        'checked': 0,
+        'amountToBeApplied': item.amountPaid,
+        'checked': 1,
       }));
-      setLocalInvoiceList([...newInvoiceList]);
+      setLocalPaymentList([...newPaymentList]);
     } else {
-      setLocalInvoiceList([]);
+      setLocalPaymentList([]);
     }
-  }, [invoiceList])
+  }, [paymentList])
 
   useEffect(() => {
-    // console.log('ini itu localInvoiceList', localInvoiceList)
-    setFieldValue('totalAmount', localInvoiceList.reduce((total, invoice) => {
-      return total + invoice.amountToBeApplied;
+    // console.log('ini itu localPaymentList', localPaymentList)
+    setFieldValue('totalAmount', localPaymentList.reduce((total, payment) => {
+      return total + payment.amountToBeApplied;
     }, 0))
-  }, [localInvoiceList])
+  }, [localPaymentList])
 
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         {isSuccess ? (
-          <BCSent title={'The payment was recorded.'}/>
+          <BCSent title={'The payment was successfully edited.'}/>
         ) : (
           <>
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
               <StyledGrid item xs={3}>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
-                  <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
-                  <Autocomplete
-                    disabled={loading}
-                    getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
-                    getOptionDisabled={(option) => !option.isActive}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleCustomerChange(ev, setFieldValue, newValue)}
-                    options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
-                    renderInput={params => <TextField
-                      {...params}
-                      InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
-                      variant={'outlined'}
-                      error={isCustomerErrorDisplayed}
-                      helperText={isCustomerErrorDisplayed && 'Please Select A Customer'}
-                    />
-                    }
-                    value={customerValue}
-                  />
+                  <Typography variant={'caption'} className={classes.previewCaption}>CUSTOMER</Typography>
+                  <Typography variant={'h6'} className={classes.previewText}>{payments.customer.profile.displayName}</Typography>
                 </div>
                 <div className={'form-filter-input'}>
-                  <Typography variant={'caption'} className={'previewCaption'}>Search</Typography>
-                  <TextField
-                    fullWidth
-                    variant={'outlined'}
-                    name={'query'}
-                    onChange={handleQueryChange}
-                    InputProps={{
-                      style: { background: '#fff' },
-                      startAdornment: <InputAdornment position="start">
-                        <SearchIcon classes={{ root: classes.searchIcon }} />
-                      </InputAdornment>,
-                    }}
-                    value={FormikValues.query}
+                  <Typography variant={'caption'} className={'previewCaption'}>Payment date</Typography>
+                  <BCDateTimePicker
+                    handleChange={handlePaymentDateChange}
+                    name={'paymentDate'}
+                    id={'paymentDate'}
+                    placeholder={'Date'}
+                    value={FormikValues.paymentDate}
+                    whiteBackground
                   />
                 </div>
               </StyledGrid>
               <StyledGrid item xs={3}>
-                <div className={'form-filter-input'}>
-                  <Typography variant={'caption'} className={'previewCaption'}>Due on or before</Typography>
-                  <BCDateTimePicker
-                    disabled={loading}
-                    handleChange={handleDueDateChange}
-                    name={'dueDate'}
-                    id={'dueDate'}
-                    placeholder={'Date'}
-                    value={FormikValues.dueDate}
-                    whiteBackground
-                  />
+                <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
+                  <div style={{marginTop: 21, height: 32}} />
                 </div>
                 <div className={'form-filter-input'}>
                   <Typography variant={'caption'} className={'previewCaption'}>Total Amount To Be Paid</Typography>
                   <TextField
-                    disabled={loading}
                     fullWidth
                     variant={'outlined'}
                     type={'number'}
@@ -492,17 +418,8 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                 </div>
               </StyledGrid>
               <StyledGrid item xs={3}>
-                <div className={'form-filter-input'}>
-                  <Typography variant={'caption'} className={'previewCaption'}>Payment date</Typography>
-                  <BCDateTimePicker
-                    disabled={loading}
-                    handleChange={handlePaymentDateChange}
-                    name={'paymentDate'}
-                    id={'paymentDate'}
-                    placeholder={'Date'}
-                    value={FormikValues.paymentDate}
-                    whiteBackground
-                  />
+                <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
+                  <div style={{marginTop: 21, height: 32}} />
                 </div>
                 <div className={'form-filter-input'}>
                   <Typography variant={'caption'} className={'previewCaption'}>Mode of Payment</Typography>
@@ -512,7 +429,6 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                       value={FormikValues.paymentType}
                       onChange={formikChange}
                       style={{ background: '#fff' }}
-                      disabled={loading}
                     >
                       {paymentTypeReference.map(({ label, _id }: { label: string; _id: number }) => {
                         return <MenuItem key={_id} value={_id}>{label}</MenuItem>
@@ -523,25 +439,11 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
               </StyledGrid>
               <StyledGrid item xs={3}>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        disabled={loading}
-                        checked={FormikValues.showPaid}
-                        onChange={formikChange}
-                        name="showPaid"
-                        color="primary"
-                      />
-                    }
-                    style={{marginTop: 21}}
-                    label="Show Paid"
-                  />
-                  
+                  <div style={{marginTop: 21, height: 32}} />
                 </div>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
                   <Typography variant={'caption'} className={'previewCaption'}>Reference No.</Typography>
                   <TextField
-                    disabled={loading}
                     fullWidth
                     variant={'outlined'}
                     name={'referenceNumber'}
@@ -557,27 +459,13 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
             <DialogContent>
               <BCTableContainer
                 columns={columns}
-                isLoading={loading}
-                tableData={localInvoiceList}
-                manualPagination
-                fetchFunction={(num: number, isPrev: boolean, isNext: boolean) =>
-                  dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
-                }
-                total={total}
-                currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
-                currentPageSize={currentPageSize}
-                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-                setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
+                tableData={localPaymentList}
               />
             </DialogContent>
           </>
         )}
         <div className={'modalDataContainer'}>
           <DialogActions>
-            {/* <Typography variant={'h5'}>
-              {!!FormikValues.totalAmount && `Total Amount: $${FormikValues.totalAmount}`}
-            </Typography> */}
             <Button
               disabled={isSubmitting}
               disableElevation={true}
@@ -590,7 +478,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
               <Button
                 color={'primary'}
                 disableElevation={true}
-                disabled={isSubmitting || loading || !isValid()}
+                disabled={isSubmitting || !isValid()}
                 type={'submit'}
                 variant={'contained'}
               >

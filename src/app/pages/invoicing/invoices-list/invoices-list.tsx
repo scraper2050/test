@@ -1,6 +1,7 @@
 import BCTabs from '../../../components/bc-tab/bc-tab';
 import InvoicingListListing from './invoices-list-listing/invoices-list-listing';
 import InvoicingDraftListing from './invoices-list-listing/invoices-draft-listing';
+import InvoicingPaymentListing from './invoices-list-listing/payments-listing';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './invoices-list.styles';
 import { useHistory } from 'react-router-dom';
@@ -72,7 +73,7 @@ function InvoiceList({ classes }: any) {
             'removeFooter': false,
             'className': 'serviceTicketTitle',
           },
-          'type': modalTypes.PAYMENT_BULK_MODAL
+          'type': modalTypes.BULK_PAYMENT_MODAL
         }));
         setTimeout(() => {
           dispatch(openModalAction());
@@ -91,7 +92,7 @@ function InvoiceList({ classes }: any) {
             curTab={curTab}
             indicatorColor={'primary'}
             onChangeTab={handleTabChange}
-            chip={true}
+            // chip={true}
             tabsData={[
               {
                 'label': 'Invoices',
@@ -102,7 +103,11 @@ function InvoiceList({ classes }: any) {
                 'value': 1,
                 'chip': true,
                 'chipValue': totalDraft
-              }
+              },
+              {
+                'label': 'Payments',
+                'value': 2,
+              },
             ]}
           />
           <div className={classes.addButtonArea}>
@@ -127,6 +132,7 @@ function InvoiceList({ classes }: any) {
             index={curTab}>
             <InvoicingListListing hidden={curTab !== 0} id={"0"} />
             <InvoicingDraftListing hidden={curTab !== 1} id={"1"} />
+            <InvoicingPaymentListing hidden={curTab !== 2} id={"2"} />
           </SwipeableViews>
         </div>
       </div>
