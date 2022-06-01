@@ -1,7 +1,12 @@
-import { updateCompanyProfile, getCompanyProfile } from 'api/user.api';
+import {
+  updateCompanyProfile,
+  getCompanyProfile,
+  getCompanyLocations, createCompanyLocation, updateCompanyLocation
+} from 'api/user.api';
 import { CompanyProfile, CompanyProfileRes, CompanyProfileActonType } from '../../actions/user/user.types'
 import Geocode from "react-geocode";
 import Config from "../../config";
+import {error, success} from "../snackbar/snackbar.action";
 
 export const updateCompanyProfileAction = (formData: CompanyProfile) => {
   return async (dispatch: any) => {
@@ -39,5 +44,42 @@ export const getCompanyProfileAction = (companyId: string) => {
       dispatch({ type: CompanyProfileActonType.LOADING, payload: false });
       dispatch({ type: CompanyProfileActonType.FETCH_SUCCESS, payload: response.company });
     }
+  }
+}
+
+export const getCompanyLocationsAction = () => {
+  return async (dispatch: any) => {
+    const {status, message, companyLocations} = await getCompanyLocations();
+    if (status === 1) {
+      dispatch({type: CompanyProfileActonType.SET_LOCATIONS, payload: companyLocations});
+    } else {
+      dispatch(error(message));
+    }
+  }
+}
+
+export const AddCompanyLocationAction = (data: any, callback:(status: number) => void) => {
+  return async (dispatch: any) => {
+    const {status, message, companyLocation} = await createCompanyLocation(data);
+    if (status === 1) {
+      dispatch({type: CompanyProfileActonType.ADD_LOCATION, payload: companyLocation});
+      dispatch(success('Location added successfully'));
+    } else {
+      dispatch(error(message));
+    }
+    callback(status);
+  }
+}
+
+export const UpdateCompanyLocationAction = (data: any, callback:(status: number) => void) => {
+  return async (dispatch: any) => {
+    const {status, message, companyLocation} = await updateCompanyLocation(data);
+    if (status === 1) {
+      dispatch({type: CompanyProfileActonType.UPDATE_LOCATION, payload: companyLocation});
+      dispatch(success('Location updated successfully'));
+    } else {
+      dispatch(error(message));
+    }
+    callback(status);
   }
 }

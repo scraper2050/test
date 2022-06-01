@@ -61,6 +61,7 @@ import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
 import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
 import BCEditBulkPaymentModal from './bc-bulk-payment-modal/bc-edit-bulk-payment-modal';
 import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-history-modal";
+import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -654,6 +655,18 @@ function BCModal() {
         setComponent(<BcPayrollPaymentDetailModal
           payment={data.payment}
           dateRange={data.dateRange}
+        />);
+        break;
+      case modalTypes.COMPANY_LOCATION_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        // data.maxHeight='100%';
+        setComponent(<BCCompanyLocationModal
+          companyLocation={data.companyLocation}
         />);
         break;
       case modalTypes.WARNING_MODAL:

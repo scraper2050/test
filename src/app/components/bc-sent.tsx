@@ -10,8 +10,9 @@ interface Props {
   type?: string;
   subtitle?: string;
   showLine?: boolean;
+  color?:string;
 }
-export default function BCSent({title, type = 'success', subtitle, showLine = true}:Props) {
+export default function BCSent({title, type = 'success', subtitle, showLine = true, color}:Props) {
   const componentStyles = styles();
 
   return (
@@ -19,9 +20,9 @@ export default function BCSent({title, type = 'success', subtitle, showLine = tr
     {showLine && <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>}
     <div className={componentStyles.container}>
       {type === 'success' ?
-        <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/>
+        <CheckCircleIcon style={{color: color || PRIMARY_GREEN, fontSize: 100}}/>
         :
-        <WarningIcon style={{color: ERROR_RED, fontSize: 100}}/>
+        <WarningIcon style={{color: color || ERROR_RED, fontSize: 100}}/>
       }
       <br/>
       <span className={componentStyles.title}>{title}</span>

@@ -15,10 +15,8 @@ import '../../../../scss/index.scss';
 import { modalTypes } from '../../../../constants';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
-import ReceiptIcon from "@material-ui/icons/Receipt";
 import BCAdminCard from "../../../components/bc-admin-card/bc-admin-card";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
-import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 
 function CustomerInfoPage({ classes }: any) {
   const dispatch = useDispatch();

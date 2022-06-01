@@ -49,3 +49,47 @@ export const updateProfile = async (data: any) => {
 
 }
 
+export const getCompanyLocations = async () => {
+  let responseData;
+  try {
+    const response: any = await request("/getCompanyLocations", "GET", {}, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = {
+      status: 0,
+      message: 'We are facing some issues, please try again.\''
+    };
+  }
+  return responseData;
+}
+
+export const createCompanyLocation = async (data: any) => {
+  let responseData;
+
+  try {
+    const response: any = await request("/createCompanyLocation", "POST", data, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = {
+      status: 0,
+      message: 'We are facing some issues, please try again.\''
+    };
+  }
+  return responseData;
+}
+
+export const updateCompanyLocation = async (data: any) => {
+  let responseData;
+
+  try {
+    const response: any = await request("/updateCompanyLocation", "PUT", data, false);
+    responseData = response.data;
+  } catch (err) {
+    responseData = {
+      status: 0,
+      message: 'We are facing some issues, please try again.\''
+    };
+  }
+  return responseData;
+}
+

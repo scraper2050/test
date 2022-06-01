@@ -41,6 +41,10 @@ export const CALENDAR_BUTTON_COLOR = '#828282';
 export const BUTTON_PURPLE = '#A107FF';
 export const BUTTON_PURPLE_HOVER = '#6C02AD';
 
+export const PRIMARY_GREY = '#e5e5e5';
+export const LABEL_GREY = '#828282';
+export const TEXT_GREY = '#333333';
+
 export const modalTypes = {
   'ADD_VENDOR_MODAL': 'add-vendor-modal',
   'CREATE_JOB_MODAL': 'create-job',
@@ -99,6 +103,7 @@ export const modalTypes = {
   'EDIT_COMMISSION_MODAL': 'edit_commission_modal',
   'PAYROLL_RECORD_PAYMENT_MODAL': 'payroll_record_payment_modal',
   'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
+  'COMPANY_LOCATION_MODAL': 'company_location_modal',
   'WARNING_MODAL': 'warning_modal',
 };
 
