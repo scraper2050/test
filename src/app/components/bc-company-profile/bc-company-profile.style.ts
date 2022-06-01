@@ -66,6 +66,11 @@ export default (): any => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  editButton: {
+    position: 'absolute',
+    right: '1rem',
+    top: '1rem'
+  },
 
   'infoPane': {
     'display': 'flex',
@@ -128,10 +133,5 @@ export default (): any => ({
     'display': 'flex',
     'align-items': 'center',
     'font-size': '20px'
-  },
-  'editButton': {
-    'position': 'absolute',
-    'right': '1rem',
-    'top': '1rem'
   },
 });
