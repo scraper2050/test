@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BCAdminProfile from '../../../components/bc-admin-profile/bc-admin-profile'
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCompanyProfileAction, getCompanyProfileAction } from 'actions/user/user.action';
+import {
+  updateCompanyProfileAction,
+  getCompanyProfileAction,
+  getCompanyLocationsAction
+} from 'actions/user/user.action';
 import { CompanyProfile, CompanyProfileStateType } from 'actions/user/user.types';
 import { phoneRegExp, digitsOnly } from 'helpers/format';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
@@ -58,9 +62,7 @@ function CompanyProfilePage() {
   const dispatch = useDispatch();
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [imageUrl, setImageUrl] = useState("");
-  const [update, setUpdate] = useState(true)
-
-
+  const [update, setUpdate] = useState(true);
   const initialValues = profileState;
 
   const handleUpdateCompanyProfile = async (values: any) => {
@@ -99,6 +101,7 @@ function CompanyProfilePage() {
     let user: User = {};
     user = JSON.parse(localStorage.getItem('user') || "");
     dispatch(getCompanyProfileAction(user?.company as string));
+    dispatch(getCompanyLocationsAction());
   }, [update]);
 
   return (
@@ -115,7 +118,8 @@ function CompanyProfilePage() {
                 imageUrl: imageUrl,
               }}
               companyName={profileState.companyName}
-              companyID={'ffffffffffffff'}
+              // locations={profileState.locations}
+              //companyID={user?.company}
             />
         }
       </PageContainer>

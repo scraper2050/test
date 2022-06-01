@@ -87,6 +87,7 @@ export default (theme: Theme): any => ({
     textTransform: 'capitalize',
   },
   hqButtonActive: {
+    border: `2px solid ${PRIMARY_BLUE}`,
     color: PRIMARY_BLUE,
     backgroundColor: '#E5F7FF',
   }

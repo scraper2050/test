@@ -634,7 +634,7 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'md'
         });
-        data.maxHeight='100%';
+        // data.maxHeight='100%';
         setComponent(<BCCompanyLocationModal
           companyLocation={data.companyLocation}
         />);

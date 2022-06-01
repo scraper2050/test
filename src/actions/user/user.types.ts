@@ -22,10 +22,32 @@ export interface CompanyProfile {
   }
 }
 
+export interface CompanyLocation {
+  _id: string;
+  name: string;
+  isActive: boolean;
+  isMainLocation: boolean;
+  info?: {
+    companyEmail?: string;
+  }
+  contact?: {
+    phone?: string;
+  }
+  contactName?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  }
+
+}
+
 export interface CompanyProfileOtherState {
-  inputError: {[k: string]: boolean}
-  serverError: any,
-  isLoading: boolean
+  locations: CompanyLocation[];
+  inputError: {[k: string]: boolean};
+  serverError: any;
+  isLoading: boolean;
 }
 export interface CompanyProfileRes {
   status?: number;
@@ -54,10 +76,18 @@ export const companyProfileState: CompanyProfile = {
   }
 }
 
+export const companyLocationState: CompanyLocation = {
+  _id: '',
+  name: '',
+  isActive: false,
+  isMainLocation: false,
+}
+
 export type CompanyProfileStateType = CompanyProfile & CompanyProfileOtherState
 
 export const initialCompanyProfileState: CompanyProfileStateType = {
   ...companyProfileState,
+  locations: [],
   inputError: {},
   serverError: null,
   isLoading: false
@@ -71,5 +101,8 @@ export enum CompanyProfileActonType {
   FETCH_SUCCESS = 'FETCH_COMPANY_PROFILE_SUCCESSFUL',
   ON_UPDATE_ERROR = "COMPANY_PROFILE_UPDATE_FAILED",
   ON_FETCH_ERROR = "COMPANY_PROFILE_FETCH_FAILED",
-  ON_INPUT_ERROR = 'VALIDATION_FAILED'
+  ON_INPUT_ERROR = 'VALIDATION_FAILED',
+  SET_LOCATIONS = 'SET_LOCATIONS',
+  UPDATE_LOCATION = 'UPDATE_LOCATION',
+  ADD_LOCATION = 'ADD_LOCATION ',
 }

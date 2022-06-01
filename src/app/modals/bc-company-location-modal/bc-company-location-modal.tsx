@@ -1,131 +1,126 @@
-// Import * as Yup from 'yup';
 import * as CONSTANTS from '../../../constants';
-import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
-import BCSent from '../../components/bc-sent';
-import { recordPayment, updatePayment } from '../../../api/payment.api';
+import {LIGHT_GREY, PRIMARY_BLUE} from '../../../constants';
 import styles from './bc-company-location-modal.styles';
-import { useFormik } from 'formik';
-import AttachMoney from '@material-ui/icons/AttachMoney';
+import {useFormik} from 'formik';
 import {
+  Button,
   DialogActions,
   DialogContent,
-  Button,
   Grid,
-  MenuItem,
   TextField,
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, { useState } from 'react';
-import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch } from 'react-redux';
+import React, {useState} from 'react';
+import {
+  closeModalAction,
+  setModalDataAction
+} from 'actions/bc-modal/bc-modal.action';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components';
-import InputAdornment from "@material-ui/core/InputAdornment";
-import { error } from "../../../actions/snackbar/snackbar.action";
-import {LIGHT_GREY, modalTypes} from "../../../constants";
 import {
   Business as BusinessIcon,
   Cancel as CancelIcon
 } from "@material-ui/icons";
 import classnames from "classnames";
 import BCSwitch from "../../components/bc-switch";
+import '../../../scss/job-poup.scss';
+import * as Yup from "yup";
+import {emailRegExp, phoneRegExp} from "../../../helpers/format";
+import {
+  AddCompanyLocationAction,
+  UpdateCompanyLocationAction
+} from "../../../actions/user/user.action";
+import {CompanyLocation} from "../../../actions/user/user.types";
+import BCSent from "../../components/bc-sent";
 
-interface ApiProps {
-  customerId: string,
-  invoiceId?:string,
-  paymentId?:string,
-  amount?: number,
-  paidAt: Date,
-  referenceNumber?: string,
-  paymentType?: string,
-  note?: string
-  line?: string,
+const companyLocationSchema = Yup.object().shape({
+  locationName: Yup.string().required('Required'),
+  contactEmail: Yup.string().matches(emailRegExp, 'Email address is not valid'),
+  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+});
+
+interface API_PARAMS {
+  companyLocationId?: string;
+  name: string;
+  isMainLocation: string;
+  isActive: string;
+  contactName?: string;
+  email?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  phone?: string;
 }
 
+
 function BCCompanyLocationModal({
-  classes,
-  companyLocation,
-}: any): JSX.Element {
-  const [sent, setSent] = useState(false);
-  const [isHQ, setHQ] = useState(false);
+                                  classes,
+                                  companyLocation,
+                                }: { classes: any, companyLocation: CompanyLocation }): JSX.Element {
+  const [showWarning, setShowWarning] = useState(false);
   const dispatch = useDispatch();
 
 
   const form = useFormik({
     initialValues: {
-      locationName: '',
-      isHeadQuarter: false,
+      id: companyLocation?._id || '',
+      locationName: companyLocation?.name || '',
+      isMainLocation: companyLocation?.isMainLocation || false,
       divisionName: '',
-      contactName: '',
-      contactNumber: '',
-      contactEmail: '',
+      contactName: companyLocation?.contactName || '',
+      contactNumber: companyLocation?.contact?.phone || '',
+      contactEmail: companyLocation?.info?.companyEmail || '',
       fax: '',
-      street: '',
-      city: '',
-      state: '',
-      zip: '',
-      isActive: false,
+      street: companyLocation?.address?.street || '',
+      city: companyLocation?.address?.city || '',
+      state: companyLocation?.address?.state || '',
+      zipCode: companyLocation?.address?.zipCode || '',
+      isActive: companyLocation?.isActive || true,
     },
-    onSubmit: (values: any, { setSubmitting }: any) => {
-      setSubmitting(true);
+    onSubmit: (values: any, {setSubmitting}: any) => {
+      const params: API_PARAMS = {
+        companyLocationId: FormikValues.id,
+        name: FormikValues.locationName,
+        isMainLocation: FormikValues.isMainLocation.toString(),
+        isActive: FormikValues.isActive.toString(),
+        contactName: FormikValues.contactName,
+        email: FormikValues.contactEmail,
+        street: FormikValues.street,
+        city: FormikValues.city,
+        state: FormikValues.state,
+        zipCode: FormikValues.zipCode,
+        phone: FormikValues.contactNumber,
+      };
 
-    //   const params: ApiProps = {
-    //     customerId: invoice.customer._id,
-    //     amount: FormikValues.amount ?? 0,
-    //     paidAt: FormikValues.paymentDate,
-    //     note: FormikValues.notes,
-    //   }
-    //
-    //   if (payment) {
-    //     params.paymentId = payment._id;
-    //     params.line = payment?.line?.length ? JSON.stringify(payment.line.map((paymentObj:any) => {
-    //       const newPaymentObj = {...paymentObj};
-    //       newPaymentObj.invoiceId = newPaymentObj.invoice;
-    //       delete newPaymentObj._id;
-    //       delete newPaymentObj.invoice;
-    //       if(paymentObj.invoice === invoice._id){
-    //         newPaymentObj.amountPaid = params.amount;
-    //       }
-    //       return newPaymentObj;
-    //     })) : '[]';
-    //     if(params.line !== '[]'){
-    //       delete params.amount;
-    //     }
-    //   } else {
-    //     params.invoiceId= invoice._id;
-    //   }
-    //
-    //   if (FormikValues.referenceNumber)
-    //     params.referenceNumber = FormikValues.referenceNumber;
-    //
-    //   if (FormikValues.paymentMethod >= 0)
-    //     params.paymentType = paymentTypes.filter((type) => type._id == FormikValues.paymentMethod)[0].name;
-    //
-    //   let request;
-    //
-    //   if (payment) {
-    //     request = updatePayment;
-    //   } else {
-    //     request = recordPayment;
-    //   }
-    //
-    //   dispatch(request(params)).then((response: any) => {
-    //     if (response.status === 1) {
-    //       setSent(true);
-    //       setSubmitting(false);
-    //       //closeModal()
-    //     } else {
-    //       console.log(response.message);
-    //       dispatch(error(response.message))
-    //     }
-    //   }).catch((e: any) => {
-    //     console.log(e.message);
-    //     dispatch(error(e.message));
-    //     setSubmitting(false);
-    //   })
-    }
+      Object.entries(params).forEach(([key, value]) => {
+        if (typeof value === 'string' && value === '') {
+          // @ts-ignore
+          delete params[key]
+        }
+      })
+
+      if (companyLocation) {
+        dispatch(UpdateCompanyLocationAction(params, (status) => {
+          if (status) closeModal();
+          else {
+            setSubmitting(false);
+            setShowWarning(false);
+          }
+        }))
+      } else {
+        dispatch(AddCompanyLocationAction(params, (status) => {
+          if (status) closeModal();
+          else {
+            setSubmitting(false);
+            setShowWarning(false);
+          }
+        }))
+      }
+    },
+    validationSchema: companyLocationSchema,
   });
-
 
   const {
     'errors': FormikErrors,
@@ -133,10 +128,27 @@ function BCCompanyLocationModal({
     'handleChange': formikChange,
     'handleSubmit': FormikSubmit,
     setFieldValue,
-    getFieldMeta,
-    isSubmitting
+    submitForm,
+    isSubmitting,
+    touched,
+    setFieldTouched,
   } = form;
 
+  const changeField = (name: string, value: any) => {
+    setFieldValue(name, value);
+    setFieldTouched(name, true);
+  }
+
+  const handleSubmit = () => {
+    console.log({touched});
+    if (touched.isMainLocation && FormikValues.isMainLocation && !showWarning) {
+      setShowWarning(true);
+      return;
+    } else {
+      submitForm();
+    }
+  }
+  console.log({touched});
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -147,308 +159,322 @@ function BCCompanyLocationModal({
     }, 200);
   };
 
-   return (
+  return (
     <DataContainer className={'new-modal-design'} style={{marginTop: -20}}>
-      {/*{sent ?*/}
-      {/*  <BCSent title={companyLocation ? 'The payment was updated.' : 'The payment was recorded.'}/>*/}
-      {/*  :*/}
-      <div style={{display: 'flex', justifyContent: 'flex-end', paddingRight: 30}}>
-        <BCSwitch
-          isActive={FormikValues.isActive}
-          onChange={() => setFieldValue('isActive', !FormikValues.isActive)}
-          activeText={'Active'}
-          inactiveText={'Inactive'}
+      {showWarning ?
+        <BCSent
+          title={`Are you sure you want to set ${FormikValues.locationName} as your Default Headquarters?`}
+          type={'warning'}
+          color={PRIMARY_BLUE}
         />
-      </div>
+        :
+        <form onSubmit={FormikSubmit}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            paddingRight: 30
+          }}>
+            <BCSwitch
+              isActive={FormikValues.isActive}
+              onChange={() => changeField('isActive', !FormikValues.isActive)}
+              activeText={'Active'}
+              inactiveText={'Inactive'}
+            />
+          </div>
 
-        <Typography
-          className={classes.dialogTitle}
-          variant={'h6'}>
-          <strong>Add New Location</strong>
-        </Typography>
-        <Grid container className={classes.modalPreview} justify={'space-around'}>
-          <Grid item xs={12}>
-            <Grid container direction={'row'} spacing={1}>
-              <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                <Typography variant={'button'}>LOCATION NAME</Typography>
+          <Typography
+            className={classes.dialogTitle}
+            variant={'h6'}>
+            <strong>Add New Location</strong>
+          </Typography>
+          <Grid container className={classes.modalPreview}
+                justify={'space-around'}>
+            <Grid item xs={12}>
+              <Grid container direction={'row'} spacing={1}>
+                <Grid container item justify={'flex-end'} style={{marginTop: 8}}
+                      xs={3}>
+                  <Typography variant={'button'}>LOCATION NAME</Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  <TextField
+                    autoFocus
+                    autoComplete={'off'}
+                    className={classes.fullWidth}
+                    id={'outlined-textarea'}
+                    label={''}
+                    name={'locationName'}
+                    onChange={(e: any) => formikChange(e)}
+                    type={'text'}
+                    value={FormikValues.locationName}
+                    variant={'outlined'}
+                    error={!!FormikErrors.locationName && touched.locationName}
+                    helperText={FormikErrors.locationName}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={9}>
-                <TextField
-                  autoFocus
-                  autoComplete={'off'}
-                  className={classes.fullWidth}
-                  id={'outlined-textarea'}
-                  label={''}
-                  name={'locationName'}
-                  onChange={(e: any) => formikChange(e)}
-                  type={'text'}
-                  value={FormikValues.locationName}
-                  variant={'outlined'}
-                />
-              </Grid>
-            </Grid>
 
-            <Grid container direction={'row'} spacing={1}>
-              <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                <Typography variant={'button'}></Typography>
-              </Grid>
-              <Grid item xs={9}>
-                <Button
-                  classes={{root: classnames(classes.hqButton, {[classes.hqButtonActive]: isHQ})}}
-                  onClick={() => setHQ(true)}
-                  variant={'outlined'}
-                  startIcon={<BusinessIcon />}
-                  endIcon={isHQ ?<CancelIcon
-                    style={{color: LIGHT_GREY}}
-                    onClick={(e) => {
-                      setHQ(false);
-                      e.stopPropagation();
-                    }}/>: null}
-                >Set as HQ</Button>
+              <Grid container direction={'row'} spacing={1}>
+                <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
+                  <Typography variant={'button'}></Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  <Button
+                    classes={{root: classnames(classes.hqButton, {[classes.hqButtonActive]: FormikValues.isMainLocation})}}
+                    onClick={() => changeField('isMainLocation', true)}
+                    variant={'outlined'}
+                    startIcon={<BusinessIcon/>}
+                    endIcon={FormikValues.isMainLocation ? <CancelIcon
+                      style={{color: LIGHT_GREY}}
+                      onClick={(e) => {
+                        changeField('isMainLocation', false);
+                        e.stopPropagation();
+                      }}/> : null}
+                  >Set as HQ</Button>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
 
-      <form onSubmit={FormikSubmit}>
-        {!sent &&
           <>
             <DialogContent classes={{'root': classes.dialogContent}}>
-            <Grid container direction={'column'} spacing={1}>
+              <Grid container direction={'column'} spacing={1}>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>DIVISION NAME</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoFocus
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'divisionName'}
-                      onChange={(e: any) => formikChange(e)}
-                      type={'text'}
-                      value={FormikValues.divisionName}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={3}>
+                      <Typography variant={'button'}>DIVISION NAME</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoFocus
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'divisionName'}
+                        onChange={(e: any) => formikChange(e)}
+                        type={'text'}
+                        value={FormikValues.divisionName}
+                        variant={'outlined'}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>CONTACT NAME</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'contactName'}
-                      onChange={formikChange}
-                      type={'text'}
-                      value={FormikValues.contactName}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={3}>
+                      <Typography variant={'button'}>CONTACT NAME</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'contactName'}
+                        onChange={formikChange}
+                        type={'text'}
+                        value={FormikValues.contactName}
+                        variant={'outlined'}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>CONTACT NUMBER</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'contactNumber'}
-                      onChange={formikChange}
-                      type={'number'}
-                      value={FormikValues.contactNumber}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          style={{marginTop: 8}} xs={3}>
+                      <Typography variant={'button'}>CONTACT NUMBER</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'contactNumber'}
+                        onChange={formikChange}
+                        type={'number'}
+                        value={FormikValues.contactNumber}
+                        variant={'outlined'}
+                        error={!!FormikErrors.contactNumber}
+                        helperText={FormikErrors.contactNumber}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>CONTACT EMAIL</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'contactEmail'}
-                      onChange={formikChange}
-                      type={'email'}
-                      value={FormikValues.contactEmail}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          style={{marginTop: 8}} xs={3}>
+                      <Typography variant={'button'}>CONTACT EMAIL</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'contactEmail'}
+                        onChange={formikChange}
+                        type={'email'}
+                        value={FormikValues.contactEmail}
+                        variant={'outlined'}
+                        error={!!FormikErrors.contactEmail}
+                        helperText={FormikErrors.contactEmail}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>FAX</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'fax'}
-                      onChange={formikChange}
-                      type={'number'}
-                      value={FormikValues.fax}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={3}>
+                      <Typography variant={'button'}>FAX</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'fax'}
+                        onChange={formikChange}
+                        type={'number'}
+                        value={FormikValues.fax}
+                        variant={'outlined'}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>STREET</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'street'}
-                      onChange={formikChange}
-                      type={'text'}
-                      value={FormikValues.street}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={3}>
+                      <Typography variant={'button'}>STREET</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'street'}
+                        onChange={formikChange}
+                        type={'text'}
+                        value={FormikValues.street}
+                        variant={'outlined'}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>CITY</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'city'}
-                      onChange={formikChange}
-                      type={'text'}
-                      value={FormikValues.city}
-                      variant={'outlined'}
-                    />
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={3}>
+                      <Typography variant={'button'}>CITY</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'city'}
+                        onChange={formikChange}
+                        type={'text'}
+                        value={FormikValues.city}
+                        variant={'outlined'}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12}>
-                <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={3}>
-                    <Typography variant={'button'}>STATE</Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'state'}
-                      onChange={formikChange}
-                      type={'text'}
-                      value={FormikValues.state}
-                      variant={'outlined'}
-                    />
-                  </Grid>
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={3}>
+                      <Typography variant={'button'}>STATE</Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'state'}
+                        onChange={formikChange}
+                        type={'text'}
+                        value={FormikValues.state}
+                        variant={'outlined'}
+                      />
+                    </Grid>
 
-                  <Grid container item justify={'flex-end'} alignItems={'center'} xs={2}>
-                    <Typography variant={'button'}>ZIP</Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      autoComplete={'off'}
-                      className={classes.fullWidth}
-                      id={'outlined-textarea'}
-                      label={''}
-                      name={'zip'}
-                      onChange={formikChange}
-                      type={'number'}
-                      value={FormikValues.zip}
-                      variant={'outlined'}
-                    />
+                    <Grid container item justify={'flex-end'}
+                          alignItems={'center'} xs={2}>
+                      <Typography variant={'button'}>ZIP</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'zipCode'}
+                        onChange={formikChange}
+                        type={'number'}
+                        value={FormikValues.zipCode}
+                        variant={'outlined'}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-            </Grid>
-          </DialogContent>
+              </Grid>
+            </DialogContent>
           </>
-        }
-        <DialogActions classes={{
-          'root': classes.dialogActions
-        }}>
-          <Button
-            aria-label={'record-payment'}
-            classes={{
-              'root': classes.closeButton
-            }}
-            disabled={isSubmitting}
-            onClick={() => closeModal()}
-            variant={'outlined'}>
-            Close
-          </Button>
+        </form>
+      }
+      <DialogActions classes={{'root': classes.dialogActions}}>
+        <Button
+          aria-label={'record-payment'}
+          classes={{
+            'root': classes.closeButton
+          }}
+          disabled={isSubmitting}
+          onClick={() => showWarning ? setShowWarning(false) : closeModal()}
+          variant={'outlined'}>
+          Cancel
+        </Button>
 
-          {!sent &&
-          <Button
-            disabled={isSubmitting}
-            aria-label={'create-job'}
-            classes={{
-              root: classes.submitButton,
-              disabled: classes.submitButtonDisabled
-            }}
-            color="primary"
-            type={'submit'}
-            variant={'contained'}>
-            Submit
-          </Button>
-          }
+        <Button
+          disabled={isSubmitting}
+          aria-label={'create-job'}
+          classes={{
+            root: classes.submitButton,
+            disabled: classes.submitButtonDisabled
+          }}
+          color="primary"
+          onClick={handleSubmit}
+          variant={'contained'}>
+          {showWarning ? 'Confirm' : 'Submit'}
+        </Button>
 
-        </DialogActions>
-      </form>
+      </DialogActions>
 
-    </DataContainer >
+    </DataContainer>
   );
 }
 
-const Label = styled.div`
-  color: red;
-  font-size: 15px;
-`;
-
 const DataContainer = styled.div`
-
   margin: auto 0;
 
   .MuiFormLabel-root {
@@ -505,5 +531,5 @@ const DataContainer = styled.div`
 
 export default withStyles(
   styles,
-  { 'withTheme': true }
+  {'withTheme': true}
 )(BCCompanyLocationModal);
