@@ -26,18 +26,21 @@ import classnames from "classnames";
 import BCSwitch from "../../components/bc-switch";
 import '../../../scss/job-poup.scss';
 import * as Yup from "yup";
-import {emailRegExp, phoneRegExp} from "../../../helpers/format";
+import {emailRegExp, phoneRegExp, zipCodeRegExp} from "../../../helpers/format";
 import {
   AddCompanyLocationAction,
   UpdateCompanyLocationAction
 } from "../../../actions/user/user.action";
 import {CompanyLocation} from "../../../actions/user/user.types";
 import BCSent from "../../components/bc-sent";
+import {allStates} from "../../../utils/constants";
+import AutoComplete from "../../components/bc-autocomplete/bc-autocomplete_2";
 
 const companyLocationSchema = Yup.object().shape({
   locationName: Yup.string().required('Required'),
   contactEmail: Yup.string().matches(emailRegExp, 'Email address is not valid'),
-  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+  contactNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+  zipCode: Yup.string().matches(zipCodeRegExp, 'Zip code is not valid'),
 });
 
 interface API_PARAMS {
@@ -75,7 +78,7 @@ function BCCompanyLocationModal({
       fax: '',
       street: companyLocation?.address?.street || '',
       city: companyLocation?.address?.city || '',
-      state: companyLocation?.address?.state || '',
+      state: allStates.find((state) => state.name === companyLocation?.address?.state) ,
       zipCode: companyLocation?.address?.zipCode || '',
       isActive: companyLocation?.isActive || true,
     },
@@ -89,7 +92,7 @@ function BCCompanyLocationModal({
         email: FormikValues.contactEmail,
         street: FormikValues.street,
         city: FormikValues.city,
-        state: FormikValues.state,
+        state: FormikValues.state?.name || '',
         zipCode: FormikValues.zipCode,
         phone: FormikValues.contactNumber,
       };
@@ -139,8 +142,11 @@ function BCCompanyLocationModal({
     setFieldTouched(name, true);
   }
 
+  const validateNumber = (field: string, value: string, max: number) => {
+    if (value.length <= max) setFieldValue(field, value);
+  }
+
   const handleSubmit = () => {
-    console.log({touched});
     if (touched.isMainLocation && FormikValues.isMainLocation && !showWarning) {
       setShowWarning(true);
       return;
@@ -148,7 +154,7 @@ function BCCompanyLocationModal({
       submitForm();
     }
   }
-  console.log({touched});
+
   const closeModal = () => {
     dispatch(closeModalAction());
     setTimeout(() => {
@@ -297,7 +303,7 @@ function BCCompanyLocationModal({
                         id={'outlined-textarea'}
                         label={''}
                         name={'contactNumber'}
-                        onChange={formikChange}
+                        onChange={(e) => validateNumber('contactNumber', e.target.value, 10 )}
                         type={'number'}
                         value={FormikValues.contactNumber}
                         variant={'outlined'}
@@ -401,25 +407,22 @@ function BCCompanyLocationModal({
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={3}>
+                         style={{marginTop: 8}} xs={3}>
                       <Typography variant={'button'}>STATE</Typography>
                     </Grid>
                     <Grid item xs={4}>
-                      <TextField
-                        autoComplete={'off'}
-                        className={classes.fullWidth}
-                        id={'outlined-textarea'}
-                        label={''}
-                        name={'state'}
-                        onChange={formikChange}
-                        type={'text'}
+                      <AutoComplete
+                        handleChange={formikChange}
+                        name={"state"}
+                        data={allStates}
                         value={FormikValues.state}
-                        variant={'outlined'}
+                        margin={"dense"}
+                        //placeholder={'Select state'}
                       />
                     </Grid>
 
                     <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={2}>
+                          style={{marginTop: 8}}  xs={2}>
                       <Typography variant={'button'}>ZIP</Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -429,10 +432,12 @@ function BCCompanyLocationModal({
                         id={'outlined-textarea'}
                         label={''}
                         name={'zipCode'}
-                        onChange={formikChange}
+                        onChange={(e) => validateNumber('zipCode', e.target.value, 5 )}
                         type={'number'}
                         value={FormikValues.zipCode}
                         variant={'outlined'}
+                        error={!!FormikErrors.zipCode}
+                        helperText={FormikErrors.zipCode}
                       />
                     </Grid>
                   </Grid>
