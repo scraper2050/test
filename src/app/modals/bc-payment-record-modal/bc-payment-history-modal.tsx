@@ -24,9 +24,9 @@ import CSInvoiceStatus from "../../components/bc-invoice-status";
 const TABLE_PADDING = 75;
 
 function BcPaymentHistoryModal({
-                                 classes,
-                                 invoiceID,
-                               }: any): JSX.Element {
+  classes,
+  invoiceID,
+}: any): JSX.Element {
   const [invoice, setInvoice] = useState<any>({});
   const [payments, setPayments] = useState<any>([]);
   const [loading, setLoading] = useState<any>(true);
@@ -90,15 +90,21 @@ function BcPaymentHistoryModal({
   }
 
   const editPayment = (payment: any) => {
-    dispatch(setModalDataAction({
+    const modalDataForEditPayment = {
       'data': {
         invoice,
         payment,
         fromHistory: true,
-        modalTitle: 'Record a Payment',
+        modalTitle: 'Edit Payment',
         removeFooter: false,
       },
       'type': modalTypes.PAYMENT_RECORD_MODAL
+    };
+    dispatch(setModalDataAction({
+      'data': {
+        modalDataForEditPayment,
+      },
+      'type': modalTypes.CONFIRM_EDIT_PAYMENT_MODAL
     }));
   }
 

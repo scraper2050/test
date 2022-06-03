@@ -257,6 +257,15 @@ function ViewMorePage({ classes }: any) {
   const handleRowClick = (event: any, row: any) =>
     renderJobSiteComponent(row.original, customerState.customerObj);
 
+  const handleBackButtonClick = () => {
+    history.push({
+      'pathname': '/main/customers',
+      'state': {
+        'prevPage': location.state.currentPage
+      }
+    });
+  }
+
   function Toolbar() {
     return <div style={{display: 'flex', alignItems: 'center'}}>
       <strong style={{fontSize: 16}}>{'Show:'}&nbsp;</strong>
@@ -283,14 +292,7 @@ function ViewMorePage({ classes }: any) {
 
           <Grid container>
             <BCBackButtonNoLink
-              func={() => {
-                history.push({
-                  'pathname': '/main/customers',
-                  'state': {
-                    'prevPage': location.state.currentPage
-                  }
-                });
-              }}
+              func={handleBackButtonClick}
             />
 
             <div className={'tab_wrapper'}>

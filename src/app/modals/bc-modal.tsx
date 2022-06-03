@@ -24,6 +24,7 @@ import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-mo
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
 import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
 import BCEditPaidInvoiceConfirmModal from './bc-edit-paid-invoice-confirm-modal/bc-edit-paid-invoice-confirm-modal';
+import BCEditPaymentConfirmModal from './bc-edit-payment-confirm-modal/bc-edit-payment-confirm-modal';
 import BCMakeAdminConfirmModal from './bc-make-admin-employee-modal/bc-make-admin-employee-confirm';
 import CloseIcon from '@material-ui/icons/Close';
 import {
@@ -58,6 +59,9 @@ import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-p
 import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
 import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
 import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
+import BCEditBulkPaymentModal from './bc-bulk-payment-modal/bc-edit-bulk-payment-modal';
+import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-history-modal";
+import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -275,6 +279,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCEditPaidInvoiceConfirmModal data={data.data} />);
+        break;
+      case modalTypes.CONFIRM_EDIT_PAYMENT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCEditPaymentConfirmModal data={data.modalDataForEditPayment} />);
         break;
       case modalTypes.DELETE_BILLING_MODAL:
         setModalOptions({
@@ -560,14 +573,32 @@ function BCModal() {
           invoiceID={data.invoiceID}
         />);
         break;
-      case modalTypes.PAYMENT_BULK_MODAL:
+      case modalTypes.BULK_PAYMENT_HISTORY_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BcBulkPaymentHistoryModal data={data.data} />);
+        break;
+      case modalTypes.BULK_PAYMENT_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
-        setComponent(<BCBulkPaymentModal />);
+        setComponent(<BCBulkPaymentModal modalOptions={modalOptions} setModalOptions={setModalOptions} />);
+        break;
+      case modalTypes.EDIT_BULK_PAYMENT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCEditBulkPaymentModal payments={data.payments} modalOptions={modalOptions} setModalOptions={setModalOptions} />);
         break;
       case modalTypes.UPDATE_PAYMENT_TERMS_MODAL:
         setModalOptions({
@@ -624,6 +655,18 @@ function BCModal() {
         setComponent(<BcPayrollPaymentDetailModal
           payment={data.payment}
           dateRange={data.dateRange}
+        />);
+        break;
+      case modalTypes.COMPANY_LOCATION_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        // data.maxHeight='100%';
+        setComponent(<BCCompanyLocationModal
+          companyLocation={data.companyLocation}
         />);
         break;
       case modalTypes.WARNING_MODAL:

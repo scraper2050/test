@@ -37,6 +37,8 @@ import {
   InvoicingTodoReducer as invoiceTodos,
   InvoicingPurchaseOrderReducer as purchaseOrder
 } from './invoicing.reducer';
+import { PaymentsListReducer as paymentList } from './payments.reducer';
+import { PaymentsState } from 'actions/invoicing/payments/payments.types';
 import { BrandsReducer as brands } from './brands.reducer';
 import { EquipmentTypeReducer as equipmentType } from './equipment-type.reducer';
 import { CompanyProfileReducer as profile } from './user.reducer';
@@ -82,6 +84,7 @@ export interface RootState {
   payroll: PayrollState;
   calendar: CalendarState;
   discountItems: DiscountState;
+  paymentList: PaymentsState;
 }
 
 
@@ -127,6 +130,7 @@ const appReducer = combineReducers({
   subscriptions,
   tableState,
   tax,
+  paymentList,
   paymentTerms,
   technicians,
   vendors,

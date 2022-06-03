@@ -60,6 +60,7 @@ function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceStyles = invoicePageStyles();
   let history = useHistory();
+  const location = useLocation<any>();
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
@@ -139,6 +140,22 @@ function ViewInvoice({ classes, theme }: any) {
     });
   }
 
+  const handleBackButtonClick = () => {
+    if(location?.state?.keyword){
+      history.push({
+        'pathname': '/main/invoicing/invoices-list',
+        'state': {
+          'option': {
+            search: location.state.keyword || '',
+          },
+        }
+        
+      });
+    } else {
+      history.goBack();
+    }
+  }
+
 /*  const goToEditNew = () => {
     history.push({
       'pathname': `/main/invoicing/update-invoice/${invoice}`,
@@ -161,9 +178,7 @@ function ViewInvoice({ classes, theme }: any) {
               color="default"
               size="small"
               className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
-              onClick={() => {
-                history.goBack();
-              }}
+              onClick={handleBackButtonClick}
             >
               <ArrowBackIcon/>
             </IconButton>

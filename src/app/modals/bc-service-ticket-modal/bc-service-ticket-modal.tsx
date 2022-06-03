@@ -563,103 +563,103 @@ function BCServiceTicketModal({
           <Grid item xs={4} />
         </Grid>
         <div className={'modalDataContainer'}>
-        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
-            <Autocomplete
-              defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
-              disabled={FormikValues.customerId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
-              getOptionLabel={option => option.name ? option.name : ''}
-              getOptionDisabled={(option) => !option.isActive}
-              id={'tags-standard'}
-              onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
-              options={jobLocations && jobLocations.length !== 0 ? jobLocations.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
-              renderInput={params =>
-                <TextField
-                  {...params}
-                  variant={'outlined'}
-                />
-              }
-              value={jobLocationValue}
-            />
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Job Address</Typography>
-            <Autocomplete
-              className={detail ? 'detail-only' : ''}
-              disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
-              getOptionLabel={option => option.name ? option.name : ''}
-              id={'tags-standard'}
-              freeSolo
-              selectOnFocus
-              clearOnBlur
-              handleHomeEndKeys
-              onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
-              options={jobSites && jobSites.length !== 0 ? jobSites.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
-              renderInput={params =>
-                <TextField
-                  {...params}
-                  variant={'outlined'}
-                />
-              }
-              filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-
-                // Suggest the creation of a new value
-                if (params.inputValue !== '' && filtered.length === 0) {
-                  filtered.push({
-                    inputValue: params.inputValue,
-                    name: `Add "${params.inputValue}"`,
-                  });
+          <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
+              <Autocomplete
+                defaultValue={ticket.jobLocation !== '' && jobLocations.length !== 0 && jobLocations.filter((jobLocation: any) => jobLocation._id === ticket.jobLocation)[0]}
+                disabled={FormikValues.customerId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
+                getOptionLabel={option => option.name ? option.name : ''}
+                getOptionDisabled={(option) => !option.isActive}
+                id={'tags-standard'}
+                onChange={(ev: any, newValue: any) => handleLocationChange(ev, 'jobLocationId', setFieldValue, getFieldMeta, newValue)}
+                options={jobLocations && jobLocations.length !== 0 ? jobLocations.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+                renderInput={params =>
+                  <TextField
+                    {...params}
+                    variant={'outlined'}
+                  />
                 }
+                value={jobLocationValue}
+              />
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>Job Address</Typography>
+              <Autocomplete
+                className={detail ? 'detail-only' : ''}
+                disabled={FormikValues.jobLocationId === '' || isLoadingDatas || detail || !!ticket.jobCreated}
+                getOptionLabel={option => option.name ? option.name : ''}
+                id={'tags-standard'}
+                freeSolo
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                onChange={(ev: any, newValue: any) => handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)}
+                options={jobSites && jobSites.length !== 0 ? jobSites.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
+                renderInput={params =>
+                  <TextField
+                    {...params}
+                    variant={'outlined'}
+                  />
+                }
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
 
-                return filtered;
-              }}
-              value={jobSiteValue}
-            />
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={`required ${'previewCaption'}`}>job type</Typography>
-            <Autocomplete
-              className={detail ? 'detail-only' : ''}
-              value={FormikValues.jobTypes}
-              getOptionDisabled={(option)=>!option.isJobType}
-              disabled={detail || !!ticket.jobCreated}
-              getOptionLabel={option => {
-                const {title, description} = option;
-                return `${title || '...'}${description ? ' - '+description: ''}`
-              }}
-              id={'tags-standard'}
-              multiple
-              onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
-              options={
-                items && items.length !== 0
-                ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
-                  .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
-                : []
-              }
-              classes={{popper: classes.popper}}
-              renderOption={(option:{title:string; description:string; isJobType:string})=>{
-                const {title, description, isJobType} = option;
-                if(!isJobType){
-                  return ''
-                } else {
+                  // Suggest the creation of a new value
+                  if (params.inputValue !== '' && filtered.length === 0) {
+                    filtered.push({
+                      inputValue: params.inputValue,
+                      name: `Add "${params.inputValue}"`,
+                    });
+                  }
+
+                  return filtered;
+                }}
+                value={jobSiteValue}
+              />
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={`required ${'previewCaption'}`}>job type</Typography>
+              <Autocomplete
+                className={detail ? 'detail-only' : ''}
+                value={FormikValues.jobTypes}
+                getOptionDisabled={(option)=>!option.isJobType}
+                disabled={detail || !!ticket.jobCreated}
+                getOptionLabel={option => {
+                  const {title, description} = option;
                   return `${title || '...'}${description ? ' - '+description: ''}`
+                }}
+                id={'tags-standard'}
+                multiple
+                onChange={(ev: any, newValue: any) => handleJobTypeChange(ev, setFieldValue, newValue)}
+                options={
+                  items && items.length !== 0
+                  ? stringSortCaseInsensitive(items.map((item:{name:string;jobType:string})=>({...item, title:item.name,_id:item.jobType})), 'title')
+                    .sort((a: {isJobType:boolean}, b: {isJobType:boolean}) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
+                  : []
                 }
-              }}
-              renderInput={params =>
-                <TextField
-                  {...params}
-                  inputRef={jobTypesInput}
-                  variant={'outlined'}
-                />
-              }
-              getOptionSelected={() => false}
-            />
+                classes={{popper: classes.popper}}
+                renderOption={(option:{title:string; description:string; isJobType:string})=>{
+                  const {title, description, isJobType} = option;
+                  if(!isJobType){
+                    return ''
+                  } else {
+                    return `${title || '...'}${description ? ' - '+description: ''}`
+                  }
+                }}
+                renderInput={params =>
+                  <TextField
+                    {...params}
+                    inputRef={jobTypesInput}
+                    variant={'outlined'}
+                  />
+                }
+                getOptionSelected={() => false}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
+          <Grid container className={'modalContent'} justify={'space-between'} spacing={4}>
           <Grid container xs={8} spacing={4}>
             <Grid container xs={12} spacing={4}>
               <Grid item xs>

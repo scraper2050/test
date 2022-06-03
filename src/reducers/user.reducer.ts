@@ -28,7 +28,7 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
         coordinates: address.coordinates || DEFAULT_COORD,
         paymentTerm: paymentTerm
       }
-      return { ...newState, inputError: {}, serverError: null }
+      return { ...newState, locations: state.locations, inputError: {}, serverError: null }
     }
     case CompanyProfileActonType.ON_UPDATE_ERROR:
       return {
@@ -37,6 +37,19 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
     case CompanyProfileActonType.ON_FETCH_ERROR:
       return {
         ...state, serverError: action.payload
+      }
+    case CompanyProfileActonType.SET_LOCATIONS:
+      return {...state, locations: action.payload};
+    case CompanyProfileActonType.ADD_LOCATION:
+      return {...state, locations: [...state.locations, action.payload]};
+    case CompanyProfileActonType.UPDATE_LOCATION:
+      const currentLocations = [...state.locations];
+      const index = currentLocations.findIndex((location) => location._id === action.payload._id)
+      if (index >= 0) {
+        currentLocations[index] = action.payload;
+        return {...state, locations: currentLocations};
+      } else {
+        return state;
       }
     default:
   }

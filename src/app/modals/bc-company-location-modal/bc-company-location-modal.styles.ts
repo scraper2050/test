@@ -1,17 +1,18 @@
 import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
+import {LABEL_GREY, PRIMARY_BLUE} from "../../../constants";
+
 export default (theme: Theme): any => ({
-  searchIcon: {
-    color: '#D0D3DC',
-    marginLeft: 5,
-  },
   dialogActions: {
     padding: '25px  40px 25px 0 !important',
     backgroundColor: 'auto'
   },
+  dialogContent: {
+    padding: '8px 200px !important',
+  },
   modalPreview: {
     backgroundColor: '#EAECF3',
-    padding: '35px 50px',
+    padding: '35px 200px',
     margin: '0 0 15px 0',
   },
   previewCaption: {
@@ -29,6 +30,15 @@ export default (theme: Theme): any => ({
   previewTextSm: {
     color: '#4F4F4F',
     marginBottom: '5px',
+  },
+  closeButton: {
+    color: '#4F4F4F',
+    borderColor: '#4F4F4F',
+    width: '110px !important',
+    height: '34px',
+    fontSize: '16px !important',
+    padding: '0 12px',
+    textTransform:'none',
   },
   submitButton: {
     color: CONSTANTS.PRIMARY_WHITE,
@@ -48,4 +58,37 @@ export default (theme: Theme): any => ({
     color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
     backgroundColor: `${CONSTANTS.TABLE_HOVER} !important`,
   },
+  formField: {
+    margin: theme.spacing(1),
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
+  },
+  fullWidth: {
+    width: '100%',
+    marginBottom: '3px',
+  },
+  grey4 : {
+    color: '#BDBDBD',
+  },
+  dialogTitle: {
+    textAlign: 'center',
+    color: PRIMARY_BLUE,
+    marginBottom: 20,
+    '& strong': {
+      fontSize: 30,
+    }
+  },
+  hqButton: {
+    borderStyle: 'dashed',
+    borderRadius: 8,
+    color: LABEL_GREY,
+    textTransform: 'capitalize',
+  },
+  hqButtonActive: {
+    border: `2px solid ${PRIMARY_BLUE}`,
+    color: PRIMARY_BLUE,
+    backgroundColor: '#E5F7FF',
+  }
 });

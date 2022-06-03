@@ -1,5 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import { fabRoot } from 'app/pages/main/main.styles';
+import * as CONSTANTS from "../../../constants";
 export default (theme: Theme): any => ({
   ...fabRoot,
   'dialogActions': {
@@ -39,5 +40,32 @@ export default (theme: Theme): any => ({
   'hadImageUrl': {
     'position': 'absolute',
     'bottom': '0'
-  }
+  },
+  closeButton: {
+    color: '#4F4F4F',
+    borderColor: '#4F4F4F',
+    width: '110px !important',
+    height: '34px',
+    fontSize: '16px !important',
+    padding: '0 12px',
+    textTransform:'none',
+  },
+  submitButton: {
+    color: CONSTANTS.PRIMARY_WHITE,
+    backgroundColor: `${CONSTANTS.TABLE_ACTION_BUTTON} !important`,
+    borderColor: CONSTANTS.TABLE_ACTION_BUTTON,
+    '&:hover': {
+      backgroundColor: `${CONSTANTS.TABLE_ACTION_BUTTON_HOVER} !important`,
+      borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
+    },
+    minWidth: '110px !important',
+    height: '34px',
+    fontSize: '16px !important',
+    padding: '0 12px',
+    textTransform:'none',
+  },
+  submitButtonDisabled : {
+    color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
+    backgroundColor: `${CONSTANTS.TABLE_HOVER} !important`,
+  },
 });
