@@ -117,6 +117,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentDraftPageSize(num))}
         setKeywordFunction={(query: string) => dispatch(setDraftKeyword(query))}
+        disableInitialSearch
       />
     </DataContainer>
   );
