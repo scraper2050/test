@@ -169,7 +169,7 @@ function BCCompanyLocation(props: Props) {
           schema: companyProfileSchema,
           userProfile: false
         },
-        'modalTitle': 'title',
+        'modalTitle': 'Edit Company Profile',
         'removeFooter': false
       },
       'type': modalTypes.EDIT_PROFILE
