@@ -16,7 +16,11 @@ import {
   updateCompanyProfileAction
 } from "../../../actions/user/user.action";
 import * as Yup from "yup";
-import {digitsOnly, phoneRegExp} from "../../../helpers/format";
+import {
+  phoneRegExp,
+  zipCodeRegExp
+} from "../../../helpers/format";
+import {companyProfileFields} from "./fields";
 
 interface Props {
   classes: any;
@@ -32,9 +36,9 @@ interface Avatar {
 
 const companyProfileSchema = Yup.object().shape({
   companyName: Yup.string().required('Required'),
-  companyEmail: Yup.string().email('Invalid email').required('Required'),
+  companyEmail: Yup.string().email('Email is not email').required('Required'),
   phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
-  zipCode: Yup.string().matches(digitsOnly, 'The field should have digits only')
+  zipCode: Yup.string().matches(zipCodeRegExp, 'Zip code is not valid')
 });
 
 function BCCompanyLocation(props: Props) {
@@ -107,64 +111,7 @@ function BCCompanyLocation(props: Props) {
         'props': {
           avatar: {url: profileState.logoUrl},
           apply: (value: any) => handleUpdateCompanyProfile(value),
-          fields: [
-            {
-              left: {
-                id: 'companyName',
-                label: 'Company Name:',
-                placehold: 'Input Company Name',
-                value: profileState.companyName,
-              },
-              right: {
-                id: 'companyEmail',
-                label: 'Company Email:',
-                placehold: 'Input Company Email',
-                value: profileState.companyEmail,
-              },
-            },
-            {
-              left: {
-                id: 'phone',
-                label: 'Phone:',
-                placehold: 'Input Phone Number',
-                value: profileState.phone,
-              },
-              right: {
-                id: 'fax',
-                label: 'Fax:',
-                placehold: 'Input Fax',
-                value: profileState.fax,
-              }
-            },
-            {
-              left: {
-                id: 'street',
-                label: 'Street:',
-                placehold: 'Input Street',
-                value: profileState.street,
-              },
-              right: {
-                id: 'city',
-                label: 'City:',
-                placehold: 'Input City',
-                value: profileState.city,
-              }
-            },
-            {
-              left: {
-                id: 'state',
-                label: 'State:',
-                placehold: 'Input State',
-                value: profileState.state,
-              },
-              right: {
-                id: 'zipCode',
-                label: 'Zip Code:',
-                placehold: 'Input Zip Code',
-                value: profileState.zipCode,
-              }
-            },
-          ],
+          fields: companyProfileFields(profileState),
           initialValues: profileState,
           schema: companyProfileSchema,
           userProfile: false

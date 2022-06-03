@@ -7,7 +7,7 @@ import {
   Grid,
   InputLabel,
   withStyles,
-  FormGroup,
+  FormGroup, Button,
 } from '@material-ui/core';
 import { Form, Formik } from "formik";
 import React, { useState } from 'react';
@@ -18,6 +18,7 @@ import styled from "styled-components";
 import UploadImageIcon from 'assets/img/icons/UploadImage';
 import { upload } from 'api/image.api';
 import { Image } from '../../../actions/image/image.types';
+import AutoComplete from "../../components/bc-autocomplete/bc-autocomplete_2";
 
 
 interface ColumnField {
@@ -27,7 +28,10 @@ interface ColumnField {
   text: string;
   value: any;
   disabled?: boolean;
-  onChange: (newValue: any) => void
+  onChange: (newValue: any) => void;
+  data?: any[],
+  type?: string,
+  max?: number,
 }
 
 interface RowField {
@@ -110,6 +114,13 @@ function BCEditProfileModal({
     }
   }
 
+  const validateLength = (e: any, f:any, action: any, max: number|undefined) => {
+    if (max) {
+      if (e.target.value.length <= max) action(e, f)
+    } else {
+      action(e, f);
+    }
+  }
 
   return (
     <Formik
@@ -221,12 +232,24 @@ function BCEditProfileModal({
                                       <InputLabel className={classes.label}>
                                         <strong>{element.left.label}</strong>
                                       </InputLabel>
-                                      <BCTextField
-                                        name={element.left.id}
-                                        placeholder={element.left.placehold}
-                                        onChange={handleChange}
-                                        disabled={element.left.disabled ? element.left.disabled : false}
-                                      />
+                                      {element.left?.data ?
+                                        <AutoComplete
+                                          handleChange={handleChange}
+                                          name={element.left.id}
+                                          data={element.left.data}
+                                          value={values[element.left.id]}
+                                          margin={"dense"}
+                                          disabled={element.left.disabled ? element.left.disabled : false}
+                                          placeholder={element.left.placehold}
+                                        /> :
+                                        <BCTextField
+                                          name={element.left.id}
+                                          placeholder={element.left.placehold}
+                                          onChange={(e: any, f: any) => validateLength(e, f, handleChange, element.left?.max)}
+                                          disabled={element.left.disabled ? element.left.disabled : false}
+                                          type={element.left.type || 'string'}
+                                        />
+                                      }
                                     </FormGroup>
                                     : <div />
                                 }
@@ -239,12 +262,24 @@ function BCEditProfileModal({
                                       <InputLabel className={classes.label}>
                                         <strong>{element.right.label}</strong>
                                       </InputLabel>
-                                      <BCTextField
-                                        name={element.right.id}
-                                        placeholder={element.right.placehold}
-                                        onChange={handleChange}
-                                        disabled={element.right.disabled ? element.right.disabled : false}
-                                      />
+                                      {element.right?.data ?
+                                        <AutoComplete
+                                          handleChange={handleChange}
+                                          name={element.right.id}
+                                          data={element.right.data}
+                                          value={values[element.right.id]}
+                                          margin={"dense"}
+                                          disabled={element.right.disabled ? element.right.disabled : false}
+                                          placeholder={element.right.placehold}
+                                        /> :
+                                        <BCTextField
+                                          name={element.right.id}
+                                          placeholder={element.right.placehold}
+                                          onChange={(e: any, f: any) => validateLength(e, f, handleChange, element.right?.max)}
+                                          disabled={element.right.disabled ? element.right.disabled : false}
+                                          type={element.right.type || 'string'}
+                                        />
+                                      }
                                     </FormGroup>
                                     : <div />
                                 }
@@ -263,31 +298,28 @@ function BCEditProfileModal({
             <DialogActions classes={{
               'root': classes.dialogActions
             }}>
-              <Fab
-                aria-label={'create-job'}
+              <Button
+                aria-label={'record-payment'}
                 classes={{
-                  'root': classes.fabRoot
+                  'root': classes.closeButton
                 }}
-                style={{
-                  marginRight: 40
-                }}
-                color={'secondary'}
                 disabled={isSubmitting}
                 onClick={() => closeModal()}
-                variant={'extended'}>
-                {'Cancel'}
-              </Fab>
-              <Fab
+                variant={'outlined'}>
+                Cancel
+              </Button>
+              <Button
+                disabled={isSubmitting}
                 aria-label={'create-job'}
                 classes={{
-                  'root': classes.fabRoot
+                  root: classes.submitButton,
+                  disabled: classes.submitButtonDisabled
                 }}
-                color={'primary'}
-                disabled={isSubmitting}
+                color="primary"
                 type={'submit'}
-                variant={'extended'}>
+                variant={'contained'}>
                 {'Submit'}
-              </Fab>
+              </Button>
             </DialogActions>
           </Form>
         )
@@ -325,6 +357,18 @@ const DataContainer = styled.div`
   .save-customer-button {
     margin-right: 16px;
     color: ${CONSTANTS.PRIMARY_WHITE};
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
   }
 `;
 

@@ -245,28 +245,28 @@ function BCCompanyLocationModal({
             <DialogContent classes={{'root': classes.dialogContent}}>
               <Grid container direction={'column'} spacing={1}>
 
-                <Grid item xs={12}>
-                  <Grid container direction={'row'} spacing={1}>
-                    <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={3}>
-                      <Typography variant={'button'}>DIVISION NAME</Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                      <TextField
-                        autoFocus
-                        autoComplete={'off'}
-                        className={classes.fullWidth}
-                        id={'outlined-textarea'}
-                        label={''}
-                        name={'divisionName'}
-                        onChange={(e: any) => formikChange(e)}
-                        type={'text'}
-                        value={FormikValues.divisionName}
-                        variant={'outlined'}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
+                {/*<Grid item xs={12}>*/}
+                {/*  <Grid container direction={'row'} spacing={1}>*/}
+                {/*    <Grid container item justify={'flex-end'}*/}
+                {/*          alignItems={'center'} xs={3}>*/}
+                {/*      <Typography variant={'button'}>DIVISION NAME</Typography>*/}
+                {/*    </Grid>*/}
+                {/*    <Grid item xs={9}>*/}
+                {/*      <TextField*/}
+                {/*        autoFocus*/}
+                {/*        autoComplete={'off'}*/}
+                {/*        className={classes.fullWidth}*/}
+                {/*        id={'outlined-textarea'}*/}
+                {/*        label={''}*/}
+                {/*        name={'divisionName'}*/}
+                {/*        onChange={(e: any) => formikChange(e)}*/}
+                {/*        type={'text'}*/}
+                {/*        value={FormikValues.divisionName}*/}
+                {/*        variant={'outlined'}*/}
+                {/*      />*/}
+                {/*    </Grid>*/}
+                {/*  </Grid>*/}
+                {/*</Grid>*/}
 
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
@@ -338,27 +338,27 @@ function BCCompanyLocationModal({
                   </Grid>
                 </Grid>
 
-                <Grid item xs={12}>
-                  <Grid container direction={'row'} spacing={1}>
-                    <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={3}>
-                      <Typography variant={'button'}>FAX</Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                      <TextField
-                        autoComplete={'off'}
-                        className={classes.fullWidth}
-                        id={'outlined-textarea'}
-                        label={''}
-                        name={'fax'}
-                        onChange={formikChange}
-                        type={'number'}
-                        value={FormikValues.fax}
-                        variant={'outlined'}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
+                {/*<Grid item xs={12}>*/}
+                {/*  <Grid container direction={'row'} spacing={1}>*/}
+                {/*    <Grid container item justify={'flex-end'}*/}
+                {/*          alignItems={'center'} xs={3}>*/}
+                {/*      <Typography variant={'button'}>FAX</Typography>*/}
+                {/*    </Grid>*/}
+                {/*    <Grid item xs={9}>*/}
+                {/*      <TextField*/}
+                {/*        autoComplete={'off'}*/}
+                {/*        className={classes.fullWidth}*/}
+                {/*        id={'outlined-textarea'}*/}
+                {/*        label={''}*/}
+                {/*        name={'fax'}*/}
+                {/*        onChange={formikChange}*/}
+                {/*        type={'number'}*/}
+                {/*        value={FormikValues.fax}*/}
+                {/*        variant={'outlined'}*/}
+                {/*      />*/}
+                {/*    </Grid>*/}
+                {/*  </Grid>*/}
+                {/*</Grid>*/}
 
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>

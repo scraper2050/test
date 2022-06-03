@@ -15,15 +15,15 @@ export default (): any => ({
     },
     width: '80%'
   },
-  'profilePane': {
-    'borderRadius': '14px',
+  profilePane: {
+    borderRadius: '14px',
     border: `1px solid ${PRIMARY_GREY}`,
-    'height': '25vh',
-    'padding': '10px',
-    'textAlign': 'center',
-    'width': '100%',
-    'background': 'white',
-    'position': 'relative',
+    height: '25vh',
+    padding: '10px',
+    textAlign: 'center',
+    width: '100%',
+    background: 'white',
+    position: 'relative',
     display: 'flex',
     flexDirection: 'row',
   },
@@ -71,67 +71,32 @@ export default (): any => ({
     right: '1rem',
     top: '1rem'
   },
-
-  'infoPane': {
-    'display': 'flex',
-    'border': `1px solid ${LIGHT_GREY}`,
-    'border-radius': '10px',
-    'padding': '3rem',
-    'min-height': '15rem',
-    'align-items': 'center'
+  fieldsPane: {
+    borderRadius: '14px',
+    border: `1px solid ${PRIMARY_GREY}`,
+    width: '100%',
+    background: 'white',
+    position: 'relative',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '10px',
+    //gridAutoRows: 'minmax(100px, auto)',
+    padding: 20,
   },
-  'buttonPane': {
-    'display': 'flex',
-    'padding': '20px',
-    'justify-content': 'flex-end'
+  fieldPane: {
+    display: 'flex',
+    flexDirection: 'column',
   },
-
-  'noUpdateAvatarArea': {
-    'flex': '25%',
-    'padding-right': '2rem',
-    'flex-shrink': '0',
-    'align-self': 'center',
+  filedLabel: {
+    color: LABEL_GREY,
+    fontWeight: 500,
+    fontSize: 16,
+    textAlign: 'left',
   },
-  'infoArea': {
-    'flex': '80%',
-  },
-  'infoAreaFullwidth': {
-    'flex': '100%',
-  },
-  'field': {
-    'display': 'flex',
-    'flex-direction': 'horizontal',
-    'justify-content': 'space-around',
-  },
-  'leftField': {
-    'width': '45%',
-    'max-width': '50%',
-    'padding': '5px',
-    'display': 'flex',
-  },
-  'rightField': {
-    'width': '45%',
-    'max-width': '50%',
-    'padding': '5px',
-    'display': 'flex',
-  },
-  'imgArea': {
-    'margin': 'auto',
-    'height': '150px',
-    'width': '150px',
-    'borderRadius': '50%',
-    'border': '5px solid #00aaff',
-    'background': 'grey',
-    'display': 'flex',
-    'justify-content': 'center',
-    'align-items': 'center',
-    'background-size': '100% 100%'
-  },
-  'label': {
-    'width': '200px',
-    'text-align': 'left',
-    'display': 'flex',
-    'align-items': 'center',
-    'font-size': '20px'
+  fieldText: {
+    color: TEXT_GREY,
+    fontWeight: 400,
+    fontSize: 16,
+    textAlign: 'left',
   },
 });

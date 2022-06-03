@@ -62,7 +62,7 @@ export default function AutoComplete({
       //   }
       //   handleChange(virtualEvent);
       // }}
-      getOptionLabel={(option:any) => option.name}
+      getOptionLabel={(option:any) => typeof option === 'string' ? option : option.name}
       renderInput={(params) => <TextField
         {...params}
         label=""
