@@ -262,7 +262,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   
   useEffect(() => {
     dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
-    setCurrentPageIndex(0);
+    dispatch(setCurrentPageIndex(0));
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
   const columns: any = [
@@ -314,7 +314,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       Cell({ row }: any) {
         return <div>
           <span>
-            {`$${row.original.balanceDue}` || 0}
+            {`$${row.original.balanceDue ?? row.original.total}`}
           </span>
         </div>;
       },
