@@ -95,7 +95,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     'initialValues': {
       'customerId': payments.customer._id,
       'paymentId': payments._id,
-      'paymentType': paymentTypeReference.filter(type => type.label == payments.paymentType)[0]._id,
+      'paymentType': payments.paymentType ? paymentTypeReference.filter(type => type.label == payments.paymentType)[0]._id : '',
       'paymentDate': new Date(payments.paidAt),
       'referenceNumber': payments.referenceNumber,
       'showPaid': false,
