@@ -1,0 +1,102 @@
+import {CompanyProfileStateType} from "../../../actions/user/user.types";
+import {allStates} from "../../../utils/constants";
+
+export const companyProfileFields = (profileState: CompanyProfileStateType) => [
+  {
+    left: {
+      id: 'companyName',
+      label: 'Company Name:',
+      placehold: 'Input Company Name',
+      value: profileState.companyName,
+    },
+    right: {
+      id: 'companyEmail',
+      label: 'Company Email:',
+      placehold: 'Input Company Email',
+      value: profileState.companyEmail,
+    },
+  },
+  {
+    left: {
+      id: 'phone',
+      label: 'Phone:',
+      placehold: 'Input Phone Number',
+      value: profileState.phone,
+      type: 'number',
+      max: 10,
+    },
+    right: {
+      id: 'fax',
+      label: 'Fax:',
+      placehold: 'Input Fax',
+      value: profileState.fax,
+      type: 'number',
+      max: 10,
+    }
+  },
+  {
+    left: {
+      id: 'street',
+      label: 'Street:',
+      placehold: 'Input Street',
+      value: profileState.street,
+    },
+    right: {
+      id: 'city',
+      label: 'City:',
+      placehold: 'Input City',
+      value: profileState.city,
+    }
+  },
+  {
+    left: {
+      id: 'state',
+      label: 'State:',
+      placehold: 'Input State',
+      value: profileState.state,
+      data: allStates.map((state) => state.name),
+    },
+    right: {
+      id: 'zipCode',
+      label: 'Zip Code:',
+      placehold: 'Input Zip Code',
+      value: profileState.zipCode,
+      type: 'number',
+      max: 5,
+    }
+  },
+];
+
+
+export const companyProfileFields2 = (profileState: CompanyProfileStateType) => [
+  {
+    id: 'companyEmail',
+    label: 'Company Email:',
+    value: profileState.companyEmail,
+  }, {
+    id: 'phone',
+    label: 'Phone:',
+    value: profileState.phone,
+  }, {
+    id: 'fax',
+    label: 'Fax:',
+    value: profileState.fax,
+  }, {
+    id: 'street',
+    label: 'Street:',
+    placehold: 'Input Street',
+    value: profileState.street,
+  }, {
+    id: 'city',
+    label: 'City:',
+    value: profileState.city,
+  }, {
+    id: 'state',
+    label: 'State:',
+    value: profileState.state,
+  }, {
+    id: 'zipCode',
+    label: 'Zip Code:',
+    value: profileState.zipCode,
+  }
+]

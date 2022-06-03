@@ -9,6 +9,11 @@ import { CompanyProfileStateType } from 'actions/user/user.types';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
 import BCCompanyLocation
   from "../../../components/bc-company-profile/bc-company-location";
+import BCCompanyProfile
+  from "../../../components/bc-company-profile/bc-company-profile";
+import {
+  companyProfileFields2
+} from "../../../components/bc-company-profile/fields";
 
 interface User {
   _id?: string,
@@ -65,7 +70,14 @@ function CompanyProfilePage() {
           profileState.isLoading ? (
               <BCCircularLoader/>
             ) :
-            <BCCompanyLocation />
+            <div>
+              <BCCompanyLocation />
+              <br />
+              <BCCompanyProfile
+                fields={companyProfileFields2(profileState)}
+                />
+
+            </div>
         }
       </PageContainer>
     </MainContainer>
