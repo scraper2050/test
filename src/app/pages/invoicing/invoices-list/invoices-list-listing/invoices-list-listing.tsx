@@ -1,5 +1,5 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
@@ -37,6 +37,7 @@ const getFilteredList = (state: any) => {
 function InvoicingListListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation<any>();
   const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
   // const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
@@ -67,6 +68,9 @@ function InvoicingListListing({ classes, theme }: any) {
     }, 10);*/
     history.push({
       'pathname': `view/${id}`,
+      'state': {
+        keyword,
+      }
     });
   };
 
@@ -88,6 +92,16 @@ function InvoicingListListing({ classes, theme }: any) {
       'accessor': 'customer.profile.displayName',
       'className': 'font-bold',
       'sortable': true
+    },
+    {
+      Cell({ row }: any) {
+        return <div>
+          <span>
+            {row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+          </span>
+        </div>;
+      },
+      'Header': 'Customer PO',
     },
     /*
      * {
@@ -219,6 +233,15 @@ function InvoicingListListing({ classes, theme }: any) {
     dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
+
+  useEffect(() => {
+    if(location?.state?.option?.search){
+      dispatch(setKeyword(location.state.option.search ));
+      dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(setCurrentPageIndex(0));
+      window.history.replaceState({}, document.title)
+    } 
+  }, [location]);
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();

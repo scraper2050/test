@@ -54,6 +54,7 @@ function BCTableContainer({
   currentPageSize,
   setCurrentPageSizeFunction = () => {},
   setKeywordFunction = () => {},
+  disableInitialSearch = false,
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -62,6 +63,10 @@ function BCTableContainer({
   const initialSearch = locationState &&
     locationState.prevPage &&
     locationState.prevPage.search ? locationState.prevPage.search : '';
+
+  const initialServerPaginatedSearch = manualPagination && 
+    locationState && locationState.option &&
+    locationState.option.search ? locationState.option.search : '';
 
 
   const onPageSearch = locationState &&
@@ -118,6 +123,9 @@ function BCTableContainer({
     if (tableData) {
       if (initialSearch !== '') {
         setSearchText(initialSearch);
+      }
+      if (initialServerPaginatedSearch !== '' && !disableInitialSearch) {
+        setSearchText(initialServerPaginatedSearch);
       }
     }
   }, []);
