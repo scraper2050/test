@@ -5,14 +5,17 @@ import {
   getCompanyProfileAction,
   getCompanyLocationsAction
 } from 'actions/user/user.action';
-import { CompanyProfileStateType } from 'actions/user/user.types';
+import {
+  CompanyLocation,
+  CompanyProfileStateType
+} from 'actions/user/user.types';
 import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular-loader';
 import BCCompanyLocation
   from "../../../components/bc-company-profile/bc-company-location";
 import BCCompanyProfile
   from "../../../components/bc-company-profile/bc-company-profile";
 import {
-  companyProfileFields2
+  companyLocationFields,
 } from "../../../components/bc-company-profile/fields";
 
 interface User {
@@ -55,6 +58,7 @@ interface User {
 function CompanyProfilePage() {
   const dispatch = useDispatch();
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const [location, setLocation] = useState<CompanyLocation| null>(null);
 
   useEffect(() => {
     let user: User = {};
@@ -71,12 +75,13 @@ function CompanyProfilePage() {
               <BCCircularLoader/>
             ) :
             <div>
-              <BCCompanyLocation />
+              <BCCompanyLocation setLocation={setLocation}/>
               <br />
-              <BCCompanyProfile
-                fields={companyProfileFields2(profileState)}
+              {location &&
+                <BCCompanyProfile
+                  fields={companyLocationFields(location)}
                 />
-
+              }
             </div>
         }
       </PageContainer>

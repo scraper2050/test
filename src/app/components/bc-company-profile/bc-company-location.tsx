@@ -8,6 +8,7 @@ import {ADMIN_SIDEBAR_BG, modalTypes} from '../../../constants';
 import DropDownMenu, {DROP_ITEM} from "../bc-menu-dropdown";
 import {Add as AddIcon, Business as BusinessIcon, Edit as EditIcon} from '@material-ui/icons';
 import {
+  CompanyLocation,
   CompanyProfile,
   CompanyProfileStateType
 } from "../../../actions/user/user.types";
@@ -24,6 +25,7 @@ import {companyProfileFields} from "./fields";
 
 interface Props {
   classes: any;
+  setLocation: (location: CompanyLocation) => void;
 }
 
 interface Avatar {
@@ -44,6 +46,7 @@ const companyProfileSchema = Yup.object().shape({
 function BCCompanyLocation(props: Props) {
   const {
     classes,
+    setLocation,
   } = props;
 
   const dispatch = useDispatch();
@@ -53,7 +56,8 @@ function BCCompanyLocation(props: Props) {
   const [showEdit, setEdit] = useState(false);
 
   useEffect(() => {
-    const companyLocations = profileState.locations.map((location: any) => {
+    let mainIndex = 0;
+    const companyLocations = profileState.locations.map((location: any, index) => {
       const temp = {
         id: location._id,
         title: location.name,
@@ -61,14 +65,20 @@ function BCCompanyLocation(props: Props) {
         selectable: true,
       };
       if (temp.id === selectedItem?.id) setSelectedItem(temp);
+      if (location.isMainLocation) mainIndex = index;
       return temp;
     });
     companyLocations.unshift({id: '0', title: 'Add New Location', icon: AddIcon, selectable: false});
     setLocations(companyLocations);
     if (!selectedItem) {
-      setSelectedItem(companyLocations[1]);
+      setSelectedItem(companyLocations[mainIndex + 1]);
     }
   }, [profileState.locations])
+
+  useEffect(() => {
+    const fullItem = profileState.locations.find((location) => location._id === selectedItem?.id);
+    if (fullItem) setLocation(fullItem);
+  }, [selectedItem])
 
 
   const handleUpdateCompanyProfile = async (values: any) => {
@@ -134,7 +144,10 @@ function BCCompanyLocation(props: Props) {
         dispatch(
           setModalDataAction({
             data: {
-              companyLocation: null,
+              companyLocation: profileState.locations.length > 4 ? null : {
+                contact: {phone: profileState?.phone || ''},
+                info: {companyEmail: profileState?.companyEmail || ''},
+              },
               //modalTitle: 'Add New Location',
               removeFooter: false,
             },
@@ -168,22 +181,16 @@ function BCCompanyLocation(props: Props) {
 
   return (
     <div className={classes.profilePane}>
-      <div
-        className={`edit_button ${classes.editButton}`}
-        onClick={() => openAddContactModal()}>
-        <button className={'MuiFab-primary'}>
-          <i className={'material-icons'}>
-            {'edit'}
-          </i>
-        </button>
-      </div>
-
       <div className={classes.avatarArea}>
         <img src={profileState.logoUrl === '' ? NoCompanyLogo :profileState.logoUrl}/>
       </div>
 
       <div className={classes.namePane} >
-        <span className={classes.labelText}>Company Name</span>
+        <span className={classes.labelText}>Company Name
+          <IconButton onClick={() => openAddContactModal()}>
+            <EditIcon className={classes.editProfileIcon}/>
+          </IconButton>
+        </span>
         <span className={classes.companyText}>{profileState.companyName}</span>
       </div>
 
