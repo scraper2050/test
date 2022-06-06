@@ -5,7 +5,7 @@ import { refreshPaymentTerms, setPaymentTerms, setPaymentTermsLoading } from 'ac
 // import {
 //   getInvoicingList,
 // } from 'actions/invoicing/invoicing.action';
-import { getAllInvoicesAPI } from './invoicing.api';
+import { getAllInvoicesAPI, getAllInvoicesForBulkPaymentsAPI } from './invoicing.api';
 import {
   setPaymentsLoading,
   setPayments,
@@ -21,6 +21,7 @@ export const recordPayment: any = (params = {}) => {
         .then((res: any) => {
           // dispatch(getInvoicingList());
           dispatch(getAllInvoicesAPI());
+          dispatch(getAllInvoicesForBulkPaymentsAPI());
           dispatch(getAllPaymentsAPI());
           return resolve(res.data);
         })
@@ -38,6 +39,7 @@ export const updatePayment: any = (params = {}) => {
         .then((res: any) => {
           // dispatch(getInvoicingList());
           dispatch(getAllInvoicesAPI());
+          dispatch(getAllInvoicesForBulkPaymentsAPI());
           dispatch(getAllPaymentsAPI());
           return resolve(res.data);
         })

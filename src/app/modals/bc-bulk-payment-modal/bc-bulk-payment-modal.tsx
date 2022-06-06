@@ -30,13 +30,14 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { CSButtonSmall } from "helpers/custom";
 import TableFilterService from 'utils/table-filter';
 import { formatShortDateNoDay } from 'helpers/format';
-import { getAllInvoicesAPI } from 'api/invoicing.api';
+import { getAllInvoicesForBulkPaymentsAPI } from 'api/invoicing.api';
 import { recordPayment } from 'api/payment.api';
 import {
   setCurrentPageIndex,
   setCurrentPageSize,
   setKeyword,
-} from 'actions/invoicing/invoicing.action';
+} from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
+import { RootState } from 'reducers';
 import { error } from "actions/snackbar/snackbar.action";
 
 const StyledGrid = withStyles(() => ({
@@ -59,7 +60,7 @@ const useDebounceInputStyles = makeStyles(() =>
 );
 
 const getFilteredList = (state: any) => {
-  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoicesForBulkPayments.data);
   return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
 };
 
@@ -73,14 +74,14 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
 
   const invoiceList = useSelector(getFilteredList);
   const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
-    ({ invoiceList }: any) => ({
-      loading: invoiceList.loading,
-      prevCursor: invoiceList.prevCursor,
-      nextCursor: invoiceList.nextCursor,
-      total: invoiceList.total,
-      currentPageIndex: invoiceList.currentPageIndex,
-      currentPageSize: invoiceList.currentPageSize,
-      keyword: invoiceList.keyword,
+    ({ invoicesForBulkPayments }: RootState) => ({
+      loading: invoicesForBulkPayments.loading,
+      prevCursor: invoicesForBulkPayments.prevCursor,
+      nextCursor: invoicesForBulkPayments.nextCursor,
+      total: invoicesForBulkPayments.total,
+      currentPageIndex: invoicesForBulkPayments.currentPageIndex,
+      currentPageSize: invoicesForBulkPayments.currentPageSize,
+      keyword: invoicesForBulkPayments.keyword,
     })
   );
 
@@ -212,7 +213,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   const debouncedFetchFunction = useCallback(
     debounce((value, FormikValues) => {
       setKeyword(value);
-      dispatch(getAllInvoicesAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
+      dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
       setCurrentPageIndex(0);
     }, 500),
     []
@@ -261,7 +262,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   };
   
   useEffect(() => {
-    dispatch(getAllInvoicesAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
+    dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
     dispatch(setCurrentPageIndex(0));
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
@@ -561,7 +562,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                 tableData={localInvoiceList}
                 manualPagination
                 fetchFunction={(num: number, isPrev: boolean, isNext: boolean) =>
-                  dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
+                  dispatch(getAllInvoicesForBulkPaymentsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
                 }
                 total={total}
                 currentPageIndex={currentPageIndex}
