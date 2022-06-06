@@ -104,7 +104,7 @@ function BCCompanyLocationModal({
         }
       })
 
-      if (companyLocation) {
+      if (companyLocation?._id) {
         dispatch(UpdateCompanyLocationAction(params, (status) => {
           if (status) closeModal();
           else {
@@ -191,7 +191,7 @@ function BCCompanyLocationModal({
           <Typography
             className={classes.dialogTitle}
             variant={'h6'}>
-            <strong>Add New Location</strong>
+            <strong>{companyLocation?._id ? 'Edit' : 'Add New'} Location</strong>
           </Typography>
           <Grid container className={classes.modalPreview}
                 justify={'space-around'}>

@@ -29,11 +29,11 @@ const MenuButton = styled.div<{opened: boolean}>`
   align-items: center;
   padding: 10px;
   cursor: pointer;
-  width: 200px;
-  border: 1px solid;
+  border-style: solid;
+  border-width: ${props => props.opened ? '1px' : '1px'};
   border-color: ${props => props.opened ? LABEL_GREY : LIGHT_GREY};
   border-radius: ${props => props.opened ? '8px 8px 0 0' : '8px'};
-  max-width: 200px;
+  min-width: 240px;
 `
 const ButtonText = styled.span`
   flex: 1;
@@ -45,7 +45,7 @@ const ButtonText = styled.span`
 const StyledMenu = withStyles({
   list: {
     padding: 0,
-    minWidth: '200px',
+    minWidth: '240px',
   },
   paper: {
     border: '0 solid #d3d4d5',
@@ -54,7 +54,7 @@ const StyledMenu = withStyles({
   },
 })((props: MenuProps) => (
   <Menu
-    elevation={4}
+    elevation={2}
     getContentAnchorEl={null}
     anchorOrigin={{
     vertical: 'bottom',
@@ -70,7 +70,7 @@ const StyledMenu = withStyles({
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
-    height: 32,
+    height: 42,
     '& span': {
       fontSize: 13,
     },
