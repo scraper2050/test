@@ -13,6 +13,13 @@ import {
   setNextDraftInvoicesCursor,
   setPreviousDraftInvoicesCursor
 } from 'actions/invoicing/invoicing.action';
+import {
+  setInvoicesLoading as setInvoicesForBulkPaymentsLoading,
+  setInvoices as setInvoicesForBulkPayments,
+  setInvoicesTotal as setInvoicesForBulkPaymentsTotal,
+  setNextInvoicesCursor as setNextInvoicesForBulkPaymentsCursor,
+  setPreviousInvoicesCursor as setPreviousInvoicesForBulkPaymentsCursor,
+} from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
 
 export const getTodos = async (params = {}) => {
   let responseData;
@@ -30,6 +37,63 @@ export const getTodos = async (params = {}) => {
     }
   }
   return responseData.jobs;
+};
+
+let cancelTokenGetAllInvoicesForBulkPaymentsAPI:any;
+export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, customerId?: string, dueDate?: Date|null, showPaid?: boolean) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setInvoicesForBulkPaymentsLoading(true));
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor,
+        isDraft: false,
+      };
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).add(1,'day').format('YYYY-MM-DD');
+      }
+      if(customerId){
+        optionObj.customerId = customerId;
+      }
+      if(dueDate){
+        optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
+      }
+      if(showPaid === false) {
+        optionObj.status = JSON.stringify(["UNPAID", "PARTIALLY_PAID"]);
+      }
+      if(cancelTokenGetAllInvoicesForBulkPaymentsAPI) {
+        cancelTokenGetAllInvoicesForBulkPaymentsAPI.cancel('axios canceled');
+        setTimeout(() => {
+          dispatch(setInvoicesForBulkPaymentsLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
+
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
+        .then((res: any) => {
+          let tempInvoices = res.data.invoices;
+          dispatch(setInvoicesForBulkPayments(tempInvoices.reverse()));
+          dispatch(setPreviousInvoicesForBulkPaymentsCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
+          dispatch(setNextInvoicesForBulkPaymentsCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
+          dispatch(setInvoicesForBulkPaymentsTotal(res.data?.total ? res.data?.total : 0));
+          dispatch(setInvoicesForBulkPaymentsLoading(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setInvoicesForBulkPaymentsLoading(false));
+          dispatch(setInvoicesForBulkPayments([]));
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
+        });
+    });
+  };
 };
 
 let cancelTokenGetAllInvoicesAPI:any;

@@ -99,4 +99,12 @@ export default (): any => ({
     fontSize: 16,
     textAlign: 'left',
   },
+  editProfileIcon: {
+    color: LABEL_GREY,
+    fontSize: 20,
+    backgroundColor: PRIMARY_GREY,
+    border: `1px solid ${LABEL_GREY}`,
+    borderRadius: 4,
+    padding: 2,
+  }
 });

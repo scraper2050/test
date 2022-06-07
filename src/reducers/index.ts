@@ -37,6 +37,12 @@ import {
   InvoicingTodoReducer as invoiceTodos,
   InvoicingPurchaseOrderReducer as purchaseOrder
 } from './invoicing.reducer';
+import {
+  InvoicesForBulkPaymentsState
+} from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.types';
+import {
+  InvoicesForBulkPaymentsListReducer as invoicesForBulkPayments,
+} from './invoices-for-bulk-payments.reducer'
 import { PaymentsListReducer as paymentList } from './payments.reducer';
 import { PaymentsState } from 'actions/invoicing/payments/payments.types';
 import { BrandsReducer as brands } from './brands.reducer';
@@ -85,6 +91,7 @@ export interface RootState {
   calendar: CalendarState;
   discountItems: DiscountState;
   paymentList: PaymentsState;
+  invoicesForBulkPayments: InvoicesForBulkPaymentsState;
 }
 
 
@@ -108,6 +115,7 @@ const appReducer = combineReducers({
   invoiceItems,
   invoiceItemsTiers,
   invoiceList,
+  invoicesForBulkPayments,
   invoiceTodos,
   jobLocations,
   jobRequests,

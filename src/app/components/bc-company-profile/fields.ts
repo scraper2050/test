@@ -1,4 +1,7 @@
-import {CompanyProfileStateType} from "../../../actions/user/user.types";
+import {
+  CompanyLocation,
+  CompanyProfileStateType
+} from "../../../actions/user/user.types";
 import {allStates} from "../../../utils/constants";
 
 export const companyProfileFields = (profileState: CompanyProfileStateType) => [
@@ -98,5 +101,41 @@ export const companyProfileFields2 = (profileState: CompanyProfileStateType) => 
     id: 'zipCode',
     label: 'Zip Code:',
     value: profileState.zipCode,
+  }
+]
+
+export const companyLocationFields = (location: CompanyLocation) => [
+  {
+    id: 'contactName',
+    label: 'Contact Name',
+    value: location.contactName,
+  }, {
+    id: 'contactNumber',
+    label: 'Contact Number',
+    value: location.contact?.phone,
+  }, {
+    id: 'contactEmail',
+    label: 'Contact Email',
+    value: location.info?.companyEmail,
+  }, {
+    id: 'empty',
+    label: '',
+    value: '',
+  }, {
+    id: 'street',
+    label: 'Street:',
+    value: location.address?.street,
+  }, {
+    id: 'city',
+    label: 'City:',
+    value: location.address?.city,
+  }, {
+    id: 'state',
+    label: 'State:',
+    value: location.address?.state,
+  }, {
+    id: 'zipCode',
+    label: 'Zip Code:',
+    value: location.address?.zipCode,
   }
 ]
