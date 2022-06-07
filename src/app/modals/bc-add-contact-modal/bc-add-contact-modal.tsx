@@ -13,7 +13,7 @@ import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
 import * as Yup from 'yup';
-import { phoneRegExp } from 'helpers/format';
+import { phoneMaskedRegExp } from 'helpers/format';
 import { success, error } from 'actions/snackbar/snackbar.action';
 import request from 'utils/http.service';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -26,7 +26,7 @@ import {updateContact} from "../../../api/contacts.api";
 const contactSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
   email: Yup.string().email('Invalid email'),
-  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+  phone: Yup.string().matches(phoneMaskedRegExp, 'Phone number is not valid'),
 });
 
 

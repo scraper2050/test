@@ -97,7 +97,7 @@ function InvoicingListListing({ classes, theme }: any) {
       Cell({ row }: any) {
         return <div>
           <span>
-            {row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+            {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
           </span>
         </div>;
       },
