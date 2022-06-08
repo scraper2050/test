@@ -50,6 +50,7 @@ import {openModalAction, setModalDataAction} from "../../../actions/bc-modal/bc-
 import {modalTypes} from "../../../constants";
 import {error as errorSnackBar, error} from "../../../actions/snackbar/snackbar.action";
 import BCButtonGroup from "../bc-button-group";
+import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 
 interface Props {
   classes?: any;
@@ -726,6 +727,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
 
   return (
     <MuiThemeProvider theme={theme}>
+      <BCMiniSidebar data={invoiceData} />
       <Formik
         initialValues={{
           invoice_id: invoiceData?._id,

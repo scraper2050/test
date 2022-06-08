@@ -9,7 +9,7 @@ import { getAllJobTypesAPI } from 'api/job.api';
 
 function ViewJobReportsPage() {
   const dispatch = useDispatch();
-  const { jobReportId } = useParams();
+  const { jobReportId } = useParams<any>();
 
   const { loading, jobReportObj, error } = useSelector(({ jobReport }: any) =>
     jobReport);
