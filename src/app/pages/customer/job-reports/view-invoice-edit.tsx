@@ -20,7 +20,7 @@ const newInvoice = {
 
 function ViewInvoice() {
   const dispatch = useDispatch();
-  let { invoice } = useParams();
+  let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { state } = useLocation<any>();
   const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
