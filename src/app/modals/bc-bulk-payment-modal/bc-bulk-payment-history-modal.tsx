@@ -87,7 +87,6 @@ function BcBulkPaymentHistoryModal({
           'modalTitle': 'Edit Bulk Payment',
           'removeFooter': false,
           payments: data,
-          isBulk: true,
         },
         'type': modalTypes.EDIT_BULK_PAYMENT_MODAL
       };

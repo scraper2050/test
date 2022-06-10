@@ -28,6 +28,8 @@ import { CSButtonSmall } from "helpers/custom";
 import { formatShortDateNoDay } from 'helpers/format';
 import { updatePayment } from 'api/payment.api';
 import { error } from "actions/snackbar/snackbar.action";
+import { voidPayment } from 'api/payment.api';
+import { modalTypes } from '../../../constants';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -53,7 +55,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   const [localPaymentList, setLocalPaymentList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const inputStyles = useInputStyles();
-
+  
   const paymentList = payments.line;
 
   const paymentTypeReference = [
@@ -199,6 +201,27 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   //   newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked)
   //   setLocalPaymentList(newPaymentList);
   // }
+
+  const handleVoidPaymentButtonClick = () => {
+    const closeAction = setModalDataAction({
+      'data': {
+        'modalTitle': 'Edit Bulk Payment',
+        'removeFooter': false,
+        payments,
+      },
+      'type': modalTypes.EDIT_BULK_PAYMENT_MODAL
+    });
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: '         ',
+        message: 'Are you sure you want to void this bulk payment?',
+        subMessage: 'This action cannot be undone.',
+        action: voidPayment({type: 'customer', paymentId: payments._id}),
+        closeAction,
+      },
+      'type': modalTypes.WARNING_MODAL
+    }));
+  };
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -475,15 +498,27 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
               Close
             </Button>
             {!isSuccess && (
-              <Button
-                color={'primary'}
-                disableElevation={true}
-                disabled={isSubmitting || !isValid()}
-                type={'submit'}
-                variant={'contained'}
-              >
-                Submit All
-              </Button>
+              <>
+                <Button
+                  color={'secondary'}
+                  disableElevation={true}
+                  disabled={isSubmitting}
+                  onClick={handleVoidPaymentButtonClick}
+                  variant={'contained'}
+                  style={{ marginLeft: 15 }}
+                >
+                  Void Bulk Payment
+                </Button>
+                <Button
+                  color={'primary'}
+                  disableElevation={true}
+                  disabled={isSubmitting || !isValid()}
+                  type={'submit'}
+                  variant={'contained'}
+                >
+                  Submit All
+                </Button>
+              </>
             )}
           </DialogActions>
         </div>
