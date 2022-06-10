@@ -53,9 +53,21 @@ export default (theme: Theme): any => ({
     padding: '0 12px',
     textTransform:'none',
   },
+  voidButton : {
+    color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
+    backgroundColor: `${CONSTANTS.ERROR_RED} !important`,
+    '&:hover': {
+      backgroundColor: `${CONSTANTS.PRIMARY_RED} !important`,
+      borderColor: CONSTANTS.PRIMARY_RED,
+    },
+  },
   submitButtonDisabled : {
     color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
     backgroundColor: `${CONSTANTS.TABLE_HOVER} !important`,
+  },
+  voidPaymentButtonDisabled : {
+    color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
+    backgroundColor: `${CONSTANTS.PRIMARY_RED} !important`,
   },
   formField: {
     margin: theme.spacing(1),

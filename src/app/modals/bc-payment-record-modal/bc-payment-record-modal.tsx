@@ -17,12 +17,14 @@ import {
   withStyles
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import classNames from 'classnames';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
+import { voidPayment } from 'api/payment.api';
 
 interface ApiProps {
   customerId: string,
@@ -187,6 +189,28 @@ function BcPaymentRecordModal({
         }));
       }, 200);
     }
+  };
+
+  const handleVoidPaymentButtonClick = () => {
+    const closeAction = setModalDataAction({
+      'data': {
+        invoice,
+        payment,
+        modalTitle: 'Edit Payment',
+        removeFooter: false,
+      },
+      'type': modalTypes.PAYMENT_RECORD_MODAL
+    });
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: '         ',
+        message: 'Are you sure you want to void this payment?',
+        subMessage: 'This action cannot be undone.',
+        action: voidPayment({type: 'customer', paymentId: payment._id}),
+        closeAction,
+      },
+      'type': modalTypes.WARNING_MODAL
+    }));
   };
 
   const {customer, dueDate} = invoice;
@@ -381,6 +405,21 @@ function BcPaymentRecordModal({
             variant={'outlined'}>
             Close
           </Button>
+
+          {payment && !sent &&
+            <Button
+              disabled={isSubmitting}
+              aria-label={'void-payment'}
+              classes={{
+                root: classNames([classes.submitButton,classes.voidButton]),
+                disabled: classes.voidPaymentButtonDisabled,
+              }}
+              color="primary"
+              onClick={handleVoidPaymentButtonClick}
+              variant={'contained'}>
+              Void Payment
+            </Button>
+          }
 
           {!sent &&
           <Button

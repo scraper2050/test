@@ -18,7 +18,7 @@ import { RootState } from 'reducers';
 
 const getFilteredList = (state: any) => {
   const sortedPayments = TableFilterService.filterByDateDesc(state?.paymentList.data);
-  return sortedPayments.filter((payment: any) => !payment.isDraft);
+  return sortedPayments.filter((payment: any) => !payment.isVoid);
 };
 
 function InvoicingPaymentListing({ classes, theme }: any) {
