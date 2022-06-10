@@ -680,6 +680,7 @@ function BCModal() {
           message={data.message}
           subMessage={data.subMessage}
           action={data.action}
+          closeAction={data.closeAction}
         />);
         break;
 
