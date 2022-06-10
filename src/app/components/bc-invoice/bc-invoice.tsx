@@ -347,7 +347,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <div className={invoiceStyles.companyInfo}>
                     {!serviceAddressLocation &&!serviceAddressSite ? (
                       <>
-                        <small>SERVICE ADDRESS</small>
+                        <small>JOB ADDRESS</small>
                         <span>{customerAddress.length && Array.isArray(customerAddress) ? customerAddress.join(', ') : ''}</span>
                       </>
                     ) : serviceAddressSite && serviceAddressLocation ? (
@@ -355,13 +355,13 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                         <small>SUBDIVISION</small>
                         <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
-                        <small style={{marginTop: 20}}>SERVICE ADDRESS</small>
+                        <small style={{marginTop: 20}}>JOB ADDRESS</small>
                         <h4 style={{marginBottom: 0}}>{serviceAddressSite[0]}</h4>
                         <span>{serviceAddressSite.slice(1).join(', ')}</span>
                       </>
                     ) : serviceAddressLocation && (
                       <>
-                        <small>SERVICE ADDRESS</small>
+                        <small>JOB ADDRESS</small>
                         <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                       </>

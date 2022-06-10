@@ -267,7 +267,7 @@ function ViewMoreLocationPage({ classes }: any) {
                   isLoading={jobSites.loading}
                   onRowClick={handleRowClick}
                   search
-                  searchPlaceholder={"Search Job Addresss..."}
+                  searchPlaceholder={"Search Job Address..."}
                   tableData={jobSites.data}
                   initialMsg="There are no job addresses"
                 />
