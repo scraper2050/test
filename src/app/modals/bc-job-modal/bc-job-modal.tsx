@@ -1255,13 +1255,15 @@ function BCJobModal({
                     style={{}}
                     variant={'contained'}
                   >Cancel Job</Button>
-                  <Button
-                    color={'secondary'}
-                    disabled={isSubmitting}
-                    onClick={() => openCancelJobModal(job, false)}
-                    style={{}}
-                    variant={'contained'}
-                  >Cancel Job and Service Ticket</Button>
+                  {job?.ticket?.ticketId && (
+                    <Button
+                      color={'secondary'}
+                      disabled={isSubmitting}
+                      onClick={() => openCancelJobModal(job, false)}
+                      style={{}}
+                      variant={'contained'}
+                    >Cancel Job and Service Ticket</Button>
+                  )}
                 </>
               }
               <Button
@@ -1269,6 +1271,7 @@ function BCJobModal({
                 disabled={isSubmitting}
                 type={'submit'}
                 variant={'contained'}
+                style={{ marginLeft: 30 }}
               >{job._id ? 'Update' : 'Submit'}</Button>
             </div>
           </DialogActions>

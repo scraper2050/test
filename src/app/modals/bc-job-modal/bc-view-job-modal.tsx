@@ -400,17 +400,20 @@ function BCViewJobModal({
             onClick={() => openCancelJobModal(true)}
             variant={'contained'}
           >Cancel Job</Button>
-          <Button
-            disabled={isSubmitting}
-            color={'secondary'}
-            onClick={() => openCancelJobModal(false)}
-            variant={'contained'}
-          >Cancel Job and Service Ticket</Button>
+          {job?.ticket?.ticketId && (
+            <Button
+              disabled={isSubmitting}
+              color={'secondary'}
+              onClick={() => openCancelJobModal(false)}
+              variant={'contained'}
+            >Cancel Job and Service Ticket</Button>
+          )}
           <Button
             disabled={isSubmitting}
             color={'primary'}
             onClick={completeJob}
             variant={'contained'}
+            style={{ marginLeft: 30 }}
           >Complete</Button>
           {/*<Button
             disabled={isSubmitting}
