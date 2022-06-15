@@ -18,6 +18,7 @@ export const setUserToLocalStorage = (user: any, token: string) => {
 export const removeUserFromLocalStorage = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
+  localStorage.removeItem('tokenCustomerAPI');
 };
 
 export const getQBAuthStateFromLocalStorage = () => {

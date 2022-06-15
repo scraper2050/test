@@ -26,7 +26,7 @@ import { modalTypes } from '../../../constants';
 import styles from './signup.styles';
 import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import Api, { setToken, setUser } from 'utils/api';
+import Api, { setToken, setTokenCustomerAPI, setUser } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -240,6 +240,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
           setAlert(true);
         } else {
           setToken(res.data.token);
+          setTokenCustomerAPI(res.data.token);
           setUser(JSON.stringify(res.data.user));
           dispatch(setQuickbooksConnection({qbAuthorized: false}));
           axios.create({
