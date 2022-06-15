@@ -15,6 +15,12 @@ export const setToken = (token: string): void => {
     token
   );
 };
+export const setTokenCustomerAPI = (tokenCustomerAPI: string): void => {
+  localStorage.setItem(
+    'tokenCustomerAPI',
+    tokenCustomerAPI
+  );
+};
 export const setUser = (user: any): void => {
   localStorage.setItem(
     'user',
