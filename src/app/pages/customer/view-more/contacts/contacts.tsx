@@ -159,6 +159,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
             email: origRow['email'],
             phone: origRow['phone'],
             _id: origRow['_id'],
+            isActive: origRow['isActive'],
           },
           onEdit: true,
           apply: (values: any) => handleUpdateContact(values)

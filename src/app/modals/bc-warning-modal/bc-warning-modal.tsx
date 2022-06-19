@@ -9,22 +9,34 @@ import styled from 'styled-components';
 import BCSent from "../../components/bc-sent";
 import styles from './bc-warning-modal.styles';
 
-function BcWarningModal({classes, message, subMessage, action}: any): JSX.Element {
+function BcWarningModal({classes, message, subMessage, action, closeAction}: any): JSX.Element {
   const dispatch = useDispatch();
 
   const closeModal = () => {
-    dispatch(closeModalAction());
-    setTimeout(() => {
-      dispatch(setModalDataAction({
-        'data': {},
-        'type': ''
-      }));
-    }, 200);
+    if(closeAction) {
+      dispatch(closeAction);
+    } else {
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    }
   };
 
   const confirm = () => {
     dispatch(action);
-    closeModal();
+    setTimeout(() => {
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    }, 1000);
   }
 
   return (

@@ -13,11 +13,12 @@ import {
   // setNextPaymentsCursor,
   // setPreviousPaymentsCursor,
 } from 'actions/invoicing/payments/payments.action';
+import { error, success } from 'actions/snackbar/snackbar.action';
 
 export const recordPayment: any = (params = {}) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
-      const response: any = await request('/recordPayment', 'POST', params, false)
+      request('/recordPayment', 'POST', params, false)
         .then((res: any) => {
           // dispatch(getInvoicingList());
           dispatch(getAllInvoicesAPI());
@@ -35,13 +36,35 @@ export const recordPayment: any = (params = {}) => {
 export const updatePayment: any = (params = {}) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
-      const response: any = await request('/updatePayment', 'PUT', params, false)
+      request('/updatePayment', 'PUT', params, false)
         .then((res: any) => {
           // dispatch(getInvoicingList());
           dispatch(getAllInvoicesAPI());
           dispatch(getAllInvoicesForBulkPaymentsAPI());
           dispatch(getAllPaymentsAPI());
           return resolve(res.data);
+        })
+        .catch(err => {
+          return reject(err);
+        });
+    });
+  }
+};
+
+export const voidPayment: any = (params = {}) => {
+  return (dispatch: any) => {
+    return new Promise(async (resolve, reject) => {
+      request('/voidPayment', 'DELETE', params, false)
+        .then((res: any) => {
+          if(res.data?.status === 1){
+            dispatch(success("Payment voided succesfully"));
+            dispatch(getAllInvoicesAPI());
+            dispatch(getAllInvoicesForBulkPaymentsAPI());
+            dispatch(getAllPaymentsAPI());
+            return resolve(res.data);
+          } else {
+            dispatch(error("Something went wrong! Cannot void payment"));
+          }
         })
         .catch(err => {
           return reject(err);
