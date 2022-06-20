@@ -140,7 +140,7 @@ function BCTableContainer({
 
 
   return (
-    <TableContainer noPadding={noPadding} container>
+    <TableContainer $noPadding={noPadding} container>
       <Grid
         className={'actions-container'}
         item
@@ -208,8 +208,8 @@ function BCTableContainer({
   );
 }
 
-const TableContainer = styled(Grid)<{noPadding: boolean}>`
-padding: ${props => props.noPadding ? '0' : '5px'};
+const TableContainer = styled(Grid)<{$noPadding: boolean}>`
+padding: ${props => props.$noPadding ? '0' : '5px'};
 .actions-container {
   display:flex;
   > .MuiPaper-root {

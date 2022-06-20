@@ -473,8 +473,8 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           </Grid>
         </div>
         <div className={invoiceTableStyle.itemsTableBody}>
-          {invoiceDetail?.items && invoiceDetail?.items.map((row: any) => (
-            <Grid container>
+          {invoiceDetail?.items && invoiceDetail?.items.map((row: any, rowIndex: number) => (
+            <Grid container key={rowIndex}>
               <Grid item container
                     className={row?.description ? invoiceTableStyle.itemsTableFirstRow : invoiceTableStyle.itemsTableOneRow}>
                 <Grid item xs={12} lg={6}>

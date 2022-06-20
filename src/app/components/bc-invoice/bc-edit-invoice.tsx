@@ -446,9 +446,9 @@ const theme = createMuiTheme({
       expandIcon: {
         padding: 0
       },
-      expanded: {
-        minHeight: 48
-      }
+      // expanded: {
+      //   minHeight: 48
+      // }
     },
     MuiDivider: {
       root: {
