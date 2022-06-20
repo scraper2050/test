@@ -48,7 +48,7 @@ import {resetEmailState, sendEmailAction} from "../../../actions/email/email.act
 import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
 import {openModalAction, setModalDataAction} from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
-import {error as errorSnackBar, error} from "../../../actions/snackbar/snackbar.action";
+import {error as errorSnackBar, success} from "../../../actions/snackbar/snackbar.action";
 import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 
@@ -509,6 +509,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   const [subTotal, setSubTotal] = useState(invoiceData?.subTotal || 0);
   const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
   const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
+  const [selectedIdx, setSelectedIdx] = useState(0);
 
   const [options, setOptions] =  React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
 
@@ -597,6 +598,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
+        dispatch(success('Invoice Updated Successfully'));
         history.push(`/main/invoicing/view/${data.invoice_id}`);
         return resolve(response);
       })
@@ -635,6 +637,7 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       callCreateInvoiceAPI(params).then((response: any) => {
+        dispatch(success('Invoice Created Successfully'));
         history.goBack();
         return resolve(response);
       })
@@ -814,6 +817,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                       setFieldValue('isDraft', selected === 2);
                       submitForm()
                     }}
+                    selectedIdx={selectedIdx}
+                    setSelectedIdx={setSelectedIdx}
                   />
 
                 </div>
@@ -1280,7 +1285,9 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                       setFieldValue('isDraft', selected === 2);
                       submitForm()
                     }}
-                    />
+                    selectedIdx={selectedIdx}
+                    setSelectedIdx={setSelectedIdx}
+                  />
                 </div>
               </PageHeader>
             </Form>
