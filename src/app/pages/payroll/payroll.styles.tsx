@@ -35,15 +35,18 @@ export default (theme: Theme): any => ({
     minWidth: 250,
   },
   statusChip: {
-    textTransform: 'none',
+    textTransform: 'capitalize',
     fontSize: 14,
     borderRadius: 8,
-    width: 80,
+    width: 120,
     height: '30px',
     backgroundColor: `${PRIMARY_GREEN}44`,
   },
   unPaidChip: {
     backgroundColor: '#F5005744',
+  },
+  partiallyPaidChip: {
+    backgroundColor: '#FED8B1',
   },
   totalContainer: {
     display: 'flex',
