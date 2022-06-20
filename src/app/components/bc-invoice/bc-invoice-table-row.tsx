@@ -253,7 +253,7 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
       {
         invoiceItems.map((rowData: any, rowIndex: number) => {
           return (
-            <div className={invoiceTableStyle.itemsTableRoot}>
+            <div className={invoiceTableStyle.itemsTableRoot} key={rowIndex}>
               <Grid container spacing={1} alignItems="center">
                 <Grid item xs={5}>
                   <FormControl className={invoiceTableStyle.formFieldFullWidth}>
@@ -360,8 +360,8 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
                       <MenuItem value={"0"}>
                         N/A
                       </MenuItem>
-                      {taxes.map((tax: any) =>
-                        <MenuItem value={tax.tax}>
+                      {taxes.map((tax: any, taxIndex: number) =>
+                        <MenuItem value={tax.tax} key={taxIndex}>
                           {tax.tax} %
                         </MenuItem>
                       )}
@@ -375,8 +375,8 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
             </span>
                 </Grid>
                 <Grid item xs={1} className={invoiceTableStyle.textCenter}>
-                  <IconButton aria-label="delete" color="primary" size="small">
-                    <DeleteIcon fontSize="small" onClick={() => removeItem(rowIndex)}/>
+                  <IconButton aria-label="delete" color="primary" size="small" onClick={() => removeItem(rowIndex)}>
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Grid>
               </Grid>

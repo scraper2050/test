@@ -172,10 +172,11 @@ function DashboardPage({ classes }: any): JSX.Element {
                 justify={'center'}
                 spacing={4}>
                 {
-                  buttonLinks.map(button => {
+                  buttonLinks.map((button:any, linkIdx: number) => {
                     const { text, icon, link } = button;
                     return (
                       <Grid
+                        key={linkIdx}
                         item
                         md={3}
                         sm={4}
