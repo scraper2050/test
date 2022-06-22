@@ -89,7 +89,7 @@ function PayrollInvoices({classes}: Props) {
         cond = cond && selectedIDs.indexOf(item.payedPerson._id) >= 0;
       }
       if (cond) {
-        totalInvoicesAmount += item.invoice.balanceDue;
+        totalInvoicesAmount += item.invoice.total;
         totalCommissions += item.commissionAmount;
       }
       setTotals({invoices: totalInvoicesAmount, commissions: totalCommissions});
@@ -113,7 +113,7 @@ function PayrollInvoices({classes}: Props) {
     },
     {
       'Header': 'Invoice Amount',
-      'accessor': (originalRow: any) => formatCurrency(originalRow.invoice.balanceDue),
+      'accessor': (originalRow: any) => formatCurrency(originalRow.invoice.total),
       'className': 'font-bold',
       'sortable': true,
     },
@@ -126,8 +126,14 @@ function PayrollInvoices({classes}: Props) {
     { Cell({ row }: any) {
         return (
           <Chip
-            label={row.original.invoice.paid ? 'Paid' : 'Unpaid'}
-            className={classNames({[classes.statusChip]: true, [classes.unPaidChip]: !row.original.invoice.paid})}
+            label={row.original.invoice.status.split('_').join(' ').toLowerCase()}
+            className={
+              classNames({
+                [classes.statusChip]: true,
+                [classes.unPaidChip]: row.original.invoice.status === 'UNPAID',
+                [classes.partiallyPaidChip]: row.original.invoice.status === 'PARTIALLY_PAID',
+              })
+            }
           />
         )
       },

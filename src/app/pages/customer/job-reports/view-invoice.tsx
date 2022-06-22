@@ -81,7 +81,7 @@ function ViewInvoice({ classes, theme }: any) {
   }
 
   const goToEdit = () => {
-    if(invoiceDetail?.paid) {
+    if(invoiceDetail?.paid && invoiceDetail?.status === 'PAID') {
       dispatch(
         setModalDataAction({
           'data': {

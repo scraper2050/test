@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import {createStyles} from "@material-ui/core/styles";
 import {makeStyles, Theme} from "@material-ui/core/styles";
@@ -18,9 +18,11 @@ interface Props {
   disabled: boolean;
   clickListener: (selectedIndex: number) => void;
   disabledItems?: number[];
+  selectedIdx?: number;
+  setSelectedIdx?: (selectedIndex: number) => void;
 }
 
-export default function BCButtonGroup({options, disabled, clickListener, disabledItems = []}:Props) {
+export default function BCButtonGroup({options, disabled, clickListener, disabledItems = [], selectedIdx, setSelectedIdx}:Props) {
   const theme = useTheme();
   const menuStyle = useMenuStyles();
   const buttonStyle = useButtonStyle();
@@ -34,6 +36,7 @@ export default function BCButtonGroup({options, disabled, clickListener, disable
     index: number,
   ) => {
     setSelectedIndex(index);
+    setSelectedIdx && setSelectedIdx(index);
     setOpen(false);
   };
 
@@ -47,6 +50,13 @@ export default function BCButtonGroup({options, disabled, clickListener, disable
     }
     setOpen(false);
   };
+
+  useEffect(() => {
+    if(selectedIdx !== undefined) {
+      setSelectedIndex(selectedIdx);
+    }
+  }, [selectedIdx])
+  
 
   return (
   <>
