@@ -88,13 +88,31 @@ function PayrollInvoices({classes}: Props) {
       if (selectedIDs.length > 0) {
         cond = cond && selectedIDs.indexOf(item.payedPerson._id) >= 0;
       }
-      if (cond) {
-        totalInvoicesAmount += item.invoice.total;
-        totalCommissions += item.commissionAmount;
-      }
-      setTotals({invoices: totalInvoicesAmount, commissions: totalCommissions});
       return cond;
-    });
+    }).map((item: any) => {
+      let technicianCount = 0;
+      let technicianIds: string[] = [];
+      item.invoice.job.tasks.forEach((task:any) => {
+        if(task.contractor){
+          !technicianIds.includes(task.contractor._id) && technicianCount++;
+          technicianIds.push(task.contractor._id)
+        } else {
+          !technicianIds.includes(task.technician._id) && technicianCount++;
+          technicianIds.push(task.technician._id)
+        }
+      })
+      totalInvoicesAmount += item.invoice.total / (technicianCount || 1);
+      totalCommissions += item.commissionAmount;
+      setTotals({invoices: totalInvoicesAmount, commissions: totalCommissions});
+      return {
+        ...item,
+        invoice: {
+          ...item.invoice,
+          technicianCount 
+        }
+      }
+    })
+    ;
     setFilteredInvoices(isFiltered ? filtered : []);
   }, [selectionRange, invoices, selectedIDs]);
 
@@ -114,6 +132,18 @@ function PayrollInvoices({classes}: Props) {
     {
       'Header': 'Invoice Amount',
       'accessor': (originalRow: any) => formatCurrency(originalRow.invoice.total),
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': '# of Technicians',
+      'accessor': 'invoice.technicianCount',
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Commission',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.commissionAmount),
       'className': 'font-bold',
       'sortable': true,
     },
