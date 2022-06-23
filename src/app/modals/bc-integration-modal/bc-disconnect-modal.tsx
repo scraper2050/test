@@ -12,7 +12,7 @@ import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
 import { quickbooksDisconnect } from "api/quickbooks.api";
-import { error } from 'actions/snackbar/snackbar.action';
+import { error, success } from 'actions/snackbar/snackbar.action';
 import {setQuickbooksConnection} from "../../../actions/quickbooks/quickbooks.actions";
 
 function BCQbDisconnectModal({
@@ -35,6 +35,20 @@ function BCQbDisconnectModal({
     const response = await quickbooksDisconnect();
     if (response.data.status === 1) {
       dispatch(setQuickbooksConnection({qbAuthorized:false}));
+      dispatch(success('Please logout manually from Quickbooks on the popup window if you want to reconnect using different Quickbooks Account'));
+      let parameters = ` "location=1,width=800,height=650"`;
+      parameters +=
+        ",left=" +
+        (window.screen.width - 800) / 2 +
+        ",top=" +
+        (window.screen.height - 650) / 2;
+      
+      const win: any = window.open('https://quickbooks.intuit.com/app/apps/home/', "logoutPopup", parameters);
+      const script = document.createElement('script');
+      script.textContent = `
+        alert('please logout manually from here')
+      `;
+      win.document.head.appendChild(script);
     } else {
       console.log(response.data.message)
       dispatch(error(response.data.message));
