@@ -74,7 +74,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   };
   const [isLoading, setLoading] = useState(false);
   const [industries, setIndustries] = useState<IndustryModel[]>([]);
-  const [alert, setAlert] = useState(false);
+  const [alert, setAlert] = useState<string>('');
 
 
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
@@ -206,7 +206,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   };
 
   const handleClose = () => {
-    setAlert(false);
+    setAlert('');
   };
 
   const handleClickSignUp = async () => {
@@ -237,8 +237,8 @@ function SignUpPage({ classes }: Props): JSX.Element {
       .then(async res => {
         if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
           setLoading(false);
-          setAlert(true);
-        } else {
+          setAlert('Account already exists.');
+        } else if (res.data.status === 1) {
           setToken(res.data.token);
           setTokenCustomerAPI(res.data.token);
           setUser(JSON.stringify(res.data.user));
@@ -255,6 +255,9 @@ function SignUpPage({ classes }: Props): JSX.Element {
               setLoading(false);
               history.push('/');
             });
+        } else {
+          setLoading(false);
+          setAlert(res.data.message);
         }
       })
       .catch(() => {
@@ -633,11 +636,11 @@ function SignUpPage({ classes }: Props): JSX.Element {
       {isLoading && <BCSpinnerer />}
       <Snackbar
         onClose={handleClose}
-        open={alert}>
+        open={!!alert}>
         <Alert
           onClose={handleClose}
           severity={'error'}>
-          {'Account already exists.'}
+          {alert}
         </Alert>
       </Snackbar>
     </div>
