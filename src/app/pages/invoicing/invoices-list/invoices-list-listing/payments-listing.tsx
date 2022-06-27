@@ -134,7 +134,7 @@ function InvoicingPaymentListing({ classes, theme }: any) {
   //   dispatch(setCurrentPageIndex(0));
   // }, [selectionRange]);
 
-  const handleRowClick = (event: any, row: any) => showPaymentDetail(row.original);
+  const handleRowClick = (event: any, row: any) => row.original.invoice && showPaymentDetail(row.original);
 
   const filteredPayments = selectionRange ? paymentList.filter((payment: any) =>  {
     return moment(payment.paidAt).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
