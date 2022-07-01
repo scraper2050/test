@@ -290,6 +290,18 @@ export const updateInvoice = (data: any) => {
   });
 };
 
+export const voidInvoice = (data: any) => {
+  return new Promise((resolve, reject) => {
+    request(`/voidInvoice`, 'delete', data)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 export const sendEmailInvoice = (data: any) => {
   return new Promise((resolve, reject) => {
     request(`/sendInvoice`, 'post', data)

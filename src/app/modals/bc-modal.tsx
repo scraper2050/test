@@ -23,6 +23,7 @@ import BCMapFilterModal from './bc-map-filter/bc-map-filter-popup';
 import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-modal';
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
 import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
+import BCVoidInvoiceConfirmModal from './bc-void-invoice-confirm-modal/bc-void-invoice-confirm-modal';
 import BCEditPaidInvoiceConfirmModal from './bc-edit-paid-invoice-confirm-modal/bc-edit-paid-invoice-confirm-modal';
 import BCEditPaymentConfirmModal from './bc-edit-payment-confirm-modal/bc-edit-payment-confirm-modal';
 import BCMakeAdminConfirmModal from './bc-make-admin-employee-modal/bc-make-admin-employee-confirm';
@@ -270,6 +271,15 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<BCAddContactModal props={data.data} />);
+        break;
+      case modalTypes.CONFIRM_VOID_INVOICE_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCVoidInvoiceConfirmModal data={data.data} />);
         break;
       case modalTypes.CONFIRM_EDIT_PAID_INVOICE_MODAL:
         setModalOptions({
