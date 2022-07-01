@@ -42,7 +42,7 @@ import EventIcon from '@material-ui/icons/Event';
 import {TextFieldProps} from '@material-ui/core/TextField';
 import BCInvoiceItemsTableRow from './bc-invoice-table-row';
 import AddIcon from '@material-ui/icons/Add';
-import {callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI} from "../../../api/invoicing.api";
+import {callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI} from "../../../api/invoicing.api";
 import {CSChip} from "../../../helpers/custom";
 import {resetEmailState, sendEmailAction} from "../../../actions/email/email.action";
 import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
@@ -145,6 +145,10 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       fontSize: '14px',
       color: '#4F4F4F',
       padding: '8px 16px',
+    },
+    bcTransparentBorder: {
+      border: '1px solid transparent',
+      color: 'white',
     },
     bcBlueBt: {
       border: '1px solid #00AAFF',
@@ -647,6 +651,39 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
     });
   };
 
+  const handleVoidInvoice = () => {
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'data': {
+            handleOnConfirm: async () => {
+              try {
+                const res:any = await voidInvoiceAPI({invoiceId: invoiceData._id})
+                if(res.status === 1){
+                  dispatch(success(res.message));
+                  history.push({
+                    'pathname': `/main/invoicing/invoices-list`,
+                  });
+                } else {
+                  dispatch(errorSnackBar(res.message));
+                }
+              } catch (error) {
+                console.log(error);
+                dispatch(errorSnackBar(`Something went wrong`))
+              }
+            }
+          },
+          'modalTitle': '',
+          'removeFooter': false
+        },
+        type: modalTypes.CONFIRM_VOID_INVOICE_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const handleFormSubmit = (data: any) => {
     if (isOld)
       return updateInvoice(data);
@@ -801,6 +838,14 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   }
                 </div>
                 <div>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                    onClick={handleVoidInvoice}
+                  >
+                    Void Invoice
+                  </Button>
                   <Button
                     variant="outlined"
                     color="default"
@@ -1269,6 +1314,14 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   }
                 </div>
                 <div>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                    onClick={handleVoidInvoice}
+                  >
+                    Void Invoice
+                  </Button>
                   <Button
                     variant="outlined"
                     color="default"
