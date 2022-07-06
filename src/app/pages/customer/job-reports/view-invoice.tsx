@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useRef} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, createStyles, withStyles, Grid, Paper } from "@material-ui/core";
 import styles from "../customer.styles";
@@ -12,13 +12,10 @@ import PrintIcon from '@material-ui/icons/Print';
 import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
 import {useHistory, useLocation, useParams} from "react-router-dom";
-import { getCustomerDetailAction, loadingSingleCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
-import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
-import { getContacts } from "../../../../api/contacts.api";
-import {getAllSalesTaxAPI} from "../../../../api/tax.api";
+import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import {CSChip} from "../../../../helpers/custom";
 import {updateInvoice} from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
@@ -64,6 +61,7 @@ function ViewInvoice({ classes, theme }: any) {
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
+  const componentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
 
@@ -149,7 +147,6 @@ function ViewInvoice({ classes, theme }: any) {
             search: location.state.keyword || '',
           },
         }
-        
       });
     } else {
       history.goBack();
@@ -214,14 +211,15 @@ function ViewInvoice({ classes, theme }: any) {
             />
             }
             {
-              invoiceDetail && <Button
-              variant="outlined"
-              color="default"
-              className={invoiceStyles.margin}
-              onClick={() => window.print()}
-              startIcon={<PrintIcon/>}
+              invoiceDetail && <ReactToPrint trigger={() => <Button
+                variant="outlined"
+                color="default"
+                className={invoiceStyles.margin}
+                startIcon={<PrintIcon/>}
               >Print
-              </Button>
+              </Button>}
+             content={() => componentRef.current}
+              />
             }
             {
               invoiceDetail && <Button
@@ -247,7 +245,9 @@ function ViewInvoice({ classes, theme }: any) {
             }
           </div>
         </PageHeader>
-        { invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail}/> }
+        {invoiceDetail &&
+        <BCInvoice ref={componentRef} invoiceDetail={invoiceDetail}/>
+      }
       </PageContainer>
     </MainContainer>
   )
