@@ -72,7 +72,7 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor =
           dispatch(setInvoicesForBulkPaymentsLoading(true));
         }, 0);
       }
-      
+
       cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
 
       request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
@@ -129,7 +129,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
           dispatch(setInvoicesLoading(true));
         }, 0);
       }
-      
+
       cancelTokenGetAllInvoicesAPI = axios.CancelToken.source();
 
       request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI)
@@ -173,7 +173,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
           dispatch(setDraftInvoicesLoading(true));
         }, 0);
       }
-      
+
       cancelTokenGetAllDraftInvoicesAPI = axios.CancelToken.source();
 
       request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI)
@@ -325,6 +325,19 @@ export const callCreatePurchaseOrderAPI = (data: any) => {
       });
   });
 };
+
+export const generateInvoicePdfAPI = (customerId: string, invoiceId: string) => {
+  return new Promise((resolve, reject) => {
+    request(`/generateInvoicePdf?customerId=${customerId}&invoiceId=${invoiceId}`, 'get')
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 export const callCreateEstimatesAPI = (data: any) => {
   return new Promise((resolve, reject) => {
     request(`/createEstimate`, 'post', data)
@@ -336,3 +349,4 @@ export const callCreateEstimatesAPI = (data: any) => {
       });
   });
 };
+
