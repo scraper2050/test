@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, createStyles, withStyles, Grid, Paper } from "@material-ui/core";
 import styles from "../customer.styles";
@@ -8,16 +8,18 @@ import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import PrintIcon from '@material-ui/icons/Print';
+import PrintIcon from '@material-ui/icons/GetApp';
 import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
 import {useHistory, useLocation, useParams} from "react-router-dom";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
-import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import {CSChip} from "../../../../helpers/custom";
-import {updateInvoice} from "../../../../api/invoicing.api";
+import {
+  generateInvoicePdfAPI,
+  updateInvoice
+} from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
 import { modalTypes } from "../../../../constants";
@@ -61,7 +63,6 @@ function ViewInvoice({ classes, theme }: any) {
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
-  const componentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
 
@@ -147,6 +148,7 @@ function ViewInvoice({ classes, theme }: any) {
             search: location.state.keyword || '',
           },
         }
+
       });
     } else {
       history.goBack();
@@ -165,6 +167,17 @@ function ViewInvoice({ classes, theme }: any) {
       }
     });
   }*/
+
+  const generatePDF = async() => {
+    generateInvoicePdfAPI(invoiceDetail.customer?._id, invoice).then((response: any) => {
+      const {status, message, invoiceUrl} = response;
+      if (status === 1) {
+        window.open(invoiceUrl)
+      } else {
+        dispatch(error(message));
+      }
+    }).catch(e => dispatch(error(e.message)))
+  }
 
   return (
     <MainContainer>
@@ -211,15 +224,14 @@ function ViewInvoice({ classes, theme }: any) {
             />
             }
             {
-              invoiceDetail && <ReactToPrint trigger={() => <Button
-                variant="outlined"
-                color="default"
-                className={invoiceStyles.margin}
-                startIcon={<PrintIcon/>}
-              >Print
-              </Button>}
-             content={() => componentRef.current}
-              />
+              invoiceDetail && <Button
+              variant="outlined"
+              color="default"
+              className={invoiceStyles.margin}
+              onClick={generatePDF}
+              startIcon={<PrintIcon/>}
+              >Export
+              </Button>
             }
             {
               invoiceDetail && <Button
@@ -245,9 +257,7 @@ function ViewInvoice({ classes, theme }: any) {
             }
           </div>
         </PageHeader>
-        {invoiceDetail &&
-        <BCInvoice ref={componentRef} invoiceDetail={invoiceDetail}/>
-      }
+        { invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail}/> }
       </PageContainer>
     </MainContainer>
   )

@@ -256,7 +256,7 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const BCInvoice = React.forwardRef<HTMLDivElement, Props>(({ classes, invoiceDetail }, ref) => {
+function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = invoiceTableStyles();
 /*  const dispatch = useDispatch();
@@ -309,13 +309,11 @@ const BCInvoice = React.forwardRef<HTMLDivElement, Props>(({ classes, invoiceDet
   }) : null;
   serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
 
-  // @ts-ignore
   return (
-    <div style={{marginTop: 12}}>
-      <DataContainer ref={ref}>
+    <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
         <Grid container>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Grid container spacing={4}>
               <Grid item xs={12}>
                 <div className={invoiceStyles.companyDetails} style={{alignItems: 'center'}}>
@@ -387,7 +385,7 @@ const BCInvoice = React.forwardRef<HTMLDivElement, Props>(({ classes, invoiceDet
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <div className={invoiceStyles.invoiceDetails}>
               <div className={invoiceStyles.companyDetails} style={{flex: 2, alignItems: 'center'}}>
                 <div className={invoiceStyles.companyInfo}>
@@ -444,27 +442,28 @@ const BCInvoice = React.forwardRef<HTMLDivElement, Props>(({ classes, invoiceDet
       </div>
 
       <div className={invoiceTableStyle.itemsTable}>
+
         <div className={invoiceTableStyle.itemsTableHeader}>
           <Grid container>
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <span className={invoiceTableStyle.itemsTableHeaderText}>SERVICE / PRODUCT</span>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>QUANTITY</span>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>PRICE</span>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>UNIT</span>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX</span>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX AMOUNT</span>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextRight)}>AMOUNT</span>
             </Grid>
           </Grid>
@@ -474,40 +473,40 @@ const BCInvoice = React.forwardRef<HTMLDivElement, Props>(({ classes, invoiceDet
             <Grid container key={rowIndex}>
               <Grid item container
                     className={row?.description ? invoiceTableStyle.itemsTableFirstRow : invoiceTableStyle.itemsTableOneRow}>
-                <Grid item xs={1} lg={6}>
+                <Grid item xs={12} lg={6}>
                   <span className={invoiceTableStyle.itemsTableBodyText}>{row?.item?.name}</span>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
                   )}>{row?.quantity}</span>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
                   )}>{row.price && row.price >= 0 ? `$${parseFloat(row.price).toFixed(2)}` : `-$${Math.abs(parseFloat(row.price)).toFixed(2)}`}</span>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
                   )}>{row?.isFixed ? 'Fixed' : 'Hourly'}</span>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
                   )}>{row?.tax > 0 ? parseFloat(row?.tax).toFixed(2) : 'N/A'}</span>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
                   )}>${parseFloat(row?.taxAmount).toFixed(2)}</span>
                 </Grid>
-                <Grid item xs={1}>
+                <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextRight
@@ -552,14 +551,13 @@ const BCInvoice = React.forwardRef<HTMLDivElement, Props>(({ classes, invoiceDet
         <Divider/>
       </div>
     </DataContainer>
-    </div>
   )
-});
+}
 
 export const DataContainer = styled.div`
   display: flex;
   flex-direction: column;
-  // margin-top: 12px;
+  margin-top: 12px;
   background-color: ${CONSTANTS.PRIMARY_WHITE};
   border: 1px solid ${CONSTANTS.INVOICE_BORDER};
 `;
