@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 import { Chip, createStyles, Divider, Grid, withStyles } from "@material-ui/core";
 import styles from "./bc-invoice.styles";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../constants";
 import styled from "styled-components";
-import { getCustomerDetailAction } from "../../../actions/customer/customer.action";
 import moment from "moment";
 
 import classNames from "classnames";
-import { getContacts } from "../../../api/contacts.api";
-import {getAllSalesTaxAPI} from "../../../api/tax.api";
 
 interface Props {
   classes?: any;

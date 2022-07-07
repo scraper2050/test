@@ -8,19 +8,18 @@ import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import PrintIcon from '@material-ui/icons/Print';
+import PrintIcon from '@material-ui/icons/GetApp';
 import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
 import {useHistory, useLocation, useParams} from "react-router-dom";
-import { getCustomerDetailAction, loadingSingleCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
-import { INVOICE_BORDER, PRIMARY_GRAY } from "../../../../constants";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
-import { getContacts } from "../../../../api/contacts.api";
-import {getAllSalesTaxAPI} from "../../../../api/tax.api";
 import {CSChip} from "../../../../helpers/custom";
-import {updateInvoice} from "../../../../api/invoicing.api";
+import {
+  generateInvoicePdfAPI,
+  updateInvoice
+} from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
 import { modalTypes } from "../../../../constants";
@@ -149,7 +148,7 @@ function ViewInvoice({ classes, theme }: any) {
             search: location.state.keyword || '',
           },
         }
-        
+
       });
     } else {
       history.goBack();
@@ -168,6 +167,17 @@ function ViewInvoice({ classes, theme }: any) {
       }
     });
   }*/
+
+  const generatePDF = async() => {
+    generateInvoicePdfAPI(invoiceDetail.customer?._id, invoice).then((response: any) => {
+      const {status, message, invoiceUrl} = response;
+      if (status === 1) {
+        window.open(invoiceUrl)
+      } else {
+        dispatch(error(message));
+      }
+    }).catch(e => dispatch(error(e.message)))
+  }
 
   return (
     <MainContainer>
@@ -218,9 +228,9 @@ function ViewInvoice({ classes, theme }: any) {
               variant="outlined"
               color="default"
               className={invoiceStyles.margin}
-              onClick={() => window.print()}
+              onClick={generatePDF}
               startIcon={<PrintIcon/>}
-              >Print
+              >Export
               </Button>
             }
             {
