@@ -838,14 +838,16 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   }
                 </div>
                 <div>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                    onClick={handleVoidInvoice}
-                  >
-                    Void Invoice
-                  </Button>
+                  {!invoiceData?.isDraft && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleVoidInvoice}
+                    >
+                      Void Invoice
+                    </Button>
+                  )}
                   <Button
                     variant="outlined"
                     color="default"
@@ -1314,14 +1316,16 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                   }
                 </div>
                 <div>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                    onClick={handleVoidInvoice}
-                  >
-                    Void Invoice
-                  </Button>
+                  {!invoiceData?.isDraft && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleVoidInvoice}
+                    >
+                      Void Invoice
+                    </Button>
+                  )}
                   <Button
                     variant="outlined"
                     color="default"
