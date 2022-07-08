@@ -1,4 +1,4 @@
-import BackImg from '../../../assets/img/bg.png';
+import BackImg from '../../../assets/img/signup/bg.png';
 import { Theme } from '@material-ui/core/styles';
 export default (theme: Theme): any => ({
   'AgreeTermDiv': {
@@ -73,7 +73,7 @@ export default (theme: Theme): any => ({
       'paddingRight': '10px'
     },
     'backgroundImage': `url(${BackImg})`,
-    'backgroundSize': 'cover',
+    'backgroundSize': 'contain',
     'display': 'flex',
     'flexDirection': 'column',
     'fontSize': '14px',

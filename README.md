@@ -69,7 +69,7 @@
 ### `Don't`
 
 - No use of class based component
-- No use of index.tsx (prefix component with page or component name)
+- No use of template.tsx (prefix component with page or component name)
 - No use of class based component
 - Don't just add any dependency
 

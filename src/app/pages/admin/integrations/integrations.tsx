@@ -2,7 +2,7 @@ import styles from "./integrations.styles";
 import { Grid, withStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import QbIcon from "assets/img/img/intuitt_green.png";
+import QbIcon from "assets/img/integration-bg/intuitt_green.png";
 import { quickbooksGetUri, quickbooksAuthenticate } from "../../../../api/quickbooks.api";
 import SyncPage from "./SyncPage";
 import { success, error } from 'actions/snackbar/snackbar.action';
