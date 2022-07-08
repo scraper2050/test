@@ -1,5 +1,6 @@
 import BackImg from '../../../assets/img/signup/bg.png';
 import { Theme } from '@material-ui/core/styles';
+import {PRIMARY_BLUE} from "../../../constants";
 export default (theme: Theme): any => ({
   'root': {
     '& .MuiButton-containedPrimary': {
@@ -43,9 +44,9 @@ export default (theme: Theme): any => ({
     '&:hover': {
       'textDecoration': 'underline'
     },
-    'color': '#00aaff',
+    'color': PRIMARY_BLUE,
     'textDecoration': 'none',
-    'fontSize': 16
+    'fontSize': 14
   },
   'formGrid': {
     '@media(max-width: 1280px)': {
@@ -54,7 +55,7 @@ export default (theme: Theme): any => ({
       'width': '100%'
     },
     'alignItems': 'center',
-    'background': '#5d9cec',
+    'background': 'black',
     'display': 'flex',
     'flexDirection': 'column',
     'justifyContent': 'center'

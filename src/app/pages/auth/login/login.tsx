@@ -1,8 +1,7 @@
 import { Action } from 'redux-actions';
 import BCEmailValidateInputut from '../../../components/bc-email-validate-input/bc-email-validate-input';
 import BCPasswordInputut from '../../../components/bc-password-input/bc-password-input';
-import BCSocialButtonon from '../../../components/bc-social-button/bc-social-button';
-import BCSpinnerer from '../../../components/bc-spinner/bc-spinner';
+import BCSocialButton from '../../../components/bc-social-button/bc-social-button';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Config from '../../../../config';
@@ -394,10 +393,13 @@ function LoginPage({
             </Grid>
             <Grid
               item
+              style={{display: 'flex'}}
+              justify='flex-end'
               md={6}
               xs={12}>
-              <BCSocialButtonon
+              <BCSocialButton
                 appId={Config.GOOGLE_APP_ID}
+                image={'https://img.icons8.com/color/48/000000/google-logo.png'}
                 onLoginFailure={(err: any): void => {
                   handleSocialLoginFailure(err, SOCIAL_GOOGLE_CONNECT_TYPE);
                 }}
@@ -405,20 +407,15 @@ function LoginPage({
                   handleSocialLogin(user, SOCIAL_GOOGLE_CONNECT_TYPE);
                 }}
                 provider={'google'}>
-                <img
-                  alt={'google'}
-                  src={
-                    'https://img.icons8.com/color/48/000000/google-logo.png'
-                  }
-                />
                 {'Login with Google'}
-              </BCSocialButtonon>
+              </BCSocialButton>
             </Grid>
             <Grid
               item
               md={6}
               xs={12}>
-              <BCSocialButtonon
+              <BCSocialButton
+                image={'https://img.icons8.com/color/48/000000/facebook-circled.png'}
                 appId={Config.FACEBOOK_APP_ID}
                 onLoginFailure={(err: any): void => {
                   handleSocialLoginFailure(
@@ -430,14 +427,8 @@ function LoginPage({
                   handleSocialLogin(user, SOCIAL_FACEBOOK_CONNECT_TYPE);
                 }}
                 provider={'facebook'}>
-                <img
-                  alt={'google'}
-                  src={
-                    'https://img.icons8.com/color/48/000000/facebook-circled.png'
-                  }
-                />
                 {'Login with Facebook'}
-              </BCSocialButtonon>
+              </BCSocialButton>
             </Grid>
             <Grid
               className={classes.register}
@@ -449,11 +440,11 @@ function LoginPage({
                 <Link
                   className={classes.link}
                   to={'/signup'}>
-                  {'Register'}
+                  {'Sign Up'}
                 </Link>
               </div>
               <Link
-                className={classes.forgetpassword}
+                className={classes.link}
                 to={'/recover'}>
                 {'Forgot password?'}
               </Link>

@@ -29,12 +29,12 @@ function AuthTemplatePage({  isLoading, children, classes}: Props) : JSX.Element
           item
           md={6}
         />
-      </Grid>
-      <Grid
-        className={classes.formGrid}
-        item
-        md={6}>
-        {children}
+        <Grid
+          className={classes.formGrid}
+          item
+          md={6}>
+          {children}
+        </Grid>
       </Grid>
       <Grid
         className={classes.footer}
@@ -43,10 +43,8 @@ function AuthTemplatePage({  isLoading, children, classes}: Props) : JSX.Element
           <Link
             className={classes.link}
             to={'https://www.blueclerk.com'}>
-            {'BlueClerk'}
+            {`BlueClerk © ${moment().format('YYYY')}`}
           </Link>
-          {' '}
-          {`© ${moment().format('YYYY')}`}
         </span>
         <span>
           {'Phone:512-846-6035'}
