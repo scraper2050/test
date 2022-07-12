@@ -63,6 +63,7 @@ import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
 import BCEditBulkPaymentModal from './bc-bulk-payment-modal/bc-edit-bulk-payment-modal';
 import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-history-modal";
 import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
+import BCCustomizeRevenueReportMOdal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -691,6 +692,18 @@ function BCModal() {
           subMessage={data.subMessage}
           action={data.action}
           closeAction={data.closeAction}
+        />);
+        break;
+
+      case modalTypes.CUSTOMIZE_REVENUE_REPORT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCCustomizeRevenueReportMOdal
+          data = {data}
         />);
         break;
 

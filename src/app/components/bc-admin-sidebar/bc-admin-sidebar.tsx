@@ -24,6 +24,11 @@ import { removeUserFromLocalStorage } from "../../../utils/local-storage.service
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Badge from '@material-ui/core/Badge';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import groupBy from 'lodash.groupby';
 
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ReceiptIcon from '@material-ui/icons/Receipt';
@@ -58,7 +63,9 @@ import HistoryIcon from '@material-ui/icons/History';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
 import { CompanyProfileStateType } from "../../../actions/user/user.types";
 import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
-
+import { ReactComponent as CollectIcon } from 'assets/img/icons/sidebar/reports/collect.svg'
+import { ReactComponent as AmountIcon } from 'assets/img/icons/sidebar/reports/amount.svg'
+import { ReactComponent as PayrollIcon } from 'assets/img/icons/sidebar/reports/payroll.svg'
 
 interface BCSidebarProps {
   token: string;
@@ -125,6 +132,28 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
       overflowX: 'hidden',
       width: theme.spacing(10) + 1,
     },
+    accordion: {
+      position: 'initial',
+      backgroundColor: 'transparent',
+      boxShadow: 'none',
+    },
+    accordionSummary: {
+      flexDirection: 'row-reverse',
+    },
+    accordionDetails: {
+      padding: 0,
+      '& > ul': {
+        'listStyle': 'none',
+        'margin': '0',
+        'padding': '0',
+        'width': '100%',
+        '& > li': {
+          'margin': '5px 0',
+          'position': 'relative',
+          'padding': '0 10px',
+        }
+      },
+    }
   }),
 );
 
@@ -323,7 +352,25 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'label': 'Email Preferences',
       'icon': <MailOutlineIcon/>,
       'link': '/main/user/email-preference'
-    }
+    },
+    {
+      'label': 'Revenue',
+      'icon': <CollectIcon />,
+      'link': '/main/reports/revenue',
+      'group': 'customers',
+    },
+    {
+      'label': 'Amounts Owed',
+      'icon': <AmountIcon/>,
+      'link': '/main/reports/amounts-owed',
+      'group': 'customers',
+    },
+    {
+      'label': 'Payroll',
+      'icon': <PayrollIcon/>,
+      'link': '/main/reports/payroll',
+      'group': 'vendors',
+    },
   ];
 
   const theme = useTheme();
@@ -404,7 +451,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
             } else {
               mainPath = 'dashboard';
             }
-            return item.link.startsWith(`/main/${mainPath}`)
+            return item.link.startsWith(`/main/${mainPath}`) && mainPath !== 'reports'
               ? <li key={idx}>
                 <Tooltip
                   arrow
@@ -426,6 +473,45 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
               : null;
           })}
         </ul>
+
+        {/* grouped sidebar link for reports*/}
+        {
+          pathName.split("/main/")[1] && pathName.split("/main/")[1].startsWith('reports/') &&
+          Object.values(groupBy(LINK_DATA.filter((item: any) => item.link.startsWith('/main/reports/')), 'group'))
+            .map((group: any, groupIdx: number) => (
+              <Accordion key={groupIdx} defaultExpanded className={sidebarStyles.accordion}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} className={sidebarStyles.accordionSummary}>
+                  {group[0].group}
+                </AccordionSummary>
+                <AccordionDetails className={sidebarStyles.accordionDetails}>
+                  <ul>
+                    {group.map((item: any, idx: number) => {
+                      return (
+                        <li key={idx}>
+                          <Tooltip
+                            arrow
+                            title={item.label}
+                            disableHoverListener={open}
+                          >
+                            <StyledListItem
+                              button
+                              onClick={() => onClickLink(item.link)}
+                              selected={
+                                pathName === item.link ||
+                                pathName === `${item.link}/${nestedRouteKey}`
+                              }>
+                              {item.icon && item.icon}
+                              <span className='menuLabel'>{item.label}</span>
+                            </StyledListItem>
+                          </Tooltip>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
+            ))
+        }
 
       </div>
       <div className={classes.bcSidebarFooter}>
