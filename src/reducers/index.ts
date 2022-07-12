@@ -69,6 +69,7 @@ import {PayrollState} from "../actions/payroll/payroll.types";
 import {CalendarState} from "../actions/calendar/bc-calendar.types";
 import { DiscountItemsReducer as discountItems} from './discount.reducer'
 import { DiscountState } from 'actions/discount/discount.types';
+import { reportReducer as reportState } from './report.reducer'
 
 
 export interface ReducerParamsInterface {
@@ -146,6 +147,7 @@ const appReducer = combineReducers({
   payroll,
   calendar,
   discountItems,
+  reportState,
 });
 
 const rootReducer = (state: any, action: any) => {
