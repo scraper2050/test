@@ -15,6 +15,8 @@ export const formatDateMMMDDYYYY = (date: string): string | undefined => {
 export const fromNow = (date: Date) => moment(date).subtract('seconds', 60)
   .fromNow();
 
+export const formatReportDate = (date: Date) => moment(date).format('MMM. DD, YYYY');
+
 export const formatDateYMD = (date: Date) => moment(date).format('YYYY-MM-DD');
 
 export const formatDateTimeYMD = (date: Date | string) => moment(date).format('YYYY-MM-DDTHH:mm:ss');
