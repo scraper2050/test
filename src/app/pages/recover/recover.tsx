@@ -78,11 +78,13 @@ function RecoverPage({ classes }: Props): JSX.Element {
         'value': ''
       });
     } else if (emailData.validate) {
+      setLoading(true);
       Api.post(
         '/forgotPassword',
         { email: emailData.value }
       )
         .then((res) => {
+          setLoading(false);
           if (res.data.message === "Invalid email address.") {
             setEmailData({
               'errorMsg': '',
@@ -91,6 +93,7 @@ function RecoverPage({ classes }: Props): JSX.Element {
             });
             dispatch(error(res.data.message));
           } else if (res.data.message === "Email sent.") {
+
             setEmailData({
               'errorMsg': '',
               'validate': true,
@@ -104,6 +107,7 @@ function RecoverPage({ classes }: Props): JSX.Element {
           }
         })
         .catch((err) => {
+          setLoading(false);
           setErrMessage(err.response.data.message);
         });
     }

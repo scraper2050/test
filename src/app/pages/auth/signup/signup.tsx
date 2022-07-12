@@ -56,11 +56,11 @@ const initHiddenData = (): FormDataModel => {
 function SignUpPage({ classes }: Props): JSX.Element {
   const history = useHistory();
   const { location } = history;
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [isLoading, setLoading] = useState(false);
   const [signedUp, setSigndUp] = useState(false);
-  const [industries, setIndustries] = useState<IndustryModel[]>([]);
+  // const [industries, setIndustries] = useState<IndustryModel[]>([]);
   const [alert, setAlert] = useState<string>('');
   const [activeStep, setActiveStep] = useState(0);
   const [accountType, setAccountType] = useState(0);
@@ -82,27 +82,18 @@ function SignUpPage({ classes }: Props): JSX.Element {
     }
   });
 
-  const handleFormDataChange = (key: string, value: string) => {
-    const formDataTemp = { ...formData };
-
-    formDataTemp[key] = {
-      'errorMsg': value.length > 0
-        ? ''
-        : 'This field is required',
-      'validate': value.length > 0,
-      'value': value
-    };
-
+  const handleFormDataChange = (key: string, value: any) => {
     setFormData({
-      ...formDataTemp
+      ...formData,
+      [key]: value,
     });
   }
 
   useEffect(
     () => {
-      Api.post('/getIndustries').then(({ data }) => {
-        setIndustries(data.industries);
-      });
+      // Api.post('/getIndustries').then(({ data }) => {
+      //   setIndustries(data.industries);
+      // });
       if (location.search) {
         const items = location.search.substr(1).split('&')
         const data = items.reduce((acc: any, item) => {
@@ -154,7 +145,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
     params.append('agreedStatus', 'true');
 
     const signupParams:any = {
-      userType: accountType.toString(),
+      accountType: accountType.toString(),
       email: formData.email.value,
       password: formData.password.value,
       firstName: formData.firstName.value,
@@ -178,9 +169,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
 
     if (formData.cid.value)
       signupParams.cid = formData.cid.value
-    setSigndUp(true);
-    setLoading(false);
-    return;
 
     Api.post('/signUp', signupParams)
       .then(async res => {
@@ -188,10 +176,10 @@ function SignUpPage({ classes }: Props): JSX.Element {
           setLoading(false);
           setAlert('Account already exists.');
         } else if (res.data.status === 1) {
-          setToken(res.data.token);
-          setTokenCustomerAPI(res.data.token);
-          setUser(JSON.stringify(res.data.user));
-          dispatch(setQuickbooksConnection({qbAuthorized: false}));
+          // setToken(res.data.token);
+          // setTokenCustomerAPI(res.data.token);
+          // setUser(JSON.stringify(res.data.user));
+          // dispatch(setQuickbooksConnection({qbAuthorized: false}));
           axios.create({
             'baseURL': Config.apiBaseURL,
             'headers': {
@@ -201,8 +189,9 @@ function SignUpPage({ classes }: Props): JSX.Element {
           })
             .post('/agreeTermAndCondition', params)
             .then(() => {
+              setSigndUp(true);
               setLoading(false);
-              history.push('/');
+              //history.push('/');
             });
         } else {
           setLoading(false);

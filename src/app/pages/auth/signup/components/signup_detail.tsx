@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
-  Button,
-  ButtonProps,
   Checkbox,
   FormHelperText,
   TextField
@@ -22,7 +20,7 @@ import {useDispatch} from "react-redux";
 
 interface Props {
   formData: any;
-  onChange: (key: string, value: string) => void;
+  onChange: (key: string, value: any) => void;
   classes: any
 }
 
@@ -41,6 +39,14 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
       dispatch(openModalAction());
     }, 200);
   };
+
+  const handleTextField = (key: string, value: string) => {
+    onChange(key, {
+      value,
+      errorMsg: value.length > 0 ? '' : 'This field is required',
+      validate: value.length > 0,
+    })
+  }
 
   return (
     <>
@@ -61,7 +67,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             helperText={formData.firstName.errorMsg}
             id={'firstname'}
             label={'First Name'}
-            onChange={(e: any) => onChange('firstName', e.target.value)}
+            onChange={(e) => handleTextField('firstName', e.target.value)}
             size={'small'}
             type={'text'}
             value={formData.firstName.value}
@@ -78,7 +84,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             helperText={formData.lastName.errorMsg}
             id={'lastName'}
             label={'Last Name'}
-            onChange={(e: any) => onChange('lastName', e.target.value)}
+            onChange={(e) => handleTextField('lastName', e.target.value)}
             size={'small'}
             type={'text'}
             value={formData.lastName.value}
@@ -94,7 +100,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             inputData={formData.email}
             disabled={formData.isci.value}
             label={'Email'}
-            onChange={(newEmail: FormDataModel) => onChange('email', newEmail.value)}
+            onChange={(newEmail: FormDataModel) => onChange('email', newEmail)}
             size={'small'}
             variant={'outlined'}
           />
@@ -108,7 +114,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             id={'password'}
             inputData={formData.password}
             label={'Password'}
-            onChange={(newPassword: FormDataModel) => onChange('password', newPassword.value)}
+            onChange={(newPassword: FormDataModel) => onChange('password', newPassword)}
             size={'small'}
             variant={'outlined'}
           />
@@ -118,7 +124,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
           md={6}
           xs={12}>
           <BCPhoneNumberInput
-            changeData={(data: FormDataModel) => onChange('phone_number', data.value)}
+            changeData={(data: FormDataModel) => onChange('phone_number', data)}
             id={'phone_number'}
             inputData={formData.phone_number}
             label={'Phone Number'}
@@ -138,7 +144,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
               checked={formData.agreeTerm.value === 'Yes'}
               color={'primary'}
               name={'agree-term'}
-              onChange={(e) => onChange('agreeTerm', e.target.checked ? 'Yes' : '')}
+              onChange={(e) => handleTextField('agreeTerm', e.target.checked ? 'Yes' : '')}
             />
             <span
               onClick={handleClickOpen}
