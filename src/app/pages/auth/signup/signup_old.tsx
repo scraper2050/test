@@ -1,28 +1,28 @@
 import Alert from '@material-ui/lab/Alert';
-import BCEmailValidateInputut from '../../components/bc-email-validate-input/bc-email-validate-input';
-import BCModal from '../../modals/bc-modal';
-import BCPhoneNumberInputut from '../../components/bc-phone-number-input/bc-phone-number-input';
-import BCSocialButtonon from '../../components/bc-social-button/bc-social-button';
-import BCSpinnerer from '../../components/bc-spinner/bc-spinner';
+import BCEmailValidateInputut from '../../../components/bc-email-validate-input/bc-email-validate-input';
+import BCModal from '../../../modals/bc-modal';
+import BCPhoneNumberInputut from '../../../components/bc-phone-number-input/bc-phone-number-input';
+import BCSocialButtonon from '../../../components/bc-social-button/bc-social-button';
+import BCSpinnerer from '../../../components/bc-spinner/bc-spinner';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
-import Config from '../../../config';
+import Config from '../../../../config';
 import FormControl from '@material-ui/core/FormControl';
-import { FormDataModel } from '../../models/form-data';
+import { FormDataModel } from '../../../models/form-data';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
-import { IndustryModel } from '../../models/industry';
+import { IndustryModel } from '../../../models/industry';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
-import PassowrdInput from '../../components/bc-password-input/bc-password-input';
+import PassowrdInput from '../../../components/bc-password-input/bc-password-input';
 import Select from '@material-ui/core/Select';
 import Snackbar from '@material-ui/core/Snackbar';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
-import { modalTypes } from '../../../constants';
+import { modalTypes } from '../../../../constants';
 import styles from './signup.styles';
 import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -30,7 +30,8 @@ import Api, { setToken, setTokenCustomerAPI, setUser } from 'utils/api';
 import { Link, useHistory } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import {setQuickbooksConnection} from "../../../actions/quickbooks/quickbooks.actions";
+import {setQuickbooksConnection} from "../../../../actions/quickbooks/quickbooks.actions";
+import AuthTemplatePage from "../template";
 
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
@@ -295,21 +296,9 @@ function SignUpPage({ classes }: Props): JSX.Element {
   };
 
   return (
-    <div className={classes.root}>
-      <Grid
-        container
-        style={{ 'flex': '1 1 100%' }}>
-        <Grid
-          className={classes.signupLeftSection}
-          item
-          md={6}
-        />
-        <Grid
-          className={classes.signupGrid}
-          item
-          md={6}>
-          <Paper className={classes.signupPaper}>
-            <Box className={classes.ControlFormBox}>
+    <AuthTemplatePage isLoading={isLoading}>
+      <Paper className={classes.signupPaper}>
+        <Box className={classes.ControlFormBox}>
               <Typography
                 className={classes.signupTitle}
                 variant={'h3'}>
@@ -522,7 +511,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 </Grid>
               </Grid>
             </Box>
-            <Box className={classes.ButtonFormBox}>
+        <Box className={classes.ButtonFormBox}>
               <Grid
                 container
                 spacing={2}>
@@ -542,9 +531,12 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 </Grid>
                 <Grid
                   item
+                  style={{display: 'flex'}}
+                  justify='flex-end'
                   md={6}
                   xs={12}>
                   <BCSocialButtonon
+                    image={'https://img.icons8.com/color/48/000000/google-logo.png'}
                     appId={Config.GOOGLE_APP_ID}
                     onLoginFailure={(err): void => {
                       handleSocialLoginFailure(
@@ -559,10 +551,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       );
                     }}
                     provider={'google'}>
-                    <img
-                      alt={'google'}
-                      src={'https://img.icons8.com/color/48/000000/google-logo.png'}
-                    />
                     {'Sign up with Google'}
                   </BCSocialButtonon>
                 </Grid>
@@ -571,6 +559,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
                   md={6}
                   xs={12}>
                   <BCSocialButtonon
+                    image={'https://img.icons8.com/color/48/000000/facebook-circled.png'}
                     appId={Config.FACEBOOK_APP_ID}
                     onLoginFailure={(err): void => {
                       handleSocialLoginFailure(
@@ -585,10 +574,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
                       );
                     }}
                     provider={'facebook'}>
-                    <img
-                      alt={'google'}
-                      src={'https://img.icons8.com/color/48/000000/facebook-circled.png'}
-                    />
                     {'Sign up with Facebook'}
                   </BCSocialButtonon>
                 </Grid>
@@ -606,32 +591,8 @@ function SignUpPage({ classes }: Props): JSX.Element {
                 </Grid>
               </Grid>
             </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-      <Grid
-        className={classes.signupFooter}
-        container>
-        <span>
-          <Link
-            className={classes.link}
-            to={'https://www.blueclerk.com'}>
-            {'BlueClerk'}
-          </Link>
-          {' '}
-          {'© 2020'}
-        </span>
-        <span>
-          {'Phone:512-846-6035'}
-        </span>
-        <span>
-          <a
-            className={classes.link}
-            href={'mailto:chris.norton1@blueclerk.com'}>
-            {'BlueClerk Support'}
-          </a>
-        </span>
-      </Grid>
+      </Paper>
+
       <BCModal />
       {isLoading && <BCSpinnerer />}
       <Snackbar
@@ -643,7 +604,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
           {alert}
         </Alert>
       </Snackbar>
-    </div>
+  </AuthTemplatePage>
   );
 }
 

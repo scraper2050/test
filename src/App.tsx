@@ -10,7 +10,7 @@ import Config from './config';
 import { io } from 'socket.io-client';
 import { pushNotification } from 'actions/notifications/notifications.action';
 const LoginPage = React.lazy(() => import('./app/pages/auth/login/login'));
-const SignUpPage = React.lazy(() => import('./app/pages/signup/signup'));
+const SignUpPage = React.lazy(() => import('./app/pages/auth/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
 const MainPage = React.lazy(() => import('./app/pages/main/main'));
 

@@ -7,6 +7,7 @@ const useStyles = makeStyles(() =>
   createStyles(   {
     buttonRoot: {
       color: 'grey',
+      backgroundColor: 'white',
       width: 200,
       borderRadius: 8,
       boxShadow: '2px 2px 4px #ccc',

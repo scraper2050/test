@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
@@ -7,35 +7,40 @@ import BCSpinnerer from "../../components/bc-spinner/bc-spinner";
 import styles from './template.styles';
 import {withStyles} from "@material-ui/core/styles";
 import moment from "moment/moment";
+import SignUpSuccess from "./signup/components/signup_success";
 
 
 interface Props {
   isLoading: boolean;
+  success?: boolean;
   children?: React.ReactNode;
   classes: any;
 }
 
-function AuthTemplatePage({  isLoading, children, classes}: Props) : JSX.Element | null {
+function AuthTemplatePage({isLoading, children, success = false, classes}: Props) : JSX.Element | null {
 
   return (
     <div className={classes.root}>
       <BCSnackbar topRight />
-
-      <Grid
-        container
-        style={{ 'flex': '1 1 100%' }}>
-        <Grid
-          className={classes.leftSection}
-          item
-          md={6}
-        />
-        <Grid
-          className={classes.formGrid}
-          item
-          md={6}>
-          {children}
-        </Grid>
-      </Grid>
+      {success ? <SignUpSuccess /> :
+        <>
+          <Grid
+            container
+            style={{ 'flex': '1 1 100%' }}>
+            <Grid
+              className={classes.leftSection}
+              item
+              md={6}
+            />
+            <Grid
+              className={classes.formGrid}
+              item
+              md={6}>
+              {children}
+            </Grid>
+          </Grid>
+        </>
+      }
       <Grid
         className={classes.footer}
         container>
@@ -64,3 +69,5 @@ function AuthTemplatePage({  isLoading, children, classes}: Props) : JSX.Element
 }
 
 export default withStyles(styles, { 'withTheme': true })(AuthTemplatePage);
+
+
