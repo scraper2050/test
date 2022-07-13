@@ -4,14 +4,12 @@ import {Button, MobileStepper} from '@material-ui/core';
 import Config from '../../../../config';
 import { FormDataModel } from '../../../models/form-data';
 import Grid from '@material-ui/core/Grid';
-import { IndustryModel } from '../../../models/industry';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 import {
   DARK_ASH,
   LIGHT_GREY,
-  modalTypes,
   PRIMARY_BLUE
 } from '../../../../constants';
 import styles from './signup.styles';
@@ -27,8 +25,7 @@ import SignUpCompany from "./components/signup_company";
 import SignUpDetail from "./components/signup_detail";
 import BCModal from "../../../modals/bc-modal";
 import BCSpinnerer from "../../../components/bc-spinner/bc-spinner";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
+import {error} from "../../../../actions/snackbar/snackbar.action";
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -56,12 +53,11 @@ const initHiddenData = (): FormDataModel => {
 function SignUpPage({ classes }: Props): JSX.Element {
   const history = useHistory();
   const { location } = history;
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const [isLoading, setLoading] = useState(false);
   const [signedUp, setSigndUp] = useState(false);
   // const [industries, setIndustries] = useState<IndustryModel[]>([]);
-  const [alert, setAlert] = useState<string>('');
   const [activeStep, setActiveStep] = useState(0);
   const [accountType, setAccountType] = useState(0);
   const [companyId, setCompanyId] = useState<string|null>(null);
@@ -135,10 +131,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
 
   }
 
-  const handleClose = () => {
-    setAlert('');
-  };
-
   const handleClickSignUp = async () => {
     setLoading(true);
     const params = new URLSearchParams();
@@ -154,10 +146,10 @@ function SignUpPage({ classes }: Props): JSX.Element {
     }
     switch (accountType) {
       case 1:
-        signupParams.customerId = companyId;
+        signupParams.companyId = companyId;
         break;
       case 2:
-        signupParams.companyId = companyId;
+        signupParams.customerId = companyId;
         break;
       case 5:
         signupParams.companyName = companyId;
@@ -172,10 +164,11 @@ function SignUpPage({ classes }: Props): JSX.Element {
 
     Api.post('/signUp', signupParams)
       .then(async res => {
-        if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
-          setLoading(false);
-          setAlert('Account already exists.');
-        } else if (res.data.status === 1) {
+        // if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
+        //   setLoading(false);
+        //   dispatch(error('Account already exists.'));
+        // } else
+        if (res.data.status === 1) {
           // setToken(res.data.token);
           // setTokenCustomerAPI(res.data.token);
           // setUser(JSON.stringify(res.data.user));
@@ -195,11 +188,12 @@ function SignUpPage({ classes }: Props): JSX.Element {
             });
         } else {
           setLoading(false);
-          setAlert(res.data.message);
+          dispatch(error(res.data.message));
         }
       })
-      .catch(() => {
+      .catch((e) => {
         setLoading(false);
+        dispatch(error(e.message));
       });
   };
 
@@ -341,15 +335,6 @@ function SignUpPage({ classes }: Props): JSX.Element {
       </Paper>
       <BCModal />
       {isLoading && <BCSpinnerer />}
-      <Snackbar
-        onClose={handleClose}
-        open={!!alert}>
-        <Alert
-          onClose={handleClose}
-          severity={'error'}>
-          {alert}
-        </Alert>
-      </Snackbar>
     </AuthTemplatePage>
   );
 }

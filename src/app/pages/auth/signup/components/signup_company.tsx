@@ -34,11 +34,11 @@ function SignUpCompany({onSelect, classes }: Props): JSX.Element {
           xs={12}
         >
           <AutoComplete
-            handleChange={(e: any) => onSelect(e.target.value)}
+            handleChange={(e: any) => onSelect(e.target.value.id)}
             label={""}
             name={"state"}
             data={[
-              {id: '1', name: 'Norton Fitness'},
+              {id: '5f31b83ef7e42c672eed087d', name: 'Norton Fitness'},
               {id: '2', name: 'LDI'},
             ]}
             value={null}
