@@ -3,4 +3,5 @@ export interface FormDataModel {
   validate: boolean;
   errorMsg: string;
   showPassword?: boolean;
+  showModal?: boolean;
 }
