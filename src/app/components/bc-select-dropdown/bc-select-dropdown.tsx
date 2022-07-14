@@ -133,10 +133,9 @@ export default function DropDownMenu({selectedItem, items, onSelect, minwidth, d
         onClose={handleClose}
       >
         {items.map((item, index:number) => {
-          return <StyledMenuItem key={index} selected={selectedItem === item.value}>
+          return <StyledMenuItem key={index} selected={selectedItem === item.value} onClick={(e) => _handleListClick(e, item)}>
               <ListText
                 primary={item.label}
-                onClick={(e) => _handleListClick(e, item)}
               />
             </StyledMenuItem>
           }
