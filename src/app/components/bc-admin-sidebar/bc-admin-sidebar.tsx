@@ -153,6 +153,13 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
           'padding': '0 10px',
         }
       },
+    },
+    minimumMargin: {
+      minHeight: '20px !important',
+      margin: '0 !important',
+    },
+    expandIcon: {
+      padding: '0 12px',
     }
   }),
 );
@@ -357,19 +364,19 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
       'label': 'Revenue',
       'icon': <CollectIcon />,
       'link': '/main/reports/revenue',
-      'group': 'customers',
+      'group': 'Customers',
     },
     {
       'label': 'Amounts Owed',
       'icon': <AmountIcon/>,
       'link': '/main/reports/amounts-owed',
-      'group': 'customers',
+      'group': 'Customers',
     },
     {
       'label': 'Payroll',
       'icon': <PayrollIcon/>,
       'link': '/main/reports/payroll',
-      'group': 'vendors',
+      'group': 'Vendors',
     },
   ];
 
@@ -480,7 +487,14 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
           Object.values(groupBy(LINK_DATA.filter((item: any) => item.link.startsWith('/main/reports/')), 'group'))
             .map((group: any, groupIdx: number) => (
               <Accordion key={groupIdx} defaultExpanded className={sidebarStyles.accordion}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} className={sidebarStyles.accordionSummary}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  className={sidebarStyles.accordionSummary}
+                  classes={{
+                    root: sidebarStyles.minimumMargin,
+                    expanded: sidebarStyles.minimumMargin,
+                    expandIcon: sidebarStyles.expandIcon,
+                  }}>
                   {group[0].group}
                 </AccordionSummary>
                 <AccordionDetails className={sidebarStyles.accordionDetails}>

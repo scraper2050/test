@@ -127,6 +127,14 @@ function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, cus
         FormikSetFieldValue('startDate', moment().subtract(1, 'year').month(0).date(1).toDate());
         FormikSetFieldValue('endDate', moment().toDate());
         break;
+      case 'thisYear':
+        FormikSetFieldValue('startDate', moment().month(0).date(1).toDate());
+        FormikSetFieldValue('endDate', moment().month(11).endOf('month').toDate());
+        break;
+      case 'thisYearToDate':
+        FormikSetFieldValue('startDate', moment().month(0).date(1).toDate());
+        FormikSetFieldValue('endDate', moment().toDate());
+        break;
       default:
         break;
     }

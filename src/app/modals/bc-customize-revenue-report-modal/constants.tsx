@@ -1,12 +1,12 @@
 export const GENERATE_FROM_OPTIONS = [
   {
-    value: '0',
+    value: '1',
     label: 'Income',
   },
-  // {
-  //   value: '1',
-  //   label: 'Completed Jobs (Invoiced)',
-  // },
+  {
+    value: '2',
+    label: 'Completed Jobs (Invoiced)',
+  },
 ]
 
 export const PERIOD_OPTIONS = [
@@ -45,6 +45,14 @@ export const PERIOD_OPTIONS = [
   {
     value: 'lastYearToDate',
     label: 'Last Year-to-date',
+  },
+  {
+    value: 'thisYear',
+    label: 'This Year',
+  },
+  {
+    value: 'thisYearToDate',
+    label: 'This Year-to-date',
   },
 ]
 
