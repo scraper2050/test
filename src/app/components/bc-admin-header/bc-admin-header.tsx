@@ -217,12 +217,12 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
      * },
      */
     {
-      'label': 'Admin',
-      'link': '/main/admin'
-    },
-    {
       'label': 'Reports',
       'link': '/main/reports'
+    },
+    {
+      'label': 'Admin',
+      'link': '/main/admin'
     },
   ];
 
