@@ -22,6 +22,7 @@ const StyledMenu = withStyles({
     border: '0 solid #d3d4d5',
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
+    boxShadow: '0px 6px 6px -3px rgb(0 0 0 / 20%), 0px 10px 14px 1px rgb(0 0 0 / 14%), 0px 4px 18px 3px rgb(0 0 0 / 12%)',
   },
 })((props: MenuProps) => (
   <Menu
@@ -41,9 +42,9 @@ const StyledMenu = withStyles({
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
-    height: 32,
+    height: 40,
     '& span': {
-      fontSize: 13,
+      fontSize: 14,
     },
     '&:focus': {
       backgroundColor: '#E5F7FF',
@@ -97,6 +98,7 @@ const BCMenuToolbarButton = ({ buttonText, items, handleClick }: MenuToolbarButt
           boxShadow: 'none',
           paddingLeft: 0,
           paddingRight: 0,
+          height: 40,
         }}
         onClick={_handleButtonClick}
       >
@@ -114,8 +116,8 @@ const BCMenuToolbarButton = ({ buttonText, items, handleClick }: MenuToolbarButt
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {items.map((item, index: number) => <StyledMenuItem key={index}>
-          <ListItemText primary={item.title} onClick={(e) => _handleListClick(e, item.id)} />
+        {items.map((item, index: number) => <StyledMenuItem key={index} onClick={(e) => _handleListClick(e, item.id)}>
+          <ListItemText primary={item.title} />
         </StyledMenuItem>
         )}
       </StyledMenu>

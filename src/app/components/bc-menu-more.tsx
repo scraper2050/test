@@ -94,8 +94,8 @@ export default function CustomizedMenus({items, icon, handleClick}:ButtonProps) 
       open={Boolean(anchorEl)}
       onClose={handleClose}
       >
-        {items.map((item: {title:string;id:number}, index:number) => <StyledMenuItem>
-            <ListItemText key={index} primary={item.title} onClick={(e) => _handleListClick(e, item.id)}/>
+        {items.map((item: {title:string;id:number}, index:number) => <StyledMenuItem key={index} onClick={(e) => _handleListClick(e, item.id)}>
+            <ListItemText primary={item.title} />
           </StyledMenuItem>
         )}
       </StyledMenu>

@@ -32,7 +32,7 @@ function BCEmailValidateInput({
 
     if (e.target.value.length === 0) {
       emailData.validate = false;
-      emailData.errorMsg = 'This filed required';
+      emailData.errorMsg = 'This field required';
     } else if (validator.isEmail(emailData.value)) {
       emailData.validate = true;
       emailData.errorMsg = '';

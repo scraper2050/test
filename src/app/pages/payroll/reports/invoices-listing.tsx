@@ -25,8 +25,6 @@ import moment from "moment";
 import {getPayrollReportAPI} from "../../../../api/payroll.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import classNames from "classnames";
-import filterImage from '../../../../assets/img/filter.png';
-import QbIcon from "../../../../assets/img/img/intuitt_green.png";
 
 interface Props {
   classes: any;
@@ -108,7 +106,7 @@ function PayrollInvoices({classes}: Props) {
         ...item,
         invoice: {
           ...item.invoice,
-          technicianCount 
+          technicianCount
         }
       }
     })

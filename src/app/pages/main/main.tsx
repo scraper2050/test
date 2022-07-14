@@ -75,7 +75,11 @@ const ChangePasswordPage = React.lazy(() => import('../profile/change-password/c
 
 const PayrollPage = React.lazy(() => import('../payroll/payroll'));
 const PastPaymentPage = React.lazy(() => import('../payroll/past-payment/past-payment'));
-const ReportsPage = React.lazy(() => import('../payroll/reports/reports'));
+const PayrollReportsPage = React.lazy(() => import('../payroll/reports/reports'));
+
+const RevenueReportsPage = React.lazy(() => import('../reports/customers/revenue-reports/revenue'));
+const AmountsOwedReportsPage = React.lazy(() => import('../reports/customers/amounts-owed-reports/amounts-owed'));
+const NewPayrollReportsPage = React.lazy(() => import('../reports/vendors/payroll-reports/payroll'));
 
 function Main(): any {
 
@@ -140,7 +144,7 @@ function Main(): any {
                   title={'Tags'}
                 />
                 <AuthRoute
-                  Component={ReportsPage}
+                  Component={PayrollReportsPage}
                   exact
                   path={'/main/payroll/reports'}
                   title={'Tags'}
@@ -553,6 +557,30 @@ function Main(): any {
                   exact
                   path={'/main/admin/vendors/:contractorName'}
                   title={'Admin'}
+                />
+
+                <Redirect
+                  exact
+                  from={`/main/reports`}
+                  to={`/main/reports/revenue`}
+                />
+                <AuthRoute
+                  Component={RevenueReportsPage}
+                  exact
+                  path={'/main/reports/revenue'}
+                  title={'Reports'}
+                />
+                <AuthRoute
+                  Component={AmountsOwedReportsPage}
+                  exact
+                  path={'/main/reports/amounts-owed'}
+                  title={'Reports'}
+                />
+                <AuthRoute
+                  Component={NewPayrollReportsPage}
+                  exact
+                  path={'/main/reports/payroll'}
+                  title={'Reports'}
                 />
 
                 <AuthRoute
