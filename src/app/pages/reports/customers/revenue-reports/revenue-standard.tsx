@@ -28,8 +28,9 @@ const INITIAL_ITEMS = [
   {id: 1, title:'Customize'},
 ]
 const MORE_ITEMS = [
-  {id: 0, title:'Export to PDF'},
-  {id: 1, title:'Send Report'},
+  {id: 0, title:'Customize'},
+  {id: 1, title:'Export to PDF'},
+  {id: 2, title:'Send Report'},
 ]
 
 const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
@@ -37,19 +38,20 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
   const history = useHistory();
   const location:any = useLocation();
   const [isLoading, setIsLoading] = useState(false);
-  const [reportData, setReportData] = useState<any>(null)
+  const [reportData, setReportData] = useState<any>(null);
 
   useEffect(() => {
     if(location.state && location.state.reportQuery){
       // console.log(location.state.reportQuery);
-      runReport(location.state.reportQuery)
+      runReport(location.state.reportQuery);
     }
-    window.history.replaceState({}, document.title)
+    window.history.replaceState({}, document.title);
   }, [location]);
   
   const runReport = async (params?:any) => {
     const paramObject:any = {};
     paramObject.reportType = 1;
+    paramObject.reportSource = params?.generateFrom ? params.generateFrom : 1;
     if(params?.selectedCustomers?.length && params?.checkCustomer){
       if(params.selectedCustomers[0].value === 'all'){
         paramObject.reportType = 2;
@@ -111,12 +113,27 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
     }
   }
 
-  const handleMenuToolbarListClick = (e: any, id: number) => {
+  const handleMenuToolbarListClick = (event: any, id: number) => {
+    event.stopPropagation();
     switch (id) {
       case 0:
-        dispatch(info('This feature is still under development!'));
+        dispatch(
+          setModalDataAction({
+            'data': {
+              'modalTitle': 'Customize Report',
+              'removeFooter': false
+            },
+            'type': modalTypes.CUSTOMIZE_REVENUE_REPORT_MODAL,
+          })
+        );
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         break;
       case 1:
+        dispatch(info('This feature is still under development!'));
+        break;
+      case 2:
         dispatch(info('This feature is still under development!'));
         break;
       default:
