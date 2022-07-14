@@ -148,7 +148,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     },
   });
 
-  const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(6) != parseFloat(`${FormikValues.totalAmount}`).toFixed(6);
+  const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(2) != parseFloat(`${FormikValues.totalAmount}`).toFixed(2);
 
   const isValid = () => {
     if(!FormikValues.customerId) {
@@ -444,8 +444,8 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                       <Typography variant={'caption'} className={'previewCaption'}>Total Amount Applied</Typography>
                       <br />
                       <Typography variant={'h6'} className={'previewCaption'} style={{marginBottom: 0, width: 147, textAlign: 'center'}}>
-                        {/* $ {parseFloat(`${FormikValues.totalAmount}`).toFixed(6).slice(-6) === '000000' ? FormikValues.totalAmount : parseFloat(`${FormikValues.totalAmount}`).toFixed(2)} */}
-                        $ {FormikValues.totalAmount}
+                        $ {parseFloat(`${FormikValues.totalAmount}`).toFixed(6).slice(-6) === '000000' ? FormikValues.totalAmount : parseFloat(`${FormikValues.totalAmount}`).toFixed(2)}
+                        {/* $ {FormikValues.totalAmount} */}
                       </Typography>
                     </div>
                   )}
