@@ -131,13 +131,13 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
         }, 200);
         break;
       case 1:
-        dispatch(info('This feature is still under development!'));
+        dispatch(info('This feature is still under development'));
         break;
       case 2:
-        dispatch(info('This feature is still under development!'));
+        dispatch(info('This feature is still under development'));
         break;
       default:
-        dispatch(info('This feature is still under development!'));
+        dispatch(info('This feature is still under development'));
     }
   }
 

@@ -138,7 +138,7 @@ export default function DropDownMenu({selectedItem, items, onSelect, onMouseEnte
       >
         {items.map((item, index:number) => {
           const StatusIcon = item.icon;
-          return <StyledMenuItem key={index} >
+          return <StyledMenuItem key={index} onClick={(e) => _handleListClick(e, item)} >
               {item.icon &&
               <ListIcon>
                 <StatusIcon style={{fontSize: 20}}/>
@@ -146,7 +146,6 @@ export default function DropDownMenu({selectedItem, items, onSelect, onMouseEnte
               }
               <ListText
                 primary={item.title}
-                onClick={(e) => _handleListClick(e, item)}
               />
             </StyledMenuItem>
           }

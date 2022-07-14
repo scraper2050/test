@@ -61,7 +61,7 @@ function BCMonth({ classes, month, events, isLoading = false }: Props) {
 
     <div className={classes.monthContainer}>
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day)=> (
-        <p className={classes.dayName}>{day}</p>
+        <p key={day} className={classes.dayName}>{day}</p>
       ))}
       {daysArray.map((week, i) => (
         <React.Fragment key={i}>

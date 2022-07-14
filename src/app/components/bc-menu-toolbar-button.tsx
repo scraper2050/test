@@ -116,8 +116,8 @@ const BCMenuToolbarButton = ({ buttonText, items, handleClick }: MenuToolbarButt
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {items.map((item, index: number) => <StyledMenuItem key={index}>
-          <ListItemText primary={item.title} onClick={(e) => _handleListClick(e, item.id)} />
+        {items.map((item, index: number) => <StyledMenuItem key={index} onClick={(e) => _handleListClick(e, item.id)}>
+          <ListItemText primary={item.title} />
         </StyledMenuItem>
         )}
       </StyledMenu>

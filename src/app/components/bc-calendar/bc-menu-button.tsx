@@ -120,13 +120,13 @@ export default function BCMenuButton({selectedIndex, items, handleClick}:ButtonP
         {items.map((item, index:number) => {
           const ItemIcon = item.icon;
           return (
-            <StyledMenuItem>
+            <StyledMenuItem key={item.title} onClick={(e) => _handleListClick(e, index, item.title)}>
               {ItemIcon &&
                 <ListItemIcon>
                   <ItemIcon fontSize={'small'}/>
                 </ListItemIcon>
               }
-                <ListItemText key={item.title} primary={item.title} onClick={(e) => _handleListClick(e, index, item.title)}/>
+                <ListItemText primary={item.title} />
               </StyledMenuItem>
           )}
         )}
