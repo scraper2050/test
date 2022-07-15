@@ -78,7 +78,7 @@ function BCViewJobRequestModal({
 
   const dueDate = jobRequest.dueDate;
   // TODO make sure canEdit
-  const canEdit = [0, 4, 6].indexOf(jobRequest.status) >= 0;
+  // const canEdit = [0, 4, 6].indexOf(jobRequest.status) >= 0;
   let positionValue: {lat?:number;long?:number} = {};
   if(jobRequest.jobSite?.location?.coordinates?.length === 2){
     positionValue.long = jobRequest.jobSite.location.coordinates[0];
@@ -229,7 +229,6 @@ function BCViewJobRequestModal({
             </Grid>
           </>
         )}
-        {jobRequest.status !== 4 &&
         <DialogActions>
           <Button
             onClick={handleClose}
@@ -237,24 +236,28 @@ function BCViewJobRequestModal({
           >
             Close
           </Button>
-          <Button
-            onClick={openRejectJobRequestModal}
-            variant={'contained'}
-            classes={{
-              root: classes.purpleButton
-            }}
-          >
-            Reject Request
-          </Button>
-          <Button
-            color={'primary'}
-            onClick={createJob}
-            variant={'contained'}
-          >
-            Create Job
-          </Button>
+          {jobRequest.status === 0 && (
+            <>
+              <Button
+                onClick={openRejectJobRequestModal}
+                variant={'contained'}
+                classes={{
+                  root: classes.purpleButton
+                }}
+              >
+                Reject Request
+              </Button>
+              <Button
+                color={'primary'}
+                onClick={createJob}
+                variant={'contained'}
+              >
+                Create Job
+              </Button>
+            </>
+          )}
+
         </DialogActions>
-        }
       </div>
     </DataContainer>
   );
