@@ -204,9 +204,13 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
               };
               if(updatedJobLocation){
                 newTicket.jobLocation = updatedJobLocation;
+              } else {
+                newTicket.jobLocation = null;
               }
               if(updatedJobSite){
                 newTicket.jobSite = updatedJobSite;
+              } else {
+                newTicket.jobSite = null;
               }
               return newTicket;
             }
