@@ -45,7 +45,14 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean, enct
   }
   axios(request)
     .then(res => {
-      return resolve(res);
+      if(res?.data?.status === 0 && res?.data?.message === 'Session is expired or you are already logged out, please login again') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('tokenCustomerAPI');
+        window.location.href = '/'
+      } else {
+        return resolve(res);
+      }
     })
     .catch(err => {
       return reject(err);

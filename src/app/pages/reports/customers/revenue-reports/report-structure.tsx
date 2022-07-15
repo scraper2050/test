@@ -59,7 +59,6 @@ const ReportStructure = ({classes, data}:ReportProps) => {
   const reportStyle = reportStyles();
   const { companyName }: any = useSelector(({ profile }: any) => profile);
   const { user }: any = useSelector(({ auth }: any) => auth);
-  console.log('ini itu user', user);
   const columns: any = [
     {
       'accessor': 'customer.profile.displayName',
