@@ -16,7 +16,8 @@ import styled from "styled-components";
 import { callUpdateJobAPI } from "api/job.api";
 import { callEditServiceTicket } from "api/service-tickets.api";
 import { modalTypes } from "../../../constants";
-import { refreshServiceTickets, } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import { refreshJobRequests } from 'actions/job-request/job-request.action';
 import { refreshJobs } from 'actions/job/job.action';
 import { success, error } from 'actions/snackbar/snackbar.action';
 
@@ -90,6 +91,7 @@ function BCDeleteJobModal({
           dispatch(refreshJobs(false));
           dispatch(refreshJobs(true));
           dispatch(refreshServiceTickets(true));
+          dispatch(refreshJobRequests(true));
           await closeModal();
           dispatch(success(`${job.jobId} and ${job.ticket.ticketId} successfully canceled!`));
         } else {
@@ -101,6 +103,7 @@ function BCDeleteJobModal({
         await dispatch(refreshServiceTickets(true));
         await dispatch(refreshJobs(false));
         await dispatch(refreshJobs(true));
+        await dispatch(refreshJobRequests(true));
         await closeModal();
         dispatch(success(`${job.jobId} successfully canceled!`));
       }
