@@ -239,7 +239,7 @@ function PastPayments({classes}: Props) {
       setPage={setCurrentPage}
       tableData={filteredPayments}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker()]}
+      toolbar={[renderMenu(), renderDateRangePicker()].map((tool:any, idx:number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
     />
   )
 }

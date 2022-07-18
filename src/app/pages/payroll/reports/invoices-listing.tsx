@@ -238,7 +238,7 @@ function PayrollInvoices({classes}: Props) {
       setPage={setCurrentPage}
       tableData={filteredInvoices}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker(), renderTotals()]}
+      toolbar={[renderMenu(), renderDateRangePicker(), renderTotals()].map((tool:any, idx:number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
     />
   )
 }
