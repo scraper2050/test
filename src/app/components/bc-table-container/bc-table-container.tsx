@@ -87,6 +87,32 @@ function BCTableContainer({
     [fetchFunction]
   );
 
+  const handleSearchReset = () => {
+    if(manualPagination){
+      setSearchText('');
+      setKeywordFunction('');
+      fetchFunction(currentPageSize, undefined, undefined, '');
+      setCurrentPageIndexFunction(0);
+    } else {
+      setSearchText('');
+      if (setPage !== undefined) {
+        setPage({
+          ...currentPage,
+          'search': ''
+        });
+      }
+      if (locationState && locationState.prevPage) {
+        history.replace({
+          ...history.location,
+          'state': {
+            ...currentPage,
+            'search': ''
+          }
+        });
+      }
+    }
+  }
+
   const handleSearchChange = (event: any) => {
     if(manualPagination){
       setSearchText(event.target.value);
@@ -151,6 +177,7 @@ function BCTableContainer({
         {search
           ? <BCTableSearchContainer
             handleSearchChange={handleSearchChange}
+            handleSearchReset={handleSearchReset}
             searchPlaceholder={searchPlaceholder}
             searchText={searchText}
           />

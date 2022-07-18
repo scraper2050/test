@@ -1,12 +1,15 @@
 import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
+import ClearIcon from '@material-ui/icons/Clear';
 import styles from './bc-table-search-container.styles';
 import { IconButton, InputBase, Paper, withStyles } from '@material-ui/core';
+
 
 interface BCTableSearchInputProps {
   classes: any;
   searchText: string,
   handleSearchChange: any
+  handleSearchReset: any
   searchPlaceholder: string
 }
 
@@ -14,6 +17,7 @@ function BCTableSearchContainer({
   classes,
   searchText,
   handleSearchChange,
+  handleSearchReset,
   searchPlaceholder
 }: BCTableSearchInputProps): JSX.Element {
   return (
@@ -29,6 +33,18 @@ function BCTableSearchContainer({
         value={searchText}
         defaultValue={searchText}
       />
+      {searchText && (
+        <>
+          <IconButton
+            aria-label={'clear'}
+            className={classes.iconButton}
+            onClick={handleSearchReset}
+          >
+            <ClearIcon />
+          </IconButton>
+          <div className={classes.iconButtonBorder} />
+        </>
+      )}
       <IconButton
         aria-label={'search'}
         className={classes.iconButton}
