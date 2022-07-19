@@ -1,5 +1,5 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
@@ -33,6 +33,7 @@ const getFilteredList = (state: any) => {
 function InvoicingDraftListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation<any>();
   const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
   // const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
@@ -47,12 +48,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
       keyword: invoiceList.keywordDraft,
     })
   );
-  const showInvoiceDetail = (id:string) => {
-    history.push({
-      'pathname': `view/${id}`,
-    });
-  };
-  //console.log(invoiceList)
+
   const columns: any = [
     {
       'Header': 'Invoice ID',
@@ -96,6 +92,27 @@ function InvoicingDraftListing({ classes, theme }: any) {
     }
   }, []);
 
+  useEffect(() => {
+    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+      dispatch(setDraftKeyword(location.state.option.search));
+      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search));
+      dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
+      dispatch(setCurrentDraftPageIndex(0));
+      window.history.replaceState({}, document.title)
+    } 
+  }, [location]);
+
+  const showInvoiceDetail = (id:string) => {
+    history.push({
+      'pathname': `view/${id}`,
+      'state': {
+        keyword,
+        currentPageSize,
+        tab: 1,
+      }
+    });
+  };
+
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
   return (
@@ -117,7 +134,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentDraftPageSize(num))}
         setKeywordFunction={(query: string) => dispatch(setDraftKeyword(query))}
-        disableInitialSearch
+        disableInitialSearch={location?.state?.tab !== 1}
       />
     </DataContainer>
   );

@@ -4,7 +4,7 @@ import InvoicingDraftListing from './invoices-list-listing/invoices-draft-listin
 import InvoicingPaymentListing from './invoices-list-listing/payments-listing';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './invoices-list.styles';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Fab, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { CSButton } from "../../../../helpers/custom";
@@ -27,6 +27,7 @@ function InvoiceList({ classes }: any) {
   const [curTab, setCurTab] = useState(0);
   const theme = useTheme();
   const history = useHistory();
+  const location = useLocation<any>();
   // const invoiceList = useSelector(getFilteredList);
   const totalDraft = useSelector(({invoiceList}:any) => invoiceList.totalDraft);
 
@@ -54,6 +55,12 @@ function InvoiceList({ classes }: any) {
   useEffect(() => {
     dispatch(getCustomers());
   }, []);
+
+  useEffect(() => {
+    if(location?.state?.tab !== undefined){
+      setCurTab(location.state.tab);
+    } 
+  }, [location]);
 
   const items = [
     {title:'Custom Invoice', id:0},

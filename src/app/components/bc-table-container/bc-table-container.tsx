@@ -154,7 +154,7 @@ function BCTableContainer({
         setSearchText(initialServerPaginatedSearch);
       }
     }
-  }, []);
+  }, [initialSearch, initialServerPaginatedSearch]);
 
   useEffect(() => {
     if (tableData && !manualPagination) {

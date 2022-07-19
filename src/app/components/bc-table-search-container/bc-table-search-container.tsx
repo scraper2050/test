@@ -31,7 +31,7 @@ function BCTableSearchContainer({
         }}
         placeholder={searchPlaceholder}
         value={searchText}
-        defaultValue={searchText}
+        // defaultValue={searchText}
       />
       {searchText && (
         <>

@@ -70,14 +70,32 @@ function AdminEmployeesPage({ classes, children }: Props) {
     dispatch(getEmployees());
   }, []);
 
+  const resetLocationState = () => {
+    window.history.replaceState({}, document.title)
+  }
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", resetLocationState);
+    return () => {
+      window.removeEventListener("beforeunload", resetLocationState);
+    };
+  }, []);
+
   const renderViewMore = (row: any) => {
     const baseObj = row.original;
 
     const employeeId = baseObj._id;
     const displayName = baseObj.profile.displayName.split(' ').join('-');
 
-    const employeeObj = { employeeId,
-      displayName };
+    const employeeObj:any = {
+      employeeId,
+      displayName,
+      currentPage,
+    };
+
+    if(location?.state?.prevPage?.search){
+      employeeObj.currentPage.search = location.state.prevPage.search
+    }
 
 
     localStorage.setItem('nestedRouteKey', `${displayName}`);
@@ -90,7 +108,6 @@ function AdminEmployeesPage({ classes, children }: Props) {
       'pathname': `/main/admin/employees/${displayName}`,
       'state': {
         ...employeeObj,
-        currentPage
       }
     });
   };
