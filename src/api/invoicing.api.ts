@@ -176,7 +176,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
 
       cancelTokenGetAllDraftInvoicesAPI = axios.CancelToken.source();
 
-      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI)
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllDraftInvoicesAPI)
         .then((res: any) => {
           let tempDraftInvoices = res.data.invoices;
           dispatch(setDraftInvoices(tempDraftInvoices.reverse()));
