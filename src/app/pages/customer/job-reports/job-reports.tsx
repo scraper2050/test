@@ -44,23 +44,23 @@ function JobReportsPage({ classes, theme }: any) {
 
   const location = useLocation<any>();
 
-  const locationState = location.state;
+  // const locationState = location.state;
 
-  const prevPage = locationState && locationState.prevPage
-    ? locationState.prevPage
-    : null;
+  // const prevPage = locationState && locationState.prevPage
+  //   ? locationState.prevPage
+  //   : null;
 
-  const [currentPage, setCurrentPage] = useState({
-    'page': prevPage
-      ? prevPage.page
-      : 0,
-    'pageSize': prevPage
-      ? prevPage.pageSize
-      : 10,
-    'sortBy': prevPage
-      ? prevPage.sortBy
-      : []
-  });
+  // const [currentPage, setCurrentPage] = useState({
+  //   'page': prevPage
+  //     ? prevPage.page
+  //     : 0,
+  //   'pageSize': prevPage
+  //     ? prevPage.pageSize
+  //     : 10,
+  //   'sortBy': prevPage
+  //     ? prevPage.sortBy
+  //     : []
+  // });
 
 
   const columns: any = [
@@ -169,6 +169,16 @@ function JobReportsPage({ classes, theme }: any) {
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
+  useEffect(() => {
+    if(location?.state?.option?.search || location?.state?.option?.pageSize){
+      dispatch(setKeyword(location.state.option.search));
+      dispatch(getAllJobReportsAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(setCurrentPageSize(location.state.option.pageSize));
+      dispatch(setCurrentPageIndex(0));
+      window.history.replaceState({}, document.title)
+    } 
+  }, [location]);
+
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -179,9 +189,10 @@ function JobReportsPage({ classes, theme }: any) {
     localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
       'pathname': `job-reports/${jobReportId}`,
-      // 'state': {
-      //   currentPage
-      // }
+      'state': {
+        keyword,
+        currentPageSize,
+      }
     });
   };
 

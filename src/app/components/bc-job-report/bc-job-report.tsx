@@ -44,6 +44,7 @@ const getJobs = (tasks:any = [], jobTypes:any) => {
 
 function BCJobReport({ classes, jobReportData, jobTypes }: any) {
   const history = useHistory();
+  const location = useLocation<any>();
   const dispatch = useDispatch();
   const [invoiceDetailResult, setInvoiceDetailResult] = useState<boolean>(false);
 
@@ -77,6 +78,29 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     ? getJobs(job.tasks, jobTypes)
     : [job.type];
 
+  const listener = history.listen((loc, action) => {
+    if (action === 'POP'){
+      handleBackButtonClick();
+      listener();
+    }
+  });
+
+  const handleBackButtonClick = () => {
+    if(location?.state?.keyword || location?.state?.currentPageSize){
+      history.push({
+        'pathname': '/main/customers/job-reports',
+        'state': {
+          'option': {
+            search: location?.state?.keyword || '',
+            pageSize: location?.state?.currentPageSize || 10,
+          },
+        }
+
+      });
+    } else {
+      history.goBack();
+    }
+  }
 
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
@@ -92,6 +116,17 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     if (jobEquipmentInfo) {
       history.push({
         'pathname': `/main/customers/${job.customer._id}/job-equipment-info/reports`
+      });
+    } else if(location?.state?.keyword || location?.state?.currentPageSize){
+      history.push({
+        'pathname': '/main/customers/job-reports',
+        'state': {
+          'option': {
+            search: location?.state?.keyword || '',
+            pageSize: location?.state?.currentPageSize || 10,
+          },
+        }
+
       });
     } else {
       history.push({
@@ -170,9 +205,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
             color="default"
             size="small"
             className={classes.backButton}
-            onClick={() => {
-              history.goBack();
-            }}
+            onClick={handleBackButtonClick}
           >
             <ArrowBackIcon/>
           </IconButton>
@@ -327,7 +360,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
                         <strong>
                           {'Technician(s) Name(s)'}
                         </strong>
-                        {job.tasks.map((task: any) => <span className={classes.noMargin}>
+                        {job.tasks.map((task: any, idx:number) => <span className={classes.noMargin} key={idx}>
                             {task.technician?.profile?.displayName || 'N/A'}
                           </span>
                         )}

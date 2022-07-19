@@ -157,7 +157,6 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
           if (response.status === 1) {
             setIsSuccess(true);
             setSubmitting(false);
-            setModalOptions({...modalOptions, maxWidth: 'sm'})
           } else {
             console.log(response.message);
             dispatch(error(response.message))
