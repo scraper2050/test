@@ -11,8 +11,9 @@ const login = async (param: Auth) => {
   try {
     const response: any = await request('/login', 'POST', param, false);
     loginData = response.data;
-    const responseCustomerAPI: any = await request('/login', 'POST', param, false, undefined, undefined, true);
-    loginData = {...loginData, tokenCustomerAPI: responseCustomerAPI.data.token}
+    // const responseCustomerAPI: any = await request('/login', 'POST', param, false, undefined, undefined, true);
+    // loginData = {...loginData, tokenCustomerAPI: responseCustomerAPI.data.token}
+    loginData.tokenCustomerAPI = response.data.token;
   } catch (err) {
     loginData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
