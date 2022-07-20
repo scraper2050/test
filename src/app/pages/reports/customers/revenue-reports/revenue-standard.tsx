@@ -50,14 +50,14 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
   
   const runReport = async (params?:any) => {
     const paramObject:any = {};
-    paramObject.reportType = 1;
+    paramObject.reportData = 1;
     paramObject.reportSource = params?.generateFrom ? params.generateFrom : 1;
     if(params?.selectedCustomers?.length && params?.checkCustomer){
       if(params.selectedCustomers[0].value === 'all'){
-        paramObject.reportType = 2;
+        paramObject.reportData = 2;
       } else {
         paramObject.customerIds = JSON.stringify(params.selectedCustomers.map((customer:any) => customer.value));
-        paramObject.reportType = 2;
+        paramObject.reportData = 2;
       }
     }
     if(params?.startDate && params?.endDate){
