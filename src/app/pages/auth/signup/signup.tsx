@@ -63,6 +63,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   const [companyId, setCompanyId] = useState<string|null>(null);
   const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
     'email': initFormData(),
+    'recoveryEmail': initFormData(),
     'firstName': initFormData(),
     'lastName': initFormData(),
     'password': {
@@ -139,6 +140,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
     const signupParams:any = {
       accountType: accountType.toString(),
       email: formData.email.value,
+      recoveryEmail: formData.recoveryEmail.value,
       password: formData.password.value,
       firstName: formData.firstName.value,
       lastName: formData.lastName.value,
@@ -164,28 +166,32 @@ function SignUpPage({ classes }: Props): JSX.Element {
 
     Api.post('/signUp', signupParams)
       .then(async res => {
-        // if (res.data.message === 'Company Email address already registered. Please try with some other email address') {
-        //   setLoading(false);
-        //   dispatch(error('Account already exists.'));
-        // } else
-        if (res.data.status === 1) {
-          // setToken(res.data.token);
-          // setTokenCustomerAPI(res.data.token);
-          // setUser(JSON.stringify(res.data.user));
-          // dispatch(setQuickbooksConnection({qbAuthorized: false}));
-          axios.create({
-            'baseURL': Config.apiBaseURL,
-            'headers': {
-              'Authorization': res.data.token,
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          })
-            .post('/agreeTermAndCondition', params)
-            .then(() => {
-              setSigndUp(true);
-              setLoading(false);
-              //history.push('/');
-            });
+        if (res.data.message === 'Email address already registered. Please try with some other email address') {
+          setLoading(false);
+          dispatch(error('Email already exists.'));
+        } else if (res.data.status === 1) {
+          if(!res.data.token){
+            setSigndUp(true);
+            setLoading(false);
+          } else {
+            // setToken(res.data.token);
+            // setTokenCustomerAPI(res.data.token);
+            // setUser(JSON.stringify(res.data.user));
+            // dispatch(setQuickbooksConnection({qbAuthorized: false}));
+            axios.create({
+              'baseURL': Config.apiBaseURL,
+              'headers': {
+                'Authorization': res.data.token,
+                'Content-Type': 'application/x-www-form-urlencoded'
+              }
+            })
+              .post('/agreeTermAndCondition', params)
+              .then(() => {
+                setSigndUp(true);
+                setLoading(false);
+                //history.push('/');
+              });
+          }
         } else {
           setLoading(false);
           dispatch(error(res.data.message));
@@ -242,7 +248,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
           }}/>
           }
           {activeStep === 1 &&
-            <SignUpCompany onSelect={(company) => {
+            <SignUpCompany accountType={accountType} onSelect={(company) => {
               setCompanyId(company);
               setActiveStep(2);
             }}/>

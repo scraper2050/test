@@ -123,6 +123,22 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
           item
           md={6}
           xs={12}>
+          <BCEmailValidateInput
+            id={'recoveryEmail'}
+            inputData={formData.recoveryEmail}
+            disabled={formData.isci.value}
+            label={'Recovery Email'}
+            onChange={(newEmail: FormDataModel) => onChange('recoveryEmail', newEmail)}
+            size={'small'}
+            variant={'outlined'}
+            referenceEmail={formData.email.value}
+            infoText={'Recovery email is required in case you get locked out of your account or your account type changes.'}
+          />
+        </Grid>
+        <Grid
+          item
+          md={6}
+          xs={12}>
           <BCPhoneNumberInput
             changeData={(data: FormDataModel) => onChange('phone_number', data)}
             id={'phone_number'}
@@ -133,7 +149,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
         </Grid>
         <Grid
           item
-          md={6}
+          md={12}
           style={{
             'display': 'flex',
             'flexDirection': 'column'
@@ -146,10 +162,12 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
               name={'agree-term'}
               onChange={(e) => handleTextField('agreeTerm', e.target.checked ? 'Yes' : '')}
             />
+            I agree to the 
             <span
+              style={{marginLeft: 5}}
               onClick={handleClickOpen}
               role={'button'}>
-                      {'I agree with the terms of use and privacy'}
+              {'terms of use and privacy'}
             </span>
           </div>
           {!formData.agreeTerm.validate &&

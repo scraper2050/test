@@ -13,6 +13,8 @@ export function *handleLogin(action: { payload: Auth }) {
     );
     if (result.message === 'Invalid email/password.') {
       yield put(loginActions.fault('Incorrect Email / Password'));
+    } else if(result.message === 'Your account type does not have web access'){
+      yield put(loginActions.fault(result.message));
     } else {
       yield put(loginActions.success(result));
       const {qbAuthorized, qbCompanyName, qbCompanyEmail} = result.company;

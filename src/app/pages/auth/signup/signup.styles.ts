@@ -76,7 +76,7 @@ export default (theme: Theme): any => ({
   },
   successTitle: {
     color: PRIMARY_BLUE,
-    weight: '700',
+    fontWeight: '700',
     fontSize: 30,
     textAlign: 'center',
   },
