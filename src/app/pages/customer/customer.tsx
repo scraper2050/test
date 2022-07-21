@@ -83,6 +83,17 @@ function CustomersPage({ classes }: any) {
     }
   ];
 
+  const resetLocationState = () => {
+    window.history.replaceState({}, document.title)
+  }
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", resetLocationState);
+    return () => {
+      window.removeEventListener("beforeunload", resetLocationState);
+    };
+  }, []);
+
   useEffect(() => {
     const active = showCustomer === 'inactive' ? false : true;
     const inactive = showCustomer === 'active' ? false : true;
@@ -103,9 +114,12 @@ function CustomersPage({ classes }: any) {
         ? baseObj.profile.displayName
         : 'N/A';
     const customerId = row.original._id;
-    const customerObj = { customerName,
+    const customerObj:any = { customerName,
       customerId,
       currentPage: {...currentPage, showCustomer} };
+    if(location?.state?.prevPage?.search){
+      customerObj.currentPage.search = location.state.prevPage.search
+    }
     customerName =
       customerName !== undefined
         ? customerName.replace(/[\/ ]/g, '')

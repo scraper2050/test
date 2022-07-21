@@ -3,6 +3,10 @@ export default (theme: Theme): any => ({
   'iconButton': {
     'padding': 10
   },
+  'iconButtonBorder': {
+    'borderRight': '1px solid #D0D3DC',
+    'margin': '5px 0',
+  },
   'input': {
     'flex': 1,
     'marginLeft': theme.spacing(1)

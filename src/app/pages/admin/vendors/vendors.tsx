@@ -166,6 +166,17 @@ function AdminVendorsPage({ classes }: any) {
     dispatch(getVendors());
   }, []);
 
+  const resetLocationState = () => {
+    window.history.replaceState({}, document.title)
+  }
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", resetLocationState);
+    return () => {
+      window.removeEventListener("beforeunload", resetLocationState);
+    };
+  }, []);
+
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
@@ -211,8 +222,16 @@ function AdminVendorsPage({ classes }: any) {
         ? baseObj.contractor.info.companyName
         : 'N/A';
     const vendorId = baseObj.contractor._id;
-    const vendorObj = { vendorCompanyName,
-      vendorId };
+    const vendorObj:any = { 
+      vendorCompanyName,
+      vendorId,
+      currentPage,
+    };
+
+    if(location?.state?.prevPage?.search){
+      vendorObj.currentPage.search = location.state.prevPage.search
+    }
+
     vendorCompanyName =
       vendorCompanyName !== undefined
         ? vendorCompanyName.replace(/[\/ ]/g, '')
@@ -228,7 +247,6 @@ function AdminVendorsPage({ classes }: any) {
       'pathname': `vendors/${vendorCompanyName}`,
       'state': {
         ...vendorObj,
-        currentPage
       }
     });
   };

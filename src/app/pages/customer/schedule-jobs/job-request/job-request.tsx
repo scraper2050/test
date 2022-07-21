@@ -134,7 +134,7 @@ function JobRequest({ classes }: any) {
 
     useEffect(() => {
       if(selectedStatus !== '-1'){
-        setIconComponent(statusReference[selectedStatus].icon);
+        setIconComponent(statusReference[selectedStatus].icon || null);
       } else {
         setIconComponent(null);
       }
@@ -212,7 +212,7 @@ function JobRequest({ classes }: any) {
               selected={statusObj.statusNumber === selectedStatus}
               onClick={() => handleSelectStatusFilter(statusObj.statusNumber)}
             >
-              <statusObj.icon className={classes.filterIcon}/>
+              {statusObj.icon && <statusObj.icon className={classes.filterIcon}/>}
               {statusObj.text}
             </MenuItem>
           ))}

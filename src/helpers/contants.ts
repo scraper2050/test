@@ -43,14 +43,14 @@ export const statusReference: {
 export const jobRequestStatusReference: { 
   [key: string]: {
     text: string; 
-    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>; 
+    icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>; 
     color: string;
     statusNumber: string;
   }; 
 } = {
-  '0': {text: 'Open', icon: IconScheduled, color: '#828282', statusNumber: '0'},
-  '1': {text: 'Archived', icon: IconRescheduled, color: '#828282', statusNumber: '1'},
-  '2': {text: 'Started', icon: IconStarted, color: '#00AAFF', statusNumber: '2'},
-  '3': {text: 'Finished', icon: IconCompleted, color: '#50AE55', statusNumber: '3'},
+  '0': {text: 'Open', color: 'inherit', statusNumber: '0'},
+  '1': {text: 'Scheduled', icon: IconScheduled, color: '#828282', statusNumber: '1'},
+  '2': {text: 'Finished', icon: IconCompleted, color: '#50AE55', statusNumber: '2'},
+  '3': {text: 'Canceled', icon: IconRescheduled, color: '#828282', statusNumber: '3'},
   '4': {text: 'Rejected', icon: IconCancelled, color: '#A107FF', statusNumber: '4'},
 }

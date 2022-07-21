@@ -53,26 +53,6 @@ function InvoicingListListing({ classes, theme }: any) {
     })
   );
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
-  const showInvoiceDetail = (id:string) => {
-/*    dispatch(setModalDataAction({
-      'data': {
-        'detail': true,
-        'modalTitle': 'Invoice',
-        'formId': id,
-        'removeFooter': false
-      },
-      'type': modalTypes.SHARED_FORM_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 10);*/
-    history.push({
-      'pathname': `view/${id}`,
-      'state': {
-        keyword,
-      }
-    });
-  };
 
   const columns: any = [
     {
@@ -235,13 +215,24 @@ function InvoicingListListing({ classes, theme }: any) {
   }, [selectionRange]);
 
   useEffect(() => {
-    if(location?.state?.option?.search){
-      dispatch(setKeyword(location.state.option.search ));
-      dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, location.state.option.search , selectionRange));
+    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+      dispatch(setKeyword(location.state.option.search));
+      dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
     } 
   }, [location]);
+
+  const showInvoiceDetail = (id:string) => {
+    history.push({
+      'pathname': `view/${id}`,
+      'state': {
+        keyword,
+        currentPageSize,
+      }
+    });
+  };
 
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
@@ -323,6 +314,7 @@ function InvoicingListListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
+        disableInitialSearch={location?.state?.tab !== 0}
       />
     </DataContainer>
   );

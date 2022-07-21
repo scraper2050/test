@@ -173,7 +173,7 @@ function Payroll({classes}: Props) {
       setPage={setCurrentPage}
       tableData={tableData}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker(), renderClearFilterButton()]}
+      toolbar={[renderMenu(), renderDateRangePicker(), renderClearFilterButton()].map((tool:any, idx:number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
     />
   )
 }
