@@ -19,7 +19,7 @@ export default (theme: Theme): any => ({
   reportType: {
     borderBottom: '1px solid #D0D3DC',
     maxWidth: 550,
-    height: 40,
+    height: 45,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
