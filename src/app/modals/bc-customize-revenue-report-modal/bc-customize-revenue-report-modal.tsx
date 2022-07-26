@@ -29,6 +29,7 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import { useHistory } from 'react-router-dom';
 import { getCustomers } from 'actions/customer/customer.action';
+import { modalTypes } from "../../../constants";
 import {
   GENERATE_FROM_OPTIONS,
   PERIOD_OPTIONS,
@@ -38,11 +39,12 @@ import {
 } from './constants'
 
 
-function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, customer, emailDefault, customerId } }: any) {
+function BCCustomizeRevenueReportModal({ classes }: any) {
   const customers: any[] = useSelector(({ customers }: any) => customers.data);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [isDisabled, setIsDisabled] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -63,7 +65,7 @@ function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, cus
   }
   const handleDateChange = (fieldName:string, value: any) => {
     FormikSetFieldValue(fieldName, value);
-    FormikSetFieldValue('period', '');
+    FormikSetFieldValue('periodOption', '');
   }
 
   const handlePeriodClick = (event: React.MouseEvent<HTMLElement>, item: Option, fieldName:string) => {
@@ -140,10 +142,28 @@ function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, cus
     }
   }
 
-  const form = useFormik({
+  interface CustomizedRevenueFormikProps {
+    generateFrom: string;
+    periodOption: string;
+    startDate:null | string | number | Date;
+    endDate:null | string | number | Date;
+    checkCustomer: boolean;
+    selectedCustomers: {
+        value: string;
+        label: string;
+    }[];
+    checkLocation: boolean;
+    location: string;
+    checkDivision: boolean;
+    division: string;
+    checkItemOrService: boolean;
+    itemOrService: string;
+}
+
+  const form = useFormik<CustomizedRevenueFormikProps>({
     initialValues: {
       generateFrom: GENERATE_FROM_OPTIONS[0].value,
-      period: '',
+      periodOption: '',
       startDate: null,
       endDate: null,
       checkCustomer: false,
@@ -159,19 +179,62 @@ function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, cus
       history.push({
         'pathname': `/main/reports/revenue`,
         'state': {
-          reportQuery: values
+          reportQuery: values,
+          tab: 0,
         }
       });
       closeModal();
     }
   });
 
-
   const {
     'values': FormikValues,
     'handleSubmit': FormikSubmit,
     setFieldValue: FormikSetFieldValue,
   } = form;
+
+
+  const memorizeReport = () => {
+    setIsLoading(true);
+    const paramObject:any = {};
+    paramObject.reportType = 1;
+    paramObject.reportData = 1;
+    paramObject.reportSource = FormikValues.generateFrom ? Number(FormikValues.generateFrom) : 1;
+    if(FormikValues.selectedCustomers.length && FormikValues.checkCustomer){
+      if(FormikValues.selectedCustomers[0].value === 'all'){
+        paramObject.reportData = 2;
+      } else {
+        paramObject.customerIds = JSON.stringify(FormikValues.selectedCustomers.map((customer:any) => customer.value));
+        paramObject.reportData = 2;
+      }
+    }
+    if(FormikValues.startDate && FormikValues.endDate){
+      let startDate:any = new Date(FormikValues.startDate)
+      const startOffset = startDate.getTimezoneOffset() * 60000;
+      startDate = new Date(startDate.getTime() - startOffset);
+      let endDate:any = new Date(FormikValues.endDate)
+      const endOffset = endDate.getTimezoneOffset() * 60000;
+      endDate = new Date(endDate.getTime() - endOffset);
+      paramObject.startDate = startDate.toISOString().slice(0,10);
+      paramObject.endDate = endDate.toISOString().slice(0,10);
+    }
+    if(FormikValues.periodOption){
+      paramObject.periodOption = FormikValues.periodOption;
+      delete paramObject.startDate;
+      delete paramObject.endDate;
+    }
+    setIsLoading(false);
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'modalTitle': 'Memorize Report',
+          'removeFooter': false,
+          'paramObject': paramObject
+        },
+        'type': modalTypes.MEMORIZE_REPORT_MODAL,
+      })
+    );
+  }
 
   useEffect(() => {
     if((!!FormikValues.startDate || !!FormikValues.endDate) && 
@@ -212,9 +275,9 @@ function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, cus
             <AccordionDetails className={classes.accordionDetails}>
               <DropDownMenu
                 minwidth='180px'
-                selectedItem={FormikValues.period}
+                selectedItem={FormikValues.periodOption}
                 items={PERIOD_OPTIONS}
-                onSelect={(e, item) => handlePeriodClick(e, item, 'period')}
+                onSelect={(e, item) => handlePeriodClick(e, item, 'periodOption')}
               />
               <div className={classes.separator} />
               <div style={{ width: 140 }}>
@@ -377,28 +440,30 @@ function BCCustomizeRevenueReportModal({ classes, data: { id, customerEmail, cus
           justify={'space-between'}>
           <Grid item>
             <Button
-              disabled={isDisabled}
+              disabled={isDisabled || isLoading}
               aria-label={'memorize-report'}
               classes={{
                 'root': classes.closeButton
               }}
+              onClick={memorizeReport}
               variant={'outlined'}>
               Memorize
             </Button>
           </Grid>
           <Grid item>
             <Button
+              disabled={isLoading}
               aria-label={'cancel'}
               classes={{
                 'root': classes.closeButton
               }}
-              onClick={() => closeModal()}
+              onClick={closeModal}
               variant={'outlined'}>
               Cancel
             </Button>
 
             <Button
-              disabled={isDisabled}
+              disabled={isDisabled || isLoading}
               aria-label={'run-report'}
               classes={{
                 root: classes.submitButton,

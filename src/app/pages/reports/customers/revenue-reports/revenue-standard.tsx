@@ -17,7 +17,6 @@ import {
 import { setReportShowing } from 'actions/report/report.action'
 import { generateIncomeReport } from 'api/reports.api';
 import { error as SnackBarError, info } from 'actions/snackbar/snackbar.action';
-import customer from 'app/pages/customer/customer';
 
 interface RevenueStandardProps {
   classes: any;
@@ -28,7 +27,7 @@ const INITIAL_ITEMS = [
   {id: 1, title:'Customize'},
 ]
 const MORE_ITEMS = [
-  {id: 0, title:'Customize'},
+  {id: 0, title:'Customize This'},
   {id: 1, title:'Export to PDF'},
   {id: 2, title:'Send Report'},
 ]
@@ -50,8 +49,9 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
   
   const runReport = async (params?:any) => {
     const paramObject:any = {};
+    paramObject.reportType = 1;
     paramObject.reportData = 1;
-    paramObject.reportSource = params?.generateFrom ? params.generateFrom : 1;
+    paramObject.reportSource = params?.generateFrom ? Number(params.generateFrom) : 1;
     if(params?.selectedCustomers?.length && params?.checkCustomer){
       if(params.selectedCustomers[0].value === 'all'){
         paramObject.reportData = 2;
@@ -74,16 +74,16 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
       setIsLoading(true);
       const result = await generateIncomeReport(paramObject);
       if(result.status === 1) {
-        setReportData(result)
-        dispatch(setReportShowing(true))
+        setReportData(result);
+        dispatch(setReportShowing(true));
       } else {
-        console.log(result.message)
-        dispatch(SnackBarError(`Something went wrong`))
+        console.log(result.message);
+        dispatch(SnackBarError(`Something went wrong`));
       }
       setIsLoading(false);
     } catch (error) {
-      console.log(error)
-      dispatch(SnackBarError(`Something went wrong`))
+      console.log(error);
+      dispatch(SnackBarError(`Something went wrong`));
       setIsLoading(false);
     }
     history.replace({state:undefined});

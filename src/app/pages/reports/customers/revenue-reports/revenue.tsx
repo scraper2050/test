@@ -4,14 +4,16 @@ import styles from './revenue.styles';
 import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 import BCBackButton from 'app/components/bc-back-button/bc-back-button';
 import RevenueStandardReports from "./revenue-standard";
-import RevenueCustomReports from "./revenue-custom";
+import RevenueMemorizedReports from "./revenue-memorized";
 import { setReportShowing } from 'actions/report/report.action'
 
 function AdminPayrollPage({ classes }: any) {
   const dispatch = useDispatch();
+  const location = useLocation<any>();
   const isReportShowing = useSelector(({reportState}:any) => reportState.isReportShowing)
   const [curTab, setCurTab] = useState(0);
 
@@ -21,7 +23,13 @@ function AdminPayrollPage({ classes }: any) {
 
   useEffect(() => {
     dispatch(setReportShowing(false))
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if(location?.state?.tab !== undefined){
+      setCurTab(location.state.tab);
+    } 
+  }, [location]);
   
 
   return (
@@ -45,7 +53,7 @@ function AdminPayrollPage({ classes }: any) {
                 'value': 0
               },
               {
-                'label': 'Custom',
+                'label': 'Memorized',
                 'value': 1
               },
             ]}
@@ -62,7 +70,7 @@ function AdminPayrollPage({ classes }: any) {
                 className={classes.dataContainer}
                 hidden={curTab !== 1}
                 id={'1'}>
-                <RevenueCustomReports />
+                <RevenueMemorizedReports />
               </div>
             </SwipeableViews>
           </div>

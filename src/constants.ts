@@ -108,6 +108,7 @@ export const modalTypes = {
   'COMPANY_LOCATION_MODAL': 'company_location_modal',
   'WARNING_MODAL': 'warning_modal',
   'CUSTOMIZE_REVENUE_REPORT_MODAL': 'customize-revenue-report-modal',
+  'MEMORIZE_REPORT_MODAL': 'memorize-report-modal',
 };
 
 export const rejectionReason = [

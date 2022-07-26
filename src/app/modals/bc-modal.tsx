@@ -63,7 +63,8 @@ import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
 import BCEditBulkPaymentModal from './bc-bulk-payment-modal/bc-edit-bulk-payment-modal';
 import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-history-modal";
 import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
-import BCCustomizeRevenueReportMOdal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
+import BCCustomizeRevenueReportModal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
+import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -694,7 +695,6 @@ function BCModal() {
           closeAction={data.closeAction}
         />);
         break;
-
       case modalTypes.CUSTOMIZE_REVENUE_REPORT_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
@@ -702,9 +702,16 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'sm'
         });
-        setComponent(<BCCustomizeRevenueReportMOdal
-          data = {data}
-        />);
+        setComponent(<BCCustomizeRevenueReportModal />);
+        break;
+      case modalTypes.MEMORIZE_REPORT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCMemorizeReportModal data = {data.paramObject} memorizedReportId={data.memorizedReportId} />);
         break;
 
       default:

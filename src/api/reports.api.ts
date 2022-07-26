@@ -13,3 +13,44 @@ export const generateIncomeReport = async (params: any) => {
     return {status: 0, message: `Something went wrong`};
   }
 }
+
+export const getMemorizedReports = async () => {
+  try {
+    const response: any = await request("/getMemorizedReports", 'OPTIONS');
+    const {status, message} = response.data;
+    if (status === 1) {
+      return response.data;
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const updateMemorizedReport = async (params: any) => {
+  try {
+    const response: any = await request("/updateMemorizedReport", 'PUT', params);
+    const {status, message} = response.data;
+    if (status === 1) {
+      return response.data;
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+export const createMemorizedReport = async (params: any) => {
+  try {
+    const response: any = await request("/createMemorizedReport", 'POST', params);
+    const {status, message} = response.data;
+    if (status === 1) {
+      return response.data;
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
