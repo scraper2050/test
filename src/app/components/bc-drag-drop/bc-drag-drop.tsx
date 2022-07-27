@@ -104,7 +104,7 @@ function BCDragAndDrop ({onDrop, onDelete, images=[], readonly = false, classes}
       <div className={classNames(classes.imagesWrapper, {[classes.noBorder]: readonly })}>
         <ImageContainer ref={targetRef} height={height}>
           {renderImages().map((image, index, arr) =>
-            <div className={classes.imageWrapper}>
+            <div key={index} className={classes.imageWrapper}>
               <img
                 key={`image_${index}`}
                 className={`${classes.image} ${index < arr.length - 1 ? classes.imageMargin : ''}`}

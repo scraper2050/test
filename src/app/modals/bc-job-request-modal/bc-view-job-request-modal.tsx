@@ -17,6 +17,7 @@ import '../../../scss/job-poup.scss';
 import classNames from "classnames";
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import BCMapWithMarker from 'app/components/bc-map-with-marker/bc-map-with-marker';
+import BCMiniChatboxSidebar from 'app/components/bc-mini-chatbox-sidebar/bc-mini-chatbox-sidebar';
 import {
   closeModalAction,
   openModalAction,
@@ -149,6 +150,7 @@ function BCViewJobRequestModal({
 
   return (
     <DataContainer className={'new-modal-design'}>
+      <BCMiniChatboxSidebar jobRequestId={jobRequest?._id || ''} name={jobRequest.customer?.profile?.displayName || 'N/A'} />
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
@@ -202,7 +204,7 @@ function BCViewJobRequestModal({
           </Grid>
         </Grid>
         {jobRequest.requests.map((request: any, requestIndex: number, arr:Array<any>) =>
-          <>
+          <React.Fragment key={requestIndex}>
             <Grid container className={'modalContent'} justify={'space-around'}>
               <Grid item xs={12} sm={8}>
                 <Typography variant={'caption'} className={'previewCaption'}>{`Job Request ${requestIndex+1}`}</Typography>
@@ -227,7 +229,7 @@ function BCViewJobRequestModal({
                 {requestIndex !== arr.length-1 && <div style={{borderBottom: '1px solid #bdbdbd'}}/>}
               </Grid>
             </Grid>
-          </>
+          </React.Fragment>
         )}
         <DialogActions>
           <Button
