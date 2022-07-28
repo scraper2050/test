@@ -14,13 +14,7 @@ export const getJobRequestChat = async (id:string) => {
   }
 }
 
-export const postJobRequestChat = async (id:string, message:string) => {
-  const paramObject:any = {};
-  if(!message) {
-    return {status: 0, message: `please enter message`};
-  } else {
-    paramObject.message = message;
-  }
+export const postJobRequestChat = async (id:string, paramObject:FormData) => {
   try {
     const response: any = await request(`/chats/jobRequest/${id}`, 'POST', paramObject);
     const {status, message} = response.data;

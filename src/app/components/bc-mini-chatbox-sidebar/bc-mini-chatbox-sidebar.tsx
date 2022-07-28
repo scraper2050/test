@@ -54,7 +54,9 @@ const BCMiniChatboxSidebar = ({ classes, jobRequestId, name }: MiniSidebarProps)
     if(input && !isSendingMessage){
       try {
         setIsSendingMessage(true);
-        const result = await postJobRequestChat(jobRequestId, input);
+        const formData = new FormData();
+        formData.append('message', input)
+        const result = await postJobRequestChat(jobRequestId, formData);
         if(result.status === 1) {
           console.log(result)
           getChatContent(jobRequestId);
