@@ -1,5 +1,7 @@
 import request from '../utils/http.service';
 import {sortByField} from "../helpers/sort";
+import { error, success } from 'actions/snackbar/snackbar.action';
+import { getContractorPayments, getPayrollBalance } from 'actions/payroll/payroll.action';
 
 export const getContractorsAPI = async () => {
   try {
@@ -97,7 +99,7 @@ export const getPaymentsByContractorAPI = async (type?: string, id?: string) => 
       return {status, message};
     }
   } catch(e) {
-    console.log(e.message);
+    console.log(e);
     return {status: 0, message: `Something went wrong`};
   }
 }
@@ -131,7 +133,7 @@ export const updatePaymentContractorAPI = async (params: any) => {
       return {status, message};
     }
   } catch(e) {
-    console.log(e.message);
+    console.log(e);
     return {status: 0, message: `Something went wrong`};
   }
 }
@@ -204,3 +206,24 @@ export const normalizeData = (item: any, type: string) => {
         type: 'employee'});
   }
 }
+
+export const voidPayment: any = (params = {}) => {
+  return (dispatch: any) => {
+    return new Promise(async (resolve, reject) => {
+      request('/voidPayment', 'DELETE', params, false)
+        .then((res: any) => {
+          if(res.data?.status === 1){
+            dispatch(success("Payment voided succesfully"));
+            dispatch(getContractorPayments());
+            dispatch(getPayrollBalance());
+            return resolve(res.data);
+          } else {
+            dispatch(error("Something went wrong! Cannot void payment"));
+          }
+        })
+        .catch(err => {
+          return reject(err);
+        });
+    });
+  }
+};

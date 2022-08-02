@@ -24,13 +24,14 @@ import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
 import {
   getContractorPayments,
-  getContractors, removeContractorPayment
+  getContractors,
 } from "../../../../actions/payroll/payroll.action";
 import {
   Contractor,
   ContractorPayment
 } from "../../../../actions/payroll/payroll.types";
 import moment from "moment";
+import {voidPayment} from 'api/payroll.api'
 
 interface Props {
   classes: any;
@@ -80,9 +81,9 @@ function PastPayments({classes}: Props) {
       const filtered = payments.filter((payment: ContractorPayment) =>
         moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
       );
-      setFilteredPayments(filtered);
+      setFilteredPayments(filtered.filter((payment: any) => !payment.isVoid));
     } else {
-      setFilteredPayments(payments);
+      setFilteredPayments(payments.filter((payment: any) => !payment.isVoid));
     }
   }, [selectionRange, payments]);
 
@@ -108,7 +109,7 @@ function PastPayments({classes}: Props) {
         modalTitle: '         ',
         message: 'Are you sure you want to delete this Payment Record?',
         subMessage: 'This action cannot be undone.',
-        action: removeContractorPayment(payment),
+        action: voidPayment({type: 'vendor', paymentId: payment._id}),
       },
       'type': modalTypes.WARNING_MODAL
     }));
