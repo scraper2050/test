@@ -63,7 +63,7 @@ export const openContractModal = (dispatch: (action:any)=>void, notification:Not
 
 export const openJobRequestModal = async (dispatch: (action:any)=>void, notification:Notification) => {
   const result:any = await dispatch(getAllJobRequestAPI(30, undefined, undefined, '-1', '', undefined));
-  const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === notification.metadata)
+  const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === notification.metadata?._id)
   if(matchedJobRequest && matchedJobRequest.length){
     dispatch(
       markNotificationAsRead.fetch({ id: notification?._id, isRead: true })
