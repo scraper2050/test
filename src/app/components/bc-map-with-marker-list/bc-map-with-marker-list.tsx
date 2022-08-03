@@ -1,11 +1,14 @@
 import { useRef, useState, useEffect } from 'react';
 import useSupercluster from "use-supercluster";
+import { useDispatch } from 'react-redux';
 import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { bcMapStyle } from './bc-map-style';
+import {IconButton} from '@material-ui/core';
+import CloseIcon from "@material-ui/icons/Close";
 
 import './bc-map-with-marker.scss';
 import BCMapMarker from "../bc-map-marker/bc-map-marker";
@@ -13,6 +16,20 @@ import {useSelector} from "react-redux";
 import {RootState} from "../../../reducers";
 import {CompanyProfileStateType} from "../../../actions/user/user.types";
 import {DEFAULT_COORD} from "../../../utils/constants";
+import {
+  getJobTypesFromJob,
+  getJobTypesFromTicket,
+  getJobTypesTitle
+} from "../../../helpers/utils";
+import {ReactComponent as IconStarted} from "../../../assets/img/icons/map/icon-started.svg";
+import {ReactComponent as IconCompleted} from "../../../assets/img/icons/map/icon-completed.svg";
+import {ReactComponent as IconCancelled} from "../../../assets/img/icons/map/icon-cancelled.svg";
+import {ReactComponent as IconRescheduled} from "../../../assets/img/icons/map/icon-rescheduled.svg";
+import {ReactComponent as IconPaused} from "../../../assets/img/icons/map/icon-paused.svg";
+import {ReactComponent as IconIncomplete} from "../../../assets/img/icons/map/icon-incomplete.svg";
+import {ReactComponent as IconPending} from "../../../assets/img/icons/map/icon-pending.svg";
+import {ReactComponent as IconJobRequest} from "../../../assets/img/icons/map/icon-job-request.svg";
+import {ReactComponent as IconOpenServiceTicket} from "../../../assets/img/icons/map/icon-open-service-ticket.svg";
 
 interface BCMapWithMarkerListProps {
   list: any,
@@ -68,11 +85,16 @@ const calculateBorder = (cluster:any) => {
 }
 
 function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: BCMapWithMarkerListProps) {
+  const { streaming: streamingTickets } = useSelector(({ serviceTicket }: any) => ({
+    streaming: serviceTicket.stream,
+  }));
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
   const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const mapRef = useRef<any>();
   const [bounds, setBounds] = useState<any>(null);
   const [zoom, setZoom] = useState(11);
+  const locationCoordinate = useRef<any>({});
+  const overlappingCoordinates = useRef<any>([]);
 
   let centerLat = coordinates?.lat || DEFAULT_COORD.lat;
   let centerLng = coordinates?.lng || DEFAULT_COORD.lng;
@@ -156,7 +178,120 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
     zoom,
     options: superClusterOptions
   });
-  
+
+  useEffect(() => {
+    locationCoordinate.current = {};
+    clusters.forEach((cluster) => {
+      const [lng, lat] = cluster.geometry.coordinates;
+      const ticket = cluster.properties.ticket;
+      const {
+        cluster: isCluster,
+      } = cluster.properties;
+
+      if (!isCluster) {
+        const key = `${lat}~~~${lng}`;
+        if (locationCoordinate.current[key] && locationCoordinate.current[key].length) {
+          locationCoordinate.current[key].push({ lat, lng, ticket })
+        } else {
+          locationCoordinate.current[key] = [{ lat, lng, ticket }]
+        }
+      }
+    })
+    overlappingCoordinates.current = Object.values(locationCoordinate.current).filter((coordinates: any) => coordinates.length > 1)
+  }, [clusters])
+
+  const OverlappingMarker = ({ data }: any) => {
+    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+
+    const toggleOverlay = () => {
+      setIsOverlayOpen((prev) => !prev)
+    }
+
+    const handleItemClick = (_id: any) => {
+      const marker = document.getElementById(`marker-${_id}`)
+      if (marker) {
+        marker.click();
+        mapRef.current.setOptions({
+          scrollwheel: true,
+        });
+        setIsOverlayOpen(false);
+      }
+    }
+
+    return (
+      <Marker>
+        <div onClick={toggleOverlay} className={classes.markerBadge} style={{cursor: isTicket && streamingTickets ? 'wait' : 'pointer'}}>
+          {data.length}
+        </div>
+        {isOverlayOpen && (
+          <div
+            onMouseEnter={(e) => {
+              e.preventDefault();
+              mapRef.current.setOptions({
+                scrollwheel: false,
+              });
+            }}
+            onMouseLeave={() => {
+              mapRef.current.setOptions({
+                scrollwheel: true,
+              });
+            }}
+            className={classes.markerOverlayContainer}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ paddingLeft: 10 }}>List of {isTicket ? 'Service Tickets/Job Requests' : 'Jobs'}</h3>
+              <div className={'action-container'}>
+                <IconButton className={'no-padding'} onClick={() => {
+                  mapRef.current.setOptions({
+                    scrollwheel: true,
+                  });
+                  setIsOverlayOpen(false);
+                }}>
+                  <CloseIcon style={{ color: '#BDBDBD' }} />
+                </IconButton>
+              </div>
+            </div>
+            {data.map((datum: any, idx: number) => {
+              const title = getJobTypesTitle(isTicket ? getJobTypesFromTicket(datum.ticket) : getJobTypesFromJob(datum.ticket));
+              const location = datum.ticket?.jobLocation && datum.ticket?.jobLocation?.name ? datum.ticket?.jobLocation.name : ` `;
+              const getStatusIcon = (status: number) => {
+                switch (status) {
+                  case -2:
+                    return IconJobRequest;
+                  case -1:
+                    return IconOpenServiceTicket;
+                  case 1:
+                    return IconStarted;
+                  case 2:
+                    return IconCompleted;
+                  case 3:
+                    return IconCancelled;
+                  case 4:
+                    return IconRescheduled;
+                  case 5:
+                    return IconPaused;
+                  case 6:
+                    return IconIncomplete;
+                  default:
+                    return IconPending;
+                }
+              }
+              const status = isTicket 
+              ? datum.ticket?.ticketId 
+                ? -1
+                : -2 
+              : datum.ticket?.status;
+            const CustomIcon = getStatusIcon(status);
+              return (
+                <div key={idx} className={classes.listItemContainer} onClick={() => handleItemClick(datum.ticket._id)}>
+                  <CustomIcon style={{marginRight: 5}}/> {title} - {location}
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </Marker>
+    )
+  }
 
   return (
     <GoogleMapReact
@@ -164,7 +299,6 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
       center={{ 'lat': centerLat,
         'lng': centerLng }}
       defaultZoom={11}
-      //onClick={event => console.log(event)}
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={({ map }) => {
         mapRef.current = map;
@@ -196,16 +330,10 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
                 lng={lng}
               >
                 <div
+                  className={classes.clusterOutsideContainer}
                   style={{
-                    width: 18,
-                    height: 18,
                     backgroundColor: calculateColor(cluster),
-                    borderRadius: '50%',
                     border: calculateBorder(cluster),
-                    padding: 8,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
                   }}
                   onClick={() => {
                     const expansionZoom = Math.min(
@@ -231,18 +359,20 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
           } else {
             return (
               <BCMapMarker
-                key={`cluster-${cluster.properties.ticketId}`}
+                key={`marker-${cluster.properties.ticketId}`}
+                id={`marker-${cluster.properties.ticketId}`}
                 lat={lat}
                 lng={lng}
                 ticket={ticket}
                 isTicket={isTicket}
-                classes={classes}
               />
             );
           }
         })
       }
-
+      {overlappingCoordinates.current?.map((coordinate: any, idx: number) => {
+        return <OverlappingMarker key={idx} data={coordinate} lat={coordinate[0].lat} lng={coordinate[0].lng} />
+      })}
     </GoogleMapReact>
   );
 }
