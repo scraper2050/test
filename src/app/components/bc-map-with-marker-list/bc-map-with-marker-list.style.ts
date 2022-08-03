@@ -30,4 +30,64 @@ export default (theme: Theme): any => ({
     'position': 'relative',
     'marginTop': '-5rem',
   },*/
+  clusterOutsideContainer: {
+    width: 18,
+    height: 18,
+    borderRadius: '50%',
+    padding: 8,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer',
+  },
+  markerBadge: {
+    width: 18,
+    height: 18,
+    background: 'red',
+    color: 'white',
+    borderRadius: '50%',
+    fontSize: 10,
+    fontWeight: 700,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    cursor: 'pointer',
+  },
+  markerOverlayContainer: {
+    width: 400,
+    maxHeight: 300,
+    padding: 20,
+    paddingTop: 0,
+    // paddingBottom: 10,
+    // paddingLeft: 5,
+    overflowY: 'scroll',
+    background: 'white',
+    color: 'initial',
+    fontSize: 16,
+    position: 'absolute',
+    top: 10,
+    left: 30,
+    borderRadius: 10,
+    overscrollBehavior: 'none',
+    boxShadow: '0 2px 4px 0 rgb(0 0 0 / 14%), 0 4px 5px 0 rgb(0 0 0 / 12%), 0 1px 8px 0 rgb(0 0 0 / 20%)',
+    '&::-webkit-scrollbar': {
+      width: 7,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#fff',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#EAECF3',
+    }
+  },
+  listItemContainer : {
+    padding: 10,
+    borderBottom: '1px solid rgb(128, 128, 128)',
+    cursor: 'pointer',
+    display: 'flex', alignItems:
+    'center',
+  }
 });
