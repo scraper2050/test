@@ -100,4 +100,159 @@ export default (theme: Theme): any => ({
   mapWrapper: {
     height: 270,
   },
+  chatContainer: {
+    height: 412,
+    padding: '25px 100px',
+    overflow: 'scroll',
+    overflowX: 'hidden',
+    '&::-webkit-scrollbar': {
+      width: 7,
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#fff',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#EAECF3',
+    }
+  },
+  chatItemContainer: {
+    marginBottom: 10,
+  },
+  currentUserChat: {
+    display: 'flex',
+    flexDirection : 'row-reverse',
+    '& div.textbox': {
+      flex: 9,
+      display: 'flex',
+      justifyContent: 'flex-start',
+      flexDirection: 'row-reverse'
+    },
+    '& div.textbox-content': {
+      maxWidth: 640,
+      color: 'white',
+      borderRadius: 5,
+      backgroundColor: '#00AAFF',
+      padding: '10px 20px',
+      fontSize: 14,
+    },
+    '& div.arrow': {
+      width: 0, 
+      height: 0, 
+      position: 'relative',
+      top: 7,
+      borderTop: '7px solid transparent',
+      borderBottom: '7px solid transparent',
+      borderLeft: '7px solid #00AAFF',
+    },
+    '& div.avatar': {
+      marginLeft: 10,
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-start'
+    },
+    '& div.avatar img': {
+      width: 24,
+      borderRadius: '50%',
+    },
+  },
+  otherUserChat: {
+    display: 'flex',
+    flexDirection : 'row',
+    '& div.textbox': {
+      flex: 9,
+      display: 'flex',
+      justifyContent: 'flex-start',
+    },
+    '& div.textbox-content': {
+      maxWidth: 640,
+      color: '#4f4f4f',
+      borderRadius: 5,
+      backgroundColor: '#E5F7FF',
+      padding: '10px 20px',
+      fontSize: 14,
+    },
+    '& div.arrow': {
+      width: 0, 
+      height: 0, 
+      position: 'relative',
+      top: 7,
+      borderTop: '7px solid transparent',
+      borderBottom: '7px solid transparent',
+      borderRight: '7px solid #E5F7FF',
+    },
+    '& div.avatar': {
+      marginRight: 10,
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start'
+    },
+    '& div.avatar img': {
+      width: 24,
+      borderRadius: '50%',
+    },
+  },
+  timeStamp: {
+    color: '#BDBDBD',
+    fontSize: 10,
+  },
+  readStatus: {
+    color: '#BDBDBD',
+    fontSize: 10,
+  },
+  bottomItemContainer: {
+    marginTop: 5,
+  },
+  imagesContainer: {
+    borderTop: '1px solid #D0D3DC',
+    display: 'flex',
+  },
+  imageContainer: {
+    display:'flex',
+    alignItems:'center',
+    height: 58,
+    marginRight: 20,
+  },
+  imageNameContainer: {
+    whiteSpace: 'nowrap',
+    width: 50,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  imageFile: {
+    height: 36,
+    width: 36,
+    borderRadius: 5,
+    marginRight: 5
+  },
+  chatInputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+  },
+  attachButton: {
+    flex: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 40,
+    padding: '0 10px',
+    '& svg': {
+      cursor: 'pointer',
+    },
+  },
+  inputContainer: {
+    flex: 10,
+  },
+  sendButton: {
+    flex: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    height: 40,
+    padding: '0 10px',
+    '& svg': {
+      cursor: 'pointer',
+    },
+  },
 });

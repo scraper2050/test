@@ -23,7 +23,7 @@ export default function JobRequestNotication(item :NotificationItem) {
   );
 
   useEffect(() => {
-    const matchedJobRequest = jobRequests.filter((jobRequest:any) => jobRequest._id === metadata)
+    const matchedJobRequest = jobRequests.filter((jobRequest:any) => jobRequest._id === metadata._id)
     if(matchedJobRequest && matchedJobRequest.length){
       setJobRequestObject(matchedJobRequest[0])
     }

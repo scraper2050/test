@@ -52,9 +52,10 @@ interface Props {
   lat: number,
   lng: number,
   isTicket?: boolean,
+  id?: string,
 }
 
-function BCMapMarker({classes, ticket, isTicket = false}: Props) {
+function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
   let CustomIcon;
   const [showInfo, setShowInfo] = useState({show: false, inside: true});
   const dispatch = useDispatch();
@@ -341,9 +342,11 @@ function BCMapMarker({classes, ticket, isTicket = false}: Props) {
         : ticket?.status;
       CustomIcon = getStatusIcon(status);
     })()}
-    <CustomIcon
-      onClick={(e) => setShowInfo({show: true, inside:true})}
-    />
+    <span
+      id={id}
+      onClick={(e) => setShowInfo({ show: true, inside: true })}>
+      <CustomIcon />
+    </span>
     {showInfo.show && <div
       className={`${classes.markerPopup} marker_dropdown elevation-4`}
       style={{

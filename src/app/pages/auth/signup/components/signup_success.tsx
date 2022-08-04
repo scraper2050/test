@@ -18,7 +18,7 @@ function SignUpSuccess({ classes }: Props): JSX.Element {
       />
       <div>
         <p className={classes.successTitle}>
-          Thank you for signin up!
+          Thank you for signing up!
         </p>
         <p className={classes.successText}>
           We have received your account information. Kindly wait for the<br/>
