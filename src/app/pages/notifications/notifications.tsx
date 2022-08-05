@@ -120,9 +120,9 @@ function NotificationPage() {
               confirmText={'Dismiss'}
               size={'small'}
               variant={'outlined'}>
-              <Typography variant={'h6'}>
+              <span style={{fontSize: 20, fontWeight: 500}}>
                 {'Are you sure you want to dismiss this notification?'}
-              </Typography>
+              </span>
             </AlertDialogSlide>
           </div>
         );
