@@ -52,9 +52,9 @@ export default function JobRequestNotication(item :NotificationItem) {
       }, 200);
     } else {
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
-      const result:any = await dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
-      const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === metadata)
+      dispatch(setCurrentPageSize(30));
+      const result:any = await dispatch(getAllJobRequestAPI(30, undefined, undefined, '-1', '', undefined));
+      const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === metadata._id)
       if(matchedJobRequest && matchedJobRequest.length){
         dispatch(
           setModalDataAction({
