@@ -134,6 +134,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#00AAFF',
       padding: '10px 20px',
       fontSize: 14,
+      wordBreak:'break-all'
     },
     '& div.arrow': {
       width: 0, 
@@ -170,6 +171,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#E5F7FF',
       padding: '10px 20px',
       fontSize: 14,
+      wordBreak:'break-all'
     },
     '& div.arrow': {
       width: 0, 
@@ -228,7 +230,6 @@ export default (theme: Theme): any => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
   },
   attachButton: {
     flex: 2,
