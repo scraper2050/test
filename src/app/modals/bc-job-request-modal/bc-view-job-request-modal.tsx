@@ -347,7 +347,7 @@ function BCViewJobRequestModal({
         </div>
         <div className={classes.sendButton}>
           <Box onClick={handleSubmit}>
-            <SendIcon htmlColor={input ? '#00AAFF' : '#D0D3DC'}/>
+            <SendIcon htmlColor={(input || images?.length > 0)? '#00AAFF' : '#D0D3DC'}/>
           </Box>
         </div>
       </div>
@@ -374,7 +374,7 @@ function BCViewJobRequestModal({
   }
 
   const handleSubmit = async () => {
-    if(input && !isSendingMessage && jobRequest?._id){
+    if((input || images?.length > 0) && !isSendingMessage && jobRequest?._id){
       try {
         setIsSendingMessage(true);
         const formData = new FormData();
@@ -409,18 +409,23 @@ function BCViewJobRequestModal({
 
   const renderChatContent = (item: any, idx:number, items:any[]) => {
     if (item.user._id !== user._id ) {
+      
       return (
         <div key={item._id} className={classes.chatItemContainer} id={idx === items.length-1 ? 'last-chat-element' : ''}>
           <div className={classes.otherUserChat}>
             <div className='avatar'>
               <img src={item.user.profile.imageUrl} alt="user avatar" />
             </div>
-            <div className='arrow' />
-            <div className='textbox'>
-              <div className='textbox-content'>
-                {item.message}
+            {item.message !== "" &&
+            <>
+              <div className='arrow' />
+              <div className='textbox'>
+                <div className='textbox-content'>
+                  {item.message}
+                </div>
               </div>
-            </div>
+            </>
+            }
           </div>
           {!!item.images?.length && (
             <div className={classes.otherUserChat}>
@@ -455,12 +460,16 @@ function BCViewJobRequestModal({
             <div className='avatar'>
               <img src={item.user.profile.imageUrl} alt="user avatar" />
             </div>
-            <div className='arrow' />
-            <div className='textbox'>
-              <div className='textbox-content'>
-                {item.message}
+            {item.message !== "" &&
+            <>
+              <div className='arrow' />
+              <div className='textbox'>
+                <div className='textbox-content'>
+                  {item.message}
+                </div>
               </div>
-            </div>
+            </>
+            }
           </div>
           {!!item.images?.length && (
             <div className={classes.currentUserChat}>
