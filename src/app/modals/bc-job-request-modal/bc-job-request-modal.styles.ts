@@ -137,7 +137,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#00AAFF',
       padding: '10px 20px',
       fontSize: 14,
-      wordBreak:'break-all'
+      wordBreak:'break-word'
     },
     '& div.arrow': {
       width: 0, 
