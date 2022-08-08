@@ -113,6 +113,9 @@ export default (theme: Theme): any => ({
     },
     '&::-webkit-scrollbar-thumb': {
       background: '#EAECF3',
+    },
+    '@media(max-width: 767px)': {
+      'padding': '25px 25px',
     }
   },
   chatItemContainer: {
@@ -134,6 +137,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#00AAFF',
       padding: '10px 20px',
       fontSize: 14,
+      wordBreak:'break-word'
     },
     '& div.arrow': {
       width: 0, 
@@ -170,6 +174,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#E5F7FF',
       padding: '10px 20px',
       fontSize: 14,
+      wordBreak:'break-word'
     },
     '& div.arrow': {
       width: 0, 
@@ -228,7 +233,6 @@ export default (theme: Theme): any => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
   },
   attachButton: {
     flex: 2,

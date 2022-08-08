@@ -343,7 +343,7 @@ function BCViewJobRequestModal({
           </Box>
         </div>
         <div className={classes.inputContainer}>
-          <InputBase value={input} onChange={handleChange} placeholder="Write a message" onKeyUp={handleKeyUp} fullWidth/>
+          <InputBase value={input} onChange={handleChange} multiline={true} placeholder="Write a message.." onKeyUp={handleKeyUp} fullWidth/>
         </div>
         <div className={classes.sendButton}>
           <Box onClick={handleSubmit}>
@@ -428,17 +428,15 @@ function BCViewJobRequestModal({
               <div style={{flex: 9, display: 'flex'}}>
                 {item.images.map((img:any) => {
                   return (
-                    <div key={img._id} style={{
-                      boxShadow: '0 3px 10px rgb(0 0 0 / 20%)',
-                      flex: 1,
-                      margin: 10,
-                      borderRadius: 5,
-                      cursor: 'pointer',
-                      backgroundImage: `url('${img.imageUrl}')`,
-                      backgroundSize: 'cover',
-                      height: 124,
-                      maxWidth: 640,
-                    }} onClick={()=> window.open(img.imageUrl, "_blank")} />
+                    <img src={img.imageUrl}  key={img._id} onClick={()=> window.open(img.imageUrl, "_blank")}
+                      style={{
+                        cursor: 'pointer',
+                        height:124,                      
+                        boxShadow: '0 3px 10px rgb(0 0 0 / 20%)',
+                        margin: 10,
+                        borderRadius: 5,
+                      }}
+                    />
                   )
                 })}
               </div>
@@ -470,17 +468,15 @@ function BCViewJobRequestModal({
               <div style={{flex: 9, display: 'flex', flexDirection: 'row-reverse'}}>
                 {item.images.map((img:any) => {
                   return (
-                    <div key={img._id} style={{
-                      boxShadow: '0 3px 10px rgb(0 0 0 / 20%)',
-                      flex: 1,
-                      margin: 10,
-                      borderRadius: 5,
-                      cursor: 'pointer',
-                      backgroundImage: `url('${img.imageUrl}')`,
-                      backgroundSize: 'cover',
-                      height: 124,
-                      maxWidth: 640,
-                    }} onClick={()=> window.open(img.imageUrl, "_blank")} />
+                    <img src={img.imageUrl}  key={img._id} onClick={()=> window.open(img.imageUrl, "_blank")}
+                      style={{
+                        cursor: 'pointer',
+                        height:124,                      
+                        boxShadow: '0 3px 10px rgb(0 0 0 / 20%)',
+                        margin: 10,
+                        borderRadius: 5,
+                      }}
+                    />
                   )
                 })}
               </div>
