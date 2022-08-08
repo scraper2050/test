@@ -113,6 +113,9 @@ export default (theme: Theme): any => ({
     },
     '&::-webkit-scrollbar-thumb': {
       background: '#EAECF3',
+    },
+    '@media(max-width: 767px)': {
+      'padding': '25px 25px',
     }
   },
   chatItemContainer: {
