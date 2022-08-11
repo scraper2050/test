@@ -101,7 +101,7 @@ export default (theme: Theme): any => ({
     height: 270,
   },
   chatContainer: {
-    height: 412,
+    maxheight: 412,
     padding: '25px 100px',
     overflow: 'scroll',
     overflowX: 'hidden',
@@ -210,22 +210,26 @@ export default (theme: Theme): any => ({
   imagesContainer: {
     borderTop: '1px solid #D0D3DC',
     display: 'flex',
+    position:'absolute',
+    bottom:100,
+    width:'100%',
+    overflow:'auto',
+    backgroundColor:'white'
   },
   imageContainer: {
     display:'flex',
     alignItems:'center',
-    height: 58,
+    height: 120,
     marginRight: 20,
   },
   imageNameContainer: {
     whiteSpace: 'nowrap',
-    width: 50,
+    width: 100,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
   imageFile: {
-    height: 36,
-    width: 36,
+    height: 100,
     borderRadius: 5,
     marginRight: 5
   },
@@ -237,26 +241,33 @@ export default (theme: Theme): any => ({
   attachButton: {
     flex: 2,
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'flex-end',
     height: 40,
-    padding: '0 10px',
     '& svg': {
       cursor: 'pointer',
     },
+    marginBottom:15
   },
   inputContainer: {
     flex: 10,
+    margin:'15px 0px',
+  },
+  textInput: {
+    flex: 10,
+    padding:15,
+    border:'1px solid #EAECF3',
+    borderRadius:10,
+    height:76
   },
   sendButton: {
     flex: 2,
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'flex-start',
     height: 40,
-    padding: '0 10px',
     '& svg': {
       cursor: 'pointer',
     },
+    marginBottom:15,
+    marginLeft:5
   },
 });

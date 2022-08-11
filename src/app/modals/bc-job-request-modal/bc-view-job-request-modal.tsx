@@ -106,8 +106,9 @@ function BCViewJobRequestModal({
   }, [jobRequest])
 
   useEffect(() => {
-    const element = document.getElementById('last-chat-element');
-    curTab === 1 && element && element.scrollIntoView({behavior: 'smooth'});
+    const element = document.getElementById('chat-text-input');
+    setImmediate(() => curTab === 1 && element && element.scrollIntoView({behavior: 'smooth'}));
+    element?.focus();
   }, [curTab, chatContent])
   
 
@@ -325,6 +326,7 @@ function BCViewJobRequestModal({
                   onClick={() => {
                     setImages((prev:any) => {
                       const newArray = [...prev];
+                      inputFileRef.current.value = null;
                       newArray.splice(imgIdx,1)
                       return newArray;
                     })
@@ -342,12 +344,14 @@ function BCViewJobRequestModal({
             <AttachFileIcon htmlColor={images.length ? '#00AAFF' : '#D0D3DC'}/>
           </Box>
         </div>
-        <div className={classes.inputContainer}>
-          <InputBase value={input} onChange={handleChange} multiline={true} placeholder="Write a message.." onKeyUp={handleKeyUp} fullWidth/>
+        <div className={classes.inputContainer} >
+          <InputBaseContainer>
+            <InputBase value={input} id={'chat-text-input'} onChange={handleChange} multiline={true} className={classes.textInput} placeholder="Write a message..." onKeyUp={handleKeyUp} fullWidth/>
+          </InputBaseContainer>
         </div>
         <div className={classes.sendButton}>
           <Box onClick={handleSubmit}>
-            <SendIcon htmlColor={(input || images?.length > 0)? '#00AAFF' : '#D0D3DC'}/>
+            <SendIcon htmlColor={((input && input.trim() !== '') || images?.length > 0)? '#00AAFF' : '#D0D3DC'}/>
           </Box>
         </div>
       </div>
@@ -364,7 +368,7 @@ function BCViewJobRequestModal({
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
+     setInput(e.target.value);
   }
 
   const handleKeyUp = ({key}: any) => {
@@ -374,11 +378,11 @@ function BCViewJobRequestModal({
   }
 
   const handleSubmit = async () => {
-    if((input || images?.length > 0) && !isSendingMessage && jobRequest?._id){
+    if(((input && input.trim() !== '') || images?.length > 0) && !isSendingMessage && jobRequest?._id){
       try {
         setIsSendingMessage(true);
         const formData = new FormData();
-        formData.append('message', input)
+        formData.append('message', input.trim())
         if(images?.length){
           images.forEach((image: any) => formData.append('images', image))
         }
@@ -405,6 +409,8 @@ function BCViewJobRequestModal({
     if(inputFileRef.current){
       inputFileRef.current.click();
     }
+    const element = document.getElementById('chat-text-input');
+    element?.focus();
   }
 
   const renderChatContent = (item: any, idx:number, items:any[]) => {
@@ -569,7 +575,20 @@ const DataContainer = styled.div`
 
   .MuiButton-containedSecondary {
     margin-left: 15px !important;
-}
+  }
+
+`;
+
+const InputBaseContainer = styled.div`
+
+.MuiInputBase-inputMultiline {
+  font-size: 15px;
+  margin-left: -5px;
+  height:70px !important;
+  overflow: hidden auto !important;
+  margin-top:15px;
+  color:#333333
+ }
 
 `;
 
