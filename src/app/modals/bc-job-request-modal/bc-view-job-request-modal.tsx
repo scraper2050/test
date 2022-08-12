@@ -9,7 +9,7 @@ import {
   InputBase,
   Box,
 } from '@material-ui/core';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SwipeableViews from 'react-swipeable-views';
 import {
@@ -91,6 +91,14 @@ function BCViewJobRequestModal({
   const inputFileRef:any = useRef(null);
   const [images, setImages] = useState<any>([]);
 
+  const elemRef = useCallback((node) => {
+    if (node !== null) {
+      const lastChat = document.getElementById('last-chat-element');
+      lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      // This ref function wait till the last element of the dom is rendered, so then, it scrollsdowns
+    }
+  }, [])
+
   useEffect(() => {
     const data: any = {
       type: 'Customer',
@@ -106,12 +114,15 @@ function BCViewJobRequestModal({
   }, [jobRequest])
 
   useEffect(() => {
-    const element = document.getElementById('chat-text-input');
-    setImmediate(() => curTab === 1 && element && element.scrollIntoView({behavior: 'smooth'}));
-    element?.focus();
+    const textBox = document.getElementById('chat-text-input');
+    textBox?.focus();
+    const lastChat = document.getElementById('last-chat-element');
+    lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [curTab, chatContent])
-  
 
+
+  
+  console.log('lastchat in render', document.getElementById('last-chat-element'))
 
   const getChatContent = async (id: string) => {
     try {
@@ -306,7 +317,7 @@ function BCViewJobRequestModal({
 
   const renderMessageTab = () => (
     <>
-      <div className={classes.chatContainer}>
+      <div className={classes.chatContainer} id="chat-container">
         {isChatLoading ? (
           <BCCircularLoader heightValue={'100%'}/>
         ) : (
@@ -455,8 +466,8 @@ function BCViewJobRequestModal({
           )}
           <div className={classes.bottomItemContainer}>
             <div className={classes.timeStamp}>{formatDatTimelll(item.createdAt)}</div>
-            <div className={classes.readStatus}>{item?.readStatus?.isRead ? 'Read' : 'Unread'}</div>
           </div>
+          {idx === items.length-1 && (<div ref={elemRef}></div>)}
         </div>
       )
     } else {
@@ -501,6 +512,7 @@ function BCViewJobRequestModal({
             <div className={classes.timeStamp}>{formatDatTimelll(item.createdAt)}</div>
             <div className={classes.readStatus}>{item?.readStatus?.isRead ? 'Read' : 'Unread'}</div>
           </div>
+          {idx === items.length-1 && (<div ref={elemRef}></div>)}
         </div>
       )
     }
