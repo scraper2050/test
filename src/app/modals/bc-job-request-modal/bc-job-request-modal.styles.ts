@@ -101,7 +101,7 @@ export default (theme: Theme): any => ({
     height: 270,
   },
   chatContainer: {
-    maxHeight: 412,
+    height: 412,
     padding: '25px 100px',
     overflow: 'scroll',
     overflowX: 'hidden',

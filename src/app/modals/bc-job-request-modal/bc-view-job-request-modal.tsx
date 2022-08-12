@@ -122,7 +122,6 @@ function BCViewJobRequestModal({
 
 
   
-  console.log('lastchat in render', document.getElementById('last-chat-element'))
 
   const getChatContent = async (id: string) => {
     try {
