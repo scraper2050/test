@@ -109,5 +109,12 @@ export const removeContractorPayment = (payment: any) => {
   };
 };
 
+export const refreshContractorPayment = (refresh: any) => {
+  return {
+    'type': types.REFRESH_CONTRACTOR_PAYMENT,
+    'payload': refresh,
+  };
+};
+
 
 

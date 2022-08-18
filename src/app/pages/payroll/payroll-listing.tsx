@@ -21,7 +21,7 @@ import BCDateRangePicker
   , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";
 import {HighlightOff} from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
-import {getPayrollBalance} from "../../../actions/payroll/payroll.action";
+import {getPayrollBalance,refreshContractorPayment} from "../../../actions/payroll/payroll.action";
 import {Contractor} from "../../../actions/payroll/payroll.types";
 
 interface Props {
@@ -40,7 +40,7 @@ function Payroll({classes}: Props) {
   const location = useLocation<any>();
   const locationState = location.state;
   const prevPage = locationState && locationState.prevPage ? locationState.prevPage : null;
-  const { loading, contractors } = useSelector((state: any) => state.payroll);
+  const { loading, contractors, refresh } = useSelector((state: any) => state.payroll);
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
@@ -56,7 +56,10 @@ function Payroll({classes}: Props) {
     } else {
       dispatch(getPayrollBalance());
     }
-  }, [selectionRange]);
+    if(refresh){
+      dispatch(refreshContractorPayment(false));
+    }
+  }, [selectionRange, refresh]);
 
   useEffect(() => {
     setTableData(selectedIDs.length > 0 ?
@@ -134,6 +137,7 @@ function Payroll({classes}: Props) {
 
   function renderDateRangePicker () {
     return <BCDateRangePicker
+      noDay
       range={selectionRange}
       disabled={loading}
       onChange={(range) => setSelectionRange(range)}
