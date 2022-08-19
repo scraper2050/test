@@ -213,7 +213,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     debounce((value, FormikValues) => {
       setKeyword(value);
       dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
-      setCurrentPageIndex(0);
+      dispatch(setCurrentPageIndex(0));
     }, 500),
     []
   );
