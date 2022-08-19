@@ -495,7 +495,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
                     expanded: sidebarStyles.minimumMargin,
                     expandIcon: sidebarStyles.expandIcon,
                   }}>
-                  {group[0].group}
+                  {open && group[0].group}
                 </AccordionSummary>
                 <AccordionDetails className={sidebarStyles.accordionDetails}>
                   <ul>
@@ -515,7 +515,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
                                 pathName === `${item.link}/${nestedRouteKey}`
                               }>
                               {item.icon && item.icon}
-                              <span className='menuLabel'>{item.label}</span>
+                              {open && <span className='menuLabel'>{item.label}</span>}
                             </StyledListItem>
                           </Tooltip>
                         </li>

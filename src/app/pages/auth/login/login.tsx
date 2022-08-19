@@ -394,6 +394,7 @@ function LoginPage({
             <Grid
               item
               style={{display: 'flex'}}
+              container
               justify='flex-end'
               md={6}
               xs={12}>

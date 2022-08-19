@@ -1,6 +1,6 @@
 import BCDateTimePicker from "../bc-date-time-picker/bc-date-time-picker";
 import {ReactComponent as IconCalendar} from "../../../assets/img/icons/map/icon-calendar.svg";
-import {formatShortDate} from "../../../helpers/format";
+import {formatShortDate, formatShortDateNoDay} from "../../../helpers/format";
 import {Button} from "@material-ui/core";
 import React, {useEffect, useRef, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
@@ -27,6 +27,7 @@ interface Props {
   showClearButton?: boolean,
   onChange?: (range: Range | null) => void;
   title?: string;
+  noDay? : boolean;
   classes?: {
     button?:string;
   }
@@ -75,7 +76,7 @@ const DEFAULT_RANGE = {
 }
 
 
-function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title}: Props) {
+function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const defaultClasses = useStyles({showClearButton});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
@@ -137,7 +138,9 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
           onClick={openDateRangePicker}
         >
           {selectionRange ?
-            formatShortDate(selectionRange.startDate) + ' - ' + formatShortDate(selectionRange.endDate)
+            noDay ? 
+              formatShortDateNoDay(selectionRange.startDate) + ' - ' + formatShortDateNoDay(selectionRange.endDate)
+              : formatShortDate(selectionRange.startDate) + ' - ' + formatShortDate(selectionRange.endDate)
             : title ? title : 'Pick a range...'
           }
         </Button>

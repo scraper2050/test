@@ -30,11 +30,14 @@ function BCTabs2({ curTab, onChangeTab, indicatorColor, tabsData }: BCTabs2Props
         return <Tab
           key={idx}
           value={item.value}
+          disabled={item.disabled}
           icon={(
             <FlexDiv>
-              <Badge color="secondary" badgeContent={item.badge || 0} >
+              {item.icon && (
+                <Badge color="secondary" badgeContent={item.badge || 0} >
                 <item.icon htmlColor={curTab === idx ? '#00AAFF' : ''} />
               </Badge>
+              )}
               <span>
                 {item.label}
               </span>

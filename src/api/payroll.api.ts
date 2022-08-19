@@ -49,13 +49,16 @@ export const getPayrollBalanceAPI = async (startDate: string|null, endDate: stri
     if (status === 1) {
       const data = [
         ...vendors.map((contractor: any) => {
-          const {commissionTotal, invoiceIds} = contractor;
+          const { commissionTotal, invoiceIds, advancePaymentTotal, creditAvailable, creditUsedTotal } = contractor;
           return ({
             ...normalizeData(contractor.contractor, 'vendor'),
             commissionTotal: Math.round(commissionTotal * 100) / 100,
             invoiceIds,
-            })
-        }, ),
+            advancePaymentTotal,
+            creditAvailable,
+            creditUsedTotal,
+          })
+        }),
         // ...employees.map((technician: any) => {
         //   const {commissionTotal, invoiceIds} = technician;
         //   return ({
@@ -100,6 +103,19 @@ export const getPaymentsByContractorAPI = async (type?: string, id?: string) => 
     }
   } catch(e) {
     console.log(e);
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+export const recordAdvancePaymentContractorAPI = async (params: any) => {
+  try {
+    const response: any = await request("/recordAdvancePaymentContractor ", 'POST', params, false);
+    const {status, message, advancePayment} = response.data;
+    if (status === 1) {
+      return {advancePayment, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch {
     return {status: 0, message: `Something went wrong`};
   }
 }
