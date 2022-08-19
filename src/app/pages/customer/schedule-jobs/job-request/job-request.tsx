@@ -66,9 +66,9 @@ function JobRequest({ classes }: any) {
           jobRequest: jobRequest,
           removeFooter: false,
           maxHeight: '100%',
-          modalTitle: 'Job Request',
+          modalTitle: `${jobRequest.type === 1 ? 'Repair' : 'Window'} Job Request`,
         },
-        type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+        type: jobRequest.type === 1 ? modalTypes.VIEW_JOB_REQUEST_MODAL : modalTypes.VIEW_JOB_REQUEST_WINDOW_MODAL,
       })
     );
     setTimeout(() => {

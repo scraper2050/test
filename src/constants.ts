@@ -9,7 +9,15 @@ export const PRIMARY_DARK_GREY = 'rgba(0, 0, 0, 0.5)';
 export const SECONDARY_DARK_GREY = 'rgba(0, 0, 0, 0.25)';
 export const PRIMARY_ORANGE = '#FE5500';
 export const PRIMARY_YELLOW = '#FEBF00';
+export const ASH = '#EAECF3';
 export const DARK_ASH = '#D0D3DC';
+export const GRAY1 = '#333333';
+export const GRAY2 = '#4F4F4F';
+export const GRAY3 = '#828282';
+export const GRAY4 = '#BDBDBD';
+export const GRAY5 = '#E0E0E0';
+export const GRAY6 = '#F2F2F2';
+
 // export const PRIMARY_GREEN = 'rgb(77, 189, 116)';
 export const PRIMARY_GREEN = '#50AE55';
 export const PRIMARY_CARD_BLUE = '#66B8F9';
@@ -53,6 +61,7 @@ export const modalTypes = {
   'EDIT_JOB_MODAL': 'edit-job-modal',
   'VIEW_JOB_MODAL': 'view-job-modal',
   'VIEW_JOB_REQUEST_MODAL': 'view-job-request-modal',
+  'VIEW_JOB_REQUEST_WINDOW_MODAL': 'view-job-request-window-modal',
   'REJECT_JOB_REQUEST_MODAL': 'reject-job-request-modal',
   'CANCEL_JOB_MODAL': 'cancel-job-modal',
   'MARK_COMPLETE_JOB_MODAL': 'mark-complete-job-modal',

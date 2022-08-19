@@ -2,6 +2,7 @@ import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
 import BCViewJobRequestModal from './bc-job-request-modal/bc-view-job-request-modal';
+import BCViewJobRequestWindowModal from './bc-job-request-modal/bc-view-job-request-window-modal';
 import BCCancelJobRequestModal from './bc-job-request-modal/bc-cancel-job-request-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
 import BCMarkCompleteJobModal from './bc-job-modal/bc-mark-complete-job-modal';
@@ -206,6 +207,18 @@ function BCModal() {
           'maxWidth': 'lg'
         });
         setComponent(<BCViewJobRequestModal
+          jobRequest={data.jobRequest}
+        />);
+        break;
+      case modalTypes.VIEW_JOB_REQUEST_WINDOW_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCViewJobRequestWindowModal
           jobRequest={data.jobRequest}
         />);
         break;
