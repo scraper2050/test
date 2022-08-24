@@ -5,10 +5,10 @@ import {Tab} from "./bc-components";
 
 const TITLES: any = {
   quantity: 'Quantity',
-  windowType: 'Type',
   glassSize: 'Window Size',
-  glassConfigurations: '',
+  windowType: 'Type',
   portionNeedingService: 'Portion needing reglaze',
+  glassConfigurations: '',
   dividedLite: 'Divided lite',
   dividedLitePattern: 'Divided lite pattern',
   windowShape: 'Window shape viewed from outside',
@@ -116,11 +116,11 @@ function BCJobRequestGlass({
             case 'glassConfigurations':
               rawValue.forEach((conf: any) => {
                 rowItems.push({
-                  label: `${conf.position} Glass Type`,
+                  label: `${conf.position || ''} Glass Type`,
                   value: conf.glassType
                 });
                 rowItems.push({
-                  label: `${conf.position} Glass Transparency`,
+                  label: `${conf.position || ''} Glass Transparency`,
                   value: conf.glassTransparency
                 });
               });

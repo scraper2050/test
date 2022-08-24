@@ -18,7 +18,7 @@ function BCJobRequestScreen({
       <Grid item xs>
         <Typography variant={'caption'} className={classes.summaryCaption}>scope</Typography>
         <Typography variant={'h6'} className={classes.summaryText}>
-          {screen.isScreenWholeHouse ? 'Whole house' : screen.required ? 'Yes' : 'No'}
+          {screen.isScreenWholeHouse ? 'Whole house' : screen.required ? 'Individual' : 'None'}
         </Typography>
       </Grid>
 
