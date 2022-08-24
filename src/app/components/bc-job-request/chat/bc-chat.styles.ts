@@ -1,6 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
-import * as CONSTANTS from "../../../constants";
-import {GRAY4, PRIMARY_WHITE} from "../../../constants";
+import * as CONSTANTS from "../../../../constants";
+import {GRAY2, GRAY3, PRIMARY_BLUE} from "../../../../constants";
 export default (theme: Theme): any => ({
   relative: {
     position: 'relative',
@@ -67,50 +67,65 @@ export default (theme: Theme): any => ({
       paddingBottom: 0,
     }
   },
-  dialogActions: {
-    padding: '35px 60px !important',
-    backgroundColor: 'auto'
+  gridWrapper: {
+    position: 'relative',
+    padding: '20px 50px 0 50px',
+    margin: 0,
   },
-  closeButton: {
-    color: '#4F4F4F',
-    marginRight: '10px',
-    height: '34px',
-    fontSize: '14px !important',
-    padding: '12px 18px 12px 18px',
-    textTransform:'none',
-    borderRadius: 8,
-  },
-  purpleButton: {
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.BUTTON_PURPLE,
-    '&:hover': {
-      backgroundColor: CONSTANTS.BUTTON_PURPLE_HOVER,
-    },
-  },
-  grayButton: {
-    color: CONSTANTS.PRIMARY_WHITE,
-    backgroundColor: CONSTANTS.PRIMARY_WHITE,
-    '&:hover': {
-      backgroundColor: CONSTANTS.GRAY4,
-    },
-  },
-  darkButtonLabel: {
-    color: 'black',
-  },
-  submitButton: {
-    height: '34px',
-    fontSize: '14px !important',
-    padding: '12px 25px 12px 25px',
-    textTransform:'none',
-    borderRadius: 8,
-  },
-  submitButtonDisabled : {
-    color: `${CONSTANTS.PRIMARY_WHITE}  !important`,
-    backgroundColor: `${CONSTANTS.TABLE_HOVER} !important`,
+  innerGrid: {
+    padding: '16px 0',
   },
   mapWrapper: {
-    height: 270,
+    height: 200,
   },
+  collapseAllButton: {
+    position: 'absolute',
+    right: 40,
+  },
+  collapseAllButtonLabel: {
+    fontSize: 8,
+    color: PRIMARY_BLUE,
+  },
+  collapseButton: {
+    margin: -15,
+    // position: 'absolute',
+    // right: 55,
+    // top: 5
+  },
+  summaryCaption: {
+    textTransform: 'uppercase',
+    fontSize: 10,
+    color: GRAY3,
+  },
+  summaryText: {
+    fontSize: 14,
+    marginTop: 10,
+    color: GRAY2,
+  },
+  summaryTextBig: {
+    fontSize: 16,
+    marginTop: 9,
+    color: PRIMARY_BLUE,
+  },
+  glassImageWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  glassImage: {
+    marginLeft: 10,
+    width: 25,
+    marginTop: 10,
+  },
+  frameColor: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginLeft: 40,
+    border: '1px solid black',
+    marginTop: 10,
+  },
+
   chatContainer: {
     height: 412,
     padding: '25px 100px',

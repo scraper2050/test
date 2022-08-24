@@ -1,11 +1,9 @@
 import {
   Button,
-  Grid,
   withStyles
 } from '@material-ui/core';
 import React, {useState} from 'react';
 import styles from './bc-job-request.styles';
-import BCJobRequestMap from "./bc-job-request-map";
 import BCJobRequestSummary from "./bc-job-request-summary";
 import BCJobRequestGlass from "./bc-job-request-glass";
 import BCJobRequestImages from "./bc-job-request-images";
@@ -13,16 +11,18 @@ import BCJobRequestFrame from "./bc-job-request-frame";
 import BCJobRequestScreen from "./bc-job-request-screen";
 import {ExpandLess} from "@material-ui/icons";
 
+interface PROPS {
+  classes?: any,
+  jobRequest: any,
+}
 
-
-function BCJobRequestComponent({
+function BCJobRequestWindow({
   classes,
   jobRequest,
-  customerContact,
-}: {classes?: any, jobRequest: any, customerContact: any}): JSX.Element {
+}: PROPS): JSX.Element {
   const [collapseIndex, setCollapseIndex] = useState(0);
   return <>
-    <BCJobRequestMap jobRequest={jobRequest} customerContact={customerContact} />
+
     <Button
       variant={'text'}
       classes={{
@@ -63,6 +63,6 @@ function BCJobRequestComponent({
 export default withStyles(
   styles,
   { 'withTheme': true },
-)(BCJobRequestComponent);
+)(BCJobRequestWindow);
 
 

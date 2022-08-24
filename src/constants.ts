@@ -61,7 +61,6 @@ export const modalTypes = {
   'EDIT_JOB_MODAL': 'edit-job-modal',
   'VIEW_JOB_MODAL': 'view-job-modal',
   'VIEW_JOB_REQUEST_MODAL': 'view-job-request-modal',
-  'VIEW_JOB_REQUEST_WINDOW_MODAL': 'view-job-request-window-modal',
   'REJECT_JOB_REQUEST_MODAL': 'reject-job-request-modal',
   'CANCEL_JOB_MODAL': 'cancel-job-modal',
   'MARK_COMPLETE_JOB_MODAL': 'mark-complete-job-modal',
