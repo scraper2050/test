@@ -13,16 +13,22 @@ import BCJobRequestFrame from "./bc-job-request-frame";
 import BCJobRequestScreen from "./bc-job-request-screen";
 import {ExpandLess} from "@material-ui/icons";
 
-
+interface PROPS {
+  classes?: any,
+  jobRequest: any,
+  customerContact: any,
+  isChanging: boolean,
+}
 
 function BCJobRequestComponent({
   classes,
   jobRequest,
   customerContact,
-}: {classes?: any, jobRequest: any, customerContact: any}): JSX.Element {
+  isChanging
+}: PROPS): JSX.Element {
   const [collapseIndex, setCollapseIndex] = useState(0);
   return <>
-    <BCJobRequestMap jobRequest={jobRequest} customerContact={customerContact} />
+    <BCJobRequestMap />
     <Button
       variant={'text'}
       classes={{

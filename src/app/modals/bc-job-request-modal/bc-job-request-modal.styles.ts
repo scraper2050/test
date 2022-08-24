@@ -1,5 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
+import {GRAY4, PRIMARY_WHITE} from "../../../constants";
 export default (theme: Theme): any => ({
   relative: {
     position: 'relative',
@@ -51,11 +52,11 @@ export default (theme: Theme): any => ({
     textTransform: 'none',
   },
   markCompleteContainer: {
-    flex: 1, 
+    flex: 1,
     textAlign: 'left'
   },
   actionsContainer: {
-    flex: 2, 
+    flex: 2,
   },
   tableContainer: {
     'maxHeight': '30rem',
@@ -85,6 +86,16 @@ export default (theme: Theme): any => ({
     '&:hover': {
       backgroundColor: CONSTANTS.BUTTON_PURPLE_HOVER,
     },
+  },
+  grayButton: {
+    color: CONSTANTS.PRIMARY_WHITE,
+    backgroundColor: CONSTANTS.PRIMARY_WHITE,
+    '&:hover': {
+      backgroundColor: CONSTANTS.GRAY4,
+    },
+  },
+  darkButtonLabel: {
+    color: 'black',
   },
   submitButton: {
     height: '34px',
@@ -140,8 +151,8 @@ export default (theme: Theme): any => ({
       wordBreak:'break-word'
     },
     '& div.arrow': {
-      width: 0, 
-      height: 0, 
+      width: 0,
+      height: 0,
       position: 'relative',
       top: 7,
       borderTop: '7px solid transparent',
@@ -177,8 +188,8 @@ export default (theme: Theme): any => ({
       wordBreak:'break-word'
     },
     '& div.arrow': {
-      width: 0, 
-      height: 0, 
+      width: 0,
+      height: 0,
       position: 'relative',
       top: 7,
       borderTop: '7px solid transparent',

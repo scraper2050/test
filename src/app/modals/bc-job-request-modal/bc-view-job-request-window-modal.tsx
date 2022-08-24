@@ -36,6 +36,7 @@ import { getJobRequestChat, postJobRequestChat } from 'api/chat.api';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import BCJobRequestComponent
   from "../../components/bc-job-request/bc-job-request";
+import {getJobLocationsAction} from "../../../actions/job-location/job-location.action";
 
 const initialJobRequestState = {
   customer: {
@@ -71,6 +72,22 @@ const initialJobRequestState = {
   jobRescheduled: false,
 };
 
+interface CONTEXT_PROPS {
+  jobRequest: any;
+  customerContact: any;
+  isChanging: boolean;
+  newLocation: any;
+  newSite: any;
+}
+
+export const WindowRequestContext = React.createContext<CONTEXT_PROPS>({
+  jobRequest: null,
+  customerContact: null,
+  isChanging: false,
+  newLocation: null,
+  newSite: null
+});
+
 function BCViewJobRequestWindowModal({
   classes,
   jobRequest = initialJobRequestState,
@@ -88,6 +105,7 @@ function BCViewJobRequestWindowModal({
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const inputFileRef:any = useRef(null);
   const [images, setImages] = useState<any>([]);
+  const [changeRequest, setChangeRequest] = useState(true);
 
   const elemRef = useCallback((node) => {
     if (node !== null) {
@@ -103,6 +121,7 @@ function BCViewJobRequestWindowModal({
       referenceNumber: jobRequest.customer._id,
     };
     dispatch(getContacts(data));
+    dispatch(getJobLocationsAction({customerId: jobRequest.customer?._id, isActive: true}));
   }, []);
 
   useEffect(() => {
@@ -117,8 +136,6 @@ function BCViewJobRequestWindowModal({
     const lastChat = document.getElementById('last-chat-element');
     lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [curTab, chatContent])
-
-
 
 
   const getChatContent = async (id: string) => {
@@ -208,16 +225,39 @@ function BCViewJobRequestWindowModal({
 
   const renderJobRequestContent = () => (
     <div hidden={curTab !== 0}>
-      <BCJobRequestComponent jobRequest={jobRequest} customerContact={customerContact} />
-      <DialogActions>
-        <Button
-          onClick={handleClose}
-          variant={'outlined'}
-        >
-          Close
-        </Button>
-        {jobRequest.status === 0 && (
-          <>
+      <WindowRequestContext.Provider value={{
+        jobRequest,
+        customerContact,
+        isChanging: changeRequest,
+        newLocation: jobRequest.jobLocation,
+        newSite: jobRequest.jobSite,
+      }}>
+      <BCJobRequestComponent
+        jobRequest={jobRequest}
+        customerContact={customerContact}
+        isChanging={changeRequest}
+      />
+      </WindowRequestContext.Provider>
+
+      {changeRequest ?
+        <DialogActions>
+          <Button
+            onClick={() => setChangeRequest(false)}
+            variant={'outlined'}
+          >
+            Cancel
+          </Button>
+          <Button
+            color={'primary'}
+            onClick={() => setChangeRequest(false)}
+            variant={'contained'}
+          >
+            Save
+          </Button>
+        </DialogActions>
+        :
+        <DialogActions>
+          {jobRequest.status === 0 && <>
             <Button
               onClick={openRejectJobRequestModal}
               variant={'contained'}
@@ -228,6 +268,27 @@ function BCViewJobRequestWindowModal({
               Reject Request
             </Button>
             <Button
+              onClick={() => setChangeRequest(true)}
+              variant={'outlined'}
+              classes={{
+                root: classes.grayButton,
+                label: classes.darkButtonLabel
+              }}
+            >
+              Change Request
+            </Button>
+          </>
+          }
+          <div style={{flex: 1}}/>
+          <Button
+            onClick={handleClose}
+            variant={'outlined'}
+          >
+            Close
+          </Button>
+          {jobRequest.status === 0 &&
+          <>
+            <Button
               color={'primary'}
               onClick={createJob}
               variant={'contained'}
@@ -235,8 +296,9 @@ function BCViewJobRequestWindowModal({
               Create Job
             </Button>
           </>
-        )}
-      </DialogActions>
+          }
+        </DialogActions>
+      }
     </div>
   );
 
