@@ -185,7 +185,7 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
           >
             <span style={{color: '#4F4F4F', fontWeight: 500}}>DESCRIPTION</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 30px 0 7px'}}>
+          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 30px 0 7px', textTransform: 'capitalize'}}>
             {getJobRequestDescription(item)}
           </Grid>
           <Grid
