@@ -2,15 +2,15 @@ import {Grid, TextField, Typography, withStyles} from '@material-ui/core';
 import React, {useContext, useEffect, useState} from 'react';
 import styles from './bc-job-request.styles';
 import classNames from "classnames";
-import BCMapWithMarker from "../bc-map-with-marker/bc-map-with-marker";
+import BCMapWithMarker from "../../bc-map-with-marker/bc-map-with-marker";
 import {Line, RequestAutocomplete, TopMarginedContainer} from "./bc-components";
 import Autocomplete, {createFilterOptions} from "@material-ui/lab/Autocomplete";
 import {useDispatch, useSelector} from "react-redux";
 import {
   clearJobSiteStore,
   getJobSites
-} from "../../../actions/job-site/job-site.action";
-import {WindowRequestContext} from "../../modals/bc-job-request-modal/bc-view-job-request-window-modal";
+} from "../../../../actions/job-site/job-site.action";
+import {WindowRequestContext} from "../../../modals/bc-job-request-modal/bc-view-job-request-window-modal";
 
 
 function BCJobRequestMap({

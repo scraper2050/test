@@ -35,8 +35,15 @@ import { getContacts } from "../../../api/contacts.api";
 import { getJobRequestChat, postJobRequestChat } from 'api/chat.api';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import BCJobRequestComponent
-  from "../../components/bc-job-request/bc-job-request";
+  from "../../components/bc-job-request/window/bc-job-request";
 import {getJobLocationsAction} from "../../../actions/job-location/job-location.action";
+import BCJobRequestHeader
+  from "../../components/bc-job-request/window/bc-job-request-header";
+import BCChatItemFriend
+  from "../../components/bc-job-request/chat/bc-chat-item-friend";
+import BCChatItemUser
+  from "../../components/bc-job-request/chat/bc-chat-item-user";
+import BCChat from "../../components/bc-job-request/chat/bc-chat";
 
 const initialJobRequestState = {
   customer: {
@@ -97,23 +104,12 @@ function BCViewJobRequestWindowModal({
   const { contacts } = useSelector((state: any) => state.contacts);
   const customerContact =
     jobRequest.customerContact && contacts.find((contact: any) => contact.userId === jobRequest.customerContact._id)?.name;
-  const { user }: any = useSelector(({ auth }: any) => auth);
+
   const [curTab, setCurTab] = useState(0);
   const [chatContent, setChatContent] = useState([]);
   const [isChatLoading, setIsChatLoading] = useState(false);
-  const [input, setInput] = useState('');
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
-  const inputFileRef:any = useRef(null);
-  const [images, setImages] = useState<any>([]);
-  const [changeRequest, setChangeRequest] = useState(true);
 
-  const elemRef = useCallback((node) => {
-    if (node !== null) {
-      const lastChat = document.getElementById('last-chat-element');
-      lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      // This ref function wait till the last element of the dom is rendered, so then, it scrollsdowns
-    }
-  }, [])
+  const [changeRequest, setChangeRequest] = useState(true);
 
   useEffect(() => {
     const data: any = {
@@ -130,13 +126,22 @@ function BCViewJobRequestWindowModal({
     }
   }, [jobRequest])
 
-  useEffect(() => {
-    const textBox = document.getElementById('chat-text-input');
-    textBox?.focus();
-    const lastChat = document.getElementById('last-chat-element');
-    lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }, [curTab, chatContent])
 
+  // TODO make sure canEdit
+  // const canEdit = [0, 4, 6].indexOf(jobRequest.status) >= 0;
+
+  const openRejectJobRequestModal = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        jobRequest: jobRequest,
+        modalTitle: 'Request Rejection',
+      },
+      'type': modalTypes.REJECT_JOB_REQUEST_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   const getChatContent = async (id: string) => {
     try {
@@ -155,23 +160,6 @@ function BCViewJobRequestWindowModal({
       setIsChatLoading(false);
     }
   }
-
-  const dueDate = jobRequest.dueDate;
-  // TODO make sure canEdit
-  // const canEdit = [0, 4, 6].indexOf(jobRequest.status) >= 0;
-
-  const openRejectJobRequestModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        jobRequest: jobRequest,
-        modalTitle: 'Request Rejection',
-      },
-      'type': modalTypes.REJECT_JOB_REQUEST_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
 
   const createJob = () => {
     dispatch(setModalDataAction({
@@ -302,233 +290,22 @@ function BCViewJobRequestWindowModal({
     </div>
   );
 
-  const renderMessageTab = () => (
-    <>
-      <div className={classes.chatContainer} id="chat-container">
-        {isChatLoading ? (
-          <BCCircularLoader heightValue={'100%'}/>
-        ) : (
-          chatContent.map(renderChatContent)
-        )}
-      </div>
-      <div className={classes.imagesContainer}>
-        <div style={{flex:1}}/>
-        <div style={{flex: 5, display: 'flex'}}>
-          {!!images?.length && (
-            images.map((img:any, imgIdx:number) => (
-              <div key={imgIdx} className={classes.imageContainer}>
-                <img src={URL.createObjectURL(img)} className={classes.imageFile} />
-                <div className={classes.imageNameContainer}>{img.name}</div>
-                <CancelIcon
-                  fontSize='small'
-                  onClick={() => {
-                    setImages((prev:any) => {
-                      const newArray = [...prev];
-                      inputFileRef.current.value = null;
-                      newArray.splice(imgIdx,1)
-                      return newArray;
-                    })
-                  }}
-                />
-              </div>
-            ))
-          )}
-        </div>
-        <div style={{flex:1}}/>
-      </div>
-      <div className={classes.chatInputContainer}>
-        <div className={classes.attachButton}>
-          <Box onClick={handleAttach}>
-            <AttachFileIcon htmlColor={images.length ? '#00AAFF' : '#D0D3DC'}/>
-          </Box>
-        </div>
-        <div className={classes.inputContainer} >
-          <InputBaseContainer>
-            <InputBase value={input} id={'chat-text-input'} onChange={handleChange} multiline={true} className={classes.textInput} placeholder="Write a message..." onKeyUp={handleKeyUp} fullWidth/>
-          </InputBaseContainer>
-        </div>
-        <div className={classes.sendButton}>
-          <Box onClick={handleSubmit}>
-            <SendIcon htmlColor={((input && input.trim() !== '') || images?.length > 0)? '#00AAFF' : '#D0D3DC'}/>
-          </Box>
-        </div>
-      </div>
-      <input
-        type={'file'}
-        ref={inputFileRef}
-        accept={"image/*"}
-        multiple
-        style={{display: 'none'}}
-        onChange={(e:any) => setImages([...e.currentTarget.files])}
-      />
-    </>
-  );
+  const renderMessageTab = () => <BCChat
+    jobRequestID={jobRequest._id}
+    visible={curTab === 1}
+    isChatLoading={isChatLoading}
+    chatContent={chatContent}
+    onSubmit={() => getChatContent(jobRequest._id)}
+    />
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     setInput(e.target.value);
-  }
 
-  const handleKeyUp = ({key}: any) => {
-    if (key === 'Enter') {
-      handleSubmit()
-    }
-  }
 
-  const handleSubmit = async () => {
-    if(((input && input.trim() !== '') || images?.length > 0) && !isSendingMessage && jobRequest?._id){
-      try {
-        setIsSendingMessage(true);
-        const formData = new FormData();
-        formData.append('message', input.trim())
-        if(images?.length){
-          images.forEach((image: any) => formData.append('images', image))
-        }
-        const result = await postJobRequestChat(jobRequest._id, formData);
-        if(result.status === 1) {
-          getChatContent(jobRequest._id);
-          setInput('');
-          setImages([]);
-          inputFileRef.current.value = null;
-        } else {
-          console.log(result.message);
-          dispatch(SnackBarError(`Something went wrong when sending chat`));
-        }
-        setIsSendingMessage(false);
-      } catch (error) {
-        console.log(error);
-        dispatch(SnackBarError(`Something went wrong when sending chat`));
-        setIsSendingMessage(false);
-      }
-    }
-  }
 
-  const handleAttach = () => {
-    if(inputFileRef.current){
-      inputFileRef.current.click();
-    }
-    const element = document.getElementById('chat-text-input');
-    element?.focus();
-  }
-
-  const renderChatContent = (item: any, idx:number, items:any[]) => {
-    if (item.user._id !== user._id ) {
-
-      return (
-        <div key={item._id} className={classes.chatItemContainer} id={idx === items.length-1 ? 'last-chat-element' : ''}>
-          <div className={classes.otherUserChat}>
-            <div className='avatar'>
-              <img src={item.user.profile.imageUrl} alt="user avatar" />
-            </div>
-            {item.message !== "" &&
-            <>
-              <div className='arrow' />
-              <div className='textbox'>
-                <div className='textbox-content'>
-                  {item.message}
-                </div>
-              </div>
-            </>
-            }
-          </div>
-          {!!item.images?.length && (
-            <div className={classes.otherUserChat}>
-              <div style={{width: 38}} />
-              <div style={{flex: 9, display: 'flex'}}>
-                {item.images.map((img:any) => {
-                  return (
-                    <img src={img.imageUrl}  key={img._id} onClick={()=> window.open(img.imageUrl, "_blank")}
-                      style={{
-                        cursor: 'pointer',
-                        height:124,
-                        boxShadow: '0 3px 10px rgb(0 0 0 / 20%)',
-                        margin: 10,
-                        borderRadius: 5,
-                      }}
-                    />
-                  )
-                })}
-              </div>
-            </div>
-          )}
-          <div className={classes.bottomItemContainer}>
-            <div className={classes.timeStamp}>{formatDatTimelll(item.createdAt)}</div>
-          </div>
-          {idx === items.length-1 && (<div ref={elemRef}></div>)}
-        </div>
-      )
-    } else {
-      return (
-        <div key={item._id} className={classes.chatItemContainer} id={idx === items.length-1 ? 'last-chat-element' : ''}>
-          <div className={classes.currentUserChat}>
-            <div className='avatar'>
-              <img src={item.user.profile.imageUrl} alt="user avatar" />
-            </div>
-            {item.message !== "" &&
-            <>
-              <div className='arrow' />
-              <div className='textbox'>
-                <div className='textbox-content'>
-                  {item.message}
-                </div>
-              </div>
-            </>
-            }
-          </div>
-          {!!item.images?.length && (
-            <div className={classes.currentUserChat}>
-              <div style={{width: 38}} />
-              <div style={{flex: 9, display: 'flex', flexDirection: 'row-reverse'}}>
-                {item.images.map((img:any) => {
-                  return (
-                    <img src={img.imageUrl}  key={img._id} onClick={()=> window.open(img.imageUrl, "_blank")}
-                      style={{
-                        cursor: 'pointer',
-                        height:124,
-                        boxShadow: '0 3px 10px rgb(0 0 0 / 20%)',
-                        margin: 10,
-                        borderRadius: 5,
-                      }}
-                    />
-                  )
-                })}
-              </div>
-            </div>
-          )}
-          <div className={classes.bottomItemContainer} style={{textAlign: 'right'}}>
-            <div className={classes.timeStamp}>{formatDatTimelll(item.createdAt)}</div>
-            <div className={classes.readStatus}>{item?.readStatus?.isRead ? 'Read' : 'Unread'}</div>
-          </div>
-          {idx === items.length-1 && (<div ref={elemRef}></div>)}
-        </div>
-      )
-    }
-  }
 
   return (
     <DataContainer className={'new-modal-design'}>
-      <Grid container className={'modalPreview'} justify={'space-around'}>
-        <Grid item xs>
-          <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
-          <Typography variant={'h6'} className={'bigText'}>{jobRequest.customer?.profile?.displayName || 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{dueDate ? formatDate(dueDate) : 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography variant={'caption'} className={'previewCaption'}>manufacturer</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'} style={{ textTransform: 'capitalize' }}>{jobRequest.windows[0].manufacturer}</Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography variant={'caption'} className={'previewCaption'}>category</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'} style={{ textTransform: 'capitalize' }}>Windows</Typography>
-        </Grid>
-        <Grid item xs>
-          <Typography variant={'caption'} className={'previewCaption'}>total</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'} style={{ textTransform: 'capitalize' }}>{jobRequest.windows.length}</Typography>
-        </Grid>
-      </Grid>
+      <BCJobRequestHeader windowRequest={jobRequest} />
       <BCTabs2
           curTab={curTab}
           indicatorColor={'primary'}
@@ -586,17 +363,6 @@ const DataContainer = styled.div`
 
 `;
 
-const InputBaseContainer = styled.div`
 
-.MuiInputBase-inputMultiline {
-  font-size: 15px;
-  margin-left: -5px;
-  height:70px !important;
-  overflow: hidden auto !important;
-  margin-top:15px;
-  color:#333333
- }
-
-`;
 
 export default withStyles(styles, { withTheme: true })(BCViewJobRequestWindowModal);

@@ -1,6 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
-import * as CONSTANTS from "../../../constants";
-import {GRAY2, GRAY3, PRIMARY_BLUE} from "../../../constants";
+import * as CONSTANTS from "../../../../constants";
+import {GRAY2, GRAY3, PRIMARY_BLUE} from "../../../../constants";
 export default (theme: Theme): any => ({
   relative: {
     position: 'relative',
