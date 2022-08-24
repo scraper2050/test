@@ -5,10 +5,10 @@ import {Tab} from "./bc-components";
 
 const TITLES: any = {
   quantity: 'Quantity',
-  windowType: 'Type',
   glassSize: 'Window Size',
-  glassConfigurations: '',
+  windowType: 'Type',
   portionNeedingService: 'Portion needing reglaze',
+  glassConfigurations: '',
   dividedLite: 'Divided lite',
   dividedLitePattern: 'Divided lite pattern',
   windowShape: 'Window shape viewed from outside',
@@ -29,55 +29,55 @@ export const SHAPES = [
     id: null,
     label: 'Press to select window shape',
     note: '',
-    shape: require('../../../assets/img/window/unknown.png'),
+    shape: require('../../../../assets/img/window/unknown.png'),
   },
   {
     id: 'Square',
     label: 'Square or Rectangle',
     note: '',
-    shape: require('../../../assets/img/window/square.png'),
+    shape: require('../../../../assets/img/window/square.png'),
   },
   {
     id: 'Bullseye',
     label: 'Bullseye',
     note: '',
-    shape: require('../../../assets/img/window/bullseye.png'),
+    shape: require('../../../../assets/img/window/bullseye.png'),
   },
   {
     id: 'Roundhead',
     label: 'Roundhead',
     note: '',
-    shape: require('../../../assets/img/window/roundhead.png'),
+    shape: require('../../../../assets/img/window/roundhead.png'),
   },
   {
     id: '1/4 Eyebrow Left Hand',
     label: '1/4 Eyebrow Left Hand',
     note: '',
-    shape: require('../../../assets/img/window/eyebrowleft.png'),
+    shape: require('../../../../assets/img/window/eyebrowleft.png'),
   },
   {
     id: '1/4 Eyebrow Right Hand',
     label: '1/4 Eyebrow Right Hand',
     note: '',
-    shape: require('../../../assets/img/window/eyebrowright.png'),
+    shape: require('../../../../assets/img/window/eyebrowright.png'),
   },
   {
     id: 'Eyebrow',
     label: 'Eyebrow',
     note: '',
-    shape: require('../../../assets/img/window/eyebrow.png'),
+    shape: require('../../../../assets/img/window/eyebrow.png'),
   },
   {
     id: 'Welded Roundhead',
     label: 'Welded Roundhead',
     note: '',
-    shape: require('../../../assets/img/window/welded.png'),
+    shape: require('../../../../assets/img/window/welded.png'),
   },
   {
     id: 'Shape not in list',
     label: 'Custom Shape',
     note: '',
-    shape: require('../../../assets/img/window/custom.png'),
+    shape: require('../../../../assets/img/window/custom.png'),
   },
 ];
 
@@ -116,11 +116,11 @@ function BCJobRequestGlass({
             case 'glassConfigurations':
               rawValue.forEach((conf: any) => {
                 rowItems.push({
-                  label: `${conf.position} Glass Type`,
+                  label: `${conf.position || ''} Glass Type`,
                   value: conf.glassType
                 });
                 rowItems.push({
-                  label: `${conf.position} Glass Transparency`,
+                  label: `${conf.position || ''} Glass Transparency`,
                   value: conf.glassTransparency
                 });
               });

@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import {ASH, GRAY2, GRAY4} from "../../../constants";
+import {ASH, GRAY2, GRAY4} from "../../../../constants";
 import React from "react";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 export const TopMarginedContainer = styled.div`
-  margin-top: 30px;
+  margin-top: 25px;
 `
 
 export const TabElement = styled.div`
@@ -31,3 +32,15 @@ export const Tab = ({title}: {title: string}) => <>
   </TabElement>
   <Line />
 </>
+
+export const RequestAutocomplete = styled(Autocomplete)`
+  .MuiFormControl-fullWidth {
+    width: 90%;
+  }
+  .MuiAutocomplete-inputRoot {
+    padding: 0 9px;
+  }
+  fieldset {
+    border-radius: 8px;
+  }
+`

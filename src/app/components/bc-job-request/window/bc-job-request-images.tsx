@@ -2,7 +2,7 @@ import {Grid, Typography, withStyles} from '@material-ui/core';
 import React from 'react';
 import styles from './bc-job-request.styles';
 import {Line, Tab} from "./bc-components";
-import BCDragAndDrop from "../bc-drag-drop/bc-drag-drop";
+import BCDragAndDrop from "../../bc-drag-drop/bc-drag-drop";
 
 function BCJobRequestImages({
                              classes,
