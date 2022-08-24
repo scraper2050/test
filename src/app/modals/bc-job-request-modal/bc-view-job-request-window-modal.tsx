@@ -2,29 +2,17 @@ import styles from './bc-job-request-modal.styles';
 import {
   Button,
   DialogActions,
-  Grid,
-  Typography,
   withStyles,
   useTheme,
-  InputBase,
-  Box,
 } from '@material-ui/core';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SwipeableViews from 'react-swipeable-views';
-import {
-  formatDate,
-  formatDatTimelll,
-} from 'helpers/format';
 import styled from 'styled-components';
 import '../../../scss/job-poup.scss';
-import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
 import BCTabs2 from 'app/components/bc-tab2/bc-tab2';
 import InfoIcon from '@material-ui/icons/Info';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import SendIcon from '@material-ui/icons/Send';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
-import CancelIcon from '@material-ui/icons/Cancel';
 import {
   closeModalAction,
   openModalAction,
@@ -34,16 +22,18 @@ import { modalTypes } from "../../../constants";
 import { getContacts } from "../../../api/contacts.api";
 import { getJobRequestChat, postJobRequestChat } from 'api/chat.api';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
-import BCJobRequestComponent
-  from "../../components/bc-job-request/window/bc-job-request";
+import BCJobRequestWindow
+  from "../../components/bc-job-request/window/bc-job-request-window";
 import {getJobLocationsAction} from "../../../actions/job-location/job-location.action";
-import BCJobRequestHeader
-  from "../../components/bc-job-request/window/bc-job-request-header";
-import BCChatItemFriend
-  from "../../components/bc-job-request/chat/bc-chat-item-friend";
-import BCChatItemUser
-  from "../../components/bc-job-request/chat/bc-chat-item-user";
+import BCJobRequestWindowHeader
+  from "../../components/bc-job-request/window/bc-job-request-header"
+import BCJobRequestRepairHeader
+  from "../../components/bc-job-request/repair/bc-job-request-header";
 import BCChat from "../../components/bc-job-request/chat/bc-chat";
+import BCJobRequestMap
+  from "../../components/bc-job-request/shared/bc-job-request-map";
+import BcJobRequestRepair
+  from "../../components/bc-job-request/repair/bc-job-request-repair";
 
 const initialJobRequestState = {
   customer: {
@@ -79,22 +69,6 @@ const initialJobRequestState = {
   jobRescheduled: false,
 };
 
-interface CONTEXT_PROPS {
-  jobRequest: any;
-  customerContact: any;
-  isChanging: boolean;
-  newLocation: any;
-  newSite: any;
-}
-
-export const WindowRequestContext = React.createContext<CONTEXT_PROPS>({
-  jobRequest: null,
-  customerContact: null,
-  isChanging: false,
-  newLocation: null,
-  newSite: null
-});
-
 function BCViewJobRequestWindowModal({
   classes,
   jobRequest = initialJobRequestState,
@@ -108,8 +82,7 @@ function BCViewJobRequestWindowModal({
   const [curTab, setCurTab] = useState(0);
   const [chatContent, setChatContent] = useState([]);
   const [isChatLoading, setIsChatLoading] = useState(false);
-
-  const [changeRequest, setChangeRequest] = useState(true);
+  const [changeRequest, setChangeRequest] = useState(false);
 
   useEffect(() => {
     const data: any = {
@@ -213,19 +186,18 @@ function BCViewJobRequestWindowModal({
 
   const renderJobRequestContent = () => (
     <div hidden={curTab !== 0}>
-      <WindowRequestContext.Provider value={{
-        jobRequest,
-        customerContact,
-        isChanging: changeRequest,
-        newLocation: jobRequest.jobLocation,
-        newSite: jobRequest.jobSite,
-      }}>
-      <BCJobRequestComponent
+      <BCJobRequestMap
         jobRequest={jobRequest}
         customerContact={customerContact}
         isChanging={changeRequest}
+        newLocation={jobRequest.jobLocation}
+        newSite={jobRequest.jobSite}
       />
-      </WindowRequestContext.Provider>
+      {jobRequest.type === 1 ?
+        <BcJobRequestRepair jobRequest={jobRequest} />
+        :
+        <BCJobRequestWindow jobRequest={jobRequest} />
+      }
 
       {changeRequest ?
         <DialogActions>
@@ -298,14 +270,13 @@ function BCViewJobRequestWindowModal({
     onSubmit={() => getChatContent(jobRequest._id)}
     />
 
-
-
-
-
-
   return (
     <DataContainer className={'new-modal-design'}>
-      <BCJobRequestHeader windowRequest={jobRequest} />
+      {jobRequest.type === 1 ?
+        <BCJobRequestRepairHeader jobRequest={jobRequest} />
+        :
+        <BCJobRequestWindowHeader jobRequest={jobRequest} />
+      }
       <BCTabs2
           curTab={curTab}
           indicatorColor={'primary'}

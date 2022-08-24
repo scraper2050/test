@@ -5,31 +5,31 @@ import {formatDate} from "../../../../helpers/format";
 
 interface PROPS {
   classes?: any;
-  windowRequest: any;
+  jobRequest: any;
 }
 
 function BCJobRequestHeader({
                               classes,
-                              windowRequest,
+                              jobRequest,
                             }: PROPS): JSX.Element {
   return <Grid container className={'modalPreview'} justify={'space-around'}>
     <Grid item xs>
       <Typography variant={'caption'}
                   className={'previewCaption'}>customer</Typography>
       <Typography variant={'h6'}
-                  className={'bigText'}>{windowRequest.customer?.profile?.displayName || 'N/A'}</Typography>
+                  className={'bigText'}>{jobRequest.customer?.profile?.displayName || 'N/A'}</Typography>
     </Grid>
     <Grid item xs>
       <Typography variant={'caption'} className={'previewCaption'}>due
         date</Typography>
       <Typography variant={'h6'}
-                  className={'previewTextTitle'}>{windowRequest.dueDate ? formatDate(windowRequest.dueDate) : 'N/A'}</Typography>
+                  className={'previewTextTitle'}>{jobRequest.dueDate ? formatDate(jobRequest.dueDate) : 'N/A'}</Typography>
     </Grid>
     <Grid item xs>
       <Typography variant={'caption'}
                   className={'previewCaption'}>manufacturer</Typography>
       <Typography variant={'h6'} className={'previewTextTitle'}
-                  style={{textTransform: 'capitalize'}}>{windowRequest.windows[0].manufacturer}</Typography>
+                  style={{textTransform: 'capitalize'}}>{jobRequest.windows[0].manufacturer}</Typography>
     </Grid>
     <Grid item xs>
       <Typography variant={'caption'}
@@ -41,7 +41,7 @@ function BCJobRequestHeader({
       <Typography variant={'caption'}
                   className={'previewCaption'}>total</Typography>
       <Typography variant={'h6'} className={'previewTextTitle'}
-                  style={{textTransform: 'capitalize'}}>{windowRequest.windows.length}</Typography>
+                  style={{textTransform: 'capitalize'}}>{jobRequest.windows.length}</Typography>
     </Grid>
   </Grid>
 }

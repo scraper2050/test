@@ -1,26 +1,31 @@
 import {Grid, TextField, Typography, withStyles} from '@material-ui/core';
 import React, {useContext, useEffect, useState} from 'react';
-import styles from './bc-job-request.styles';
+import styles from '../window/bc-job-request.styles';
 import classNames from "classnames";
 import BCMapWithMarker from "../../bc-map-with-marker/bc-map-with-marker";
-import {Line, RequestAutocomplete, TopMarginedContainer} from "./bc-components";
+import {Line, RequestAutocomplete, TopMarginedContainer} from "../window/bc-components";
 import Autocomplete, {createFilterOptions} from "@material-ui/lab/Autocomplete";
 import {useDispatch, useSelector} from "react-redux";
 import {
   clearJobSiteStore,
   getJobSites
 } from "../../../../actions/job-site/job-site.action";
-import {WindowRequestContext} from "../../../modals/bc-job-request-modal/bc-view-job-request-window-modal";
 
+interface PRORS {
+  classes: any,
+  isChanging: boolean;
+  jobRequest: any;
+  customerContact: any;
+  newLocation: any,
+  newSite: any,
+}
 
 function BCJobRequestMap({
-   classes,
- }: any): JSX.Element {
+   classes, isChanging, jobRequest, customerContact, newLocation, newSite
+ }: PRORS): JSX.Element {
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
 
-  const {isChanging, jobRequest, customerContact, newLocation, newSite} = useContext(WindowRequestContext);
-  //
   // const [jobLocation, setJobLocation] = useState<any>(jobRequest?.jobLocation);
   // const [jobSite, setJobSite] = useState<any>(jobRequest.jobSite);
 
