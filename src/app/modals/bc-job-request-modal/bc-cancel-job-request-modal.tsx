@@ -26,6 +26,7 @@ import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { Job } from 'actions/job/job.types';
 import { rejectionReason } from '../../../constants';
 import classNames from 'classnames';
+import {getJobRequestDescription} from "../../../helpers/job";
 
 const rejectRequestValidation = yup.object().shape({
   'name': yup
@@ -173,19 +174,19 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
     <form onSubmit={formik.handleSubmit}>
       <DialogContent classes={{'root': classes.dialogContent}}>
         <Grid container alignItems={'center'}>
-          <Grid 
-            item 
-            xs={12} 
-            sm={3} 
-            container 
-            alignItems={'center'} 
-            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'} 
+          <Grid
+            item
+            xs={12}
+            sm={3}
+            container
+            alignItems={'center'}
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
             style={{padding: '0 30px 0 7px'}}
           >
             <span style={{color: '#4F4F4F', fontWeight: 500}}>DESCRIPTION</span>
           </Grid>
           <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 30px 0 7px'}}>
-            {'Repair - Sink'}
+            {getJobRequestDescription(item)}
           </Grid>
           <Grid
             item
@@ -193,7 +194,7 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
+            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'}
             style={{padding: '0 30px 0 7px'}}
           >
             <span style={{color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap'}}>REASON</span>
@@ -220,7 +221,7 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'} 
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
             style={{padding: '0 30px 0 7px', alignSelf: 'flex-start'}}
           >
             <span style={{color: '#4F4F4F', fontWeight: 500, marginTop: 20}}>NOTES</span>
@@ -253,7 +254,7 @@ function BCRejectJobRequestModal({ jobRequest:item, classes }:any) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
+            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'}
             style={{padding: '0 30px 0 7px'}}
           />
         </Grid>
