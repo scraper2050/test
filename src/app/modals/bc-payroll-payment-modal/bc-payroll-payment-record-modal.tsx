@@ -654,7 +654,7 @@ function BcPayrollPaymentRecordModal({
           },
         ]}
       />
-      <div className={'modalDataContainer'} style={{ maxHeight: sent || sentAdvance ? '54vh' : '70vh' }}>
+      <div className={'modalDataContainer'} style={{ maxHeight: sent || sentAdvance ? '54vh' : '70vh', overflow:  sent || sentAdvance ? 'hidden' : 'auto'}}>
         <SwipeableViews
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={curTab}
