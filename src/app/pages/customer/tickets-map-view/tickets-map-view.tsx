@@ -23,9 +23,8 @@ import {STATUSES} from "../../../../helpers/contants";
 import BCMapFilterHead from "../../../components/bc-map-filter/bc-map-filter-head";
 import { getCustomers } from "../../../../actions/customer/customer.action";
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
-import {
-  getAllJobTypesAPI
-} from "../../../../api/job.api";
+import { getAllJobTypesAPI } from "api/job.api";
+import { getContacts } from 'api/contacts.api';
 import {getEmployeesForJobAction} from "../../../../actions/employees-for-job/employees-for-job.action";
 import {getVendors} from "../../../../actions/vendor/vendor.action";
 import preloader from '../../../../assets/img/preloader/loading-icon2.gif';
@@ -85,6 +84,13 @@ function TicketsWithMapView({ classes }: any) {
   const [allDates, setAllDates] = useState([null, new Date(), null, new Date()]);
   const [curTab, setCurTab] = useState(0);
   const [showLegendDialog, setShowLegendDialog] = useState(false);
+  
+  const customers = useSelector(({ customers }: any) => customers.data);
+  const contacts = useSelector(({contacts}: any) => contacts?.contacts);
+  const { data: employees } = useSelector(({ employeesForJob }: any) => employeesForJob);
+  const { data: vendors } = useSelector(({ vendors }: any) => vendors);
+  const {data: jobTypes} = useSelector((state: any) => state.jobTypes);
+
   const { streaming, streamingScheduledJobs } = useSelector(
     ({ serviceTicket, jobState }: any) => ({
       streaming: serviceTicket.stream,
@@ -136,6 +142,11 @@ function TicketsWithMapView({ classes }: any) {
     dispatch(getEmployeesForJobAction());
     dispatch(getVendors());
   }, []);
+
+
+  const dispatchGetContacts =(data:any) => {
+    dispatch(getContacts(data));
+  }
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -274,6 +285,12 @@ function TicketsWithMapView({ classes }: any) {
               filter={allFilters[curTab]}
               shouldResetDate={curTab === 0 || curTab === 2}
               filterType={curTab === 0 ? 'ticket' : curTab === 3 ? 'route' : 'job'}
+              customers={customers}
+              contacts={contacts}
+              dispatchGetContacts={dispatchGetContacts}
+              employees={employees}
+              vendors={vendors}
+              jobTypes={jobTypes}
             />
             <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
             <Info className={'infoLegend'} fontSize={'default'} onClick={() => setShowLegendDialog(true)}/>

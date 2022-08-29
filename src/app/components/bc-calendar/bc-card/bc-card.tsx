@@ -4,9 +4,6 @@ import {makeStyles} from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import CloseIcon from "@material-ui/icons/Close";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../../reducers";
-import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 import BCJobCard from "./bc-job-card";
 import BCTicketCard from "./bc-ticket-card";
 
@@ -27,9 +24,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BCCard() {
-  const dispatch = useDispatch();
-  const { anchor, data, popperOpen } = useSelector((state: RootState) => state.calendar);
+function BCCard({eventClickHandler, calendarState, openJobModalHandler, openTicketModalHandler, getServiceTicketDetail}:any) {
+  const { anchor, data, popperOpen } = calendarState;
   const defaultClasses = useStyles();
 
   if (!data) return null;
@@ -44,11 +40,13 @@ function BCCard() {
       {({ TransitionProps, placement }) => (
         <Paper elevation={0}>
           <IconButton className={defaultClasses.closeButton}
-            onClick={() => dispatch(clearSelectedEvent())}
+            onClick={() => eventClickHandler(true)}
           >
             <CloseIcon fontSize={'small'} />
           </IconButton>
-          {data.jobId ? <BCJobCard /> : <BCTicketCard />}
+          {data.jobId 
+            ? <BCJobCard calendarState={calendarState} openJobModalHandler={openJobModalHandler} /> 
+            : <BCTicketCard calendarState={calendarState} openTicketModalHandler={openTicketModalHandler} getServiceTicketDetail={getServiceTicketDetail} />}
         </Paper>
       )}
     </Popper>

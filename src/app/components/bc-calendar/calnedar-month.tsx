@@ -12,6 +12,11 @@ interface Props {
   month: Date,
   isLoading?: boolean,
   events: BCEVENT[],
+  eventClickHandler: (isSelected: boolean, eventProps: any) => void;
+  calendarState: any;
+  openJobModalHandler?: (job:any) => void;
+  openTicketModalHandler?: (data:any,status:any,message:any) => void;
+  getServiceTicketDetail: any;
 }
 
 function getDateArray (month: Date) {
@@ -44,7 +49,17 @@ function sortEvents (a: BCEVENT, b: BCEVENT) {
   }
 }
 
-function BCMonth({ classes, month, events, isLoading = false }: Props) {
+function BCMonth({
+  classes,
+  month,
+  events,
+  isLoading = false,
+  eventClickHandler,
+  calendarState,
+  openJobModalHandler,
+  openTicketModalHandler,
+  getServiceTicketDetail,
+}: Props) {
   const [daysArray, setDaysArray] = useState<any[]>([]);
   useEffect(() => {
     setDaysArray(getDateArray(month));
@@ -57,7 +72,13 @@ function BCMonth({ classes, month, events, isLoading = false }: Props) {
       <BCCircularLoader heightValue={'70vh'} />
     </div>
     }
-    <BCCard />
+    <BCCard
+      eventClickHandler={eventClickHandler}
+      calendarState={calendarState}
+      openJobModalHandler={openJobModalHandler}
+      openTicketModalHandler={openTicketModalHandler}
+      getServiceTicketDetail={getServiceTicketDetail}
+    />
 
     <div className={classes.monthContainer}>
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day)=> (
@@ -68,10 +89,18 @@ function BCMonth({ classes, month, events, isLoading = false }: Props) {
           {week.map((day: Date, idx: number) => {
             const dayEvents = events.filter((event) => moment(event.date).isSame(moment(day), 'day'))
             dayEvents.sort(sortEvents);
-            return <Day day={day} key={idx} column={idx} row={i}
-                        isLastRow={i === daysArray.length - 1}
-                        events={dayEvents}
-            />
+            return (
+              <Day
+                day={day}
+                key={idx}
+                column={idx}
+                row={i}
+                isLastRow={i === daysArray.length - 1}
+                events={dayEvents}
+                eventClickHandler={eventClickHandler}
+                calendarState={calendarState}
+              />
+            )
           })}
         </React.Fragment>
       ))}

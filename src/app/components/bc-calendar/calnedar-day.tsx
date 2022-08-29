@@ -14,9 +14,11 @@ interface Props {
   row: number,
   column: number,
   isLastRow: boolean,
+  eventClickHandler: (isSelected: boolean, eventProps: any) => void;
+  calendarState: any;
 }
 
-function BCDay({ day, events = [], row, column, isLastRow, classes }:Props) {
+function BCDay({ day, events = [], row, column, isLastRow, classes, eventClickHandler, calendarState }:Props) {
   const isToday = moment(day).isSame(new Date(), 'day');
 
   return (
@@ -43,6 +45,8 @@ function BCDay({ day, events = [], row, column, isLastRow, classes }:Props) {
           <BCEvent
             event={evt}
             key={idx}
+            eventClickHandler={eventClickHandler}
+            calendarState={calendarState}
           >
             {evt.title}
           </BCEvent>

@@ -7,16 +7,25 @@ import '../ticket-map-view.scss';
 import styles from '../ticket-map-view.style';
 import SidebarTickets from '../sidebar/sidebar-tickets';
 import {io} from "socket.io-client";
-import Config from "../../../../../config";
+import Config from "config";
 import {SocketMessage} from "../../../../../helpers/contants";
-import {getOpenServiceTicketsStream} from "../../../../../api/service-tickets.api";
-import {parseISOMoment} from "../../../../../helpers/format";
+import {getOpenServiceTicketsStream} from "api/service-tickets.api";
+import {parseISOMoment} from "helpers/format";
+import {RootState} from "reducers";
+import {CompanyProfileStateType} from "actions/user/user.types";
 import {
   refreshServiceTickets,
   setServiceTicket,
   streamServiceTickets,
   setTicket2JobID,
-} from "../../../../../actions/service-ticket/service-ticket.action";
+} from "actions/service-ticket/service-ticket.action";
+import {setTicketSelected} from "actions/map/map.actions";
+import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { clearJobSiteStore, getJobSites, loadingJobSites } from "actions/job-site/job-site.action";
+import { getAllJobTypesAPI } from 'api/job.api';
+import {getServiceTicketDetail} from "api/service-tickets.api";
+import { getJobLocation } from 'api/job-location.api';
+import { getJobSite } from 'api/job-site.api';
 
 function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: any) {
   const dispatch = useDispatch();
@@ -24,6 +33,11 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({ticket2Job: serviceTicket.ticket2Job}));
   const { refresh } = useSelector(({ serviceTicket }: any) => ({refresh: serviceTicket.refresh}));
   const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
+  const { streaming: streamingTickets } = useSelector(({ serviceTicket }: any) => ({
+    streaming: serviceTicket.stream,
+  }));
+  const selected = useSelector((state: RootState) => state.map.ticketSelected);
+  const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
 
   const tempRefTicket = useRef<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -140,6 +154,31 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
     setAllTickets(tickets);
   }, [tickets]);
 
+  const dispatchUnselectTicket = () => {
+    dispatch(setTicketSelected({_id: ''}));
+  }
+
+  const openModalHandler = (modalDataAction: any) => {
+    dispatch(setModalDataAction(modalDataAction));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const openEditTicketModalPrepDispatcher = (reqObj: any) => {
+    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+      dispatch(loadingJobSites());
+      dispatch(getJobSites(reqObj));
+    } else {
+      dispatch(clearJobSiteStore());
+    }
+    dispatch(getAllJobTypesAPI());
+  }
+
+  const setServiceTicketDispatcher = (updatedTickets:any) => {
+    dispatch(setServiceTicket(updatedTickets));
+  }
+
   return (
     <Grid container item lg={12}>
       <Grid
@@ -149,8 +188,20 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         className="ticketsMapContainer"
       >
         <MemoizedMap
+          reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
           list={filteredTickets}
           isTicket={true}
+          streamingTickets={streamingTickets}
+          selected={selected}
+          coordinates={coordinates}
+          tickets={tickets}
+          dispatchUnselectTicket={dispatchUnselectTicket}
+          openModalHandler={openModalHandler}
+          openEditTicketModalPrepDispatcher={openEditTicketModalPrepDispatcher}
+          setServiceTicketDispatcher={setServiceTicketDispatcher}
+          getServiceTicketDetail={getServiceTicketDetail}
+          getJobLocation={getJobLocation}
+          getJobSite={getJobSite}
         />
       </Grid>
 

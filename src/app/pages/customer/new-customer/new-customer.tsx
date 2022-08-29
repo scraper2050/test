@@ -521,6 +521,7 @@ function NewCustomerPage({classes}: Props) {
                       <BCMapWithMarker
                         lang={positionValue.lang}
                         lat={positionValue.lat}
+                        reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
                       />
                     </div>
                   </Grid>

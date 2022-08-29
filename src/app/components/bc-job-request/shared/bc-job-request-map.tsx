@@ -1,37 +1,36 @@
+import Config from 'config';
 import {Grid, TextField, Typography, withStyles} from '@material-ui/core';
 import React, {useContext, useEffect, useState} from 'react';
 import styles from '../window/bc-job-request.styles';
 import classNames from "classnames";
 import BCMapWithMarker from "../../bc-map-with-marker/bc-map-with-marker";
 import {Line, RequestAutocomplete, TopMarginedContainer} from "../window/bc-components";
-import Autocomplete, {createFilterOptions} from "@material-ui/lab/Autocomplete";
-import {useDispatch, useSelector} from "react-redux";
-import {
-  clearJobSiteStore,
-  getJobSites
-} from "../../../../actions/job-site/job-site.action";
 
-interface PRORS {
+interface Props {
   classes: any,
   isChanging: boolean;
   jobRequest: any;
   customerContact: any;
   newLocation: any,
   newSite: any,
+  getJobSitesOnNewLocationHandler: (customerId: string, locationId: string) => void;
+  dispatchClearJobSite: () => void;
+  jobLocations: any;
+  jobSites: any;
 }
 
 function BCJobRequestMap({
-   classes, isChanging, jobRequest, customerContact, newLocation, newSite
- }: PRORS): JSX.Element {
-  const jobLocations = useSelector((state: any) => state.jobLocations.data);
-  const jobSites = useSelector((state: any) => state.jobSites.data);
-
-  // const [jobLocation, setJobLocation] = useState<any>(jobRequest?.jobLocation);
-  // const [jobSite, setJobSite] = useState<any>(jobRequest.jobSite);
-
-
-  const dispatch = useDispatch();
-  const filter = createFilterOptions();
+  classes,
+  isChanging,
+  jobRequest,
+  customerContact,
+  newLocation,
+  newSite,
+  getJobSitesOnNewLocationHandler,
+  dispatchClearJobSite,
+  jobLocations,
+  jobSites,
+}: Props): JSX.Element {
 
   let positionValue: { lat?: number; long?: number } = {};
   if (jobRequest.jobSite?.location?.coordinates?.length === 2) {
@@ -43,10 +42,7 @@ function BCJobRequestMap({
   }
 
   useEffect(() => {
-    dispatch(getJobSites({
-      'customerId': jobRequest.customer._id,
-      'locationId': newLocation?._id,
-    }));
+    getJobSitesOnNewLocationHandler(jobRequest.customer._id,newLocation?._id)
   }, [newLocation]);
 
   return <>
@@ -62,9 +58,7 @@ function BCJobRequestMap({
               // getOptionDisabled={(option) => !option.isActive}
               id={'tags-standard'}
               onChange={(ev: any, newValue: any) => {
-                dispatch(clearJobSiteStore());
-                //setJobLocation(newValue);
-                // setJobSite(null);
+                dispatchClearJobSite();
               }}
               options={jobLocations && jobLocations.length !== 0 ? jobLocations.sort((a: any, b: any) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0) : []}
               renderInput={params =>
@@ -125,6 +119,7 @@ function BCJobRequestMap({
         <TopMarginedContainer>
           <div className={classNames(classes.paper, classes.mapWrapper)}>
             <BCMapWithMarker
+              reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
               lang={positionValue.long}
               lat={positionValue.lat}
             />

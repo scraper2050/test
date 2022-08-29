@@ -4,17 +4,7 @@ import {
 } from "../../../../helpers/format";
 import {IconButton} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../../reducers";
-import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
-import {
-  openModalAction,
-  setModalDataAction
-} from "../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
-import {getServiceTicketDetail} from "../../../../api/service-tickets.api";
-import {error} from "../../../../actions/snackbar/snackbar.action";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -53,32 +43,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BCTicketCard() {
-  const dispatch = useDispatch();
-  const { data } = useSelector((state: RootState) => state.calendar);
+function BCTicketCard({calendarState,openTicketModalHandler,getServiceTicketDetail}:any) {
+  const { data } = calendarState;
   const defaultClasses = useStyles();
 
   if (!data) return null;
 
   const openDetailTicketModal = async () => {
     const {status, message} = await getServiceTicketDetail(data._id);
-    dispatch(clearSelectedEvent());
-    if (status === 1) {
-      dispatch(setModalDataAction({
-        'data': {
-          'modalTitle': '',
-          'removeFooter': false,
-          'job': data,
-          'className': 'serviceTicketTitle',
-        },
-        'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
-      }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
-    } else {
-      dispatch(error(message));
-    }
+    openTicketModalHandler(data, status, message)
   };
 
   return (

@@ -2,8 +2,6 @@ import React from 'react';
 import styles from '../bc-shared-form.styles';
 import { Fab, Typography, withStyles } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 
 
 interface Props {
@@ -15,15 +13,15 @@ interface Props {
     handleSubmit: any;
     modalTitle: string;
     modalType: string;
+    openPreviewFormModalHandler: (modalDataAction: any) => void;
 }
 
 
-function SharedFormTitleBar({ classes, pageTitle, redirectUrl, disabled, formData, handleSubmit, modalTitle, modalType }:Props) {
+function SharedFormTitleBar({ classes, pageTitle, redirectUrl, disabled, formData, handleSubmit, modalTitle, modalType, openPreviewFormModalHandler }:Props) {
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const openPreviewFormModal = () => {
-    dispatch(setModalDataAction({
+    const modalDataAction = {
       'data': {
         'detail': true,
         'formData': formData,
@@ -33,10 +31,8 @@ function SharedFormTitleBar({ classes, pageTitle, redirectUrl, disabled, formDat
 
       },
       'type': modalType
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 10);
+    };
+    openPreviewFormModalHandler(modalDataAction)
   };
 
 

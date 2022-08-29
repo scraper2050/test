@@ -1,12 +1,27 @@
 import AuthRoute from 'auth-route';
 import BCCircularLoader from '../../components/bc-circular-loader/bc-circular-loader';
 import 'scss/elevation.scss';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import BCAdminLayout from "../../components/bc-admin-layout/bc-admin-layout";
 import BCAdminHeader from "../../components/bc-admin-header/bc-admin-header";
 import BCAdminSidebar from "../../components/bc-admin-sidebar/bc-admin-sidebar";
 import * as CONSTANTS from "../../../constants";
+import { modalTypes } from '../../../constants';
+
+import { getjobDetailAPI } from 'api/job.api';
+import { getAllJobRequestAPI } from 'api/job-request.api';
+
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { loadNotificationsActions, showNotificationPopup } from 'actions/notifications/notifications.action';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import { getCompanyProfileAction } from 'actions/user/user.action';
+import { logoutAction, resetStore } from 'actions/auth/auth.action';
+import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job-request/job-request.action';
+import { markNotificationAsRead } from 'actions/notifications/notifications.action';
+import { info } from '../../../actions/snackbar/snackbar.action';
+
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
@@ -82,6 +97,138 @@ const AmountsOwedReportsPage = React.lazy(() => import('../reports/customers/amo
 const NewPayrollReportsPage = React.lazy(() => import('../reports/vendors/payroll-reports/payroll'));
 
 function Main(): any {
+  const dispatch = useDispatch();
+  const notifications = useSelector((state: any) => state.notifications)
+  const profileState = useSelector((state: any) => state.profile);
+  const { user } = useSelector((state: any) => state.auth);
+  const { numberOfJobRequest } = useSelector((state: any) => state.jobRequests);
+  const { jobRequests } = useSelector((state: any) => state.jobRequests);
+  const snackbarState = useSelector((state: any) => state.snackbar);
+
+  const initialHeaderLoad = () => {
+    dispatch(loadNotificationsActions.fetch());
+    dispatch(loadInvoiceItems.fetch());
+    dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
+  }
+
+  const showNotificationDetails = (state?: boolean) => {
+    dispatch(showNotificationPopup(state ?? !notifications.notificationOpen));
+  };
+
+  const getCompanyProfile = (companyId:string) => {
+    dispatch(getCompanyProfileAction(companyId));
+  };
+
+  const logoutAndReset = () => {
+    dispatch(logoutAction());
+    dispatch(resetStore());
+  }
+
+  const openModalHandler = async (type:any, data:any, itemId:any, metadata?:any) => {
+    switch (type) {
+      case 'JobRescheduled':
+        const job: any = await getjobDetailAPI(data);
+        job.jobRescheduled = itemId;
+        dispatch(setModalDataAction({
+          'data': {
+            'job': job,
+            'modalTitle': 'Edit Job - Rescheduled',
+            'removeFooter': false
+          },
+          'type': modalTypes.EDIT_JOB_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+
+      case 'JobRequestCreated':
+        dispatch(
+          markNotificationAsRead.fetch({ id: itemId, isRead: true })
+        );
+        if(data){
+          dispatch(
+            setModalDataAction({
+              data: {
+                jobRequest: data,
+                removeFooter: false,
+                maxHeight: '100%',
+                modalTitle: 'Job Request',
+              },
+              type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+            })
+          );
+          setTimeout(() => {
+            dispatch(openModalAction());
+          }, 200);
+        } else {
+          dispatch(setCurrentPageIndex(0));
+          dispatch(setCurrentPageSize(30));
+          const result:any = await dispatch(getAllJobRequestAPI(30, undefined, undefined, '-1', '', undefined));
+          const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === metadata?._id)
+          if(matchedJobRequest && matchedJobRequest.length){
+            dispatch(
+              setModalDataAction({
+                data: {
+                  jobRequest: matchedJobRequest[0],
+                  removeFooter: false,
+                  maxHeight: '100%',
+                  modalTitle: 'Job Request',
+                },
+                type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+              })
+            );
+            setTimeout(() => {
+              dispatch(openModalAction());
+            }, 200);
+          }
+        }
+        break;
+
+      case 'ServiceTicketCreated':
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'Service Ticket Details',
+            'removeFooter': false,
+            'className': 'serviceTicketTitle',
+            'maxHeight': '754px',
+            'height': '100%',
+            'ticketId': metadata._id,
+            'notificationId': itemId,
+          },
+          'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+
+      case 'ContractNotification':
+        dispatch(setModalDataAction({
+          'data': {
+            'removeFooter': false,
+            'maxHeight': '450px',
+            'height': '100%',
+            'message': data.message,
+            'contractId': metadata._id,
+            'notificationType': data.notificationType,
+            'notificationId': itemId
+          },
+          'type': modalTypes.CONTRACT_VIEW_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  const dispatchResetInfoSnackbar = () => {
+    dispatch(info(''));
+  }
 
   return (
     <Router>
@@ -91,9 +238,20 @@ function Main(): any {
             <div style={{flex: 1}}>
               <BCAdminHeader
                 drawerOpen={true}
+                notifications={notifications}
+                initialLoad={initialHeaderLoad}
+                showNotificationDetails={showNotificationDetails}
+                openModalHandler={openModalHandler}
+                jobRequests={jobRequests}
               />
               <BCAdminSidebar
                 open={true}
+                user={user}
+                profileState={profileState}
+                numberOfJobRequest={numberOfJobRequest}
+                showNotificationDetails={showNotificationDetails}
+                getCompanyProfile={getCompanyProfile}
+                logoutAndReset={logoutAndReset}
               />
               <div style={{
                 flexGrow: 1,
@@ -105,7 +263,20 @@ function Main(): any {
             </div>
           }>
           <Route>
-            <BCAdminLayout>
+            <BCAdminLayout 
+              notifications={notifications}
+              initialLoad={initialHeaderLoad}
+              showNotificationDetails={showNotificationDetails}
+              user={user}
+              profileState={profileState}
+              numberOfJobRequest={numberOfJobRequest}
+              getCompanyProfile={getCompanyProfile}
+              logoutAndReset={logoutAndReset}
+              openModalHandler={openModalHandler}
+              jobRequests={jobRequests}
+              dispatchResetInfoSnackbar={dispatchResetInfoSnackbar}
+              snackbarState={snackbarState}
+            >
               <Switch>
                 <AuthRoute
                   Component={DashboardPage}

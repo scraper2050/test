@@ -66,6 +66,8 @@ function BCViewServiceTicketModal({
     return title;
   }
 
+  const track = job.track ? job.track : [];
+
   const equipments = useSelector(({ inventory }: any) => inventory.data);
   const { loading, data } = useSelector(
     ({ employeesForJob }: any) => employeesForJob
@@ -200,7 +202,7 @@ function BCViewServiceTicketModal({
                 pageSize={5}
                 pagination={true}
                 stickyHeader
-                tableData={[{action: 'Service Ticket Created', date: job.createdAt, user: job.createdBy}, ...job.track].reverse()}
+                tableData={[{action: 'Service Ticket Created', date: job.createdAt, user: job.createdBy}, ...track].reverse()}
               />
             </div>
           </Grid>

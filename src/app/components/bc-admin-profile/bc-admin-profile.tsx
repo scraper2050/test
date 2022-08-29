@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './bc-admin-profile.style';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, withStyles } from '@material-ui/core';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
 import NoCompanyLogo from 'assets/img/avatars/NoCompanyLogo.png';
-import { useDispatch } from 'react-redux';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { modalTypes } from '../../../constants';
 
 interface Props {
   avatar: Avatar;
@@ -16,10 +13,10 @@ interface Props {
   fields: object[];
   classes: any;
   children?: React.ReactNode;
-  title?: string;
   initialValues?: any;
   schema?: any;
   userProfile?: boolean;
+  openAddContactModal?: (passedProps:any) => void;
 }
 
 interface Avatar {
@@ -50,26 +47,9 @@ function BCAdminProfile(props: Props) {
     avatar,
     fields,
     classes,
-    title,
     userProfile = true,
+    openAddContactModal,
   } = props;
-
-  const dispatch = useDispatch();
-
-  const openAddContactModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'props': props,
-        'modalTitle': title,
-        'removeFooter': false
-      },
-      'type': modalTypes.EDIT_PROFILE
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
 
   return (
     <div className={classes.profilePane}>
@@ -78,7 +58,7 @@ function BCAdminProfile(props: Props) {
           !avatar.noUpdate &&
           <div
             className={`edit_button ${classes.editButton}`}
-            onClick={() => openAddContactModal()}>
+            onClick={() => typeof openAddContactModal === 'function' && openAddContactModal(props)}>
             <button className={'MuiFab-primary'}>
               <i className={'material-icons'}>
                 {'edit'}

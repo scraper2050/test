@@ -15,6 +15,7 @@ type ServiceTicketNotification = {
   company: string;
   ticketId: string;
   jobId: string;
+  requestId: string;
   track: any[];
   status?: number;
 };
@@ -27,7 +28,8 @@ export enum NotificationTypeTypes {
   CONTRACT_REJECTED = 'ContractRejected',
   SERVICE_TICKET_CREATED = 'ServiceTicketCreated',
   JOB_REQUEST_CREATED = 'JobRequestCreated',
-  JOB_RESCHEDULED = 'JobRescheduled'
+  JOB_RESCHEDULED = 'JobRescheduled',
+  NEW_CHAT = 'NewChat',
 }
 
 export type Notification = {

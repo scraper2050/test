@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
 import {ReactComponent as IconStarted} from "../../../assets/img/icons/map/icon-started.svg";
 import {ReactComponent as IconCompleted} from "../../../assets/img/icons/map/icon-completed.svg";
 import {ReactComponent as IconCancelled} from "../../../assets/img/icons/map/icon-cancelled.svg";
@@ -9,22 +8,7 @@ import {ReactComponent as IconIncomplete} from "../../../assets/img/icons/map/ic
 import {ReactComponent as IconPending} from "../../../assets/img/icons/map/icon-pending.svg";
 import {ReactComponent as IconJobRequest} from "../../../assets/img/icons/map/icon-job-request.svg";
 import {ReactComponent as IconOpenServiceTicket} from "../../../assets/img/icons/map/icon-open-service-ticket.svg";
-import {
-  getJobLocationsAction,
-  loadingJobLocations
-} from "../../../actions/job-location/job-location.action";
-import {
-  clearJobSiteStore,
-  getJobSites,
-  loadingJobSites
-} from "../../../actions/job-site/job-site.action";
-import {
-  openModalAction,
-  setModalDataAction
-} from "../../../actions/bc-modal/bc-modal.action";
-import {
-  setServiceTicket,
-} from "actions/service-ticket/service-ticket.action";
+
 import {modalTypes} from "../../../constants";
 import {Button, IconButton} from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
@@ -32,13 +16,6 @@ import InfoIcon from "@material-ui/icons/InfoOutlined";
 import {withStyles} from "@material-ui/core/styles";
 import styles from "./bc-map-marker.style";
 import './bc-map-marker.scss';
-import {openDetailTicketModal} from "../../pages/notifications/notification-click-handlers";
-import {RootState} from "../../../reducers";
-import {setTicketSelected} from "../../../actions/map/map.actions";
-import {getServiceTicketDetail} from "../../../api/service-tickets.api";
-import { getAllJobTypesAPI } from 'api/job.api';
-import { getJobLocation } from 'api/job-location.api';
-import { getJobSite } from 'api/job-site.api';
 import {formatDate, formatTime} from "../../../helpers/format";
 import {
   getJobTypesFromJob,
@@ -53,25 +30,47 @@ interface Props {
   lng: number,
   isTicket?: boolean,
   id?: string,
+  streamingTickets?: boolean;
+  tickets?: any[];
+  selected?: any;
+  dispatchUnselectTicket?: any;
+  openModalHandler?: (modalDataAction:any) => void;
+  openEditTicketModalPrepDispatcher?: (reqObj:any) => void;
+  setServiceTicketDispatcher?: (updatedTickets:any) => void;
+  getServiceTicketDetail?: any;
+  getJobLocation?: any;
+  getJobSite?: any;
 }
 
-function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
+function BCMapMarker({
+  classes,
+  ticket,
+  isTicket = false,
+  id = '',
+  streamingTickets,
+  tickets = [],
+  selected = {},
+  dispatchUnselectTicket = ()=>{},
+  openModalHandler = ()=>{},
+  openEditTicketModalPrepDispatcher = ()=>{},
+  setServiceTicketDispatcher = ()=>{},
+  getServiceTicketDetail = ()=>{},
+  getJobLocation = ()=>{},
+  getJobSite = ()=>{},
+}: Props) {
   let CustomIcon;
   const [showInfo, setShowInfo] = useState({show: false, inside: true});
-  const dispatch = useDispatch();
 
   const title = getJobTypesTitle(isTicket ? getJobTypesFromTicket(ticket) : getJobTypesFromJob(ticket));
 
   const note = ticket.description || ticket.note || 'N/A';
   const notes = note.length > 500 ? `${note.substr(0, 500)}...` : note;
-  const selected = useSelector((state: RootState) => state.map.ticketSelected);
-  const { tickets, stream } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets, stream: serviceTicket.stream}));
 
   useEffect(() => {
-    if(!stream){
+    if(!streamingTickets){
       localStorage.removeItem('afterCancelJob')
     }
-  }, [stream])
+  }, [streamingTickets])
   
 
   useEffect(() => {
@@ -107,8 +106,8 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
     }
   }
 
-  const openCreateJobModal = () => {  
-    dispatch(setModalDataAction({
+  const openCreateJobModal = () => {
+    const modalDataAction = {
       'data': {
         'job': {
           'customer': {
@@ -137,10 +136,8 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
 
       },
       'type': modalTypes.EDIT_JOB_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    }
+    openModalHandler(modalDataAction);
   };
 
   const openEditTicketModal = (ticket: any) => {
@@ -148,15 +145,9 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
       customerId: ticket.customer?._id,
       locationId: ticket.jobLocation?._id || ticket.jobLocation
     }
-    if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
-      dispatch(loadingJobSites());
-      dispatch(getJobSites(reqObj));
-    } else {
-      dispatch(clearJobSiteStore());
-    }
-    dispatch(getAllJobTypesAPI());
+    openEditTicketModalPrepDispatcher(reqObj)
     ticket.updateFlag = true;
-    dispatch(setModalDataAction({
+    const modalDataAction = {
       'data': {
         'modalTitle': 'Edit Service Ticket',
         'removeFooter': false,
@@ -217,18 +208,16 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
             }
             return ticket
           });
-          dispatch(setServiceTicket(updatedTickets));
+          setServiceTicketDispatcher(updatedTickets)
         }
       },
       'type': modalTypes.EDIT_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    };
+    openModalHandler(modalDataAction)
   }
 
   const openDetailJobModal = (job: any) => {
-    dispatch(setModalDataAction({
+    const modalDataAction = {
       'data': {
         job: job,
         modalTitle: '',
@@ -236,10 +225,8 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
         maxHeight: '100%',
       },
       'type': modalTypes.VIEW_JOB_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    };
+    openModalHandler(modalDataAction)
   };
 
   const openViewTicketModal = async(ticket: any) => {
@@ -252,41 +239,35 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
     } catch (e) {
       console.log(e);
     }
-    dispatch(setModalDataAction({
+    const modalDataAction = {
       'data': {
         'job': data,
         'modalTitle': '',
         'removeFooter': true,
       },
       'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    }
+    openModalHandler(modalDataAction);
   };
 
   const openViewJobRequestModal = async(jobRequest: any) => {
-    dispatch(
-      setModalDataAction({
-        data: {
-          jobRequest: jobRequest,
-          removeFooter: false,
-          maxHeight: '100%',
-          modalTitle: 'Job Request',
-        },
-        type: modalTypes.VIEW_JOB_REQUEST_MODAL,
-      })
-    );
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    const modalDataAction = {
+      data: {
+        jobRequest: jobRequest,
+        removeFooter: false,
+        maxHeight: '100%',
+        modalTitle: 'Job Request',
+      },
+      type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+    };
+    openModalHandler(modalDataAction);
   };
 
   const closeInfo = () => {
     if (showInfo.inside) {
       setShowInfo({show: false, inside: true});
     } else {
-      dispatch(setTicketSelected({_id: ''}));
+      dispatchUnselectTicket();
     }
   }
 
@@ -395,7 +376,7 @@ function BCMapMarker({classes, ticket, isTicket = false, id = ''}: Props) {
       {isTicket && ticket.customer?._id &&
         <div className={'button-wrapper-ticket'}>
           <div>
-            {ticket?.ticketId && <Button disabled={stream && !!localStorage.getItem('afterCancelJob')} onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>}
+            {ticket?.ticketId && <Button disabled={streamingTickets && !!localStorage.getItem('afterCancelJob')} onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>}
           </div>
           <div>
             <Button onClick={() => openCreateJobModal()}>Create Job</Button>

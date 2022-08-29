@@ -17,14 +17,19 @@ import {
   closeModalAction,
   openModalAction,
   setModalDataAction
-} from "../../../actions/bc-modal/bc-modal.action";
+} from "actions/bc-modal/bc-modal.action";
+import {
+  clearJobSiteStore,
+  getJobSites
+} from "actions/job-site/job-site.action";
+import {error as errorSnackBar} from "actions/snackbar/snackbar.action";
 import { modalTypes } from "../../../constants";
-import { getContacts } from "../../../api/contacts.api";
+import { getContacts } from "api/contacts.api";
 import { getJobRequestChat, postJobRequestChat } from 'api/chat.api';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import BCJobRequestWindow
   from "../../components/bc-job-request/window/bc-job-request-window";
-import {getJobLocationsAction} from "../../../actions/job-location/job-location.action";
+import {getJobLocationsAction} from "actions/job-location/job-location.action";
 import BCJobRequestWindowHeader
   from "../../components/bc-job-request/window/bc-job-request-header"
 import BCJobRequestRepairHeader
@@ -70,14 +75,18 @@ const initialJobRequestState = {
 };
 
 function BCViewJobRequestModal({
-                                       classes,
-                                       jobRequest = initialJobRequestState,
-                                     }: any): JSX.Element {
+  classes,
+  jobRequest = initialJobRequestState,
+}: any): JSX.Element {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { contacts } = useSelector((state: any) => state.contacts);
+  const { user }: any = useSelector(({ auth }: any) => auth);
   const customerContact =
     jobRequest.customerContact && contacts.find((contact: any) => contact.userId === jobRequest.customerContact._id)?.name;
+
+  const jobLocations = useSelector((state: any) => state.jobLocations.data);
+  const jobSites = useSelector((state: any) => state.jobSites.data);
 
   const [curTab, setCurTab] = useState(0);
   const [chatContent, setChatContent] = useState([]);
@@ -184,6 +193,17 @@ function BCViewJobRequestModal({
     setCurTab(newValue);
   };
 
+  const getJobSitesOnNewLocationHandler = (customerId: string, locationId: string) => {
+    dispatch(getJobSites({
+      'customerId': customerId,
+      'locationId': locationId,
+    }));
+  };
+
+  const dispatchClearJobSite = () => {
+    dispatch(clearJobSiteStore())
+  }
+
   const renderJobRequestContent = () => (
     <div hidden={curTab !== 0}>
       <BCJobRequestMap
@@ -192,6 +212,10 @@ function BCViewJobRequestModal({
         isChanging={changeRequest}
         newLocation={jobRequest.jobLocation}
         newSite={jobRequest.jobSite}
+        getJobSitesOnNewLocationHandler={getJobSitesOnNewLocationHandler}
+        dispatchClearJobSite={dispatchClearJobSite}
+        jobLocations={jobLocations}
+        jobSites={jobSites}
       />
       {jobRequest.type === 1 ?
         <BcJobRequestRepair jobRequest={jobRequest} />
@@ -268,7 +292,14 @@ function BCViewJobRequestModal({
     isChatLoading={isChatLoading}
     chatContent={chatContent}
     onSubmit={() => getChatContent(jobRequest._id)}
+    user={user}
+    errorDispatcher={errorDispatcher}
+    postJobRequestChat={postJobRequestChat}
   />
+
+  const errorDispatcher = (message:string) => {
+    dispatch(errorSnackBar(message))
+  }
 
   return (
     <DataContainer className={'new-modal-design'}>

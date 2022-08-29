@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar'
 import Alert from '@material-ui/lab/Alert'
-import { useSelector } from 'react-redux'
-import { SnackbarType } from '../../../reducers/snackbar.type'
-import { useSnackbar } from 'notistack';
-import { info, error } from '../../../actions/snackbar/snackbar.action';
-import { useDispatch } from 'react-redux';
 import './bc-snackbar.scss';
 import Button from '@material-ui/core/Button';
 
@@ -16,9 +11,9 @@ function BCSnackbar({
   topCenter,
   bottomRight,
   bottomLeft,
+  dispatchResetInfoSnackbar,
+  snackbarState: snackbar,
 }: any) {
-  const dispatch = useDispatch();
-  const { closeSnackbar } = useSnackbar();
 
   const position: SnackbarOrigin =
     topRight ? { vertical: "top", horizontal: "right" }
@@ -30,10 +25,10 @@ function BCSnackbar({
 
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const handleCloseSnackbar = () => {
-    dispatch(info(''));
+    dispatchResetInfoSnackbar();
     setOpenSnackbar(false);
   }
-  const snackbar = useSelector((state: any) => state.snackbar);
+
   useEffect(() => {
     if (snackbar.message) {
       setOpenSnackbar(true);

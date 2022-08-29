@@ -1,14 +1,50 @@
 import BCInvoiceForm from 'app/components/bc-shared-form/bc-shared-form';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { callCreateInvoiceAPI } from 'api/invoicing.api';
 import styles from '../invoices-list.styles';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
 import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-default-values';
 import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
+import { getCustomerDetailAction, resetCustomer, getCustomers } from 'actions/customer/customer.action';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { RootState } from 'reducers';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import { getAllSalesTaxAPI } from 'api/tax.api';
 
 function CreateInvoice({ classes }: any) {
+  const dispatch = useDispatch();
   const history = useHistory();
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
+  const customers = useSelector(({ customers }: any) => customers.data);
+  const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  const taxes = useSelector(({ tax }: any) => tax.data);
+
+  const getCustomersDispatcher = () => {
+    dispatch(getCustomers());
+  }
+
+  const getSharedFormInitialData = () => {
+    dispatch(loadInvoiceItems.fetch());
+    dispatch(getAllSalesTaxAPI());
+  }
+
+  const getCustomerDetailActionHandler = (customerId: string) => {
+    dispatch(getCustomerDetailAction({ customerId }));
+  }
+
+  const resetCustomerHandler = () => {
+    dispatch(resetCustomer());
+  }
+
+  const openPreviewFormModalHandler = (modalDataAction:any) => {
+    dispatch(setModalDataAction(modalDataAction));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 10);
+  }
+
   const columns = [
     {
       'Cell'({ row }: any) {
@@ -168,6 +204,15 @@ function CreateInvoice({ classes }: any) {
             onFormSubmit={handleFormSubmit}
             pageTitle={'New Invoice'}
             redirectUrl={redirectURL}
+            customer={customer}
+            getCustomerDetailActionHandler={getCustomerDetailActionHandler}
+            resetCustomerHandler={resetCustomerHandler}
+            openPreviewFormModalHandler={openPreviewFormModalHandler}
+            invoiceItems={invoiceItems}
+            taxes={taxes}
+            getSharedFormInitialData={getSharedFormInitialData}
+            customers={customers}
+            getCustomersDispatcher={getCustomersDispatcher}
           />
         </div>
       </div>

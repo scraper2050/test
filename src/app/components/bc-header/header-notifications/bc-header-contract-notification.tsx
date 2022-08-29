@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactComponent as AcceptedContract } from 'assets/img/contract-accepted.svg';
 import { ReactComponent as RejectedContract } from 'assets/img/contract-rejected.svg';
 import { ReactComponent as InvitationContract } from 'assets/img/contract-invitation.svg';
@@ -5,14 +6,9 @@ import { ReactComponent as CancelledContract } from 'assets/img/contract-cancell
 import { ReactComponent as FinishedContract } from 'assets/img/contract-finished.svg';
 
 import { MenuItem } from '@material-ui/core';
-import { NotificationItem } from '../bc-header-notification';
-import React from 'react';
+import { NotificationItemWithHandler, NotificationTypeTypes } from '../bc-header-notification';
 import { fromNow } from 'helpers/format';
-import { modalTypes } from '../../../../constants';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { NotificationTypeTypes } from 'reducers/notifications.types';
 
 
 const renderImage = (notificationType:string) => {
@@ -26,24 +22,9 @@ const renderImage = (notificationType:string) => {
   return images[notificationType];
 };
 
-export default function ContractNotification({ message, metadata, createdAt, readStatus, _id, notificationType } :NotificationItem) {
-  const dispatch = useDispatch();
+export default function ContractNotification({ message, metadata, createdAt, readStatus, _id, notificationType, openModalHandler } :NotificationItemWithHandler) {
   const openContractModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'removeFooter': false,
-        'maxHeight': '450px',
-        'height': '100%',
-        'message': message,
-        'contractId': metadata._id,
-        'notificationType': notificationType,
-        'notificationId': _id
-      },
-      'type': modalTypes.CONTRACT_VIEW_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    openModalHandler('ContractNotification', {message, notificationType}, _id, metadata)
   };
 
   const ContractMenuItem = styled(MenuItem)`

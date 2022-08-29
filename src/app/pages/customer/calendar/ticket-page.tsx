@@ -5,10 +5,21 @@ import styles from './calendar.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment";
+import {RootState} from "../../../../reducers";
 import CalendarHeader from "../../../components/bc-calendar/calendar-header";
 import BCMonth from "../../../components/bc-calendar/calnedar-month";
 import {BCEVENT} from "./calendar-types";
-import {getAllServiceTicketAPI} from "../../../../api/service-tickets.api";
+import {getAllServiceTicketAPI,getServiceTicketDetail} from "api/service-tickets.api";
+import {
+  clearSelectedEvent,
+  setSelectedEvent
+} from "actions/calendar/bc-calendar.action";
+import {
+  openModalAction,
+  setModalDataAction
+} from "actions/bc-modal/bc-modal.action";
+import {error} from "actions/snackbar/snackbar.action";
+import {modalTypes} from "../../../../constants";
 
 function TicketPage() {
   const dispatch = useDispatch();
@@ -16,6 +27,8 @@ function TicketPage() {
   const [currentTitle, setCurrentTitle] = useState('Customer');
   const [searchText, setSearchText] = useState('');
   const [events, setEvents] = useState<BCEVENT[]>([]);
+
+  const calendarState = useSelector((state: RootState) => state.calendar);
 
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
@@ -70,6 +83,51 @@ function TicketPage() {
     : events;
   }
 
+  const eventClickHandler = (isSelected:boolean, eventProps: any ) => {
+    dispatch(isSelected ? clearSelectedEvent() :
+      setSelectedEvent(eventProps)
+    )
+  }
+
+  const openJobModalHandler = (job:any) => {
+    dispatch(clearSelectedEvent());
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: '',
+        },
+        type: modalTypes.VIEW_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const openTicketModalHandler = (data:any, status:any, message:any) => {
+    dispatch(clearSelectedEvent());
+    if (status === 1) {
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': '',
+          'removeFooter': false,
+          'job': data,
+          'className': 'serviceTicketTitle',
+        },
+        'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      dispatch(error(message));
+    }
+  }
+
+
   return (
     <DataContainer id={'0'}>
       <CalendarHeader
@@ -81,7 +139,16 @@ function TicketPage() {
         searchLabel={'Search Tickets...'}
         onSearchChange={setSearchText}
       />
-      <BCMonth month={currentDate} isLoading={isLoading} events={filterEvents()}/>
+      <BCMonth
+        month={currentDate}
+        isLoading={isLoading}
+        events={filterEvents()}
+        eventClickHandler={eventClickHandler}
+        calendarState={calendarState}
+        openJobModalHandler={openJobModalHandler}
+        openTicketModalHandler={openTicketModalHandler}
+        getServiceTicketDetail={getServiceTicketDetail}
+      />
     </DataContainer>
   );
 }
