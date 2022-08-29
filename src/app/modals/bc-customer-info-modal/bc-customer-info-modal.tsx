@@ -677,6 +677,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                 <BCMapWithMarker
                   lang={positionValue.lang}
                   lat={positionValue.lat}
+                  reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
                 />
               </div>
             </Grid>

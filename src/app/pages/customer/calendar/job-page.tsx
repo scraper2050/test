@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {withStyles} from '@material-ui/core';
-import {getAllJobAPI, getAllJobsAPI} from 'api/job.api';
+import {getAllJobAPI} from 'api/job.api';
+import {getServiceTicketDetail} from "api/service-tickets.api";
 import styles from './calendar.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
 import moment from "moment";
+import {RootState} from "../../../../reducers";
 import CalendarHeader from "../../../components/bc-calendar/calendar-header";
 import BCMonth from "../../../components/bc-calendar/calnedar-month";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import {Job} from "../../../../actions/job/job.types";
 import {BCEVENT} from "./calendar-types";
-import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
+import {clearSelectedEvent, setSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 import {getJobType, getVendor} from "../../../../helpers/job";
 import BCJobFilter from "../../../components/bc-job-filter";
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../constants";
 
 function JobPage() {
   const dispatch = useDispatch();
@@ -23,6 +30,8 @@ function JobPage() {
   const [searchText, setSearchText] = useState('');
   const [events, setEvents] = useState<BCEVENT[]>([]);
   const [refresh, setRefresh] = useState(true);
+
+  const calendarState = useSelector((state: RootState) => state.calendar);
 
   const getTitle = (job: any, type: string) => {
     switch (type) {
@@ -84,6 +93,50 @@ function JobPage() {
     setEvents(eventsTemp);
   }
 
+  const eventClickHandler = (isSelected:boolean, eventProps: any ) => {
+    dispatch(isSelected ? clearSelectedEvent() :
+      setSelectedEvent(eventProps)
+    )
+  }
+
+  const openJobModalHandler = (job:any) => {
+    dispatch(clearSelectedEvent());
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: job,
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: '',
+        },
+        type: modalTypes.VIEW_JOB_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const openTicketModalHandler = (data:any, status:any, message:any) => {
+    dispatch(clearSelectedEvent());
+    if (status === 1) {
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': '',
+          'removeFooter': false,
+          'job': data,
+          'className': 'serviceTicketTitle',
+        },
+        'type': modalTypes.VIEW_SERVICE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      dispatch(error(message));
+    }
+  }
+
   return (
     <DataContainer id={'0'}>
       <CalendarHeader
@@ -97,7 +150,16 @@ function JobPage() {
       >
         <BCJobFilter onStatusChange={setCurrentStatus} />
       </CalendarHeader>
-      <BCMonth month={currentDate} isLoading={refresh} events={filterEvents()}/>
+      <BCMonth
+        month={currentDate}
+        isLoading={refresh}
+        events={filterEvents()}
+        eventClickHandler={eventClickHandler}
+        calendarState={calendarState}
+        openJobModalHandler={openJobModalHandler}
+        openTicketModalHandler={openTicketModalHandler}
+        getServiceTicketDetail={getServiceTicketDetail}
+      />
     </DataContainer>
   );
 }

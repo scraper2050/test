@@ -1,3 +1,4 @@
+// TODO this component is never used, should we get rid of it?
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, createStyles, withStyles, Grid, Paper } from "@material-ui/core";
@@ -47,7 +48,7 @@ function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceStyles = invoicePageStyles();
   let history = useHistory();
-  let { invoice } = useParams();
+  let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
 
@@ -81,7 +82,7 @@ function ViewInvoice({ classes, theme }: any) {
   return (
     <MainContainer>
       <PageContainer>
-        <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/>
+        {/* <BCEditInvoice invoiceData={invoiceDetail} isOld={invoice}/> */}
       </PageContainer>
     </MainContainer>
   )

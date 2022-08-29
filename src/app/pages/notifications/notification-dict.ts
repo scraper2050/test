@@ -6,15 +6,15 @@ import { openContractModal, openDetailJobModal, openDetailTicketModal, openJobRe
 export const getNotificationValues = (notificationType: string, notification:Notification) => {
   const notificationTypes:any = {
     [NotificationTypeTypes.SERVICE_TICKET_CREATED]: {
-      'details': notification.metadata.ticketId,
+      'details': notification.metadata?.ticketId,
       'typeText': 'Service Ticket'
     },
     [NotificationTypeTypes.JOB_REQUEST_CREATED]: {
-      'details': notification.message?.body?.split(':')[1] || '',
+      'details': notification.metadata?.requestId,
       'typeText': 'Job Request'
     },
     [NotificationTypeTypes.JOB_RESCHEDULED]: {
-      'details': notification.metadata.jobId,
+      'details': notification.metadata?.jobId,
       'typeText': 'Job Rescheduled'
     },
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: {
@@ -36,9 +36,13 @@ export const getNotificationValues = (notificationType: string, notification:Not
     [NotificationTypeTypes.CONTRACT_FINISHED]: {
       'details': notification.message?.body,
       'typeText': 'Contract Finished,'
-    }
+    },
+    [NotificationTypeTypes.NEW_CHAT]: {
+      'details': notification.message?.title,
+      'typeText': 'New Job Request Comment'
+    },
   };
-
+  
   return notificationTypes[notificationType] || '';
 };
 
@@ -54,6 +58,6 @@ export const getNotificationMethods = (dispatch:Dispatch, notificationType: stri
     [NotificationTypeTypes.CONTRACT_FINISHED]: () => openContractModal(dispatch, notification)
   };
 
-  return notificationTypes[notificationType];
+  return notificationTypes[notificationType] || (() => null);
 };
 

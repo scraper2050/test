@@ -2,13 +2,8 @@ import BCTableContainer from '../../bc-table-container/bc-table-container';
 import React, { Dispatch, useEffect, useState } from 'react';
 import styles from '../bc-shared-form.styles';
 import { Button, InputBase, withStyles } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
-import { RootState } from 'reducers';
-import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
-import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import { customer } from 'testData';
 
 
 interface Props {
@@ -23,6 +18,9 @@ interface Props {
     itemTier: any;
     isCustomPrice: boolean;
     edit?: boolean;
+    invoiceItems: any;
+    taxes: any;
+    getSharedFormInitialData: () => void;
 }
 
 
@@ -36,19 +34,20 @@ function SharedFormItemsContainer({ classes,
   items,
   setItems,
   itemTier,
-  isCustomPrice }:Props) {
-  const dispatch = useDispatch();
-  const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  isCustomPrice ,
+  invoiceItems,
+  taxes,
+  getSharedFormInitialData,
+}:Props) {
   const [columns, setColumns] = useState([...columnSchema]);
   const [refereshColumns, setRefreshColumns] = useState(false);
-  const taxes = useSelector(({ tax }: any) => tax.data);
 
   const handleItemChange = (value: string, index:number, fieldName:string) => {
     const tempArray = [...items];
     if (fieldName === 'name') {
       const item = invoiceItems?.find((item:any) => item.name === value);
       if (itemTier?._id) {
-        const customerTier = item?.tiers.find(({ tier }) => tier._id === itemTier._id);
+        const customerTier = item?.tiers.find(({ tier }:any) => tier._id === itemTier._id);
         tempArray[index].price = customerTier.charge || 0;
       } else {
         tempArray[index].price = item?.charges || 0;
@@ -243,8 +242,7 @@ function SharedFormItemsContainer({ classes,
 
 
   useEffect(() => {
-    dispatch(loadInvoiceItems.fetch());
-    dispatch(getAllSalesTaxAPI());
+    getSharedFormInitialData();
   }, []);
 
   if (!invoiceItems.length) {

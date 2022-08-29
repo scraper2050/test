@@ -12,9 +12,6 @@ import BCCircularLoader from "../../bc-circular-loader/bc-circular-loader";
 import CancelIcon from "@material-ui/icons/Cancel";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import SendIcon from "@material-ui/icons/Send";
-import {getJobRequestChat, postJobRequestChat} from "../../../../api/chat.api";
-import {error as SnackBarError} from "../../../../actions/snackbar/snackbar.action";
-import {useDispatch, useSelector} from "react-redux";
 import BCChatItemFriend from "./bc-chat-item-friend";
 import BCChatItemUser from "./bc-chat-item-user";
 import styled from "styled-components";
@@ -27,6 +24,9 @@ interface PROPS {
   isChatLoading: boolean;
   chatContent: any[];
   onSubmit: () => void;
+  user: any;
+  errorDispatcher: (message:string) => void;
+  postJobRequestChat: (id: string, paramObject: FormData) => Promise<any>;
 }
 
 function BCChat({
@@ -36,9 +36,10 @@ function BCChat({
   isChatLoading,
   chatContent,
   onSubmit,
+  user,
+  errorDispatcher,
+  postJobRequestChat,
 }: PROPS): JSX.Element {
-  const dispatch = useDispatch();
-  const { user }: any = useSelector(({ auth }: any) => auth);
 
   const [images, setImages] = useState<any>([]);
   const [input, setInput] = useState('');
@@ -79,12 +80,12 @@ function BCChat({
           inputFileRef.current.value = null;
         } else {
           console.log(result.message);
-          dispatch(SnackBarError(`Something went wrong when sending chat`));
+          errorDispatcher(`Something went wrong when sending chat`);
         }
         setIsSendingMessage(false);
       } catch (error) {
         console.log(error);
-        dispatch(SnackBarError(`Something went wrong when sending chat`));
+        errorDispatcher(`Something went wrong when sending chat`);
         setIsSendingMessage(false);
       }
     }

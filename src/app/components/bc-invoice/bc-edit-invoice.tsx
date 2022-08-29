@@ -1,5 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {useSelector} from 'react-redux';
+import React, {useMemo, useState} from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -33,7 +32,6 @@ import classNames from 'classnames';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {PageHeader} from '../../pages/customer/job-reports/view-invoice-edit';
 import {useHistory} from 'react-router-dom';
-import {useDispatch} from "react-redux";
 import {blue} from '@material-ui/core/colors';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import {KeyboardDatePicker} from '@material-ui/pickers';
@@ -42,13 +40,7 @@ import EventIcon from '@material-ui/icons/Event';
 import {TextFieldProps} from '@material-ui/core/TextField';
 import BCInvoiceItemsTableRow from './bc-invoice-table-row';
 import AddIcon from '@material-ui/icons/Add';
-import {callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI} from "../../../api/invoicing.api";
 import {CSChip} from "../../../helpers/custom";
-import {resetEmailState, sendEmailAction} from "../../../actions/email/email.action";
-import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
-import {openModalAction, setModalDataAction} from "../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../constants";
-import {error as errorSnackBar, success} from "../../../actions/snackbar/snackbar.action";
 import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 
@@ -466,6 +458,15 @@ interface Props {
   classes?: any;
   invoiceData?: any;
   isOld?: boolean;
+  paymentTerms: any;
+  customer: any;
+  customersData: any;
+  taxes: any;
+  showSendInvoiceModalHandler: (invoiceId:string, customerId:string) => void;
+  updateInvoiceHandler: (data:any) => Promise<any>;
+  createInvoiceHandler: (data:any) => Promise<any>;
+  voidInvoiceHandler: (invoiceId:string) => void;
+  getItems: (includeDiscountItems?: boolean) => Promise<any>;
 }
 
 const InvoiceValidationSchema = Yup.object().shape({
@@ -491,12 +492,24 @@ const InvoiceValidationSchema = Yup.object().shape({
     .required('Select a customer'),
 });
 
-function BCEditInvoice({classes, invoiceData, isOld}: Props) {
+function BCEditInvoice({
+  classes,
+  invoiceData,
+  isOld,
+  paymentTerms,
+  customer,
+  customersData: customers,
+  taxes,
+  showSendInvoiceModalHandler,
+  updateInvoiceHandler,
+  createInvoiceHandler,
+  voidInvoiceHandler,
+  getItems,
+}: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = useInvoiceTableStyles();
 
   const history = useHistory();
-  const dispatch = useDispatch();
   const simplifiedItems = invoiceData.items.map((item: any) => {
     const newItem = {...item.item, ...item};
     delete newItem.item;
@@ -505,8 +518,6 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   })
   const [invoiceItems, setInvoiceItems] = useState(simplifiedItems);
 
-  const {'data': paymentTerms, isLoading: loadingPaymentTerms, done, updating, error} = useSelector(({paymentTerms}: any) => paymentTerms);
-  const {customerObj: customer, data: customers} = useSelector(({ customers }:any) => customers);
   const { itemTier, isCustomPrice, paymentTerm: customerPaymentTerm } = useMemo(() => customer, [customer]);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [duedatePickerOpen, setDueDatePickerOpen] = useState(false);
@@ -535,153 +546,20 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
   }) : null;
   serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
 
-  const sendInvoice = () => {
-    dispatch(sendEmailAction.fetch({ 'email': customer?.info?.email,
-      'id': invoiceData._id,
-      'type': 'invoice'
-    }));
-  };
-
   const showSendInvoiceModal = async(invoiceId: string, customerId: string) => {
-    try {
-      const response = await getInvoiceEmailTemplate(invoiceId || invoiceData._id);
-      const {emailTemplate: emailDefault, status, message} = response.data;
-      if (status === 1) {
-        dispatch(setModalDataAction({
-          data: {
-              'modalTitle': 'Send this invoice',
-              'customer': customer?.profile?.displayName,
-              'customerEmail': emailDefault?.to || customer?.info?.email,
-              'handleClick': sendInvoice,
-              'id': invoiceId || invoiceData._id,
-              'typeText': 'Invoice',
-              'className': 'wideModalTitle',
-              emailDefault,
-              customerId: customerId || customer._id
-          },
-          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-        }));
-        dispatch(resetEmailState());
-        setTimeout(() => {
-          dispatch(openModalAction());
-        }, 200);
-      } else {
-        dispatch(errorSnackBar(message));
-      }
-    } catch (e) {
-      dispatch(errorSnackBar('Something went wrong. Please try again'));
-      console.log(e);
-    }
+    showSendInvoiceModalHandler(invoiceId || invoiceData._id, customerId);
   }
 
   const updateInvoice = (data: any) => {
-    return new Promise((resolve, reject) => {
-      const params: any = {
-        invoiceId: data.invoice_id,
-        issuedDate: new Date(data.invoice_date).toISOString(),
-        dueDate: new Date(data.due_date).toISOString(),
-        paymentTermId: data.paymentTerm,
-        note: data.note,
-        isDraft: data.isDraft,
-        items: JSON.stringify(data.items.map((o: any) => {
-          const item: any ={
-            description: o.description ?? '',
-            price: parseFloat(o.price),
-            quantity: parseInt(o.quantity),
-            tax: parseFloat(o.tax) ?? 0,
-            isFixed: o.isFixed,
-          }
-          if (o._id)
-            item.item = o._id;
-          else
-            item.name = o.name;
-          return item;
-        })),
-        charges: 0,
-      }
-      if (data.customer_po) params.customerPO = data.customer_po;
-
-      updateInvoiceAPI(params).then((response: any) => {
-        dispatch(success('Invoice Updated Successfully'));
-        history.push(`/main/invoicing/view/${data.invoice_id}`);
-        return resolve(response);
-      })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    return updateInvoiceHandler(data)
   };
 
   const createInvoice = (data: any) => {
-    return new Promise((resolve, reject) => {
-      const params: any = {
-        invoiceNumber: data.invoiceId,
-        issueDate: data.invoice_date,
-        dueDate: data.due_date,
-        paymentTermId: data.paymentTerm,
-        note: data.note,
-        isDraft: data.isDraft,
-        customerId: data.customer._id,
-        items: JSON.stringify(data.items.map((o: any) => {
-          const item: any ={
-            description: o.description ?? '',
-            price: parseFloat(o.price),
-            quantity: parseInt(o.quantity),
-            tax: parseFloat(o.tax) ?? 0,
-            isFixed: o.isFixed,
-          }
-          if (o._id)
-            item.item = o._id;
-          else
-            item.name = o.name;
-          return item;
-        })),
-        charges: 0,
-      }
-      if (data.customer_po) params.customerPO = data.customer_po;
-
-      callCreateInvoiceAPI(params).then((response: any) => {
-        dispatch(success('Invoice Created Successfully'));
-        history.goBack();
-        return resolve(response);
-      })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
+    return createInvoiceHandler(data)
   };
 
   const handleVoidInvoice = () => {
-    dispatch(
-      setModalDataAction({
-        'data': {
-          'data': {
-            handleOnConfirm: async () => {
-              try {
-                const res:any = await voidInvoiceAPI({invoiceId: invoiceData._id})
-                if(res.status === 1){
-                  dispatch(success(res.message));
-                  history.push({
-                    'pathname': `/main/invoicing/invoices-list`,
-                  });
-                } else {
-                  dispatch(errorSnackBar(res.message));
-                }
-              } catch (error) {
-                console.log(error);
-                dispatch(errorSnackBar(`Something went wrong`))
-              }
-            }
-          },
-          'modalTitle': '',
-          'removeFooter': false
-        },
-        type: modalTypes.CONFIRM_VOID_INVOICE_MODAL,
-      })
-    );
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    voidInvoiceHandler(invoiceData._id)
   }
 
   const handleFormSubmit = (data: any) => {
@@ -1208,6 +1086,8 @@ function BCEditInvoice({classes, invoiceData, isOld}: Props) {
                     }}
                     values={values}
                     errors={errors}
+                    taxes={taxes}
+                    getItems={getItems}
                   />
 
                   <div className={invoiceTableStyle.itemsTableActions}>

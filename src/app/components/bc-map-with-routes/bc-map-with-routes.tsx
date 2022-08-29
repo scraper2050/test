@@ -1,4 +1,3 @@
-import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
 import styles from './bc-map-with-routes.style';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,13 +8,13 @@ import './bc-map-with-routes.scss';
 import {JobRoute} from "../../../actions/job-routes/job-route.types";
 import BCMapMarker from "../bc-map-marker/bc-map-marker";
 import {DEFAULT_COORD} from "../../../utils/constants";
-import {CompanyProfileStateType} from "../../../actions/user/user.types";
-import {useSelector} from "react-redux";
 
 interface BCMapWithMarkerListProps {
-  classes: any,
-  routes: JobRoute[],
-  showPins?: boolean
+  reactAppGoogleKeyFromConfig: string;
+  classes: any;
+  routes: JobRoute[];
+  showPins?: boolean;
+  coordinates: any;
 }
 
 interface MarkerPosition {
@@ -44,10 +43,9 @@ const getColor = (str: string) => {
 }
 
 
-function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMarkerListProps) {
+function BCMapWithRoutes({ reactAppGoogleKeyFromConfig, classes, routes = [], showPins = false, coordinates }: BCMapWithMarkerListProps) {
   const [map, setMap] = useState<any>(null);
   const [maps, setMaps] = useState<any>(null);
-  const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const lines = useRef<any[]>([]);
 
   const routeData = routes.map((jobRoute: JobRoute, index) => {
@@ -129,7 +127,7 @@ function BCMapWithRoutes({ classes, routes = [], showPins = false }: BCMapWithMa
 
   return (
     <GoogleMapReact
-      bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
+      bootstrapURLKeys={{ 'key': reactAppGoogleKeyFromConfig }}
       center={{ 'lat': centerLat,
         'lng': centerLng }}
       defaultZoom={11}
