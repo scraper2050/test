@@ -79,7 +79,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       setIsLoading(true);
       setAllTickets([]);
       tempRefTicket.current = [];
-      const socket = io(`${Config.socketSever}`, {
+      const socket = io(`${Config.socketServer}`, {
         'extraHeaders': { 'Authorization': token }
       });
   
