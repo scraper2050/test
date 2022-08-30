@@ -77,15 +77,23 @@ function App() {
         'name': user.profile.displayName
       });
 
-      const socket = io(`${Config.socketSever}`, {
+      const socket = io(`${Config.socketServer}`, {
         'extraHeaders': { 'Authorization': token }
       });
       socket.on(SocketMessage.CREATENOTIFICATION, data => {
         dispatch(pushNotification(data));
       });
 
+      const customerSocket = io(`${Config.customerSocketServer}`, {
+        'extraHeaders': { 'Authorization': token }
+      });
+      customerSocket.on(SocketMessage.CREATENOTIFICATION, data => {
+        dispatch(pushNotification(data));
+      });
+
       return () => {
         socket.close();
+        customerSocket.close();
       };
     }
   }, [token]);
