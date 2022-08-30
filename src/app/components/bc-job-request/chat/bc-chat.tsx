@@ -1,13 +1,10 @@
 import {
   Box,
-  Button,
-  Grid, InputBase,
+  InputBase,
   withStyles
 } from '@material-ui/core';
 import React, {useEffect, useRef, useState} from 'react';
 import styles from './bc-chat.styles';
-import {ExpandLess} from "@material-ui/icons";
-import {formatDatTimelll} from "../../../../helpers/format";
 import BCCircularLoader from "../../bc-circular-loader/bc-circular-loader";
 import CancelIcon from "@material-ui/icons/Cancel";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
@@ -101,9 +98,9 @@ function BCChat({
 
   const renderChatContent = (item: any, idx:number, items:any[]) => {
     if (item.user._id !== user._id ) {
-      return <BCChatItemFriend item={item} idx={idx} totalItemsCount={items.length} />
+      return <BCChatItemFriend key={item._id} item={item} idx={idx} totalItemsCount={items.length} />
     } else {
-      return <BCChatItemUser item={item} idx={idx} totalItemsCount={items.length} />
+      return <BCChatItemUser key={item._id} item={item} idx={idx} totalItemsCount={items.length} />
     }
   }
 
@@ -147,9 +144,16 @@ function BCChat({
         </Box>
       </div>
       <div className={classes.inputContainer} >
-        <InputBaseContainer>
-          <InputBase value={input} id={'chat-text-input'} onChange={handleChange} multiline={true} className={classes.textInput} placeholder="Write a message..." onKeyUp={handleKeyUp} fullWidth/>
-        </InputBaseContainer>
+          <InputBase
+            value={input}
+            id={'chat-text-input'}
+            onChange={handleChange}
+            multiline={true}
+            className={classes.textInput}
+            placeholder="Write a message..."
+            fullWidth
+            rowsMax={3}
+          />
       </div>
       <div className={classes.sendButton}>
         <Box onClick={handleSubmit}>
@@ -172,10 +176,8 @@ const InputBaseContainer = styled.div`
 
 .MuiInputBase-inputMultiline {
   font-size: 15px;
-  margin-left: -5px;
-  height:70px !important;
+  height:100%;
   overflow: hidden auto !important;
-  margin-top:15px;
   color:#333333
  }
 
