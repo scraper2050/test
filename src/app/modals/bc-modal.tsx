@@ -653,6 +653,7 @@ function BCModal() {
         setComponent(<BcPayrollPaymentRecordModal
           payroll={data.payroll}
           payment={data.payment}
+          advancePayment={data.advancePayment}
           dateRange={data.dateRange}
         />);
         break;

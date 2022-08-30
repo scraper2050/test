@@ -1,3 +1,4 @@
+// TODO this component is never used, should we get rid of it?
 import * as CONSTANTS from "../../../constants";
 import BCSubHeader from "./../bc-sub-header/bc-sub-header";
 import BCToolBarSearchInput from "./../bc-toolbar-search-input/bc-toolbar-search-input";

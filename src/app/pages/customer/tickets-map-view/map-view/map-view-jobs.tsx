@@ -1,3 +1,4 @@
+import Config from 'config';
 import React, {useEffect, useState} from 'react';
 import { Grid, withStyles } from '@material-ui/core';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
@@ -13,6 +14,10 @@ import {
   setCurrentPageSize,
   setKeyword,
 } from "actions/job/job.action";
+import {RootState} from "reducers";
+import {CompanyProfileStateType} from "actions/user/user.types";
+import {setTicketSelected} from "actions/map/map.actions";
+import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
 
 interface Props {
   classes: any;
@@ -29,6 +34,11 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       refresh: jobState.refresh
     })
   );
+  const { streaming: streamingTickets } = useSelector(({ serviceTicket }: any) => ({
+    streaming: serviceTicket.stream,
+  }));
+  const selected = useSelector((state: RootState) => state.map.ticketSelected);
+  const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
 
   const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState('0');
@@ -98,6 +108,17 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
     setFilteredJobs(filterScheduledJobs(jobs));
   }, [jobs, selectedDate, filterJobs])
 
+  const dispatchUnselectTicket = () => {
+    dispatch(setTicketSelected({_id: ''}));
+  }
+
+  const openModalHandler = (modalDataAction: any) => {
+    dispatch(setModalDataAction(modalDataAction));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   return (
     <Grid
       container
@@ -111,7 +132,13 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       >
         {
           <MemoizedMap
+            reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
             list={filteredJobs}
+            streamingTickets={streamingTickets}
+            selected={selected}
+            coordinates={coordinates}
+            dispatchUnselectTicket={dispatchUnselectTicket}
+            openModalHandler={openModalHandler}
           />
         }
       </Grid>

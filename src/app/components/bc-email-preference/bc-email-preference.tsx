@@ -6,17 +6,14 @@ import {
   Box, Grid,
   TextField,
   InputLabel,
-  Fab,
   Checkbox
 } from "@material-ui/core";
-import { useDispatch } from 'react-redux';
 import { Form, Formik } from "formik";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {CSButton} from "../../../helpers/custom";
 
 
 function BCAdminProfile({ classes, initialValues, apply }: any) {
-  const dispatch = useDispatch();
   const [daily, setDaily] = useState(initialValues.emailPreferences === 1 ? true : false);
   const [disabled, setDisabled] = useState(true);
 

@@ -5,17 +5,9 @@ import {
 } from "../../../../helpers/format";
 import {IconButton} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../../reducers";
-import {clearSelectedEvent} from "../../../../actions/calendar/bc-calendar.action";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
 import {statusReference} from "../../../../helpers/contants";
 import BCJobStatus from "../../bc-job-status";
-import {
-  openModalAction,
-  setModalDataAction
-} from "../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -54,9 +46,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BCJobCard() {
-  const dispatch = useDispatch();
-  const { data } = useSelector((state: RootState) => state.calendar);
+function BCJobCard({calendarState, openJobModalHandler}:any) {
+  const { data } = calendarState;
   const defaultClasses = useStyles();
 
   if (!data) return null;
@@ -76,21 +67,7 @@ function BCJobCard() {
   const StatusIcon = status.icon;
 
   const openDetailJobModal = (job: any) => {
-    dispatch(clearSelectedEvent());
-    dispatch(
-      setModalDataAction({
-        data: {
-          job: job,
-          removeFooter: false,
-          maxHeight: '100%',
-          modalTitle: '',
-        },
-        type: modalTypes.VIEW_JOB_MODAL,
-      })
-    );
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
+    openJobModalHandler(job)
   };
 
   return (

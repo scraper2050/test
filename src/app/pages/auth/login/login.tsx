@@ -26,8 +26,6 @@ import {
   openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import BCModal from '../../../modals/bc-modal';
-import BCSnackbar from '../../../components/bc-snackbar/bc-snackbar';
 import {error, info} from 'actions/snackbar/snackbar.action';
 import AuthTemplatePage from "../template";
 
@@ -394,6 +392,7 @@ function LoginPage({
             <Grid
               item
               style={{display: 'flex'}}
+              container
               justify='flex-end'
               md={6}
               xs={12}>

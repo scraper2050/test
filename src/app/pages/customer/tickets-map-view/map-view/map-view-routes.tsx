@@ -1,18 +1,22 @@
+import Config from 'config';
 import React, {useEffect, useState} from 'react';
+import { useSelector } from 'react-redux';
 import { Grid, withStyles } from '@material-ui/core';
 import MemoizedMap from 'app/components/bc-map-with-routes/bc-map-with-routes';
 import '../ticket-map-view.scss';
 import styles from '../ticket-map-view.style';
 import SidebarRoutes from "../sidebar/sidebar-route";
-import {JobRoute} from "../../../../../actions/job-routes/job-route.types";
+import {JobRoute} from "actions/job-routes/job-route.types";
 import moment from "moment";
-import {getAllRoutes} from "../../../../../api/job-routes.api";
-
+import {getAllRoutes} from "api/job-routes.api";
+import {CompanyProfileStateType} from "actions/user/user.types";
 function MapViewRoutesScreen({selectedDate, filter: routeFilter}: any) {
   const [allRoutes, setAllRoutes] = useState<JobRoute[]>([]);
   const [routes, setRoutes] = useState<JobRoute[]>([]);
   const [mapRoutes, setMapRoutes] = useState<JobRoute[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
 
   const filterRoutes = (routes: any) => {
     return routes.filter((route: any) => {
@@ -74,7 +78,9 @@ function MapViewRoutesScreen({selectedDate, filter: routeFilter}: any) {
       >
         {
           <MemoizedMap
+            reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
             routes={mapRoutes}
+            coordinates={coordinates}
           />
         }
       </Grid>

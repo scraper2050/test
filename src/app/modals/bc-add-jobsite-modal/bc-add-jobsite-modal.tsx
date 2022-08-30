@@ -451,6 +451,7 @@ function BCAddJobSiteModal({ classes, jobSiteInfo, ticket }: any) {
                             <BCMapWithMarker
                               lang={positionValue.long}
                               lat={positionValue.lat}
+                              reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
                             />
                           </div>
                         </div>

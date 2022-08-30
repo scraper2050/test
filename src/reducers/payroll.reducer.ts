@@ -10,6 +10,7 @@ const initialPayroll: PayrollState = {
   loading: false,
   contractors: [],
   payments: [],
+  refresh: false,
 };
 
 export const PayrollReducer: Reducer<any> = (state = initialPayroll, {type, payload}) => {
@@ -24,6 +25,11 @@ export const PayrollReducer: Reducer<any> = (state = initialPayroll, {type, payl
         ...state,
         contractors: payload,
         loading: false,
+      };
+    case (types.REFRESH_CONTRACTOR_PAYMENT):
+      return {
+        ...state,
+        refresh: payload,
       };
     case (types.SET_CONTRACTOR):
     case (types.REMOVE_CONTRACTOR):

@@ -8,6 +8,7 @@ export const types = {
   'SET_CONTRACTOR_PAYMENTS': 'setContractorPayments',
   'UPDATE_CONTRACTOR_PAYMENT': 'updateContractorPayment',
   'REMOVE_CONTRACTOR_PAYMENT': 'removeContractorPayment',
+  'REFRESH_CONTRACTOR_PAYMENT': 'refreshContractorPayment',
 };
 
 export interface Contractor {
@@ -63,6 +64,7 @@ export interface PayrollState {
   readonly error?: string
   //readonly response?: string
   readonly contractorObj?: Contractor | {}
+  readonly refresh?: boolean
 }
 
 export enum PayrollActionType {

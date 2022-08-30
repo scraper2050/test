@@ -6,7 +6,6 @@ import { useHistory, useLocation } from "react-router-dom";
 import classnames from "classnames";
 import Drawer from "@material-ui/core/Drawer";
 import AvatarImg from "../../../assets/img/user_avatar.png";
-import { connect, useDispatch, useSelector } from "react-redux";
 import Avatar from '@material-ui/core/Avatar';
 import Tooltip from '@material-ui/core/Tooltip';
 import styled from "styled-components";
@@ -16,10 +15,6 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
 import MapIcon from '@material-ui/icons/Map';
 import DescriptionIcon from '@material-ui/icons/Description';
-import { getCompanyProfileAction } from "../../../actions/user/user.action";
-import { showNotificationPopup } from "actions/notifications/notifications.action";
-import SearchIcon from '@material-ui/icons/Search';
-import { logoutAction, resetStore } from "../../../actions/auth/auth.action";
 import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -42,7 +37,6 @@ import BusinessIcon from '@material-ui/icons/Business';
 import SubtitlesIcon from '@material-ui/icons/Subtitles';
 import BuildIcon from '@material-ui/icons/Build';
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
-import SettingsIcon from '@material-ui/icons/Settings';
 import WorkIcon from '@material-ui/icons/Work';
 import GroupIcon from '@material-ui/icons/Group';
 import ReportIcon from '@material-ui/icons/Report';
@@ -68,29 +62,15 @@ import { ReactComponent as AmountIcon } from 'assets/img/icons/sidebar/reports/a
 import { ReactComponent as PayrollIcon } from 'assets/img/icons/sidebar/reports/payroll.svg'
 
 interface BCSidebarProps {
-  token: string;
   user: any;
   classes: any;
   open: boolean;
+  profileState: CompanyProfileStateType;
+  numberOfJobRequest: number;
+  showNotificationDetails: (state?:boolean) => void;
+  getCompanyProfile: (companyId:string) => void;
+  logoutAndReset: () => void;
 }
-
-function a11yProps(index: any) {
-  return {
-    'id': `scrollable-auto-tab-${index}`,
-    'aria-controls': `scrollable-auto-tabpanel-${index}`
-  };
-}
-
-const tabStyles = makeStyles(theme => ({
-  'root': {
-    'flexGrow': 1,
-    'width': '100%',
-    'textTransform': 'capitalize'
-  },
-  'link': {
-    'textTransform': 'none'
-  }
-}));
 
 const useAvatarStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -164,15 +144,21 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
-  const dispatch = useDispatch();
+function BCAdminSidebar({
+    user,
+    classes,
+    open,
+    profileState,
+    numberOfJobRequest,
+    showNotificationDetails,
+    getCompanyProfile,
+    logoutAndReset,
+  }: BCSidebarProps) {
   const history = useHistory();
   const location = useLocation();
   const pathName = location.pathname;
   const nestedRouteKey = localStorage.getItem('nestedRouteKey');
-  const { numberOfJobRequest } = useSelector(({ jobRequests }: any) => ({
-    numberOfJobRequest: jobRequests.numberOfJobRequest
-  }));
+
   const LINK_DATA = [
     {
       'label': 'Customer List',
@@ -385,7 +371,6 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
   const sidebarStyles = useSidebarStyles();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
 
@@ -397,11 +382,11 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
   }, [location, isMobile]);
 
   useEffect(() => {
-    if (user?.company) dispatch(getCompanyProfileAction(user?.company as string));
+    if (user?.company) getCompanyProfile(user?.company as string);
   }, [user]);
 
   const onClickLink = (strLink: string): void => {
-    dispatch(showNotificationPopup(false));
+    showNotificationDetails(false)
     history.push(strLink);
   };
 
@@ -424,8 +409,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
 
   const handleClickLogout = (): void => {
     handleClose();
-    dispatch(logoutAction());
-    dispatch(resetStore());
+    logoutAndReset();
     removeUserFromLocalStorage();
     history.push('/');
   };
@@ -495,7 +479,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
                     expanded: sidebarStyles.minimumMargin,
                     expandIcon: sidebarStyles.expandIcon,
                   }}>
-                  {group[0].group}
+                  {open && group[0].group}
                 </AccordionSummary>
                 <AccordionDetails className={sidebarStyles.accordionDetails}>
                   <ul>
@@ -515,7 +499,7 @@ function BCAdminSidebar({ token, user, classes, open }: BCSidebarProps) {
                                 pathName === `${item.link}/${nestedRouteKey}`
                               }>
                               {item.icon && item.icon}
-                              <span className='menuLabel'>{item.label}</span>
+                              {open && <span className='menuLabel'>{item.label}</span>}
                             </StyledListItem>
                           </Tooltip>
                         </li>
@@ -604,18 +588,7 @@ const StyledFooterItem = styled(ListItem)`
   };
 `;
 
-
-const mapStateToProps = (state: {
-  auth: {
-    token: string;
-    user: any;
-  };
-}) => ({
-  'token': state.auth.token,
-  'user': state.auth.user
-});
-
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(connect(mapStateToProps)(BCAdminSidebar));
+)(BCAdminSidebar);

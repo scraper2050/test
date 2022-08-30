@@ -1,24 +1,20 @@
 import React, {useState} from 'react';
-import { modalTypes } from '../../../constants';
-import { useDispatch } from 'react-redux';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { resetEmailState } from 'actions/email/email.action';
 import BCCircularLoader from "../bc-circular-loader/bc-circular-loader";
-import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
-import {error as errorSnackBar, error} from "../../../actions/snackbar/snackbar.action";
 
 
 interface EmailButtonProps {
     data: any,
     Component: any,
     showLoader?: boolean,
+    errorDispatcher: (message:string) => void;
+    draftInvoiceHandler: (data:any, emailDefault:string) => void;
+    invoiceHandler: (data:any, emailDefault:string) => void;
+    oldJobReportHandler: (data:any) => void;
+    getInvoiceEmailTemplate: (invoiceId: string) => Promise<any>;
 }
 
-
-export default function EmailButton({ data, Component, showLoader = true }: EmailButtonProps) {
+export default function EmailButton({ data, Component, showLoader = true, errorDispatcher, draftInvoiceHandler, invoiceHandler, oldJobReportHandler, getInvoiceEmailTemplate }: EmailButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
-
 
   const handleClick = async(e: any) => {
     e.stopPropagation();
@@ -30,41 +26,24 @@ export default function EmailButton({ data, Component, showLoader = true }: Emai
         const {emailTemplate: emailDefault, status, message} = response.data
         if (status === 1) {
           if(data?.invoice?.isDraft){
-            dispatch(setModalDataAction({
-              data: {...data, emailDefault, modalTitle: 'Save & Send'},
-              'type': modalTypes.SAVE_INVOICE_AND_EMAIL_JOB_REPORT_MODAL
-            }));
-            dispatch(resetEmailState());
-            setTimeout(() => {
-              dispatch(openModalAction());
-            }, 200);
+            draftInvoiceHandler(data, emailDefault)
           } else {
-            dispatch(setModalDataAction({
-              data: {...data, emailDefault},
-              'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-            }));
-            dispatch(resetEmailState());
-            setTimeout(() => {
-              dispatch(openModalAction());
-            }, 200);
+            invoiceHandler(data, emailDefault)
           }
         } else {
-          dispatch(error(message));
+          errorDispatcher(message);
         }
       } catch (e) {
         setIsLoading(false);
-        dispatch(errorSnackBar(e.message));
-        console.log(e);
+        console.log(e)
+        let message = 'Unknown Error'
+        if (e instanceof Error) {
+          message = e.message
+        }
+        errorDispatcher(message);
       }
     } else {
-      dispatch(setModalDataAction({
-        data,
-        'type': modalTypes.EMAIL_JOB_REPORT_MODAL_OLD
-      }));
-      dispatch(resetEmailState());
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
+      oldJobReportHandler(data)
     }
   };
 

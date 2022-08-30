@@ -61,7 +61,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   const [activeStep, setActiveStep] = useState(0);
   const [accountType, setAccountType] = useState(0);
   const [companyId, setCompanyId] = useState<string|null>(null);
-  const [formData, setFormData] = useState<{ [k: string]: FormDataModel }>({
+  const [formData, setFormData] = useState<{ [k: string]: FormDataModel | any }>({
     'email': initFormData(),
     'recoveryEmail': initFormData(),
     'firstName': initFormData(),
@@ -122,15 +122,30 @@ function SignUpPage({ classes }: Props): JSX.Element {
   const checkSubmitDisabled = (): boolean => {
     for (const item of Object.keys(formData)){
       if (item !== 'cid' && item !== 'isci') {
-        if (formData[item].value.length === 0) {
+        if (formData[item].value.length === 0 || !formData[item].validate) {
           return true;
-          break;
         }
       }
     }
     return false;
 
   }
+  useEffect(() => {
+    if(formData.email.value){
+      setFormData((prev) => {
+        const newFormData = {...prev};
+        if(formData.email.value === formData.recoveryEmail.value){
+          newFormData.recoveryEmail = {
+            ...prev.recoveryEmail,
+            validate: false,
+            errorMsg: 'This email cannot be the same as primary email'
+          };
+        }
+        return newFormData
+      })
+    }
+  }, [formData.email])
+  
 
   const handleClickSignUp = async () => {
     setLoading(true);

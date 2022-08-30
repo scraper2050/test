@@ -1,7 +1,7 @@
 import { FormDefaultProps } from './bc-shared-form.types';
 import { modalTypes } from '../../../constants';
 import { useFormik } from 'formik';
-import { Box, IconButton, Paper, withStyles } from '@material-ui/core';
+import { Box, Paper, withStyles } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './bc-shared-form.styles';
 import { useLocation } from 'react-router-dom';
@@ -10,9 +10,6 @@ import BCSharedFormItemsContainer from './form-components/bc-shared-form-items-c
 import BCSharedFormHeaderContainer from './form-components/bc-shared-form-header-container';
 import BCSharedFormTitleBar from './form-components/bc-shared-form-title-bar';
 import EmailHistory from '../bc-job-report/email-history';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCustomerDetailAction, resetCustomer } from 'actions/customer/customer.action';
-import { types } from 'reducers/customer.types';
 
 interface BCInvoiceFormProps {
   columnSchema: any;
@@ -24,6 +21,15 @@ interface BCInvoiceFormProps {
   redirectUrl: string;
   onFormSubmit: (data: any)=> Promise<any>;
   edit?: boolean;
+  customer: any;
+  getCustomerDetailActionHandler: any;
+  resetCustomerHandler: any;
+  openPreviewFormModalHandler: (modalDataAction: any) => void;
+  invoiceItems: any;
+  taxes: any;
+  getSharedFormInitialData: () => void;
+  customers: any;
+  getCustomersDispatcher: () => void;
 }
 
 interface FormProps {
@@ -51,13 +57,20 @@ function BCSharedForm({ classes,
   },
   redirectUrl,
   onFormSubmit,
-  edit
+  edit,
+  customer,
+  getCustomerDetailActionHandler,
+  resetCustomerHandler,
+  openPreviewFormModalHandler,
+  invoiceItems,
+  taxes,
+  getSharedFormInitialData,
+  customers,
+  getCustomersDispatcher,
 }: BCInvoiceFormProps) {
-  const customer = useSelector(({ customers }:any) => customers.customerObj);
 
   const { itemTier, isCustomPrice } = useMemo(() => customer, [customer]);
 
-  const dispatch = useDispatch();
   const { state } = useLocation<any>();
   const reference = state
     ? state.purchaseOrderId || state.jobId || state.estimateId
@@ -90,9 +103,9 @@ function BCSharedForm({ classes,
 
   useEffect(() => {
     if (customerId) {
-      dispatch(getCustomerDetailAction({ customerId }));
+      getCustomerDetailActionHandler(customerId);
       return () => {
-        dispatch(resetCustomer());
+        resetCustomerHandler();
       };
     }
   }, []);
@@ -174,7 +187,7 @@ function BCSharedForm({ classes,
             modalType={modalTypes.SHARED_FORM_MODAL}
             pageTitle={pageTitle}
             redirectUrl={redirectUrl}
-
+            openPreviewFormModalHandler={openPreviewFormModalHandler}
           />
           <Paper
             elevation={1}
@@ -189,6 +202,9 @@ function BCSharedForm({ classes,
               jobId={state?.jobId}
               setFieldValue={setFieldValue}
               values={FormikValues}
+              customers={customers}
+              getCustomerDetailActionHandler={getCustomerDetailActionHandler}
+              getCustomersDispatcher={getCustomersDispatcher}
             />
             <BCSharedFormItemsContainer
               addItemText={
@@ -203,7 +219,9 @@ function BCSharedForm({ classes,
               itemTier={itemTier}
               jobTypes={state?.invoiceDetail.job.tasks}
               setItems={setItems}
-
+              invoiceItems={invoiceItems}
+              taxes={taxes}
+              getSharedFormInitialData={getSharedFormInitialData}
             />
             <BCSharedFormTotalContainer
               subTotal={subTotal}
