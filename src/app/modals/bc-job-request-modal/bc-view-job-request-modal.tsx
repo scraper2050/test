@@ -137,7 +137,7 @@ function BCViewJobRequestModal({
         setChatContent(result.chats);
         if (result.chats.length > 0) {
           const lastMessage = result.chats[result.chats.length - 1];
-        if (lastMessage.readStatus.isRead)
+        if (!lastMessage.readStatus.isRead)
           markJobRequestChatRead(id, lastMessage._id);
         }
       } else {
