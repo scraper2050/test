@@ -135,8 +135,10 @@ function BCViewJobRequestModal({
       const result = await getJobRequestChat(id);
       if (result.status === 1) {
         setChatContent(result.chats);
-        if (result.chats.length > 0 && !result.chats[result.chats.length - 1].isRead) {
-          markJobRequestChatRead(id, result.chats[result.chats.length - 1]._id);
+        if (result.chats.length > 0) {
+          const lastMessage = result.chats[result.chats.length - 1];
+        if (lastMessage.readStatus.isRead)
+          markJobRequestChatRead(id, lastMessage._id);
         }
       } else {
         console.log(result.message);

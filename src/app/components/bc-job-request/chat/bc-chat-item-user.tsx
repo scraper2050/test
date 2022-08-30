@@ -4,6 +4,7 @@ import {
 import React, {useCallback} from 'react';
 import styles from './bc-chat.styles';
 import {formatDatTimelll} from "../../../../helpers/format";
+import noAvatar from "../../../../assets/img/avatars/NoImageFound.png";
 
 interface PROPS {
   classes?: any,
@@ -29,7 +30,7 @@ function BCChatItemUser({
     <div key={item._id} className={classes.chatItemContainer} id={idx === totalItemsCount - 1 ? 'last-chat-element' : ''}>
       <div className={classes.currentUserChat}>
         <div className='avatar'>
-          <img src={item.user.profile.imageUrl} alt="user avatar" />
+          <img src={item.user.profile.imageUrl || noAvatar} alt="user avatar" />
         </div>
         {item.message !== "" &&
         <>

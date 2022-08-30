@@ -1,131 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
-import * as CONSTANTS from "../../../../constants";
-import {GRAY2, GRAY3, PRIMARY_BLUE} from "../../../../constants";
-export default (theme: Theme): any => ({
-  relative: {
-    position: 'relative',
-  },
-  addJobTypeButton: {
-    width: '100%',
-    border: '1px dashed #BDBDBD',
-    borderRadius: 8,
-    textTransform: 'none',
-  },
-  removeJobTypeButton: {
-    position: 'absolute',
-    right: 16,
-    top: 28,
-  },
-  noteContainer: {
-    'paddingLeft': '1.5rem',
-  },
-  lastContent: {
-    marginTop: -10,
-    marginBottom: 35,
-    padding: '10px 16px',
-  },
-  innerRow: {
-    paddingTop: 15,
-    paddingRight: 30,
-  },
-  lastRow: {
-    marginBottom: '35px !important',
-  },
-  actionsList: {
-    margin: '4px 0 4px 4px',
-    padding: 0,
-  },
-  taskList: {
-    padding: '5px 50px',
-  },
-  task: {
-    padding: '0 0 5px 0 !important',
-    // borderBottom: '0.5px solid #E0E0E0',
-  },
-  editButtonPadding: {
-    paddingTop: 20,
-  },
-  editButton: {
-    color: '#828282',
-  },
-  editButtonText: {
-    textTransform: 'none',
-  },
-  markCompleteContainer: {
-    flex: 1,
-    textAlign: 'left'
-  },
-  actionsContainer: {
-    flex: 2,
-  },
-  tableContainer: {
-    'maxHeight': '30rem',
-  },
-  popper: {
-    '& li[aria-disabled="true"]': {
-      paddingTop: 0,
-      paddingBottom: 0,
-    }
-  },
-  gridWrapper: {
-    position: 'relative',
-    padding: '20px 50px 0 50px',
-    margin: 0,
-  },
-  innerGrid: {
-    padding: '16px 0',
-  },
-  mapWrapper: {
-    height: 200,
-  },
-  collapseAllButton: {
-    position: 'absolute',
-    right: 40,
-  },
-  collapseAllButtonLabel: {
-    fontSize: 8,
-    color: PRIMARY_BLUE,
-  },
-  collapseButton: {
-    margin: -15,
-    // position: 'absolute',
-    // right: 55,
-    // top: 5
-  },
-  summaryCaption: {
-    textTransform: 'uppercase',
-    fontSize: 10,
-    color: GRAY3,
-  },
-  summaryText: {
-    fontSize: 14,
-    marginTop: 10,
-    color: GRAY2,
-  },
-  summaryTextBig: {
-    fontSize: 16,
-    marginTop: 9,
-    color: PRIMARY_BLUE,
-  },
-  glassImageWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  glassImage: {
-    marginLeft: 10,
-    width: 25,
-    marginTop: 10,
-  },
-  frameColor: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginLeft: 40,
-    border: '1px solid black',
-    marginTop: 10,
-  },
 
+export default (theme: Theme): any => ({
   chatContainer: {
     height: 412,
     padding: '25px 100px',
@@ -163,7 +38,8 @@ export default (theme: Theme): any => ({
       backgroundColor: '#00AAFF',
       padding: '10px 20px',
       fontSize: 14,
-      wordBreak:'break-word'
+      wordBreak:'break-word',
+      whiteSpace: 'pre-line',
     },
     '& div.arrow': {
       width: 0,
@@ -182,6 +58,7 @@ export default (theme: Theme): any => ({
     },
     '& div.avatar img': {
       width: 24,
+      height: 24,
       borderRadius: '50%',
     },
   },
@@ -200,7 +77,8 @@ export default (theme: Theme): any => ({
       backgroundColor: '#E5F7FF',
       padding: '10px 20px',
       fontSize: 14,
-      wordBreak:'break-word'
+      wordBreak:'break-word',
+      whiteSpace: 'pre-line',
     },
     '& div.arrow': {
       width: 0,
@@ -219,6 +97,7 @@ export default (theme: Theme): any => ({
     },
     '& div.avatar img': {
       width: 24,
+      height: 24,
       borderRadius: '50%',
     },
   },
@@ -268,11 +147,9 @@ export default (theme: Theme): any => ({
     flex: 2,
     display: 'flex',
     justifyContent: 'flex-end',
-    height: 40,
     '& svg': {
       cursor: 'pointer',
     },
-    marginBottom:15
   },
   inputContainer: {
     flex: 10,
@@ -280,20 +157,20 @@ export default (theme: Theme): any => ({
   },
   textInput: {
     flex: 10,
-    padding:15,
+    padding: '4px 0 4px 15px',
     border:'1px solid #EAECF3',
-    borderRadius:10,
-    height:76
+    borderRadius:8,
+    minHeight:76,
+    fontSize: 15,
+    color: '#333333',
   },
   sendButton: {
     flex: 2,
     display: 'flex',
     justifyContent: 'flex-start',
-    height: 40,
     '& svg': {
       cursor: 'pointer',
     },
-    marginBottom:15,
     marginLeft:5
   },
 });
