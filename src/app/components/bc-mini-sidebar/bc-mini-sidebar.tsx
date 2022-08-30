@@ -31,7 +31,7 @@ const BCMiniSidebar = ({ classes, data }: MiniSidebarProps) => {
   const techniciansReference =
     data.job?.tasks?.map((task: any) => ({
       id: task.technician._id,
-      name: task.technician.profile.displayName,
+      name: task.technician?.profile?.displayName,
     })) || [];
   const comments =
     data.job?.tasks
@@ -44,7 +44,7 @@ const BCMiniSidebar = ({ classes, data }: MiniSidebarProps) => {
     data.job?.technicianImages?.map((image: any) => ({
       date: image.createdAt,
       url: image.imageUrl,
-      uploader: image.uploadedBy.profile.displayName,
+      uploader: image.uploadedBy?.profile?.displayName,
     })) || [];
   const groupedTechnicianImages = Object.values(
     groupBy(
