@@ -25,7 +25,11 @@ import {
 import {error as errorSnackBar} from "actions/snackbar/snackbar.action";
 import { modalTypes } from "../../../constants";
 import { getContacts } from "api/contacts.api";
-import { getJobRequestChat, postJobRequestChat } from 'api/chat.api';
+import {
+  getJobRequestChat,
+  markJobRequestChatRead,
+  postJobRequestChat
+} from 'api/chat.api';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import BCJobRequestWindow
   from "../../components/bc-job-request/window/bc-job-request-window";
@@ -131,14 +135,17 @@ function BCViewJobRequestModal({
       const result = await getJobRequestChat(id);
       if (result.status === 1) {
         setChatContent(result.chats);
+        if (result.chats.length > 0 && !result.chats[result.chats.length - 1].isRead) {
+          markJobRequestChatRead(id, result.chats[result.chats.length - 1]._id);
+        }
       } else {
         console.log(result.message);
-        dispatch(SnackBarError(`Something went wrong when retreiving comments`));
+        dispatch(SnackBarError(`Something went wrong when retrieving comments`));
       }
       setIsChatLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch(SnackBarError(`Something went wrong when retreiving comments`));
+      dispatch(SnackBarError(`Something went wrong when retrieving comments`));
       setIsChatLoading(false);
     }
   }
