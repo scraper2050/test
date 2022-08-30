@@ -140,10 +140,11 @@ export default (theme: Theme): any => ({
   },
   chatInputContainer: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
   },
   attachButton: {
+    marginTop: 25,
     flex: 2,
     display: 'flex',
     justifyContent: 'flex-end',
@@ -157,7 +158,8 @@ export default (theme: Theme): any => ({
   },
   textInput: {
     flex: 10,
-    padding: '4px 0 4px 15px',
+    alignItems: 'flex-start',
+    padding: '15px 0 4px 15px',
     border:'1px solid #EAECF3',
     borderRadius:8,
     minHeight:76,
@@ -165,6 +167,7 @@ export default (theme: Theme): any => ({
     color: '#333333',
   },
   sendButton: {
+    marginTop: 25,
     flex: 2,
     display: 'flex',
     justifyContent: 'flex-start',

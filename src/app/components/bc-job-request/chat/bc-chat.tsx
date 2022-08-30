@@ -152,7 +152,7 @@ function BCChat({
             className={classes.textInput}
             placeholder="Write a message..."
             fullWidth
-            rowsMax={4}
+            rowsMax={3}
           />
       </div>
       <div className={classes.sendButton}>
