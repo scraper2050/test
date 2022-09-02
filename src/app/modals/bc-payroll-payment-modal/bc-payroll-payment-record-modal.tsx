@@ -16,7 +16,7 @@ import {
   withStyles,
   useTheme,
 } from '@material-ui/core';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -33,6 +33,7 @@ import {
   recordPaymentContractorAPI,
   updatePaymentContractorAPI,
   recordAdvancePaymentContractorAPI,
+  updateAdvancePaymentContractorAPI,
 } from "../../../api/payroll.api";
 import {updateVendorPayment} from "../../../actions/vendor/vendor.action";
 import BCTabs2 from 'app/components/bc-tab2/bc-tab2';
@@ -48,7 +49,7 @@ function BcPayrollPaymentRecordModal({
 }: any): JSX.Element {
   const [sent, setSent] = useState(false);
   const [sentAdvance, setSentAdvance] = useState(false);
-  const [curTab, setCurTab] = useState(0);
+  const [curTab, setCurTab] = useState(advancePayment ? 1 : 0);
   const dispatch = useDispatch();
   const theme = useTheme()
 
@@ -74,7 +75,7 @@ function BcPayrollPaymentRecordModal({
   const form = useFormik({
     initialValues: {
       paymentDate: payment ? new Date(payment.paidAt) : new Date(),
-      amount: payment ? payment.amountPaid : amountValue,
+      amount: payment ? payment.amountPaid : Math.round(amountValue * 100) / 100,
       creditUsed: creditUsedValue, 
       paymentMethod: findPaymentTypeIndex(payment?.paymentType),
       referenceNumber: payment?.referenceNumber || '',
@@ -394,15 +395,15 @@ function BcPayrollPaymentRecordModal({
 
       try {
         if (advancePayment) {
-          params.paymentId = advancePayment._id;
-          // const response = await updatePaymentContractorAPI(params);
-          // if (response.status === 1) {
-          //   setSentAdvance(true);
-          //   dispatch(updateContractorPayment(response.payment));
-          //   dispatch(updateVendorPayment(response.payment));
-          // } else {
-          //   dispatch(error(response.message))
-          // }
+          params.advancePaymentId = advancePayment._id;
+          const response = await updateAdvancePaymentContractorAPI(params);
+          if (response.status === 1) {
+            setSentAdvance(true);
+            dispatch(updateContractorPayment(response.payment));
+            dispatch(updateVendorPayment(response.payment));
+          } else {
+            dispatch(error(response.message))
+          }
         } else {
           const response = await recordAdvancePaymentContractorAPI(params);
           if (response.status === 1) {
@@ -432,6 +433,18 @@ function BcPayrollPaymentRecordModal({
     'setFieldValue': setFieldValueAdvance,
     'isSubmitting': isSubmittingAdvance
   } = formAdvance;
+
+  useEffect(() => {
+    if(advancePayment){
+      formAdvance.setFieldValue('paymentDate', new Date(advancePayment.paidAt))
+      formAdvance.setFieldValue('appliedAt', new Date(advancePayment.appliedAt))
+      formAdvance.setFieldValue('amount', advancePayment.amountPaid)
+      formAdvance.setFieldValue('paymentMethod', findPaymentTypeIndex(advancePayment.paymentType))
+      formAdvance.setFieldValue('referenceNumber', advancePayment.referenceNumber || '')
+      formAdvance.setFieldValue('notes', advancePayment.note || '')
+    }
+  }, [curTab])
+  
 
   const handleTabChange = (newValue: number) => {
     if(sent || sentAdvance){
