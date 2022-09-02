@@ -81,23 +81,43 @@ export const getPaymentsByContractorAPI = async (type?: string, id?: string) => 
   try {
     const url = `/getPaymentsByContractor${type ? `?id=${id}&type=${type}`:''}`;
     const response: any = await request(url, 'GET', {}, false);
-    const {status, message, payments} = response.data;
+    const {status, message, payments, advancePayments} = response.data;
     if (status === 1) {
-      const normalized = payments.map((payment: any) => {
-        if (payment.contractor) {
-          return {...payment,
-            payedPerson: normalizeData(payment.contractor, 'contractor'),
-            contractor: undefined,
+      const returnObj:any = {status, message, payments: []}
+      if(payments?.length) {
+        const normalized = payments.map((payment: any) => {
+          if (payment.contractor) {
+            return {...payment,
+              payedPerson: normalizeData(payment.contractor, 'contractor'),
+              contractor: undefined,
+            }
+          } else {
+            return {...payment,
+              payedPerson: normalizeData(payment.employee, 'employee'),
+              employee: undefined,
+            }
           }
-        } else {
-          return {...payment,
-            payedPerson: normalizeData(payment.employee, 'employee'),
-            employee: undefined,
+        }).filter((payment: any) => payment.__t === 'PaymentVendor');
+        returnObj.payments = normalized
+      }
+      if(advancePayments?.length) {
+        const normalized = advancePayments.map((advancePayment: any) => {
+          if (advancePayment.contractor) {
+            return {...advancePayment,
+              amountPaid: advancePayment.amount,
+              payedPerson: normalizeData(advancePayment.contractor, 'contractor'),
+              contractor: undefined,
+            }
+          } else {
+            return {...advancePayment,
+              payedPerson: normalizeData(advancePayment.employee, 'employee'),
+              employee: undefined,
+            }
           }
-        }
-      })
-      return {payments: normalized.filter((payment: any) => payment.__t === 'PaymentVendor')
-        , status, message};
+        }).filter((advancePayment: any) => advancePayment.__t === 'AdvancePaymentVendor');
+        returnObj.payments = [...returnObj.payments, ...normalized]
+      }
+      return returnObj
     } else {
       return {status, message};
     }
@@ -116,6 +136,26 @@ export const recordAdvancePaymentContractorAPI = async (params: any) => {
       return {status, message};
     }
   } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const updateAdvancePaymentContractorAPI = async (params: any) => {
+  try {
+    const response: any = await request("/updateAdvancePaymentContractor ", 'PUT', params, false);
+    const {status, message, advancePayment} = response.data;
+    if (status === 1) {
+      return {
+        payment: {
+          ...advancePayment,
+          contractor: undefined,
+          employee: undefined,
+        }, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch(e) {
+    console.log(e);
     return {status: 0, message: `Something went wrong`};
   }
 }
@@ -227,6 +267,27 @@ export const voidPayment: any = (params = {}) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
       request('/voidPayment', 'DELETE', params, false)
+        .then((res: any) => {
+          if(res.data?.status === 1){
+            dispatch(success("Payment voided succesfully"));
+            dispatch(getContractorPayments());
+            dispatch(getPayrollBalance());
+            return resolve(res.data);
+          } else {
+            dispatch(error("Something went wrong! Cannot void payment"));
+          }
+        })
+        .catch(err => {
+          return reject(err);
+        });
+    });
+  }
+};
+
+export const voidAdvancePayment: any = (params = {}) => {
+  return (dispatch: any) => {
+    return new Promise(async (resolve, reject) => {
+      request('/voidAdvancePaymentContractor', 'DELETE', params, false)
         .then((res: any) => {
           if(res.data?.status === 1){
             dispatch(success("Payment voided succesfully"));

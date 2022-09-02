@@ -31,7 +31,7 @@ import {
   ContractorPayment
 } from "../../../../actions/payroll/payroll.types";
 import moment from "moment";
-import {voidPayment} from 'api/payroll.api'
+import {voidPayment, voidAdvancePayment} from 'api/payroll.api'
 
 interface Props {
   classes: any;
@@ -88,15 +88,27 @@ function PastPayments({classes}: Props) {
   }, [selectionRange, payments]);
 
   const editPayment = (payment: any) => {
-    dispatch(setModalDataAction({
-      data: {
-        modalTitle: 'Edit Payment',
-        payment,
-        payroll: payment.payedPerson,
-        dateRange: {startDate: payment.startDate, endDate: payment.endDate},
-      },
-      'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
-    }));
+    if(payment.__t === 'AdvancePaymentVendor') {
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Edit Advance Payment',
+          advancePayment: payment,
+          payroll: payment.payedPerson,
+          dateRange: {startDate: payment.startDate, endDate: payment.endDate},
+        },
+        'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
+      }));
+    } else {
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Edit Payment',
+          payment,
+          payroll: payment.payedPerson,
+          dateRange: {startDate: payment.startDate, endDate: payment.endDate},
+        },
+        'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
+      }));
+    }
 
     setTimeout(() => {
       dispatch(openModalAction());
@@ -109,7 +121,9 @@ function PastPayments({classes}: Props) {
         modalTitle: '         ',
         message: 'Are you sure you want to delete this Payment Record?',
         subMessage: 'This action cannot be undone.',
-        action: voidPayment({type: 'vendor', paymentId: payment._id}),
+        action: payment.__t === 'AdvancePaymentVendor'
+          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id })
+          : voidPayment({ type: 'vendor', paymentId: payment._id }),
       },
       'type': modalTypes.WARNING_MODAL
     }));
@@ -122,7 +136,7 @@ function PastPayments({classes}: Props) {
   const viewPayment = (payment: any) => {
     dispatch(setModalDataAction({
       data: {
-        modalTitle: 'Payroll Details',
+        modalTitle: payment.__t === 'AdvancePaymentVendor' ? 'Advance Payment Details' : 'Payroll Details',
         payment,
       },
       'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL
@@ -147,10 +161,31 @@ function PastPayments({classes}: Props) {
     }
   }
 
+  const renderPayrollTypeText = (string:string) => {
+    switch (string) {
+      case 'PaymentVendor':
+        return 'Payroll Payment'
+        break;
+      case 'AdvancePaymentVendor':
+        return 'Advance Payment'
+        break;
+    
+      default:
+        return string
+        break;
+    }
+  }
+
   const columns: any = [
     {
       'Header': 'Vendor',
       'accessor': (originalRow: any) => originalRow.payedPerson.vendor,
+      'className': 'font-bold',
+      'sortable': true,
+    },
+    {
+      'Header': 'Type',
+      'accessor': (originalRow: any) => renderPayrollTypeText(originalRow.__t),
       'className': 'font-bold',
       'sortable': true,
     },

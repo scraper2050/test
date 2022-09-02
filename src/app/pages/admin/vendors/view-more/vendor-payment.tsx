@@ -81,7 +81,7 @@ function VendorPayment({classes}: Props) {
   const viewPayment = (payment: any) => {
     dispatch(setModalDataAction({
       data: {
-        modalTitle: 'Payroll Details',
+        modalTitle: payment.__t === 'AdvancePaymentVendor' ? 'Advance Payment Details' : 'Payroll Details',
         payment,
       },
       'type': modalTypes.PAYROLL_DETAIL_PAYMENT_MODAL
