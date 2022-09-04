@@ -5,15 +5,15 @@ import InvoicingPaymentListing from './invoices-list-listing/payments-listing';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './invoices-list.styles';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Fab, useTheme, withStyles } from '@material-ui/core';
+import {Button, Fab, useTheme, withStyles} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { CSButton } from "../../../../helpers/custom";
 import { useDispatch, useSelector } from 'react-redux';
 import BCMenuToolbarButton from 'app/components/bc-menu-toolbar-button';
 import { info } from 'actions/snackbar/snackbar.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../constants'
 import { getCustomers } from 'actions/customer/customer.action'
+import {Sync as SyncIcon} from '@material-ui/icons';
 // import { getInvoicingList } from "../../../../actions/invoicing/invoicing.action";
 // import TableFilterService from "../../../../utils/table-filter";
 
@@ -29,7 +29,7 @@ function InvoiceList({ classes }: any) {
   const history = useHistory();
   const location = useLocation<any>();
   // const invoiceList = useSelector(getFilteredList);
-  const totalDraft = useSelector(({invoiceList}:any) => invoiceList.totalDraft);
+  const {loading, totalDraft} = useSelector(({invoiceList}: any) => invoiceList);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -59,7 +59,7 @@ function InvoiceList({ classes }: any) {
   useEffect(() => {
     if(location?.state?.tab !== undefined){
       setCurTab(location.state.tab);
-    } 
+    }
   }, [location]);
 
   const items = [
@@ -91,10 +91,34 @@ function InvoiceList({ classes }: any) {
     }
   }
 
+  const manualSyncHandle = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Sync Invoices',
+        'removeFooter': false,
+        'className': 'serviceTicketTitle',
+      },
+      'type': modalTypes.MANUAL_SYNC_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
+          {!loading && <Button
+            variant='outlined'
+            startIcon={<SyncIcon className={classes.syncIcon}/>}
+            classes={{
+              root: classes.syncButton
+            }}
+            onClick={manualSyncHandle}>
+            Invoice Not Synced 3
+          </Button>
+          }
         <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}
@@ -125,7 +149,7 @@ function InvoiceList({ classes }: any) {
               variant={'contained'}>
               {'Custom Invoice'}
             </CSButton> */}
-            <BCMenuToolbarButton 
+            <BCMenuToolbarButton
               buttonText='More Actions'
               items={items}
               handleClick={handleMenuToolbarListClick}
