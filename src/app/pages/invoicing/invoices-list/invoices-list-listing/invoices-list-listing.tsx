@@ -2,7 +2,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { withStyles, Button } from "@material-ui/core";
+import { withStyles, Button, Tooltip } from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import {
   getInvoicingList,
@@ -54,6 +54,15 @@ function InvoicingListListing({ classes, theme }: any) {
   );
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
 
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      border: '1px solid #dadde9',
+    },
+  }))(Tooltip);
+
   const columns: any = [
     {
       'Header': 'Invoice ID',
@@ -75,11 +84,18 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     {
       Cell({ row }: any) {
-        return <div>
-          <span>
-            {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
-          </span>
-        </div>;
+        return <div style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip
+            placement='bottom-start'
+            title={
+              row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'
+            }
+          >
+            <span>
+              {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+            </span>
+          </HtmlTooltip>
+        </div>
       },
       'Header': 'Customer PO',
     },
