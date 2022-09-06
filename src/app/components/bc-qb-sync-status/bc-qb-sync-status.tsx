@@ -5,13 +5,14 @@ import {SyncProblem as SyncProblemIcon, Sync as SyncIcon} from '@material-ui/ico
 
 interface Props {
   data: any;
+  showStatus?: boolean;
 }
 
 function isNotEmpty(str: string | undefined | null) {
   return !(!str || 0 === str.trim().length);
 }
 
-function BCQbSyncStatus({ data }: Props) {
+function BCQbSyncStatus({ data, showStatus = false }: Props) {
   const classes = useStyles({isSynced: data.isSynced});
   return (
     isNotEmpty(data.quickbookId) ?
@@ -21,7 +22,9 @@ function BCQbSyncStatus({ data }: Props) {
              title={'synced with QuickBooks'}
              src={qbLogo}
         />
-        {data.isSynced ? <SyncIcon  className={classes.syncIcon}/> : <SyncProblemIcon className={classes.syncIcon}/>}
+        {showStatus && (
+          data.isSynced ? <SyncIcon  className={classes.syncIcon}/> : <SyncProblemIcon className={classes.syncIcon}/>
+        )}
       </div> :
       null
   );

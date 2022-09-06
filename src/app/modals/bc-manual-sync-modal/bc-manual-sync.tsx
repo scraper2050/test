@@ -190,6 +190,7 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
 
         <Button
           aria-label={'create-job'}
+          disabled={selectedIndexes.length === 0}
           classes={{
             root: classes.submitButton,
             disabled: classes.submitButtonDisabled
@@ -207,6 +208,7 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
 
 const DataContainer = styled.div`
   margin: auto 0;
+  padding: 0 30px;
 `;
 
 export default withStyles(

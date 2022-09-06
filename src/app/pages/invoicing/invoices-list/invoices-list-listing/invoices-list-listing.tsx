@@ -2,7 +2,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { withStyles, Button } from "@material-ui/core";
+import {withStyles, Button, Tooltip} from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
@@ -71,11 +71,17 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     {
       Cell({ row }: any) {
-        return <div>
-          <span>
-            {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
-          </span>
-        </div>;
+        const content = row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-';
+        return <Tooltip title={content}>
+          <div style={{
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            maxWidth: 125,
+          }}>
+            {content}
+          </div>
+        </Tooltip>;
       },
       'Header': 'Customer PO',
     },
@@ -160,7 +166,7 @@ function InvoicingListListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return (
-          <BCQbSyncStatus data={row.original} />
+          <BCQbSyncStatus data={row.original} showStatus/>
         );
       },
       'Header': 'Integrations',

@@ -109,7 +109,7 @@ function InvoiceList({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          {!loading && <Button
+          {!loading && curTab === 0 && <Button
             variant='outlined'
             startIcon={<SyncIcon className={classes.syncIcon}/>}
             classes={{
