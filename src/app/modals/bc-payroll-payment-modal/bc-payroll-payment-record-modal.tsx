@@ -155,7 +155,7 @@ function BcPayrollPaymentRecordModal({
         <Grid container className={classes.modalPreview} justify={'space-around'}>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>VENDOR</Typography>
-            <Typography variant={'h6'} className={classes.previewText}>{payroll.vendor}</Typography>
+            <Typography variant={'h6'} className={classes.previewText} style={{maxWidth: 120}}>{payroll.vendor}</Typography>
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>TIME PERIOD</Typography>
@@ -176,7 +176,7 @@ function BcPayrollPaymentRecordModal({
                 </Typography>
               </Grid>
               <Grid item>
-                <Typography variant={'caption'} className={classes.previewCaption}>ADVANCED PAYMENT CREDITS</Typography>
+                <Typography variant={'caption'} className={classes.previewCaption}>AMOUNT ADVANCED</Typography>
                 <Typography variant={'h6'} className={classes.previewText}>
                   {formatCurrency(payroll.creditAvailable)}
                 </Typography>
