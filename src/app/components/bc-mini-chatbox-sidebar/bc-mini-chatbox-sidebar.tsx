@@ -1,3 +1,4 @@
+// TODO this component is never used, should we get rid of it?
 import React, { useState, useEffect, ReactHTMLElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {

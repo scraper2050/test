@@ -12,9 +12,6 @@ import Badge from "@material-ui/core/Badge";
 import { computeUnreadNotifications } from "../bc-header/util";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import HeaderNotifications, { NotificationItem } from "../bc-header/bc-header-notification";
-import { connect, useDispatch, useSelector } from "react-redux";
-import { loadNotificationsActions, showNotificationPopup } from "actions/notifications/notifications.action";
-import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import * as CONSTANTS from "../../../constants";
 import classnames from "classnames";
 import SearchIcon from '@material-ui/icons/Search';
@@ -27,14 +24,16 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { getAllJobRequestAPI } from 'api/job-request.api';
 
 interface Props {
-  token: string;
-  user: any;
   classes: any;
   drawerToggle?(): void;
   drawerOpen: boolean;
+  notifications: any;
+  initialLoad: () => void;
+  showNotificationDetails: (state?:boolean) => void;
+  openModalHandler: (type:any, data:any, itemId:any, metadata?:any) => void;
+  jobRequests: any;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -130,33 +129,34 @@ const useSearchStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props): JSX.Element {
+function BCAdminHeader({
+  classes,
+  drawerToggle,
+  drawerOpen,
+  notifications:
+  notificationsFromRedux,
+  initialLoad,
+  showNotificationDetails,
+  openModalHandler,
+  jobRequests,
+}: Props): JSX.Element {
   const fabStyles = useStyles();
   const headerStyles = useHeaderStyles();
   const searchStyles = useSearchStyles();
 
-  const { notifications, error, loading, notificationOpen } = useSelector((state: any) => state.notifications);
+  const { notifications, loading, notificationOpen } = notificationsFromRedux;
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
   const location = useLocation();
-  const dispatch = useDispatch();
   const pathName = location.pathname;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
   const [profileOpen, setProfileOpen] = useState(false);
-  // const [showNotification, setShowNotification] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(menuAnchorEl);
 
   useEffect(() => {
-    dispatch(loadNotificationsActions.fetch());
-    dispatch(loadInvoiceItems.fetch());
-    dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
+    initialLoad()
   }, []);
-
-  const showNotificationDetails = () => {
-    // setShowNotification(!showNotification);
-    dispatch(showNotificationPopup(!notificationOpen));
-  };
 
   const notificationPopover = notificationOpen ? 'notification-popper' : undefined;
 
@@ -172,8 +172,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
 
   const handleClose = () => {
     setProfileOpen(false);
-    // setShowNotification(false);
-    dispatch(showNotificationPopup(false));
+    showNotificationDetails(false)
     setAnchorEl(null);
   };
 
@@ -339,7 +338,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
             className={classes.bcAdminHeaderToolsButton}
             color={'default'}
             href={''}
-            onClick={showNotificationDetails}
+            onClick={() => showNotificationDetails()}
             target={'_blank'}>
             <Badge
               badgeContent={computeUnreadNotifications(notifications)}
@@ -379,6 +378,8 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
                       close={handleClose}
                       items={activeNotifications}
                       loading={loading}
+                      openModalHandler={openModalHandler}
+                      jobRequests={jobRequests}
                     />
                   </Paper>
                 {/* </ClickAwayListener> */}
@@ -393,18 +394,7 @@ function BCAdminHeader({ token, user, classes, drawerToggle, drawerOpen }: Props
   )
 }
 
-const mapStateToProps = (state: {
-  auth: {
-    token: string;
-    user: any;
-  };
-}) => ({
-  'token': state.auth.token,
-  'user': state.auth.user,
-});
-
-
 export default withStyles(
   styles,
   { 'withTheme': true }
-)(connect(mapStateToProps)(BCAdminHeader));
+)(BCAdminHeader);

@@ -9,11 +9,7 @@ import styles, {
 } from './job-reports.styles';
 import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
 import EmailHistory from './email-history';
-import { useDispatch } from 'react-redux';
-import { callCreateInvoiceAPI, getInvoiceDetail } from 'api/invoicing.api';
-import { loadJobReportActions } from 'actions/customer/job-report/job-report.action';
 import {CSButton} from "../../../helpers/custom";
-import {error, success} from "../../../actions/snackbar/snackbar.action";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {getJobTypesFromJob} from "../../../helpers/utils";
@@ -42,14 +38,12 @@ const getJobs = (tasks:any = [], jobTypes:any) => {
   return jobTypes.filter((jobType:any) => ids.includes(jobType._id));
 };
 
-function BCJobReport({ classes, jobReportData, jobTypes }: any) {
+function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler, getInvoiceDetailHandler }: any) {
   const history = useHistory();
   const location = useLocation<any>();
-  const dispatch = useDispatch();
   const [invoiceDetailResult, setInvoiceDetailResult] = useState<boolean>(false);
 
   const { job, invoiceCreated, invoice } = jobReportData;
-  //console.log({jobReportData});
 
   if(job && !job.ticket){
     job.ticket = {}
@@ -57,7 +51,7 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
 
   useEffect(() => {
     if(invoice) {
-      getInvoiceDetail(invoice._id).then((response) => {
+      getInvoiceDetailHandler(invoice._id).then((response:any) => {
         if (response.status === 1) {
           setInvoiceDetailResult(true);
         }
@@ -152,46 +146,10 @@ function BCJobReport({ classes, jobReportData, jobTypes }: any) {
     if(job?.customerPO) {
       invoiceObj.customerPO = job.customerPO;
     }
-    const result:any = await callCreateInvoiceAPI(invoiceObj);
-    if (result && result?.status !== 0) {
-      const { 'invoice': newInvoice } = result;
-      dispatch(loadJobReportActions.success({ ...jobReportData,
-        'invoiceCreated': true,
-        'invoice': newInvoice }));
-      history.push({
-        'pathname': `view/${newInvoice._id}`,
-      });
-      dispatch(success(`Draft ${newInvoice.invoiceId} Created`));
-/*      dispatch(setModalDataAction({
-        'data': {
-          'detail': true,
-          'modalTitle': 'Invoice',
-          'formId': newInvoice._id,
-          'removeFooter': false
-        },
-        'type': modalTypes.SHARED_FORM_MODAL
-      }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 10);*/
-    } else {
-      dispatch(error(result.message));
-    }
+    generateInvoiceHandler(invoiceObj)
   };
 
   const showInvoice = () => {
-    // dispatch(setModalDataAction({
-    //   'data': {
-    //     'detail': true,
-    //     'modalTitle': 'Invoice',
-    //     'formId': invoice._id,
-    //     'removeFooter': false
-    //   },
-    //   'type': modalTypes.SHARED_FORM_MODAL
-    // }));
-    // setTimeout(() => {
-    //   dispatch(openModalAction());
-    // }, 10);
     history.push({
       'pathname': `view/${invoice._id}`,
     });

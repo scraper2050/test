@@ -1,7 +1,6 @@
+import React from 'react';
 import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 import ContractNotification from './header-notifications/bc-header-contract-notification';
-import { Notification, NotificationTypeTypes } from 'reducers/notifications.types';
-import React from 'react';
 import ServiceTicketNotication from './header-notifications/bc-header-service-ticket-notification';
 import JobRequestNotication from './header-notifications/bc-header-job-request-notification';
 import JobRescheduledNotication from './header-notifications/bc-header-job-rescheduled';
@@ -10,48 +9,174 @@ import { useHistory } from 'react-router-dom';
 import { Button, MenuList } from '@material-ui/core';
 import { SECONDARY_CARD_BLUE, SECONDARY_DARK_GREY, SECONDARY_GREY, PRIMARY_DARK } from '../../../constants';
 
+type ServiceTicketNotification = {
+  _id: string;
+  scheduleDate: string;
+  createdAt: string;
+  technician: string;
+  image: string;
+  customer: string;
+  customerPO: string;
+  customerContactId: string;
+  note: string;
+  comment: string;
+  createdBy: string;
+  company: string;
+  ticketId: string;
+  jobId: string;
+  requestId: string;
+  track: any[];
+  status?: number;
+};
+
+
+export enum NotificationTypeTypes {
+  CONTRACT_ACCEPTED = 'ContractAccepted',
+  CONTRACT_CANCELLED = 'ContractCanceled',
+  CONTRACT_FINISHED = 'ContractFinished',
+  CONTRACT_INVITATION = 'ContractInvitation',
+  CONTRACT_REJECTED = 'ContractRejected',
+  SERVICE_TICKET_CREATED = 'ServiceTicketCreated',
+  JOB_REQUEST_CREATED = 'JobRequestCreated',
+  JOB_RESCHEDULED = 'JobRescheduled',
+  NEW_CHAT = 'NewChat',
+}
+
+type Notification = {
+  _id: string;
+  company: string;
+  notificationType: string;
+  message: {
+    title: string;
+    body: string;
+  };
+  readStatus: {
+    isRead: true;
+    readBy: {
+      _id: string;
+      auth: {
+        email: string;
+        password: string;
+      };
+      profile: {
+        firstName: string;
+        lastName: string;
+        displayName: string;
+      };
+      address: {
+        street: string;
+        city: string;
+        state: string;
+        zipCode: string;
+      };
+      contact: {
+        phone: string;
+      };
+      permissions: {
+        role: 0;
+      };
+      info: {
+        companyName: string;
+        logoUrl: string;
+        industry: string;
+      };
+      company: string;
+    };
+    readAt: string;
+  };
+  dismissedStatus: {
+    isDismissed: true;
+    dismissedBy: {
+      _id: string;
+      auth: {
+        email: string;
+        password: string;
+      };
+      profile: {
+        firstName: string;
+        lastName: string;
+        displayName: string;
+      };
+      address: {
+        street: string;
+        city: string;
+        state: string;
+        zipCode: string;
+      };
+      contact: {
+        phone: string;
+      };
+      permissions: {
+        role: number;
+    };
+      info: {
+        companyName: string;
+        logoUrl: string;
+        industry: string;
+      };
+      company: string;
+    };
+    dismissedAt: string;
+  };
+  createdAt: string;
+  metadata: ServiceTicketNotification;
+};
 
 export type NotificationItem = Notification
-
+export interface NotificationItemWithHandler extends Notification {
+  openModalHandler: (type:any, data:any, itemId:any, metadata?:any) => void;
+  jobRequests?: any;
+}
 interface HeaderNotification {
     items: NotificationItem[];
     close: () => void;
-    loading: boolean
+    loading: boolean;
+    openModalHandler: (type:any, data:any, itemId:any) => void;
+    jobRequests?:any;
 }
 
-function renderItem(item:NotificationItem, index:number) {
+function renderItem(item:NotificationItem, index:number, openModalHandler: NotificationItemWithHandler['openModalHandler'], jobRequests:any) {
   const notificationTypes:any = {
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: <ContractNotification
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />,
     [NotificationTypeTypes.CONTRACT_CANCELLED]: <ContractNotification
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />,
     [NotificationTypeTypes.CONTRACT_INVITATION]: <ContractNotification
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />,
     [NotificationTypeTypes.CONTRACT_REJECTED]: <ContractNotification
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />,
     [NotificationTypeTypes.CONTRACT_FINISHED]: <ContractNotification
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />,
     [NotificationTypeTypes.SERVICE_TICKET_CREATED]: <ServiceTicketNotication
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />,
     [NotificationTypeTypes.JOB_REQUEST_CREATED]: <JobRequestNotication
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
+      jobRequests={jobRequests}
     />,
     [NotificationTypeTypes.JOB_RESCHEDULED]: <JobRescheduledNotication
       {...item}
       key={index}
+      openModalHandler={openModalHandler}
     />
 
   };
@@ -115,7 +240,7 @@ const HeaderNotificationContainer = styled(MenuList)`
 }
 `;
 
-export default function HeaderNotifications({ items, close, loading }: HeaderNotification) {
+export default function HeaderNotifications({ items, close, loading, openModalHandler, jobRequests }: HeaderNotification) {
   const history = useHistory();
   return <HeaderNotificationContainer role={'menu'}>
     <h3>
@@ -141,7 +266,7 @@ export default function HeaderNotifications({ items, close, loading }: HeaderNot
       }
       return true;
     }).slice(0, 5).map((item:NotificationItem, index:number) => {
-      return renderItem(item, index);
+      return renderItem(item, index, openModalHandler, jobRequests);
     })}
   </HeaderNotificationContainer>;
 }

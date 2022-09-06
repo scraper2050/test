@@ -6,7 +6,6 @@ import {
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styles from './bc-map-filter.styles';
 
 import {
@@ -20,12 +19,11 @@ function BCMapFilterRoute({
   classes,
   currentFilter,
   resetFilter,
-  callback
+  callback,
+  employees,
+  vendors,
+  jobTypes,
 }: any): JSX.Element {
-  const dispatch = useDispatch();
-  const { data: employees } = useSelector(({ employeesForJob }: any) => employeesForJob);
-  const { data: vendors } = useSelector(({ vendors }: any) => vendors);
-  const {data: jobTypes} = useSelector((state: any) => state.jobTypes);
   const [menuOpen, setMenuOpen] = useState('');
 
   const technicians = employees.map((employee: any) => ({

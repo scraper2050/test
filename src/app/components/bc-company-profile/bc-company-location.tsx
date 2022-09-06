@@ -2,30 +2,21 @@ import React, {useEffect, useState} from 'react';
 import styles from './bc-company-profile.style';
 import {IconButton, withStyles} from '@material-ui/core';
 import NoCompanyLogo from 'assets/img/avatars/NoCompanyLogo.png';
-import {useDispatch, useSelector} from 'react-redux';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import {ADMIN_SIDEBAR_BG, modalTypes} from '../../../constants';
+import {ADMIN_SIDEBAR_BG} from '../../../constants';
 import DropDownMenu, {DROP_ITEM} from "../bc-menu-dropdown";
 import {Add as AddIcon, Business as BusinessIcon, Edit as EditIcon} from '@material-ui/icons';
 import {
   CompanyLocation,
-  CompanyProfile,
-  CompanyProfileStateType
+  CompanyProfileStateType,
 } from "../../../actions/user/user.types";
-import {
-  getCompanyProfileAction,
-  updateCompanyProfileAction
-} from "../../../actions/user/user.action";
-import * as Yup from "yup";
-import {
-  phoneRegExp,
-  zipCodeRegExp
-} from "../../../helpers/format";
-import {companyProfileFields} from "./fields";
 
 interface Props {
   classes: any;
   setLocation: (location: CompanyLocation) => void;
+  profileState: CompanyProfileStateType;
+  openAddContactModal: () => void;
+  editItem: (selectedItem:any) => void;
+  handleAddLocation: () => void;
 }
 
 interface Avatar {
@@ -36,21 +27,16 @@ interface Avatar {
   imageUrl?: any;
 }
 
-const companyProfileSchema = Yup.object().shape({
-  companyName: Yup.string().required('Required'),
-  companyEmail: Yup.string().email('Email is not email').required('Required'),
-  phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
-  zipCode: Yup.string().matches(zipCodeRegExp, 'Zip code is not valid')
-});
-
 function BCCompanyLocation(props: Props) {
   const {
     classes,
     setLocation,
+    profileState,
+    openAddContactModal,
+    editItem,
+    handleAddLocation,
   } = props;
 
-  const dispatch = useDispatch();
-  const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [selectedItem, setSelectedItem] = useState<DROP_ITEM | null>(null);
   const [locations, setLocations] = useState<DROP_ITEM[]>([]);
   const [showEdit, setEdit] = useState(false);
@@ -80,102 +66,14 @@ function BCCompanyLocation(props: Props) {
     if (fullItem) setLocation(fullItem);
   }, [selectedItem])
 
-
-  const handleUpdateCompanyProfile = async (values: any) => {
-    const {
-      companyName,
-      companyEmail,
-      phone,
-      logoUrl,
-      fax,
-      city,
-      state,
-      zipCode,
-      street,
-      paymentTerm
-    } = values
-
-
-    const data: CompanyProfile = {
-      companyName,
-      companyEmail,
-      phone,
-      logoUrl,
-      fax,
-      city,
-      state,
-      zipCode,
-      street,
-      paymentTerm
-    }
-
-    await dispatch(updateCompanyProfileAction(data));
-    let user: any = {};
-    user = JSON.parse(localStorage.getItem('user') || "");
-    dispatch(getCompanyProfileAction(user?.company as string));
-  }
-
-  const openAddContactModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'props': {
-          avatar: {url: profileState.logoUrl},
-          apply: (value: any) => handleUpdateCompanyProfile(value),
-          fields: companyProfileFields(profileState),
-          initialValues: profileState,
-          schema: companyProfileSchema,
-          userProfile: false
-        },
-        'modalTitle': 'Edit Company Profile',
-        'removeFooter': false
-      },
-      'type': modalTypes.EDIT_PROFILE
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
   const handleClick = (event: React.MouseEvent<HTMLElement>, item: DROP_ITEM) => {
     if (item.selectable) {
       setSelectedItem(item);
     } else {
       if (item.id === '0') {
-        dispatch(
-          setModalDataAction({
-            data: {
-              companyLocation: profileState.locations.length > 4 ? null : {
-                contact: {phone: profileState?.phone || ''},
-                info: {companyEmail: profileState?.companyEmail || ''},
-              },
-              //modalTitle: 'Add New Location',
-              removeFooter: false,
-            },
-            type: modalTypes.COMPANY_LOCATION_MODAL,
-          })
-        );
-        setTimeout(() => {
-          dispatch(openModalAction());
-        }, 200);
+        handleAddLocation()
       }
     }
-  }
-
-  const editItem = () => {
-    const fullItem = profileState.locations.find((location) => location._id === selectedItem?.id);
-    dispatch(
-      setModalDataAction({
-        data: {
-          companyLocation: fullItem,
-          //modalTitle: 'Add New Location',
-          removeFooter: false,
-        },
-        type: modalTypes.COMPANY_LOCATION_MODAL,
-      })
-    );
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
   }
 
 
@@ -205,7 +103,7 @@ function BCCompanyLocation(props: Props) {
         />
         <IconButton
           disabled={!selectedItem}
-          onClick={editItem}
+          onClick={() => editItem(selectedItem)}
         >
           <EditIcon style={{color: showEdit && selectedItem ? ADMIN_SIDEBAR_BG : 'white'}}/>
         </IconButton>

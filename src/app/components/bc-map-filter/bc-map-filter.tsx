@@ -6,7 +6,6 @@ import {
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styles from './bc-map-filter.styles';
 
 import {
@@ -14,7 +13,6 @@ import {
   TextField
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
-import { getContacts } from 'api/contacts.api';
 import {STATUSES} from "../../../helpers/contants";
 
 function BCMapFilter({
@@ -22,13 +20,12 @@ function BCMapFilter({
   filterType,
   currentFilter,
   resetFilter,
-  callback
+  callback,
+  customers,
+  contacts,
+  dispatchGetContacts,
 }: any): JSX.Element {
-  const dispatch = useDispatch();
-  const customers = useSelector(({ customers }: any) => customers.data);
-  const loading = useSelector(({ customers }: any) => customers.loading);
   const [menuOpen, setMenuOpen] = useState('');
-  const contacts = useSelector(({contacts}: any) => contacts?.contacts);
 
   const onSubmit = async (values: any, { setSubmitting }: any) => {
     if (typeof callback === "function") callback(values);
@@ -68,8 +65,7 @@ function BCMapFilter({
         type: 'Customer',
         referenceNumber: newValue._id
       }
-
-      dispatch(getContacts(data));
+      dispatchGetContacts(data);
     } else {
       setFieldValue('contact', '');
     }

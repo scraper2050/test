@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import BCSnackbar from "../../components/bc-snackbar/bc-snackbar";
 import Grid from "@material-ui/core/Grid";
 import {Link} from "react-router-dom";
@@ -8,6 +9,7 @@ import styles from './template.styles';
 import {withStyles} from "@material-ui/core/styles";
 import moment from "moment/moment";
 import SignUpSuccess from "./signup/components/signup_success";
+import { info } from '../../../actions/snackbar/snackbar.action';
 
 
 interface Props {
@@ -18,10 +20,16 @@ interface Props {
 }
 
 function AuthTemplatePage({isLoading, children, success = false, classes}: Props) : JSX.Element | null {
+  const dispatch = useDispatch();
+  const snackbarState = useSelector((state: any) => state.snackbar);
+
+  const dispatchResetInfoSnackbar = () => {
+    dispatch(info(''));
+  }
 
   return (
     <div className={classes.root}>
-      <BCSnackbar topRight />
+      <BCSnackbar topRight dispatchResetInfoSnackbar={dispatchResetInfoSnackbar} snackbarState={snackbarState} />
       {success ? <SignUpSuccess /> :
         <>
           <Grid

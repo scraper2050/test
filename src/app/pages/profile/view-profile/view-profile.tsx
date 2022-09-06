@@ -10,6 +10,8 @@ import BCCircularLoader from '../../../components/bc-circular-loader/bc-circular
 import * as Yup from 'yup';
 import { loginActions } from 'actions/auth/auth.action';
 import { error } from 'actions/snackbar/snackbar.action'
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { modalTypes } from '../../../../constants';
 
 const userProfileSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
@@ -132,6 +134,20 @@ function ViewProfilePage() {
 
   }, [update]);
 
+  const openAddContactModal = (passedProps:any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'props': passedProps,
+        'modalTitle': 'Edit Profile',
+        'removeFooter': false
+      },
+      'type': modalTypes.EDIT_PROFILE
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
   return (
     <MainContainer>
       <PageContainer>
@@ -140,7 +156,7 @@ function ViewProfilePage() {
             <BCCircularLoader />
           ) : (
               <BCAdminProfile
-                title="Edit Profile"
+                openAddContactModal={openAddContactModal}
                 avatar={{
                   isEmpty: 'NO',
                   url: userProfile && userProfile.profile && userProfile.profile.imageUrl ? userProfile.profile.imageUrl : imageUrl,

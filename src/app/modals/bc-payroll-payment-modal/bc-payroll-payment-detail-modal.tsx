@@ -107,17 +107,19 @@ function BcPayrollPaymentDetailModal({
             {payment.note}
           </Typography>
         </div>
-        <div className={'tableRow'}>
-          <Typography variant={'button'} className={'tableTitle'}>INVOICE NO(s).</Typography>
-          <div className={'tableValue'}>
-            {payment.invoices.map((invoice: any, index: number, array: any[]) =>
-              <>
-                <a href={`/main/invoicing/view/${invoice._id}`}>{invoice.invoiceId}</a>
-                {index < array.length - 1 ? ', ' : ''}
-              </>
-            )}
+        {payment.invoices && (
+          <div className={'tableRow'}>
+            <Typography variant={'button'} className={'tableTitle'}>INVOICE NO(s).</Typography>
+            <div className={'tableValue'}>
+              {payment.invoices.map((invoice: any, index: number, array: any[]) =>
+                <>
+                  <a href={`/main/invoicing/view/${invoice._id}`}>{invoice.invoiceId}</a>
+                  {index < array.length - 1 ? ', ' : ''}
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </DialogContent>
 
 

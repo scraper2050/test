@@ -2,13 +2,49 @@ import BCInvoiceForm from 'app/components/bc-shared-form/bc-shared-form';
 import { FormDefaultValues } from 'app/components/bc-shared-form/bc-shared-form-default-values';
 import { FormTypes } from 'app/components/bc-shared-form/bc-shared-form.types';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { callCreatePurchaseOrderAPI } from 'api/invoicing.api';
 import styles from '../purchase-order.styles';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core';
+import { getCustomerDetailAction, resetCustomer, getCustomers } from 'actions/customer/customer.action';
+import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { RootState } from 'reducers';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import { getAllSalesTaxAPI } from 'api/tax.api';
 
 function CreatePurchaseOrder({ classes }: any) {
+  const dispatch = useDispatch();
   const history = useHistory();
+  const customer = useSelector(({ customers }:any) => customers.customerObj);
+  const customers = useSelector(({ customers }: any) => customers.data);
+  const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  const taxes = useSelector(({ tax }: any) => tax.data);
+
+  const getCustomersDispatcher = () => {
+    dispatch(getCustomers());
+  }
+
+  const getSharedFormInitialData = () => {
+    dispatch(loadInvoiceItems.fetch());
+    dispatch(getAllSalesTaxAPI());
+  }
+
+  const getCustomerDetailActionHandler = (customerId: string) => {
+    dispatch(getCustomerDetailAction({ customerId }));
+  }
+
+  const resetCustomerHandler = () => {
+    dispatch(resetCustomer());
+  }
+
+  const openPreviewFormModalHandler = (modalDataAction:any) => {
+    dispatch(setModalDataAction(modalDataAction));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 10);
+  }
+
   const columns = [
     {
       'Cell'({ row }: any) {
@@ -109,7 +145,7 @@ function CreatePurchaseOrder({ classes }: any) {
   const redirectURL = '/main/invoicing/purchase-order';
 
   const handleFormSubmit = (data: any) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       data.items = JSON.stringify(data.items.map((o: any) => {
         o.description = o.name;
         o.price = parseFloat(o.price);
@@ -140,6 +176,15 @@ function CreatePurchaseOrder({ classes }: any) {
             onFormSubmit={handleFormSubmit}
             pageTitle={'New Purchase Order'}
             redirectUrl={redirectURL}
+            customer={customer}
+            getCustomerDetailActionHandler={getCustomerDetailActionHandler}
+            resetCustomerHandler={resetCustomerHandler}
+            openPreviewFormModalHandler={openPreviewFormModalHandler}
+            invoiceItems={invoiceItems}
+            taxes={taxes}
+            getSharedFormInitialData={getSharedFormInitialData}
+            customers={customers}
+            getCustomersDispatcher={getCustomersDispatcher}
           />
         </div>
       </div>

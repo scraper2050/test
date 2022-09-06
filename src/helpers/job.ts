@@ -35,17 +35,23 @@ export function getJobType(job: any) {
 }
 
 export function getJobRequestDescription (jobRequest: any) {
-  const {requests} = jobRequest;
+  const {requests, windows} = jobRequest;
   let value = '';
-  if (requests) {
-    if (requests.length === 0) {
-      return null;
-    } else if (requests.length > 1) {
+  if (requests.length > 0) {
+    if (requests.length > 1) {
       value = 'Multiple requests';
     } else if (requests[0]) {
       value = requests[0].category ? requests[0].category : '-'
     } else {
       value = '-'
+    }
+  } else if (windows.length > 0) {
+    if (windows.length === 0) {
+      return '';
+    } else if (windows.length > 1) {
+      value = 'Multiple Windows';
+    } else if (windows[0]) {
+      value = windows[0].title || '';
     }
   }
   return value.toLowerCase();

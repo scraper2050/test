@@ -3,27 +3,24 @@ import styles, { FormHeaderContainer } from '../bc-shared-form.styles';
 import { withStyles } from '@material-ui/core';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
-import { useDispatch, useSelector } from 'react-redux';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
-import { getCustomerDetailAction, getCustomers } from 'actions/customer/customer.action';
-
 
 interface Props {
-    classes: any;
-    values: any;
-    handleChange: { (e: ChangeEvent<any>): void; <T_1 = string | ChangeEvent<any>>(field: T_1): T_1 extends ChangeEvent<any> ? void : (e: string | ChangeEvent<any>) => void; };
-    formTypeValues: any;
-    invoiceDetail: any;
-    setFieldValue: any;
-    jobId: any;
-    customer: any;
+  classes: any;
+  values: any;
+  handleChange: { (e: ChangeEvent<any>): void; <T_1 = string | ChangeEvent<any>>(field: T_1): T_1 extends ChangeEvent<any> ? void : (e: string | ChangeEvent<any>) => void; };
+  formTypeValues: any;
+  invoiceDetail: any;
+  setFieldValue: any;
+  jobId: any;
+  customer: any;
+  customers: any;
+  getCustomerDetailActionHandler: any;
+  getCustomersDispatcher: () => void;
 }
 
-function SharedFormHeaderContainer({ classes, values, handleChange, setFieldValue, formTypeValues, invoiceDetail, jobId, customer }:Props) {
+function SharedFormHeaderContainer({ classes, values, handleChange, setFieldValue, formTypeValues, invoiceDetail, jobId, customer, customers, getCustomerDetailActionHandler, getCustomersDispatcher }:Props) {
   const [canEditNote, setCanEditNote] = useState(false);
-  const customers = useSelector(({ customers }: any) => customers.data);
-
-  const dispatch = useDispatch();
 
   const dateChangeHandler = (type:string, date: Date) => {
     setFieldValue(type, date);
@@ -35,14 +32,13 @@ function SharedFormHeaderContainer({ classes, values, handleChange, setFieldValu
       dateChangeHandler('dueDate', invoiceDetail.dueDate);
       setFieldValue('note', invoiceDetail.note);
     }
-
-    dispatch(getCustomers());
+    getCustomersDispatcher();
   }, []);
 
 
   useEffect(() => {
     if (values.customerId) {
-      dispatch(getCustomerDetailAction({ 'customerId': values.customerId }));
+      getCustomerDetailActionHandler(values.customerId)
     }
   }, [values.customerId]);
 

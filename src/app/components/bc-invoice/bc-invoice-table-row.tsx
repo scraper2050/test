@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { createMuiTheme, makeStyles, Theme } from "@material-ui/core/styles";
 import {
   createStyles,
@@ -17,10 +16,8 @@ import InputBase from "@material-ui/core/InputBase";
 import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { useSelector } from "react-redux";
 import {Autocomplete} from "@material-ui/lab";
 import {useLocation} from "react-router-dom";
-import { getItems } from 'api/items.api'
 
 
 const useInvoiceTableStyles = makeStyles((theme: Theme) =>
@@ -152,12 +149,13 @@ interface Props {
   itemTier: any,
   handleChange(items: any[]): any,
   errors?: any;
+  taxes: any;
+  getItems: (includeDiscountItems?: boolean) => Promise<any>;
 }
 
-function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, itemTier, errors }: Props) {
-  const dispatch = useDispatch();
+function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange, itemTier, errors, taxes, getItems }: Props) {
   const [serviceItems, setServiceItems] = useState<any>([])
-  const taxes = useSelector(({ tax }: any) => tax.data);
+  
   const invoiceTableStyle = useInvoiceTableStyles();
   const { state } = useLocation<any>();
 

@@ -1,3 +1,4 @@
+// TODO this component is never used, should we get rid of it?
 import {
   AppBar,
   Button,
@@ -28,7 +29,6 @@ import { Link, useHistory, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 
-import Config from '../../../config';
 import { loadNotificationsActions, pushNotification } from 'actions/notifications/notifications.action';
 import HeaderNotifications, { NotificationItem } from './bc-header-notification';
 import { computeUnreadNotifications } from './util';
@@ -268,6 +268,7 @@ function BCHeader({ token, user, classes }: Props): JSX.Element {
                           close={handleClose}
                           items={activeNotifications}
                           loading={loading}
+                          openModalHandler={()=>null}
                         />
                       </Paper>
                     </ClickAwayListener>

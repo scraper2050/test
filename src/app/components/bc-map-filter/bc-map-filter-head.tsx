@@ -29,14 +29,20 @@ const useStyles = makeStyles(theme => ({
 
 
 function BCMapFilterHead({
- theme,
- startDate = null,
- placeholder = '',
- disableDate = false,
- onChangeDate,
- filter,
- shouldResetDate = false,
- filterType
+  theme,
+  startDate = null,
+  placeholder = '',
+  disableDate = false,
+  onChangeDate,
+  filter,
+  shouldResetDate = false,
+  filterType,
+  customers,
+  contacts,
+  dispatchGetContacts,
+  employees,
+  vendors,
+  jobTypes,
 }: any): JSX.Element {
   const mapStyles = useStyles();
   const [dateValue, setDateValue] = useState<any>(null);
@@ -126,6 +132,9 @@ function BCMapFilterHead({
                     currentFilter={filter[0]}
                     resetFilter={resetFilter}
                     filterType={filterType}
+                    employees={employees}
+                    vendors={vendors}
+                    jobTypes={jobTypes}
                   />
                   :
                   <BCMapFilter
@@ -133,6 +142,9 @@ function BCMapFilterHead({
                     currentFilter={filter[0]}
                     resetFilter={resetFilter}
                     filterType={filterType}
+                    customers={customers}
+                    contacts={contacts}
+                    dispatchGetContacts={dispatchGetContacts}
                   />
                 }
               </div>

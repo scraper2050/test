@@ -1,7 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
 import useSupercluster from "use-supercluster";
-import { useDispatch } from 'react-redux';
-import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
 import styles from './bc-map-with-marker-list.style';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,9 +10,6 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import './bc-map-with-marker.scss';
 import BCMapMarker from "../bc-map-marker/bc-map-marker";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../reducers";
-import {CompanyProfileStateType} from "../../../actions/user/user.types";
 import {DEFAULT_COORD} from "../../../utils/constants";
 import {
   getJobTypesFromJob,
@@ -32,12 +27,24 @@ import {ReactComponent as IconJobRequest} from "../../../assets/img/icons/map/ic
 import {ReactComponent as IconOpenServiceTicket} from "../../../assets/img/icons/map/icon-open-service-ticket.svg";
 
 interface BCMapWithMarkerListProps {
-  list: any,
-  classes: any,
-  lat?: any,
-  lng?: any,
-  showPins?: boolean,
-  isTicket?: boolean,
+  reactAppGoogleKeyFromConfig: string;
+  list: any;
+  classes: any;
+  lat?: any;
+  lng?: any;
+  showPins?: boolean;
+  isTicket?: boolean;
+  streamingTickets: boolean;
+  selected: any;
+  coordinates: any;
+  tickets?: any[];
+  dispatchUnselectTicket?: any;
+  openModalHandler?: (modalDataAction:any) => void;
+  openEditTicketModalPrepDispatcher?: (reqObj:any) => void;
+  setServiceTicketDispatcher?: (updatedTickets:any) => void;
+  getServiceTicketDetail?: any;
+  getJobLocation?: any;
+  getJobSite?: any;
 }
 function createMapOptions() {
   return {
@@ -84,12 +91,24 @@ const calculateBorder = (cluster:any) => {
   return '3px solid rgb(130,130,130)'
 }
 
-function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: BCMapWithMarkerListProps) {
-  const { streaming: streamingTickets } = useSelector(({ serviceTicket }: any) => ({
-    streaming: serviceTicket.stream,
-  }));
-  const selected = useSelector((state: RootState) => state.map.ticketSelected);
-  const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
+function BCMapWithMarkerWithList({
+  reactAppGoogleKeyFromConfig,
+  classes,
+  list,
+  isTicket = false,
+  showPins,
+  streamingTickets,
+  selected,
+  coordinates,
+  tickets = [],
+  dispatchUnselectTicket = ()=>{},
+  openModalHandler = ()=>{},
+  openEditTicketModalPrepDispatcher = ()=>{},
+  setServiceTicketDispatcher = ()=>{},
+  getServiceTicketDetail = ()=>{},
+  getJobLocation = ()=>{},
+  getJobSite = ()=>{},
+}: BCMapWithMarkerListProps) {
   const mapRef = useRef<any>();
   const [bounds, setBounds] = useState<any>(null);
   const [zoom, setZoom] = useState(11);
@@ -295,7 +314,7 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
 
   return (
     <GoogleMapReact
-      bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
+      bootstrapURLKeys={{ 'key': reactAppGoogleKeyFromConfig }}
       center={{ 'lat': centerLat,
         'lng': centerLng }}
       defaultZoom={11}
@@ -365,6 +384,16 @@ function BCMapWithMarkerWithList({ classes, list, isTicket = false, showPins }: 
                 lng={lng}
                 ticket={ticket}
                 isTicket={isTicket}
+                streamingTickets={streamingTickets}
+                tickets={tickets}
+                selected={selected}
+                dispatchUnselectTicket={dispatchUnselectTicket}
+                openModalHandler={openModalHandler}
+                openEditTicketModalPrepDispatcher={openEditTicketModalPrepDispatcher}
+                setServiceTicketDispatcher={setServiceTicketDispatcher}
+                getServiceTicketDetail={getServiceTicketDetail}
+                getJobLocation={getJobLocation}
+                getJobSite={getJobSite}
               />
             );
           }

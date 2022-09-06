@@ -1,14 +1,13 @@
-import Config from '../../../config';
 import GoogleMapReact from 'google-map-react';
 import RoomIcon from '@material-ui/icons/Room';
 import styles from './bc-map-with-marker.style';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-
 interface BCMapWithMarkerProps {
   lat: any;
   lang: any;
   classes: any;
+  reactAppGoogleKeyFromConfig: string;
 }
 
 function MakerPin({ classes }: any) {
@@ -21,7 +20,7 @@ function createMapOptions() {
   };
 }
 
-function BCMapWithMarker({ classes, lat, lang }: BCMapWithMarkerProps) {
+function BCMapWithMarker({ classes, lat, lang, reactAppGoogleKeyFromConfig }: BCMapWithMarkerProps) {
   const [center, setCenter] = useState({ 'lat': lat,
     'lng': lang });
 
@@ -34,7 +33,7 @@ function BCMapWithMarker({ classes, lat, lang }: BCMapWithMarkerProps) {
 
   return (
     <GoogleMapReact
-      bootstrapURLKeys={{ 'key': Config.REACT_APP_GOOGLE_KEY }}
+      bootstrapURLKeys={{ 'key': reactAppGoogleKeyFromConfig }}
       center={center}
       options={createMapOptions}
       defaultZoom={10}>
