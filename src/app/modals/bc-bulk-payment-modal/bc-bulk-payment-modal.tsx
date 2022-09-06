@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   Checkbox,
   withStyles,
+  Tooltip,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -265,6 +266,16 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     dispatch(setCurrentPageIndex(0));
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
+
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      border: '1px solid #dadde9',
+    },
+  }))(Tooltip);
+
   const columns: any = [
     {
       Cell({ row }: any) {
@@ -302,11 +313,18 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     },
     {
       Cell({ row }: any) {
-        return <div>
-          <span>
-            {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
-          </span>
-        </div>;
+        return <div style={{ maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip
+            placement='bottom-start'
+            title={
+              row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'
+            }
+          >
+            <span>
+              {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+            </span>
+          </HtmlTooltip>
+        </div>
       },
       'Header': 'Customer PO',
     },
