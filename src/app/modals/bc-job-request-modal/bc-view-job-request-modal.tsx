@@ -92,8 +92,9 @@ function BCViewJobRequestModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
 
-  const [curTab, setCurTab] = useState(0);
+  const [curTab, setCurTab] = useState(jobRequest.tab ? jobRequest.tab : 0);
   const [chatContent, setChatContent] = useState([]);
+  const [unreadChatCount, setUnreadChatCount] = useState(0)
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [changeRequest, setChangeRequest] = useState(false);
 
@@ -138,7 +139,12 @@ function BCViewJobRequestModal({
         if (result.chats.length > 0) {
           const lastMessage = result.chats[result.chats.length - 1];
         if (!lastMessage.readStatus.isRead)
-          markJobRequestChatRead(id, lastMessage._id);
+          setTimeout(() => {
+            markJobRequestChatRead(id, lastMessage._id);
+          }, 4000);
+        }
+        if(result.unreadChat){
+          setUnreadChatCount(result.unreadChat)
         }
       } else {
         console.log(result.message);
@@ -331,7 +337,7 @@ function BCViewJobRequestModal({
             'label': 'COMMENTS',
             'value': 1,
             'icon': QuestionAnswerIcon,
-            'badge': chatContent.length,
+            'badge': unreadChatCount,
           },
         ]}
       />

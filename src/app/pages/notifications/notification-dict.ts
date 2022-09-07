@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { Notification, NotificationTypeTypes } from 'reducers/notifications.types';
-import { openContractModal, openDetailJobModal, openDetailTicketModal, openJobRequestModal } from './notification-click-handlers';
+import { openContractModal, openDetailJobModal, openDetailTicketModal, openJobRequestModal, openJobRequestModalFromChat } from './notification-click-handlers';
 
 
 export const getNotificationValues = (notificationType: string, notification:Notification) => {
@@ -50,6 +50,7 @@ export const getNotificationMethods = (dispatch:Dispatch, notificationType: stri
   const notificationTypes:any = {
     [NotificationTypeTypes.SERVICE_TICKET_CREATED]: () => openDetailJobModal(dispatch, notification),
     [NotificationTypeTypes.JOB_REQUEST_CREATED]: () => openJobRequestModal(dispatch, notification),
+    [NotificationTypeTypes.NEW_CHAT]: () => openJobRequestModalFromChat(dispatch, notification),
     [NotificationTypeTypes.JOB_RESCHEDULED]: () => openDetailTicketModal(dispatch, notification),
     [NotificationTypeTypes.CONTRACT_ACCEPTED]: () => openContractModal(dispatch, notification),
     [NotificationTypeTypes.CONTRACT_INVITATION]: () => openContractModal(dispatch, notification),

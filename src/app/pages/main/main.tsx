@@ -143,6 +143,7 @@ function Main(): any {
         break;
 
       case 'JobRequestCreated':
+      case 'NewChatJobRequest':
         dispatch(
           markNotificationAsRead.fetch({ id: itemId, isRead: true })
         );
@@ -150,7 +151,7 @@ function Main(): any {
           dispatch(
             setModalDataAction({
               data: {
-                jobRequest: data,
+                jobRequest: {...data, tab: type === 'NewChatJobRequest' ? 1 : 0},
                 removeFooter: false,
                 maxHeight: '100%',
                 modalTitle: 'Job Request',
@@ -170,7 +171,7 @@ function Main(): any {
             dispatch(
               setModalDataAction({
                 data: {
-                  jobRequest: matchedJobRequest[0],
+                  jobRequest: {...matchedJobRequest[0], tab: type === 'NewChatJobRequest' ? 1 : 0},
                   removeFooter: false,
                   maxHeight: '100%',
                   modalTitle: 'Job Request',
