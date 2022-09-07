@@ -3,6 +3,7 @@ import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 import ContractNotification from './header-notifications/bc-header-contract-notification';
 import ServiceTicketNotication from './header-notifications/bc-header-service-ticket-notification';
 import JobRequestNotication from './header-notifications/bc-header-job-request-notification';
+import NewChatJobRequestNotication from './header-notifications/bc-header-new-chat-job-request-notification';
 import JobRescheduledNotication from './header-notifications/bc-header-job-rescheduled';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
@@ -119,7 +120,7 @@ type Notification = {
     dismissedAt: string;
   };
   createdAt: string;
-  metadata: ServiceTicketNotification;
+  metadata: ServiceTicketNotification | any;
 };
 
 export type NotificationItem = Notification
@@ -177,6 +178,12 @@ function renderItem(item:NotificationItem, index:number, openModalHandler: Notif
       {...item}
       key={index}
       openModalHandler={openModalHandler}
+    />,
+    [NotificationTypeTypes.NEW_CHAT]: <NewChatJobRequestNotication
+      {...item}
+      key={index}
+      openModalHandler={openModalHandler}
+      jobRequests={jobRequests}
     />
 
   };
