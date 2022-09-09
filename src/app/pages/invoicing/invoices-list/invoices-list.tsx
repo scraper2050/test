@@ -14,13 +14,6 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { modalTypes } from '../../../../constants'
 import { getCustomers } from 'actions/customer/customer.action'
 import {Sync as SyncIcon} from '@material-ui/icons';
-// import { getInvoicingList } from "../../../../actions/invoicing/invoicing.action";
-// import TableFilterService from "../../../../utils/table-filter";
-
-// const getFilteredList = (state: any) => {
-//   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
-//   return sortedInvoices.filter((invoice: any) => invoice?.isDraft);
-// };
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
@@ -36,21 +29,8 @@ function InvoiceList({ classes }: any) {
 
   const openCreateInvoicePage = () => {
     history.push('/main/invoicing/create-invoice');
-/*    history.push({
-      'pathname': `/main/invoicing/edit/0`,
-/!*      'state': {
-        'customerId': invoiceDetail.customer?._id,
-        'customerName': invoiceDetail.customer?.profile?.displayName,
-        'invoiceId': invoiceDetail?._id,
-        'jobType': invoiceDetail.job?.type?._id,
-        'invoiceDetail': invoiceDetail
-      }*!/
-    });*/
   };
 
-  // useEffect(() => {
-  //   dispatch(getInvoicingList());
-  // }, []);
   useEffect(() => {
     dispatch(getCustomers());
   }, []);
@@ -115,7 +95,7 @@ function InvoiceList({ classes }: any) {
               root: classes.syncButton
             }}
             onClick={manualSyncHandle}>
-            Invoice Not Synced {unSyncedInvoicesCount}
+            Invoices Not Synced {unSyncedInvoicesCount}
           </Button>
           }
         <BCTabs

@@ -21,7 +21,8 @@ import {getUnsyncedInvoices, SyncInvoices} from "../../../api/invoicing.api";
 import {error} from "../../../actions/snackbar/snackbar.action";
 import {
   Sync as SyncIcon,
-  SyncProblem as SyncProblemIcon
+  SyncProblem as SyncProblemIcon,
+  Warning as WarningIcon,
 } from "@material-ui/icons";
 import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
 import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
@@ -33,6 +34,7 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [isSyncing, setSyncing] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const getData = async () => {
     try {
@@ -162,17 +164,17 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
       'sortable': true,
       'width': 10
     },
-    {
-      Cell({row}: any) {
-        return row.original.lastEmailSent
-          ? formatDatTimelll(row.original.lastEmailSent)
-          : 'N/A';
-      },
-      'Header': 'Last Email Send Date ',
-      'accessor': 'lastEmailSent',
-      'className': 'font-bold',
-      'sortable': true
-    },
+    // {
+    //   Cell({row}: any) {
+    //     return row.original.lastEmailSent
+    //       ? formatDatTimelll(row.original.lastEmailSent)
+    //       : 'N/A';
+    //   },
+    //   'Header': 'Last Email Send Date ',
+    //   'accessor': 'lastEmailSent',
+    //   'className': 'font-bold',
+    //   'sortable': true
+    // },
     {
       Cell({row}: any) {
         return row.original.createdAt
@@ -218,8 +220,13 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
         newList.splice(found, 1)
         setSelectedIndexes(newList);
       } else {
-        newList.push(row.index);
-        setSelectedIndexes(newList);
+        if (newList.length === 5) {
+          setShowWarning(true)
+          setTimeout(() => setShowWarning(false), 2000)
+        } else {
+          newList.push(row.index);
+          setSelectedIndexes(newList);
+        }
       }
     }
   };
@@ -239,6 +246,11 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
       <DialogActions classes={{
         'root': classes.dialogActions
       }}>
+        {showWarning && <div className={classes.warningContainer}>
+          <WarningIcon/>
+          <span>Only five (5) invoices may be manually synced at one time.</span>
+        </div>
+        }
         <Button
           disabled={isLoading || isSyncing}
           aria-label={'record-payment'}
@@ -247,7 +259,7 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
           }}
           onClick={() => closeModal()}
           variant={'outlined'}>
-          Cancel
+          Close
         </Button>
 
         <Button

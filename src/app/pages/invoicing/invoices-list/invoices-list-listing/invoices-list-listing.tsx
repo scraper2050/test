@@ -61,26 +61,40 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const columns: any = [
     {
+      Cell({row}: any) {
+        return <span>{row.original.invoiceId?.substring(8)}</span>
+      },
       'Header': 'Invoice ID',
-      'accessor': 'invoiceId',
+      //'accessor': 'invoiceId',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
     },
     {
       'Header': 'Job ID',
-      'accessor': 'job.jobId',
+      Cell({row}: any) {
+        return <span>{row.original.job?.jobId?.substring(5)}</span>
+      },
       'className': 'font-bold',
       'sortable': true
     },
     {
       'Header': 'Customer',
-      'accessor': 'customer.profile.displayName',
+      //'accessor': 'customer.profile.displayName',
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      Cell({ row }: any) {
+        return <div style={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip
+            placement='bottom-start'
+            title={row.original.customer?.profile?.displayName}>
+            <span>{row.original.customer?.profile?.displayName}</span>
+          </HtmlTooltip>
+        </div>
+      },
     },
     {
       Cell({ row }: any) {
-        return <div style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        return <div style={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis' }}>
           <HtmlTooltip
             placement='bottom-start'
             title={
@@ -95,34 +109,6 @@ function InvoicingListListing({ classes, theme }: any) {
       },
       'Header': 'Customer PO',
     },
-    /*
-     * {
-     *   'Header': 'Type',
-     *   'accessor': '',
-     *   'className': 'font-bold',
-     *   'sortable': true
-     * },
-     * {
-     *   Cell({ row }: any) {
-     *     return <div className={'flex items-center'}>
-     *       {`$${row.original.charges}` || 0}
-     *     </div>;
-     *   },
-     *   'Header': 'Amount',
-     *   'sortable': true,
-     *   'width': 60
-     * },
-     * {
-     *   Cell({ row }: any) {
-     *     return <div className={'flex items-center'}>
-     *       {`$${row.original.tax}` || 0}
-     *     </div>;
-     *   },
-     *   'Header': 'Tax',
-     *   'sortable': true,
-     *   'width': 60
-     * },
-     */
     {
       Cell({ row }: any) {
         return <div className={classes.totalNumber}>
@@ -157,7 +143,7 @@ function InvoicingListListing({ classes, theme }: any) {
         ? formatDatTimelll(row.original.lastEmailSent)
         : 'N/A';
     },
-    'Header': 'Last Email Send Date ',
+    'Header': 'Email Send Date ',
     'accessor': 'lastEmailSent',
     'className': 'font-bold',
     'sortable': true
@@ -179,7 +165,7 @@ function InvoicingListListing({ classes, theme }: any) {
           <BCQbSyncStatus data={row.original}/>
         );
       },
-      'Header': 'Integrations',
+      //'Header': 'Integrations',
       'id': 'qbSync',
       'sortable': false,
       'width': 30
