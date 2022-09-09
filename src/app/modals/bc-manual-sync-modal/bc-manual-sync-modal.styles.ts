@@ -56,4 +56,14 @@ export default (theme: Theme): any => ({
     backgroundColor: ERROR_RED,
     color: 'white',
   },
+  warningContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: ERROR_RED,
+    fontSize: 14
+  }
 });

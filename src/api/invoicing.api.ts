@@ -235,15 +235,14 @@ export const SyncInvoices = (ids: string[] = [], onEnd?: (data: any[]) => void )
     const params ={invoiceIds :  JSON.stringify(ids)};
     const response: any = await request('/createQBInvoices', 'POST', params, false);
     const {status, message, invoiceSynced, invoiceUnsynced} = response.data;
-    //const invoiceSyncedT = invoiceUnsynced.map((invoice: any) => ({...invoice.invoice, quickbookId: invoice.invoice._id}))
+
     if (status === 1) {
       const unsynced = invoiceUnsynced.map((invoice: any) => ({
         _id: invoice.invoice._id,
         error: invoice.errorMessage,
-        //quickbookId: invoice.invoice._id
       }));
       const synced = invoiceSynced.map((invoice: any) => ({
-        _id: invoice.invoice._id,
+        _id: invoice._id,
         quickbookId: invoice.quickbookId
       }));
 
