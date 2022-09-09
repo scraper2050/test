@@ -11,7 +11,9 @@ import {
   setDraftInvoices,
   setDraftInvoicesTotal,
   setNextDraftInvoicesCursor,
-  setPreviousDraftInvoicesCursor
+  setPreviousDraftInvoicesCursor,
+  updateSyncedInvoices,
+  setUnsyncedInvoicesCount,
 } from 'actions/invoicing/invoicing.action';
 import {
   setInvoicesLoading as setInvoicesForBulkPaymentsLoading,
@@ -20,6 +22,7 @@ import {
   setNextInvoicesCursor as setNextInvoicesForBulkPaymentsCursor,
   setPreviousInvoicesCursor as setPreviousInvoicesForBulkPaymentsCursor,
 } from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
+import {SYNC_RESPONSE} from "../app/models/invoices";
 
 export const getTodos = async (params = {}) => {
   let responseData;
@@ -139,6 +142,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
           dispatch(setPreviousInvoicesCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
           dispatch(setNextInvoicesCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
           dispatch(setInvoicesTotal(res.data?.total ? res.data?.total : 0));
+          dispatch(setUnsyncedInvoicesCount(res.data?.unsyncedInvoices));
           dispatch(setInvoicesLoading(false));
           return resolve(res.data);
         })
@@ -213,6 +217,52 @@ export const getInvoicingList = async (params = {}) => {
     }
   }
   return responseData.invoices;
+};
+
+export const getUnsyncedInvoices = async() => {
+  try {
+    const response: any = await request('/getUnsyncedInvoices', 'GET');
+    const {status, message, invoices} = response.data;
+    if (status === 1) return invoices;
+    throw ({message});
+  } catch (e) {
+    throw (e.message);
+  }
+}
+
+export const SyncInvoices = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE) => void ) => async(dispatch: any) => {
+  let responseData;
+  try {
+    const params ={invoiceIds :  JSON.stringify(ids)};
+    const response: any = await request('/createQBInvoices', 'POST', params, false);
+    const {status, message, totalInvoiceSynced, totalInvoiceUnsynced, invoiceSynced, invoiceUnsynced} = response.data;
+
+    if (status === 1) {
+      const unsynced = invoiceUnsynced.map((invoice: any) => ({
+        _id: invoice.invoice._id,
+        error: invoice.errorMessage,
+      }));
+      const synced = invoiceSynced.map((invoice: any) => ({
+        _id: invoice._id,
+        quickbookId: invoice.quickbookId
+      }));
+
+      dispatch(updateSyncedInvoices(invoiceSynced));
+      if (onEnd) onEnd({ids: [...unsynced, ...synced], totalInvoiceSynced, totalInvoiceUnsynced});
+    } else {
+      throw new Error(message);
+    }
+  } catch (err) {
+    responseData = err.data;
+    if (err.response?.status >= 400 || err.data?.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+  //return responseData;
 };
 
 export const getPurchaseOrder = async (params = {}) => {

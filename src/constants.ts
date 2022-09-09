@@ -117,6 +117,7 @@ export const modalTypes = {
   'WARNING_MODAL': 'warning_modal',
   'CUSTOMIZE_REVENUE_REPORT_MODAL': 'customize-revenue-report-modal',
   'MEMORIZE_REPORT_MODAL': 'memorize-report-modal',
+  'MANUAL_SYNC_MODAL': 'manual-sync-modal',
 };
 
 export const rejectionReason = [

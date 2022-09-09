@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import WarningIcon from "@material-ui/icons/Warning";
 import {createStyles} from "@material-ui/core/styles";
@@ -14,11 +14,17 @@ interface Props {
 }
 export default function BCSent({title, type = 'success', subtitle, showLine = true, color}:Props) {
   const componentStyles = styles();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    containerRef?.current?.scrollIntoView();
+  }, [containerRef])
+  
 
   return (
   <>
     {showLine && <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>}
-    <div className={componentStyles.container}>
+    <div className={componentStyles.container} ref={containerRef}>
       {type === 'success' ?
         <CheckCircleIcon style={{color: color || PRIMARY_GREEN, fontSize: 100}}/>
         :
