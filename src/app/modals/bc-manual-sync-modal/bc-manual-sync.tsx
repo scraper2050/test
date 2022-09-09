@@ -31,6 +31,8 @@ import {
 import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
 import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
 import {SYNC_RESPONSE} from "../../models/invoices";
+import BCCircularLoader
+  from "../../components/bc-circular-loader/bc-circular-loader";
 
 
 function BcManualSync({classes, action, closeAction}: any): JSX.Element {
@@ -80,17 +82,16 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
       const found = newList.indexOf(i);
       newList.splice(found, 1)
       temp[i] = {...temp[i], ...update};
-      //temp[selectedIndexes[index]].errorMessage = item.error;
     });
     setSelectedIndexes(newList);
     setInvoices(temp);
     setSyncing(false);
     if (totalInvoiceSynced && !totalInvoiceUnsynced) {
-      dispatch(success(`${totalInvoiceSynced} invoices are successfully synced.`))
+      dispatch(success(`${totalInvoiceSynced} invoices synced.`))
     } else if (!totalInvoiceSynced && totalInvoiceUnsynced) {
-      dispatch(error(`${totalInvoiceUnsynced} invoices failed to synced.`))
+      dispatch(error(`${totalInvoiceUnsynced} invoices not synced.`))
     } else {
-      dispatch(warning(`${totalInvoiceSynced} invoices are successfully synced, and ${totalInvoiceUnsynced} invoices failed to synced.`))
+      dispatch(warning(`${totalInvoiceSynced} invoices synced, and ${totalInvoiceUnsynced} invoices not synced.`))
     }
   }
 
@@ -285,7 +286,8 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
           color="primary"
           onClick={() => confirm()}
           variant={'outlined'}>
-          Sync Manually
+          {isSyncing && <><BCCircularLoader heightValue='20px' size={20}/>&nbsp;&nbsp;</>}
+          {isSyncing ? 'Syncing...' : 'Sync Manually'}
         </Button>
 
       </DialogActions>
