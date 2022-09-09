@@ -1,26 +1,56 @@
 import {
+  Button,
+  Checkbox,
   DialogActions,
-  Button, withStyles, Checkbox,
+  DialogContent,
+  Tooltip,
+  withStyles,
 } from '@material-ui/core';
-import React, {useState} from 'react';
-import {closeModalAction, setModalDataAction} from 'actions/bc-modal/bc-modal.action';
-import {useDispatch, useSelector} from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {
+  closeModalAction,
+  setModalDataAction
+} from 'actions/bc-modal/bc-modal.action';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components';
 import styles from './bc-manual-sync-modal.styles';
 import BCTableContainer
   from "../../components/bc-table-container/bc-table-container";
 import {formatDatTimelll} from "../../../helpers/format";
-import BCQbSyncStatus
-  from "../../components/bc-qb-sync-status/bc-qb-sync-status";
+import {getUnsyncedInvoices, SyncInvoices} from "../../../api/invoicing.api";
+import {error} from "../../../actions/snackbar/snackbar.action";
+import {
+  Sync as SyncIcon,
+  SyncProblem as SyncProblemIcon
+} from "@material-ui/icons";
+import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
+import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
 
 
-function BcManualSync({classes, message, subMessage, action, closeAction}: any): JSX.Element {
+function BcManualSync({classes, action, closeAction}: any): JSX.Element {
   const dispatch = useDispatch();
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
-  const {data: invoiceList} = useSelector(({invoiceList}: any) => invoiceList);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [isLoading, setLoading] = useState(true);
+  const [isSyncing, setSyncing] = useState(false);
+
+  const getData = async () => {
+    try {
+      const invoices = await getUnsyncedInvoices();
+      setInvoices(invoices);
+    } catch (e) {
+      dispatch(error(e));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, [])
 
   const closeModal = () => {
-    if(closeAction) {
+    if (closeAction) {
       dispatch(closeAction);
     } else {
       dispatch(closeModalAction());
@@ -33,17 +63,42 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
     }
   };
 
-  const confirm = () => {
-    dispatch(action);
-    setTimeout(() => {
-      dispatch(closeModalAction());
-      setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
-      }, 200);
-    }, 1000);
+  const handleSyncResponse = (updates: any[]) => {
+    const temp = [...invoices];
+    const newList = [...selectedIndexes];
+
+    updates.forEach((update: any, index: number) => {
+      const i = temp.findIndex((item) => item._id === update._id);
+      const found = newList.indexOf(i);
+      newList.splice(found, 1)
+      temp[i] = {...temp[i], ...update};
+      //temp[selectedIndexes[index]].errorMessage = item.error;
+    });
+    setSelectedIndexes(newList);
+    setInvoices(temp);
+    setSyncing(false);
+  }
+
+  const confirm = async () => {
+    const ids: string[] = selectedIndexes.map(index => invoices[index]._id);
+
+    try {
+      setSyncing(true);
+      dispatch(SyncInvoices(ids, handleSyncResponse));
+
+      //if (unsynced.length > 0) dispatch(error('Errors'))
+      // setTimeout(() => {
+      //   dispatch(closeModalAction());
+      //   setTimeout(() => {
+      //     dispatch(setModalDataAction({
+      //       'data': {},
+      //       'type': ''
+      //     }));
+      //   }, 200);
+      // }, 1000);
+    } catch (e) {
+      dispatch(error(e));
+    }
   }
 
   const columns: any = [
@@ -52,10 +107,11 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
       'accessor': 'invoiceId',
       'className': 'font-bold',
       'sortable': true,
-      Cell({ row }: any) {
+      Cell({row}: any) {
         return <div className={classes.totalNumber}>
           <Checkbox
             color="primary"
+            disabled={row.original.quickbookId}
             classes={{root: classes.checkbox}}
             checked={selectedIndexes.indexOf(row.index) >= 0}
           />
@@ -78,7 +134,7 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
       'sortable': true
     },
     {
-      Cell({ row }: any) {
+      Cell({row}: any) {
         return <div className={classes.totalNumber}>
 
           <span>
@@ -91,22 +147,23 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
       'sortable': true,
       'width': 20
     },
-    // { Cell({ row }: any) {
-    //     const { status = '' } = row.original;
-    //     const textStatus = status.split('_').join(' ').toLowerCase();
-    //     return (
-    //       <div className={customStyles.centerContainer}>
-    //         <BCMenuButton status={status}  handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)}/>
-    //       </div>
-    //     )
-    //   },
-    //   'Header': 'Payment Status',
-    //   'accessor': 'paid',
-    //   'className': 'font-bold',
-    //   'sortable': true,
-    //   'width': 10
-    // },
     { Cell({ row }: any) {
+        const { status = '' } = row.original;
+        const textStatus = status.split('_').join(' ').toLowerCase();
+        return (
+          <PaymentStatus color={PAYMENT_STATUS_COLORS[row.original.status]}>
+            {row.original.status.replace('_', '').toLowerCase()}
+          </PaymentStatus>
+        )
+      },
+      'Header': 'Payment Status',
+      'accessor': 'paid',
+      'className': 'font-bold',
+      'sortable': true,
+      'width': 10
+    },
+    {
+      Cell({row}: any) {
         return row.original.lastEmailSent
           ? formatDatTimelll(row.original.lastEmailSent)
           : 'N/A';
@@ -117,7 +174,7 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
       'sortable': true
     },
     {
-      Cell({ row }: any) {
+      Cell({row}: any) {
         return row.original.createdAt
           ? formatDatTimelll(row.original.createdAt)
           : 'N/A';
@@ -128,9 +185,22 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
       'sortable': true
     },
     {
-      Cell({ row }: any) {
+      Cell({row}: any) {
+        const color = row.original.quickbookId ? PRIMARY_GREEN : (row.original.error ? ERROR_RED : GRAY4);
         return (
-          <BCQbSyncStatus data={row.original} />
+          <Tooltip
+            title={row.original.error}
+            disableHoverListener={!row.original.error}
+            classes={{tooltip: classes.tooltip}}
+          >
+            <div style={{display: 'flex'}}>
+              {row.original.quickbookId ?
+                <SyncIcon className={classes.syncIcon} style={{color}}/>
+                :
+                <SyncProblemIcon className={classes.syncIcon} style={{color}}/>
+              }
+            </div>
+          </Tooltip>
         );
       },
       'Header': 'Integrations',
@@ -143,42 +213,34 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
   const handleRowClick = (event: any, row: any) => {
     const found = selectedIndexes.indexOf(row.index);
     const newList = [...selectedIndexes];
-    if (found >= 0) {
-      newList.splice(found, 1)
-      setSelectedIndexes(newList);
-    } else {
-      newList.push(row.index);
-      setSelectedIndexes(newList);
+    if (!row.original.quickbookId) {
+      if (found >= 0) {
+        newList.splice(found, 1)
+        setSelectedIndexes(newList);
+      } else {
+        newList.push(row.index);
+        setSelectedIndexes(newList);
+      }
     }
   };
 
   return (
     <DataContainer>
+      <DialogContent classes={{ root: classes.dialogContent }}>
       <BCTableContainer
         columns={columns}
-        isLoading={false}
+        isLoading={isLoading}
         onRowClick={handleRowClick}
-        tableData={invoiceList}
-        //toolbarPositionLeft={true}
-        // manualPagination
-        // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
-        //   dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
-        // }
-        // total={total}
-        // currentPageIndex={currentPageIndex}
-        // setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
-        // currentPageSize={currentPageSize}
-        // setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-        // setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
-        // disableInitialSearch={location?.state?.tab !== 0}
+        tableData={invoices}
       />
-
+      </DialogContent>
 
 
       <DialogActions classes={{
         'root': classes.dialogActions
       }}>
         <Button
+          disabled={isLoading || isSyncing}
           aria-label={'record-payment'}
           classes={{
             'root': classes.closeButton
@@ -190,7 +252,7 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
 
         <Button
           aria-label={'create-job'}
-          disabled={selectedIndexes.length === 0}
+          disabled={selectedIndexes.length === 0 || isLoading || isSyncing}
           classes={{
             root: classes.submitButton,
             disabled: classes.submitButtonDisabled
@@ -202,16 +264,26 @@ function BcManualSync({classes, message, subMessage, action, closeAction}: any):
         </Button>
 
       </DialogActions>
-    </DataContainer >
+    </DataContainer>
   );
 }
 
 const DataContainer = styled.div`
   margin: auto 0;
-  padding: 0 30px;
+
 `;
 
 export default withStyles(
   styles,
-  { 'withTheme': true }
+  {'withTheme': true}
 )(BcManualSync);
+
+const PaymentStatus = styled.div`
+  width: 100px;
+  background-color: ${props => props.color};
+  color: white;
+  border-radius: 8px;
+  text-transform: capitalize;
+  text-align: center;
+  font-size: 13px;
+`;

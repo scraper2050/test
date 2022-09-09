@@ -23,13 +23,13 @@ export const STATUSES = [
   { id: 6, title: 'Incomplete', icon: IconIncomplete, color: '#F50057'},
 ];
 
-export const statusReference: { 
+export const statusReference: {
   [key: string]: {
-    text: string; 
-    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>; 
+    text: string;
+    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
     color: string;
     statusNumber: string;
-  }; 
+  };
 } = {
   '0': {text: 'Scheduled', icon: IconScheduled, color: '#828282', statusNumber: '0'},
   '1': {text: 'Started', icon: IconStarted, color: '#00AAFF', statusNumber: '1'},
@@ -40,13 +40,13 @@ export const statusReference: {
   '6': {text: 'Incomplete', icon: IconIncomplete, color: '#F50057', statusNumber: '6'}
 }
 
-export const jobRequestStatusReference: { 
+export const jobRequestStatusReference: {
   [key: string]: {
-    text: string; 
-    icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>; 
+    text: string;
+    icon?: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
     color: string;
     statusNumber: string;
-  }; 
+  };
 } = {
   '0': {text: 'Open', color: 'inherit', statusNumber: '0'},
   '1': {text: 'Scheduled', icon: IconScheduled, color: '#828282', statusNumber: '1'},
@@ -54,3 +54,6 @@ export const jobRequestStatusReference: {
   '3': {text: 'Canceled', icon: IconRescheduled, color: '#828282', statusNumber: '3'},
   '4': {text: 'Rejected', icon: IconCancelled, color: '#A107FF', statusNumber: '4'},
 }
+
+
+export const PAYMENT_STATUS_COLORS: {[index: string]:string}={PAID: '#81c784', UNPAID: '#F50057', PARTIALLY_PAID: '#FA8029'};

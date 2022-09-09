@@ -16,6 +16,8 @@ export interface InvoicingState {
     currentPageIndexDraft: number;
     currentPageSizeDraft: number;
     keywordDraft: string;
+    unSyncedInvoices: any[];
+    unSyncedInvoicesCount: number;
 }
 
 export enum InvoicingTodosActionType {
@@ -32,6 +34,9 @@ export enum InvoicingListActionType {
     FAILED = 'getInvoicingListFailed',
     SET_INVOICES_LOADING = 'SET_INVOICES_LOADING',
     SET_INVOICES = 'SET_INVOICES',
+    SET_UNSYNCED_INVOICES = 'SET_UNSYNCED_INVOICES',
+    SET_UNSYNCED_INVOICES_COUNT = 'SET_UNSYNCED_INVOICES_COUNT',
+    UPDATE_SYNCED_INVOICES = 'UPDATE_SYNCED_INVOICES',
     SET_PREVIOUS_INVOICES_CURSOR = 'SET_PREVIOUS_INVOICES_CURSOR',
     SET_NEXT_INVOICES_CURSOR = 'SET_NEXT_INVOICES_CURSOR',
     SET_INVOICES_TOTAL = 'SET_INVOICES_TOTAL',

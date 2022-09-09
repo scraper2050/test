@@ -1,14 +1,20 @@
 import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
-import {GRAY2, PRIMARY_BLUE} from "../../../constants";
+import {
+  ERROR_RED,
+  GRAY2,
+} from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
-    padding: '25px  40px 25px 0 !important',
-    backgroundColor: 'auto'
+    padding: '25px  30px 25px 0 !important',
+    backgroundColor: 'auto',
+    borderWidth: 0,
   },
   dialogContent: {
-    padding: '8px 150px !important',
+    padding: '0 30px !important',
+    maxHeight: '60vh',
+    overflowY: 'auto !important',
   },
   closeButton: {
     color: GRAY2,
@@ -42,5 +48,12 @@ export default (theme: Theme): any => ({
   },
   checkbox: {
     padding: '0 10px 0 0',
-  }
+  },
+  syncIcon: {
+    fontSize: 28,
+  },
+  tooltip: {
+    backgroundColor: ERROR_RED,
+    color: 'white',
+  },
 });

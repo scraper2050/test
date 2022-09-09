@@ -28,8 +28,7 @@ function InvoiceList({ classes }: any) {
   const theme = useTheme();
   const history = useHistory();
   const location = useLocation<any>();
-  // const invoiceList = useSelector(getFilteredList);
-  const {loading, totalDraft} = useSelector(({invoiceList}: any) => invoiceList);
+  const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -109,14 +108,14 @@ function InvoiceList({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          {!loading && curTab === 0 && <Button
+          {!loading && curTab === 0 && unSyncedInvoicesCount > 0 && <Button
             variant='outlined'
             startIcon={<SyncIcon className={classes.syncIcon}/>}
             classes={{
               root: classes.syncButton
             }}
             onClick={manualSyncHandle}>
-            Invoice Not Synced 3
+            Invoice Not Synced {unSyncedInvoicesCount}
           </Button>
           }
         <BCTabs

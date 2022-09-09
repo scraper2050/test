@@ -166,7 +166,7 @@ function InvoicingListListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return (
-          <BCQbSyncStatus data={row.original} showStatus/>
+          <BCQbSyncStatus data={row.original}/>
         );
       },
       'Header': 'Integrations',

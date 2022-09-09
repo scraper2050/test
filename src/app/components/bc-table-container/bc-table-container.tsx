@@ -53,7 +53,7 @@ function BCTableContainer({
     locationState.prevPage &&
     locationState.prevPage.search ? locationState.prevPage.search : '';
 
-  const initialServerPaginatedSearch = manualPagination && 
+  const initialServerPaginatedSearch = manualPagination &&
     locationState && locationState.option &&
     locationState.option.search ? locationState.option.search : '';
 
