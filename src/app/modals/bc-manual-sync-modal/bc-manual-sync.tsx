@@ -18,7 +18,11 @@ import BCTableContainer
   from "../../components/bc-table-container/bc-table-container";
 import {formatDatTimelll} from "../../../helpers/format";
 import {getUnsyncedInvoices, SyncInvoices} from "../../../api/invoicing.api";
-import {error} from "../../../actions/snackbar/snackbar.action";
+import {
+  error,
+  success,
+  warning
+} from "../../../actions/snackbar/snackbar.action";
 import {
   Sync as SyncIcon,
   SyncProblem as SyncProblemIcon,
@@ -26,6 +30,7 @@ import {
 } from "@material-ui/icons";
 import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
 import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
+import {SYNC_RESPONSE} from "../../models/invoices";
 
 
 function BcManualSync({classes, action, closeAction}: any): JSX.Element {
@@ -65,11 +70,12 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
     }
   };
 
-  const handleSyncResponse = (updates: any[]) => {
+  const handleSyncResponse = (response: SYNC_RESPONSE) => {
+    const {ids, totalInvoiceSynced, totalInvoiceUnsynced} = response;
     const temp = [...invoices];
     const newList = [...selectedIndexes];
 
-    updates.forEach((update: any, index: number) => {
+    ids.forEach((update: any, index: number) => {
       const i = temp.findIndex((item) => item._id === update._id);
       const found = newList.indexOf(i);
       newList.splice(found, 1)
@@ -79,6 +85,13 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
     setSelectedIndexes(newList);
     setInvoices(temp);
     setSyncing(false);
+    if (totalInvoiceSynced && !totalInvoiceUnsynced) {
+      dispatch(success(`${totalInvoiceSynced} invoices are successfully synced.`))
+    } else if (!totalInvoiceSynced && totalInvoiceUnsynced) {
+      dispatch(error(`${totalInvoiceUnsynced} invoices failed to synced.`))
+    } else {
+      dispatch(warning(`${totalInvoiceSynced} invoices are successfully synced, and ${totalInvoiceUnsynced} invoices failed to synced.`))
+    }
   }
 
   const confirm = async () => {

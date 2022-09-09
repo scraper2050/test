@@ -22,6 +22,7 @@ import {
   setNextInvoicesCursor as setNextInvoicesForBulkPaymentsCursor,
   setPreviousInvoicesCursor as setPreviousInvoicesForBulkPaymentsCursor,
 } from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
+import {SYNC_RESPONSE} from "../app/models/invoices";
 
 export const getTodos = async (params = {}) => {
   let responseData;
@@ -229,12 +230,12 @@ export const getUnsyncedInvoices = async() => {
   }
 }
 
-export const SyncInvoices = (ids: string[] = [], onEnd?: (data: any[]) => void ) => async(dispatch: any) => {
+export const SyncInvoices = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE) => void ) => async(dispatch: any) => {
   let responseData;
   try {
     const params ={invoiceIds :  JSON.stringify(ids)};
     const response: any = await request('/createQBInvoices', 'POST', params, false);
-    const {status, message, invoiceSynced, invoiceUnsynced} = response.data;
+    const {status, message, totalInvoiceSynced, totalInvoiceUnsynced, invoiceSynced, invoiceUnsynced} = response.data;
 
     if (status === 1) {
       const unsynced = invoiceUnsynced.map((invoice: any) => ({
@@ -247,7 +248,7 @@ export const SyncInvoices = (ids: string[] = [], onEnd?: (data: any[]) => void )
       }));
 
       dispatch(updateSyncedInvoices(invoiceSynced));
-      if (onEnd) onEnd([...unsynced, ...synced]);
+      if (onEnd) onEnd({ids: [...unsynced, ...synced], totalInvoiceSynced, totalInvoiceUnsynced});
     } else {
       throw new Error(message);
     }
