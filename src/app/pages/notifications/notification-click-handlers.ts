@@ -84,3 +84,27 @@ export const openJobRequestModal = async (dispatch: (action:any)=>void, notifica
     }, 200);
   }
 };
+
+export const openJobRequestModalFromChat = async (dispatch: (action:any)=>void, notification:Notification | any) => {
+  const result:any = await dispatch(getAllJobRequestAPI(30, undefined, undefined, '-1', '', undefined));
+  const matchedJobRequest = result?.jobRequests?.filter((jobRequest:any) => jobRequest._id === (notification.metadata?.jobRequest?._id || notification.metadata?.jobRequest))
+  if(matchedJobRequest && matchedJobRequest.length){
+    dispatch(
+      markNotificationAsRead.fetch({ id: notification?._id, isRead: true })
+    );
+    dispatch(
+      setModalDataAction({
+        data: {
+          jobRequest: {...matchedJobRequest[0], tab: 1},
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: 'Job Request',
+        },
+        type: modalTypes.VIEW_JOB_REQUEST_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+};

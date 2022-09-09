@@ -50,6 +50,15 @@ function InvoicingListListing({ classes, theme }: any) {
   );
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
 
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      border: '1px solid #dadde9',
+    },
+  }))(Tooltip);
+
   const columns: any = [
     {
       'Header': 'Invoice ID',
@@ -71,17 +80,18 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     {
       Cell({ row }: any) {
-        const content = row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-';
-        return <Tooltip title={content}>
-          <div style={{
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            maxWidth: 125,
-          }}>
-            {content}
-          </div>
-        </Tooltip>;
+        return <div style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip
+            placement='bottom-start'
+            title={
+              row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'
+            }
+          >
+            <span>
+              {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+            </span>
+          </HtmlTooltip>
+        </div>
       },
       'Header': 'Customer PO',
     },

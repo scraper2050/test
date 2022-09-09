@@ -18,6 +18,7 @@ export default (theme: Theme): any => ({
     color: '#828282',
     marginBottom: '10px',
     textTransform:'uppercase',
+    fontSize: 12,
   },
   previewCaption2: {
     color: '#828282',
