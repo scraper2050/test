@@ -7,6 +7,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ArrowDropDown from "@material-ui/icons/ArrowDropDown";
 import {CSButtonSmall} from "../../helpers/custom";
+import {PAYMENT_STATUS_COLORS} from "../../helpers/contants";
 
 const STATUS_ITEMS = {
   record_payment: {id: 0, title:'Record Payment'},
@@ -20,8 +21,6 @@ interface ButtonProps {
   handleClick: (e: any, id: number) => void;
 }
 
-
-const bgColors: {[index: string]:string}={PAID: '#81c784', UNPAID: '#F50057', PARTIALLY_PAID: '#FA8029'};
 
 const StyledMenu = withStyles({
   list: {
@@ -103,7 +102,7 @@ export default function CustomizedMenus({status, handleClick}:ButtonProps) {
       <CSButtonSmall
         variant="contained"
         style={{
-          backgroundColor: bgColors[status],
+          backgroundColor: PAYMENT_STATUS_COLORS[status],
           color: '#fff',
           borderBottomLeftRadius: anchorEl ? 0 : 8,
           borderBottomRightRadius: anchorEl ? 0 : 8,

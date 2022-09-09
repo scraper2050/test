@@ -8,10 +8,11 @@ import {
 } from './../actions/invoicing/invoicing.types';
 import { Reducer } from 'redux';
 import { loadInvoiceDetail } from 'actions/invoicing/invoicing.action';
+import _ from "lodash";
 
 const initialState: InvoicingState = {
-  'loading': false,
-  'data': [],
+  loading: false,
+  data: [],
   loadingDraft: false,
   draft: [],
   prevCursor: '',
@@ -26,6 +27,8 @@ const initialState: InvoicingState = {
   currentPageIndexDraft: 0,
   currentPageSizeDraft: 10,
   keywordDraft: '',
+  unSyncedInvoices: [],
+  unSyncedInvoicesCount: 0,
 };
 
 export const InvoicingTodoReducer: Reducer<any> = (state = initialState, action) => {
@@ -90,6 +93,21 @@ export const InvoicingListReducer: Reducer<any> = (state = initialState, action)
       return {
         ...state,
         data: action.payload,
+      };
+    case InvoicingListActionType.SET_UNSYNCED_INVOICES_COUNT:
+      return {
+        ...state,
+        unSyncedInvoicesCount: action.payload,
+      };
+    case InvoicingListActionType.UPDATE_SYNCED_INVOICES:
+      const {data, unSyncedInvoicesCount} = state;
+      let newCount = unSyncedInvoicesCount - action.payload.length;
+      const foundInvoice = _.intersectionBy(action.payload, data, '_id')
+      const updatedInvoices = _.unionBy(foundInvoice, data, '_id')
+      return {
+        ...state,
+        unSyncedInvoicesCount: newCount,
+        data: updatedInvoices,
       };
     case InvoicingListActionType.SET_PREVIOUS_INVOICES_CURSOR:
       return {

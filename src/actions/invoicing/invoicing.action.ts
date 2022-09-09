@@ -118,6 +118,24 @@ export const setInvoices = (invoices: any) => {
     'type': InvoicingListActionType.SET_INVOICES
   };
 };
+export const setUnsyncedInvoices = (invoices: any) => {
+  return {
+    'payload': invoices,
+    'type': InvoicingListActionType.SET_UNSYNCED_INVOICES
+  };
+};
+export const setUnsyncedInvoicesCount = (count: any) => {
+  return {
+    'payload': count,
+    'type': InvoicingListActionType.SET_UNSYNCED_INVOICES_COUNT
+  };
+};
+export const updateSyncedInvoices = (invoices: any[]) => {
+  return {
+    'payload': invoices,
+    'type': InvoicingListActionType.UPDATE_SYNCED_INVOICES
+  };
+};
 export const setPreviousInvoicesCursor = (prevCursor: string) => {
   return {
     'payload': prevCursor,

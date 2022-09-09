@@ -2,12 +2,8 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { withStyles, Button, Tooltip } from "@material-ui/core";
+import {withStyles, Button, Tooltip} from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
-import {
-  getInvoicingList,
-  loadingInvoicingList
-} from 'actions/invoicing/invoicing.action';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
 import { MailOutlineOutlined } from '@material-ui/icons';
@@ -23,7 +19,7 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 // import moment from "moment";
 import { getAllInvoicesAPI } from 'api/invoicing.api';
-import { 
+import {
   setCurrentPageIndex,
   setCurrentPageSize,
   setKeyword,
@@ -180,10 +176,10 @@ function InvoicingListListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return (
-          <BCQbSyncStatus data={row.original} />
+          <BCQbSyncStatus data={row.original}/>
         );
       },
-      'Header': '',
+      'Header': 'Integrations',
       'id': 'qbSync',
       'sortable': false,
       'width': 30
@@ -237,7 +233,7 @@ function InvoicingListListing({ classes, theme }: any) {
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
-    } 
+    }
   }, [location]);
 
   const showInvoiceDetail = (id:string) => {
@@ -321,7 +317,7 @@ function InvoicingListListing({ classes, theme }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
           dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
