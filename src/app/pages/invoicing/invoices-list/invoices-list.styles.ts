@@ -1,6 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import { dataContainer, fabRoot,emailButton, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
-import {GRAY5, PRIMARY_GREEN} from "../../../../constants";
+import {GRAY5, GRAY6, PRIMARY_GREEN} from "../../../../constants";
 
 export default (theme: Theme): any => ({
   ...fabRoot,
@@ -37,7 +37,15 @@ export default (theme: Theme): any => ({
     //   color: 'white',
     // }
   },
-  syncIcon: {
+  disabledButton: {
+    backgroundColor: GRAY6,
+    boxShadow: `0 0`,
+  },
+  buttonIcon: {
     color: PRIMARY_GREEN,
   },
+  buttonIconDisabled: {
+    color: GRAY5,
+  },
+
 });
