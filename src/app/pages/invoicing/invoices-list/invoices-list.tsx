@@ -84,18 +84,23 @@ function InvoiceList({ classes }: any) {
     }, 200);
   }
 
+  const isSyncDisabled = unSyncedInvoicesCount === 0;
+
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          {!loading && curTab === 0 && unSyncedInvoicesCount > 0 && <Button
+          {!loading && curTab === 0 && <Button
             variant='outlined'
-            startIcon={<SyncIcon className={classes.syncIcon}/>}
+            startIcon={<SyncIcon />}
+            disabled={isSyncDisabled}
             classes={{
-              root: classes.syncButton
+              root: classes.syncButton,
+              disabled: classes.disabledButton,
+              startIcon: isSyncDisabled ? classes.buttonIconDisabled : classes.buttonIcon,
             }}
             onClick={manualSyncHandle}>
-            Invoices Not Synced {unSyncedInvoicesCount}
+            {isSyncDisabled ? 'All Invoices Synced' : `Invoices Not Synced ${unSyncedInvoicesCount}`}
           </Button>
           }
         <BCTabs
