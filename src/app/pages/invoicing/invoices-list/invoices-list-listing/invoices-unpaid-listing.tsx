@@ -137,7 +137,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return row.original.createdAt
-          ? formatDatTimelll(row.original.createdAt)
+          ? formatDateMMMDDYYYY(row.original.createdAt)
           : 'N/A';
       },
       'Header': 'Invoice Date',
