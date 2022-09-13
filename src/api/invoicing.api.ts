@@ -202,7 +202,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
 };
 
 let cancelTokenGetUnpaidInvoicesAPI:any;
-export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string) => {
+export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string,  selectionRange?:{startDate:Date;endDate:Date}|null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setUnpaidInvoicesLoading(true));
@@ -211,10 +211,14 @@ export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCur
         previousCursor,
         nextCursor,
         status: JSON.stringify(["UNPAID"]),
-        isDarft: false,
+        isDraft: false,
       };
       if(keyword){
         optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).add(1,'day').format('YYYY-MM-DD');
       }
       if(cancelTokenGetUnpaidInvoicesAPI) {
         cancelTokenGetUnpaidInvoicesAPI.cancel('axios canceled');

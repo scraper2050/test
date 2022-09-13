@@ -203,6 +203,21 @@ export const InvoicingListReducer: Reducer<any> = (state = initialState, action)
         ...state,
         loadingUnpaid: action.payload,
       };
+    case InvoicingListActionType.SET_CURRENT_UNPAID_INVOICES_PAGE_INDEX:
+      return {
+        ...state,
+        currentPageIndexUnpaid: action.payload,
+      };
+    case InvoicingListActionType.SET_CURRENT_UNPAID_INVOICES_PAGE_SIZE:
+      return {
+        ...state,
+        currentPageSizeUnpaid: action.payload,
+      };
+    case InvoicingListActionType.SET_UNPAID_INVOICES_SEARCH_KEYWORD:
+      return {
+        ...state,
+        keywordUnpaid: action.payload,
+      };
   }
   return state;
 };

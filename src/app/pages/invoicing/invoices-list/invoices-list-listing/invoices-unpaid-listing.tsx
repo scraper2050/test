@@ -12,20 +12,16 @@ import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-
 import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
 import {GRAY2, modalTypes} from "../../../../../constants";
-import BCMenuButton from "../../../../components/bc-menu-button";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import {getAllInvoicesAPI, getUnpaidInvoicesAPI} from 'api/invoicing.api';
 import {
   setCurrentPageIndex,
-  setCurrentPageSize,
-  setKeyword,
+  setCurrentPageSize, setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize,
+  setKeyword, setUnpaidKeyword,
 } from 'actions/invoicing/invoicing.action';
-import {inspect} from "util";
-import {PAYMENT_STATUS_COLORS} from "../../../../../helpers/contants";
 import moment from "moment";
-import {boolean} from "yup";
 
 // const getFilteredList = (state: any) => {
 //   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.unpaid);
@@ -36,9 +32,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
-  // const invoiceList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
-  // const isLoading = useSelector((state: any) => state?.invoiceList?.loading);
   const { unpaidInvoices, loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ invoiceList }: any) => ({
       unpaidInvoices: invoiceList.unpaid,
@@ -188,13 +182,13 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     dispatch(getUnpaidInvoicesAPI());
     return () => {
       dispatch(setKeyword(''));
-      //dispatch(setCurrentPageIndex(currentPageIndex));
-      //dispatch(setCurrentPageSize(currentPageSize));
+      dispatch(setCurrentUnpaidPageIndex(currentPageIndex));
+      dispatch(setCurrentUnpaidPageSize(currentPageSize));
     }
   }, []);
 
   useEffect(() => {
-    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword));
+    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
@@ -285,14 +279,14 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
-          dispatch(getUnpaidInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword))
+          dispatch(getUnpaidInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
         currentPageIndex={currentPageIndex}
-        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentUnpaidPageIndex(num))}
         currentPageSize={currentPageSize}
-        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-        setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
+        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentUnpaidPageSize(num))}
+        setKeywordFunction={(query: string) => dispatch(setUnpaidKeyword(query))}
         disableInitialSearch={location?.state?.tab !== 0}
       />
     </DataContainer>
