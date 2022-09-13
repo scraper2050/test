@@ -27,6 +27,16 @@ const initialState: InvoicingState = {
   currentPageIndexDraft: 0,
   currentPageSizeDraft: 10,
   keywordDraft: '',
+
+  unpaid: [],
+  totalUnpaid: 0,
+  loadingUnpaid: false,
+  currentPageIndexUnpaid: 0,
+  currentPageSizeUnpaid: 10,
+  prevCursorUnpaid: '',
+  nextCursorUnpaid: '',
+  keywordUnpaid: '',
+
   unSyncedInvoices: [],
   unSyncedInvoicesCount: 0,
 };
@@ -178,6 +188,20 @@ export const InvoicingListReducer: Reducer<any> = (state = initialState, action)
       return {
         ...state,
         keywordDraft: action.payload,
+      };
+    case InvoicingListActionType.SET_UNPAID_INVOICES:
+      return {
+        ...state,
+        unpaid: action.payload.invoices,
+        nextCursorUnpaid: action.payload.nextCursor,
+        prevCursorUnpaid: action.payload.prevCursor,
+        totalUnpaid: action.payload.total,
+        //unpaid: action.payload.invoices,
+      };
+    case InvoicingListActionType.SET_UNPAID_INVOICES_LOADING:
+      return {
+        ...state,
+        loadingUnpaid: action.payload,
       };
   }
   return state;

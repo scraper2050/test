@@ -16,6 +16,14 @@ export interface InvoicingState {
     currentPageIndexDraft: number;
     currentPageSizeDraft: number;
     keywordDraft: string;
+    unpaid: any[],
+    totalUnpaid: number,
+    currentPageIndexUnpaid: number,
+    currentPageSizeUnpaid: number,
+    prevCursorUnpaid: string,
+    nextCursorUnpaid: string,
+    keywordUnpaid: string,
+    loadingUnpaid: boolean,
     unSyncedInvoices: any[];
     unSyncedInvoicesCount: number;
 }
@@ -51,6 +59,8 @@ export enum InvoicingListActionType {
     SET_CURRENT_DRAFT_INVOICES_PAGE_INDEX = 'SET_CURRENT_DRAFT_INVOICES_PAGE_INDEX',
     SET_CURRENT_DRAFT_INVOICES_PAGE_SIZE = 'SET_CURRENT_DRAFT_INVOICES_PAGE_SIZE',
     SET_DRAFT_INVOICES_SEARCH_KEYWORD = 'SET_DRAFT_INVOICES_SEARCH_KEYWORD',
+    SET_UNPAID_INVOICES = 'SET_UNPAID_INVOICES',
+    SET_UNPAID_INVOICES_LOADING = 'SET_UNPAID_INVOICES_LOADING',
 }
 
 export enum InvoicingPurchaseOrdersActionType {

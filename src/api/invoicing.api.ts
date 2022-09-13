@@ -13,7 +13,7 @@ import {
   setNextDraftInvoicesCursor,
   setPreviousDraftInvoicesCursor,
   updateSyncedInvoices,
-  setUnsyncedInvoicesCount,
+  setUnsyncedInvoicesCount, setUnpaidInvoices, setUnpaidInvoicesLoading,
 } from 'actions/invoicing/invoicing.action';
 import {
   setInvoicesLoading as setInvoicesForBulkPaymentsLoading,
@@ -193,6 +193,54 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
         .catch(err => {
           dispatch(setDraftInvoicesLoading(false));
           dispatch(setDraftInvoices([]));
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
+        });
+    });
+  };
+};
+
+let cancelTokenGetUnpaidInvoicesAPI:any;
+export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setUnpaidInvoicesLoading(true));
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor,
+        status: JSON.stringify(["UNPAID"]),
+        isDarft: false,
+      };
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(cancelTokenGetUnpaidInvoicesAPI) {
+        cancelTokenGetUnpaidInvoicesAPI.cancel('axios canceled');
+        setTimeout(() => {
+          dispatch(setUnpaidInvoicesLoading(true));
+        }, 0);
+      }
+
+      cancelTokenGetAllDraftInvoicesAPI = axios.CancelToken.source();
+
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetUnpaidInvoicesAPI)
+        .then((res: any) => {
+          const {invoices, pagination, total} = res.data;
+          let tempUnpaidInvoices = res.data.invoices;
+          dispatch(setUnpaidInvoices(
+            tempUnpaidInvoices.reverse(),
+            pagination?.previousCursor || '',
+            pagination?.nextCursor || '',
+            total
+            ));
+          dispatch(setUnpaidInvoicesLoading(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setUnpaidInvoices([], '', '', 0));
+          setUnpaidInvoicesLoading(false);
           if(err.message !== 'axios canceled'){
             return reject(err);
           }

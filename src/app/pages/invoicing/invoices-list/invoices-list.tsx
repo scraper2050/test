@@ -14,6 +14,8 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { modalTypes } from '../../../../constants'
 import { getCustomers } from 'actions/customer/customer.action'
 import {Sync as SyncIcon} from '@material-ui/icons';
+import InvoicingUnpaidListing
+  from "./invoices-list-listing/invoices-unpaid-listing";
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
@@ -90,7 +92,7 @@ function InvoiceList({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          {!loading && curTab === 0 && <Button
+          {!loading && curTab === 1 && <Button
             variant='outlined'
             startIcon={<SyncIcon />}
             disabled={isSyncDisabled}
@@ -110,18 +112,22 @@ function InvoiceList({ classes }: any) {
             // chip={true}
             tabsData={[
               {
-                'label': 'Invoices',
+                'label': 'Unpaid',
                 'value': 0
               },
               {
+                'label': 'Invoices',
+                'value':1
+              },
+              {
                 'label': 'Drafts',
-                'value': 1,
+                'value': 2,
                 'chip': true,
                 'chipValue': totalDraft
               },
               {
                 'label': 'Payments',
-                'value': 2,
+                'value': 3,
               },
             ]}
           />
@@ -145,9 +151,10 @@ function InvoiceList({ classes }: any) {
                 ? 'x-reverse'
                 : 'x'}
             index={curTab}>
-            <InvoicingListListing hidden={curTab !== 0} id={"0"} />
-            <InvoicingDraftListing hidden={curTab !== 1} id={"1"} />
-            <InvoicingPaymentListing hidden={curTab !== 2} id={"2"} />
+            <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"} />
+            <InvoicingListListing hidden={curTab !== 1} id={"1"} />
+            <InvoicingDraftListing hidden={curTab !== 2} id={"2"} />
+            <InvoicingPaymentListing hidden={curTab !== 3} id={"3"} />
           </SwipeableViews>
         </div>
       </div>

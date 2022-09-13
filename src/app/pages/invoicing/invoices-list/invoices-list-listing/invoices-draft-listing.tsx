@@ -4,22 +4,12 @@ import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
 import React, { useEffect } from 'react';
-import {
-  getInvoicingList,
-  loadingInvoicingList
-} from 'actions/invoicing/invoicing.action';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
-import { MailOutlineOutlined } from '@material-ui/icons';
-import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
-import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers/custom";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../../constants";
+import { useCustomStyles } from "../../../../../helpers/custom";
 import { getAllDraftInvoicesAPI } from 'api/invoicing.api';
-import { 
+import {
   setCurrentDraftPageIndex,
   setCurrentDraftPageSize,
   setDraftKeyword,
@@ -99,7 +89,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
       dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
       dispatch(setCurrentDraftPageIndex(0));
       window.history.replaceState({}, document.title)
-    } 
+    }
   }, [location]);
 
   const showInvoiceDetail = (id:string) => {
@@ -125,7 +115,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
           dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword))
         }
         total={total}
