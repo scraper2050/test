@@ -2,10 +2,9 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import {withStyles, Button, Tooltip} from "@material-ui/core";
+import {withStyles, Tooltip} from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
 import {formatDateMMMDDYYYY, formatDatTimelll} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
@@ -154,17 +153,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       Cell({ row }: any) {
         // return <div className={customStyles.centerContainer}>
         return <EmailInvoiceButton
-            Component={<Button
-              variant="contained"
-              classes={{
-                'root': classes.emailButton
-              }}
-              color="primary"
-              size="small">
-              <MailOutlineOutlined
-                className={customStyles.iconBtn}
-              />
-            </Button>}
+            Component={<span className={classes.reminderText}>Send Reminder</span>}
             invoice={row.original}
           />;
         // </div>;

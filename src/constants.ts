@@ -105,6 +105,7 @@ export const modalTypes = {
   'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
   'PAYMENT_RECORD_MODAL': 'payment_record_modal',
   'PAYMENT_HISTORY_MODAL': 'payment_history_modal',
+  'SEND_INVOICES_MODAL': 'send_invoices_modal',
   'BULK_PAYMENT_HISTORY_MODAL': 'bulk_payment_history_modal',
   'BULK_PAYMENT_MODAL': 'bulk_payment_modal',
   'EDIT_BULK_PAYMENT_MODAL': 'edit_bulk_payment_modal',

@@ -60,6 +60,7 @@ import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-p
 import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
 import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
 import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
+import BCSendInvoicesModal from './bc-send-invoices-modal/bc-send-invoices-modal';
 import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
 import BCEditBulkPaymentModal from './bc-bulk-payment-modal/bc-edit-bulk-payment-modal';
 import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-history-modal";
@@ -603,6 +604,15 @@ function BCModal() {
           'maxWidth': 'md'
         });
         setComponent(<BcBulkPaymentHistoryModal data={data.data} />);
+        break;
+      case modalTypes.SEND_INVOICES_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCSendInvoicesModal modalOptions={modalOptions} setModalOptions={setModalOptions} />);
         break;
       case modalTypes.BULK_PAYMENT_MODAL:
         setModalOptions({

@@ -44,6 +44,7 @@ function InvoiceList({ classes }: any) {
   }, [location]);
 
   const items = [
+    {title:'Send Invoices', id:3},
     {title:'Custom Invoice', id:0},
     // {title:'Payment', id:1},
     {title:'Bulk Payment', id:2},
@@ -62,6 +63,19 @@ function InvoiceList({ classes }: any) {
             'className': 'serviceTicketTitle',
           },
           'type': modalTypes.BULK_PAYMENT_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+      case 3:
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'Send Invoices',
+            'removeFooter': false,
+            'className': 'serviceTicketTitle',
+          },
+          'type': modalTypes.SEND_INVOICES_MODAL
         }));
         setTimeout(() => {
           dispatch(openModalAction());
