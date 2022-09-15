@@ -1,6 +1,7 @@
 export interface PaymentsState {
-  readonly loading: boolean
-  readonly data?: any
+  readonly loading: boolean;
+  readonly data?: any;
+  unSyncPaymentsCount: number;
   // readonly error?: string
   // prevCursor: string;
   // nextCursor: string;
@@ -13,6 +14,7 @@ export interface PaymentsState {
 export enum PaymentsListActionType {
   SET_PAYMENTS_LOADING = 'SET_PAYMENTS_LOADING',
   SET_PAYMENTS = 'SET_PAYMENTS',
+  UPDATE_SYNCED_PAYMENTS = 'UPDATE_SYNCED_PAYMENTS',
   // SET_PREVIOUS_PAYMENTS_CURSOR = 'SET_PREVIOUS_PAYMENTS_CURSOR',
   // SET_NEXT_PAYMENTS_CURSOR = 'SET_NEXT_PAYMENTS_CURSOR',
   // SET_PAYMENTS_TOTAL = 'SET_PAYMENTS_TOTAL',

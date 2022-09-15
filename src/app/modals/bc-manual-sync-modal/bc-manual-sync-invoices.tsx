@@ -33,9 +33,10 @@ import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
 import {SYNC_RESPONSE} from "../../models/invoices";
 import BCCircularLoader
   from "../../components/bc-circular-loader/bc-circular-loader";
+import BcSyncStatus from "./bc-sync-status";
 
 
-function BcManualSync({classes, action, closeAction}: any): JSX.Element {
+function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element {
   const dispatch = useDispatch();
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
@@ -178,17 +179,6 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
       'sortable': true,
       'width': 10
     },
-    // {
-    //   Cell({row}: any) {
-    //     return row.original.lastEmailSent
-    //       ? formatDatTimelll(row.original.lastEmailSent)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Last Email Send Date ',
-    //   'accessor': 'lastEmailSent',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
     {
       Cell({row}: any) {
         return row.original.createdAt
@@ -202,22 +192,7 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
     },
     {
       Cell({row}: any) {
-        const color = row.original.quickbookId ? PRIMARY_GREEN : (row.original.error ? ERROR_RED : GRAY4);
-        return (
-          <Tooltip
-            title={row.original.error}
-            disableHoverListener={!row.original.error}
-            classes={{tooltip: classes.tooltip}}
-          >
-            <div style={{display: 'flex'}}>
-              {row.original.quickbookId ?
-                <SyncIcon className={classes.syncIcon} style={{color}}/>
-                :
-                <SyncProblemIcon className={classes.syncIcon} style={{color}}/>
-              }
-            </div>
-          </Tooltip>
-        );
+        return <BcSyncStatus data={row.original} />
       },
       'Header': 'Integrations',
       'id': 'qbSync',
@@ -303,7 +278,7 @@ const DataContainer = styled.div`
 export default withStyles(
   styles,
   {'withTheme': true}
-)(BcManualSync);
+)(BcManualSyncInvoices);
 
 const PaymentStatus = styled.div`
   width: 100px;

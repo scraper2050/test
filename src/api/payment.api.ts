@@ -8,12 +8,13 @@ import { refreshPaymentTerms, setPaymentTerms, setPaymentTermsLoading } from 'ac
 import { getAllInvoicesAPI, getAllInvoicesForBulkPaymentsAPI } from './invoicing.api';
 import {
   setPaymentsLoading,
-  setPayments,
+  setPayments, updateSyncedPayments,
   // setPaymentsTotal,
   // setNextPaymentsCursor,
   // setPreviousPaymentsCursor,
 } from 'actions/invoicing/payments/payments.action';
 import { error, success } from 'actions/snackbar/snackbar.action';
+import {SYNC_RESPONSE} from "../app/models/payments";
 
 export const recordPayment: any = (params = {}) => {
   return (dispatch: any) => {
@@ -107,13 +108,13 @@ export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor
       //     dispatch(setPaymentsLoading(true));
       //   }, 0);
       // }
-      
+
       cancelTokenGetAllPaymentsAPI = axios.CancelToken.source();
 
       request(`/getPayments`, 'GET', optionObj, undefined, undefined, cancelTokenGetAllPaymentsAPI)
         .then((res: any) => {
-          let tempPayments = res.data.payment;
-          dispatch(setPayments(tempPayments.reverse()));
+          const {payment, unsyncedPayments} = res.data;
+          dispatch(setPayments(payment.reverse(), unsyncedPayments));
           // dispatch(setPreviousPaymentsCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
           // dispatch(setNextPaymentsCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
           // dispatch(setPaymentsTotal(res.data?.total ? res.data?.total : 0));
@@ -129,5 +130,51 @@ export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor
         });
     });
   };
+};
+
+export const getUnsyncedPayments = async() => {
+  try {
+    const response: any = await request('/getUnsyncedPayments', 'GET');
+    const {status, message, payments} = response.data;
+    if (status === 1) return payments.reverse();
+    throw ({message});
+  } catch (e) {
+    throw (e.message);
+  }
+}
+
+export const SyncPayments = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE) => void ) => async(dispatch: any) => {
+  let responseData;
+  try {
+    const params ={paymentIds :  JSON.stringify(ids)};
+    const response: any = await request('/createQBPayments', 'POST', params, false);
+    const {status, message, totalPaymentSynced, totalPaymentUnsynced, paymentSynced, paymentUnsynced} = response.data;
+
+    if (status === 1) {
+      const unsynced = paymentUnsynced.map((payment: any) => ({
+        _id: payment.payment._id,
+        error: payment.errorMessage,
+      }));
+      const synced = paymentSynced.map((payment: any) => ({
+        _id: payment._id,
+        quickbookId: payment.quickbookId
+      }));
+
+      dispatch(updateSyncedPayments(paymentSynced));
+      if (onEnd) onEnd({ids: [...unsynced, ...synced], totalPaymentSynced, totalPaymentUnsynced});
+    } else {
+      throw new Error(message);
+    }
+  } catch (err) {
+    responseData = err.data;
+    if (err.response?.status >= 400 || err.data?.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+  //return responseData;
 };
 
