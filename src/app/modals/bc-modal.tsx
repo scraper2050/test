@@ -66,6 +66,8 @@ import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-h
 import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
 import BCCustomizeRevenueReportModal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
 import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report-modal";
+import BcRecordSyncStatusModal
+  from "./bc-record-sync-modal/bc-record-sync-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -723,6 +725,15 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<BCMemorizeReportModal data = {data.paramObject} memorizedReportId={data.memorizedReportId} />);
+        break;
+      case modalTypes.RECORD_SYNC_STATUS_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcRecordSyncStatusModal data={data} />);
         break;
 
       default:

@@ -25,6 +25,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import { voidPayment } from 'api/payment.api';
+import BCSentSync from "../../components/bc-sent-sync";
+import {boolean} from "yup";
 
 interface ApiProps {
   customerId: string,
@@ -44,7 +46,7 @@ function BcPaymentRecordModal({
   payment,
   fromHistory,
 }: any): JSX.Element {
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
   const dispatch = useDispatch();
 
   const paymentTypes = [
@@ -143,13 +145,14 @@ function BcPaymentRecordModal({
       }
 
       dispatch(request(params)).then((response: any) => {
-        if (response.status === 1) {
-          setSent(true);
+        const {status, payment, quickbookPayment, message} = response;
+        debugger;
+        if (status === 1) {
+          setSent({created: !!payment, synced: !quickbookPayment});
           setSubmitting(false);
           //closeModal()
         } else {
-          console.log(response.message);
-          dispatch(error(response.message))
+          dispatch(error(message))
         }
       }).catch((e: any) => {
         console.log(e.message);
@@ -220,7 +223,7 @@ function BcPaymentRecordModal({
   return (
     <DataContainer className={'new-modal-design'}>
       {sent ?
-        <BCSent title={payment ? 'The payment was updated.' : 'The payment was recorded.'}/>
+        <BCSentSync keyword='payment' created={sent.created} synced={sent.synced} onTryAgain={() => setSent(null)}/>
         :
         <Grid container className={classes.modalPreview} justify={'space-around'}>
           <Grid item>
