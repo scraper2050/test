@@ -9,8 +9,13 @@ import styled from 'styled-components';
 import styles from './bc-record-sync-modal.styles';
 import BCSentSync from "../../components/bc-sent-sync";
 
-function BcRecordSyncStatusModal({classes, data: {keyword, created, synced}, action}: any): JSX.Element {
+function BcRecordSyncStatusModal({classes, data: {keyword, created, synced, closeAction}}: any): JSX.Element {
   const dispatch = useDispatch();
+
+  const closeWithAction = () => {
+    if (closeAction) closeAction();
+    closeModal();
+  }
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -23,22 +28,15 @@ function BcRecordSyncStatusModal({classes, data: {keyword, created, synced}, act
 
   };
 
-  const confirm = () => {
-    dispatch(action);
-    setTimeout(() => {
-      dispatch(closeModalAction());
-      setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
-      }, 200);
-    }, 1000);
-  }
-
   return (
     <DataContainer className={'new-modal-design'}>
-      <BCSentSync keyword={keyword} created={created} synced={synced} showLine={true}/>
+      <BCSentSync
+        keyword={keyword}
+        created={created}
+        synced={synced}
+        showLine={true}
+        onTryAgain={closeModal}
+      />
 
       <DialogActions classes={{
         'root': classes.dialogActions
@@ -48,7 +46,7 @@ function BcRecordSyncStatusModal({classes, data: {keyword, created, synced}, act
           classes={{
             'root': classes.closeButton
           }}
-          onClick={() => closeModal()}
+          onClick={() => closeWithAction()}
           variant={'outlined'}>
           Close
         </Button>

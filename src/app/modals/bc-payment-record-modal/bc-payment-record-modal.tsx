@@ -42,11 +42,12 @@ interface ApiProps {
 
 function BcPaymentRecordModal({
   classes,
-  invoice,
+  invoice: invoiceOrg,
   payment,
   fromHistory,
 }: any): JSX.Element {
   const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
+  const [invoice, setInvoice] = useState(invoiceOrg);
   const dispatch = useDispatch();
 
   const paymentTypes = [
@@ -145,15 +146,12 @@ function BcPaymentRecordModal({
       }
 
       dispatch(request(params)).then((response: any) => {
-        const {status, payment, quickbookPayment, message} = response;
-        debugger;
-        if (status === 1) {
-          setSent({created: !!payment, synced: !quickbookPayment});
-          setSubmitting(false);
+        const {status, payment, quickbookPayment, invoice: updatedInvoice, invoices, message} = response;
+        const {paid, status: invoiceStatus, paymentApplied, balanceDue} = updatedInvoice || invoices[0] || {};
+        setSent({created: !!payment, synced: !!quickbookPayment});
+        if (payment) setInvoice({...invoice, paid, status: invoiceStatus, paymentApplied, balanceDue});
+        setSubmitting(false);
           //closeModal()
-        } else {
-          dispatch(error(message))
-        }
       }).catch((e: any) => {
         console.log(e.message);
         dispatch(error(e.message));
@@ -223,7 +221,9 @@ function BcPaymentRecordModal({
   return (
     <DataContainer className={'new-modal-design'}>
       {sent ?
-        <BCSentSync keyword='payment' created={sent.created} synced={sent.synced} onTryAgain={() => setSent(null)}/>
+        <div style={{padding: '5vh 10vw'}}>
+          <BCSentSync keyword='payment' created={sent.created} synced={sent.synced} onTryAgain={() => setSent(null)}/>
+        </div>
         :
         <Grid container className={classes.modalPreview} justify={'space-around'}>
           <Grid item>

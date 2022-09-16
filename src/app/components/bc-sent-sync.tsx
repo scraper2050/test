@@ -44,9 +44,10 @@ export default function BCSentSync({keyword, created, synced, showLine = true, o
         }
         <span className={componentStyles.title}>
           {`The ${keyword} was ${synced ? '' : 'not '}synced to Quickbooks`}
-          {`${!synced ? '\nWould you like to ' : ''}`}
-          {!synced && <Link to={'#'} onClick={onTryAgain}>try again</Link>}
-          {`${!synced ? '?' : ''}`}
+          {!synced && created && <>
+            <br/>Would you like to <Link to={'#'} onClick={onTryAgain}>try again</Link>?
+          </>
+          }
         </span>
       </div>
     </div>
@@ -62,7 +63,7 @@ const styles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'flex-start',
-      padding: '10vh 15vw',
+      padding: '5vh 4vw',
     },
     row: {
       display: 'flex',
