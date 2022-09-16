@@ -117,8 +117,8 @@ export const modalTypes = {
   'WARNING_MODAL': 'warning_modal',
   'CUSTOMIZE_REVENUE_REPORT_MODAL': 'customize-revenue-report-modal',
   'MEMORIZE_REPORT_MODAL': 'memorize-report-modal',
-  'MANUAL_SYNC_MODAL': 'manual-sync-modal',
-  'RECORD_SYNC_STATUS_MODAL': 'record_sync_status_modal',
+  'MANUAL_SYNC_MODAL_INVOICES': 'manual_sync_modal_invoices',
+  'MANUAL_SYNC_MODAL_PAYMENTS': 'manual_sync_modal_payments',
 };
 
 export const rejectionReason = [

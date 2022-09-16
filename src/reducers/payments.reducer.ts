@@ -1,9 +1,11 @@
 import { PaymentsListActionType, PaymentsState } from 'actions/invoicing/payments/payments.types';
 import { Reducer } from 'redux';
+import _ from "lodash";
 
 const initialState: PaymentsState = {
-  'loading': false,
-  'data': [],
+  loading: false,
+  data: [],
+  unSyncPaymentsCount: 0,
   // prevCursor: '',
   // nextCursor: '',
   // total: 0,
@@ -22,7 +24,18 @@ export const PaymentsListReducer: Reducer<any> = (state = initialState, action) 
     case PaymentsListActionType.SET_PAYMENTS:
       return {
         ...state,
-        data: action.payload,
+        data: action.payload.payments,
+        unSyncPaymentsCount: action.payload.unSyncCount
+      };
+    case PaymentsListActionType.UPDATE_SYNCED_PAYMENTS:
+      const {data, unSyncPaymentsCount} = state;
+      let newCount = unSyncPaymentsCount - action.payload.length;
+      // const foundInvoice = _.intersectionBy(action.payload, data, '_id')
+      const updatedInvoices = _.unionBy(action.payload, data, '_id')
+      return {
+        ...state,
+        unSyncPaymentsCount: newCount,
+        data: updatedInvoices,
       };
     // case PaymentsListActionType.SET_PREVIOUS_PAYMENTS_CURSOR:
     //   return {
