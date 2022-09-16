@@ -98,7 +98,8 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
 
     try {
       setSyncing(true);
-      dispatch(SyncPayments(ids, handleSyncResponse));
+      const res: any= await dispatch(SyncPayments(ids));
+      handleSyncResponse(res);
     } catch (e) {
       dispatch(error(e));
     }

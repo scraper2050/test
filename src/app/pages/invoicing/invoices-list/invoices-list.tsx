@@ -23,7 +23,7 @@ function InvoiceList({ classes }: any) {
   const history = useHistory();
   const location = useLocation<any>();
   const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
-  const { unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
+  const { loading: loadingPayment, unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
   );
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -76,7 +76,7 @@ function InvoiceList({ classes }: any) {
     switch (curTab) {
       case 0:
         const isSyncDisabled = unSyncedInvoicesCount === 0;
-        return  <Button
+        return  !loading ? <Button
           variant='outlined'
           startIcon={<SyncIcon />}
           disabled={isSyncDisabled}
@@ -87,10 +87,10 @@ function InvoiceList({ classes }: any) {
           }}
           onClick={manualSyncHandle}>
           {isSyncDisabled ? 'All Invoices Synced' : `Invoices Not Synced ${unSyncedInvoicesCount}`}
-        </Button>
+        </Button> : null
       case 2:
         const isSyncPaymentDisabled = unSyncPaymentsCount === 0;
-        return  <Button
+        return  !loadingPayment ? <Button
           variant='outlined'
           startIcon={<SyncIcon />}
           disabled={isSyncPaymentDisabled}
@@ -101,7 +101,7 @@ function InvoiceList({ classes }: any) {
           }}
           onClick={manualSyncHandle}>
           {isSyncPaymentDisabled ? 'All Payments Synced' : `Payments Not Synced ${unSyncPaymentsCount}`}
-        </Button>
+        </Button> : null
       default:
         return null;
     }
@@ -127,7 +127,7 @@ function InvoiceList({ classes }: any) {
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          {!loading && <SyncButton />}
+          <SyncButton />
         <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}

@@ -143,7 +143,7 @@ export const getUnsyncedPayments = async() => {
   }
 }
 
-export const SyncPayments = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE) => void ) => async(dispatch: any) => {
+export const SyncPayments = (ids: string[] = []) => async(dispatch: any): Promise<SYNC_RESPONSE> => {
   let responseData;
   try {
     const params ={paymentIds :  JSON.stringify(ids)};
@@ -161,7 +161,7 @@ export const SyncPayments = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE)
       }));
 
       dispatch(updateSyncedPayments(paymentSynced));
-      if (onEnd) onEnd({ids: [...unsynced, ...synced], totalPaymentSynced, totalPaymentUnsynced});
+      return ({ids: [...unsynced, ...synced], totalPaymentSynced, totalPaymentUnsynced});
     } else {
       throw new Error(message);
     }
