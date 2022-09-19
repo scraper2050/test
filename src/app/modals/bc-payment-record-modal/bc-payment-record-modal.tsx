@@ -25,6 +25,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import { voidPayment } from 'api/payment.api';
+import BCSentSync from "../../components/bc-sent-sync";
+import {boolean} from "yup";
 
 interface ApiProps {
   customerId: string,
@@ -40,11 +42,12 @@ interface ApiProps {
 
 function BcPaymentRecordModal({
   classes,
-  invoice,
+  invoice: invoiceOrg,
   payment,
   fromHistory,
 }: any): JSX.Element {
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
+  const [invoice, setInvoice] = useState(invoiceOrg);
   const dispatch = useDispatch();
 
   const paymentTypes = [
@@ -143,14 +146,12 @@ function BcPaymentRecordModal({
       }
 
       dispatch(request(params)).then((response: any) => {
-        if (response.status === 1) {
-          setSent(true);
-          setSubmitting(false);
+        const {status, payment, quickbookPayment, invoice: updatedInvoice, invoices, message} = response;
+        const {paid, status: invoiceStatus, paymentApplied, balanceDue} = updatedInvoice || invoices[0] || {};
+        setSent({created: !!payment, synced: !!quickbookPayment});
+        if (payment) setInvoice({...invoice, paid, status: invoiceStatus, paymentApplied, balanceDue});
+        setSubmitting(false);
           //closeModal()
-        } else {
-          console.log(response.message);
-          dispatch(error(response.message))
-        }
       }).catch((e: any) => {
         console.log(e.message);
         dispatch(error(e.message));
@@ -220,7 +221,9 @@ function BcPaymentRecordModal({
   return (
     <DataContainer className={'new-modal-design'}>
       {sent ?
-        <BCSent title={payment ? 'The payment was updated.' : 'The payment was recorded.'}/>
+        <div style={{padding: '5vh 10vw'}}>
+          <BCSentSync keyword='payment' created={sent.created} synced={sent.synced} onTryAgain={() => setSent(null)}/>
+        </div>
         :
         <Grid container className={classes.modalPreview} justify={'space-around'}>
           <Grid item>

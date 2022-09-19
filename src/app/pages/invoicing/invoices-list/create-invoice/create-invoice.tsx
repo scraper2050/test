@@ -12,6 +12,7 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllSalesTaxAPI } from 'api/tax.api';
+import {modalTypes} from "../../../../../constants";
 
 function CreateInvoice({ classes }: any) {
   const dispatch = useDispatch();
@@ -183,12 +184,27 @@ function CreateInvoice({ classes }: any) {
         return o;
       }));
       callCreateInvoiceAPI(data).then((response: any) => {
-        history.push(redirectURL);
-        return resolve(response);
-      })
-        .catch((err: any) => {
-          reject(err);
-        });
+        {const {status, invoice, quickbookInvoice} = response;
+          dispatch(setModalDataAction({
+            data: {
+              modalTitle: 'Status',
+              keyword: 'Invoice',
+              created: status === 1,
+              synced: !!quickbookInvoice,
+              closeAction: () => history.push(redirectURL),
+              removeFooter: false,
+              className: 'serviceTicketTitle',
+            },
+            type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+          }));
+          setTimeout(() => {
+            dispatch(openModalAction());
+          }, 200);
+          return resolve(response);
+        }
+      }).catch((err: any) => {
+        reject(err);
+      });
     });
   };
 

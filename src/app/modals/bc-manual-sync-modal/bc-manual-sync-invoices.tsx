@@ -101,18 +101,8 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
 
     try {
       setSyncing(true);
-      dispatch(SyncInvoices(ids, handleSyncResponse));
-
-      //if (unsynced.length > 0) dispatch(error('Errors'))
-      // setTimeout(() => {
-      //   dispatch(closeModalAction());
-      //   setTimeout(() => {
-      //     dispatch(setModalDataAction({
-      //       'data': {},
-      //       'type': ''
-      //     }));
-      //   }, 200);
-      // }, 1000);
+      const res: any = await dispatch(SyncInvoices(ids));
+      handleSyncResponse(res);
     } catch (e) {
       dispatch(error(e));
     }

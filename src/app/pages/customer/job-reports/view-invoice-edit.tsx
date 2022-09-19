@@ -71,14 +71,14 @@ function ViewInvoice() {
       if (status === 1) {
         dispatch(setModalDataAction({
           data: {
-              'modalTitle': 'Send this invoice',
-              'customer': customer?.profile?.displayName,
-              'customerEmail': emailDefault?.to || customer?.info?.email,
-              'id': invoiceId,
-              'typeText': 'Invoice',
-              'className': 'wideModalTitle',
-              emailDefault,
-              customerId: customerId || customer._id
+            'modalTitle': 'Send this invoice',
+            'customer': customer?.profile?.displayName,
+            'customerEmail': emailDefault?.to || customer?.info?.email,
+            'id': invoiceId,
+            'typeText': 'Invoice',
+            'className': 'wideModalTitle',
+            emailDefault,
+            customerId: customerId || customer._id
           },
           'type': modalTypes.EMAIL_JOB_REPORT_MODAL
         }));
@@ -123,8 +123,22 @@ function ViewInvoice() {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
-        dispatch(success('Invoice Updated Successfully'));
-        history.push(`/main/invoicing/view/${data.invoice_id}`);
+        const {status, invoice, quickbookInvoice} = response;
+        dispatch(setModalDataAction({
+          data: {
+            modalTitle: 'Status',
+            keyword: 'Invoice',
+            created: status === 1,
+            synced: !!quickbookInvoice,
+            closeAction: () => history.push(`/main/invoicing/view/${data.invoice_id}`),
+            removeFooter: false,
+            className: 'serviceTicketTitle',
+          },
+          type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         return resolve(response);
       })
         .catch((err: any) => {
@@ -162,8 +176,23 @@ function ViewInvoice() {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       callCreateInvoiceAPI(params).then((response: any) => {
-        dispatch(success('Invoice Created Successfully'));
-        history.goBack();
+        const {status, invoice, quickbookInvoice} = response;
+        debugger;
+        dispatch(setModalDataAction({
+          data: {
+            modalTitle: 'Status',
+            keyword: 'Invoice',
+            created: status === 1,
+            synced: !!quickbookInvoice,
+            closeAction: () => history.goBack(),
+            removeFooter: false,
+            className: 'serviceTicketTitle',
+          },
+          type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         return resolve(response);
       })
         .catch((err: any) => {
@@ -245,7 +274,7 @@ export const PageContainer = styled.div`
   padding-left: 65px;
   padding-right: 65px;
   margin: 0 auto;
-  
+
   @media (max-width: 768px) {
     padding: 18px;
   }

@@ -7,6 +7,11 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllJobTypesAPI } from 'api/job.api';
 import { callCreateInvoiceAPI, getInvoiceDetail } from 'api/invoicing.api';
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../constants";
 
 
 function ViewJobReportsPage() {
@@ -24,19 +29,31 @@ function ViewJobReportsPage() {
   }, []);
 
   const generateInvoiceHandler = async(invoiceObj:any) => {
-    const result:any = await callCreateInvoiceAPI(invoiceObj);
-    if (result && result?.status !== 0) {
-      const { 'invoice': newInvoice } = result;
-      dispatch(loadJobReportActions.success({ ...jobReportObj,
-        'invoiceCreated': true,
-        'invoice': newInvoice }));
-      history.push({
-        'pathname': `view/${newInvoice._id}`,
-      });
-      dispatch(success(`Draft ${newInvoice.invoiceId} Created`));
-    } else {
-      dispatch(errorSnackBar(result.message));
-    }
+    const response: any = await callCreateInvoiceAPI(invoiceObj);
+    const {status, invoice: newInvoice, quickbookInvoice} = response;
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Status',
+        keyword: 'Invoice',
+        created: status === 1,
+        synced: !!quickbookInvoice,
+        closeAction: () => {
+          dispatch(loadJobReportActions.success({ ...jobReportObj,
+            'invoiceCreated': true,
+            'invoice': newInvoice }));
+          history.push({
+            'pathname': `view/${newInvoice._id}`,
+          });
+        },
+        removeFooter: false,
+        className: 'serviceTicketTitle',
+      },
+      type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+    return response;
   }
 
   if (loading || jobTypesLoading) {
