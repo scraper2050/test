@@ -14,7 +14,11 @@ import {
   withStyles,
   Tooltip,
 } from '@material-ui/core';
-import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import {
+  closeModalAction,
+  openModalAction,
+  setModalDataAction
+} from 'actions/bc-modal/bc-modal.action';
 import styles from './bc-send-invoices-modal.styles';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import BCSent from 'app/components/bc-sent';
@@ -43,6 +47,10 @@ import DropDownMenu
   from "../../components/bc-select-dropdown/bc-select-dropdown";
 import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
 import moment from "moment/moment";
+import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
+import {error} from "../../../actions/snackbar/snackbar.action";
+import {modalTypes} from "../../../constants";
+import {resetEmailState} from "../../../actions/email/email.action";
 
 
 const SHOW_OPTIONS = [
@@ -91,7 +99,7 @@ const useDebounceInputStyles = makeStyles(() =>
 
 function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): JSX.Element {
   const dispatch = useDispatch();
-  const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
+  const [selectedIndexes, setSelectedIndexes] = useState<string[]>([]);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [showValue, setShowValue] = useState<string>('unpaid');
@@ -136,9 +144,48 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     }
   }
 
-
   const handleCustomerChange = (event: any, newValue: any) => {
     setCustomerValue(newValue);
+  };
+
+  const handleSend = async(e: any) => {
+    e.stopPropagation();
+      // setIsLoading(true);
+    try {
+      const response = await getInvoiceEmailTemplate(selectedIndexes);
+      // setIsLoading(false);
+      const {emailTemplate: emailDefault, status, message} = response.data
+      if (status === 1) {
+        const data = {
+          'modalTitle': 'Send Multiple Invoices',
+          'customerEmail': customerValue?.info?.email,
+          'handleClick': () => {},
+          'ids': selectedIndexes,
+          'typeText': 'Invoice',
+          'className': 'wideModalTitle',
+          'customerId': customerValue?._id,
+        };
+        dispatch(setModalDataAction({
+          data: {...data, emailDefault},
+          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+        }));
+        dispatch(resetEmailState());
+        // setTimeout(() => {
+        //   dispatch(openModalAction());
+        // }, 200);
+
+      } else {
+        dispatch(error(message));
+      }
+    } catch (e) {
+      //setIsLoading(false);
+      console.log(e)
+      let message = 'Unknown Error'
+      if (e instanceof Error) {
+        message = e.message
+      }
+      dispatch(error(message));
+    }
   };
 
   const debouncedFetchFunction = useCallback(
@@ -371,22 +418,23 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
               {!!FormikValues.totalAmount && `Total Amount: $${FormikValues.totalAmount}`}
             </Typography> */}
             <Button
-              //disabled={isSubmitting}
               disableElevation={true}
               onClick={() => closeModal()}
               variant={'outlined'}
             >
-              Close
+              Cancel
             </Button>
             {!isSuccess && (
               <Button
                 color={'primary'}
+                disabled={selectedIndexes.length === 0}
+                onClick={handleSend}
                 disableElevation={true}
                 //disabled={isSubmitting || loading || !isValid()}
                 type={'submit'}
                 variant={'contained'}
               >
-                Submit All
+                Send
               </Button>
             )}
           </DialogActions>

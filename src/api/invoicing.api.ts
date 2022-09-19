@@ -406,7 +406,21 @@ export const voidInvoice = (data: any) => {
 
 export const sendEmailInvoice = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/sendInvoice`, 'post', data)
+    const {id, ...rest} = data;
+    request(`/sendInvoice`, 'post', rest)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+export const sendEmailInvoices = (data: any) => {
+  return new Promise((resolve, reject) => {
+    const {ids, ...rest} = data;
+    request(`/sendInvoices`, 'post', rest)
       .then((res: any) => {
         return resolve(res.data);
       })
