@@ -7,7 +7,7 @@ export default (theme: Theme): any => ({
   },
   dialogContent: {
     padding: '0 30px !important',
-    maxHeight: '60vh',
+    maxHeight: '40vh',
     overflowY: 'auto !important',
   },
   datePicker: {
