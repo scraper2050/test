@@ -97,6 +97,19 @@ function ViewInvoice() {
 
   const updateInvoiceHandler = (data:any) => {
     return new Promise((resolve, reject) => {
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Status',
+          progress: true,
+          removeFooter: false,
+          className: 'serviceTicketTitle',
+        },
+        type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+
       const params: any = {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
@@ -127,6 +140,7 @@ function ViewInvoice() {
         dispatch(setModalDataAction({
           data: {
             modalTitle: 'Status',
+            progress: false,
             keyword: 'Invoice',
             created: status === 1,
             synced: !!quickbookInvoice,
@@ -136,10 +150,6 @@ function ViewInvoice() {
           },
           type: modalTypes.RECORD_SYNC_STATUS_MODAL,
         }));
-        setTimeout(() => {
-          dispatch(openModalAction());
-        }, 200);
-        return resolve(response);
       })
         .catch((err: any) => {
           reject(err);
@@ -175,9 +185,21 @@ function ViewInvoice() {
       }
       if (data.customer_po) params.customerPO = data.customer_po;
 
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Status',
+          progress: true,
+          removeFooter: false,
+          className: 'serviceTicketTitle',
+        },
+        type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+
       callCreateInvoiceAPI(params).then((response: any) => {
         const {status, invoice, quickbookInvoice} = response;
-        debugger;
         dispatch(setModalDataAction({
           data: {
             modalTitle: 'Status',
@@ -190,10 +212,6 @@ function ViewInvoice() {
           },
           type: modalTypes.RECORD_SYNC_STATUS_MODAL,
         }));
-        setTimeout(() => {
-          dispatch(openModalAction());
-        }, 200);
-        return resolve(response);
       })
         .catch((err: any) => {
           reject(err);

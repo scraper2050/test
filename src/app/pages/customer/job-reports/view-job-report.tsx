@@ -29,6 +29,18 @@ function ViewJobReportsPage() {
   }, []);
 
   const generateInvoiceHandler = async(invoiceObj:any) => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Status',
+        progress: true,
+        removeFooter: false,
+        className: 'serviceTicketTitle',
+      },
+      type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
     const response: any = await callCreateInvoiceAPI(invoiceObj);
     const {status, invoice: newInvoice, quickbookInvoice} = response;
     dispatch(setModalDataAction({
@@ -50,9 +62,6 @@ function ViewJobReportsPage() {
       },
       type: modalTypes.RECORD_SYNC_STATUS_MODAL,
     }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
     return response;
   }
 
