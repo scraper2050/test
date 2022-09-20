@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
   }),
   rangePickerPopup: {
-    zIndex: 1,
+    zIndex: 1500,
     //padding: 4,
     //borderRadius: 8,
     border: '1px solid #E0E0E0',
@@ -138,7 +138,7 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
           onClick={openDateRangePicker}
         >
           {selectionRange ?
-            noDay ? 
+            noDay ?
               formatShortDateNoDay(selectionRange.startDate) + ' - ' + formatShortDateNoDay(selectionRange.endDate)
               : formatShortDate(selectionRange.startDate) + ' - ' + formatShortDate(selectionRange.endDate)
             : title ? title : 'Pick a range...'

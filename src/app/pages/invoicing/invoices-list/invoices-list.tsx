@@ -14,6 +14,8 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { modalTypes } from '../../../../constants'
 import { getCustomers } from 'actions/customer/customer.action'
 import {Sync as SyncIcon} from '@material-ui/icons';
+import InvoicingUnpaidListing
+  from "./invoices-list-listing/invoices-unpaid-listing";
 import {RootState} from "../../../../reducers";
 
 function InvoiceList({ classes }: any) {
@@ -22,11 +24,13 @@ function InvoiceList({ classes }: any) {
   const theme = useTheme();
   const history = useHistory();
   const location = useLocation<any>();
+  const [visibleTabs, setVisibleTabs] = useState<number[]>([0])
   const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
   const { loading: loadingPayment, unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
   );
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
+    if (visibleTabs.indexOf(newValue) === -1) setVisibleTabs([...visibleTabs, newValue]);
   };
 
   const openCreateInvoicePage = () => {
@@ -44,6 +48,7 @@ function InvoiceList({ classes }: any) {
   }, [location]);
 
   const items = [
+    {title:'Send Invoices', id:3},
     {title:'Custom Invoice', id:0},
     // {title:'Payment', id:1},
     {title:'Bulk Payment', id:2},
@@ -67,6 +72,19 @@ function InvoiceList({ classes }: any) {
           dispatch(openModalAction());
         }, 200);
         break;
+      case 3:
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'Send Invoices',
+            'removeFooter': false,
+            'className': 'serviceTicketTitle',
+          },
+          'type': modalTypes.SEND_INVOICES_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
       default:
         dispatch(info('This feature is still under development!'));
     }
@@ -74,7 +92,7 @@ function InvoiceList({ classes }: any) {
 
   const SyncButton = () => {
     switch (curTab) {
-      case 0:
+      case 1:
         const isSyncDisabled = unSyncedInvoicesCount === 0;
         return  !loading ? <Button
           variant='outlined'
@@ -88,7 +106,7 @@ function InvoiceList({ classes }: any) {
           onClick={manualSyncHandle}>
           {isSyncDisabled ? 'All Invoices Synced' : `Invoices Not Synced ${unSyncedInvoicesCount}`}
         </Button> : null
-      case 2:
+      case 3:
         const isSyncPaymentDisabled = unSyncPaymentsCount === 0;
         return  !loadingPayment ? <Button
           variant='outlined'
@@ -135,18 +153,22 @@ function InvoiceList({ classes }: any) {
             // chip={true}
             tabsData={[
               {
-                'label': 'Invoices',
+                'label': 'Unpaid',
                 'value': 0
               },
               {
+                'label': 'Invoices',
+                'value':1
+              },
+              {
                 'label': 'Drafts',
-                'value': 1,
+                'value': 2,
                 'chip': true,
                 'chipValue': totalDraft
               },
               {
                 'label': 'Payments',
-                'value': 2,
+                'value': 3,
               },
             ]}
           />
@@ -170,9 +192,18 @@ function InvoiceList({ classes }: any) {
                 ? 'x-reverse'
                 : 'x'}
             index={curTab}>
-            <InvoicingListListing hidden={curTab !== 0} id={"0"} />
-            <InvoicingDraftListing hidden={curTab !== 1} id={"1"} />
-            <InvoicingPaymentListing hidden={curTab !== 2} id={"2"} />
+            {(visibleTabs.indexOf(0) >= 0 || curTab === 0) &&
+              <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"}/>
+            }
+            {(visibleTabs.indexOf(1) >= 0 || curTab === 1) &&
+              <InvoicingListListing hidden={curTab !== 1} id={"1"} />
+            }
+            {(visibleTabs.indexOf(2) >= 0 || curTab === 2) &&
+              <InvoicingDraftListing hidden={curTab !== 2} id={"2"} />
+            }
+            {(visibleTabs.indexOf(3) >= 0 || curTab === 3) &&
+              <InvoicingPaymentListing hidden={curTab !== 3} id={"3"} />
+            }
           </SwipeableViews>
         </div>
       </div>
