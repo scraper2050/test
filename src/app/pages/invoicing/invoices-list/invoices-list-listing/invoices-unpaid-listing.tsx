@@ -31,7 +31,6 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
-  const customStyles = useCustomStyles()
   const { unpaidInvoices, loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ invoiceList }: any) => ({
       unpaidInvoices: invoiceList.unpaid,
@@ -166,30 +165,24 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    // dispatch(getInvoicingList());
-    // dispatch(loadingInvoicingList());
-    dispatch(getUnpaidInvoicesAPI());
+    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
+    dispatch(setCurrentPageIndex(0));
     return () => {
-      dispatch(setKeyword(''));
+      dispatch(setUnpaidKeyword(''));
       dispatch(setCurrentUnpaidPageIndex(currentPageIndex));
       dispatch(setCurrentUnpaidPageSize(currentPageSize));
     }
-  }, []);
-
-  useEffect(() => {
-    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
-    dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
-  useEffect(() => {
-    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
-      dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
-      dispatch(setCurrentPageSize(location.state.option.pageSize));
-      dispatch(setCurrentPageIndex(0));
-      window.history.replaceState({}, document.title)
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+  //     dispatch(setKeyword(location.state.option.search));
+  //     dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+  //     dispatch(setCurrentPageSize(location.state.option.pageSize));
+  //     dispatch(setCurrentPageIndex(0));
+  //     window.history.replaceState({}, document.title)
+  //   }
+  // }, [location]);
 
   const showInvoiceDetail = (id:string) => {
     history.push({

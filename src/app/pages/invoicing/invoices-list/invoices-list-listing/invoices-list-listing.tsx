@@ -17,7 +17,6 @@ import BCMenuButton from "../../../../components/bc-menu-button";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-// import moment from "moment";
 import { getAllInvoicesAPI } from 'api/invoicing.api';
 import {
   setCurrentPageIndex,

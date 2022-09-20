@@ -24,11 +24,13 @@ function InvoiceList({ classes }: any) {
   const theme = useTheme();
   const history = useHistory();
   const location = useLocation<any>();
+  const [visibleTabs, setVisibleTabs] = useState<number[]>([0])
   const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
   const { loading: loadingPayment, unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
   );
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
+    if (visibleTabs.indexOf(newValue) === -1) setVisibleTabs([...visibleTabs, newValue]);
   };
 
   const openCreateInvoicePage = () => {
@@ -90,7 +92,7 @@ function InvoiceList({ classes }: any) {
 
   const SyncButton = () => {
     switch (curTab) {
-      case 0:
+      case 1:
         const isSyncDisabled = unSyncedInvoicesCount === 0;
         return  !loading ? <Button
           variant='outlined'
@@ -104,7 +106,7 @@ function InvoiceList({ classes }: any) {
           onClick={manualSyncHandle}>
           {isSyncDisabled ? 'All Invoices Synced' : `Invoices Not Synced ${unSyncedInvoicesCount}`}
         </Button> : null
-      case 2:
+      case 3:
         const isSyncPaymentDisabled = unSyncPaymentsCount === 0;
         return  !loadingPayment ? <Button
           variant='outlined'
@@ -139,25 +141,11 @@ function InvoiceList({ classes }: any) {
     }, 200);
   }
 
-  const isSyncDisabled = unSyncedInvoicesCount === 0;
-
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
-          {!loading && curTab === 1 && <Button
-            variant='outlined'
-            startIcon={<SyncIcon />}
-            disabled={isSyncDisabled}
-            classes={{
-              root: classes.syncButton,
-              disabled: classes.disabledButton,
-              startIcon: isSyncDisabled ? classes.buttonIconDisabled : classes.buttonIcon,
-            }}
-            onClick={manualSyncHandle}>
-            {isSyncDisabled ? 'All Invoices Synced' : `Invoices Not Synced ${unSyncedInvoicesCount}`}
-          </Button>
-          }
+          <SyncButton />
         <BCTabs
             curTab={curTab}
             indicatorColor={'primary'}
@@ -204,10 +192,18 @@ function InvoiceList({ classes }: any) {
                 ? 'x-reverse'
                 : 'x'}
             index={curTab}>
-            <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"} />
-            <InvoicingListListing hidden={curTab !== 1} id={"1"} />
-            <InvoicingDraftListing hidden={curTab !== 2} id={"2"} />
-            <InvoicingPaymentListing hidden={curTab !== 3} id={"3"} />
+            {(visibleTabs.indexOf(0) >= 0 || curTab === 0) &&
+              <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"}/>
+            }
+            {(visibleTabs.indexOf(1) >= 0 || curTab === 1) &&
+              <InvoicingListListing hidden={curTab !== 1} id={"1"} />
+            }
+            {(visibleTabs.indexOf(2) >= 0 || curTab === 2) &&
+              <InvoicingDraftListing hidden={curTab !== 2} id={"2"} />
+            }
+            {(visibleTabs.indexOf(3) >= 0 || curTab === 3) &&
+              <InvoicingPaymentListing hidden={curTab !== 3} id={"3"} />
+            }
           </SwipeableViews>
         </div>
       </div>
