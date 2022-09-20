@@ -68,8 +68,7 @@ import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-h
 import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
 import BCCustomizeRevenueReportModal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
 import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report-modal";
-import BcRecordSyncStatusModal
-  from "./bc-record-sync-modal/bc-record-sync-modal";
+import BcRecordSyncStatusModal from "./bc-record-sync-modal/bc-record-sync-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -771,6 +770,7 @@ function BCModal() {
     }, 200);
   };
 
+  const showCloseIcon = type !== modalTypes.RECORD_SYNC_STATUS_MODAL;
 
   return (
     <div className={'modal-wrapper'}>
@@ -800,7 +800,7 @@ function BCModal() {
                 {data.modalTitle}
               </strong>
             </Typography>
-            <IconButton
+            {showCloseIcon && <IconButton
               aria-label={'close'}
               onClick={handleClose}
               style={{
@@ -808,8 +808,9 @@ function BCModal() {
                 'right': 1,
                 'top': 1
               }}>
-              <CloseIcon />
+              <CloseIcon/>
             </IconButton>
+            }
           </DialogTitle>
           : <IconButton
             aria-label={'close'}
