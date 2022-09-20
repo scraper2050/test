@@ -9,6 +9,9 @@ export default (theme: Theme): any => ({
   dialogContent: {
     padding: '8px 150px !important',
   },
+  spinnerContainer: {
+    padding: '100px 0 130px 0',
+  },
   closeButton: {
     color: '#4F4F4F',
     borderColor: '#4F4F4F',
