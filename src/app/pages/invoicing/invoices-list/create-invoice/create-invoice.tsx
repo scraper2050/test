@@ -183,6 +183,20 @@ function CreateInvoice({ classes }: any) {
         delete o.total;
         return o;
       }));
+
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Status',
+          progress: true,
+          removeFooter: false,
+          className: 'serviceTicketTitle',
+        },
+        type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+
       callCreateInvoiceAPI(data).then((response: any) => {
         {const {status, invoice, quickbookInvoice} = response;
           dispatch(setModalDataAction({
@@ -197,10 +211,6 @@ function CreateInvoice({ classes }: any) {
             },
             type: modalTypes.RECORD_SYNC_STATUS_MODAL,
           }));
-          setTimeout(() => {
-            dispatch(openModalAction());
-          }, 200);
-          return resolve(response);
         }
       }).catch((err: any) => {
         reject(err);
