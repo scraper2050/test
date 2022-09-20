@@ -40,7 +40,7 @@ import {
   setCurrentPageIndex,
   setCurrentPageSize,
   setKeyword,
-} from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
+} from 'actions/invoicing/invoicing.action';
 import BCDateRangePicker
   , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";
 import DropDownMenu
@@ -123,7 +123,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   );
 
   const handleRowClick = (event: any, row: any) => {
-    if (selectedIndexes.length === 0) setCustomerValue(row.original.customer);
+    if (selectedIndexes.length === 0 && !customerValue) setCustomerValue(row.original.customer);
     const found = selectedIndexes.indexOf(row.original._id);
     const newList = [...selectedIndexes];
     if (found >= 0) {
@@ -146,14 +146,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   const handleCustomerChange = (event: any, newValue: any) => {
     setCustomerValue(newValue);
+    if (!newValue) setSelectedIndexes([]);
   };
 
   const handleSend = async(e: any) => {
     e.stopPropagation();
-      // setIsLoading(true);
     try {
       const response = await getInvoiceEmailTemplate(selectedIndexes);
-      // setIsLoading(false);
       const {emailTemplate: emailDefault, status, message} = response.data
       if (status === 1) {
         const data = {
@@ -170,10 +169,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           'type': modalTypes.EMAIL_JOB_REPORT_MODAL
         }));
         dispatch(resetEmailState());
-        // setTimeout(() => {
-        //   dispatch(openModalAction());
-        // }, 200);
-
+        dispatch(setCurrentPageIndex(0));
+        dispatch(getAllInvoicesAPI());
       } else {
         dispatch(error(message));
       }
@@ -188,17 +185,9 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     }
   };
 
-  const debouncedFetchFunction = useCallback(
-    debounce((value, FormikValues) => {
-      setKeyword(value);
-      dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
-      dispatch(setCurrentPageIndex(0));
-    }, 500),
-    []
-  );
-
-
   const closeModal = () => {
+    dispatch(setCurrentPageIndex(0));
+    dispatch(getAllInvoicesAPI());
     dispatch(closeModalAction());
     setTimeout(() => {
       dispatch(setModalDataAction({
@@ -217,8 +206,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     } else {
       dueDate = moment().add(parseInt(showValue, 10), 'day').toDate();
     }
-    dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, '' , selectionRange, customerValue?._id, dueDate, showpaid));
     dispatch(setCurrentPageIndex(0));
+    dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, '' , selectionRange, customerValue?._id, dueDate, showpaid));
   }, [customerValue, selectionRange, showValue]);
 
 
@@ -239,6 +228,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           classes={{root: classes.checkbox}}
           checked={selectedIndexes.length === localInvoiceList.length}
           indeterminate={selectedIndexes.length > 0 && selectedIndexes.length < localInvoiceList.length}
+          disabled={!customerValue}
           onChange={handleSelectAll}
         />
         <span>Invoice ID</span>
@@ -351,7 +341,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           <BCSent title={'The payment was recorded.'}/>
         ) : (
           <>
-            <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{width: '100%', paddingLeft: 65, paddingRight: 85}}>
+            <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{width: '100%', paddingLeft: 65, paddingRight: 45}}>
               <Grid item xs={5}>
                   <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
                   <Autocomplete
@@ -371,9 +361,11 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                     }
                     value={customerValue}
                   />
-                </Grid>
-              <Grid item xs={4}>
-                <Typography variant={'caption'} className={'previewCaption'}>Date Range</Typography>
+                <div style={{width: 10}} >&nbsp;</div>
+              </Grid>
+
+              <Grid item xs={4} >
+                <Typography variant={'caption'} className={'previewCaption'} style={{marginLeft: 12}}>Date Range</Typography>
                 <BCDateRangePicker
                   range={selectionRange}
                   onChange={setSelectionRange}
@@ -382,7 +374,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   classes={{button: classes.datePicker}}
                 />
               </Grid>
-              <Grid item xs={3}>
+
+              <Grid item xs={2}>
                   <Typography variant={'caption'} className={'previewCaption'}>SHOW</Typography>
                 <DropDownMenu
                   // minwidth='180px'
@@ -391,6 +384,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   onSelect={(e, item) => setShowValue(item.value)}
                 />
               </Grid>
+              <Grid item xs={1}/>
             </Grid>
             <DialogContent classes={{ root: classes.dialogContent }}>
               <BCTableContainer
@@ -413,7 +407,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           </>
         )}
         <div className={'modalDataContainer'}>
-          <DialogActions>
+          <DialogActions style={{paddingRight: 80}}>
             {/* <Typography variant={'h5'}>
               {!!FormikValues.totalAmount && `Total Amount: $${FormikValues.totalAmount}`}
             </Typography> */}

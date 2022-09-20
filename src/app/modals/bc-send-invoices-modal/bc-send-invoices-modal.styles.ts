@@ -13,6 +13,7 @@ export default (theme: Theme): any => ({
   datePicker: {
     backgroundColor: 'white',
     height: 42,
+    marginLeft: 12,
   },
   dialogActions: {
     padding: '25px  40px 25px 0 !important',
