@@ -2,8 +2,7 @@ import {
   Button,
   Checkbox,
   DialogActions,
-  DialogContent,
-  Tooltip,
+  DialogContent, Tooltip,
   withStyles,
 } from '@material-ui/core';
 import React, {useEffect, useState} from 'react';
@@ -16,37 +15,36 @@ import styled from 'styled-components';
 import styles from './bc-manual-sync-modal.styles';
 import BCTableContainer
   from "../../components/bc-table-container/bc-table-container";
-import {formatDatTimelll} from "../../../helpers/format";
-import {getUnsyncedInvoices, SyncInvoices} from "../../../api/invoicing.api";
+import {formatShortDateNoDay} from "../../../helpers/format";
 import {
   error,
   success,
   warning
 } from "../../../actions/snackbar/snackbar.action";
 import {
-  Sync as SyncIcon,
-  SyncProblem as SyncProblemIcon,
+  Sync as SyncIcon, SyncProblem as SyncProblemIcon,
   Warning as WarningIcon,
 } from "@material-ui/icons";
-import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
-import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
-import {SYNC_RESPONSE} from "../../models/invoices";
+import {SYNC_RESPONSE} from "../../models/payments";
 import BCCircularLoader
   from "../../components/bc-circular-loader/bc-circular-loader";
+import {getUnsyncedPayments, SyncPayments} from "../../../api/payment.api";
+import BcSyncStatus from "./bc-sync-status";
 
 
-function BcManualSync({classes, action, closeAction}: any): JSX.Element {
+
+function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
   const dispatch = useDispatch();
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
-  const [invoices, setInvoices] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [isSyncing, setSyncing] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
 
   const getData = async () => {
     try {
-      const invoices = await getUnsyncedInvoices();
-      setInvoices(invoices);
+      const payments = await getUnsyncedPayments();
+      setPayments(payments);
     } catch (e) {
       dispatch(error(e));
     } finally {
@@ -73,8 +71,8 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
   };
 
   const handleSyncResponse = (response: SYNC_RESPONSE) => {
-    const {ids, totalInvoiceSynced, totalInvoiceUnsynced} = response;
-    const temp = [...invoices];
+    const {ids, totalPaymentSynced, totalPaymentUnsynced} = response;
+    const temp = [...payments];
     const newList = [...selectedIndexes];
 
     ids.forEach((update: any, index: number) => {
@@ -84,34 +82,24 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
       temp[i] = {...temp[i], ...update};
     });
     setSelectedIndexes(newList);
-    setInvoices(temp);
+    setPayments(temp);
     setSyncing(false);
-    if (totalInvoiceSynced && !totalInvoiceUnsynced) {
-      dispatch(success(`${totalInvoiceSynced} invoices synced.`))
-    } else if (!totalInvoiceSynced && totalInvoiceUnsynced) {
-      dispatch(error(`${totalInvoiceUnsynced} invoices not synced.`))
+    if (totalPaymentSynced && !totalPaymentUnsynced) {
+      dispatch(success(`${totalPaymentSynced} payments synced.`))
+    } else if (!totalPaymentSynced && totalPaymentUnsynced) {
+      dispatch(error(`${totalPaymentUnsynced} payments not synced.`))
     } else {
-      dispatch(warning(`${totalInvoiceSynced} invoices synced, and ${totalInvoiceUnsynced} invoices not synced.`))
+      dispatch(warning(`${totalPaymentSynced} invoices synced, and ${totalPaymentUnsynced} invoices not synced.`))
     }
   }
 
   const confirm = async () => {
-    const ids: string[] = selectedIndexes.map(index => invoices[index]._id);
+    const ids: string[] = selectedIndexes.map(index => payments[index]._id);
 
     try {
       setSyncing(true);
-      dispatch(SyncInvoices(ids, handleSyncResponse));
-
-      //if (unsynced.length > 0) dispatch(error('Errors'))
-      // setTimeout(() => {
-      //   dispatch(closeModalAction());
-      //   setTimeout(() => {
-      //     dispatch(setModalDataAction({
-      //       'data': {},
-      //       'type': ''
-      //     }));
-      //   }, 200);
-      // }, 1000);
+      const res: any= await dispatch(SyncPayments(ids));
+      handleSyncResponse(res);
     } catch (e) {
       dispatch(error(e));
     }
@@ -119,11 +107,7 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
 
   const columns: any = [
     {
-      'Header': 'Invoice ID',
-      'accessor': 'invoiceId',
-      'className': 'font-bold',
-      'sortable': true,
-      Cell({row}: any) {
+      Cell({ row }: any) {
         return <div className={classes.totalNumber}>
           <Checkbox
             color="primary"
@@ -132,92 +116,54 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
             checked={selectedIndexes.indexOf(row.index) >= 0}
           />
           <span>
-            {row.original.invoiceId}
+            {row.original.line?.length ? 'Multiple Invoices' : row.original.invoice?.invoiceId}
           </span>
         </div>;
       },
-    },
-    {
-      'Header': 'Job ID',
-      'accessor': 'job.jobId',
-      'className': 'font-bold',
-      'sortable': true
+      'Header': 'Invoice ID',
+      'accessor': 'invoice',
+      'sortable': true,
     },
     {
       'Header': 'Customer',
       'accessor': 'customer.profile.displayName',
-      'className': 'font-bold',
       'sortable': true
     },
     {
-      Cell({row}: any) {
-        return <div className={classes.totalNumber}>
-
+      Cell({ row }: any) {
+        return row.original.paidAt
+          ? formatShortDateNoDay(row.original.paidAt)
+          : 'N/A';
+      },
+      'Header': 'Payment Date',
+      'accessor': 'paidAt',
+      'sortable': true
+    },
+    {
+      'Header': 'Payment Type',
+      'accessor': 'paymentType',
+      'sortable': true
+    },
+    {
+      'Header': 'Reference Number',
+      'accessor': 'referenceNumber',
+      'sortable': true
+    },
+    {
+      Cell({ row }: any) {
+        return <div>
           <span>
-            {`$${row.original.total}` || 0}
+            {`$${row.original.amountPaid}` || 0}
           </span>
         </div>;
       },
-      'accessor': 'total',
-      'Header': 'Total',
+      'Header': 'Amount Paid',
       'sortable': true,
       'width': 20
     },
-    { Cell({ row }: any) {
-        const { status = '' } = row.original;
-        const textStatus = status.split('_').join(' ').toLowerCase();
-        return (
-          <PaymentStatus color={PAYMENT_STATUS_COLORS[row.original.status]}>
-            {row.original.status.replace('_', '').toLowerCase()}
-          </PaymentStatus>
-        )
-      },
-      'Header': 'Payment Status',
-      'accessor': 'paid',
-      'className': 'font-bold',
-      'sortable': true,
-      'width': 10
-    },
-    // {
-    //   Cell({row}: any) {
-    //     return row.original.lastEmailSent
-    //       ? formatDatTimelll(row.original.lastEmailSent)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Last Email Send Date ',
-    //   'accessor': 'lastEmailSent',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
     {
       Cell({row}: any) {
-        return row.original.createdAt
-          ? formatDatTimelll(row.original.createdAt)
-          : 'N/A';
-      },
-      'Header': 'Invoice Date',
-      'accessor': 'createdAt',
-      'className': 'font-bold',
-      'sortable': true
-    },
-    {
-      Cell({row}: any) {
-        const color = row.original.quickbookId ? PRIMARY_GREEN : (row.original.error ? ERROR_RED : GRAY4);
-        return (
-          <Tooltip
-            title={row.original.error}
-            disableHoverListener={!row.original.error}
-            classes={{tooltip: classes.tooltip}}
-          >
-            <div style={{display: 'flex'}}>
-              {row.original.quickbookId ?
-                <SyncIcon className={classes.syncIcon} style={{color}}/>
-                :
-                <SyncProblemIcon className={classes.syncIcon} style={{color}}/>
-              }
-            </div>
-          </Tooltip>
-        );
+        return <BcSyncStatus data={row.original} />
       },
       'Header': 'Integrations',
       'id': 'qbSync',
@@ -252,7 +198,7 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
         columns={columns}
         isLoading={isLoading}
         onRowClick={handleRowClick}
-        tableData={invoices}
+        tableData={payments}
       />
       </DialogContent>
 
@@ -262,7 +208,7 @@ function BcManualSync({classes, action, closeAction}: any): JSX.Element {
       }}>
         {showWarning && <div className={classes.warningContainer}>
           <WarningIcon/>
-          <span>Only five (5) invoices may be manually synced at one time.</span>
+          <span>Only five (5) payments may be manually synced at one time.</span>
         </div>
         }
         <Button
@@ -303,7 +249,7 @@ const DataContainer = styled.div`
 export default withStyles(
   styles,
   {'withTheme': true}
-)(BcManualSync);
+)(BcManualSyncPayment);
 
 const PaymentStatus = styled.div`
   width: 100px;

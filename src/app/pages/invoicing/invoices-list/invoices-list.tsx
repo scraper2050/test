@@ -16,6 +16,7 @@ import { getCustomers } from 'actions/customer/customer.action'
 import {Sync as SyncIcon} from '@material-ui/icons';
 import InvoicingUnpaidListing
   from "./invoices-list-listing/invoices-unpaid-listing";
+import {RootState} from "../../../../reducers";
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
@@ -24,7 +25,8 @@ function InvoiceList({ classes }: any) {
   const history = useHistory();
   const location = useLocation<any>();
   const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
-
+  const { loading: loadingPayment, unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
+  );
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
   };
@@ -86,14 +88,51 @@ function InvoiceList({ classes }: any) {
     }
   }
 
+  const SyncButton = () => {
+    switch (curTab) {
+      case 0:
+        const isSyncDisabled = unSyncedInvoicesCount === 0;
+        return  !loading ? <Button
+          variant='outlined'
+          startIcon={<SyncIcon />}
+          disabled={isSyncDisabled}
+          classes={{
+            root: classes.syncButton,
+            disabled: classes.disabledButton,
+            startIcon: isSyncDisabled ? classes.buttonIconDisabled : classes.buttonIcon,
+          }}
+          onClick={manualSyncHandle}>
+          {isSyncDisabled ? 'All Invoices Synced' : `Invoices Not Synced ${unSyncedInvoicesCount}`}
+        </Button> : null
+      case 2:
+        const isSyncPaymentDisabled = unSyncPaymentsCount === 0;
+        return  !loadingPayment ? <Button
+          variant='outlined'
+          startIcon={<SyncIcon />}
+          disabled={isSyncPaymentDisabled}
+          classes={{
+            root: classes.syncButton,
+            disabled: classes.disabledButton,
+            startIcon: isSyncPaymentDisabled ? classes.buttonIconDisabled : classes.buttonIcon,
+          }}
+          onClick={manualSyncHandle}>
+          {isSyncPaymentDisabled ? 'All Payments Synced' : `Payments Not Synced ${unSyncPaymentsCount}`}
+        </Button> : null
+      default:
+        return null;
+    }
+
+
+  }
+
   const manualSyncHandle = () => {
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': 'Sync Invoices',
+        'modalTitle': `Sync ${curTab === 0 ? 'Invoices' : 'Payments'}`,
         'removeFooter': false,
         'className': 'serviceTicketTitle',
       },
-      'type': modalTypes.MANUAL_SYNC_MODAL
+      'type': curTab === 0 ? modalTypes.MANUAL_SYNC_MODAL_INVOICES :  modalTypes.MANUAL_SYNC_MODAL_PAYMENTS
     }));
     setTimeout(() => {
       dispatch(openModalAction());

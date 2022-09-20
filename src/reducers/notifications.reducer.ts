@@ -58,13 +58,22 @@ export const NotificationsReducer: Reducer<any> = (
       };
     case markNotificationAsRead.success.toString():
     case dismissNotificationAction.success.toString():
-
       return {
         ...state,
-        'notifications': state.notifications.map((notification:NotificationItem) =>
-          notification._id === action.payload._id
-            ? action.payload
-            : notification)
+        'notifications': state.notifications.map((notification:NotificationItem) => {
+          if(notification._id === action.payload._id){
+            const returnedNotification = action.payload;
+            if(notification?.metadata?.jobRequest?.requestId){
+              returnedNotification.metadata.jobRequest = {
+                _id: notification.metadata.jobRequest._id,
+                requestId: notification.metadata.jobRequest.requestId
+              }
+            }
+            return returnedNotification
+          } else {
+            return notification
+          }
+        })
       };
 
     case NotificationActionTypes.PUSH_NOTIFICATION:

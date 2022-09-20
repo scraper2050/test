@@ -8,10 +8,19 @@ export const setPaymentsLoading = (isLoading: any) => {
     'type': PaymentsListActionType.SET_PAYMENTS_LOADING
   };
 };
-export const setPayments = (payments: any) => {
+export const setPayments = (payments: any, unSyncCount: number = 0) => {
+  return {
+    'payload': {
+      payments,
+      unSyncCount,
+    },
+    'type': PaymentsListActionType.SET_PAYMENTS
+  };
+};
+export const updateSyncedPayments = (payments: any[]) => {
   return {
     'payload': payments,
-    'type': PaymentsListActionType.SET_PAYMENTS
+    'type': PaymentsListActionType.UPDATE_SYNCED_PAYMENTS
   };
 };
 // export const setPreviousPaymentsCursor = (prevCursor: string) => {
