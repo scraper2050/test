@@ -44,10 +44,10 @@ export default function BCSentSync({keyword, created, synced, showLine = true, o
         }
         <span className={componentStyles.title}>
           {`The ${keyword} was ${synced ? '' : 'not '}synced to Quickbooks`}
-          {!synced && created && <>
-            <br/>Would you like to <Link to={'#'} onClick={onTryAgain}>try again</Link>?
-          </>
-          }
+          {/*{!synced && created && <>*/}
+          {/*  <br/>Would you like to <Link to={'#'} onClick={onTryAgain}>try again</Link>?*/}
+          {/*</>*/}
+          {/*}*/}
         </span>
       </div>
     </div>

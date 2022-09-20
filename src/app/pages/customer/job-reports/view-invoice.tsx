@@ -122,6 +122,19 @@ function ViewInvoice({ classes, theme }: any) {
   }
 
   const saveInvoice = () => {
+    dispatch(setModalDataAction({
+      data: {
+        modalTitle: 'Status',
+        progress: true,
+        removeFooter: false,
+        className: 'serviceTicketTitle',
+      },
+      type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+
     const params ={
       invoiceId: invoiceDetail._id,
       isDraft: false,
@@ -130,9 +143,22 @@ function ViewInvoice({ classes, theme }: any) {
     }
 
     updateInvoice(params).then((response: any) => {
-      if (response.status === 1)
-        history.goBack();
-      else
+      if (response.status === 1) {
+        const {status, quickbookInvoice} = response;
+        dispatch(setModalDataAction({
+          data: {
+            modalTitle: 'Status',
+            progress: false,
+            keyword: 'Invoice',
+            created: status === 1,
+            synced: !!quickbookInvoice,
+            closeAction: () => history.goBack(),
+            removeFooter: false,
+            className: 'serviceTicketTitle',
+          },
+          type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+        }));
+      } else
         dispatch(error(response.message));
     }).catch((err: any) => {
       dispatch(error(err));
