@@ -109,7 +109,6 @@ function ViewInvoice() {
       setTimeout(() => {
         dispatch(openModalAction());
       }, 200);
-      debugger;
       const params: any = {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
