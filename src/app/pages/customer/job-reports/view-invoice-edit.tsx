@@ -109,12 +109,12 @@ function ViewInvoice() {
       setTimeout(() => {
         dispatch(openModalAction());
       }, 200);
-
+      debugger;
       const params: any = {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
-        dueDate: new Date(data.due_date).toISOString(),
-        paymentTermId: data.paymentTerm,
+        dueDate: new Date(data.due_date).toISOString().split('T')[0],
+        ...(data.paymentTerm && {paymentTermId: data.paymentTerm}),
         note: data.note,
         isDraft: data.isDraft,
         items: JSON.stringify(data.items.map((o: any) => {

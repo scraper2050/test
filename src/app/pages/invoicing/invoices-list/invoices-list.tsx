@@ -130,11 +130,11 @@ function InvoiceList({ classes }: any) {
   const manualSyncHandle = () => {
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': `Sync ${curTab === 0 ? 'Invoices' : 'Payments'}`,
+        'modalTitle': `Sync ${curTab === 1 ? 'Invoices' : 'Payments'}`,
         'removeFooter': false,
         'className': 'serviceTicketTitle',
       },
-      'type': curTab === 0 ? modalTypes.MANUAL_SYNC_MODAL_INVOICES :  modalTypes.MANUAL_SYNC_MODAL_PAYMENTS
+      'type': curTab === 1 ? modalTypes.MANUAL_SYNC_MODAL_INVOICES :  modalTypes.MANUAL_SYNC_MODAL_PAYMENTS
     }));
     setTimeout(() => {
       dispatch(openModalAction());
