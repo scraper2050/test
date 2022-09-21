@@ -212,7 +212,7 @@ function InvoicingListListing({ classes, theme }: any) {
   }, [selectionRange]);
 
   useEffect(() => {
-    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setKeyword(location.state.option.search));
       dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
@@ -227,6 +227,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
+        tab: 1,
       }
     });
   };

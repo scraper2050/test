@@ -174,15 +174,15 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     }
   }, [selectionRange]);
 
-  // useEffect(() => {
-  //   if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
-  //     dispatch(setKeyword(location.state.option.search));
-  //     dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
-  //     dispatch(setCurrentPageSize(location.state.option.pageSize));
-  //     dispatch(setCurrentPageIndex(0));
-  //     window.history.replaceState({}, document.title)
-  //   }
-  // }, [location]);
+  useEffect(() => {
+    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+      dispatch(setUnpaidKeyword(location.state.option.search));
+      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(setCurrentUnpaidPageSize(location.state.option.pageSize));
+      dispatch(setCurrentUnpaidPageIndex(0));
+      window.history.replaceState({}, document.title)
+    }
+  }, [location]);
 
   const showInvoiceDetail = (id:string) => {
     history.push({
@@ -190,51 +190,10 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
+        tab: 0,
       }
     });
   };
-
-  const handleMenuButtonClick = (event: any, id: number, row:any) => {
-    event.stopPropagation();
-    switch (id) {
-      case 0:
-        recordPayment(row);
-        break;
-      case 1:
-        historyPayment(row);
-        break;
-      default:
-        dispatch(info('This feature is still under development!'));
-    }
-  }
-
-  const recordPayment = (row: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        invoice: row,
-        modalTitle: 'Record a Payment',
-        removeFooter: false,
-      },
-      'type': modalTypes.PAYMENT_RECORD_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
-
-  const historyPayment = (row: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        invoiceID: row._id,
-        modalTitle: 'Payment History',
-        removeFooter: false,
-      },
-      'type': modalTypes.PAYMENT_HISTORY_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
