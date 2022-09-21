@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
-import { formatDatTimelll } from 'helpers/format';
+import {formatDateMMMDDYYYY, formatDatTimelll} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
@@ -139,7 +139,7 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     { Cell({ row }: any) {
       return row.original.lastEmailSent
-        ? formatDatTimelll(row.original.lastEmailSent)
+        ? formatDateMMMDDYYYY(row.original.lastEmailSent)
         : 'N/A';
     },
     'Header': 'Email Send Date ',
@@ -150,11 +150,11 @@ function InvoicingListListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return row.original.createdAt
-          ? formatDatTimelll(row.original.createdAt)
+          ? formatDateMMMDDYYYY(row.original.issuedDate)
           : 'N/A';
       },
       'Header': 'Invoice Date',
-      'accessor': 'createdAt',
+      'accessor': 'issuedDate',
       'className': 'font-bold',
       'sortable': true
     },
@@ -212,7 +212,7 @@ function InvoicingListListing({ classes, theme }: any) {
   }, [selectionRange]);
 
   useEffect(() => {
-    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setKeyword(location.state.option.search));
       dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
@@ -227,6 +227,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
+        tab: 1,
       }
     });
   };

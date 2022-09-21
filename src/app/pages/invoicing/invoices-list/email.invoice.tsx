@@ -22,7 +22,6 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
   const dispatch = useDispatch();
 
   const sendInvoice = () => {
-    debugger;
     dispatch(sendEmailAction.fetch({ 'email': customer?.info?.email,
       'id': _id,
       'type': 'invoice'

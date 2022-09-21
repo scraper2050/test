@@ -83,7 +83,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
   }, []);
 
   useEffect(() => {
-    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 2 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setDraftKeyword(location.state.option.search));
       dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search));
       dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
@@ -98,7 +98,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
-        tab: 1,
+        tab: 2,
       }
     });
   };

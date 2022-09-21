@@ -849,7 +849,7 @@ function BCEditInvoice({
                             onChange={(selectedInvoiceDate) => {
                               setDatePickerOpen(false);
                               calculateDueDate2(setFieldValue, values, selectedInvoiceDate);
-                              setFieldValue('invoice_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
+                              setFieldValue('invoice_date', selectedInvoiceDate);
                             }}
                             KeyboardButtonProps={{
                               'aria-label': 'change date',
@@ -904,7 +904,7 @@ function BCEditInvoice({
                             autoOk
                             onChange={(selectedInvoiceDate) => {
                               setDueDatePickerOpen(false);
-                              setFieldValue('due_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
+                              setFieldValue('due_date',selectedInvoiceDate);
                             }}
                             onClick={() => {
                                 if (values.paymentTerm === '') setDueDatePickerOpen(true)
@@ -917,6 +917,7 @@ function BCEditInvoice({
                                 <InputBase
                                   id="due-date"
                                   name="due_date"
+                                  disabled={values.paymentTerm !== ''}
                                   error={!!errors.due_date}
                                   onClick={(e) => {
                                     if (values.paymentTerm === '')

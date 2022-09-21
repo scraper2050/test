@@ -109,12 +109,11 @@ function ViewInvoice() {
       setTimeout(() => {
         dispatch(openModalAction());
       }, 200);
-
       const params: any = {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
-        dueDate: new Date(data.due_date).toISOString(),
-        paymentTermId: data.paymentTerm,
+        dueDate: new Date(data.due_date).toISOString().split('T')[0],
+        ...(data.paymentTerm && {paymentTermId: data.paymentTerm}),
         note: data.note,
         isDraft: data.isDraft,
         items: JSON.stringify(data.items.map((o: any) => {
@@ -144,7 +143,7 @@ function ViewInvoice() {
             keyword: 'Invoice',
             created: status === 1,
             synced: !!quickbookInvoice,
-            closeAction: () => history.push(`/main/invoicing/view/${data.invoice_id}`),
+            closeAction: () => history.replace(`/main/invoicing/view/${data.invoice_id}`),
             removeFooter: false,
             className: 'serviceTicketTitle',
           },

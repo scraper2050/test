@@ -10,16 +10,12 @@ import {formatDateMMMDDYYYY, formatDatTimelll} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
-import {GRAY2, modalTypes} from "../../../../../constants";
+import {GRAY2, modalTypes, PRIMARY_GREEN} from "../../../../../constants";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-import {getAllInvoicesAPI, getUnpaidInvoicesAPI} from 'api/invoicing.api';
-import {
-  setCurrentPageIndex,
-  setCurrentPageSize, setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize,
-  setKeyword, setUnpaidKeyword,
-} from 'actions/invoicing/invoicing.action';
+import {getUnpaidInvoicesAPI} from 'api/invoicing.api';
+import {setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize, setUnpaidKeyword} from 'actions/invoicing/invoicing.action';
 import moment from "moment";
 
 // const getFilteredList = (state: any) => {
@@ -56,12 +52,16 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
   const columns: any = [
     { Cell({ row }: any) {
-       const overdue = moment(row.original.dueDate).isBefore(moment(), 'day');
-        return (
-          <PaymentStatus overdue={overdue}>
-            {overdue ? 'Overdue' : 'Due Soon'}
-          </PaymentStatus>
-        )
+      let status = 'open';
+      if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
+      else if (moment(row.original.dueDate).isSame(moment(), 'day')) status = 'due today'
+      else if (moment(row.original.dueDate).diff(moment(), 'day') <= 7) status = 'due soon'
+
+      return (
+        <PaymentStatus status={status}>
+          {status}
+        </PaymentStatus>
+      )
       },
       'Header': 'Status',
       'accessor': 'paid',
@@ -118,7 +118,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
     { Cell({ row }: any) {
       return row.original.lastEmailSent
-        ? formatDatTimelll(row.original.lastEmailSent)
+        ? formatDateMMMDDYYYY(row.original.lastEmailSent)
         : 'N/A';
     },
     'Header': 'Last Emailed',
@@ -129,11 +129,11 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return row.original.createdAt
-          ? formatDateMMMDDYYYY(row.original.createdAt)
+          ? formatDateMMMDDYYYY(row.original.issuedDate)
           : 'N/A';
       },
       'Header': 'Invoice Date',
-      'accessor': 'createdAt',
+      'accessor': 'issuedDate',
       'className': 'font-bold',
       'sortable': true
     },
@@ -166,7 +166,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
   useEffect(() => {
     dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
-    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentUnpaidPageIndex(0));
     return () => {
       dispatch(setUnpaidKeyword(''));
       dispatch(setCurrentUnpaidPageIndex(currentPageIndex));
@@ -174,15 +174,15 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     }
   }, [selectionRange]);
 
-  // useEffect(() => {
-  //   if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
-  //     dispatch(setKeyword(location.state.option.search));
-  //     dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
-  //     dispatch(setCurrentPageSize(location.state.option.pageSize));
-  //     dispatch(setCurrentPageIndex(0));
-  //     window.history.replaceState({}, document.title)
-  //   }
-  // }, [location]);
+  useEffect(() => {
+    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+      dispatch(setUnpaidKeyword(location.state.option.search));
+      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(setCurrentUnpaidPageSize(location.state.option.pageSize));
+      dispatch(setCurrentUnpaidPageIndex(0));
+      window.history.replaceState({}, document.title)
+    }
+  }, [location]);
 
   const showInvoiceDetail = (id:string) => {
     history.push({
@@ -190,51 +190,10 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
+        tab: 0,
       }
     });
   };
-
-  const handleMenuButtonClick = (event: any, id: number, row:any) => {
-    event.stopPropagation();
-    switch (id) {
-      case 0:
-        recordPayment(row);
-        break;
-      case 1:
-        historyPayment(row);
-        break;
-      default:
-        dispatch(info('This feature is still under development!'));
-    }
-  }
-
-  const recordPayment = (row: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        invoice: row,
-        modalTitle: 'Record a Payment',
-        removeFooter: false,
-      },
-      'type': modalTypes.PAYMENT_RECORD_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
-
-  const historyPayment = (row: any) => {
-    dispatch(setModalDataAction({
-      'data': {
-        invoiceID: row._id,
-        modalTitle: 'Payment History',
-        removeFooter: false,
-      },
-      'type': modalTypes.PAYMENT_HISTORY_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
@@ -285,12 +244,12 @@ const DataContainer = styled.div`
 export default withStyles(styles, { 'withTheme': true })(InvoicingUnpaidListing);
 
 
-const PaymentStatus = styled.div<{overdue: boolean}>`
+const PaymentStatus = styled.div<{status: string}>`
   width: 75px;
-  background-color: ${props => props.overdue ? '#F5005768' : '#E5F7FF'};
-  background-image: ${props => props.overdue ? 'repeating-linear-gradient(-60deg,#F5005720 0px 8px,#F5005701 8px 12px);' : 'none'};
+  background-color: ${props => props.status === 'overdue' || props.status === 'due today'? '#F5005768' : props.status === 'due soon' ? '#E5F7FF' : PRIMARY_GREEN};
+  background-image: ${props => props.status === 'overdue' ? 'repeating-linear-gradient(-60deg,#F5005720 0px 8px,#F5005701 8px 12px);' : 'none'};
   font-weight: bold;
-  color: ${props => props.overdue ? '#F50057' : GRAY2};
+  color: ${props => props.status === 'overdue' ? '#F50057' : props.status === 'open' ? 'white' : GRAY2};
   border-radius: 8px;
   text-transform: capitalize;
   text-align: center;

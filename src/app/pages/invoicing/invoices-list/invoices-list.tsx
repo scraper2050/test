@@ -130,11 +130,11 @@ function InvoiceList({ classes }: any) {
   const manualSyncHandle = () => {
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': `Sync ${curTab === 0 ? 'Invoices' : 'Payments'}`,
+        'modalTitle': `Sync ${curTab === 1 ? 'Invoices' : 'Payments'}`,
         'removeFooter': false,
         'className': 'serviceTicketTitle',
       },
-      'type': curTab === 0 ? modalTypes.MANUAL_SYNC_MODAL_INVOICES :  modalTypes.MANUAL_SYNC_MODAL_PAYMENTS
+      'type': curTab === 1 ? modalTypes.MANUAL_SYNC_MODAL_INVOICES :  modalTypes.MANUAL_SYNC_MODAL_PAYMENTS
     }));
     setTimeout(() => {
       dispatch(openModalAction());
@@ -192,17 +192,15 @@ function InvoiceList({ classes }: any) {
                 ? 'x-reverse'
                 : 'x'}
             index={curTab}>
-            {(visibleTabs.indexOf(0) >= 0 || curTab === 0) &&
-              <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"}/>
+            <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"}/>
+            {(visibleTabs.indexOf(1) >= 0 || curTab === 1) ?
+              <InvoicingListListing hidden={curTab !== 1} id={"1"} /> : <div />
             }
-            {(visibleTabs.indexOf(1) >= 0 || curTab === 1) &&
-              <InvoicingListListing hidden={curTab !== 1} id={"1"} />
+            {(visibleTabs.indexOf(2) >= 0 || curTab === 2) ?
+              <InvoicingDraftListing hidden={curTab !== 2} id={"2"} /> : <div />
             }
-            {(visibleTabs.indexOf(2) >= 0 || curTab === 2) &&
-              <InvoicingDraftListing hidden={curTab !== 2} id={"2"} />
-            }
-            {(visibleTabs.indexOf(3) >= 0 || curTab === 3) &&
-              <InvoicingPaymentListing hidden={curTab !== 3} id={"3"} />
+            {(visibleTabs.indexOf(3) >= 0 || curTab === 3) ?
+              <InvoicingPaymentListing hidden={curTab !== 3} id={"3"} />: <div />
             }
           </SwipeableViews>
         </div>
