@@ -15,7 +15,7 @@ import styled from 'styled-components';
 import styles from './bc-manual-sync-modal.styles';
 import BCTableContainer
   from "../../components/bc-table-container/bc-table-container";
-import {formatShortDateNoDay} from "../../../helpers/format";
+import {formatCurrency, formatShortDateNoDay} from "../../../helpers/format";
 import {
   error,
   success,
@@ -44,7 +44,7 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
   const getData = async () => {
     try {
       const payments = await getUnsyncedPayments();
-      setPayments(payments);
+      setPayments(payments.reverse());
     } catch (e) {
       dispatch(error(e));
     } finally {
@@ -150,13 +150,7 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
       'sortable': true
     },
     {
-      Cell({ row }: any) {
-        return <div>
-          <span>
-            {`$${row.original.amountPaid}` || 0}
-          </span>
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.amountPaid),
       'Header': 'Amount Paid',
       'sortable': true,
       'width': 20

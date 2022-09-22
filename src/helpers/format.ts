@@ -55,9 +55,10 @@ export const parseISODate = (date: string) => {
 }
 
 export const formatCurrency = (value: number) => {
+  const hasFrac = Math.ceil(value) !== value;
   const formatted = (value ?? 0).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: hasFrac ? 2 : 0,
+    maximumFractionDigits: hasFrac ? 2 : 0,
     useGrouping: true,
   });
   return `$${formatted}`;
