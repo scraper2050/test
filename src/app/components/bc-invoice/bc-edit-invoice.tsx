@@ -608,21 +608,21 @@ function BCEditInvoice({
   };
 
   const calculateDueDate = (setFieldValue: any, values: any, newTerm: any) => {
-    if (newTerm !== '') {
-      const paymentTerm = paymentTerms.find((term:any) => term._id === newTerm);
-      setFieldValue('due_date', moment(values.invoice_date).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
-    }
+    // if (newTerm !== '') {
+    const paymentTerm = paymentTerms.find((term:any) => term._id === newTerm);
+    setFieldValue('due_date', moment(values.invoice_date).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
+    // }
     setFieldValue('paymentTerm', newTerm);
   }
 
   const calculateDueDate2 = (setFieldValue: any, values: any, newInvoiceDate: any) => {
-    if (values.paymentTerm === '') {
-      if (newInvoiceDate > new Date(values.due_date))
-        setFieldValue('due_date', moment(newInvoiceDate).format('MMM. DD, YYYY'));
-    } else {
-      const paymentTerm = paymentTerms.find((term:any) => term._id === values.paymentTerm);
-      setFieldValue('due_date', moment(newInvoiceDate).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
-    }
+    // if (values.paymentTerm === '') {
+    //   if (newInvoiceDate > new Date(values.due_date))
+    //     setFieldValue('due_date', moment(newInvoiceDate).format('MMM. DD, YYYY'));
+    // } else {
+    const paymentTerm = paymentTerms.find((term:any) => term._id === values.paymentTerm);
+    setFieldValue('due_date', moment(newInvoiceDate).add(paymentTerm.dueDays, 'day'));
+   // }
   }
 
   const changeCustomer = (id: string, values: any, setFieldValue: any) => {
@@ -961,9 +961,6 @@ function BCEditInvoice({
                               }}
                               error={!!errors.paymentTerm}/>}
                           >
-                            <MenuItem value={''}>
-                              <em>None</em>
-                            </MenuItem>
                             {
                               paymentTerms.map((pitem: any, pindex: number) => {
                                 return (
