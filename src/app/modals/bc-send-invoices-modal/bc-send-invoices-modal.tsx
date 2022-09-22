@@ -16,7 +16,6 @@ import {
 } from '@material-ui/core';
 import {
   closeModalAction,
-  openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
 import styles from './bc-send-invoices-modal.styles';
@@ -198,16 +197,17 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   };
 
   useEffect(() => {
-    let showpaid = true;
-    let dueDate = null;
-
-    if (isNaN(parseInt(showValue))) {
-      showpaid = showValue === 'all'
-    } else {
-      dueDate = moment().add(parseInt(showValue, 10), 'day').toDate();
-    }
     dispatch(setCurrentPageIndex(0));
-    dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, '' , selectionRange, customerValue?._id, dueDate, showpaid));
+    dispatch(getAllInvoicesAPI(
+      currentPageSize,
+      undefined,
+      undefined,
+      '' ,
+      selectionRange,
+      customerValue?._id,
+      isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
+      showValue === 'all'
+    ));
   }, [customerValue, selectionRange, showValue]);
 
 
@@ -393,9 +393,17 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 tableData={localInvoiceList}
                 onRowClick={handleRowClick}
                 manualPagination
-                fetchFunction={(num: number, isPrev: boolean, isNext: boolean) =>
-                  dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, '', selectionRange))
-                }
+                fetchFunction={(num: number, isPrev: boolean, isNext: boolean) => {
+                  dispatch(getAllInvoicesAPI(
+                    num || currentPageSize,
+                    isPrev ? prevCursor : undefined,
+                    isNext ? nextCursor : undefined,
+                    '', selectionRange,
+                    customerValue?._id,
+                    isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
+                    showValue === 'all'
+                  ))
+                }}
                 total={total}
                 currentPageIndex={currentPageIndex}
                 setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
