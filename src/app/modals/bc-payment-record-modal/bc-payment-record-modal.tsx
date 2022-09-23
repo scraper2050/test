@@ -26,7 +26,7 @@ import { error } from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import { voidPayment } from 'api/payment.api';
 import BCSentSync from "../../components/bc-sent-sync";
-import {boolean} from "yup";
+import {formatCurrency} from "../../../helpers/format";
 
 interface ApiProps {
   customerId: string,
@@ -147,9 +147,24 @@ function BcPaymentRecordModal({
 
       dispatch(request(params)).then((response: any) => {
         const {status, payment, quickbookPayment, invoice: updatedInvoice, invoices, message} = response;
-        const {paid, status: invoiceStatus, paymentApplied, balanceDue} = updatedInvoice || invoices[0] || {};
-        setSent({created: !!payment, synced: !!quickbookPayment});
-        if (payment) setInvoice({...invoice, paid, status: invoiceStatus, paymentApplied, balanceDue});
+        if (status === 1) {
+          const {
+            paid,
+            status: invoiceStatus,
+            paymentApplied,
+            balanceDue
+          } = updatedInvoice || invoices[0] || {};
+          setSent({created: !!payment, synced: !!quickbookPayment});
+          if (payment) setInvoice({
+            ...invoice,
+            paid,
+            status: invoiceStatus,
+            paymentApplied,
+            balanceDue
+          });
+        } else {
+          dispatch(error(message));
+        }
         setSubmitting(false);
           //closeModal()
       }).catch((e: any) => {
@@ -232,11 +247,11 @@ function BcPaymentRecordModal({
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-            <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(invoice.total)}</Typography>
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>BALANCE DUE</Typography>
-            <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(currentBalanceDue)}</Typography>
           </Grid>
           <Grid item>
             <Grid container direction={'row'} spacing={2}>

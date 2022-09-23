@@ -23,6 +23,7 @@ import styled from 'styled-components';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
+import {formatCurrency} from "../../../helpers/format";
 
 interface ApiProps {
   customerId: string,
@@ -191,11 +192,11 @@ function BcPaymentVendorEditModal({
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-            <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(invoice.total)}</Typography>
           </Grid>
           <Grid item>
             <Typography variant={'caption'} className={classes.previewCaption}>BALANCE DUE</Typography>
-            <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
+            <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(currentBalanceDue)}</Typography>
           </Grid>
           <Grid item>
             <Grid container direction={'row'} spacing={2}>

@@ -25,7 +25,7 @@ import BCSent from 'app/components/bc-sent';
 import { createStyles, makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
 import { CSButtonSmall } from "helpers/custom";
-import { formatShortDateNoDay } from 'helpers/format';
+import {formatCurrency, formatShortDateNoDay} from 'helpers/format';
 import { updatePayment } from 'api/payment.api';
 import { error } from "actions/snackbar/snackbar.action";
 import { voidPayment } from 'api/payment.api';
@@ -55,7 +55,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   const [localPaymentList, setLocalPaymentList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const inputStyles = useInputStyles();
-  
+
   const paymentList = payments.line;
 
   const paymentTypeReference = [
@@ -280,13 +280,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
       'Header': 'Customer PO',
     },
     {
-      Cell({ row }: any) {
-        return <div>
-          <span>
-            {`$${row.original.invoice?.balanceDue}` || 0}
-          </span>
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.invoice?.balanceDue),
       'Header': 'Amount Due',
       'width': 20
     },
@@ -312,13 +306,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
       'accessor': 'paid',
     },
     {
-      Cell({ row }: any) {
-        return <div>
-          <span>
-            {`$${row.original.amountPaid}` || 0}
-          </span>
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.amountPaid),
       'Header': 'Current Amount',
       'width': 20
     },

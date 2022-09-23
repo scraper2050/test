@@ -89,7 +89,7 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
     } else if (!totalPaymentSynced && totalPaymentUnsynced) {
       dispatch(error(`${totalPaymentUnsynced} payments not synced.`))
     } else {
-      dispatch(warning(`${totalPaymentSynced} invoices synced, and ${totalPaymentUnsynced} invoices not synced.`))
+      dispatch(warning(`${totalPaymentSynced} payments synced, and ${totalPaymentUnsynced} payments not synced.`))
     }
   }
 

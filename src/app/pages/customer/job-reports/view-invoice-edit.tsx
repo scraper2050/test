@@ -143,7 +143,7 @@ function ViewInvoice() {
             keyword: 'Invoice',
             created: status === 1,
             synced: !!quickbookInvoice,
-            closeAction: () => history.replace(`/main/invoicing/view/${data.invoice_id}`),
+            closeAction: () => history.replace(`/main/invoicing/view/${data.invoice_id}`, history.location.state),
             removeFooter: false,
             className: 'serviceTicketTitle',
           },

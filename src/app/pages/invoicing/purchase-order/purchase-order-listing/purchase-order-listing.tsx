@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../../../constants";
 import { CSButton, useCustomStyles } from "../../../../../helpers/custom";
+import {formatCurrency} from "../../../../../helpers/format";
 
 function PurchaseOrderListing({ classes }: any) {
   const dispatch = useDispatch();
@@ -51,11 +52,7 @@ function PurchaseOrderListing({ classes }: any) {
       'sortable': true
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.total}` || 0}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 60

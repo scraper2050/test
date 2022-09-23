@@ -13,6 +13,7 @@ import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllSalesTaxAPI } from 'api/tax.api';
 import {modalTypes} from "../../../../../constants";
+import {formatCurrency} from "../../../../../helpers/format";
 
 function CreateInvoice({ classes }: any) {
   const dispatch = useDispatch();
@@ -117,11 +118,7 @@ function CreateInvoice({ classes }: any) {
       'width': 80
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.taxAmount}`}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.taxAmount),
       'Header': 'Tax Amount',
       'borderRight': true,
       'currency': true,
@@ -133,11 +130,7 @@ function CreateInvoice({ classes }: any) {
       'width': 60
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.total}`}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'borderRight': true,
       'currency': true,

@@ -21,6 +21,7 @@ import {getInvoiceDetail} from "../../../api/invoicing.api";
 import BCCircularLoader from "../../components/bc-circular-loader/bc-circular-loader";
 import {modalTypes} from "../../../constants";
 import CSInvoiceStatus from "../../components/bc-invoice-status";
+import {formatCurrency} from "../../../helpers/format";
 const TABLE_PADDING = 75;
 
 function BcPaymentHistoryModal({
@@ -111,11 +112,11 @@ function BcPaymentHistoryModal({
             </Grid>
             <Grid item>
               <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT</Typography>
-              <Typography variant={'h6'} className={classes.previewText}>${formatNumber(invoice.total)}</Typography>
+              <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(invoice.total)}</Typography>
             </Grid>
             <Grid item>
               <Typography variant={'caption'} className={classes.previewCaption}>BALANCE DUE</Typography>
-              <Typography variant={'h6'} className={classes.previewText}>${formatNumber(currentBalanceDue)}</Typography>
+              <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(currentBalanceDue)}</Typography>
             </Grid>
             <Grid item>
               <Grid container direction={'row'} spacing={2}>
@@ -165,7 +166,7 @@ function BcPaymentHistoryModal({
                     <TableCell>
                       {paymentDate.format('MM/DD/YYYY')}
                     </TableCell>
-                    <TableCell>${formatNumber(payment.amountPaid)}</TableCell>
+                    <TableCell>{formatCurrency(payment.amountPaid)}</TableCell>
                     <TableCell style={{whiteSpace: 'nowrap'}}>{payment.paymentType}</TableCell>
                     <TableCell>{payment.referenceNumber}</TableCell>
                     <TableCell style={{width: '99%'}}>{payment.note}</TableCell>

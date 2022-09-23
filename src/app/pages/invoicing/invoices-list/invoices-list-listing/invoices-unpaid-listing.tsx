@@ -6,12 +6,12 @@ import {withStyles, Tooltip} from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EmailInvoiceButton from '../email.invoice';
-import {formatDateMMMDDYYYY, formatDatTimelll} from 'helpers/format';
+import {
+  formatCurrency,
+  formatDateMMMDDYYYY,
+} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { useCustomStyles } from "../../../../../helpers/custom";
-import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
-import {GRAY2, modalTypes, PRIMARY_GREEN} from "../../../../../constants";
-import {info} from "../../../../../actions/snackbar/snackbar.action";
+import {GRAY2, PRIMARY_GREEN} from "../../../../../constants";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import {getUnpaidInvoicesAPI} from 'api/invoicing.api';
@@ -102,15 +102,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'sortable': true,
     },
     {
-      Cell({ row }: any) {
-        return <div className={classes.totalNumber}>
-
-          <span>
-            {`$${row.original.total}` || 0}
-          </span>
-        </div>;
-      },
-      'accessor': 'total',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 20
@@ -127,13 +119,8 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     'sortable': true
     },
     {
-      Cell({ row }: any) {
-        return row.original.createdAt
-          ? formatDateMMMDDYYYY(row.original.issuedDate)
-          : 'N/A';
-      },
       'Header': 'Invoice Date',
-      'accessor': 'issuedDate',
+      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate),
       'className': 'font-bold',
       'sortable': true
     },

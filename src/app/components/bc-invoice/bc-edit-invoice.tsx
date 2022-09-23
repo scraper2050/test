@@ -43,6 +43,7 @@ import AddIcon from '@material-ui/icons/Add';
 import {CSChip} from "../../../helpers/custom";
 import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
+import {formatCurrency} from "../../../helpers/format";
 
 interface Props {
   classes?: any;
@@ -1066,7 +1067,7 @@ function BCEditInvoice({
                             TOTAL
                           </div>
                           <div className={invoiceStyles.totalEnd}>
-                            ${totalAmount}
+                            {formatCurrency(totalAmount)}
                           </div>
                         </div>
                       </CardContent>
@@ -1100,7 +1101,7 @@ function BCEditInvoice({
                       </Grid>
                       <Grid item xs={1}>
                         <span>
-                          $ {subTotal}
+                          {formatCurrency(subTotal)}
                         </span>
                       </Grid>
                       <Grid item xs={1} className={invoiceStyles.textRight}>
@@ -1108,7 +1109,7 @@ function BCEditInvoice({
                       </Grid>
                       <Grid item xs={1}>
                         <span>
-                          $ {totalTax}
+                          {formatCurrency(totalTax)}
                         </span>
                       </Grid>
                     </Grid>

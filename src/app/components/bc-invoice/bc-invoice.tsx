@@ -7,6 +7,7 @@ import styled from "styled-components";
 import moment from "moment";
 
 import classNames from "classnames";
+import {formatCurrency} from "../../../helpers/format";
 
 interface Props {
   classes?: any;
@@ -433,7 +434,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <small>Total</small>
                 </div>
                 <div className={invoiceStyles.totalEnd}>
-                  <h1>${invoiceDetail.total}</h1>
+                  <h1>{formatCurrency(invoiceDetail.total)}</h1>
                 </div>
               </div>
             </div>
@@ -486,7 +487,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>{row.price && row.price >= 0 ? `$${parseFloat(row.price).toFixed(2)}` : `-$${Math.abs(parseFloat(row.price)).toFixed(2)}`}</span>
+                  )}>{formatCurrency(row.price)}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
@@ -498,19 +499,19 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>{row?.tax > 0 ? parseFloat(row?.tax).toFixed(2) : 'N/A'}</span>
+                  )}>{formatCurrency(row?.tax, 'N/A')}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>${parseFloat(row?.taxAmount).toFixed(2)}</span>
+                  )}>{formatCurrency(row?.taxAmount)}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextRight
-                  )}>{row.subTotal && row.subTotal >= 0 ? `$${parseFloat(row.subTotal).toFixed(2)}` : `-$${Math.abs(parseFloat(row.subTotal)).toFixed(2)}`}</span>
+                  )}>{formatCurrency(row.subTotal)}</span>
                 </Grid>
               </Grid>
               {row?.description &&
