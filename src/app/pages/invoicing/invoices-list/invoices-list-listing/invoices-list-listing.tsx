@@ -143,13 +143,8 @@ function InvoicingListListing({ classes, theme }: any) {
     'sortable': true
     },
     {
-      Cell({ row }: any) {
-        return row.original.createdAt
-          ? formatDateMMMDDYYYY(row.original.issuedDate)
-          : 'N/A';
-      },
       'Header': 'Invoice Date',
-      'accessor': 'issuedDate',
+      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
       'className': 'font-bold',
       'sortable': true
     },
@@ -307,7 +302,7 @@ function InvoicingListListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
-        disableInitialSearch={location?.state?.tab !== 0}
+        disableInitialSearch={location?.state?.tab !== 1}
       />
     </DataContainer>
   );

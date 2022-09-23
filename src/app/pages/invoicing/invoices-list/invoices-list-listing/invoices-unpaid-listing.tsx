@@ -120,7 +120,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     },
     {
       'Header': 'Invoice Date',
-      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate),
+      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
       'className': 'font-bold',
       'sortable': true
     },

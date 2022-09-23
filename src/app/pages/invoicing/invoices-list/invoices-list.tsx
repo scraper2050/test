@@ -20,10 +20,13 @@ import {RootState} from "../../../../reducers";
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
-  const [curTab, setCurTab] = useState(0);
-  const theme = useTheme();
   const history = useHistory();
   const location = useLocation<any>();
+
+  const [curTab, setCurTab] = useState(location?.state?.tab || 0);
+  const theme = useTheme();
+
+
   const [visibleTabs, setVisibleTabs] = useState<number[]>([0])
   const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
   const { loading: loadingPayment, unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
