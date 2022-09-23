@@ -165,28 +165,29 @@ function ViewInvoice({ classes, theme }: any) {
     });
   }
 
-  const listener = history.listen((loc, action) => {
-    if (action === 'POP'){
-      handleBackButtonClick();
-      listener();
-    }
-  });
+  // const listener = history.listen((loc, action) => {
+  //   debugger;
+  //   if (action === 'POP'){
+  //     handleBackButtonClick();
+  //     // listener();
+  //   }
+  // });
 
   const handleBackButtonClick = () => {
-    if(location?.state?.keyword || location?.state?.currentPageSize){
-      history.push({
-        'pathname': '/main/invoicing/invoices-list',
-        'state': {
-          'option': {
-            search: location?.state?.keyword || '',
-            pageSize: location?.state?.currentPageSize || 10,
-          },
-          'tab': location?.state?.tab || 0,
-        }
-      });
-    } else {
-      history.goBack();
-    }
+    // if(location?.state?.keyword || location?.state?.currentPageSize){
+    history.replace({
+      'pathname': '/main/invoicing/invoices-list',
+      'state': {
+        'option': {
+          search: location?.state?.keyword || '',
+          pageSize: location?.state?.currentPageSize || 10,
+        },
+        'tab': location?.state?.tab || 0,
+      }
+    });
+    // } else {
+    //   history.goBack();
+    // }
   }
 
 /*  const goToEditNew = () => {
