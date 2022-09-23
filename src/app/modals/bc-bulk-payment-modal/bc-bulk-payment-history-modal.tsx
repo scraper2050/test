@@ -16,6 +16,7 @@ import BCCircularLoader from "app/components/bc-circular-loader/bc-circular-load
 import { error, info } from "../../../actions/snackbar/snackbar.action";
 import { modalTypes } from "../../../constants";
 import { getInvoiceDetail } from 'api/invoicing.api';
+import {formatCurrency} from "../../../helpers/format";
 const TABLE_PADDING = 75;
 
 function BcBulkPaymentHistoryModal({
@@ -45,14 +46,6 @@ function BcBulkPaymentHistoryModal({
       setLoading(false);
     }
   }, []);
-
-  const formatNumber = (number: number) => {
-    return number.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      useGrouping: true
-    })
-  };
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -118,7 +111,7 @@ function BcBulkPaymentHistoryModal({
             </Grid>
             <Grid item>
               <Typography variant={'caption'} className={classes.previewCaption}>TOTAL AMOUNT PAID</Typography>
-              <Typography variant={'h6'} className={classes.previewText}>${formatNumber(amountPaid)}</Typography>
+              <Typography variant={'h6'} className={classes.previewText}>{formatCurrency(amountPaid)}</Typography>
             </Grid>
             {/* <Grid item>
           <Typography variant={'caption'} className={classes.previewCaption}>PAYMENT METHOD</Typography>
@@ -172,7 +165,7 @@ function BcBulkPaymentHistoryModal({
                 {payments.map((payment: any, index: number) => (
                   <TableRow key={payment._id || index}>
                     <TableCell>{payment.invoice.invoiceId}</TableCell>
-                    <TableCell>${payment.amountPaid}</TableCell>
+                    <TableCell>{formatCurrency(payment.amountPaid)}</TableCell>
                     <TableCell>{paymentType || 'N/A'}</TableCell>
                     <TableCell>{referenceNumber || 'N/A'}</TableCell>
                   </TableRow>

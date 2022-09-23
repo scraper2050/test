@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import styles from './bc-manual-sync-modal.styles';
 import BCTableContainer
   from "../../components/bc-table-container/bc-table-container";
-import {formatDatTimelll} from "../../../helpers/format";
+import {formatCurrency, formatDatTimelll} from "../../../helpers/format";
 import {getUnsyncedInvoices, SyncInvoices} from "../../../api/invoicing.api";
 import {
   error,
@@ -141,15 +141,7 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
       'sortable': true
     },
     {
-      Cell({row}: any) {
-        return <div className={classes.totalNumber}>
-
-          <span>
-            {`$${row.original.total}` || 0}
-          </span>
-        </div>;
-      },
-      'accessor': 'total',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 20

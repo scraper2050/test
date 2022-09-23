@@ -8,7 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
-import {formatDateMMMDDYYYY, formatDatTimelll} from 'helpers/format';
+import {
+  formatCurrency,
+  formatDateMMMDDYYYY,
+} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
@@ -109,15 +112,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'Header': 'Customer PO',
     },
     {
-      Cell({ row }: any) {
-        return <div className={classes.totalNumber}>
-
-          <span>
-            {`$${row.original.total}` || 0}
-          </span>
-        </div>;
-      },
-      'accessor': 'total',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 20

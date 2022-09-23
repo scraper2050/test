@@ -12,6 +12,7 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllSalesTaxAPI } from 'api/tax.api';
+import {formatCurrency} from "../../../../../helpers/format";
 
 function CreateEstimates({ classes }: any) {
   const dispatch = useDispatch();
@@ -99,11 +100,7 @@ function CreateEstimates({ classes }: any) {
       'width': 80
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.taxAmount}`}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.taxAmount),
       'Header': 'Tax Amount',
       'borderRight': true,
       'currency': true,
@@ -115,11 +112,7 @@ function CreateEstimates({ classes }: any) {
       'width': 60
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.total}`}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'borderRight': true,
       'currency': true,
@@ -158,7 +151,7 @@ function CreateEstimates({ classes }: any) {
       console.log(data);
       callCreateEstimatesAPI(data).then((response: any) => {
         history.push(redirectURL);
-        // Missing an argument 
+        // Missing an argument
         // remove response from argument
         return resolve(response);
       })

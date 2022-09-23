@@ -22,9 +22,11 @@ export const recordPayment: any = (params = {}) => {
       request('/recordPayment', 'POST', params, false)
         .then((res: any) => {
           // dispatch(getInvoicingList());
-          dispatch(getAllInvoicesAPI());
-          dispatch(getAllInvoicesForBulkPaymentsAPI());
-          dispatch(getAllPaymentsAPI());
+          if (res.data.status === 1) {
+            dispatch(getAllInvoicesAPI());
+            dispatch(getAllInvoicesForBulkPaymentsAPI());
+            dispatch(getAllPaymentsAPI());
+          }
           return resolve(res.data);
         })
         .catch(err => {
@@ -40,9 +42,11 @@ export const updatePayment: any = (params = {}) => {
       request('/updatePayment', 'PUT', params, false)
         .then((res: any) => {
           // dispatch(getInvoicingList());
-          dispatch(getAllInvoicesAPI());
-          dispatch(getAllInvoicesForBulkPaymentsAPI());
-          dispatch(getAllPaymentsAPI());
+          if (res.data.status === 1) {
+            dispatch(getAllInvoicesAPI());
+            dispatch(getAllInvoicesForBulkPaymentsAPI());
+            dispatch(getAllPaymentsAPI());
+          }
           return resolve(res.data);
         })
         .catch(err => {
