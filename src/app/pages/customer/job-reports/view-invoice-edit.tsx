@@ -109,10 +109,14 @@ function ViewInvoice() {
       setTimeout(() => {
         dispatch(openModalAction());
       }, 200);
+      data.invoice_date = new Date(data.invoice_date)
+      data.invoice_date = data.invoice_date.setHours(data.invoice_date.getHours() + 12)
+      data.due_date = new Date(data.due_date)
+      data.due_date = data.due_date.setHours(data.due_date.getHours() + 12)
       const params: any = {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
-        dueDate: new Date(data.due_date).toISOString().split('T')[0],
+        dueDate: new Date(data.due_date).toISOString(),
         ...(data.paymentTerm && {paymentTermId: data.paymentTerm}),
         note: data.note,
         isDraft: data.isDraft,
@@ -160,7 +164,7 @@ function ViewInvoice() {
     return new Promise((resolve, reject) => {
       const params: any = {
         invoiceNumber: data.invoiceId,
-        issueDate: data.invoice_date,
+        issuedDate: data.invoice_date,
         dueDate: data.due_date,
         paymentTermId: data.paymentTerm,
         note: data.note,
