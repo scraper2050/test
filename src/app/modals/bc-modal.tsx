@@ -24,7 +24,8 @@ import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-mo
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
 import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
 import BCVoidInvoiceConfirmModal from './bc-void-invoice-confirm-modal/bc-void-invoice-confirm-modal';
-import BcManualSyncModal from './bc-manual-sync-modal/bc-manual-sync';
+import BcManualSyncModalInvoice from './bc-manual-sync-modal/bc-manual-sync-invoices';
+import BcManualSyncModalPayments from './bc-manual-sync-modal/bc-manual-sync-payments';
 import BCEditPaidInvoiceConfirmModal from './bc-edit-paid-invoice-confirm-modal/bc-edit-paid-invoice-confirm-modal';
 import BCEditPaymentConfirmModal from './bc-edit-payment-confirm-modal/bc-edit-payment-confirm-modal';
 import BCMakeAdminConfirmModal from './bc-make-admin-employee-modal/bc-make-admin-employee-confirm';
@@ -60,12 +61,14 @@ import BcPayrollPaymentRecordModal from "./bc-payroll-payment-modal/bc-payroll-p
 import BcPayrollPaymentDetailModal from "./bc-payroll-payment-modal/bc-payroll-payment-detail-modal";
 import BCEditInvoiceNumber from './bc-edit-invoice-number/bc-edit-invoice-number';
 import BcWarningModal from "./bc-warning-modal/bc-warning-modal";
+import BCSendInvoicesModal from './bc-send-invoices-modal/bc-send-invoices-modal';
 import BCBulkPaymentModal from './bc-bulk-payment-modal/bc-bulk-payment-modal';
 import BCEditBulkPaymentModal from './bc-bulk-payment-modal/bc-edit-bulk-payment-modal';
 import BcBulkPaymentHistoryModal from "./bc-bulk-payment-modal/bc-bulk-payment-history-modal";
 import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-location-modal";
 import BCCustomizeRevenueReportModal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
 import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report-modal";
+import BcRecordSyncStatusModal from "./bc-record-sync-modal/bc-record-sync-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -284,14 +287,23 @@ function BCModal() {
         });
         setComponent(<BCVoidInvoiceConfirmModal data={data.data} />);
         break;
-      case modalTypes.MANUAL_SYNC_MODAL:
+      case modalTypes.MANUAL_SYNC_MODAL_INVOICES:
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
           'maxWidth': 'lg'
         });
-        setComponent(<BcManualSyncModal data={data.data} />);
+        setComponent(<BcManualSyncModalInvoice data={data.data} />);
+        break;
+      case modalTypes.MANUAL_SYNC_MODAL_PAYMENTS:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BcManualSyncModalPayments data={data.data} />);
         break;
       case modalTypes.CONFIRM_EDIT_PAID_INVOICE_MODAL:
         setModalOptions({
@@ -604,6 +616,15 @@ function BCModal() {
         });
         setComponent(<BcBulkPaymentHistoryModal data={data.data} />);
         break;
+      case modalTypes.SEND_INVOICES_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BCSendInvoicesModal modalOptions={modalOptions} setModalOptions={setModalOptions} />);
+        break;
       case modalTypes.BULK_PAYMENT_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
@@ -724,6 +745,15 @@ function BCModal() {
         });
         setComponent(<BCMemorizeReportModal data = {data.paramObject} memorizedReportId={data.memorizedReportId} />);
         break;
+      case modalTypes.RECORD_SYNC_STATUS_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcRecordSyncStatusModal data={data} />);
+        break;
 
       default:
         setComponent(null);
@@ -740,6 +770,7 @@ function BCModal() {
     }, 200);
   };
 
+  const showCloseIcon = type !== modalTypes.RECORD_SYNC_STATUS_MODAL;
 
   return (
     <div className={'modal-wrapper'}>
@@ -769,7 +800,7 @@ function BCModal() {
                 {data.modalTitle}
               </strong>
             </Typography>
-            <IconButton
+            {showCloseIcon && <IconButton
               aria-label={'close'}
               onClick={handleClose}
               style={{
@@ -777,8 +808,9 @@ function BCModal() {
                 'right': 1,
                 'top': 1
               }}>
-              <CloseIcon />
+              <CloseIcon/>
             </IconButton>
+            }
           </DialogTitle>
           : <IconButton
             aria-label={'close'}

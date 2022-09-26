@@ -53,7 +53,7 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
       dispatch(openModalAction());
     }, 200);
   }
-  
+
   const oldJobReportHandler = (data:any) => {
     dispatch(setModalDataAction({
       data,

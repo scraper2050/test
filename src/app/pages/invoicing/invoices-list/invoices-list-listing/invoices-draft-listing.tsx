@@ -4,22 +4,12 @@ import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
 import React, { useEffect } from 'react';
-import {
-  getInvoicingList,
-  loadingInvoicingList
-} from 'actions/invoicing/invoicing.action';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
-import { MailOutlineOutlined } from '@material-ui/icons';
-import EmailInvoiceButton from '../email.invoice';
 import { formatDatTimelll } from 'helpers/format';
-import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import { CSButton, useCustomStyles, CSButtonSmall } from "../../../../../helpers/custom";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../../constants";
+import { useCustomStyles } from "../../../../../helpers/custom";
 import { getAllDraftInvoicesAPI } from 'api/invoicing.api';
-import { 
+import {
   setCurrentDraftPageIndex,
   setCurrentDraftPageSize,
   setDraftKeyword,
@@ -93,13 +83,13 @@ function InvoicingDraftListing({ classes, theme }: any) {
   }, []);
 
   useEffect(() => {
-    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 2 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setDraftKeyword(location.state.option.search));
       dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search));
       dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
       dispatch(setCurrentDraftPageIndex(0));
       window.history.replaceState({}, document.title)
-    } 
+    }
   }, [location]);
 
   const showInvoiceDetail = (id:string) => {
@@ -108,7 +98,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
-        tab: 1,
+        tab: 2,
       }
     });
   };
@@ -125,7 +115,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
           dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword))
         }
         total={total}
@@ -134,7 +124,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentDraftPageSize(num))}
         setKeywordFunction={(query: string) => dispatch(setDraftKeyword(query))}
-        disableInitialSearch={location?.state?.tab !== 1}
+        disableInitialSearch={location?.state?.tab !== 2}
       />
     </DataContainer>
   );

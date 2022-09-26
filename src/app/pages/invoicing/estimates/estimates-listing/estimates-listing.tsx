@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../../../constants";
+import {formatCurrency} from "../../../../../helpers/format";
 
 const useCustomStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -95,11 +96,7 @@ function EstimatesListing({ classes }: any) {
       'sortable': true
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.total}` || 0}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 60

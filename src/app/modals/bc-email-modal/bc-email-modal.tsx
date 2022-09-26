@@ -60,7 +60,7 @@ p {
 }
 `;
 
-function EmailJobReportModal({classes, data: {id, customerEmail, customer, emailDefault, customerId}}: any) {
+function EmailJobReportModal({classes, data: {id, ids, customerEmail, customer, emailDefault, customerId}}: any) {
   const {sent, loading, error} = useSelector(({email}: any) => email);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
@@ -134,7 +134,9 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
   const emailSent = () => {
     return <div style={{textAlign: 'center', height: '20vh'}}>
       <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/><br/>
-      <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>This invoice was sent</span>
+      <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>
+        {id ? 'This invoice was sent' : 'Multiple invoices sent'}
+      </span>
     </div>
   }
 
@@ -152,18 +154,25 @@ function EmailJobReportModal({classes, data: {id, customerEmail, customer, email
         return
       }
       const params: any = {
-        id: id,
-        invoiceId: id,
+        ...(id && {
+          id: id,
+          invoiceId: id,
+          invoicePdf: true,
+        }),
+        ...(ids && {
+          ids: ids,
+          invoiceIds: JSON.stringify(ids),
+          customerId: customerId,
+        }),
         recipients: JSON.stringify(values.to.map((recipient:any) => recipient.email)),
         subject: values.subject,
         message: values.message,
         copyToMyself: values.sendToMe,
-        invoicePdf: true,
       };
       dispatch(sendEmailAction.fetch({
         'email': values.to.map((recipient:any) => recipient.email).join(',') || customer?.info?.email,
         data: params,
-        type: 'invoice'
+        type: ids ? 'invoices': 'invoice',
       }));
     }
   });

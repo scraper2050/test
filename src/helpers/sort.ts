@@ -26,6 +26,6 @@ export const stringSortCaseSensitive = (arr: any[], field:any) => {
 }
 
 export const stringSortCaseInsensitive = (arr: any[], field:any) => {
-  return arr.sort((a: string, b: string) => (a[field].toLowerCase() > b[field].toLowerCase() ? 1 : b[field].toLowerCase() > a[field].toLowerCase() ? -1 : 0));
+  return arr.sort((a: string, b: string) => (a[field]?.toLowerCase() > b[field]?.toLowerCase() ? 1 : b[field]?.toLowerCase() > a[field]?.toLowerCase() ? -1 : 0));
 }
 

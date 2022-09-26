@@ -30,7 +30,7 @@ import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { CSButtonSmall } from "helpers/custom";
 import TableFilterService from 'utils/table-filter';
-import { formatShortDateNoDay } from 'helpers/format';
+import {formatCurrency, formatShortDateNoDay} from 'helpers/format';
 import { getAllInvoicesForBulkPaymentsAPI } from 'api/invoicing.api';
 import { recordPayment } from 'api/payment.api';
 import {
@@ -260,7 +260,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       }));
     }, 200);
   };
-  
+
   useEffect(() => {
     dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
     dispatch(setCurrentPageIndex(0));
@@ -329,13 +329,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       'Header': 'Customer PO',
     },
     {
-      Cell({ row }: any) {
-        return <div>
-          <span>
-            {`$${row.original.balanceDue ?? row.original.total}`}
-          </span>
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.balanceDue ?? originalRow.total),
       'Header': 'Amount Due',
       'width': 20
     },
@@ -565,7 +559,6 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                     style={{marginTop: 21}}
                     label="Show Paid"
                   />
-                  
                 </div>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
                   <Typography variant={'caption'} className={'previewCaption'}>Reference No.</Typography>

@@ -43,6 +43,7 @@ import AddIcon from '@material-ui/icons/Add';
 import {CSChip} from "../../../helpers/custom";
 import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
+import {formatCurrency} from "../../../helpers/format";
 
 interface Props {
   classes?: any;
@@ -621,7 +622,7 @@ function BCEditInvoice({
         setFieldValue('due_date', moment(newInvoiceDate).format('MMM. DD, YYYY'));
     } else {
       const paymentTerm = paymentTerms.find((term:any) => term._id === values.paymentTerm);
-      setFieldValue('due_date', moment(newInvoiceDate).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
+      setFieldValue('due_date', moment(newInvoiceDate).add(paymentTerm.dueDays, 'day'));
     }
   }
 
@@ -640,7 +641,7 @@ function BCEditInvoice({
     if (invoiceData?.company?.paymentTerm) {
       return moment(invoiceData.createdAt).add(invoiceData.company.paymentTerm.dueDays, 'day').format('MMM. DD, YYYY');
     }
-    return invoiceData.createdAt;
+    return invoiceData.createdAt?.split('T')[0];
   }
 
   return (
@@ -652,8 +653,8 @@ function BCEditInvoice({
           invoice_title: 'INVOICE',
           invoiceId: invoiceData?.invoiceId,
           customer_po: invoiceData?.customerPO || '',
-          invoice_date: invoiceData.issuedDate || invoiceData.createdAt,
-          due_date: invoiceData.dueDate ? invoiceData.dueDate : calculateInitialDueDate(),
+          invoice_date: invoiceData.issuedDate?.split('T')[0] || invoiceData.createdAt?.split('T')[0],
+          due_date: invoiceData.dueDate ? invoiceData.dueDate?.split('T')[0] : calculateInitialDueDate(),
           paymentTerm: currentPaymentTerm,
           note: invoiceData?.note,
           items: invoiceItems,
@@ -849,7 +850,7 @@ function BCEditInvoice({
                             onChange={(selectedInvoiceDate) => {
                               setDatePickerOpen(false);
                               calculateDueDate2(setFieldValue, values, selectedInvoiceDate);
-                              setFieldValue('invoice_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
+                              setFieldValue('invoice_date', selectedInvoiceDate);
                             }}
                             KeyboardButtonProps={{
                               'aria-label': 'change date',
@@ -904,12 +905,10 @@ function BCEditInvoice({
                             autoOk
                             onChange={(selectedInvoiceDate) => {
                               setDueDatePickerOpen(false);
-                              setFieldValue('due_date', moment(selectedInvoiceDate).format('MMM. DD, YYYY'));
+                              setFieldValue('due_date',selectedInvoiceDate);
+                              setFieldValue('paymentTerm','');
                             }}
-                            onClick={() => {
-                                if (values.paymentTerm === '') setDueDatePickerOpen(true)
-                              }
-                            }
+                            onClick={() => setDueDatePickerOpen(true)}
                             onClose={() => setDueDatePickerOpen(false)}
 
                             TextFieldComponent={(props: TextFieldProps) => {
@@ -917,9 +916,10 @@ function BCEditInvoice({
                                 <InputBase
                                   id="due-date"
                                   name="due_date"
+                                  // disabled={values.paymentTerm !== ''}
                                   error={!!errors.due_date}
                                   onClick={(e) => {
-                                    if (values.paymentTerm === '')
+                                    // if (values.paymentTerm === '')
                                       setDueDatePickerOpen(true);
                                   }}
                                   value={props.value}
@@ -951,6 +951,7 @@ function BCEditInvoice({
                           <Select
                             onChange={(e) => calculateDueDate(setFieldValue, values, e.target.value)}
                             value={values.paymentTerm}
+                            displayEmpty
                             input={<InputBase
                               classes={{
                                 root: classNames(invoiceStyles.bootstrapRoot, {
@@ -961,7 +962,7 @@ function BCEditInvoice({
                               error={!!errors.paymentTerm}/>}
                           >
                             <MenuItem value={''}>
-                              <em>None</em>
+                              <em>Custom</em>
                             </MenuItem>
                             {
                               paymentTerms.map((pitem: any, pindex: number) => {
@@ -1068,7 +1069,7 @@ function BCEditInvoice({
                             TOTAL
                           </div>
                           <div className={invoiceStyles.totalEnd}>
-                            ${totalAmount}
+                            {formatCurrency(totalAmount)}
                           </div>
                         </div>
                       </CardContent>
@@ -1102,7 +1103,7 @@ function BCEditInvoice({
                       </Grid>
                       <Grid item xs={1}>
                         <span>
-                          $ {subTotal}
+                          {formatCurrency(subTotal)}
                         </span>
                       </Grid>
                       <Grid item xs={1} className={invoiceStyles.textRight}>
@@ -1110,7 +1111,7 @@ function BCEditInvoice({
                       </Grid>
                       <Grid item xs={1}>
                         <span>
-                          $ {totalTax}
+                          {formatCurrency(totalTax)}
                         </span>
                       </Grid>
                     </Grid>

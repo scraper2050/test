@@ -222,3 +222,39 @@ export const setDraftKeyword = (keyword: string) => {
     'type': InvoicingListActionType.SET_DRAFT_INVOICES_SEARCH_KEYWORD
   };
 };
+
+export const setUnpaidInvoices = (invoices: any[], prevCursor: string, nextCursor: string, total: number) => {
+  return {
+    'payload': {
+      invoices,
+      prevCursor,
+      nextCursor,
+      total,
+    },
+    'type': InvoicingListActionType.SET_UNPAID_INVOICES
+  };
+};
+export const setUnpaidInvoicesLoading = (isLoading: any) => {
+  return {
+    'payload': isLoading,
+    'type': InvoicingListActionType.SET_UNPAID_INVOICES_LOADING
+  };
+};
+export const setCurrentUnpaidPageIndex = (currentPageIndex: number) => {
+  return {
+    'payload': currentPageIndex,
+    'type': InvoicingListActionType.SET_CURRENT_UNPAID_INVOICES_PAGE_INDEX
+  };
+};
+export const setCurrentUnpaidPageSize = (currentPageSize: number) => {
+  return {
+    'payload': currentPageSize,
+    'type': InvoicingListActionType.SET_CURRENT_UNPAID_INVOICES_PAGE_SIZE
+  };
+};
+export const setUnpaidKeyword = (keyword: string) => {
+  return {
+    'payload': keyword,
+    'type': InvoicingListActionType.SET_UNPAID_INVOICES_SEARCH_KEYWORD
+  };
+};

@@ -71,14 +71,14 @@ function ViewInvoice() {
       if (status === 1) {
         dispatch(setModalDataAction({
           data: {
-              'modalTitle': 'Send this invoice',
-              'customer': customer?.profile?.displayName,
-              'customerEmail': emailDefault?.to || customer?.info?.email,
-              'id': invoiceId,
-              'typeText': 'Invoice',
-              'className': 'wideModalTitle',
-              emailDefault,
-              customerId: customerId || customer._id
+            'modalTitle': 'Send this invoice',
+            'customer': customer?.profile?.displayName,
+            'customerEmail': emailDefault?.to || customer?.info?.email,
+            'id': invoiceId,
+            'typeText': 'Invoice',
+            'className': 'wideModalTitle',
+            emailDefault,
+            customerId: customerId || customer._id
           },
           'type': modalTypes.EMAIL_JOB_REPORT_MODAL
         }));
@@ -97,11 +97,27 @@ function ViewInvoice() {
 
   const updateInvoiceHandler = (data:any) => {
     return new Promise((resolve, reject) => {
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Status',
+          progress: true,
+          removeFooter: false,
+          className: 'serviceTicketTitle',
+        },
+        type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+      data.invoice_date = new Date(data.invoice_date)
+      data.invoice_date = data.invoice_date.setHours(data.invoice_date.getHours() + 12)
+      data.due_date = new Date(data.due_date)
+      data.due_date = data.due_date.setHours(data.due_date.getHours() + 12)
       const params: any = {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
         dueDate: new Date(data.due_date).toISOString(),
-        paymentTermId: data.paymentTerm,
+        ...(data.paymentTerm && {paymentTermId: data.paymentTerm}),
         note: data.note,
         isDraft: data.isDraft,
         items: JSON.stringify(data.items.map((o: any) => {
@@ -123,9 +139,20 @@ function ViewInvoice() {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
-        dispatch(success('Invoice Updated Successfully'));
-        history.push(`/main/invoicing/view/${data.invoice_id}`);
-        return resolve(response);
+        const {status, invoice, quickbookInvoice} = response;
+        dispatch(setModalDataAction({
+          data: {
+            modalTitle: 'Status',
+            progress: false,
+            keyword: 'Invoice',
+            created: status === 1,
+            synced: !!quickbookInvoice,
+            closeAction: () => history.replace(`/main/invoicing/view/${data.invoice_id}`, history.location.state),
+            removeFooter: false,
+            className: 'serviceTicketTitle',
+          },
+          type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+        }));
       })
         .catch((err: any) => {
           reject(err);
@@ -137,7 +164,7 @@ function ViewInvoice() {
     return new Promise((resolve, reject) => {
       const params: any = {
         invoiceNumber: data.invoiceId,
-        issueDate: data.invoice_date,
+        issuedDate: data.invoice_date,
         dueDate: data.due_date,
         paymentTermId: data.paymentTerm,
         note: data.note,
@@ -161,10 +188,33 @@ function ViewInvoice() {
       }
       if (data.customer_po) params.customerPO = data.customer_po;
 
+      dispatch(setModalDataAction({
+        data: {
+          modalTitle: 'Status',
+          progress: true,
+          removeFooter: false,
+          className: 'serviceTicketTitle',
+        },
+        type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+
       callCreateInvoiceAPI(params).then((response: any) => {
-        dispatch(success('Invoice Created Successfully'));
-        history.goBack();
-        return resolve(response);
+        const {status, invoice, quickbookInvoice} = response;
+        dispatch(setModalDataAction({
+          data: {
+            modalTitle: 'Status',
+            keyword: 'Invoice',
+            created: status === 1,
+            synced: !!quickbookInvoice,
+            closeAction: () => history.goBack(),
+            removeFooter: false,
+            className: 'serviceTicketTitle',
+          },
+          type: modalTypes.RECORD_SYNC_STATUS_MODAL,
+        }));
       })
         .catch((err: any) => {
           reject(err);
@@ -245,7 +295,7 @@ export const PageContainer = styled.div`
   padding-left: 65px;
   padding-right: 65px;
   margin: 0 auto;
-  
+
   @media (max-width: 768px) {
     padding: 18px;
   }

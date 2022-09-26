@@ -6,7 +6,11 @@ import { withStyles, Button } from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
-import { formatShortDateNoDay } from 'helpers/format';
+import {
+  formatCurrency,
+  formatDateYMD,
+  formatShortDateNoDay
+} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
@@ -80,8 +84,9 @@ function InvoicingPaymentListing({ classes, theme }: any) {
           ? formatShortDateNoDay(row.original.paidAt)
           : 'N/A';
       },
+      'accessor': (originalRow: any) => originalRow.paidAt ? formatDateYMD(originalRow.paidAt) : '-',
       'Header': 'Payment Date',
-      'accessor': 'paidAt',
+      'sortDirection': 'desc',
       'sortable': true
     },
     {
@@ -95,13 +100,7 @@ function InvoicingPaymentListing({ classes, theme }: any) {
       'sortable': true
     },
     {
-      Cell({ row }: any) {
-        return <div>
-          <span>
-            {`$${row.original.amountPaid}` || 0}
-          </span>
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.amountPaid),
       'Header': 'Amount Paid',
       'sortable': true,
       'width': 20
@@ -162,7 +161,7 @@ function InvoicingPaymentListing({ classes, theme }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         // manualPagination
-        // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+        // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
         //   dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
         // }
         // total={total}

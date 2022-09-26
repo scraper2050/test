@@ -8,7 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
-import { formatDatTimelll } from 'helpers/format';
+import {
+  formatCurrency,
+  formatDateMMMDDYYYY,
+} from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
 import { useCustomStyles } from "../../../../../helpers/custom";
 import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
@@ -17,7 +20,6 @@ import BCMenuButton from "../../../../components/bc-menu-button";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-// import moment from "moment";
 import { getAllInvoicesAPI } from 'api/invoicing.api';
 import {
   setCurrentPageIndex,
@@ -110,15 +112,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'Header': 'Customer PO',
     },
     {
-      Cell({ row }: any) {
-        return <div className={classes.totalNumber}>
-
-          <span>
-            {`$${row.original.total}` || 0}
-          </span>
-        </div>;
-      },
-      'accessor': 'total',
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 20
@@ -140,7 +134,7 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     { Cell({ row }: any) {
       return row.original.lastEmailSent
-        ? formatDatTimelll(row.original.lastEmailSent)
+        ? formatDateMMMDDYYYY(row.original.lastEmailSent)
         : 'N/A';
     },
     'Header': 'Email Send Date ',
@@ -149,13 +143,8 @@ function InvoicingListListing({ classes, theme }: any) {
     'sortable': true
     },
     {
-      Cell({ row }: any) {
-        return row.original.createdAt
-          ? formatDatTimelll(row.original.createdAt)
-          : 'N/A';
-      },
       'Header': 'Invoice Date',
-      'accessor': 'createdAt',
+      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
       'className': 'font-bold',
       'sortable': true
     },
@@ -213,7 +202,7 @@ function InvoicingListListing({ classes, theme }: any) {
   }, [selectionRange]);
 
   useEffect(() => {
-    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setKeyword(location.state.option.search));
       dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
@@ -228,6 +217,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'state': {
         keyword,
         currentPageSize,
+        tab: 1,
       }
     });
   };
@@ -312,7 +302,7 @@ function InvoicingListListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
         setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
-        disableInitialSearch={location?.state?.tab !== 0}
+        disableInitialSearch={location?.state?.tab !== 1}
       />
     </DataContainer>
   );

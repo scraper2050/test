@@ -31,6 +31,7 @@ const MenuButton = styled.div<{opened: boolean, disabled: boolean, minwidth?: st
   border-color: ${props => props.opened ? PRIMARY_BLUE : props.disabled ? '#E0E0E0' : LIGHT_GREY};
   border-radius: ${props => props.opened ? '8px 8px 0 0' : '8px'};
   min-width: ${props => props.minwidth ? props.minwidth : '240px'};
+  background-color: white;
 `
 const ButtonText = styled.span<{disabled: boolean}>`
   flex: 1;

@@ -9,6 +9,8 @@ export const formatDate = (date: string): string | undefined => {
 export const formatDateMMMDDYYYY = (date: string): string | undefined => {
   if (typeof date !== undefined && date !== null) {
     return moment.utc(date).format('MMM DD, YYYY');
+  } else {
+    return 'N/A'
   }
 };
 
@@ -54,13 +56,21 @@ export const parseISODate = (date: string) => {
   return new Date(dateObj.getTime() + userTimezoneOffset);*/
 }
 
-export const formatCurrency = (value: number) => {
-  const formatted = (value ?? 0).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+export const formatCurrency = (value: number|null|undefined, nullValue: string = '') => {
+  if (!value && nullValue) return nullValue;
+
+  const tempValue = value ? value : 0;
+  const hasFrac = Math.ceil(tempValue) !== tempValue
+
+  const formatted = (tempValue ?? 0).toLocaleString('en-US', {
+    minimumFractionDigits: hasFrac ? 2 : 0,
+    maximumFractionDigits: hasFrac ? 2 : 0,
     useGrouping: true,
+    currency: 'USD',
+    style: 'currency',
   });
-  return `$${formatted}`;
+
+  return formatted;
 }
 
 const formatNumber = (number: number) => {

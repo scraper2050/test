@@ -1,6 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import { dataContainer, fabRoot,emailButton, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
-import {GRAY5, GRAY6, PRIMARY_GREEN} from "../../../../constants";
+import {GRAY5, GRAY6, PRIMARY_BLUE, PRIMARY_GREEN} from "../../../../constants";
 
 export default (theme: Theme): any => ({
   ...fabRoot,
@@ -47,5 +47,8 @@ export default (theme: Theme): any => ({
   buttonIconDisabled: {
     color: GRAY5,
   },
-
+  reminderText: {
+    color: PRIMARY_BLUE,
+    fontWeight: 'bold',
+  }
 });

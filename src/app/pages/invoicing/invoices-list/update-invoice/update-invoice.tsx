@@ -12,6 +12,7 @@ import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.a
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllSalesTaxAPI } from 'api/tax.api';
+import {formatCurrency} from "../../../../../helpers/format";
 
 function UpdateInvoice({ classes }: any) {
   const dispatch = useDispatch();
@@ -116,11 +117,7 @@ function UpdateInvoice({ classes }: any) {
       'width': 80
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.taxAmount}`}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.taxAmount),
       'Header': 'Tax Amount',
       'borderRight': true,
       'currency': true,
@@ -132,11 +129,7 @@ function UpdateInvoice({ classes }: any) {
       'width': 60
     },
     {
-      'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
-          {`$${row.original.total}`}
-        </div>;
-      },
+      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'borderRight': true,
       'currency': true,

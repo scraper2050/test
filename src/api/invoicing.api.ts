@@ -13,7 +13,7 @@ import {
   setNextDraftInvoicesCursor,
   setPreviousDraftInvoicesCursor,
   updateSyncedInvoices,
-  setUnsyncedInvoicesCount,
+  setUnsyncedInvoicesCount, setUnpaidInvoices, setUnpaidInvoicesLoading,
 } from 'actions/invoicing/invoicing.action';
 import {
   setInvoicesLoading as setInvoicesForBulkPaymentsLoading,
@@ -201,6 +201,58 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
   };
 };
 
+let cancelTokenGetUnpaidInvoicesAPI:any;
+export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string,  selectionRange?:{startDate:Date;endDate:Date}|null) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setUnpaidInvoicesLoading(true));
+      const optionObj:any = {
+        pageSize,
+        previousCursor,
+        nextCursor,
+        status: JSON.stringify(["UNPAID"]),
+        isDraft: false,
+      };
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).add(1,'day').format('YYYY-MM-DD');
+      }
+      if(cancelTokenGetUnpaidInvoicesAPI) {
+        cancelTokenGetUnpaidInvoicesAPI.cancel('axios canceled');
+        setTimeout(() => {
+          dispatch(setUnpaidInvoicesLoading(true));
+        }, 0);
+      }
+
+      cancelTokenGetUnpaidInvoicesAPI = axios.CancelToken.source();
+
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetUnpaidInvoicesAPI)
+        .then((res: any) => {
+          const {invoices, pagination, total} = res.data;
+          let tempUnpaidInvoices = res.data.invoices;
+          dispatch(setUnpaidInvoices(
+            tempUnpaidInvoices.reverse(),
+            pagination?.previousCursor || '',
+            pagination?.nextCursor || '',
+            total
+            ));
+          dispatch(setUnpaidInvoicesLoading(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setUnpaidInvoices([], '', '', 0));
+          setUnpaidInvoicesLoading(false);
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
+        });
+    });
+  };
+};
+
 export const getInvoicingList = async (params = {}) => {
   let responseData;
   try {
@@ -230,7 +282,7 @@ export const getUnsyncedInvoices = async() => {
   }
 }
 
-export const SyncInvoices = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE) => void ) => async(dispatch: any) => {
+export const SyncInvoices = (ids: string[] = []) => async(dispatch: any):Promise<SYNC_RESPONSE> => {
   let responseData;
   try {
     const params ={invoiceIds :  JSON.stringify(ids)};
@@ -248,7 +300,7 @@ export const SyncInvoices = (ids: string[] = [], onEnd?: (params: SYNC_RESPONSE)
       }));
 
       dispatch(updateSyncedInvoices(invoiceSynced));
-      if (onEnd) onEnd({ids: [...unsynced, ...synced], totalInvoiceSynced, totalInvoiceUnsynced});
+      return ({ids: [...unsynced, ...synced], totalInvoiceSynced, totalInvoiceUnsynced});
     } else {
       throw new Error(message);
     }
@@ -354,7 +406,21 @@ export const voidInvoice = (data: any) => {
 
 export const sendEmailInvoice = (data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/sendInvoice`, 'post', data)
+    const {id, ...rest} = data;
+    request(`/sendInvoice`, 'post', rest)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+export const sendEmailInvoices = (data: any) => {
+  return new Promise((resolve, reject) => {
+    const {ids, ...rest} = data;
+    request(`/sendInvoices`, 'post', rest)
       .then((res: any) => {
         return resolve(res.data);
       })
