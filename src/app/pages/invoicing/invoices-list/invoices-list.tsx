@@ -195,7 +195,9 @@ function InvoiceList({ classes }: any) {
                 ? 'x-reverse'
                 : 'x'}
             index={curTab}>
-            <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"}/>
+            {(visibleTabs.indexOf(0) >= 0 || curTab === 0) ?
+              <InvoicingUnpaidListing hidden={curTab !== 0} id={"0"}/> : <div />
+            }
             {(visibleTabs.indexOf(1) >= 0 || curTab === 1) ?
               <InvoicingListListing hidden={curTab !== 1} id={"1"} /> : <div />
             }
