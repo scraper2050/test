@@ -227,7 +227,7 @@ export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCur
         }, 0);
       }
 
-      cancelTokenGetAllDraftInvoicesAPI = axios.CancelToken.source();
+      cancelTokenGetUnpaidInvoicesAPI = axios.CancelToken.source();
 
       request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetUnpaidInvoicesAPI)
         .then((res: any) => {
