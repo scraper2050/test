@@ -109,6 +109,7 @@ function ViewInvoice() {
       setTimeout(() => {
         dispatch(openModalAction());
       }, 200);
+      // this is to set Hour to 12:00 so when backend generate invoice for email it wont render wrong date because of timezone difference
       data.invoice_date = new Date(data.invoice_date)
       data.invoice_date = data.invoice_date.setHours(data.invoice_date.getHours() + 12)
       data.due_date = new Date(data.due_date)
