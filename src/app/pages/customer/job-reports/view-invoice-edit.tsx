@@ -21,7 +21,7 @@ import { getItems } from 'api/items.api'
 import {callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI} from "api/invoicing.api";
 
 const newInvoice = {
-  createdAt: new Date(),
+  createdAt: new Date().toISOString(),
   items:[],
   isDraft: true,
 }
