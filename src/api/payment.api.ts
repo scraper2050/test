@@ -5,7 +5,11 @@ import { refreshPaymentTerms, setPaymentTerms, setPaymentTermsLoading } from 'ac
 // import {
 //   getInvoicingList,
 // } from 'actions/invoicing/invoicing.action';
-import { getAllInvoicesAPI, getAllInvoicesForBulkPaymentsAPI } from './invoicing.api';
+import {
+  getAllInvoicesAPI,
+  getAllInvoicesForBulkPaymentsAPI,
+  getUnpaidInvoicesAPI
+} from './invoicing.api';
 import {
   setPaymentsLoading,
   setPayments, updateSyncedPayments,
@@ -24,6 +28,7 @@ export const recordPayment: any = (params = {}) => {
           // dispatch(getInvoicingList());
           if (res.data.status === 1) {
             dispatch(getAllInvoicesAPI());
+            dispatch(getUnpaidInvoicesAPI());
             dispatch(getAllInvoicesForBulkPaymentsAPI());
             dispatch(getAllPaymentsAPI());
           }
