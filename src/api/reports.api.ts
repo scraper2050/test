@@ -41,6 +41,7 @@ export const updateMemorizedReport = async (params: any) => {
     return {status: 0, message: `Something went wrong`};
   }
 }
+
 export const createMemorizedReport = async (params: any) => {
   try {
     const response: any = await request("/createMemorizedReport", 'POST', params);
@@ -50,6 +51,16 @@ export const createMemorizedReport = async (params: any) => {
     } else {
       return {status, message};
     }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const generateAccountReceivableReport = async (type: number, asOf: string) => {
+  const params = `?reportData=${type}&asOf=${asOf}`
+  try {
+    const response: any = await request(`/generateAccountReceivableReport${params}`, 'GET', {});
+    return response.data;
   } catch {
     return {status: 0, message: `Something went wrong`};
   }

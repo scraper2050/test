@@ -353,9 +353,9 @@ function BCAdminSidebar({
       'group': 'Customers',
     },
     {
-      'label': 'Amounts Owed',
+      'label': 'A/R',
       'icon': <AmountIcon/>,
-      'link': '/main/reports/amounts-owed',
+      'link': '/main/reports/ar',
       'group': 'Customers',
     },
     {
