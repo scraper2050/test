@@ -120,3 +120,22 @@ export const shortenStringWithElipsis = (input: string, targetLength = 24):strin
     return `${input.slice(0,targetLength)}...`
   }
 }
+
+
+export const abbreviateNumber = (value: number, decimals = 2) => {
+
+  const SYMBOLS = ['', 'K', 'M', 'B', 'T'];
+  if (!value) {
+    return '0';
+  }
+
+  const num = Math.abs(value);
+
+  const p = Math.floor(Math.log10(num));
+  const sym = Math.floor(p / 3);
+  const smallNum = Math.abs(value / (1000 ** sym));
+
+  const formattedNum = parseFloat(smallNum.toFixed(smallNum < 10 ? decimals : 0));
+
+  return `${value < 0 ? '-' : ''}${formattedNum}${SYMBOLS[sym]}`;
+}
