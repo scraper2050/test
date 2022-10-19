@@ -203,7 +203,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       undefined,
       undefined,
       '' ,
-      selectionRange,
+      {invoiceDateRange: selectionRange},
       customerValue?._id,
       isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
       showValue === 'all'
@@ -398,7 +398,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                     num || currentPageSize,
                     isPrev ? prevCursor : undefined,
                     isNext ? nextCursor : undefined,
-                    '', selectionRange,
+                    '',
+                    {invoiceDateRange: selectionRange},
                     customerValue?._id,
                     isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
                     showValue === 'all'
