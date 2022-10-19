@@ -19,6 +19,8 @@ interface ButtonProps {
   minwidth?: string;
   onSelect: (e: React.MouseEvent<HTMLElement>, item: Option) => void;
   disabled?: boolean;
+  fontSize?: number;
+  placeholder?: string;
 }
 
 const MenuButton = styled.div<{opened: boolean, disabled: boolean, minwidth?: string}>`
@@ -66,11 +68,12 @@ const StyledMenu = withStyles({
   />
 ));
 
-const StyledMenuItem = withStyles((theme) => ({
+const StyledMenuItem:any = withStyles((theme) => ({
   root: {
+    maxWidth: '100%',
     height: 42,
     '& span': {
-      fontSize: 13,
+      fontSize: (props:any) => props.fontSize,
     },
     '&:focus': {
       backgroundColor: '#E5F7FF',
@@ -93,7 +96,7 @@ const ListText =withStyles((theme) => ({
   },
 }))(ListItemText);
 
-export default function DropDownMenu({selectedItem, items, onSelect, minwidth, disabled}:ButtonProps) {
+export default function DropDownMenu({selectedItem, items, onSelect, minwidth, disabled, fontSize = 13, placeholder = ''}:ButtonProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const _handleButtonClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -122,7 +125,7 @@ export default function DropDownMenu({selectedItem, items, onSelect, minwidth, d
         onClick={_handleButtonClick}
         disabled={!!disabled}
         >
-        <ButtonText disabled={!!disabled}>{items.find((item)=> item.value === selectedItem)?.label}</ButtonText>
+        <ButtonText disabled={!!disabled}>{items.find((item)=> item.value === selectedItem)?.label || placeholder}</ButtonText>
         <ArrowDropDown style={{color: LIGHT_GREY}}/>
       </MenuButton>
       <StyledMenu
@@ -134,7 +137,7 @@ export default function DropDownMenu({selectedItem, items, onSelect, minwidth, d
         onClose={handleClose}
       >
         {items.map((item, index:number) => {
-          return <StyledMenuItem key={index} selected={selectedItem === item.value} onClick={(e) => _handleListClick(e, item)}>
+          return <StyledMenuItem key={index} selected={selectedItem === item.value} onClick={(e:any) => _handleListClick(e, item)} fontSize={fontSize}>
               <ListText
                 primary={item.label}
               />
