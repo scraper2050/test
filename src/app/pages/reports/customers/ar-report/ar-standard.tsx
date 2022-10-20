@@ -39,11 +39,25 @@ const chartOptions = {
   chart: {
     height: 350,
     type: 'bar' as 'bar',
+    zoom: {
+      enabled: true,
+      type: 'x' as 'x',
+    },
+    toolbar: {
+      show: false,
+      tools: {
+        download: false,
+        zoom: true,
+        zoomin: true,
+        zoomout: true,
+      },
+    },
+
   },
 
   legend: {
     horizontalAlign: 'right' as 'right',
-    customLegendItems: ['Current', '1 - 90 Days Past Due', '91 and Over Past Due'],
+    customLegendItems: ['Current', '1 - 90 Days Past Due', '91 and Over'],
     markers: {
       fillColors: ['#349785', PRIMARY_BLUE, '#F50057']
     },
@@ -97,7 +111,7 @@ const chartOptions = {
       offsetY: -20,
     },
     // tickAmount: 3,
-    // tickPlacement: 'between',
+    tickPlacement: 'between',
     style: {
       color: GRAY3,
       textTransform: 'uppercase',
@@ -128,6 +142,11 @@ const chartOptions = {
       colors: [GRAY3],
     }
   },
+
+  tooltip: {
+    enabled: true,
+    intersect: false,
+  }
 }
 
 const ARStandardReport = ({classes}: RevenueStandardProps) => {
@@ -156,12 +175,14 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
             value: formatCurrency(report[key])
           });
         } else {
-          temp.push({
-            title: report[key].label,
-            value: formatCurrency(report[key].totalUnpaid)
-          });
-          tempChart.push(report[key].totalUnpaid);
-          tempLabels.push(report[key].label.toUpperCase());
+          if (report[key].label) {
+            temp.push({
+              title: report[key].label,
+              value: formatCurrency(report[key].totalUnpaid)
+            });
+            tempChart.push(report[key].totalUnpaid);
+            tempLabels.push(report[key].label.toUpperCase());
+          }
         }
       })
       setReportData(temp);
@@ -191,9 +212,9 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
               <BCDateTimePicker
                 // label="As Of"
                 className={'due_date'}
-                handleChange={(date: Date) => setAsOfDate(date)}
+                handleChange={(date: Date) => {if (date && !isNaN(date.getTime())) setAsOfDate(date)}}
                 name={'dueDate'}
-                id={'dueDate'}
+                id={'asOf'}
                 placeholder={'Date'}
                 value={asOfDate}
               />
