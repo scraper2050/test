@@ -57,7 +57,7 @@ function ARReportPage({ classes }: any) {
             onChangeTab={handleTabChange}
             tabsData={[
               {
-                'label': 'Account Receivable',
+                'label': 'Accounts Receivable',
                 'value': 0
               },
               {
