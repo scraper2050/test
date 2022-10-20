@@ -31,6 +31,8 @@ interface Props {
   classes?: {
     button?:string;
   }
+  bottomStart?: boolean;
+  preventOverflow?: boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -76,7 +78,7 @@ const DEFAULT_RANGE = {
 }
 
 
-function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false}: Props) {
+function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, bottomStart = false, preventOverflow = false}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const defaultClasses = useStyles({showClearButton});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
@@ -149,6 +151,16 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
         className={defaultClasses.rangePickerPopup}
         open={showDateRangePicker}
         anchorEl={buttonRef.current}
+        placement={bottomStart ? 'bottom-start' : 'bottom'}
+        modifiers={{
+          flip: {
+            enabled: false,
+          },
+          preventOverflow: {
+            enabled: preventOverflow ? true : false,
+            boundariesElement: 'scrollParent',
+          },
+        }}
         role={undefined} transition>
         {({ TransitionProps, placement }) => (
           <Fade timeout={500}

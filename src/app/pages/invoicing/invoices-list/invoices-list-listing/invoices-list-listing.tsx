@@ -2,11 +2,11 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import {withStyles, Button, Tooltip} from "@material-ui/core";
+import {withStyles, Button, Tooltip, Badge} from "@material-ui/core";
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
-import { MailOutlineOutlined } from '@material-ui/icons';
+import { MailOutlineOutlined, VolumeMute } from '@material-ui/icons';
 import EmailInvoiceButton from '../email.invoice';
 import {
   formatCurrency,
@@ -18,14 +18,16 @@ import {openModalAction, setModalDataAction} from "../../../../../actions/bc-mod
 import {modalTypes} from "../../../../../constants";
 import BCMenuButton from "../../../../components/bc-menu-button";
 import {info} from "../../../../../actions/snackbar/snackbar.action";
-import BCDateRangePicker
-  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+// import BCDateRangePicker
+//   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import { getAllInvoicesAPI } from 'api/invoicing.api';
 import {
   setCurrentPageIndex,
   setCurrentPageSize,
   setKeyword,
 } from 'actions/invoicing/invoicing.action';
+import { resetAdvanceFilterInvoice } from 'actions/advance-filter/advance-filter.action'
+import { initialAdvanceFilterInvoiceState } from 'reducers/advance-filter.reducer';
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -50,7 +52,11 @@ function InvoicingListListing({ classes, theme }: any) {
       keyword: invoiceList.keyword,
     })
   );
-  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  // const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  
+  const [fetchInvoices, setFetchInvoices] = useState(false);
+
+  const advanceFilterInvoiceData: any = useSelector(({advanceFilterInvoiceState}: any) => advanceFilterInvoiceState)
 
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
@@ -196,15 +202,23 @@ function InvoicingListListing({ classes, theme }: any) {
     }
   }, []);
 
+  // useEffect(() => {
+  //   dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
+  //   dispatch(setCurrentPageIndex(0));
+  // }, [selectionRange]);
+
   useEffect(() => {
-    dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
-    dispatch(setCurrentPageIndex(0));
-  }, [selectionRange]);
+    if(fetchInvoices){
+      dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, advanceFilterInvoiceData));
+      dispatch(setCurrentPageIndex(0));
+    }
+    setFetchInvoices(false);
+  }, [fetchInvoices]);
 
   useEffect(() => {
     if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , advanceFilterInvoiceData));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
@@ -266,19 +280,94 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const handleRowClick = (event: any, row: any) => showInvoiceDetail(row.original._id);
 
-  const filteredInvoices = selectionRange ? invoiceList.filter((invoice: any) =>  {
-    // return moment(invoice.createdAt).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
-    return true
-  }) : invoiceList;
+  const handleFilterSubmit = (data: any) => {
+    setFetchInvoices(true);
+  }
+
+  const handleOpenFilter = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        modalTitle: 'Filter Invoices',
+        handleFilterSubmit,
+      },
+      'type': modalTypes.ADVANCE_FILTER_INVOICE_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const handleClear = () => {
+    dispatch(resetAdvanceFilterInvoice());
+    setTimeout(() => {
+      setFetchInvoices(true);
+    }, 200);
+  }
+
+  const ButtonFilter = (props: any) => {
+    const content = JSON.stringify(initialAdvanceFilterInvoiceState) !== JSON.stringify(advanceFilterInvoiceData)
+    return (
+      <>
+        <Badge color="secondary" variant='dot' badgeContent={content ? ' ' : 0}>
+          <Button
+            style={{
+              color: 'white',
+              background: '#00AAFF',
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              border: '1px solid #00AAFF',
+              fontSize: 14,
+              borderRadius: 8,
+              width: 105,
+              height: 38,
+            }}
+            onClick={props.onClick}
+          >
+            <VolumeMute style={{
+              transform: 'rotate(270deg)'
+            }} />
+            Filter
+          </Button>
+        </Badge>
+        {!!content && (
+          <div
+            style={{
+              color: '#00AAFF',
+              textDecoration: 'underline',
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              fontSize: 12,
+              width: 50,
+              height: 38,
+            }}
+          >
+            <span
+              style={{
+                cursor: 'pointer',
+              }}
+              onClick={props.onClear}
+            >
+              Clear
+            </span>
+          </div>
+        )}
+      </>
+    )
+  }
 
   function Toolbar() {
-    return <BCDateRangePicker
-      range={selectionRange}
-      onChange={setSelectionRange}
-      showClearButton={true}
-      title={'Filter by Invoice Date...'}
-      classes={{button: classes.noLeftMargin}}
-    />
+    return <>
+      {/* <BCDateRangePicker
+        range={selectionRange}
+        onChange={setSelectionRange}
+        showClearButton={true}
+        title={'Filter by Invoice Date...'}
+        classes={{button: classes.noLeftMargin}}
+      /> */}
+      <ButtonFilter onClick={handleOpenFilter} onClear={handleClear}>Filter</ButtonFilter>
+    </>
   }
 
   return (
@@ -289,12 +378,12 @@ function InvoicingListListing({ classes, theme }: any) {
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Invoices...'}
-        tableData={filteredInvoices}
+        tableData={invoiceList}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
-          dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
+          dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, advanceFilterInvoiceData))
         }
         total={total}
         currentPageIndex={currentPageIndex}

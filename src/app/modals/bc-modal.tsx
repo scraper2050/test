@@ -69,6 +69,7 @@ import BCCompanyLocationModal from "./bc-company-location-modal/bc-company-locat
 import BCCustomizeRevenueReportModal from "./bc-customize-revenue-report-modal/bc-customize-revenue-report-modal";
 import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report-modal";
 import BcRecordSyncStatusModal from "./bc-record-sync-modal/bc-record-sync-modal";
+import BCAdvanceFilterInvoiceModal from "./bc-advance-filter-invoice-modal/bc-advance-filter-invoice-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -735,6 +736,15 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<BCCustomizeRevenueReportModal />);
+        break;
+      case modalTypes.ADVANCE_FILTER_INVOICE_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BCAdvanceFilterInvoiceModal handleFilterSubmit={data.handleFilterSubmit} formFilter={data.formFilter} />);
         break;
       case modalTypes.MEMORIZE_REPORT_MODAL:
         setModalOptions({
