@@ -8,7 +8,7 @@ export const PAYMENT_STATUS_OPTIONS = [
     label: 'Unpaid',
   },
   {
-    value: 'PARTIALLY PAID',
+    value: 'PARTIALLY_PAID',
     label: 'Partially Paid',
   },
   {

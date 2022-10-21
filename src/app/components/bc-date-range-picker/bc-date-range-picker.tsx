@@ -33,6 +33,7 @@ interface Props {
   }
   bottomStart?: boolean;
   preventOverflow?: boolean;
+  biggerButton?: boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -69,6 +70,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: '1rem',
     color: 'grey',
+  },
+  biggerButton: {
+    padding: '10px 15px',
   }
 }));
 
@@ -78,7 +82,7 @@ const DEFAULT_RANGE = {
 }
 
 
-function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, bottomStart = false, preventOverflow = false}: Props) {
+function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, bottomStart = false, preventOverflow = false, biggerButton = false}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const defaultClasses = useStyles({showClearButton});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
@@ -132,7 +136,7 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
           variant={'outlined'}
           disabled={disabled}
           classes={{
-            root: classNames(defaultClasses.rangePickerButton, classes?.button),
+            root: classNames(defaultClasses.rangePickerButton, classes?.button, biggerButton ? defaultClasses.biggerButton : ''),
             endIcon: defaultClasses.clearRangeButton,
           }}
           startIcon={<IconCalendar style={{fontSize: 14}}/>}

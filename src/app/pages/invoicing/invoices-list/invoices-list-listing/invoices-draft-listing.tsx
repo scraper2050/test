@@ -74,7 +74,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
   useEffect(() => {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
-    dispatch(getAllDraftInvoicesAPI());
+    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined, true));
     return () => {
       dispatch(setDraftKeyword(''));
       dispatch(setCurrentDraftPageIndex(currentPageIndex));

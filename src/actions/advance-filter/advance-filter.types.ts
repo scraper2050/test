@@ -13,6 +13,8 @@ export interface AdvanceFilterInvoiceState {
     selectedPaymentStatus: string;
     checkCustomer: boolean;
     selectedCustomer: {value:any; label:any} | null;
+    checkContact: boolean;
+    selectedContact: {value:any; label:any} | null;
     checkTechnician: boolean;
     selectedTechnician: {value:any; label:any} | null;
     checkLastEmailSentDateRange: boolean;
@@ -21,7 +23,7 @@ export interface AdvanceFilterInvoiceState {
     amountRangeFrom: string;
     amountRangeTo: string;
     checkSubdivision: boolean;
-    selectedSubdivision: string;
+    selectedSubdivision: {value:any; label:any} | null;
     checkJobAddress: boolean;
     jobAddressStreet: string;
     jobAddressCity: string;
