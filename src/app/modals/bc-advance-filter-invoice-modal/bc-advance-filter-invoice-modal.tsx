@@ -659,8 +659,13 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   onChange={(e) => FormikSetFieldValue('checkLastEmailSentDateRange', e.target.checked)}
                 />
                 LAST EMAIL SENT DATE RANGE
-                <div className={classes.inputRow}>
+                <div style={{
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  marginBottom: 30,
+                }}>
                   <BCDateRangePicker
+                    biggerButton
                     preventOverflow
                     disabled={!FormikValues.checkLastEmailSentDateRange}
                     range={FormikValues.lastEmailSentDateRange}
@@ -672,6 +677,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </div>
             </Col>
+            <Col />
           </Row>
           
         </div>

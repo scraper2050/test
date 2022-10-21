@@ -73,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
   biggerButton: {
     padding: '10px 15px',
+    width: '100% !important',
   }
 }));
 
