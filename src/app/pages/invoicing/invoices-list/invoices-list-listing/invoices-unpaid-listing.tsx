@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import {withStyles, Tooltip} from "@material-ui/core";
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EmailInvoiceButton from '../email.invoice';
 import {
@@ -27,6 +27,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
+  const callUnpaidInvoicesCount = useRef(0);
   const { unpaidInvoices, loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ invoiceList }: any) => ({
       unpaidInvoices: invoiceList.unpaid,
@@ -152,7 +153,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
+    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0));
     dispatch(setCurrentUnpaidPageIndex(0));
     return () => {
       dispatch(setUnpaidKeyword(''));
