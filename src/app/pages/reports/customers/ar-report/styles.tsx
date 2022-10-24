@@ -18,9 +18,12 @@ export default (theme: Theme): any => ({
   ...swipe_wrapper,
 
   toolbar: {
-    width: '600px',
+    width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  menuToolbarContainer: {
+    flex: 1,
   },
   label: {
     fontSize: 10,
@@ -49,7 +52,7 @@ export const SummaryContainer = styled.div `
     margin-top: 10px;
     display: flex;
     justify-content: center;
-    background-color: ${PRIMARY_BLUE}11;
+    background-color: ${PRIMARY_BLUE}05;
     border-radius: 8px;
     padding: 30px;
     div {

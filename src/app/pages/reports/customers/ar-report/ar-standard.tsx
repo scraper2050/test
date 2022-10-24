@@ -6,7 +6,7 @@ import styles, {SummaryContainer} from './styles';
 import BCCircularLoader
   from "app/components/bc-circular-loader/bc-circular-loader";
 import {generateAccountReceivableReport} from 'api/reports.api';
-import {error} from 'actions/snackbar/snackbar.action';
+import {error, info} from 'actions/snackbar/snackbar.action';
 import BCDateTimePicker
   from "../../../../components/bc-date-time-picker/bc-date-time-picker";
 import BCItemsFilter
@@ -16,8 +16,13 @@ import {
   formatCurrency,
   formatDateYMD
 } from "../../../../../helpers/format";
-import {GRAY3, PRIMARY_BLUE} from "../../../../../constants";
+import {GRAY3, modalTypes, PRIMARY_BLUE} from "../../../../../constants";
 import ApexChart from 'react-apexcharts';
+import BCMenuToolbarButton from "../../../../components/bc-menu-toolbar-button";
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../../../actions/bc-modal/bc-modal.action";
 
 interface RevenueStandardProps {
   classes: any;
@@ -32,6 +37,12 @@ const INITIAL_ITEMS = [
   {id: '0', value: 'Aging'},
   {id: '1', value: 'Past Due'},
 ];
+
+const MORE_ITEMS = [
+  {id: 0, title:'Customize'},
+  {id: 1, title:'Export to PDF'},
+  {id: 2, title:'Send Report'},
+]
 
 const chartColors = ['#349785', PRIMARY_BLUE, PRIMARY_BLUE, PRIMARY_BLUE, '#F50057']
 
@@ -67,6 +78,9 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
 
     legend: {
       horizontalAlign: 'left' as 'left',
+      itemMargin: {
+        horizontal: 15,
+      },
       customLegendItems: reportType === '0' ? ['Current', '1 - 90 Days Past Due', '91 and Over'] : ['Past Due'],
       markers: {
         fillColors: reportType === '0' ? ['#349785', PRIMARY_BLUE, '#F50057'] : [PRIMARY_BLUE],
@@ -171,11 +185,11 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
     Object.keys(report.globalAgingBuckets).forEach((key, index) => {
       if (reportType === '0' || index > 0) {
         temp.push({
-          title: report[key].label,
+          title: report[key].label.substr(0, 11),
           value: formatCurrency(report[key].totalUnpaid)
         });
         tempChart.push(report[key].totalUnpaid);
-        tempLabels.push(report[key].label.toUpperCase());
+        tempLabels.push(report[key].label.substr(0, 11).toUpperCase());
       }
     });
     setReportData(temp);
@@ -198,6 +212,34 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
     setIsLoading(false);
   }
 
+  const handleMenuToolbarListClick = (event: any, id: number) => {
+    event.stopPropagation();
+    switch (id) {
+      case 0:
+        dispatch(
+          setModalDataAction({
+            'data': {
+              'modalTitle': 'Customized A/R Report',
+              'removeFooter': false
+            },
+            'type': modalTypes.CUSTOMIZE_AR_REPORT_MODAL,
+          })
+        );
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+      case 1:
+        dispatch(info('This feature is still under development'));
+        break;
+      case 2:
+        dispatch(info('This feature is still under development'));
+        break;
+      default:
+        dispatch(info('This feature is still under development'));
+    }
+  };
+
   useEffect(() => {
     getReportData();
   }, [asOfDate]);
@@ -215,7 +257,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
         :
         <>
           <div className={classes.toolbar}>
-            <Typography style={{alignSelf: 'center'}}>As Of</Typography>
+            <Typography style={{alignSelf: 'center', marginRight: 5}}>As of</Typography>
             <div style={{width: 300}}>
               <BCDateTimePicker
                 // label="As Of"
@@ -227,11 +269,19 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
                 value={asOfDate}
               />
             </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
             <BCItemsFilter
               single
               items={INITIAL_ITEMS}
               selected={[reportType]}
               onApply={(values) => setReportType(values[0])}
+            />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div className={classes.menuToolbarContainer} />
+            <BCMenuToolbarButton
+              buttonText='More Actions'
+              items={MORE_ITEMS}
+              handleClick={handleMenuToolbarListClick}
             />
           </div>
 
