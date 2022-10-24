@@ -1,5 +1,6 @@
 import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from "../../../constants";
+import {GRAY2} from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
@@ -7,16 +8,22 @@ export default (theme: Theme): any => ({
     backgroundColor: 'auto'
   },
   dialogContent: {
-    padding: '8px 50px !important',
+    padding: '8px 75px !important',
   },
   titleDiv: {
     display: 'flex',
+    alignItems: 'center',
     marginTop: 20,
     marginBottom: 20,
   },
   title: {
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  label: {
+    fontSize: 11,
+    color: GRAY2,
+    marginBottom: 5,
   },
   modalPreview: {
     backgroundColor: '#EAECF3',
@@ -42,9 +49,9 @@ export default (theme: Theme): any => ({
   closeButton: {
     color: '#4F4F4F',
     borderColor: '#4F4F4F',
-    width: '110px !important',
+    // width: '110px !important',
     height: '34px',
-    fontSize: '16px !important',
+    // fontSize: '16px !important',
     padding: '0 12px',
     textTransform:'none',
   },
@@ -57,8 +64,8 @@ export default (theme: Theme): any => ({
       borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
     },
     minWidth: '110px !important',
-    height: '34px',
-    fontSize: '16px !important',
+    // height: '34px',
+    // fontSize: '16px !important',
     padding: '0 12px',
     textTransform:'none',
   },
