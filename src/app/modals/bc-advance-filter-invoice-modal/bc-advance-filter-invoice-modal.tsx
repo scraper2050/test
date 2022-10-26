@@ -219,7 +219,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     }
     if(!checkCustomer) {
       FormikSetFieldValue('selectedCustomer', null);
+      FormikSetFieldValue('checkContact', null);
       FormikSetFieldValue('selectedContact', null);
+      FormikSetFieldValue('checkSubdivision', null);
+      FormikSetFieldValue('selectedSubdivision', null);
     }
     if(!checkContact) {
       FormikSetFieldValue('selectedContact', null);
@@ -235,7 +238,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       FormikSetFieldValue('amountRangeTo', '');
     }
     if(!checkSubdivision) {
-      FormikSetFieldValue('selectedSubdivision', '');
+      FormikSetFieldValue('selectedSubdivision', null);
     }
     if(!checkJobAddress) {
       FormikSetFieldValue('jobAddressStreet', '');
@@ -543,7 +546,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     onChange={FormikHandleChange}
                     name={'jobAddressStreet'}
                     value={FormikValues.jobAddressStreet}
-                    placeholder="Address 1"
+                    placeholder=""
                   />
                 </div>
                 <div className={classes.inputRow}>
@@ -629,7 +632,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                     }}
-                    placeholder="0"
+                    placeholder=""
                     width={180}
                   />
                   <div className={classes.separator}>to</div>
@@ -642,7 +645,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                     }}
-                    placeholder="1000"
+                    placeholder=""
                     width={180}
                   />
                 </div>
