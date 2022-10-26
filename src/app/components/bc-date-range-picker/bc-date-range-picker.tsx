@@ -32,7 +32,7 @@ interface Props {
   classes?: {
     button?:string;
   }
-  placement?: 'bottom' | 'bottom-start' | 'right-start';
+  placement?: 'bottom' | 'bottom-start' | 'right';
   preventOverflow?: boolean;
   biggerButton?: boolean;
 }

@@ -324,7 +324,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                       <div hidden={curTab !== 1} id={"1"} style={{padding: 20}}>
                         <BCDateRangePicker
                           biggerButton
-                          placement={window.innerWidth < 1500 ? 'bottom-start' : 'right-start'}
+                          placement={window.innerWidth < 1500 ? 'bottom-start' : 'right'}
                           disabled={!FormikValues.checkDateOrRange}
                           range={FormikValues.invoiceDateRange}
                           onChange={(e) => FormikSetFieldValue('invoiceDateRange', e)}
