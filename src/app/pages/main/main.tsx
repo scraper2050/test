@@ -93,7 +93,7 @@ const PastPaymentPage = React.lazy(() => import('../payroll/past-payment/past-pa
 const PayrollReportsPage = React.lazy(() => import('../payroll/reports/reports'));
 
 const RevenueReportsPage = React.lazy(() => import('../reports/customers/revenue-reports/revenue'));
-const AmountsOwedReportsPage = React.lazy(() => import('../reports/customers/amounts-owed-reports/amounts-owed'));
+const ARReportsPage = React.lazy(() => import('../reports/customers/ar-report'));
 const NewPayrollReportsPage = React.lazy(() => import('../reports/vendors/payroll-reports/payroll'));
 
 function Main(): any {
@@ -264,7 +264,7 @@ function Main(): any {
             </div>
           }>
           <Route>
-            <BCAdminLayout 
+            <BCAdminLayout
               notifications={notifications}
               initialLoad={initialHeaderLoad}
               showNotificationDetails={showNotificationDetails}
@@ -743,9 +743,9 @@ function Main(): any {
                   title={'Reports'}
                 />
                 <AuthRoute
-                  Component={AmountsOwedReportsPage}
+                  Component={ARReportsPage}
                   exact
-                  path={'/main/reports/amounts-owed'}
+                  path={'/main/reports/ar'}
                   title={'Reports'}
                 />
                 <AuthRoute

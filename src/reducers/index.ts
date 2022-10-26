@@ -70,6 +70,7 @@ import {CalendarState} from "../actions/calendar/bc-calendar.types";
 import { DiscountItemsReducer as discountItems} from './discount.reducer'
 import { DiscountState } from 'actions/discount/discount.types';
 import { reportReducer as reportState } from './report.reducer'
+import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './advance-filter.reducer'
 
 
 export interface ReducerParamsInterface {
@@ -148,6 +149,7 @@ const appReducer = combineReducers({
   calendar,
   discountItems,
   reportState,
+  advanceFilterInvoiceState,
 });
 
 const rootReducer = (state: any, action: any) => {

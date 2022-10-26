@@ -24,11 +24,8 @@ import {
   warning
 } from "../../../actions/snackbar/snackbar.action";
 import {
-  Sync as SyncIcon,
-  SyncProblem as SyncProblemIcon,
   Warning as WarningIcon,
 } from "@material-ui/icons";
-import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
 import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
 import {SYNC_RESPONSE} from "../../models/invoices";
 import BCCircularLoader
@@ -151,7 +148,7 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
         const textStatus = status.split('_').join(' ').toLowerCase();
         return (
           <PaymentStatus color={PAYMENT_STATUS_COLORS[row.original.status]}>
-            {row.original.status.replace('_', '').toLowerCase()}
+            {row.original.status.replace('_', ' ').toLowerCase()}
           </PaymentStatus>
         )
       },

@@ -15,6 +15,7 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import classNames from "classnames";
+import { Place } from "@material-ui/icons";
 
 export interface Range {
   startDate: Date;
@@ -31,6 +32,9 @@ interface Props {
   classes?: {
     button?:string;
   }
+  placement?: 'bottom' | 'bottom-start' | 'right';
+  preventOverflow?: boolean;
+  biggerButton?: boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -67,6 +71,11 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     right: '1rem',
     color: 'grey',
+  },
+  biggerButton: {
+    padding: '10px 15px',
+    width: '100% !important',
+    maxWidth: '390px',
   }
 }));
 
@@ -76,7 +85,7 @@ const DEFAULT_RANGE = {
 }
 
 
-function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false}: Props) {
+function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, placement = 'bottom', preventOverflow = false, biggerButton = false}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const defaultClasses = useStyles({showClearButton});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
@@ -130,7 +139,7 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
           variant={'outlined'}
           disabled={disabled}
           classes={{
-            root: classNames(defaultClasses.rangePickerButton, classes?.button),
+            root: classNames(defaultClasses.rangePickerButton, classes?.button, biggerButton ? defaultClasses.biggerButton : ''),
             endIcon: defaultClasses.clearRangeButton,
           }}
           startIcon={<IconCalendar style={{fontSize: 14}}/>}
@@ -149,11 +158,21 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
         className={defaultClasses.rangePickerPopup}
         open={showDateRangePicker}
         anchorEl={buttonRef.current}
+        placement={placement}
+        modifiers={{
+          flip: {
+            enabled: false,
+          },
+          preventOverflow: {
+            enabled: preventOverflow ? true : false,
+            boundariesElement: 'scrollParent',
+          },
+        }}
         role={undefined} transition>
         {({ TransitionProps, placement }) => (
-          <Fade timeout={500}
-                {...TransitionProps}
-          >
+          // <Fade timeout={500}
+          //       {...TransitionProps}
+          // >
             <Paper elevation={0}>
               <ClickAwayListener onClickAway={closeDateRangePicker}>
                 <div className={defaultClasses.rangePickerWrapper}>
@@ -182,7 +201,7 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
                 </div>
               </ClickAwayListener>
             </Paper>
-          </Fade>
+          // </Fade>
         )}
       </Popper>
     </>

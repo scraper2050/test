@@ -121,6 +121,7 @@ export const modalTypes = {
   'MANUAL_SYNC_MODAL_INVOICES': 'manual_sync_modal_invoices',
   'MANUAL_SYNC_MODAL_PAYMENTS': 'manual_sync_modal_payments',
   'RECORD_SYNC_STATUS_MODAL' : 'record_sync_status_modal',
+  'ADVANCE_FILTER_INVOICE_MODAL' : 'ADVANCE_FILTER_INVOICE_MODAL',
 };
 
 export const rejectionReason = [
