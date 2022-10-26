@@ -219,7 +219,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     }
     if(!checkCustomer) {
       FormikSetFieldValue('selectedCustomer', null);
+      FormikSetFieldValue('checkContact', null);
       FormikSetFieldValue('selectedContact', null);
+      FormikSetFieldValue('checkSubdivision', null);
+      FormikSetFieldValue('selectedSubdivision', null);
     }
     if(!checkContact) {
       FormikSetFieldValue('selectedContact', null);
@@ -235,7 +238,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       FormikSetFieldValue('amountRangeTo', '');
     }
     if(!checkSubdivision) {
-      FormikSetFieldValue('selectedSubdivision', '');
+      FormikSetFieldValue('selectedSubdivision', null);
     }
     if(!checkJobAddress) {
       FormikSetFieldValue('jobAddressStreet', '');
@@ -264,8 +267,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     <form onSubmit={FormikSubmit}>
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <div>
-          <Row>
-            <Col>
+          <Grid container>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -321,7 +324,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                       <div hidden={curTab !== 1} id={"1"} style={{padding: 20}}>
                         <BCDateRangePicker
                           biggerButton
-                          bottomStart
+                          placement={window.innerWidth < 1500 ? 'bottom-start' : 'right'}
                           disabled={!FormikValues.checkDateOrRange}
                           range={FormikValues.invoiceDateRange}
                           onChange={(e) => FormikSetFieldValue('invoiceDateRange', e)}
@@ -335,10 +338,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   </SwipeableViews>
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -357,8 +358,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -377,10 +378,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -399,31 +398,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
-              <div>
-                <Checkbox
-                  color="primary"
-                  className={classes.checkbox}
-                  checked={FormikValues.checkPaymentStatus}
-                  onChange={(e) => FormikSetFieldValue('checkPaymentStatus', e.target.checked)}
-                />
-                PAYMENT STATUS
-                <div className={classes.inputRow}>
-                  <DropDownMenu
-                    disabled={!FormikValues.checkPaymentStatus}
-                    minwidth='390px'
-                    selectedItem={FormikValues.selectedPaymentStatus}
-                    items={PAYMENT_STATUS_OPTIONS}
-                    fontSize={17}
-                    onSelect={(e, item) => handleClick(e, item, 'selectedPaymentStatus')}
-                  />
-                </div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -451,8 +429,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   disabled={!FormikValues.selectedCustomer}
@@ -494,10 +472,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   disabled={!FormikValues.selectedCustomer}
@@ -526,8 +502,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -543,7 +519,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     onChange={FormikHandleChange}
                     name={'jobAddressStreet'}
                     value={FormikValues.jobAddressStreet}
-                    placeholder="Address 1"
+                    placeholder=""
                   />
                 </div>
                 <div className={classes.inputRow}>
@@ -578,10 +554,31 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item md={6} xl={3}>
+              <div>
+                <Checkbox
+                  color="primary"
+                  className={classes.checkbox}
+                  checked={FormikValues.checkPaymentStatus}
+                  onChange={(e) => FormikSetFieldValue('checkPaymentStatus', e.target.checked)}
+                />
+                PAYMENT STATUS
+                <div className={classes.inputRow}>
+                  <DropDownMenu
+                    disabled={!FormikValues.checkPaymentStatus}
+                    minwidth='390px'
+                    selectedItem={FormikValues.selectedPaymentStatus}
+                    items={PAYMENT_STATUS_OPTIONS}
+                    fontSize={17}
+                    onSelect={(e, item) => handleClick(e, item, 'selectedPaymentStatus')}
+                  />
+                </div>
+              </div>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -609,8 +606,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -629,7 +626,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                     }}
-                    placeholder="0"
+                    placeholder=""
                     width={180}
                   />
                   <div className={classes.separator}>to</div>
@@ -642,15 +639,13 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                     }}
-                    placeholder="1000"
+                    placeholder=""
                     width={180}
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -676,9 +671,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col />
-          </Row>
+            </Grid>
+          </Grid>
           
         </div>
       </DialogContent>

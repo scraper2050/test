@@ -15,6 +15,7 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import classNames from "classnames";
+import { Place } from "@material-ui/icons";
 
 export interface Range {
   startDate: Date;
@@ -31,7 +32,7 @@ interface Props {
   classes?: {
     button?:string;
   }
-  bottomStart?: boolean;
+  placement?: 'bottom' | 'bottom-start' | 'right';
   preventOverflow?: boolean;
   biggerButton?: boolean;
 }
@@ -74,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
   biggerButton: {
     padding: '10px 15px',
     width: '100% !important',
+    maxWidth: '390px',
   }
 }));
 
@@ -83,7 +85,7 @@ const DEFAULT_RANGE = {
 }
 
 
-function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, bottomStart = false, preventOverflow = false, biggerButton = false}: Props) {
+function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, placement = 'bottom', preventOverflow = false, biggerButton = false}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const defaultClasses = useStyles({showClearButton});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
@@ -156,7 +158,7 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
         className={defaultClasses.rangePickerPopup}
         open={showDateRangePicker}
         anchorEl={buttonRef.current}
-        placement={bottomStart ? 'bottom-start' : 'bottom'}
+        placement={placement}
         modifiers={{
           flip: {
             enabled: false,
@@ -168,9 +170,9 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
         }}
         role={undefined} transition>
         {({ TransitionProps, placement }) => (
-          <Fade timeout={500}
-                {...TransitionProps}
-          >
+          // <Fade timeout={500}
+          //       {...TransitionProps}
+          // >
             <Paper elevation={0}>
               <ClickAwayListener onClickAway={closeDateRangePicker}>
                 <div className={defaultClasses.rangePickerWrapper}>
@@ -199,7 +201,7 @@ function BCDateRangePicker({classes, range, disabled = false, showClearButton = 
                 </div>
               </ClickAwayListener>
             </Paper>
-          </Fade>
+          // </Fade>
         )}
       </Popper>
     </>
