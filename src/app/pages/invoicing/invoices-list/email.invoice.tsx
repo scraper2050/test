@@ -18,11 +18,13 @@ interface EmailReportProps {
 
 
 export default function EmailInvoiceButton({ invoice, Component, showLoader = true }: EmailReportProps) {
+  
   const { customer, _id, invoiceId } = invoice;
   const dispatch = useDispatch();
+  const emailToSend = invoice?.contactsObj[0]?.email || customer?.info?.email
 
   const sendInvoice = () => {
-    dispatch(sendEmailAction.fetch({ 'email': customer?.info?.email,
+    dispatch(sendEmailAction.fetch({ 'email': emailToSend,
       'id': _id,
       'type': 'invoice'
     }));
@@ -67,9 +69,9 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
 
   const data = {
     'modalTitle': 'Send this invoice',
-    'customer': customer?.profile?.displayName,
+    'customer': invoice?.contactsObj[0]?.name || customer?.profile?.displayName,
     // 'customerEmail': customer?.info?.email,
-    'customerEmail': invoice.customerContactId?.email || customer?.info?.email,
+    'customerEmail': emailToSend,
     'handleClick': sendInvoice,
     'id': _id,
     'typeText': 'Invoice',
