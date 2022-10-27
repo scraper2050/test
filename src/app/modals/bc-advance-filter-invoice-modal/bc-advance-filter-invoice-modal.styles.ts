@@ -43,7 +43,7 @@ export default (theme: Theme): any => ({
     '& button': {
       paddingLeft: 3,
       paddingRight: 3,
-    }
+    },
   },
   separator: {
     display: 'flex',
@@ -83,5 +83,12 @@ export default (theme: Theme): any => ({
         borderColor: '#E0E0E0',
       },
     },
-  }
+  },
+  autoCompleteInputRoot: {
+    height: 43,
+    paddingTop: '2px !important',
+  },
+  autoCompleteEndAdornment: {
+    display: 'none',
+  },
 });

@@ -10,6 +10,7 @@ import {
   InputAdornment,
   useTheme,
 } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 import SwipeableViews from 'react-swipeable-views';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
@@ -27,8 +28,11 @@ import DateFnsUtils from '@date-io/date-fns';
 import BCDateRangePicker from "app/components/bc-date-range-picker/bc-date-range-picker";
 import BCTabs from 'app/components/bc-tab/bc-tab';
 import { getCustomers } from 'actions/customer/customer.action';
+import { getContacts } from 'api/contacts.api';
 import { getVendors } from 'actions/vendor/vendor.action';
 import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
+import { getJobLocationsAction } from 'actions/job-location/job-location.action';
+
 import {
   PAYMENT_STATUS_OPTIONS,
 } from './constants'
@@ -41,12 +45,15 @@ import { AdvanceFilterInvoiceState } from 'actions/advance-filter/advance-filter
 function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
   const theme = useTheme();
   const customers: any[] = useSelector(({ customers }: any) => customers.data);
+  const contacts: any[] = useSelector(({contacts}: any) => contacts.contacts);
+  const subdivisions = useSelector(({jobLocations}: any) => jobLocations.data);
   const vendors: any[] = useSelector(({ vendors }: any) => vendors.data);
   const employees = useSelector(({ employeesForJob }: any) => employeesForJob.data);
   const advanceFilterInvoiceData: any = useSelector(({advanceFilterInvoiceState}: any) => advanceFilterInvoiceState)
   const dispatch = useDispatch();
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [openContactList, setOpenContactList] = useState(false);
   const [curTab, setCurTab] = useState(advanceFilterInvoiceData.dateRangeType);
 
 
@@ -83,6 +90,12 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
   const customerOptions = customers.map((cust:any) => ({value: cust._id, label: cust.profile.displayName}))
   customerOptions.sort((a,b) => a.label.localeCompare(b.label))
 
+  const contactOptions = contacts.map((contact:any) => ({value: contact._id, label: contact.name}))
+  contactOptions.sort((a,b) => a.label.localeCompare(b.label))
+
+  const subdivisionOptions = subdivisions.map((subdivision:any) => ({value: subdivision._id, label: subdivision.name}))
+  contactOptions.sort((a,b) => a.label.localeCompare(b.label))
+
   const vendorOptions = vendors.reduce((acc: any[],vendor: any) => {
     if (vendor.status === 1) acc.push({value: vendor.contractor._id, label: vendor.contractor.info.companyName});
     return acc;
@@ -93,9 +106,9 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     return acc;
   }, []).sort((a:any,b:any) => a.label.localeCompare(b.label));
 
-  const technicianOptions = [{value:'all',label:'All'}, ...employeeOptions, ...vendorOptions]
+  const technicianOptions = [...employeeOptions, ...vendorOptions]
 
-  const allStatesOptions = allStates.map(state => ({value: state.abbreviation, label: state.name}))
+  const allStatesOptions = allStates.map(state => ({value: state.name, label: state.name}))
 
   const form = useFormik<AdvanceFilterInvoiceState>({
     initialValues: {
@@ -113,6 +126,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       selectedPaymentStatus: advanceFilterInvoiceData.selectedPaymentStatus,
       checkCustomer: advanceFilterInvoiceData.checkCustomer,
       selectedCustomer: advanceFilterInvoiceData.selectedCustomer,
+      checkContact: advanceFilterInvoiceData.checkContact,
+      selectedContact: advanceFilterInvoiceData.selectedContact,
       checkTechnician: advanceFilterInvoiceData.checkTechnician,
       selectedTechnician: advanceFilterInvoiceData.selectedTechnician,
       checkLastEmailSentDateRange: advanceFilterInvoiceData.checkLastEmailSentDateRange,
@@ -151,12 +166,37 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     checkPoNumber,
     checkPaymentStatus,
     checkCustomer,
+    checkContact,
     checkTechnician,
     checkLastEmailSentDateRange,
     checkAmountRange,
     checkSubdivision,
     checkJobAddress,
-  } = FormikValues
+  } = FormikValues;
+
+  const getContactsData = async (data: any) => {
+    const res:any = await dispatch(getContacts(data));
+    if(FormikValues.selectedContact && res && res.result && !res.result?.find((contact:any) => contact._id === FormikValues.selectedContact?.value)){
+      FormikSetFieldValue('selectedContact', null)
+    }
+  }
+  const getSubdivisionData = async (customerId: any) => {
+    const res:any = await dispatch(getJobLocationsAction({customerId}));
+    if(FormikValues.selectedSubdivision && res && res.result && !res.result?.find((subdivision:any) => subdivision._id === FormikValues.selectedSubdivision?.value)){
+      FormikSetFieldValue('selectedSubdivision', null)
+    }
+  }
+
+  useEffect(() => {
+    if(FormikValues.selectedCustomer && FormikValues.selectedCustomer.value){
+      const data: any = {
+        'type': 'Customer',
+        'referenceNumber': FormikValues.selectedCustomer.value
+      };
+      getContactsData(data);
+      getSubdivisionData(FormikValues.selectedCustomer.value);
+    }
+  }, [FormikValues.selectedCustomer]);
 
   useEffect(() => {
     if(!checkDateOrRange) {
@@ -179,9 +219,16 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     }
     if(!checkCustomer) {
       FormikSetFieldValue('selectedCustomer', null);
+      FormikSetFieldValue('checkContact', null);
+      FormikSetFieldValue('selectedContact', null);
+      FormikSetFieldValue('checkSubdivision', null);
+      FormikSetFieldValue('selectedSubdivision', null);
+    }
+    if(!checkContact) {
+      FormikSetFieldValue('selectedContact', null);
     }
     if(!checkTechnician) {
-      FormikSetFieldValue('selectedTechnician', '');
+      FormikSetFieldValue('selectedTechnician', null);
     }
     if(!checkLastEmailSentDateRange) {
       FormikSetFieldValue('lastEmailSentDateRange', null);
@@ -191,7 +238,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       FormikSetFieldValue('amountRangeTo', '');
     }
     if(!checkSubdivision) {
-      FormikSetFieldValue('selectedSubdivision', '');
+      FormikSetFieldValue('selectedSubdivision', null);
     }
     if(!checkJobAddress) {
       FormikSetFieldValue('jobAddressStreet', '');
@@ -206,6 +253,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     checkPoNumber,
     checkPaymentStatus,
     checkCustomer,
+    checkContact,
     checkTechnician,
     checkLastEmailSentDateRange,
     checkAmountRange,
@@ -219,8 +267,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     <form onSubmit={FormikSubmit}>
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <div>
-          <Row>
-            <Col>
+          <Grid container>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -264,6 +312,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                             variant={'inline'}
                             inputVariant={'outlined'}
                             value={FormikValues.invoiceDate}
+                            fullWidth
                             InputProps={{
                               className: classes.datePicker,
                             }}
@@ -274,7 +323,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     {(visibleTabs.indexOf(1) >= 0 || curTab === 1) ?
                       <div hidden={curTab !== 1} id={"1"} style={{padding: 20}}>
                         <BCDateRangePicker
-                          bottomStart
+                          biggerButton
+                          placement={window.innerWidth < 1500 ? 'bottom-start' : 'right'}
                           disabled={!FormikValues.checkDateOrRange}
                           range={FormikValues.invoiceDateRange}
                           onChange={(e) => FormikSetFieldValue('invoiceDateRange', e)}
@@ -288,10 +338,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   </SwipeableViews>
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -310,8 +358,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -330,10 +378,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -352,31 +398,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
-              <div>
-                <Checkbox
-                  color="primary"
-                  className={classes.checkbox}
-                  checked={FormikValues.checkPaymentStatus}
-                  onChange={(e) => FormikSetFieldValue('checkPaymentStatus', e.target.checked)}
-                />
-                PAYMENT STATUS
-                <div className={classes.inputRow}>
-                  <DropDownMenu
-                    disabled={!FormikValues.checkPaymentStatus}
-                    minwidth='390px'
-                    selectedItem={FormikValues.selectedPaymentStatus}
-                    items={PAYMENT_STATUS_OPTIONS}
-                    fontSize={17}
-                    onSelect={(e, item) => handleClick(e, item, 'selectedPaymentStatus')}
-                  />
-                </div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -399,108 +424,59 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                         variant={'outlined'}
                       />
                     }
-                    classes={{root: classes.autocompleteStyle}}
+                    classes={{root: classes.autocompleteStyle, inputRoot: classes.autoCompleteInputRoot}}
                     value={FormikValues.selectedCustomer}
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
+                  disabled={!FormikValues.selectedCustomer}
                   color="primary"
                   className={classes.checkbox}
-                  checked={FormikValues.checkTechnician}
-                  onChange={(e) => FormikSetFieldValue('checkTechnician', e.target.checked)}
+                  checked={FormikValues.checkContact}
+                  onChange={(e) => FormikSetFieldValue('checkContact', e.target.checked)}
                 />
-                TECHNICIAN
+                CUSTOMER CONTACT
                 <div className={classes.inputRow}>
                   <Autocomplete
-                    disabled={!FormikValues.checkTechnician}
+                    open={openContactList}
+                    onInputChange={(_, value) => {
+                      if (value.length === 0) {
+                        if (openContactList) setOpenContactList(false);
+                      } else {
+                        if (!openContactList) setOpenContactList(true);
+                      }
+                    }}
+                    onClose={() => setOpenContactList(false)}
+                    disabled={!FormikValues.checkContact}
                     getOptionLabel={option => option.label || ''}
                     id={'tags-standard'}
-                    onChange={(e, item) => FormikSetFieldValue('selectedTechnician', item)}
-                    options={technicianOptions}
+                    onChange={(e, item) => FormikSetFieldValue('selectedContact', item)}
+                    options={contactOptions}
                     renderInput={params =>
                       <TextField
                         required
                         {...params}
+                        InputProps={{
+                          ...params.InputProps,
+                          startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+                        }}
                         variant={'outlined'}
                       />
                     }
-                    classes={{root: classes.autocompleteStyle}}
-                    value={FormikValues.selectedTechnician}
+                    classes={{root: classes.autocompleteStyle, inputRoot: classes.autoCompleteInputRoot, endAdornment: classes.autoCompleteEndAdornment}}
+                    value={FormikValues.selectedContact}
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
-                  color="primary"
-                  className={classes.checkbox}
-                  checked={FormikValues.checkLastEmailSentDateRange}
-                  onChange={(e) => FormikSetFieldValue('checkLastEmailSentDateRange', e.target.checked)}
-                />
-                LAST EMAIL SENT DATE RANGE
-                <div className={classes.inputRow}>
-                  <BCDateRangePicker
-                    preventOverflow
-                    disabled={!FormikValues.checkLastEmailSentDateRange}
-                    range={FormikValues.lastEmailSentDateRange}
-                    onChange={(e) => FormikSetFieldValue('lastEmailSentDateRange', e)}
-                    showClearButton={true}
-                    title={'Filter by Last Email Sent Date Range...'}
-                    classes={{button: classes.noLeftMargin}}
-                  />
-                </div>
-              </div>
-            </Col>
-            <Col>
-              <div>
-                <Checkbox
-                  color="primary"
-                  className={classes.checkbox}
-                  checked={FormikValues.checkAmountRange}
-                  onChange={(e) => FormikSetFieldValue('checkAmountRange', e.target.checked)}
-                />
-                AMOUNT RANGE
-                <div className={classes.inputRow}>
-                  <CustomTextField
-                    variant='outlined'
-                    disabled={!FormikValues.checkAmountRange}
-                    onChange={FormikHandleChange}
-                    name={'amountRangeFrom'}
-                    value={FormikValues.amountRangeFrom}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    }}
-                    placeholder="0"
-                    width={180}
-                  />
-                  <div className={classes.separator}>to</div>
-                  <CustomTextField
-                    variant='outlined'
-                    disabled={!FormikValues.checkAmountRange}
-                    onChange={FormikHandleChange}
-                    name={'amountRangeTo'}
-                    value={FormikValues.amountRangeTo}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                    }}
-                    placeholder="1000"
-                    width={180}
-                  />
-                </div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div>
-                <Checkbox
+                  disabled={!FormikValues.selectedCustomer}
                   color="primary"
                   className={classes.checkbox}
                   checked={FormikValues.checkSubdivision}
@@ -508,19 +484,26 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 />
                 SUBDIVISION
                 <div className={classes.inputRow}>
-                  <DropDownMenu
+                  <Autocomplete
                     disabled={!FormikValues.checkSubdivision}
-                    minwidth='390px'
-                    selectedItem={FormikValues.selectedSubdivision}
-                    items={PAYMENT_STATUS_OPTIONS}
-                    fontSize={17}
-                    onSelect={(e, item) => handleClick(e, item, 'selectedSubdivision')}
-                    placeholder="Select Subdivision"
+                    getOptionLabel={option => option.label || ''}
+                    id={'tags-standard'}
+                    onChange={(e, item) => FormikSetFieldValue('selectedSubdivision', item)}
+                    options={subdivisionOptions}
+                    renderInput={params =>
+                      <TextField
+                        required
+                        {...params}
+                        variant={'outlined'}
+                      />
+                    }
+                    classes={{ root: classes.autocompleteStyle, inputRoot: classes.autoCompleteInputRoot }}
+                    value={FormikValues.selectedSubdivision}
                   />
                 </div>
               </div>
-            </Col>
-            <Col>
+            </Grid>
+            <Grid item md={6} xl={3}>
               <div>
                 <Checkbox
                   color="primary"
@@ -536,7 +519,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     onChange={FormikHandleChange}
                     name={'jobAddressStreet'}
                     value={FormikValues.jobAddressStreet}
-                    placeholder="Address 1"
+                    placeholder=""
                   />
                 </div>
                 <div className={classes.inputRow}>
@@ -571,8 +554,125 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   />
                 </div>
               </div>
-            </Col>
-          </Row>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item md={6} xl={3}>
+              <div>
+                <Checkbox
+                  color="primary"
+                  className={classes.checkbox}
+                  checked={FormikValues.checkPaymentStatus}
+                  onChange={(e) => FormikSetFieldValue('checkPaymentStatus', e.target.checked)}
+                />
+                PAYMENT STATUS
+                <div className={classes.inputRow}>
+                  <DropDownMenu
+                    disabled={!FormikValues.checkPaymentStatus}
+                    minwidth='390px'
+                    selectedItem={FormikValues.selectedPaymentStatus}
+                    items={PAYMENT_STATUS_OPTIONS}
+                    fontSize={17}
+                    onSelect={(e, item) => handleClick(e, item, 'selectedPaymentStatus')}
+                  />
+                </div>
+              </div>
+            </Grid>
+            <Grid item md={6} xl={3}>
+              <div>
+                <Checkbox
+                  color="primary"
+                  className={classes.checkbox}
+                  checked={FormikValues.checkTechnician}
+                  onChange={(e) => FormikSetFieldValue('checkTechnician', e.target.checked)}
+                />
+                TECHNICIAN
+                <div className={classes.inputRow}>
+                  <Autocomplete
+                    disabled={!FormikValues.checkTechnician}
+                    getOptionLabel={option => option.label || ''}
+                    id={'tags-standard'}
+                    onChange={(e, item) => FormikSetFieldValue('selectedTechnician', item)}
+                    options={technicianOptions}
+                    renderInput={params =>
+                      <TextField
+                        required
+                        {...params}
+                        variant={'outlined'}
+                      />
+                    }
+                    classes={{ root: classes.autocompleteStyle, inputRoot: classes.autoCompleteInputRoot }}
+                    value={FormikValues.selectedTechnician}
+                  />
+                </div>
+              </div>
+            </Grid>
+            <Grid item md={6} xl={3}>
+              <div>
+                <Checkbox
+                  color="primary"
+                  className={classes.checkbox}
+                  checked={FormikValues.checkAmountRange}
+                  onChange={(e) => FormikSetFieldValue('checkAmountRange', e.target.checked)}
+                />
+                AMOUNT RANGE
+                <div className={classes.inputRow}>
+                  <CustomTextField
+                    variant='outlined'
+                    disabled={!FormikValues.checkAmountRange}
+                    onChange={FormikHandleChange}
+                    name={'amountRangeFrom'}
+                    value={FormikValues.amountRangeFrom}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    }}
+                    placeholder=""
+                    width={180}
+                  />
+                  <div className={classes.separator}>to</div>
+                  <CustomTextField
+                    variant='outlined'
+                    disabled={!FormikValues.checkAmountRange}
+                    onChange={FormikHandleChange}
+                    name={'amountRangeTo'}
+                    value={FormikValues.amountRangeTo}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    }}
+                    placeholder=""
+                    width={180}
+                  />
+                </div>
+              </div>
+            </Grid>
+            <Grid item md={6} xl={3}>
+              <div>
+                <Checkbox
+                  color="primary"
+                  className={classes.checkbox}
+                  checked={FormikValues.checkLastEmailSentDateRange}
+                  onChange={(e) => FormikSetFieldValue('checkLastEmailSentDateRange', e.target.checked)}
+                />
+                LAST EMAIL SENT DATE RANGE
+                <div style={{
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  marginBottom: 30,
+                }}>
+                  <BCDateRangePicker
+                    biggerButton
+                    preventOverflow
+                    disabled={!FormikValues.checkLastEmailSentDateRange}
+                    range={FormikValues.lastEmailSentDateRange}
+                    onChange={(e) => FormikSetFieldValue('lastEmailSentDateRange', e)}
+                    showClearButton={true}
+                    title={'Filter by Last Email Sent Date Range...'}
+                    classes={{ button: classes.noLeftMargin }}
+                  />
+                </div>
+              </div>
+            </Grid>
+          </Grid>
           
         </div>
       </DialogContent>
@@ -624,6 +724,7 @@ const CustomTextField:any = withStyles({
   root: {
     width: (props:any) => props.width || 390,
     '& .MuiOutlinedInput-root': {
+      height: 43,
       '& fieldset': {
         borderWidth: 1,
         borderRadius: 8,

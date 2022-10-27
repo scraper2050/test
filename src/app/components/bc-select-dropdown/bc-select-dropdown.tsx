@@ -26,7 +26,8 @@ interface ButtonProps {
 const MenuButton = styled.div<{opened: boolean, disabled: boolean, minwidth?: string}>`
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 9px;
+  padding-bottom: 8px;
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   border-style: solid;
   border-width: ${props => props.opened ? '1px' : '1px'};

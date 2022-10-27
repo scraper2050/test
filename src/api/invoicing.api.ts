@@ -116,11 +116,11 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
       if(advanceFilterInvoiceData){
         if(advanceFilterInvoiceData.invoiceDateRange){
           optionObj.startDate = moment(advanceFilterInvoiceData.invoiceDateRange.startDate).format('YYYY-MM-DD');
-          optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDateRange.endDate).add(1,'day').format('YYYY-MM-DD');
+          optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDateRange.endDate).format('YYYY-MM-DD');
         }
         if(advanceFilterInvoiceData.invoiceDate){
           optionObj.startDate = moment(advanceFilterInvoiceData.invoiceDate).format('YYYY-MM-DD');
-          optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDate).add(1,'day').format('YYYY-MM-DD');
+          optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDate).format('YYYY-MM-DD');
         }
         if(advanceFilterInvoiceData.invoiceId){
           optionObj.invoiceId = advanceFilterInvoiceData.invoiceId;
@@ -131,8 +131,8 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
         if(advanceFilterInvoiceData.poNumber){
           optionObj.customerPO = advanceFilterInvoiceData.poNumber;
         }
-        if(advanceFilterInvoiceData.selectedPaymentStatus){
-          optionObj.status = `["${advanceFilterInvoiceData.selectedPaymentStatus}"`;
+        if(advanceFilterInvoiceData.selectedPaymentStatus && advanceFilterInvoiceData.selectedPaymentStatus !== 'all'){
+          optionObj.status = `["${advanceFilterInvoiceData.selectedPaymentStatus}"]`;
         }
         if(advanceFilterInvoiceData.selectedCustomer){
           optionObj.customerId = advanceFilterInvoiceData.selectedCustomer.value;
@@ -140,18 +140,21 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
         if(advanceFilterInvoiceData.selectedTechnician){
           optionObj.technicianId = advanceFilterInvoiceData.selectedTechnician.value;
         }
+        if(advanceFilterInvoiceData.selectedContact){
+          optionObj.customerContactId = advanceFilterInvoiceData.selectedContact.value;
+        }
         if(advanceFilterInvoiceData.lastEmailSentDateRange){
           optionObj.lastEmailStartDate = moment(advanceFilterInvoiceData.lastEmailSentDateRange.startDate).format('YYYY-MM-DD');
-          optionObj.lastEmailEndDate = moment(advanceFilterInvoiceData.lastEmailSentDateRange.endDate).add(1,'day').format('YYYY-MM-DD');
+          optionObj.lastEmailEndDate = moment(advanceFilterInvoiceData.lastEmailSentDateRange.endDate).format('YYYY-MM-DD');
         }
         if(advanceFilterInvoiceData.amountRangeFrom){
-          optionObj.startAmount = advanceFilterInvoiceData.amountRangeFrom;
+          optionObj.startAmount = parseInt(advanceFilterInvoiceData.amountRangeFrom);
         }
         if(advanceFilterInvoiceData.amountRangeTo){
-          optionObj.endAmount = advanceFilterInvoiceData.amountRangeTo;
+          optionObj.endAmount = parseInt(advanceFilterInvoiceData.amountRangeTo);
         }
         if(advanceFilterInvoiceData.selectedSubdivision){
-          optionObj.jobLocationId = advanceFilterInvoiceData.selectedSubdivision;
+          optionObj.jobLocationId = advanceFilterInvoiceData.selectedSubdivision.value;
         }
         if(advanceFilterInvoiceData.jobAddressStreet){
           optionObj.jobAddress = advanceFilterInvoiceData.jobAddressStreet;
@@ -207,7 +210,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
 };
 
 let cancelTokenGetAllDraftInvoicesAPI:any;
-export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string) => {
+export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, recentOnly = false) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setDraftInvoicesLoading(true));
@@ -219,6 +222,9 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
       };
       if(keyword){
         optionObj.keyword = keyword
+      }
+      if(recentOnly){
+        optionObj.recentOnly = true;
       }
       if(cancelTokenGetAllDraftInvoicesAPI) {
         cancelTokenGetAllDraftInvoicesAPI.cancel('axios canceled');
@@ -251,7 +257,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
 };
 
 let cancelTokenGetUnpaidInvoicesAPI:any;
-export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string,  selectionRange?:{startDate:Date;endDate:Date}|null) => {
+export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string,  selectionRange?:{startDate:Date;endDate:Date}|null, recentOnly = false) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setUnpaidInvoicesLoading(true));
@@ -264,6 +270,9 @@ export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCur
       };
       if(keyword){
         optionObj.keyword = keyword
+      }
+      if(recentOnly){
+        optionObj.recentOnly = true
       }
       if(selectionRange){
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
