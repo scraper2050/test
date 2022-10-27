@@ -70,6 +70,7 @@ import BCCustomizeRevenueReportModal from "./bc-customize-revenue-report-modal/b
 import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report-modal";
 import BcRecordSyncStatusModal from "./bc-record-sync-modal/bc-record-sync-modal";
 import BCAdvanceFilterInvoiceModal from "./bc-advance-filter-invoice-modal/bc-advance-filter-invoice-modal";
+import BcArReportModal from "./bc-ar-report-modal/bc-ar-report-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -698,6 +699,19 @@ function BCModal() {
         });
         data.maxHeight='100%';
         setComponent(<BcPayrollPaymentDetailModal
+          payment={data.payment}
+          dateRange={data.dateRange}
+        />);
+        break;
+      case modalTypes.CUSTOMIZE_AR_REPORT_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        // data.maxHeight='100%';
+        setComponent(<BcArReportModal
           payment={data.payment}
           dateRange={data.dateRange}
         />);
