@@ -10,6 +10,7 @@ import BCBackButton from 'app/components/bc-back-button/bc-back-button';
 import ARStandardReports from "./ar-standard";
 import ARMemorizedReports from "./ar-memorized";
 import { setReportShowing } from 'actions/report/report.action'
+import ARCustomReport from "./ar-custom";
 
 const chartData = [
   ["Element", "Density", { role: "style" }],
@@ -33,12 +34,7 @@ function ARReportPage({ classes }: any) {
     dispatch(setReportShowing(false))
   }, []);
 
-  useEffect(() => {
-    if(location?.state?.tab !== undefined){
-      setCurTab(location.state.tab);
-    }
-  }, [location]);
-
+  console.log(location.state)
 
   return (
     <div className={classes.pageMainContainer}>
@@ -57,7 +53,7 @@ function ARReportPage({ classes }: any) {
             onChangeTab={handleTabChange}
             tabsData={[
               {
-                'label': 'Account Receivable',
+                'label': 'Accounts Receivable',
                 'value': 0
               },
               {
@@ -72,7 +68,8 @@ function ARReportPage({ classes }: any) {
                 className={classes.dataContainer}
                 hidden={curTab !== 0}
                 id={'0'}>
-                <ARStandardReports />
+                {location?.state?.type === 'custom' ? <ARCustomReport /> : <ARStandardReports />}
+
               </div>
               <div
                 className={classes.dataContainer}
