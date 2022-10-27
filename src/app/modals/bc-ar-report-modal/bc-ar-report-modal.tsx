@@ -74,12 +74,12 @@ function BcArReportModal({
       days: 30,
       periods: 4,
       filterCustomer: false,
-      customer: null
+      customers: []
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
       history.push({
         pathname: '/main/reports/ar',
-        state: {type: 'custom', asOf: values.asOf, customer: values.customer}
+        state: {type: 'custom', asOf: values.asOf, customers: values.customers}
         });
       closeModal();
     }
@@ -124,45 +124,45 @@ function BcArReportModal({
             value={FormikValues.asOf}
           />
 
-          <div className={classes.titleDiv}>
-            <ExpandMoreIcon />
-            <Typography className={classes.title}>AGING METHOD</Typography>
-          </div>
+          {/*<div className={classes.titleDiv}>*/}
+          {/*  <ExpandMoreIcon />*/}
+          {/*  <Typography className={classes.title}>AGING METHOD</Typography>*/}
+          {/*</div>*/}
 
-          <RadioGroup row aria-label="agingMethode" name="agingMethode" value={FormikValues.agingMethode} onChange={formikChange}>
-            <FormControlLabel color="primary" value="current" control={<Radio />} label="Current" />
-            <FormControlLabel color="primary" value="report" control={<Radio />} label="Report Date" />
-          </RadioGroup>
+          {/*<RadioGroup row aria-label="agingMethode" name="agingMethode" value={FormikValues.agingMethode} onChange={formikChange}>*/}
+          {/*  <FormControlLabel color="primary" value="current" control={<Radio />} label="Current" />*/}
+          {/*  <FormControlLabel color="primary" value="report" control={<Radio />} label="Report Date" />*/}
+          {/*</RadioGroup>*/}
 
-          <div className="MethodContainer">
-            <FormGroup>
-              <InputLabel>
-                {'Days per aging period'}
-              </InputLabel>
-              <TextField
-                variant="outlined"
-                name="days"
-                onChange={formikChange}
-                placeholder={'Days'}
-                value={FormikValues.days}
-              />
-            </FormGroup>
+          {/*<div className="MethodContainer">*/}
+          {/*  <FormGroup>*/}
+          {/*    <InputLabel>*/}
+          {/*      {'Days per aging period'}*/}
+          {/*    </InputLabel>*/}
+          {/*    <TextField*/}
+          {/*      variant="outlined"*/}
+          {/*      name="days"*/}
+          {/*      onChange={formikChange}*/}
+          {/*      placeholder={'Days'}*/}
+          {/*      value={FormikValues.days}*/}
+          {/*    />*/}
+          {/*  </FormGroup>*/}
 
-            <FormGroup>
-              <InputLabel>
-                {'Number of periods'}
-              </InputLabel>
-              <TextField
-                variant="outlined"
-                name="periods"
-                onChange={formikChange}
-                placeholder={'Periods'}
-                value={FormikValues.periods}
-              />
-            </FormGroup>
-          </div>
+          {/*  <FormGroup>*/}
+          {/*    <InputLabel>*/}
+          {/*      {'Number of periods'}*/}
+          {/*    </InputLabel>*/}
+          {/*    <TextField*/}
+          {/*      variant="outlined"*/}
+          {/*      name="periods"*/}
+          {/*      onChange={formikChange}*/}
+          {/*      placeholder={'Periods'}*/}
+          {/*      value={FormikValues.periods}*/}
+          {/*    />*/}
+          {/*  </FormGroup>*/}
+          {/*</div>*/}
 
-          <div className={classes.titleDiv}>
+          <div className={classes.titleDiv} style={{marginLeft: -10}}>
             <Checkbox
               name="filterCustomer"
               color="primary"
@@ -170,15 +170,16 @@ function BcArReportModal({
               // onBlur={handleBlur}
               checked={FormikValues.filterCustomer}
             />
-            <Typography className={classes.title}>CUSTOMER</Typography>
+            <Typography className={classes.title}>CUSTOMER(S)</Typography>
 
           </div>
           <Autocomplete
+            multiple
             disabled={loading || !FormikValues.filterCustomer}
             getOptionLabel={(option: any) => option?.profile?.displayName ? option?.profile.displayName : ''}
             // getOptionDisabled={(option) => !option?.isActive}
             id={'tags-standard'}
-            onChange={(ev: any, newValue: any) =>  setFieldValue('customer', newValue)}
+            onChange={(ev: any, newValue: any) =>  setFieldValue('customers', newValue)}
             options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
             renderInput={params => <TextField
               {...params}
@@ -188,7 +189,7 @@ function BcArReportModal({
               //helperText={isCustomerErrorDisplayed && 'Please Select A Customer'}
             />
             }
-            value={FormikValues.customer}
+            value={FormikValues.customers}
           />
 
 
@@ -274,7 +275,7 @@ const DataContainer = styled.div`
   .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
     padding: 3px;
     width: 400px;
-    margin-left: 50px;
+    margin-left: 40px;
     margin-top: -20px;
   }
 

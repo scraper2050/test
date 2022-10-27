@@ -1,23 +1,12 @@
 import { Theme } from '@material-ui/core/styles';
-import { swipe_wrapper, dataContainer, fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
 import {
   ASH,
   DARK_ASH, GRAY1, GRAY2,
-  GRAY3,
-  PRIMARY_BLUE,
-  PRIMARY_GREEN
+  GRAY3, LIGHT_BLUE,
 } from "../../../../../constants";
 import styled from "styled-components";
 
 export default (theme: Theme): any => ({
-  // ...fabRoot,
-  // ...pageContent,
-  // ...pageMainContainer,
-  // ...pageContainer,
-  // ...topActionBar,
-  // ...dataContainer,
-  // ...swipe_wrapper,
-
   pageContainer: {
     padding: '0 40px',
   },
@@ -51,16 +40,17 @@ export default (theme: Theme): any => ({
   },
   customSummaryContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: ASH,
     padding: '27px 48px',
     //margin: '30px 0',
     marginTop: 30,
   },
-  customSummaryRow: {
+  customSummaryColumn: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     padding: '10px 0'
   },
@@ -72,10 +62,10 @@ export default (theme: Theme): any => ({
     fontWeight: '700',
     fontSize: 22,
     color: GRAY2,
-    margin: 0,
+    margin: '0 0 20px 0',
   },
   customSummaryLabel: {
-    fontWeight: '500',
+    fontWeight: '700',
     fontSize: 9,
     color: GRAY3,
     margin: 0,
@@ -113,7 +103,7 @@ export const SummaryContainer = styled.div `
     margin-top: 10px;
     display: flex;
     justify-content: center;
-    background-color: ${PRIMARY_BLUE}05;
+    background-color: ${LIGHT_BLUE};
     border-radius: 8px;
     padding: 30px;
     div {

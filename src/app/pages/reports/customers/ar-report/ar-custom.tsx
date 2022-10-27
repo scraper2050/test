@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from "react-redux";
-import {Typography, withStyles} from '@material-ui/core';
+import {TablePagination, withStyles} from '@material-ui/core';
 
-import styles, {SummaryContainer} from './styles';
+import styles from './styles';
 import BCCircularLoader
   from "app/components/bc-circular-loader/bc-circular-loader";
 import {generateAccountReceivableReport} from 'api/reports.api';
@@ -16,8 +16,7 @@ import {
   formatCurrency,
   formatDateYMD, formatShortDateNoDay
 } from "../../../../../helpers/format";
-import {GRAY3, modalTypes, PRIMARY_BLUE} from "../../../../../constants";
-import ApexChart from 'react-apexcharts';
+import {LIGHT_BLUE, modalTypes} from "../../../../../constants";
 import BCMenuToolbarButton from "../../../../components/bc-menu-toolbar-button";
 import {
   openModalAction,
@@ -26,11 +25,11 @@ import {
 import {
   DataGrid,
   GridColDef,
-  GridRowData,
-  GridValueGetterParams
 } from '@material-ui/data-grid';
 import styled from "styled-components";
 import {useLocation} from "react-router-dom";
+import BCTablePagination
+  from "../../../../components/bc-table-container/bc-table-pagination";
 
 interface RevenueStandardProps {
   classes: any;
@@ -63,23 +62,24 @@ const MORE_ITEMS = [
 ]
 
 const columns: GridColDef[] = [
-  { field: 'customer', headerName: 'Customer', width: 150, disableColumnMenu: true },
-  { field: 'Current', headerName: 'Current', width: 135, disableColumnMenu: true },
-  { field: '1 - 30', headerName: '1  - 30', width: 135, disableColumnMenu: true },
-  { field: '31 - 60', headerName: '31 - 60', width: 135, disableColumnMenu: true },
-  { field: '61 - 90', headerName: '61 - 90', width: 135, disableColumnMenu: true },
-  { field: '91 and Over Past Due', headerName: '91 and Over', width: 135, disableColumnMenu: true },
-  { field: 'total', headerName: 'Total', width: 135, disableColumnMenu: true },
+  { field: 'customer', headerName: 'Customer', flex: 1, disableColumnMenu: true },
+  { field: 'Current', headerName: 'Current',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  { field: '1 - 30', headerName: '1  - 30',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  { field: '31 - 60', headerName: '31 - 60',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  { field: '61 - 90', headerName: '61 - 90',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  { field: '91 and Over Past Due', headerName: '91 and Over',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  { field: 'total', headerName: 'Total',flex: 1.2, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
 ];
 
-  const ARCustomReport = ({classes}: RevenueStandardProps) => {
+const ARCustomReport = ({classes}: RevenueStandardProps) => {
   const dispatch = useDispatch();
-  const location = useLocation<{asOf: string, customer: any}>();
+  const location = useLocation<{asOf: string, customers: any[]}>();
   const [isLoading, setIsLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
   const [reportData, setReportData] = useState<CUSTOM_REPORT | null>(null);
   const {state} = location;
-  const {asOf, customer} = state || {asOf: new Date(), customers: null};
+  const {asOf, customers = []} = state || {asOf: new Date(), customers: []};
 
   const formatReport = (report: any) => {
     const {globalAgingBuckets, customerAgingBuckets} = report;
@@ -120,12 +120,14 @@ const columns: GridColDef[] = [
 
   const getReportData = async () => {
     setIsLoading(true);
+    const customerIds = customers.length ? customers.map((customer: any) => customer._id) : undefined;
     const {
       status,
       report,
       message
-    } = await generateAccountReceivableReport(2, formatDateYMD(asOf), customer ? [customer._id] : undefined);
+    } = await generateAccountReceivableReport(2, formatDateYMD(asOf), customerIds);
     if (status === 1) {
+      setCurrentPage(0);
       formatReport(report);
     } else {
       dispatch(error(message));
@@ -165,6 +167,7 @@ const columns: GridColDef[] = [
     getReportData();
   }, [location]);
 
+
   return (
     <div style={{padding: '20px 20px 0 20px'}}>
       {isLoading ?
@@ -181,36 +184,32 @@ const columns: GridColDef[] = [
           </div>
 
           <div className={classes.customSummaryContainer}>
-            <div className={classes.customSummaryRow}>
-              <div className={classes.customSummaryValueContainer}>
-                <p className={classes.customSummaryLabel}>As Of</p>
-                <p className={classes.customSummaryValue}>{formatShortDateNoDay(asOf)}</p>
-              </div>
-              <div className={classes.customSummaryValueContainer}>
-                <p className={classes.customSummaryLabel}>Customer(s)</p>
-                <p className={classes.customSummaryValue}>{customer ? customer?.profile?.displayName : 'All'}</p>
-              </div>
-              <div />
-              <div className={classes.customSummaryValueContainer}>
-                <p className={classes.customSummaryTitle}>A/R REPORT</p>
-              </div>
+            <div className={classes.customSummaryColumn}>
+              <p className={classes.customSummaryLabel}>As Of</p>
+              <p className={classes.customSummaryValue}>{formatShortDateNoDay(asOf)}</p>
             </div>
-            <div className={classes.customSummaryRow}>
-              <div />
-              <div className={classes.customSummaryValueContainer}>
-                <p className={classes.customSummaryTotalLabel}>Total Outstanding</p>
-                <p className={classes.customSummaryTotalValue}>{reportData?.outstanding}</p>
-              </div>
+            <div className={classes.customSummaryColumn}>
+              <p className={classes.customSummaryLabel}>Customer(s)</p>
+              {customers.length ?
+                customers.map((customer: any) => <p className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
+                : 'All'
+              }
+            </div>
+            <div />
+            <div className={classes.customSummaryColumn} style={{alignItems: 'flex-end'}}>
+              <p className={classes.customSummaryTitle}>A/R REPORT</p>
+              <p className={classes.customSummaryTotalLabel}>Total Outstanding</p>
+              <p className={classes.customSummaryTotalValue}>{reportData?.outstanding}</p>
             </div>
           </div>
 
-          <div className={classes.customSubSummaryContainer}>
+          {currentPage === 0 && <div className={classes.customSubSummaryContainer}>
             {reportData?.aging.map((data, index) => <div key={data.title}>
               <p className={classes.label} style={{fontSize: 10}}>{data.title}</p>
               <p className={classes.value} style={{margin: '10px 0', fontSize: 14}}>{data.value}</p>
               </div>
             )}
-          </div>
+          </div>}
 
           {reportData?.customersData &&
           <div style={{height: 'max-content', width: '100%'}}>
@@ -219,9 +218,27 @@ const columns: GridColDef[] = [
               autoHeight={true}
               rows={reportData?.customersData}
               columns={columns}
+              page={currentPage}
               pageSize={pageSize}
               rowsPerPageOptions={[5, 10, 50]}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              components={{
+                Footer: CustomFooter,
+              }}
+              componentsProps={{
+                footer: {
+                  total: reportData?.outstanding,
+                  rowsCount: reportData?.customersData.length,
+                  pageNumber: currentPage,
+                  pageSize,
+                  handleChangePage: (event: any, pageNumber: number) => setCurrentPage(pageNumber),
+                  handleChangeRowsPerPage: (event: any) => {
+                    setCurrentPage(0);
+                    setPageSize(event.target.value);
+                  },
+                }
+              }}
+              // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              // onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
             />
           </div>
           }
@@ -240,7 +257,6 @@ const BCDataGrid = styled(DataGrid)`
     border: 0;
     margin-bottom: 30px;
 
-
   .MuiDataGrid-columnSeparator {
     display: none;
   }
@@ -248,4 +264,75 @@ const BCDataGrid = styled(DataGrid)`
   .MuiDataGrid-footerContainer {
     justify-content: flex-start;
   }
+
+  .MuiToolbar-gutters {
+    padding-left: 10px;
+  }
+
+  .MuiTablePagination-spacer {
+    flex: 0;
+  }
+
+  .MuiTablePagination-root {
+    color: rgba(0, 0, 0, 0.87);
+    overflow: auto;
+    font-size: 0.875rem;
+    border-bottom: none;
+    border-top: 2px solid rgba(224, 224, 224, 1);
+  }
+
+  .GrandTotalContainer {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 10px;
+    background-color: ${LIGHT_BLUE};
+  }
 `
+
+
+// const CustomHeader = withStyles(
+//   styles,
+//   {'withTheme': true}
+// )(({classes, headerData}: {classes: any, headerData: ReportData[]}) => <div className={classes.customSubSummaryContainer}>
+//   {headerData.map((data, index) => <div key={data.title}>
+//     <p className={classes.label} style={{fontSize: 10}}>{data.title}</p>
+//     <p className={classes.value} style={{margin: '10px 0', fontSize: 14}}>{data.value}</p>
+//     </div>
+//   )}
+// </div>)
+
+const CustomFooter = ({total, rowsCount, pageNumber, pageSize, handleChangePage, handleChangeRowsPerPage}: any) => <>
+  {Math.floor(rowsCount / pageSize) === pageNumber && <div className="GrandTotalContainer">
+    <strong>Total Outstanding</strong>
+    <strong>{total}</strong>
+  </div>}
+  <TablePagination
+    ActionsComponent={BCTablePagination}
+    style={{width: '80vw'}}
+    //colSpan={5}
+    count={rowsCount}
+    onChangePage={handleChangePage}
+    onChangeRowsPerPage={handleChangeRowsPerPage}
+    page={pageNumber}
+    rowsPerPage={pageSize}
+    rowsPerPageOptions={[
+      {
+        label: '5',
+        value: 5
+      }, {
+        label: '10',
+        value: 10
+      }, {
+        label: '25',
+        value: 25
+      }, {
+        label: 'All',
+        value: rowsCount + 1
+      }
+    ]}
+    SelectProps={{
+      'inputProps': {'aria-label': 'rows per page'},
+      'native': false
+    }}
+  />
+</>

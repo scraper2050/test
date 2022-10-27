@@ -708,7 +708,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'md'
+          'maxWidth': 'sm'
         });
         // data.maxHeight='100%';
         setComponent(<BcArReportModal

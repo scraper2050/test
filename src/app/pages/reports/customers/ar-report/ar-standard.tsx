@@ -251,7 +251,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
   // console.log(chartData)
 
   return (
-    <div style={{padding: '20px 20px 0 20px'}}>
+    <div style={{padding: '20px 20px 0 20px', height: '85vh'}}>
       {isLoading ?
         <BCCircularLoader heightValue={'20vh'}/>
         :
@@ -298,7 +298,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
               options={{...chartOptions, xaxis: {...chartOptions.xaxis, categories: xLabels}}}
               series={chartData}
               type="bar"
-              height={350}
+              height={370}
             />
           </div>
         </>
