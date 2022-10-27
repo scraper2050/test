@@ -21,7 +21,7 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
   
   const { customer, _id, invoiceId } = invoice;
   const dispatch = useDispatch();
-  const emailToSend = invoice?.contactsObj[0]?.email || customer?.info?.email
+  const emailToSend = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.email : customer?.info?.email
 
   const sendInvoice = () => {
     dispatch(sendEmailAction.fetch({ 'email': emailToSend,
@@ -69,7 +69,7 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
 
   const data = {
     'modalTitle': 'Send this invoice',
-    'customer': invoice?.contactsObj[0]?.name || customer?.profile?.displayName,
+    'customer': invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.name : customer?.profile?.displayName,
     // 'customerEmail': customer?.info?.email,
     'customerEmail': emailToSend,
     'handleClick': sendInvoice,
