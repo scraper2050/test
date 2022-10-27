@@ -231,23 +231,42 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           disabled={!customerValue}
           onChange={handleSelectAll}
         />
-        <span>Invoice ID</span>
+         <span>Status</span>
       </>,
-      'accessor': 'invoiceId',
+      'accessor': 'paid',
       'className': 'font-bold',
       'sortable': false,
-      Cell({row}: any) {
+      Cell({ row }: any) {
+        const { status = '' } = row.original;
+        const textStatus = status.split('_').join(' ').toLowerCase();
         return <div>
           <Checkbox
             color="primary"
             classes={{root: classes.checkbox}}
             checked={selectedIndexes.indexOf(row.original._id) >= 0}
           />
-          <span>
-            {row.original.invoiceId}
-          </span>
+          <CSButtonSmall
+              variant="contained"
+              style={{
+                backgroundColor: PAYMENT_STATUS_COLORS[status],
+                color: '#fff',
+              }}
+            >
+              <span style={{ textTransform: 'capitalize' }}>{textStatus}</span>
+            </CSButtonSmall>
         </div>;
       },
+    },
+    
+    {
+      Cell({ row }: any) {
+        return <div>
+          {row.original.invoiceId}
+        </div>
+      },
+      'Header': 'Invoice ID',
+      'accessor': 'invoiceId',
+      'className': 'font-bold',
     },
     {
       Cell({ row }: any) {
@@ -277,28 +296,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'Header': 'Amount Due',
       'width': 20
     },
-    {
-      Cell({ row }: any) {
-        const { status = '' } = row.original;
-        const textStatus = status.split('_').join(' ').toLowerCase();
-        return (
-          <div>
-            <CSButtonSmall
-              variant="contained"
-              style={{
-                backgroundColor: PAYMENT_STATUS_COLORS[status],
-                color: '#fff',
-              }}
-            >
-              <span style={{ textTransform: 'capitalize' }}>{textStatus}</span>
-            </CSButtonSmall>
-          </div>
-
-        )
-      },
-      'Header': 'Payment Status',
-      'accessor': 'paid',
-    },
+  
     { Cell({ row }: any) {
         return row.original.lastEmailSent
           ? formatDatTimelll(row.original.lastEmailSent)
@@ -323,6 +321,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   ];
 
   useEffect(() => {
+    console.log('invoice ist=>',invoiceList)
     if (invoiceList.length > 0) {
       const newInvoiceList = invoiceList.map((item: any) => ({
         ...item,
