@@ -34,6 +34,7 @@ import {formatCurrency} from "../../../helpers/format";
 import BCTextField from "../../components/bc-text-field/bc-text-field";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import {getCustomers} from "../../../actions/customer/customer.action";
+import {useHistory} from "react-router-dom";
 
 interface ApiProps {
   customerId: string,
@@ -54,6 +55,7 @@ function BcArReportModal({
   fromHistory,
 }: any): JSX.Element {
   const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
+  const history = useHistory();
   const {data: customers, loading} = useSelector(({ customers }: any) => customers);
   const dispatch = useDispatch();
 
@@ -75,16 +77,11 @@ function BcArReportModal({
       customer: null
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
-      setSubmitting(true);
-
-      // try {
-      //   setSubmitting(false);
-      //     //closeModal()
-      // }).catch((e: any) => {
-      //   console.log(e.message);
-      //   dispatch(error(e.message));
-      //   setSubmitting(false);
-      // })
+      history.push({
+        pathname: '/main/reports/ar',
+        state: {type: 'custom', asOf: values.asOf, customer: values.customer}
+        });
+      closeModal();
     }
   });
 
@@ -120,7 +117,7 @@ function BcArReportModal({
           <BCDateTimePicker
             // label="AS OF"
             className={'due_date'}
-            handleChange={formikChange}
+            handleChange={(date: Date) => setFieldValue('asOf', date)}
             name={'asOf'}
             id={'asOf'}
             placeholder={'Date'}

@@ -56,8 +56,10 @@ export const createMemorizedReport = async (params: any) => {
   }
 }
 
-export const generateAccountReceivableReport = async (type: number, asOf: string) => {
-  const params = `?reportData=${type}&asOf=${asOf}`
+export const generateAccountReceivableReport = async (type: number, asOf: string, customerIds?: string[]) => {
+  const ids = customerIds ? JSON.stringify(customerIds) : null;
+
+  const params = `?reportData=${type}&asOf=${asOf}${ids ? '&customerIds='+ids : ''}`
   try {
     const response: any = await request(`/generateAccountReceivableReport${params}`, 'GET', {});
     return response.data;
