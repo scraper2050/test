@@ -150,6 +150,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   const handleSend = async(e: any) => {
     e.stopPropagation();
+    console.log('indices=>',selectedIndexes)
     try {
       const response = await getInvoiceEmailTemplate(selectedIndexes);
       const {emailTemplate: emailDefault, status, message} = response.data
