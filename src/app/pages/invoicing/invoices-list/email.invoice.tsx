@@ -32,7 +32,6 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
     customerName = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.name : customer?.profile?.displayName
   }
   
-  console.log('invoice be like', invoice)
 
   const sendInvoice = () => {
     dispatch(sendEmailAction.fetch({ 'email': emailToSend,
