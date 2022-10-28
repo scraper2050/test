@@ -14,14 +14,25 @@ interface EmailReportProps {
     invoice: any,
     Component: any,
     showLoader?: boolean,
+    from?:string | null
 }
 
 
-export default function EmailInvoiceButton({ invoice, Component, showLoader = true }: EmailReportProps) {
+export default function EmailInvoiceButton({ invoice, Component, showLoader = true, from=null }: EmailReportProps) {
   
   const { customer, _id, invoiceId } = invoice;
   const dispatch = useDispatch();
-  const emailToSend = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.email : customer?.info?.email
+  let emailToSend: string;
+  let customerName: string;
+  if (typeof (from) === 'string' && from === 'view-invoice') {
+    emailToSend = invoice?.customerContactId?.email || customer?.info?.email
+    customerName = invoice?.customerContactId?.name || customer?.info?.name
+  } else {
+    emailToSend = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.email : customer?.info?.email
+    customerName = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.name : customer?.profile?.displayName
+  }
+  
+  console.log('invoice be like', invoice)
 
   const sendInvoice = () => {
     dispatch(sendEmailAction.fetch({ 'email': emailToSend,
@@ -69,7 +80,7 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
 
   const data = {
     'modalTitle': 'Send this invoice',
-    'customer': invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.name : customer?.profile?.displayName,
+    'customer': customerName,
     // 'customerEmail': customer?.info?.email,
     'customerEmail': emailToSend,
     'handleClick': sendInvoice,
