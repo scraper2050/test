@@ -255,6 +255,7 @@ function ViewInvoice({ classes, theme }: any) {
               >
                 Email
               </Button>}
+              from="view-invoice"
               invoice={invoiceDetail}
             />
             }
