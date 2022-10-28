@@ -26,7 +26,7 @@ export default function EmailInvoiceButton({ invoice, Component, showLoader = tr
   let customerName: string;
   if (typeof (from) === 'string' && from === 'view-invoice') {
     emailToSend = invoice?.customerContactId?.email || customer?.info?.email
-    customerName = invoice?.customerContactId?.name || customer?.info?.name
+    customerName = invoice?.customerContactId?.name || customer?.profile?.displayName
   } else {
     emailToSend = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.email : customer?.info?.email
     customerName = invoice?.contactsObj?.length ? invoice?.contactsObj[0]?.name : customer?.profile?.displayName
