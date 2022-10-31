@@ -297,28 +297,61 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'Header': 'Amount Due',
       'width': 20
     },
-  
+
     { Cell({ row }: any) {
-        return row.original.lastEmailSent
-          ? formatDatTimelll(row.original.lastEmailSent)
+        return row.original.contactsObj.length>0
+          ? row.original.contactsObj[0]?.name
           : 'N/A';
       },
-      'Header': 'Last Emailed',
-      'accessor': 'lastEmailSent',
+      'Header': 'Contact',
+      'accessor': 'row.original.contactsObj[0]?.name',
       'className': 'font-bold',
       'sortable': true
     },
-    {
-      Cell({ row }: any) {
-        return row.original.createdAt
-          ? formatDateMMMDDYYYY(row.original.createdAt)
+
+    { Cell({ row }: any) {
+        return row.original.contactsObj.length>0
+          ? row.original.contactsObj[0]?.email
           : 'N/A';
       },
-      'Header': 'Invoice Date',
-      'accessor': 'createdAt',
+      'Header': 'Email',
+      'accessor': 'row.original.contactsObj[0]?.email',
       'className': 'font-bold',
       'sortable': true
     },
+    // {
+    //   Cell({ row }: any) {
+    //     return row.original.createdAt
+    //       ? formatDateMMMDDYYYY(row.original.createdAt)
+    //       : 'N/A';
+    //   },
+    //   'Header': 'Invoice Date',
+    //   'accessor': 'createdAt',
+    //   'className': 'font-bold',
+    //   'sortable': true
+    // },
+  
+    // { Cell({ row }: any) {
+    //     return row.original.lastEmailSent
+    //       ? formatDatTimelll(row.original.lastEmailSent)
+    //       : 'N/A';
+    //   },
+    //   'Header': 'Last Emailed',
+    //   'accessor': 'lastEmailSent',
+    //   'className': 'font-bold',
+    //   'sortable': true
+    // },
+    // {
+    //   Cell({ row }: any) {
+    //     return row.original.createdAt
+    //       ? formatDateMMMDDYYYY(row.original.createdAt)
+    //       : 'N/A';
+    //   },
+    //   'Header': 'Invoice Date',
+    //   'accessor': 'createdAt',
+    //   'className': 'font-bold',
+    //   'sortable': true
+    // },
   ];
 
   useEffect(() => {
