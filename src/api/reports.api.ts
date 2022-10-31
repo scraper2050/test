@@ -67,3 +67,16 @@ export const generateAccountReceivableReport = async (type: number, asOf: string
     return {status: 0, message: `Something went wrong`};
   }
 }
+
+
+export const generateAccountReceivablePdfReport = async (type: number, asOf: string, customerIds?: string[]) => {
+  const ids = customerIds ? JSON.stringify(customerIds) : null;
+
+  const params = `?reportData=${type}&asOf=${asOf}${ids ? '&customerIds='+ids : ''}`
+  try {
+    const response: any = await request(`/generateReportPdf/AccountReceivableReport${params}`, 'GET', {});
+    return response.data;
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
