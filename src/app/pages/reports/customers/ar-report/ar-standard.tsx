@@ -5,7 +5,10 @@ import {Typography, withStyles} from '@material-ui/core';
 import styles, {SummaryContainer} from './styles';
 import BCCircularLoader
   from "app/components/bc-circular-loader/bc-circular-loader";
-import {generateAccountReceivableReport} from 'api/reports.api';
+import {
+  generateAccountReceivablePdfReport,
+  generateAccountReceivableReport
+} from 'api/reports.api';
 import {error, info} from 'actions/snackbar/snackbar.action';
 import BCDateTimePicker
   from "../../../../components/bc-date-time-picker/bc-date-time-picker";
@@ -212,6 +215,26 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
     setIsLoading(false);
   }
 
+  const generatePdfReport = async() => {
+    try {
+      setIsLoading(true);
+      const {
+        status,
+        reportUrl,
+        message
+      } = await generateAccountReceivablePdfReport(1, formatDateYMD(asOfDate));
+      if (status === 1) {
+        window.open(reportUrl)
+      } else {
+        dispatch(error(message));
+      }
+    } catch (e) {
+      dispatch(error(e.message));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleMenuToolbarListClick = (event: any, id: number) => {
     event.stopPropagation();
     switch (id) {
@@ -230,7 +253,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
         }, 200);
         break;
       case 1:
-        dispatch(info('This feature is still under development'));
+        generatePdfReport();
         break;
       case 2:
         dispatch(info('This feature is still under development'));

@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {TablePagination, withStyles} from '@material-ui/core';
 
 import styles from './styles';
 import BCCircularLoader
   from "app/components/bc-circular-loader/bc-circular-loader";
-import {generateAccountReceivableReport} from 'api/reports.api';
+import {
+  generateAccountReceivablePdfReport,
+  generateAccountReceivableReport
+} from 'api/reports.api';
 import {error, info} from 'actions/snackbar/snackbar.action';
 import BCDateTimePicker
   from "../../../../components/bc-date-time-picker/bc-date-time-picker";
@@ -74,8 +77,9 @@ const columns: GridColDef[] = [
 const ARCustomReport = ({classes}: RevenueStandardProps) => {
   const dispatch = useDispatch();
   const location = useLocation<{asOf: string, customers: any[]}>();
+  const { companyName } = useSelector(({ profile }: any) => profile)
   const [isLoading, setIsLoading] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
+  // const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [reportData, setReportData] = useState<CUSTOM_REPORT | null>(null);
   const {state} = location;
@@ -87,7 +91,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     const BUCKETS: any = {};
 
     Object.keys(globalAgingBuckets).forEach((key, index) => {
-      BUCKETS[globalAgingBuckets[key].label] = '$0';
+      BUCKETS[globalAgingBuckets[key].label] = '';
       if (index > 0) {
         temp.push({
           title: globalAgingBuckets[key].label.substr(0, 11),
@@ -119,20 +123,47 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
   }
 
   const getReportData = async () => {
-    setIsLoading(true);
-    const customerIds = customers.length ? customers.map((customer: any) => customer._id) : undefined;
-    const {
-      status,
-      report,
-      message
-    } = await generateAccountReceivableReport(2, formatDateYMD(asOf), customerIds);
-    if (status === 1) {
-      setCurrentPage(0);
-      formatReport(report);
-    } else {
-      dispatch(error(message));
+    try {
+      setIsLoading(true);
+      const customerIds = customers.length ? customers.map((customer: any) => customer._id) : undefined;
+      const {
+        status,
+        report,
+        message
+      } = await generateAccountReceivableReport(2, formatDateYMD(asOf), customerIds);
+      if (status === 1) {
+        setCurrentPage(0);
+        formatReport(report);
+      } else {
+        dispatch(error(message));
+      }
+    } catch (e) {
+      dispatch(error(e.message));
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+
+  }
+
+  const generatePdfReport = async() => {
+    try {
+      setIsLoading(true);
+      const customerIds = customers.length ? customers.map((customer: any) => customer._id) : undefined;
+      const {
+        status,
+        reportUrl,
+        message
+      } = await generateAccountReceivablePdfReport(2, formatDateYMD(asOf), customerIds);
+      if (status === 1) {
+        window.open(reportUrl)
+      } else {
+        dispatch(error(message));
+      }
+    } catch (e) {
+      dispatch(error(e.message));
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleMenuToolbarListClick = (event: any, id: number) => {
@@ -143,7 +174,9 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
           setModalDataAction({
             'data': {
               'modalTitle': 'Customized A/R Report',
-              'removeFooter': false
+              'removeFooter': false,
+              asOf,
+              customers,
             },
             'type': modalTypes.CUSTOMIZE_AR_REPORT_MODAL,
           })
@@ -153,7 +186,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         }, 200);
         break;
       case 1:
-        dispatch(info('This feature is still under development'));
+        generatePdfReport();
         break;
       case 2:
         dispatch(info('This feature is still under development'));
@@ -185,10 +218,12 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
 
           <div className={classes.customSummaryContainer}>
             <div className={classes.customSummaryColumn}>
+              <p className={classes.customSummaryTitle}>{companyName}</p>
               <p className={classes.customSummaryLabel}>As Of</p>
               <p className={classes.customSummaryValue}>{formatShortDateNoDay(asOf)}</p>
             </div>
             <div className={classes.customSummaryColumn}>
+              <p className={classes.customSummaryTitle}>&nbsp;</p>
               <p className={classes.customSummaryLabel}>Customer(s)</p>
               {customers.length ?
                 customers.map((customer: any) => <p className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
@@ -214,27 +249,29 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
           {reportData?.customersData &&
           <div style={{height: 'max-content', width: '100%'}}>
             <BCDataGrid
-              pagination={true}
-              autoHeight={true}
+              pagination
+              autoHeight
+              disableSelectionOnClick
               rows={reportData?.customersData}
               columns={columns}
-              page={currentPage}
-              pageSize={pageSize}
-              rowsPerPageOptions={[5, 10, 50]}
+
+              // page={currentPage}
+              pageSize={reportData?.customersData?.length ?? 0}
+              // rowsPerPageOptions={[5, 10, 50]}
               components={{
                 Footer: CustomFooter,
               }}
               componentsProps={{
                 footer: {
                   total: reportData?.outstanding,
-                  rowsCount: reportData?.customersData.length,
-                  pageNumber: currentPage,
-                  pageSize,
-                  handleChangePage: (event: any, pageNumber: number) => setCurrentPage(pageNumber),
-                  handleChangeRowsPerPage: (event: any) => {
-                    setCurrentPage(0);
-                    setPageSize(event.target.value);
-                  },
+                  // rowsCount: reportData?.customersData.length,
+                  // pageNumber: currentPage,
+                  // pageSize,
+                  // handleChangePage: (event: any, pageNumber: number) => setCurrentPage(pageNumber),
+                  // handleChangeRowsPerPage: (event: any) => {
+                  //   setCurrentPage(0);
+                  //   setPageSize(event.target.value);
+                  // },
                 }
               }}
               // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -259,6 +296,10 @@ const BCDataGrid = styled(DataGrid)`
 
   .MuiDataGrid-columnSeparator {
     display: none;
+  }
+
+  .MuiDataGrid-cell:focus {
+    outline: none;
   }
 
   .MuiDataGrid-footerContainer {
@@ -302,37 +343,38 @@ const BCDataGrid = styled(DataGrid)`
 // </div>)
 
 const CustomFooter = ({total, rowsCount, pageNumber, pageSize, handleChangePage, handleChangeRowsPerPage}: any) => <>
-  {Math.floor(rowsCount / pageSize) === pageNumber && <div className="GrandTotalContainer">
+  {/*{Math.floor(rowsCount / pageSize) === pageNumber && */}
+  <div className="GrandTotalContainer">
     <strong>Total Outstanding</strong>
     <strong>{total}</strong>
-  </div>}
-  <TablePagination
-    ActionsComponent={BCTablePagination}
-    style={{width: '80vw'}}
-    //colSpan={5}
-    count={rowsCount}
-    onChangePage={handleChangePage}
-    onChangeRowsPerPage={handleChangeRowsPerPage}
-    page={pageNumber}
-    rowsPerPage={pageSize}
-    rowsPerPageOptions={[
-      {
-        label: '5',
-        value: 5
-      }, {
-        label: '10',
-        value: 10
-      }, {
-        label: '25',
-        value: 25
-      }, {
-        label: 'All',
-        value: rowsCount + 1
-      }
-    ]}
-    SelectProps={{
-      'inputProps': {'aria-label': 'rows per page'},
-      'native': false
-    }}
-  />
+  </div>
+  {/*<TablePagination*/}
+  {/*  ActionsComponent={BCTablePagination}*/}
+  {/*  style={{width: '80vw'}}*/}
+  {/*  //colSpan={5}*/}
+  {/*  count={rowsCount}*/}
+  {/*  onChangePage={handleChangePage}*/}
+  {/*  onChangeRowsPerPage={handleChangeRowsPerPage}*/}
+  {/*  page={pageNumber}*/}
+  {/*  rowsPerPage={pageSize}*/}
+  {/*  rowsPerPageOptions={[*/}
+  {/*    {*/}
+  {/*      label: '5',*/}
+  {/*      value: 5*/}
+  {/*    }, {*/}
+  {/*      label: '10',*/}
+  {/*      value: 10*/}
+  {/*    }, {*/}
+  {/*      label: '25',*/}
+  {/*      value: 25*/}
+  {/*    }, {*/}
+  {/*      label: 'All',*/}
+  {/*      value: rowsCount + 1*/}
+  {/*    }*/}
+  {/*  ]}*/}
+  {/*  SelectProps={{*/}
+  {/*    'inputProps': {'aria-label': 'rows per page'},*/}
+  {/*    'native': false*/}
+  {/*  }}*/}
+  {/*/>*/}
 </>
