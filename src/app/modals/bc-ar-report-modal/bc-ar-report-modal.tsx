@@ -8,53 +8,30 @@ import {
   DialogActions,
   DialogContent,
   Button,
-  Grid,
-  MenuItem,
   TextField,
   Typography,
   withStyles,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  FormGroup,
-  InputLabel,
   Checkbox
 } from '@material-ui/core';
 import React, {useEffect, useState} from 'react';
-import classNames from 'classnames';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
-import InputAdornment from "@material-ui/core/InputAdornment";
-import { error } from "../../../actions/snackbar/snackbar.action";
-import {modalTypes} from "../../../constants";
-import { voidPayment } from 'api/payment.api';
-import BCSentSync from "../../components/bc-sent-sync";
-import {formatCurrency} from "../../../helpers/format";
-import BCTextField from "../../components/bc-text-field/bc-text-field";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import {getCustomers} from "../../../actions/customer/customer.action";
 import {useHistory} from "react-router-dom";
 
-interface ApiProps {
-  customerId: string,
-  invoiceId?:string,
-  paymentId?:string,
-  amount?: number,
-  paidAt: Date,
-  referenceNumber?: string,
-  paymentType?: string,
-  note?: string
-  line?: string,
+interface PROPS {
+  classes: any;
+  asOfDate: Date;
+  selectedCustomers: any[];
 }
 
 function BcArReportModal({
   classes,
-  // invoice: invoiceOrg,
-  payment,
-  fromHistory,
-}: any): JSX.Element {
-  const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
+  asOfDate,
+  selectedCustomers = []
+}: PROPS): JSX.Element {
   const history = useHistory();
   const {data: customers, loading} = useSelector(({ customers }: any) => customers);
   const dispatch = useDispatch();
@@ -69,17 +46,17 @@ function BcArReportModal({
 
   const form = useFormik({
     initialValues: {
-      asOf: new Date(),
+      asOf: asOfDate || new Date(),
       agingMethode: 'current',
       days: 30,
       periods: 4,
-      filterCustomer: false,
-      customers: []
+      filterCustomer: selectedCustomers.length > 0,
+      customers: selectedCustomers,
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
       history.push({
         pathname: '/main/reports/ar',
-        state: {type: 'custom', asOf: values.asOf, customers: values.customers}
+        state: {type: 'custom', asOf: values.asOf, customers: values.filterCustomer ? values.customers : []}
         });
       closeModal();
     }
@@ -162,7 +139,7 @@ function BcArReportModal({
           {/*  </FormGroup>*/}
           {/*</div>*/}
 
-          <div className={classes.titleDiv} style={{marginLeft: -10}}>
+          <div className={classes.titleDiv} style={{marginLeft: -10, marginTop: 20}}>
             <Checkbox
               name="filterCustomer"
               color="primary"
@@ -175,8 +152,10 @@ function BcArReportModal({
           </div>
           <Autocomplete
             multiple
+            disableCloseOnSelect
             disabled={loading || !FormikValues.filterCustomer}
             getOptionLabel={(option: any) => option?.profile?.displayName ? option?.profile.displayName : ''}
+
             // getOptionDisabled={(option) => !option?.isActive}
             id={'tags-standard'}
             onChange={(ev: any, newValue: any) =>  setFieldValue('customers', newValue)}
@@ -275,8 +254,6 @@ const DataContainer = styled.div`
   .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
     padding: 3px;
     width: 400px;
-    margin-left: 40px;
-    margin-top: -20px;
   }
 
  .MuiButton-root {

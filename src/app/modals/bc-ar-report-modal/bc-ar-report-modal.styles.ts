@@ -13,8 +13,6 @@ export default (theme: Theme): any => ({
   titleDiv: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
   },
   title: {
     fontWeight: 'bold',

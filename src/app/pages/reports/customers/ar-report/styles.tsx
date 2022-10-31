@@ -60,32 +60,32 @@ export default (theme: Theme): any => ({
   },
   customSummaryTitle: {
     fontWeight: '700',
-    fontSize: 22,
+    fontSize: 26,
     color: GRAY2,
     margin: '0 0 20px 0',
   },
   customSummaryLabel: {
-    fontWeight: '700',
-    fontSize: 9,
+    fontWeight: 'bold',
+    fontSize: 11,
     color: GRAY3,
     margin: 0,
   },
   customSummaryValue: {
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: 13,
     color: GRAY1,
     margin: 0,
   },
   customSummaryTotalLabel: {
   fontWeight: '500',
-    fontSize: 11,
+    fontSize: 13,
     color: GRAY3,
     margin: 0,
     textAlign: 'right',
   },
   customSummaryTotalValue: {
     fontWeight: '700',
-    fontSize: 14,
+    fontSize: 16,
     color: GRAY2,
     margin: 0,
     textAlign: 'right',
@@ -94,7 +94,7 @@ export default (theme: Theme): any => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: '0 50px',
+    padding: '0 180px 0 320px',
   },
 });
 
