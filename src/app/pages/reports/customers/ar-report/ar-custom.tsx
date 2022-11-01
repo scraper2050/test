@@ -397,6 +397,7 @@ const BCDataGrid = styled(DataGrid)`
     background-color: ${LIGHT_BLUE};
     strong {
       flex: 1;
+      padding: 0 10px;
     }
     strong:not(:first-of-type) {
       text-align: right;
@@ -423,8 +424,8 @@ const CustomFooter = ({total, totalAmount, rowsCount, pageNumber, pageSize, hand
     <strong>&nbsp;</strong>
     <strong>&nbsp;</strong>
     <strong>&nbsp;</strong>
-    <strong>{totalAmount}&nbsp;&nbsp;</strong>
-    <strong>{total}&nbsp;&nbsp;</strong>
+    <strong>{totalAmount}</strong>
+    <strong>{total}</strong>
   </div>
   {/*<TablePagination*/}
   {/*  ActionsComponent={BCTablePagination}*/}
