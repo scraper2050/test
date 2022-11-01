@@ -50,6 +50,7 @@ import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
 import {error} from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import {resetEmailState} from "../../../actions/email/email.action";
+import { setTimeout } from 'timers';
 
 
 const SHOW_OPTIONS = [
@@ -134,7 +135,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     //   newList.push(row.original._id);
     //   setSelectedIndexes(newList);
     // }
-console.log('rowclicked>',invoicesToDispatch)
 
     if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
     const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
@@ -165,30 +165,30 @@ console.log('rowclicked>',invoicesToDispatch)
   };
 
   const handleSend = async(e: any) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     
       //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
       //..then group the responses
-    const cloneSelectedInvoices = [...selectedInvoices];
+    
+    const invoicesToDispatchClone:any[] = []
 
-    //create a stack
-    const invoicesStack = [...selectedInvoices]
-    const specialIdsObj:any = {}
+    
     
     //cycle thru the array for individual objects
-    for (let i = 0; i < cloneSelectedInvoices.length; i++) {
-      const invoice = cloneSelectedInvoices[i];
+    for (let i = 0; i < selectedInvoices.length; i++) {
+      const invoice = selectedInvoices[i];
       if (invoice.contactsObj.length > 0) {
         const email = invoice.contactsObj[0].email;
 
         //first check if email is in state
 
         // if in state, ignore, else filter to get similar invoices, then send to BE and get templates
-        if (invoicesToDispatch.some(inv => inv.customerEmail === email)) {
+        if (invoicesToDispatchClone.some(inv => inv.customerEmail === email)) {
           //do nothing
+          
           continue;
         } else {
-          const tempArray = cloneSelectedInvoices.filter(inv => inv.contactsObj[0]?.email === email);
+          const tempArray = selectedInvoices.filter(inv => inv.contactsObj[0]?.email === email);
           const invoicesArray:any = []
           tempArray.map((inv) => {
             invoicesArray.push(inv._id)
@@ -207,10 +207,17 @@ console.log('rowclicked>',invoicesToDispatch)
                 'customerId': customerValue?._id,
               };
               const combined: any = { ...data, emailDefault }
-              const invoicesToDispatchClone = [...invoicesToDispatch]
+              
               invoicesToDispatchClone.push(combined)
               // console.log("combined=>",combined)
-              setInvoicesToDispatch(invoicesToDispatchClone)
+              // setInvoicesToDispatch(invoicesToDispatchClone)
+              //     dispatch(setModalDataAction({
+    //       data: {...data, emailDefault},
+          // 'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+    //     }));
+    //     dispatch(resetEmailState());
+    //     dispatch(setCurrentPageIndex(0));
+    //     dispatch(getAllInvoicesAPI());
             }
 
           
@@ -262,13 +269,13 @@ console.log('rowclicked>',invoicesToDispatch)
         // do as before,, send to default email instead
 
         //check if in state
-        if (invoicesToDispatch.some(inv => inv.customerEmail === customerValue?.info?.email)) {
+        if (invoicesToDispatchClone.some(inv => inv.customerEmail === customerValue?.info?.email)) {
           //do nothing
           continue;
         } else {
 
         //filter to get those with empty contactObj's first
-          const contactlessInvoices = cloneSelectedInvoices.filter(inv => inv.contactsObj.length === 0)
+          const contactlessInvoices = selectedInvoices.filter(inv => inv.contactsObj.length === 0)
           if (contactlessInvoices.length) {
             //get the id's
             const invoicesArray:any = []
@@ -289,10 +296,9 @@ console.log('rowclicked>',invoicesToDispatch)
                 'customerId': customerValue?._id,
               };
               const combined: any = { ...data, emailDefault }
-              const invoicesToDispatchClone = [...invoicesToDispatch]
               invoicesToDispatchClone.push(combined)
               // console.log("combined=>",combined)
-              setInvoicesToDispatch(invoicesToDispatchClone)
+              // setInvoicesToDispatch(invoicesToDispatchClone)
             }
 
           
@@ -322,6 +328,43 @@ console.log('rowclicked>',invoicesToDispatch)
 
       }
     }
+
+    // for (const invoice of invoicesToDispatch) {
+    //          dispatch(setModalDataAction({
+    //       data: invoice,
+    //       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+    //     }));
+    // //     dispatch(resetEmailState());
+    // //     dispatch(setCurrentPageIndex(0));
+    // //     dispatch(getAllInvoicesAPI());
+    // }
+
+    console.log('arr=>',invoicesToDispatchClone)
+    const dat = {
+      "multiple":true,
+    "modalTitle": "Send Invoice #2",
+    "customerEmail": "molly.randall@yopmail.com",
+    "ids": [
+        "63567c97157de2b0f6e55ebc",
+        "63567c51157de2b917e55eb9",
+        "623209e8e6b287526f188dfd"
+    ],
+    "typeText": "Invoice",
+    "className": "wideModalTitle",
+    "customerId": "61e96fee73578c07886907cc",
+    "emailDefault": {
+        "from": "chris@nortonfitness.com",
+        "to": "emi.atkins@yopmail.com",
+        "subject": "Invoices from Norton Fitness",
+        "message": "Dear Emi Atkins,\n\nPlease see your open invoices attached with a total of $417.05.\n\nThank you for doing business with Norton Fitness\n{{small_company_logo}}"
+    }
+}
+    
+    
+    dispatch(setModalDataAction({
+          data: dat,
+          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+        }));
     return console.log('indices=>', selectedInvoices)
     // try {
     //   const response = await getInvoiceEmailTemplate(selectedIndexes);
@@ -338,7 +381,7 @@ console.log('rowclicked>',invoicesToDispatch)
     //     };
     //     dispatch(setModalDataAction({
     //       data: {...data, emailDefault},
-    //       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+          // 'type': modalTypes.EMAIL_JOB_REPORT_MODAL
     //     }));
     //     dispatch(resetEmailState());
     //     dispatch(setCurrentPageIndex(0));

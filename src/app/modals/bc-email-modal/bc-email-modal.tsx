@@ -60,7 +60,7 @@ p {
 }
 `;
 
-function EmailJobReportModal({classes, data: {id, ids, customerEmail, customer, emailDefault, customerId}}: any) {
+function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple}}: any) {
   const {sent, loading, error} = useSelector(({email}: any) => email);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
@@ -78,6 +78,7 @@ function EmailJobReportModal({classes, data: {id, ids, customerEmail, customer, 
 
 
   useEffect(() => {
+    console.log("your data array is=>", data);
     if(customerId){
       getCustomersContact(customerId)
       .then(res => {
@@ -198,7 +199,8 @@ function EmailJobReportModal({classes, data: {id, ids, customerEmail, customer, 
           :
           sent ?
             emailSent() :
-            <Grid container direction={'column'} spacing={1}>
+            multiple === false ? (
+              <Grid container direction={'column'} spacing={1}>
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
                   <Grid container item justify={'flex-end'} alignItems={'center'} xs={2}>
@@ -352,6 +354,10 @@ function EmailJobReportModal({classes, data: {id, ids, customerEmail, customer, 
                 </Grid>
               </Grid>
             </Grid>
+            ) : (
+                <p>Multiple has been supplied</p>
+            )
+            
         }
       </DialogContent>
 
