@@ -125,29 +125,19 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   );
 
   const handleRowClick = (event: any, row: any) => {
-    // if (selectedIndexes.length === 0 && !customerValue) setCustomerValue(row.original.customer);
-    // const found = selectedIndexes.indexOf(row.original._id);
-    // const newList = [...selectedIndexes];
-    // if (found >= 0) {
-    //   newList.splice(found, 1)
-    //   setSelectedIndexes(newList);
-    // } else {
-    //   newList.push(row.original._id);
-    //   setSelectedIndexes(newList);
-    // }
 
     if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
-    const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
-    const newList = [...selectedInvoices];
-    if (found >= 0) {
-      newList.splice(found, 1)
-      setSelectedInvoices(newList);
-    } else {
-      newList.push(row.original);//push new whole row
-      setSelectedInvoices(newList);
-    }
+      const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
+      const newList = [...selectedInvoices];
+      if (found >= 0) {
+        newList.splice(found, 1)
+        setSelectedInvoices(newList);
+      } else {
+        newList.push(row.original);//push new whole row
+        setSelectedInvoices(newList);
+      }
 
-  };
+    };
 
   const handleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
@@ -170,9 +160,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
       //..then group the responses
     
-    const invoicesToDispatchClone:any[] = []
-
-    
+    const invoicesToDispatchClone:any[] = [] 
     
     //cycle thru the array for individual objects
     for (let i = 0; i < selectedInvoices.length; i++) {
@@ -180,7 +168,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       if (invoice.contactsObj.length > 0) {
         const email = invoice.contactsObj[0].email;
 
-        //first check if email is in state
+        //first check if email is in array
 
         // if in state, ignore, else filter to get similar invoices, then send to BE and get templates
         if (invoicesToDispatchClone.some(inv => inv.customerEmail === email)) {
@@ -209,66 +197,18 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
               const combined: any = { ...data, emailDefault }
               
               invoicesToDispatchClone.push(combined)
-              // console.log("combined=>",combined)
-              // setInvoicesToDispatch(invoicesToDispatchClone)
-              //     dispatch(setModalDataAction({
-    //       data: {...data, emailDefault},
-          // 'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-    //     }));
-    //     dispatch(resetEmailState());
-    //     dispatch(setCurrentPageIndex(0));
-    //     dispatch(getAllInvoicesAPI());
+              
             }
-
-          
-
-            //   dispatch(setModalDataAction({
-            //     data: {...data, emailDefault},
-            //     'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-            //   }));
-            //   dispatch(resetEmailState());
-            //   dispatch(setCurrentPageIndex(0));
-            //   dispatch(getAllInvoicesAPI());
-            // } else {
-            //   dispatch(error(message));
-            // }
           } catch (e) {
             //setIsLoading(false);
             console.log(e)
-            let message = 'Unknown Error'
-            // if (e instanceof Error) {
-            //   message = e.message
-            // }
-            // dispatch(error(message));
+            
           }
         }
-        
-
-
-
-
-        // // specialIdsObj[email]= []
-        // //check if it exists in our stack
-        // if (invoicesStack.some(inv => inv.contactsObj[0].email === email)) {
-        //   //populate ids in special obj
-        //   specialIdsObj[email].push(invoice._id);
-
-
-
-
-        //   //remove obj from stack
-        //   invoicesStack.splice(i)
-        // } else {
-        //   //it is not there (anymore)
-        //   console.log('single found')
-        // }
-        
-        
-
       } else {
         // do as before,, send to default email instead
 
-        //check if in state
+        //check if in array
         if (invoicesToDispatchClone.some(inv => inv.customerEmail === customerValue?.info?.email)) {
           //do nothing
           continue;
@@ -297,30 +237,10 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
               };
               const combined: any = { ...data, emailDefault }
               invoicesToDispatchClone.push(combined)
-              // console.log("combined=>",combined)
-              // setInvoicesToDispatch(invoicesToDispatchClone)
+              
             }
-
-          
-
-            //   dispatch(setModalDataAction({
-            //     data: {...data, emailDefault},
-            //     'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-            //   }));
-            //   dispatch(resetEmailState());
-            //   dispatch(setCurrentPageIndex(0));
-            //   dispatch(getAllInvoicesAPI());
-            // } else {
-            //   dispatch(error(message));
-            // }
           } catch (e) {
-            //setIsLoading(false);
             console.log(e)
-            let message = 'Unknown Error'
-            // if (e instanceof Error) {
-            //   message = e.message
-            // }
-            // dispatch(error(message));
           }
           
           }
@@ -351,7 +271,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     ],
     "typeText": "Invoice",
     "className": "wideModalTitle",
-    "customerId": "61e96fee73578c07886907cc",
+      "customerId": "61e96fee73578c07886907cc",
+    multipleInvoices:invoicesToDispatchClone,
     "emailDefault": {
         "from": "chris@nortonfitness.com",
         "to": "emi.atkins@yopmail.com",
