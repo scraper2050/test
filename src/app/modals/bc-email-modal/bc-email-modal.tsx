@@ -60,11 +60,13 @@ p {
 }
 `;
 
-function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple}}: any) {
+function EmailJobReportModal({classes,data}: any) {
   const {sent, loading, error} = useSelector(({email}: any) => email);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
+  const [invoiceToView, setInvoiceToView] = useState<any>({});
   const dispatch = useDispatch();
+  // data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple, multipleInvoices}
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -76,11 +78,38 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
     }, 200);
   };
 
+  useEffect(() => {
+    //map the props to Invoice To View accordingly
+    
+    if (!data?.multiple) {
+     setInvoiceToView({
+        id: data?.id,
+        ids: data?.ids,
+        customerEmail: data?.customerEmail,
+        customer: data?.customer,
+        emailDefault: data?.emailDefault,
+        customerId: data?.customerId,
+      })
+
+    } else {
+      //set the first one, the changer function will handle the switching
+        setInvoiceToView({
+          id: data?.multipleInvoices[0]?.id,
+          ids: data?.multipleInvoices[0]?.ids,
+          customerEmail: data?.multipleInvoices[0]?.customerEmail,
+          customer: data?.multipleInvoices[0]?.customer,
+          emailDefault: data?.multipleInvoices[0]?.emailDefault,
+          customerId: data?.multipleInvoices[0]?.customerId,
+      })
+    }
+    
+    
+  }, [])
+  
 
   useEffect(() => {
-    console.log("your data array is=>", data);
-    if(customerId){
-      getCustomersContact(customerId)
+    if(invoiceToView?.customerId){
+      getCustomersContact(invoiceToView?.customerId)
       .then(res => {
         if(res.status === 1){
           const custContacts = res.contacts
@@ -92,7 +121,7 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
           );
           setCustomerContacts(custContacts);
           if(custContacts.length){
-            const initialContact = custContacts.filter((contact:any) => customerEmail === contact.email);
+            const initialContact = custContacts.filter((contact:any) => invoiceToView?.customerEmail === contact.email);
             if(initialContact){
               FormikSetFieldValue('to', initialContact);
             }
@@ -103,7 +132,7 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
         dispatch(SnackBarError('Something went wrong when fetching Customer\'s contacts. Please try again.'))
       })
     }
-  }, [customerId]);
+  }, [data.customerId]);
 
   useEffect(() => {
     if(error){
@@ -123,7 +152,7 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
         return
       }
     }
-    FormikSetFieldValue(fieldName, data.map((datum:any)=>{
+    FormikSetFieldValue(fieldName, invoiceToView.map((datum:any)=>{
       if(typeof datum === 'string'){
         return {email: datum.trim()}
       } else {
@@ -136,17 +165,18 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
     return <div style={{textAlign: 'center', height: '20vh'}}>
       <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/><br/>
       <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>
-        {id ? 'This invoice was sent' : 'Multiple invoices sent'}
+        {invoiceToView.id ? 'This invoice was sent' : 'Multiple invoices sent'}
       </span>
     </div>
   }
 
   const form = useFormik({
+    enableReinitialize: true,
     initialValues: {
       from: profileState.companyEmail,
-      to: [{email: customerEmail}],
-      subject: emailDefault.subject,
-      message: emailDefault.message,
+      to: [{email: invoiceToView.customerEmail}],
+      subject: invoiceToView?.emailDefault?.subject,
+      message: invoiceToView?.emailDefault?.message,
       sendToMe: false,
     },
     onSubmit: (values: any, {setSubmitting}: any) => {
@@ -155,15 +185,15 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
         return
       }
       const params: any = {
-        ...(id && {
-          id: id,
-          invoiceId: id,
+        ...(invoiceToView.id && {
+          id: invoiceToView.id,
+          invoiceId: invoiceToView.id,
           invoicePdf: true,
         }),
-        ...(ids && {
-          ids: ids,
-          invoiceIds: JSON.stringify(ids),
-          customerId: customerId,
+        ...(invoiceToView.ids && {
+          ids: invoiceToView.ids,
+          invoiceIds: JSON.stringify(invoiceToView.ids),
+          customerId: invoiceToView.customerId,
         }),
         recipients: JSON.stringify(values.to.map((recipient:any) => recipient.email)),
         subject: values.subject,
@@ -171,9 +201,9 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
         copyToMyself: values.sendToMe,
       };
       dispatch(sendEmailAction.fetch({
-        'email': values.to.map((recipient:any) => recipient.email).join(',') || customer?.info?.email,
+        'email': values.to.map((recipient:any) => recipient.email).join(',') || invoiceToView.customer?.info?.email,
         data: params,
-        type: ids ? 'invoices': 'invoice',
+        type: invoiceToView.ids ? 'invoices': 'invoice',
       }));
     }
   });
@@ -199,7 +229,7 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
           :
           sent ?
             emailSent() :
-            multiple === false ? (
+            
               <Grid container direction={'column'} spacing={1}>
               <Grid item xs={12}>
                 <Grid container direction={'row'} spacing={1}>
@@ -354,9 +384,7 @@ function EmailJobReportModal({classes,data, data: {id, ids, customerEmail, custo
                 </Grid>
               </Grid>
             </Grid>
-            ) : (
-                <p>Multiple has been supplied</p>
-            )
+           
             
         }
       </DialogContent>

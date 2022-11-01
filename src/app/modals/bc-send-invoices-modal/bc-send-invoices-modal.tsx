@@ -273,11 +273,11 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     "className": "wideModalTitle",
       "customerId": "61e96fee73578c07886907cc",
     multipleInvoices:invoicesToDispatchClone,
-    "emailDefault": {
-        "from": "chris@nortonfitness.com",
-        "to": "emi.atkins@yopmail.com",
-        "subject": "Invoices from Norton Fitness",
-        "message": "Dear Emi Atkins,\n\nPlease see your open invoices attached with a total of $417.05.\n\nThank you for doing business with Norton Fitness\n{{small_company_logo}}"
+    emailDefault: {
+        from: "chris@nortonfitness.com",
+        to: "emi.atkins@yopmail.com",
+        subject: "Invoices from Norton Fitness",
+        message: "Dear Emi Atkins,\n\nPlease see your open invoices attached with a total of $417.05.\n\nThank you for doing business with Norton Fitness\n{{small_company_logo}}"
     }
 }
     
