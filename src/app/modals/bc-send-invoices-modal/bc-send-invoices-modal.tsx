@@ -100,6 +100,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const dispatch = useDispatch();
   const [selectedIndexes, setSelectedIndexes] = useState<string[]>([]);
   const [selectedInvoices, setSelectedInvoices] = useState<any[]>([]);
+  const [invoicesToDispatch, setInvoicesToDispatch] = useState<any[]>([]);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [showValue, setShowValue] = useState<string>('unpaid');
@@ -169,16 +170,94 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
       //..then group the responses
     const cloneSelectedInvoices = [...selectedInvoices];
+
+    //create a stack
+    const invoicesStack = [...selectedInvoices]
+    const specialIdsObj:any = {}
     
     //cycle thru the array for individual objects
     for (let i = 0; i < cloneSelectedInvoices.length; i++) {
       const invoice = cloneSelectedInvoices[i];
       if (invoice.contactsObj.length > 0) {
         const email = invoice.contactsObj[0].email;
-        console.log("email=>", email);
+
+        //first check if email is in state
+
+        // if in state, ignore, else filter to get similar invoices, then send to BE and get templates
+        if (invoicesToDispatch.some(inv => inv.customerEmail === email)) {
+          //do nothing
+        } else {
+          const tempArray = cloneSelectedInvoices.filter(inv => inv.contactsObj[0]?.email === email);
+          const invoicesArray:any = []
+          tempArray.map((inv) => {
+            invoicesArray.push(inv._id)
+          })
+          try {
+            const response = await getInvoiceEmailTemplate(invoicesArray);
+            const {emailTemplate: emailDefault, status, message} = response.data
+            if (status === 1) {
+              const data = {
+                'modalTitle': 'Send Invoice #' + i,
+                'customerEmail': email,
+                'handleClick': () => { },
+                'ids': invoicesArray,
+                'typeText': 'Invoice',
+                'className': 'wideModalTitle',
+                'customerId': customerValue?._id,
+              };
+              const combined: any = { ...data, emailDefault }
+              console.log("combined=>",combined)
+              setInvoicesToDispatch(combined)
+            }
+
+          
+
+            //   dispatch(setModalDataAction({
+            //     data: {...data, emailDefault},
+            //     'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+            //   }));
+            //   dispatch(resetEmailState());
+            //   dispatch(setCurrentPageIndex(0));
+            //   dispatch(getAllInvoicesAPI());
+            // } else {
+            //   dispatch(error(message));
+            // }
+          } catch (e) {
+            //setIsLoading(false);
+            console.log(e)
+            let message = 'Unknown Error'
+            // if (e instanceof Error) {
+            //   message = e.message
+            // }
+            // dispatch(error(message));
+          }
+        }
+        
+
+
+
+
+        // // specialIdsObj[email]= []
+        // //check if it exists in our stack
+        // if (invoicesStack.some(inv => inv.contactsObj[0].email === email)) {
+        //   //populate ids in special obj
+        //   specialIdsObj[email].push(invoice._id);
+
+
+
+
+        //   //remove obj from stack
+        //   invoicesStack.splice(i)
+        // } else {
+        //   //it is not there (anymore)
+        //   console.log('single found')
+        // }
+        
+        
 
       }
     }
+    console.log("email=>", specialIdsObj);
     return console.log('indices=>', selectedInvoices)
     // try {
     //   const response = await getInvoiceEmailTemplate(selectedIndexes);
