@@ -5,6 +5,7 @@ import {
   GRAY3, LIGHT_BLUE,
 } from "../../../../../constants";
 import styled from "styled-components";
+import * as CONSTANTS from "../../../../../constants";
 
 export default (theme: Theme): any => ({
   pageContainer: {
@@ -95,6 +96,17 @@ export default (theme: Theme): any => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: '0 180px 0 320px',
+  },
+  'roundBackground': {
+    'backgroundColor': CONSTANTS.PRIMARY_BLUE,
+    'borderRadius': '50%',
+    'color': 'white',
+    'height': '28px',
+    'width': '28px',
+    '&:hover': {
+      'opacity': '0.7',
+      'backgroundColor': CONSTANTS.PRIMARY_BLUE
+    }
   },
 });
 
