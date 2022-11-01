@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {TablePagination, withStyles} from '@material-ui/core';
+import {IconButton, TablePagination, withStyles} from '@material-ui/core';
 
 import styles from './styles';
 import BCCircularLoader
@@ -10,13 +10,8 @@ import {
   generateAccountReceivableReport
 } from 'api/reports.api';
 import {error, info} from 'actions/snackbar/snackbar.action';
-import BCDateTimePicker
-  from "../../../../components/bc-date-time-picker/bc-date-time-picker";
-import BCItemsFilter
-  from "../../../../components/bc-items-filter/bc-items-filter";
 import {
-  abbreviateNumber,
-  formatCurrency,
+  formatCurrency, formatDate,
   formatDateYMD, formatShortDateNoDay
 } from "../../../../../helpers/format";
 import {LIGHT_BLUE, modalTypes} from "../../../../../constants";
@@ -26,13 +21,12 @@ import {
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
 import {
-  DataGrid,
+  DataGrid, GridCellParams,
   GridColDef,
 } from '@material-ui/data-grid';
 import styled from "styled-components";
 import {useLocation} from "react-router-dom";
-import BCTablePagination
-  from "../../../../components/bc-table-container/bc-table-pagination";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 interface RevenueStandardProps {
   classes: any;
@@ -45,6 +39,7 @@ interface ReportData {
 
 interface CUSTOM_REPORT {
   outstanding: string,
+  totalAmount: string,
   aging: ReportData[],
   customersData: {
     id: string;
@@ -64,7 +59,7 @@ const MORE_ITEMS = [
   {id: 2, title:'Send Report'},
 ]
 
-const columns: GridColDef[] = [
+const columnsBuckets: GridColDef[] = [
   { field: 'customer', headerName: 'Customer', flex: 1, disableColumnMenu: true },
   { field: 'Current', headerName: 'Current',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
   { field: '1 - 30', headerName: '1  - 30',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
@@ -74,18 +69,30 @@ const columns: GridColDef[] = [
   { field: 'total', headerName: 'Total',flex: 1.2, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
 ];
 
+const columnsInvoices: GridColDef[] = [
+  { field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true },
+  { field: 'invoice', headerName: 'Invoice',flex: 1, disableColumnMenu: true },
+  { field: 'customer', headerName: 'Customer',flex: 1, disableColumnMenu: true, },
+  { field: 'dueDate', headerName: 'Due Date',flex: 1, disableColumnMenu: true,  },
+  { field: 'amount', headerName: 'Amount',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  { field: 'balance', headerName: 'Open Balance',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+];
+
 const ARCustomReport = ({classes}: RevenueStandardProps) => {
   const dispatch = useDispatch();
   const location = useLocation<{asOf: string, customers: any[]}>();
   const { companyName } = useSelector(({ profile }: any) => profile)
   const [isLoading, setIsLoading] = useState(false);
+  const [originalData, setOriginalData] = useState<any>([]);
+  const [bucket, setBucket] = useState<string | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<any[]>([]);
   // const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [reportData, setReportData] = useState<CUSTOM_REPORT | null>(null);
   const {state} = location;
   const {asOf, customers = []} = state || {asOf: new Date(), customers: []};
 
-  const formatReport = (report: any) => {
+  const formatReportBuckets = (report: any) => {
     const {globalAgingBuckets, customerAgingBuckets} = report;
     const temp: ReportData[] = [];
     const BUCKETS: any = {};
@@ -109,6 +116,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       });
       return {
         id: customer?._id,
+        customerId: customer?._id,
         customer: customer?.profile?.displayName || customer?.contactName,
         ...customerBuckets,
         total: formatCurrency(total),
@@ -117,8 +125,34 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
 
     setReportData({
       outstanding: formatCurrency(report.totalUnpaid),
+      totalAmount: '',
       aging: temp,
       customersData: tempCustomer,
+    });
+  }
+
+  const formatReportInvoices = (bucket: any, customer: any) => {
+    let totalAmount = 0;
+    const tempInvoices = bucket.invoices.map((invoice: any) => {
+      totalAmount += invoice.total;
+      return {
+        id: invoice._id,
+        date: formatDate(invoice.issuedDate),
+        invoice: invoice.invoiceId,
+        customer: customer?.profile?.displayName || customer?.contactName,
+        dueDate: formatDate(invoice.dueDate),
+        amount: formatCurrency(invoice.total),
+        balance: formatCurrency(invoice.balanceDue),
+      }
+
+    });
+
+    setSelectedCustomer([customer]);
+    setReportData({
+      outstanding: formatCurrency(bucket.totalUnpaid),
+      totalAmount: formatCurrency(totalAmount),
+      aging: [],
+      customersData: tempInvoices,
     });
   }
 
@@ -133,7 +167,8 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       } = await generateAccountReceivableReport(2, formatDateYMD(asOf), customerIds);
       if (status === 1) {
         setCurrentPage(0);
-        formatReport(report);
+        setOriginalData(report);
+        formatReportBuckets(report);
       } else {
         dispatch(error(message));
       }
@@ -142,7 +177,6 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     } finally {
       setIsLoading(false);
     }
-
   }
 
   const generatePdfReport = async() => {
@@ -196,6 +230,21 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     }
   };
 
+  const handleOnCellClick = (params: GridCellParams) => {
+    if (!bucket && params.value) {
+      const {customerAgingBuckets} = originalData;
+      const selectedCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === params.id);
+      const selectedBucket = selectedCustomer.agingBuckets.find((bucket: any) => bucket.label === params.field);
+      setBucket(params.field);
+      formatReportInvoices(selectedBucket, selectedCustomer.customer);
+    }
+  };
+
+  const handleReturnReport = () => {
+    setBucket(null);
+    formatReportBuckets(originalData);
+  }
+
   useEffect(() => {
     getReportData();
   }, [location]);
@@ -208,7 +257,16 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         :
         <div className={classes.pageContainer}>
           <div className={classes.toolbar}>
-            <div className={classes.menuToolbarContainer} />
+            <div className={classes.menuToolbarContainer} >
+              {!!bucket && <IconButton
+                className={classes.roundBackground}
+                color={'primary'}
+                onClick={handleReturnReport}
+              >
+                <ArrowBackIcon fontSize={'small'}/>
+              </IconButton>
+              }
+            </div>
             <BCMenuToolbarButton
               buttonText='More Actions'
               items={MORE_ITEMS}
@@ -224,13 +282,21 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
             </div>
             <div className={classes.customSummaryColumn}>
               <p className={classes.customSummaryTitle}>&nbsp;</p>
-              <p className={classes.customSummaryLabel}>Customer(s)</p>
+              <p className={classes.customSummaryLabel}>Customer{bucket ? '' : '(s)'}</p>
               {customers.length ?
-                customers.map((customer: any) => <p className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
+                (bucket ? selectedCustomer : customers).map((customer: any) => <p className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
                 : 'All'
               }
             </div>
-            <div />
+            {bucket ? <>
+                <div className={classes.customSummaryColumn}>
+                  <p className={classes.customSummaryTitle}>&nbsp;</p>
+                  <p
+                    className={classes.customSummaryLabel}>{bucket} {bucket.indexOf('-') > 0 ? 'days past due' : ''}</p>
+                </div>
+              </> :
+              <div/>
+            }
             <div className={classes.customSummaryColumn} style={{alignItems: 'flex-end'}}>
               <p className={classes.customSummaryTitle}>A/R REPORT</p>
               <p className={classes.customSummaryTotalLabel}>Total Outstanding</p>
@@ -253,7 +319,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
               autoHeight
               disableSelectionOnClick
               rows={reportData?.customersData}
-              columns={columns}
+              columns={bucket ? columnsInvoices : columnsBuckets}
 
               // page={currentPage}
               pageSize={reportData?.customersData?.length ?? 0}
@@ -264,6 +330,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
               componentsProps={{
                 footer: {
                   total: reportData?.outstanding,
+                  totalAmount: reportData?.totalAmount,
                   // rowsCount: reportData?.customersData.length,
                   // pageNumber: currentPage,
                   // pageSize,
@@ -274,6 +341,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
                   // },
                 }
               }}
+              onCellClick={handleOnCellClick}
               // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               // onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
             />
@@ -327,6 +395,12 @@ const BCDataGrid = styled(DataGrid)`
     justify-content: space-between;
     padding: 16px 10px;
     background-color: ${LIGHT_BLUE};
+    strong {
+      flex: 1;
+    }
+    strong:not(:first-of-type) {
+      text-align: right;
+    }
   }
 `
 
@@ -342,10 +416,14 @@ const BCDataGrid = styled(DataGrid)`
 //   )}
 // </div>)
 
-const CustomFooter = ({total, rowsCount, pageNumber, pageSize, handleChangePage, handleChangeRowsPerPage}: any) => <>
+const CustomFooter = ({total, totalAmount, rowsCount, pageNumber, pageSize, handleChangePage, handleChangeRowsPerPage}: any) => <>
   {/*{Math.floor(rowsCount / pageSize) === pageNumber && */}
   <div className="GrandTotalContainer">
     <strong>Total Outstanding</strong>
+    <strong>&nbsp;</strong>
+    <strong>&nbsp;</strong>
+    <strong>&nbsp;</strong>
+    <strong>{totalAmount}&nbsp;&nbsp;</strong>
     <strong>{total}</strong>
   </div>
   {/*<TablePagination*/}
