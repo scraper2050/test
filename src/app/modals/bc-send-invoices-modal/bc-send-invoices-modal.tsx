@@ -99,6 +99,7 @@ const useDebounceInputStyles = makeStyles(() =>
 function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): JSX.Element {
   const dispatch = useDispatch();
   const [selectedIndexes, setSelectedIndexes] = useState<string[]>([]);
+  const [selectedInvoices, setSelectedInvoices] = useState<any[]>([]);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [showValue, setShowValue] = useState<string>('unpaid');
@@ -122,67 +123,95 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   );
 
   const handleRowClick = (event: any, row: any) => {
-    if (selectedIndexes.length === 0 && !customerValue) setCustomerValue(row.original.customer);
-    const found = selectedIndexes.indexOf(row.original._id);
-    const newList = [...selectedIndexes];
+    // if (selectedIndexes.length === 0 && !customerValue) setCustomerValue(row.original.customer);
+    // const found = selectedIndexes.indexOf(row.original._id);
+    // const newList = [...selectedIndexes];
+    // if (found >= 0) {
+    //   newList.splice(found, 1)
+    //   setSelectedIndexes(newList);
+    // } else {
+    //   newList.push(row.original._id);
+    //   setSelectedIndexes(newList);
+    // }
+
+
+    if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
+    const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
+    const newList = [...selectedInvoices];
     if (found >= 0) {
       newList.splice(found, 1)
-      setSelectedIndexes(newList);
+      setSelectedInvoices(newList);
     } else {
-      newList.push(row.original._id);
-      setSelectedIndexes(newList);
+      newList.push(row.original);//push new whole row
+      setSelectedInvoices(newList);
     }
+
   };
 
   const handleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     if (e.target.checked) {
-      setSelectedIndexes(localInvoiceList.map((invoice) => invoice._id));
+      // setSelectedIndexes(localInvoiceList.map((invoice) => invoice._id));
+      setSelectedInvoices(localInvoiceList)
     } else {
-      setSelectedIndexes([]);
+      setSelectedInvoices([]);
     }
   }
 
   const handleCustomerChange = (event: any, newValue: any) => {
     setCustomerValue(newValue);
-    if (!newValue) setSelectedIndexes([]);
+    if (!newValue) setSelectedInvoices([]);
   };
 
   const handleSend = async(e: any) => {
     e.stopPropagation();
-    console.log('indices=>',selectedIndexes)
-    try {
-      const response = await getInvoiceEmailTemplate(selectedIndexes);
-      const {emailTemplate: emailDefault, status, message} = response.data
-      if (status === 1) {
-        const data = {
-          'modalTitle': 'Send Multiple Invoices',
-          'customerEmail': customerValue?.info?.email,
-          'handleClick': () => {},
-          'ids': selectedIndexes,
-          'typeText': 'Invoice',
-          'className': 'wideModalTitle',
-          'customerId': customerValue?._id,
-        };
-        dispatch(setModalDataAction({
-          data: {...data, emailDefault},
-          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-        }));
-        dispatch(resetEmailState());
-        dispatch(setCurrentPageIndex(0));
-        dispatch(getAllInvoicesAPI());
-      } else {
-        dispatch(error(message));
+    
+      //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
+      //..then group the responses
+    const cloneSelectedInvoices = [...selectedInvoices];
+    
+    //cycle thru the array for individual objects
+    for (let i = 0; i < cloneSelectedInvoices.length; i++) {
+      const invoice = cloneSelectedInvoices[i];
+      if (invoice.contactsObj.length > 0) {
+        const email = invoice.contactsObj[0].email;
+        console.log("email=>", email);
+
       }
-    } catch (e) {
-      //setIsLoading(false);
-      console.log(e)
-      let message = 'Unknown Error'
-      if (e instanceof Error) {
-        message = e.message
-      }
-      dispatch(error(message));
     }
+    return console.log('indices=>', selectedInvoices)
+    // try {
+    //   const response = await getInvoiceEmailTemplate(selectedIndexes);
+    //   const {emailTemplate: emailDefault, status, message} = response.data
+    //   if (status === 1) {
+    //     const data = {
+    //       'modalTitle': 'Send Multiple Invoices',
+    //       'customerEmail': customerValue?.info?.email,
+    //       'handleClick': () => {},
+    //       'ids': selectedIndexes,
+    //       'typeText': 'Invoice',
+    //       'className': 'wideModalTitle',
+    //       'customerId': customerValue?._id,
+    //     };
+    //     dispatch(setModalDataAction({
+    //       data: {...data, emailDefault},
+    //       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+    //     }));
+    //     dispatch(resetEmailState());
+    //     dispatch(setCurrentPageIndex(0));
+    //     dispatch(getAllInvoicesAPI());
+    //   } else {
+    //     dispatch(error(message));
+    //   }
+    // } catch (e) {
+    //   //setIsLoading(false);
+    //   console.log(e)
+    //   let message = 'Unknown Error'
+    //   if (e instanceof Error) {
+    //     message = e.message
+    //   }
+    //   dispatch(error(message));
+    // }
   };
 
   const closeModal = () => {
@@ -227,8 +256,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         <Checkbox
           color="primary"
           classes={{root: classes.checkbox}}
-          checked={selectedIndexes.length === localInvoiceList.length}
-          indeterminate={selectedIndexes.length > 0 && selectedIndexes.length < localInvoiceList.length}
+          checked={selectedInvoices.length === localInvoiceList.length}
+          indeterminate={selectedInvoices.length > 0 && selectedInvoices.length < localInvoiceList.length}
           disabled={!customerValue}
           onChange={handleSelectAll}
         />
@@ -244,7 +273,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           <Checkbox
             color="primary"
             classes={{root: classes.checkbox}}
-            checked={selectedIndexes.indexOf(row.original._id) >= 0}
+            checked={selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) >= 0 }
           />
           <CSButtonSmall
               variant="contained"
@@ -463,7 +492,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             {!isSuccess && (
               <Button
                 color={'primary'}
-                disabled={selectedIndexes.length === 0}
+                disabled={selectedInvoices.length === 0}
                 onClick={handleSend}
                 disableElevation={true}
                 //disabled={isSubmitting || loading || !isValid()}
