@@ -424,7 +424,7 @@ const CustomFooter = ({total, totalAmount, rowsCount, pageNumber, pageSize, hand
     <strong>&nbsp;</strong>
     <strong>&nbsp;</strong>
     <strong>{totalAmount}&nbsp;&nbsp;</strong>
-    <strong>{total}</strong>
+    <strong>{total}&nbsp;&nbsp;</strong>
   </div>
   {/*<TablePagination*/}
   {/*  ActionsComponent={BCTablePagination}*/}
