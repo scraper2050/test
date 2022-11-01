@@ -134,7 +134,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     //   newList.push(row.original._id);
     //   setSelectedIndexes(newList);
     // }
-
+console.log('rowclicked>',invoicesToDispatch)
 
     if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
     const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
@@ -186,6 +186,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         // if in state, ignore, else filter to get similar invoices, then send to BE and get templates
         if (invoicesToDispatch.some(inv => inv.customerEmail === email)) {
           //do nothing
+          continue;
         } else {
           const tempArray = cloneSelectedInvoices.filter(inv => inv.contactsObj[0]?.email === email);
           const invoicesArray:any = []
@@ -206,8 +207,10 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 'customerId': customerValue?._id,
               };
               const combined: any = { ...data, emailDefault }
-              console.log("combined=>",combined)
-              setInvoicesToDispatch(combined)
+              const invoicesToDispatchClone = [...invoicesToDispatch]
+              invoicesToDispatchClone.push(combined)
+              // console.log("combined=>",combined)
+              setInvoicesToDispatch(invoicesToDispatchClone)
             }
 
           
@@ -255,9 +258,70 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         
         
 
+      } else {
+        // do as before,, send to default email instead
+
+        //check if in state
+        if (invoicesToDispatch.some(inv => inv.customerEmail === customerValue?.info?.email)) {
+          //do nothing
+          continue;
+        } else {
+
+        //filter to get those with empty contactObj's first
+          const contactlessInvoices = cloneSelectedInvoices.filter(inv => inv.contactsObj.length === 0)
+          if (contactlessInvoices.length) {
+            //get the id's
+            const invoicesArray:any = []
+            contactlessInvoices.map((inv) => {
+              invoicesArray.push(inv._id)
+            })
+             try {
+            const response = await getInvoiceEmailTemplate(invoicesArray);
+            const {emailTemplate: emailDefault, status, message} = response.data
+            if (status === 1) {
+              const data = {
+                'modalTitle': 'Send Invoice #' + i,
+                'customerEmail': customerValue?.info?.email,
+                'handleClick': () => { },
+                'ids': invoicesArray,
+                'typeText': 'Invoice',
+                'className': 'wideModalTitle',
+                'customerId': customerValue?._id,
+              };
+              const combined: any = { ...data, emailDefault }
+              const invoicesToDispatchClone = [...invoicesToDispatch]
+              invoicesToDispatchClone.push(combined)
+              // console.log("combined=>",combined)
+              setInvoicesToDispatch(invoicesToDispatchClone)
+            }
+
+          
+
+            //   dispatch(setModalDataAction({
+            //     data: {...data, emailDefault},
+            //     'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+            //   }));
+            //   dispatch(resetEmailState());
+            //   dispatch(setCurrentPageIndex(0));
+            //   dispatch(getAllInvoicesAPI());
+            // } else {
+            //   dispatch(error(message));
+            // }
+          } catch (e) {
+            //setIsLoading(false);
+            console.log(e)
+            let message = 'Unknown Error'
+            // if (e instanceof Error) {
+            //   message = e.message
+            // }
+            // dispatch(error(message));
+          }
+          
+          }
+         }
+
       }
     }
-    console.log("email=>", specialIdsObj);
     return console.log('indices=>', selectedInvoices)
     // try {
     //   const response = await getInvoiceEmailTemplate(selectedIndexes);
@@ -294,6 +358,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   };
 
   const closeModal = () => {
+    
     dispatch(setCurrentPageIndex(0));
     dispatch(getAllInvoicesAPI());
     dispatch(closeModalAction());
