@@ -260,6 +260,10 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
        },
       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
     }));
+
+    dispatch(resetEmailState());
+    dispatch(setCurrentPageIndex(0));
+    dispatch(getAllInvoicesAPI());
   };
 
   const closeModal = () => {
