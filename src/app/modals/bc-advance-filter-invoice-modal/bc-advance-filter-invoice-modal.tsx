@@ -268,8 +268,8 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <div>
           <Grid container>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -277,12 +277,13 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                   onChange={(e) => FormikSetFieldValue('checkDateOrRange', e.target.checked)}
                 />
                 DATE OR RANGE
-                <div style={{marginLeft: 20, marginBottom: 30, display: 'block', width: 400, border: '1px solid #D0D3DC', borderRadius: 8}}>
+                <div style={{marginLeft: 20, marginBottom: 30, display: 'block', width: 'calc(100% - 20px)', border: '1px solid #D0D3DC', borderRadius: 8}}>
                   <BCTabs
                     curTab={curTab}
                     indicatorColor={'primary'}
                     onChangeTab={handleTabChange}
                     variant={'fullWidth'}
+                    minWidth={'170px'}
                     disabled={!FormikValues.checkDateOrRange}
                     tabsData={[
                       {
@@ -329,7 +330,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                           range={FormikValues.invoiceDateRange}
                           onChange={(e) => FormikSetFieldValue('invoiceDateRange', e)}
                           showClearButton={true}
-                          title={'Filter by Invoice Date Range...'}
+                          title={'Filter by Date Range...'}
                           classes={{ button: classes.noLeftMargin }}
                         />
                       </div> : <div />
@@ -337,10 +338,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
 
                   </SwipeableViews>
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -357,10 +358,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.invoiceId}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -377,10 +378,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.jobId}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -397,12 +398,12 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.poNumber}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
           </Grid>
           <Grid container>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -428,10 +429,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.selectedCustomer}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   disabled={!FormikValues.selectedCustomer}
                   color="primary"
@@ -471,10 +472,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.selectedContact}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   disabled={!FormikValues.selectedCustomer}
                   color="primary"
@@ -501,10 +502,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.selectedSubdivision}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -553,12 +554,12 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     placeholder="Zip"
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
           </Grid>
           <Grid container>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -569,17 +570,17 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 <div className={classes.inputRow}>
                   <DropDownMenu
                     disabled={!FormikValues.checkPaymentStatus}
-                    minwidth='390px'
+                    minwidth={window.innerWidth > 1600 ? '350px' : '260px'}
                     selectedItem={FormikValues.selectedPaymentStatus}
                     items={PAYMENT_STATUS_OPTIONS}
                     fontSize={17}
                     onSelect={(e, item) => handleClick(e, item, 'selectedPaymentStatus')}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -605,10 +606,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     value={FormikValues.selectedTechnician}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -643,10 +644,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     width={180}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
-            <Grid item md={6} xl={3}>
-              <div>
+            <Grid item md={6} lg={3} container justify={'center'}>
+              <Grid item style={{width: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
                   className={classes.checkbox}
@@ -656,8 +657,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 LAST EMAIL SENT DATE RANGE
                 <div style={{
                   paddingLeft: 20,
-                  paddingRight: 20,
-                  marginBottom: 30,
+                  width: window.innerWidth > 1600 ? '100%' : '280px',
                 }}>
                   <BCDateRangePicker
                     biggerButton
@@ -666,11 +666,11 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                     range={FormikValues.lastEmailSentDateRange}
                     onChange={(e) => FormikSetFieldValue('lastEmailSentDateRange', e)}
                     showClearButton={true}
-                    title={'Filter by Last Email Sent Date Range...'}
+                    title={'Filter by Date Range...'}
                     classes={{ button: classes.noLeftMargin }}
                   />
                 </div>
-              </div>
+              </Grid>
             </Grid>
           </Grid>
           
