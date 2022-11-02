@@ -101,7 +101,6 @@ const useDebounceInputStyles = makeStyles(() =>
 
 function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): JSX.Element {
   const dispatch = useDispatch();
-  const [selectedIndexes, setSelectedIndexes] = useState<string[]>([]);
   const [selectedInvoices, setSelectedInvoices] = useState<any[]>([]);
   const [invoicesToDispatch, setInvoicesToDispatch] = useState<any[]>([]);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);

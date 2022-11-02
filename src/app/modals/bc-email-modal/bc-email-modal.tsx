@@ -11,7 +11,7 @@ import {
   Chip,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect} from 'react';
 import {
   closeModalAction,
   setModalDataAction,
@@ -75,7 +75,6 @@ function EmailJobReportModal({ classes, data }: any) {
   const [invoiceInMultipleView, setInvoiceInMultipleView] = useState<number>(0);
   const [invoicesToSend, setInvoicesToSend] = useState<any[]>([]);
   const [sendAllButtonState, setSendAllButtonState] = useState<string>("Send All")
-  const formRef = useRef(null);
   const dispatch = useDispatch();
   // data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple, multipleInvoices}
 
