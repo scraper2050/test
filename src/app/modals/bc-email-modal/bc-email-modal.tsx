@@ -155,7 +155,7 @@ function EmailJobReportModal({classes,data}: any) {
         return
       }
     }
-    FormikSetFieldValue(fieldName, invoiceToView.map((datum:any)=>{
+    FormikSetFieldValue(fieldName, data.map((datum:any)=>{
       if(typeof datum === 'string'){
         return {email: datum.trim()}
       } else {
