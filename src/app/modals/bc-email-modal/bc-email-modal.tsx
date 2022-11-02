@@ -65,6 +65,7 @@ function EmailJobReportModal({classes,data}: any) {
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
   const [invoiceToView, setInvoiceToView] = useState<any>({});
+  const [invoiceInMultipleView, setInvoiceInMultipleView] = useState<number>(0);
   const dispatch = useDispatch();
   // data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple, multipleInvoices}
 
@@ -161,6 +162,36 @@ function EmailJobReportModal({classes,data}: any) {
     }));
   };
 
+  const slideNextInvoice = (e: any) => {
+    e.stopPropagation();
+    //invoice to view next is invoiceInMultipleView +1 
+      setInvoiceToView({
+          id: data?.multipleInvoices[invoiceInMultipleView +1 ]?.id,
+          ids: data?.multipleInvoices[invoiceInMultipleView +1 ]?.ids,
+          customerEmail: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customerEmail,
+          customer: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customer,
+          emailDefault: data?.multipleInvoices[invoiceInMultipleView +1 ]?.emailDefault,
+          customerId: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customerId,
+      })
+    
+    setInvoiceInMultipleView(invoiceInMultipleView +1 )
+
+  }
+  const slidePreviousInvoice = () => {
+    //invoice to view next is invoiceInMultipleView -1 
+      setInvoiceToView({
+          id: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.id,
+          ids: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.ids,
+          customerEmail: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customerEmail,
+          customer: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customer,
+          emailDefault: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.emailDefault,
+          customerId: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customerId,
+      })
+    
+    setInvoiceInMultipleView(invoiceInMultipleView - 1 )
+
+  }
+
   const emailSent = () => {
     return <div style={{textAlign: 'center', height: '20vh'}}>
       <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/><br/>
@@ -220,6 +251,8 @@ function EmailJobReportModal({classes,data}: any) {
   } = form;
 
   return <DataContainer>
+     
+    {data.multiple && <Typography align='center' variant={'h6'} className={'previewTextTitle'}>{`Email ${invoiceInMultipleView +1} of ${data.multipleInvoices.length}`}</Typography>}
     <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
 
     <form onSubmit={FormikSubmit}>
@@ -397,16 +430,54 @@ function EmailJobReportModal({classes,data}: any) {
           container
           justify={'space-between'}>
           <Grid item>
-            {!loading && !sent &&
-            <Button
-              aria-label={'record-payment'}
-              classes={{
-                'root': classes.closeButton
-              }}
-              onClick={() => closeModal()}
-              variant={'outlined'}>
-              Cancel
-            </Button>
+            {!loading && !sent && <>
+              {
+                  data.multiple ? (
+                    //check where which data is in preview, if first or middle, show next, if end  show send all
+                    <>
+                    {
+                      invoiceInMultipleView ===0 ? (
+                         <Button
+                        aria-label={'record-payment'}
+                        classes={{
+                          'root': classes.closeButton
+                        }}
+                        onClick={() => closeModal()}
+                        variant={'outlined'}>
+                        Cancel
+                      </Button> 
+                    ):(
+                      <Button
+                          aria-label={'create-job'}
+                          classes={{
+                            root: classes.submitButton,
+                            disabled: classes.submitButtonDisabled
+                          }}
+                          color="primary"
+                            type={'button'}
+                            onClick={slidePreviousInvoice}
+                          variant={'outlined'}>
+                          Previous
+                        </Button>  
+                    )
+                      }
+                  </>
+                  ): (
+                     <Button
+                      aria-label={'record-payment'}
+                      classes={{
+                        'root': classes.closeButton
+                      }}
+                      onClick={() => closeModal()}
+                      variant={'outlined'}>
+                      Cancel
+                    </Button> 
+                  )
+                }
+              
+             
+            </>
+            
             }
           </Grid>
           <Grid item>
@@ -420,18 +491,59 @@ function EmailJobReportModal({classes,data}: any) {
                   variant={'outlined'}>
                   Preview as customer
                 </Button>
+                <>
 
-                <Button
-                  aria-label={'create-job'}
-                  classes={{
-                    root: classes.submitButton,
-                    disabled: classes.submitButtonDisabled
-                  }}
-                  color="primary"
-                  type={'submit'}
-                  variant={'contained'}>
-                  Submit
-                </Button>
+                {
+                  data.multiple ? (
+                    //check where which data is in preview, if first or middle, show next, if end  show send all
+                    <>
+                    {
+                      invoiceInMultipleView < data?.multipleInvoices?.length -1 ? (
+                        <Button
+                          aria-label={'create-job'}
+                          classes={{
+                            root: classes.submitButton,
+                            disabled: classes.submitButtonDisabled
+                          }}
+                          color="primary"
+                            type={'button'}
+                            onClick={slideNextInvoice}
+                          variant={'outlined'}>
+                          Next
+                        </Button> 
+                    ):(
+                      <Button
+                        aria-label={'create-job'}
+                        classes={{
+                          root: classes.submitButton,
+                          disabled: classes.submitButtonDisabled
+                        }}
+                        color="primary"
+                        // type={'submit'}
+                        variant={'contained'}>
+                        Send All
+                      </Button> 
+                    )
+                      }
+                  </>
+                  ): (
+                    <Button
+                      aria-label={'create-job'}
+                      classes={{
+                        root: classes.submitButton,
+                        disabled: classes.submitButtonDisabled
+                      }}
+                      color="primary"
+                      type={'submit'}
+                      variant={'contained'}>
+                      Submit
+                    </Button>  
+                  )
+                  }
+                  
+                  </>
+
+                
               </>
               :
               <Button

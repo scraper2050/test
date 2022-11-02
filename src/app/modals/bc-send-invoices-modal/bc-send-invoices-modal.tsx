@@ -186,7 +186,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             const {emailTemplate: emailDefault, status, message} = response.data
             if (status === 1) {
               const data = {
-                'modalTitle': 'Send Invoice #' + i,
+                'modalTitle': 'Send Invoices',
                 'customerEmail': email,
                 'handleClick': () => { },
                 'ids': invoicesArray,
@@ -227,7 +227,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             const {emailTemplate: emailDefault, status, message} = response.data
             if (status === 1) {
               const data = {
-                'modalTitle': 'Send Invoice #' + i,
+                'modalTitle': 'Send Invoices',
                 'customerEmail': customerValue?.info?.email,
                 'handleClick': () => { },
                 'ids': invoicesArray,
@@ -283,7 +283,12 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     
     
     dispatch(setModalDataAction({
-          data: dat,
+      data: {
+        multiple: true,
+        multipleInvoices: invoicesToDispatchClone,
+        'customerId': customerValue?._id,
+        "modalTitle": "Send Invoices",
+          },
           'type': modalTypes.EMAIL_JOB_REPORT_MODAL
         }));
     return console.log('indices=>', selectedInvoices)
