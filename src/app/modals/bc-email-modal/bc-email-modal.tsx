@@ -11,7 +11,7 @@ import {
   Chip,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {closeModalAction, setModalDataAction} from 'actions/bc-modal/bc-modal.action';
 import styled from 'styled-components';
 import styles from './bc-email-modal.styles';
@@ -66,6 +66,8 @@ function EmailJobReportModal({classes,data}: any) {
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
   const [invoiceToView, setInvoiceToView] = useState<any>({});
   const [invoiceInMultipleView, setInvoiceInMultipleView] = useState<number>(0);
+  const [invoicesToSend, setInvoicesToSend] = useState<any[]>([]);
+  const formRef = useRef(null);
   const dispatch = useDispatch();
   // data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple, multipleInvoices}
 
@@ -133,7 +135,7 @@ function EmailJobReportModal({classes,data}: any) {
         dispatch(SnackBarError('Something went wrong when fetching Customer\'s contacts. Please try again.'))
       })
     }
-  }, [data.customerId]);
+  }, [invoiceToView.customerId]);
 
   useEffect(() => {
     if(error){
@@ -162,43 +164,14 @@ function EmailJobReportModal({classes,data}: any) {
     }));
   };
 
-  const slideNextInvoice = (e: any) => {
-    e.stopPropagation();
-    //invoice to view next is invoiceInMultipleView +1 
-      setInvoiceToView({
-          id: data?.multipleInvoices[invoiceInMultipleView +1 ]?.id,
-          ids: data?.multipleInvoices[invoiceInMultipleView +1 ]?.ids,
-          customerEmail: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customerEmail,
-          customer: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customer,
-          emailDefault: data?.multipleInvoices[invoiceInMultipleView +1 ]?.emailDefault,
-          customerId: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customerId,
-      })
-    
-    setInvoiceInMultipleView(invoiceInMultipleView +1 )
-
-  }
-  const slidePreviousInvoice = () => {
-    //invoice to view next is invoiceInMultipleView -1 
-      setInvoiceToView({
-          id: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.id,
-          ids: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.ids,
-          customerEmail: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customerEmail,
-          customer: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customer,
-          emailDefault: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.emailDefault,
-          customerId: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customerId,
-      })
-    
-    setInvoiceInMultipleView(invoiceInMultipleView - 1 )
-
-  }
-
-  const emailSent = () => {
-    return <div style={{textAlign: 'center', height: '20vh'}}>
-      <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/><br/>
-      <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>
-        {invoiceToView.id ? 'This invoice was sent' : 'Multiple invoices sent'}
-      </span>
-    </div>
+  const sendAll = () => {
+    invoicesToSend.map(invoice => {
+      dispatch(sendEmailAction.fetch({
+        'email': invoice?.to.map((recipient:any) => recipient.email).join(',') || invoiceToView.customer?.info?.email,
+        data: invoice,
+        type: 'invoices',
+      }));
+    })
   }
 
   const form = useFormik({
@@ -210,6 +183,7 @@ function EmailJobReportModal({classes,data}: any) {
       message: invoiceToView?.emailDefault?.message,
       sendToMe: false,
     },
+   
     onSubmit: (values: any, {setSubmitting}: any) => {
       if(!values.to.length){
         dispatch(SnackBarError('Please Add Recipient(s)'));
@@ -249,6 +223,56 @@ function EmailJobReportModal({classes,data}: any) {
     //getFieldMeta,
     //isSubmitting
   } = form;
+
+  const slideNextInvoice = (e: any) => {
+    e.stopPropagation();
+    //invoice to view next is invoiceInMultipleView +1 
+      setInvoiceToView({
+          id: data?.multipleInvoices[invoiceInMultipleView +1 ]?.id,
+          ids: data?.multipleInvoices[invoiceInMultipleView +1 ]?.ids,
+          customerEmail: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customerEmail,
+          customer: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customer,
+          emailDefault: data?.multipleInvoices[invoiceInMultipleView +1 ]?.emailDefault,
+          customerId: data?.multipleInvoices[invoiceInMultipleView +1 ]?.customerId,
+      })
+    console.log("values are", form.values)
+    
+    const invoicesToSendClone = [...invoicesToSend]
+    invoicesToSendClone.push(form.values)
+    setInvoicesToSend(invoicesToSendClone)
+    
+    setInvoiceInMultipleView(invoiceInMultipleView +1 )
+
+  }
+  const slidePreviousInvoice = () => {
+    //invoice to view next is invoiceInMultipleView -1 
+      setInvoiceToView({
+          id: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.id,
+          ids: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.ids,
+          customerEmail: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customerEmail,
+          customer: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customer,
+          emailDefault: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.emailDefault,
+          customerId: data?.multipleInvoices[invoiceInMultipleView - 1 ]?.customerId,
+      })
+    
+    const invoicesToSendClone = [...invoicesToSend]
+    invoicesToSendClone.pop()
+    setInvoicesToSend(invoicesToSendClone)
+    
+    setInvoiceInMultipleView(invoiceInMultipleView - 1 )
+
+  }
+
+  const emailSent = () => {
+    return <div style={{textAlign: 'center', height: '20vh'}}>
+      <CheckCircleIcon style={{color: PRIMARY_GREEN, fontSize: 100}}/><br/>
+      <span style={{color: '#4F4F4F', fontSize: 30, fontWeight: 'bold'}}>
+        {invoiceToView.id ? 'This invoice was sent' : 'Multiple invoices sent'}
+      </span>
+    </div>
+  }
+
+  
 
   return <DataContainer>
      
@@ -519,7 +543,7 @@ function EmailJobReportModal({classes,data}: any) {
                           disabled: classes.submitButtonDisabled
                         }}
                         color="primary"
-                        // type={'submit'}
+                        onClick={sendAll}
                         variant={'contained'}>
                         Send All
                       </Button> 

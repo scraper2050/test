@@ -260,26 +260,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     // }
 
     console.log('arr=>',invoicesToDispatchClone)
-    const dat = {
-      "multiple":true,
-    "modalTitle": "Send Invoice #2",
-    "customerEmail": "molly.randall@yopmail.com",
-    "ids": [
-        "63567c97157de2b0f6e55ebc",
-        "63567c51157de2b917e55eb9",
-        "623209e8e6b287526f188dfd"
-    ],
-    "typeText": "Invoice",
-    "className": "wideModalTitle",
-      "customerId": "61e96fee73578c07886907cc",
-    multipleInvoices:invoicesToDispatchClone,
-    emailDefault: {
-        from: "chris@nortonfitness.com",
-        to: "emi.atkins@yopmail.com",
-        subject: "Invoices from Norton Fitness",
-        message: "Dear Emi Atkins,\n\nPlease see your open invoices attached with a total of $417.05.\n\nThank you for doing business with Norton Fitness\n{{small_company_logo}}"
-    }
-}
+    
     
     
     dispatch(setModalDataAction({
@@ -288,10 +269,9 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         multipleInvoices: invoicesToDispatchClone,
         'customerId': customerValue?._id,
         "modalTitle": "Send Invoices",
-          },
-          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-        }));
-    return console.log('indices=>', selectedInvoices)
+       },
+      'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+    }));
     // try {
     //   const response = await getInvoiceEmailTemplate(selectedIndexes);
     //   const {emailTemplate: emailDefault, status, message} = response.data
