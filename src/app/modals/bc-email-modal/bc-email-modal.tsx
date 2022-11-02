@@ -74,6 +74,7 @@ function EmailJobReportModal({ classes, data }: any) {
   const [invoiceToView, setInvoiceToView] = useState<any>({});
   const [invoiceInMultipleView, setInvoiceInMultipleView] = useState<number>(0);
   const [invoicesToSend, setInvoicesToSend] = useState<any[]>([]);
+  const [sendAllButtonState, setSendAllButtonState] = useState<string>("Send All")
   const formRef = useRef(null);
   const dispatch = useDispatch();
   // data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple, multipleInvoices}
@@ -213,13 +214,6 @@ function EmailJobReportModal({ classes, data }: any) {
         message: values.message,
         copyToMyself: values.sendToMe,
       };
-      console.log({
-          email:
-            values.to.map((recipient: any) => recipient.email).join(',') ||
-            invoiceToView.customer?.info?.email,
-          data: params,
-          type: invoiceToView.ids ? 'invoices' : 'invoice',
-        })
       dispatch(
         sendEmailAction.fetch({
           email:
@@ -272,6 +266,7 @@ function EmailJobReportModal({ classes, data }: any) {
   };
 
   const sendAll = () => {
+    setSendAllButtonState('Sending Invoices...')
 
     //temp object for final invoice that is not in `invoicesToSend`
     const tempObj = {
@@ -316,6 +311,7 @@ function EmailJobReportModal({ classes, data }: any) {
         })
       );
     });
+    return setSendAllButtonState("Send All")
   };
 
   const slidePreviousInvoice = () => {
@@ -670,8 +666,9 @@ function EmailJobReportModal({ classes, data }: any) {
                             color="primary"
                             onClick={sendAll}
                             variant={'contained'}
+                            disabled={sendAllButtonState !== 'Send All'}
                           >
-                            Send All
+                            {sendAllButtonState}
                           </Button>
                         )}
                       </>
