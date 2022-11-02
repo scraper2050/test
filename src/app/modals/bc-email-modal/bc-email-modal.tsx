@@ -29,6 +29,8 @@ import { getCustomersContact } from 'api/customer.api';
 import { stringSortCaseInsensitive } from 'helpers/sort';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import { PRIMARY_GREEN } from '../../../constants';
+import ChevronLeft from '@material-ui/icons/ChevronLeft'
+import ChevronRight from '@material-ui/icons/ChevronRight'
 
 const EmailJobReportModalContainer = styled.div`
   display: flex;
@@ -603,18 +605,15 @@ function EmailJobReportModal({ classes, data }: any) {
                           Cancel
                         </Button>
                       ) : (
-                        <Button
+                          <Button
+                          startIcon={<ChevronLeft />}
                           aria-label={'create-job'}
-                          classes={{
-                            root: classes.submitButton,
-                            disabled: classes.submitButtonDisabled,
-                          }}
                           color="primary"
                           type={'button'}
                           onClick={slidePreviousInvoice}
                           variant={'outlined'}
                         >
-                          Previous
+                          Back
                         </Button>
                       )}
                     </>
@@ -653,14 +652,11 @@ function EmailJobReportModal({ classes, data }: any) {
                         data?.multipleInvoices?.length - 1 ? (
                           <Button
                             aria-label={'create-job'}
-                            classes={{
-                              root: classes.submitButton,
-                              disabled: classes.submitButtonDisabled,
-                            }}
                             color="primary"
                             type={'button'}
                             onClick={slideNextInvoice}
-                            variant={'outlined'}
+                              variant={'outlined'}
+                              endIcon={<ChevronRight />}
                           >
                             Next
                           </Button>

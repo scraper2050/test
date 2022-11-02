@@ -248,20 +248,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
       }
     }
-
-    // for (const invoice of invoicesToDispatch) {
-    //          dispatch(setModalDataAction({
-    //       data: invoice,
-    //       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-    //     }));
-    // //     dispatch(resetEmailState());
-    // //     dispatch(setCurrentPageIndex(0));
-    // //     dispatch(getAllInvoicesAPI());
-    // }
-
-    console.log('arr=>',invoicesToDispatchClone)
-    
-    
     
     dispatch(setModalDataAction({
       data: {
@@ -272,38 +258,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
        },
       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
     }));
-    // try {
-    //   const response = await getInvoiceEmailTemplate(selectedIndexes);
-    //   const {emailTemplate: emailDefault, status, message} = response.data
-    //   if (status === 1) {
-    //     const data = {
-    //       'modalTitle': 'Send Multiple Invoices',
-    //       'customerEmail': customerValue?.info?.email,
-    //       'handleClick': () => {},
-    //       'ids': selectedIndexes,
-    //       'typeText': 'Invoice',
-    //       'className': 'wideModalTitle',
-    //       'customerId': customerValue?._id,
-    //     };
-    //     dispatch(setModalDataAction({
-    //       data: {...data, emailDefault},
-          // 'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-    //     }));
-    //     dispatch(resetEmailState());
-    //     dispatch(setCurrentPageIndex(0));
-    //     dispatch(getAllInvoicesAPI());
-    //   } else {
-    //     dispatch(error(message));
-    //   }
-    // } catch (e) {
-    //   //setIsLoading(false);
-    //   console.log(e)
-    //   let message = 'Unknown Error'
-    //   if (e instanceof Error) {
-    //     message = e.message
-    //   }
-    //   dispatch(error(message));
-    // }
   };
 
   const closeModal = () => {
