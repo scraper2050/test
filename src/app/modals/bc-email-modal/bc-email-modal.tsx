@@ -258,7 +258,6 @@ function EmailJobReportModal({ classes, data }: any) {
       ids: data?.multipleInvoices[invoiceInMultipleView]?.ids,
       customerId: data?.multipleInvoices[invoiceInMultipleView]?.customerId,
     }
-    console.log(tempObj)
     invoicesToSendClone.push(tempObj);
     setInvoicesToSend(invoicesToSendClone);
 
