@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {IconButton, TablePagination, withStyles} from '@material-ui/core';
+import {
+  IconButton,
+  withStyles
+} from '@material-ui/core';
 
 import styles from './styles';
 import BCCircularLoader
@@ -14,7 +17,7 @@ import {
   formatCurrency, formatDate,
   formatDateYMD, formatShortDateNoDay
 } from "../../../../../helpers/format";
-import {LIGHT_BLUE, modalTypes} from "../../../../../constants";
+import {LIGHT_BLUE, modalTypes, PRIMARY_BLUE} from "../../../../../constants";
 import BCMenuToolbarButton from "../../../../components/bc-menu-toolbar-button";
 import {
   openModalAction,
@@ -25,7 +28,7 @@ import {
   GridColDef,
 } from '@material-ui/data-grid';
 import styled from "styled-components";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 interface RevenueStandardProps {
@@ -59,32 +62,16 @@ const MORE_ITEMS = [
   {id: 2, title:'Send Report'},
 ]
 
-const columnsBuckets: GridColDef[] = [
-  { field: 'customer', headerName: 'Customer', flex: 1, disableColumnMenu: true },
-  { field: 'Current', headerName: 'Current',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-  { field: '1 - 30', headerName: '1  - 30',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-  { field: '31 - 60', headerName: '31 - 60',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-  { field: '61 - 90', headerName: '61 - 90',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-  { field: '91 and Over Past Due', headerName: '91 and Over',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-  { field: 'total', headerName: 'Total',flex: 1.2, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-];
 
-const columnsInvoices: GridColDef[] = [
-  { field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true },
-  { field: 'invoice', headerName: 'Invoice',flex: 1, disableColumnMenu: true },
-  { field: 'customer', headerName: 'Customer',flex: 1, disableColumnMenu: true, },
-  { field: 'dueDate', headerName: 'Due Date',flex: 1, disableColumnMenu: true,  },
-  { field: 'amount', headerName: 'Amount',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-  { field: 'balance', headerName: 'Open Balance',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
-];
 
 const ARCustomReport = ({classes}: RevenueStandardProps) => {
   const dispatch = useDispatch();
-  const location = useLocation<{asOf: string, customers: any[]}>();
+  const history = useHistory();
+  const location = useLocation<{asOf: string, customers: any[], bucket: string, selectedCustomer: any}>();
   const { companyName } = useSelector(({ profile }: any) => profile)
   const [isLoading, setIsLoading] = useState(false);
-  const [originalData, setOriginalData] = useState<any>([]);
-  const [bucket, setBucket] = useState<string | null>(null);
+  const [originalData, setOriginalData] = useState<any>(null);
+  const [bucket, setBucket] = useState<string | null>(null || location?.state?.bucket);
   const [selectedCustomer, setSelectedCustomer] = useState<any[]>([]);
   // const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
@@ -92,8 +79,87 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
   const {state} = location;
   const {asOf, customers = []} = state || {asOf: new Date(), customers: []};
 
+
+  const columnsBuckets: GridColDef[] = [
+    { field: 'customer', headerName: 'Customer', flex: 1, disableColumnMenu: true },
+    { field: 'Current', headerName: 'Current',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+    { field: '1 - 30',
+      headerName: '1  - 30',
+      headerAlign: 'right',
+      flex: 1,
+      disableColumnMenu: true,
+      align: 'right',
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+        {cellValues.value}
+      </ClickableCell>
+    },
+    {
+      field: '31 - 60',
+      headerName: '31 - 60',
+      flex: 1,
+      disableColumnMenu: true,
+      headerAlign: 'right',
+      align: 'right',
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+        {cellValues.value}
+
+      </ClickableCell>
+    },
+    {
+      field: '61 - 90',
+      headerName: '61 - 90',
+      flex: 1,
+      disableColumnMenu: true,
+      headerAlign: 'right',
+      align: 'right',
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+        {cellValues.value}
+
+      </ClickableCell>
+    },
+    {
+      field: '91 and Over Past Due',
+      headerName: '91 and Over',
+      flex: 1,
+      disableColumnMenu: true,
+      headerAlign: 'right',
+      align: 'right',
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+        {cellValues.value}
+      </ClickableCell>
+    },
+    { field: 'total', headerName: 'Total',flex: 1.2, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  ];
+
+  const columnsInvoices: GridColDef[] = [
+    { field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true },
+    {
+      field: 'invoice',
+      headerName: 'Invoice',
+      flex: 1,
+      disableColumnMenu: true,
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleInvoiceClick(cellValues)}>
+        {cellValues.value}
+      </ClickableCell>
+    },
+    { field: 'customer', headerName: 'Customer',flex: 1, disableColumnMenu: true, },
+    { field: 'dueDate', headerName: 'Due Date',flex: 1, disableColumnMenu: true,  },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      flex: 1,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleInvoiceClick(cellValues)}>
+        {cellValues.value}
+      </ClickableCell>
+    },
+    { field: 'balance', headerName: 'Open Balance',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+  ];
+
   const formatReportBuckets = (report: any) => {
-    const {globalAgingBuckets, customerAgingBuckets} = report;
+    const {globalAgingBuckets = {}, customerAgingBuckets} = report;
     const temp: ReportData[] = [];
     const BUCKETS: any = {};
 
@@ -119,7 +185,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         customerId: customer?._id,
         customer: customer?.profile?.displayName || customer?.contactName,
         ...customerBuckets,
-        total: formatCurrency(total),
+        total: total ? formatCurrency(total) : '',
       }
     });
 
@@ -230,17 +296,27 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     }
   };
 
-  const handleOnCellClick = (params: GridCellParams) => {
-    if (!bucket && params.value) {
-      const {customerAgingBuckets} = originalData;
-      const selectedCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === params.id);
-      const selectedBucket = selectedCustomer.agingBuckets.find((bucket: any) => bucket.label === params.field);
-      setBucket(params.field);
-      formatReportInvoices(selectedBucket, selectedCustomer.customer);
-    }
+  const handleAmountClick = (customerId: string, bucketLabel: string) => {
+    const {customerAgingBuckets} = originalData;
+    const selectedCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customerId);
+    const selectedBucket = selectedCustomer.agingBuckets.find((bucket: any) => bucket.label === bucketLabel);
+    setBucket(bucketLabel);
+    formatReportInvoices(selectedBucket, selectedCustomer.customer);
   };
 
+  const handleInvoiceClick = (params: GridCellParams) => {
+    history.replace({state:{ ...location.state, bucket, selectedCustomer }});
+    history.push({
+      'pathname': `/main/invoicing/view/${params.id}`,
+    });
+  }
+
   const handleReturnReport = () => {
+    // const state = location.state;
+    // delete state.bucket;
+    // delete state.selectedCustomer;
+    // history.replace({state});
+
     setBucket(null);
     formatReportBuckets(originalData);
   }
@@ -248,6 +324,13 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
   useEffect(() => {
     getReportData();
   }, [location]);
+
+  useEffect(() => {
+    if (originalData && location?.state?.bucket) {
+      setBucket(location.state.bucket);
+      handleAmountClick(location.state.selectedCustomer[0]._id, location.state.bucket);
+    }
+  }, [originalData])
 
 
   return (
@@ -260,7 +343,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
             <div className={classes.menuToolbarContainer} >
               {!!bucket && <IconButton
                 className={classes.roundBackground}
-                color={'primary'}
+                color={'default'}
                 onClick={handleReturnReport}
               >
                 <ArrowBackIcon fontSize={'small'}/>
@@ -341,7 +424,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
                   // },
                 }
               }}
-              onCellClick={handleOnCellClick}
+              // onCellClick={handleOnCellClick}
               // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               // onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
             />
@@ -368,6 +451,10 @@ const BCDataGrid = styled(DataGrid)`
 
   .MuiDataGrid-cell:focus {
     outline: none;
+  }
+
+  .MuiDataGrid-columnHeaderTitleContainer {
+    padding: 0;
   }
 
   .MuiDataGrid-footerContainer {
@@ -397,7 +484,7 @@ const BCDataGrid = styled(DataGrid)`
     background-color: ${LIGHT_BLUE};
     strong {
       flex: 1;
-      padding: 0 10px;
+      padding: 0 5px;
     }
     strong:not(:first-of-type) {
       text-align: right;
@@ -457,3 +544,11 @@ const CustomFooter = ({total, totalAmount, rowsCount, pageNumber, pageSize, hand
   {/*  }}*/}
   {/*/>*/}
 </>
+
+const ClickableCell = styled.span`
+  cursor: pointer;
+  :hover {
+    color: ${PRIMARY_BLUE};
+    text-decoration: underline;
+  }
+`;
