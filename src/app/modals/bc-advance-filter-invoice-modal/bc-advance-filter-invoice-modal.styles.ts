@@ -64,6 +64,7 @@ export default (theme: Theme): any => ({
     paddingLeft: 20,
     display: 'flex',
     marginBottom: 30,
+    maxWidth: 370,
   },
   autocompleteStyle: {
     width: (props:any) => props.width || 390,

@@ -73,9 +73,9 @@ const useStyles = makeStyles((theme) => ({
     color: 'grey',
   },
   biggerButton: {
-    padding: '10px 15px',
+    padding: '9px 15px',
     width: '100% !important',
-    maxWidth: '390px',
+    maxWidth: '100%',
   }
 }));
 
