@@ -13,6 +13,7 @@ import {
   Checkbox,
   withStyles,
   Tooltip,
+  Box,
 } from '@material-ui/core';
 import {
   closeModalAction,
@@ -51,6 +52,7 @@ import {error} from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import {resetEmailState} from "../../../actions/email/email.action";
 import { setTimeout } from 'timers';
+import { PaymentStatus } from 'app/pages/invoicing/invoices-list/invoices-list-listing/invoices-unpaid-listing';
 
 
 const SHOW_OPTIONS = [
@@ -248,7 +250,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
       }
     }
-    
+
     dispatch(setModalDataAction({
       data: {
         multiple: true,
@@ -314,24 +316,23 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'className': 'font-bold',
       'sortable': false,
       Cell({ row }: any) {
-        const { status = '' } = row.original;
-        const textStatus = status.split('_').join(' ').toLowerCase();
-        return <div>
+        // const { status = '' } = row.original;
+        // const textStatus = status.split('_').join(' ').toLowerCase();
+        // for payment 
+        let status = 'open';
+        if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
+        else if (moment(row.original.dueDate).isSame(moment(), 'day')) status = 'due today'
+        else if (moment(row.original.dueDate).diff(moment(), 'day') <= 7) status = 'due soon'
+        return <Box display="flex" flexDirection="row">
           <Checkbox
             color="primary"
             classes={{root: classes.checkbox}}
             checked={selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) >= 0 }
           />
-          <CSButtonSmall
-              variant="contained"
-              style={{
-                backgroundColor: PAYMENT_STATUS_COLORS[status],
-                color: '#fff',
-              }}
-            >
-              <span style={{ textTransform: 'capitalize' }}>{textStatus}</span>
-            </CSButtonSmall>
-        </div>;
+          <PaymentStatus status={status}>
+            {status}
+          </PaymentStatus>
+        </Box>;
       },
     },
     
