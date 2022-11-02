@@ -18,6 +18,8 @@ export default (theme: Theme): any => ({
   },
   menuToolbarContainer: {
     flex: 1,
+    display: 'flex',
+    alignItems: 'center',
   },
   label: {
     fontSize: 10,
@@ -68,7 +70,7 @@ export default (theme: Theme): any => ({
   customSummaryLabel: {
     fontWeight: 'bold',
     fontSize: 11,
-    color: GRAY3,
+    color: 'black',
     margin: 0,
   },
   customSummaryValue: {
@@ -80,7 +82,7 @@ export default (theme: Theme): any => ({
   customSummaryTotalLabel: {
   fontWeight: '500',
     fontSize: 13,
-    color: GRAY3,
+    color: 'black',
     margin: 0,
     textAlign: 'right',
   },
@@ -98,7 +100,7 @@ export default (theme: Theme): any => ({
     padding: '0 180px 0 320px',
   },
   'roundBackground': {
-    'backgroundColor': CONSTANTS.PRIMARY_BLUE,
+    'backgroundColor': CONSTANTS.GRAY4,
     'borderRadius': '50%',
     'color': 'white',
     'height': '28px',
