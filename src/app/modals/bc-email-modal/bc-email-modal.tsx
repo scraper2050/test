@@ -276,7 +276,6 @@ function EmailJobReportModal({ classes, data }: any) {
     //collect form.values
     const arr = [...invoicesToSend, tempObj];
     arr.map((invoice) => {
-      console.log(invoice)
 
       //form object
        const params: any = {
@@ -348,7 +347,7 @@ function EmailJobReportModal({ classes, data }: any) {
 
   return (
     <DataContainer>
-      {data.multiple && (
+      {data.multiple && !sent && (
         <Typography
           align="center"
           variant={'h6'}
