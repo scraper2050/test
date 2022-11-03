@@ -130,13 +130,28 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
       const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
       const newList = [...selectedInvoices];
+      let localInvoiceListClone = [...localInvoiceList]
       if (found >= 0) {
         newList.splice(found, 1)
-        setSelectedInvoices(newList);
+        //remove from top
+        localInvoiceListClone.splice(found, 1)
+        //push to the bottom of localInvoice, only if it contains same customer as the local invoice
+        //since we pushed it to the first, use the last row of the localinvoice for comparison
+        if (localInvoiceListClone[localInvoiceListClone.length - 1]?.customer?._id === row.original?.customer?._id) {
+          localInvoiceListClone.push(row.original)
+        }
+        
       } else {
-        newList.push(row.original);//push new whole row
-        setSelectedInvoices(newList);
-      }
+        newList.unshift(row.original);//unshift new whole row
+        
+        //remove it from local list at the original position
+        localInvoiceListClone =  localInvoiceListClone.filter(inv=>inv._id !== row.original._id)
+        //push to the top        
+        localInvoiceListClone.unshift(row.original)
+        
+    }
+    setSelectedInvoices(newList);
+    setLocalInvoiceList(localInvoiceListClone)
 
     };
 
@@ -435,16 +450,15 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   ];
 
   useEffect(() => {
-    console.log('invoice ist=>',invoiceList)
     if (invoiceList.length > 0) {
       const newInvoiceList = invoiceList.map((item: any) => ({
         ...item,
         'amountToBeApplied': 0,
         'checked': 0,
       }));
-      setLocalInvoiceList([...newInvoiceList]);
+      setLocalInvoiceList([...selectedInvoices,...newInvoiceList]);
     } else {
-      setLocalInvoiceList([]);
+      setLocalInvoiceList([...selectedInvoices]);
     }
   }, [invoiceList])
 
