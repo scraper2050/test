@@ -334,8 +334,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'className': 'font-bold',
       'sortable': false,
       Cell({ row }: any) {
-        // const { status = '' } = row.original;
-        // const textStatus = status.split('_').join(' ').toLowerCase();
         // for payment 
         let status = 'open';
         if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
@@ -414,39 +412,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'className': 'font-bold',
       'sortable': true
     },
-    // {
-    //   Cell({ row }: any) {
-    //     return row.original.createdAt
-    //       ? formatDateMMMDDYYYY(row.original.createdAt)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Invoice Date',
-    //   'accessor': 'createdAt',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
-  
-    // { Cell({ row }: any) {
-    //     return row.original.lastEmailSent
-    //       ? formatDatTimelll(row.original.lastEmailSent)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Last Emailed',
-    //   'accessor': 'lastEmailSent',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
-    // {
-    //   Cell({ row }: any) {
-    //     return row.original.createdAt
-    //       ? formatDateMMMDDYYYY(row.original.createdAt)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Invoice Date',
-    //   'accessor': 'createdAt',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
   ];
 
   useEffect(() => {
