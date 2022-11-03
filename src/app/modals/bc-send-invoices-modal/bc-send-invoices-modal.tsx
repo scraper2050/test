@@ -208,7 +208,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 'ids': invoicesArray,
                 'typeText': 'Invoice',
                 'className': 'wideModalTitle',
-                'customerId': customerValue?._id,
+                'customerId': invoice.customer?._id,
               };
               const combined: any = { ...data, emailDefault }
               
@@ -244,12 +244,12 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             if (status === 1) {
               const data = {
                 'modalTitle': 'Send Invoices',
-                'customerEmail': customerValue?.info?.email,
+                'customerEmail': invoice.customer?.info?.email,
                 'handleClick': () => { },
                 'ids': invoicesArray,
                 'typeText': 'Invoice',
                 'className': 'wideModalTitle',
-                'customerId': customerValue?._id,
+                'customerId': invoice.customer?._id,
               };
               const combined: any = { ...data, emailDefault }
               invoicesToDispatchClone.push(combined)

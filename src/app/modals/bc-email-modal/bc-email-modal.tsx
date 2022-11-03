@@ -116,6 +116,7 @@ function EmailJobReportModal({ classes, data }: any) {
   }, []);
 
   useEffect(() => {
+    // console.log('invoice==>', invoiceToView)
     if (invoiceToView?.customerId) {
       getCustomersContact(invoiceToView?.customerId)
         .then((res) => {
