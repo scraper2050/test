@@ -471,12 +471,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{width: '100%', paddingLeft: 65, paddingRight: 45}}>
               <Grid item xs={5}>
                   <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
-                  <Autocomplete
+                <Autocomplete
                     disabled={loading}
                     getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
                     getOptionDisabled={(option) => !option.isActive}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleCustomerChange(ev, newValue)}
+                    disableClearable={customerValue !== null}
                     options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
                     renderInput={params => <TextField
                       {...params}
