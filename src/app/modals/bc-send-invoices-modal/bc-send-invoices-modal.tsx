@@ -127,7 +127,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   const handleRowClick = (event: any, row: any) => {
 
-    if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
+    // if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
       const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
       const newList = [...selectedInvoices];
       let localInvoiceListClone = [...localInvoiceList]
@@ -456,7 +456,14 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         'amountToBeApplied': 0,
         'checked': 0,
       }));
-      setLocalInvoiceList([...selectedInvoices,...newInvoiceList]);
+      const allInvoices:any[] =[...selectedInvoices,...newInvoiceList]
+      //if item is in newInvoice list and is already in selecedInvoices, do not show it
+      const uniqueInvoiceList :any[] =allInvoices.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t._id === value._id 
+        ))
+      )
+      setLocalInvoiceList(uniqueInvoiceList);
     } else {
       setLocalInvoiceList([...selectedInvoices]);
     }
