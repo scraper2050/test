@@ -42,8 +42,10 @@ function ServiceTicket({ classes }: any) {
 
     if (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     if (selectionRange) {
+      const offset = moment.parseZone().utcOffset();
+      const parsedDate = moment(ticket.dueDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toDate();
       cond = cond &&
-        moment(ticket.dueDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
+        moment(parsedDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
     }
     return cond;
   })

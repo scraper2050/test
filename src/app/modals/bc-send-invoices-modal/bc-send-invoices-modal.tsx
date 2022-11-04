@@ -127,16 +127,31 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   const handleRowClick = (event: any, row: any) => {
 
-    if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
+    // if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
       const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
       const newList = [...selectedInvoices];
+      let localInvoiceListClone = [...localInvoiceList]
       if (found >= 0) {
         newList.splice(found, 1)
-        setSelectedInvoices(newList);
+        //remove from top
+        localInvoiceListClone.splice(found, 1)
+        //push to the bottom of localInvoice, only if it contains same customer as the local invoice
+        //since we pushed it to the first, use the last row of the localinvoice for comparison
+        if (localInvoiceListClone[localInvoiceListClone.length - 1]?.customer?._id === row.original?.customer?._id) {
+          localInvoiceListClone.push(row.original)
+        }
+        
       } else {
-        newList.push(row.original);//push new whole row
-        setSelectedInvoices(newList);
-      }
+        newList.unshift(row.original);//unshift new whole row
+        
+        //remove it from local list at the original position
+        localInvoiceListClone =  localInvoiceListClone.filter(inv=>inv._id !== row.original._id)
+        //push to the top        
+        localInvoiceListClone.unshift(row.original)
+        
+    }
+    setSelectedInvoices(newList);
+    setLocalInvoiceList(localInvoiceListClone)
 
     };
 
@@ -193,7 +208,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 'ids': invoicesArray,
                 'typeText': 'Invoice',
                 'className': 'wideModalTitle',
-                'customerId': customerValue?._id,
+                'customerId': invoice.customer?._id,
               };
               const combined: any = { ...data, emailDefault }
               
@@ -229,12 +244,12 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             if (status === 1) {
               const data = {
                 'modalTitle': 'Send Invoices',
-                'customerEmail': customerValue?.info?.email,
+                'customerEmail': invoice.customer?.info?.email,
                 'handleClick': () => { },
                 'ids': invoicesArray,
                 'typeText': 'Invoice',
                 'className': 'wideModalTitle',
-                'customerId': customerValue?._id,
+                'customerId': invoice.customer?._id,
               };
               const combined: any = { ...data, emailDefault }
               invoicesToDispatchClone.push(combined)
@@ -319,8 +334,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'className': 'font-bold',
       'sortable': false,
       Cell({ row }: any) {
-        // const { status = '' } = row.original;
-        // const textStatus = status.split('_').join(' ').toLowerCase();
         // for payment 
         let status = 'open';
         if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
@@ -399,52 +412,25 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'className': 'font-bold',
       'sortable': true
     },
-    // {
-    //   Cell({ row }: any) {
-    //     return row.original.createdAt
-    //       ? formatDateMMMDDYYYY(row.original.createdAt)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Invoice Date',
-    //   'accessor': 'createdAt',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
-  
-    // { Cell({ row }: any) {
-    //     return row.original.lastEmailSent
-    //       ? formatDatTimelll(row.original.lastEmailSent)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Last Emailed',
-    //   'accessor': 'lastEmailSent',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
-    // {
-    //   Cell({ row }: any) {
-    //     return row.original.createdAt
-    //       ? formatDateMMMDDYYYY(row.original.createdAt)
-    //       : 'N/A';
-    //   },
-    //   'Header': 'Invoice Date',
-    //   'accessor': 'createdAt',
-    //   'className': 'font-bold',
-    //   'sortable': true
-    // },
   ];
 
   useEffect(() => {
-    console.log('invoice ist=>',invoiceList)
     if (invoiceList.length > 0) {
       const newInvoiceList = invoiceList.map((item: any) => ({
         ...item,
         'amountToBeApplied': 0,
         'checked': 0,
       }));
-      setLocalInvoiceList([...newInvoiceList]);
+      const allInvoices:any[] =[...selectedInvoices,...newInvoiceList]
+      //if item is in newInvoice list and is already in selecedInvoices, do not show it
+      const uniqueInvoiceList :any[] =allInvoices.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t._id === value._id 
+        ))
+      )
+      setLocalInvoiceList(uniqueInvoiceList);
     } else {
-      setLocalInvoiceList([]);
+      setLocalInvoiceList([...selectedInvoices]);
     }
   }, [invoiceList])
 
@@ -457,12 +443,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{width: '100%', paddingLeft: 65, paddingRight: 45}}>
               <Grid item xs={5}>
                   <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
-                  <Autocomplete
+                <Autocomplete
                     disabled={loading}
                     getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
                     getOptionDisabled={(option) => !option.isActive}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleCustomerChange(ev, newValue)}
+                    disableClearable={customerValue !== null}
                     options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
                     renderInput={params => <TextField
                       {...params}

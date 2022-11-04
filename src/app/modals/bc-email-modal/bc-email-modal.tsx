@@ -116,6 +116,7 @@ function EmailJobReportModal({ classes, data }: any) {
   }, []);
 
   useEffect(() => {
+    // console.log('invoice==>', invoiceToView)
     if (invoiceToView?.customerId) {
       getCustomersContact(invoiceToView?.customerId)
         .then((res) => {
@@ -276,7 +277,6 @@ function EmailJobReportModal({ classes, data }: any) {
     //collect form.values
     const arr = [...invoicesToSend, tempObj];
     arr.map((invoice) => {
-      console.log(invoice)
 
       //form object
        const params: any = {
@@ -348,7 +348,7 @@ function EmailJobReportModal({ classes, data }: any) {
 
   return (
     <DataContainer>
-      {data.multiple && (
+      {data.multiple && !sent && (
         <Typography
           align="center"
           variant={'h6'}
