@@ -15,8 +15,15 @@ import {
   setModalDataAction
 } from "actions/bc-modal/bc-modal.action";
 import { setReportShowing } from 'actions/report/report.action'
-import { generateIncomeReport } from 'api/reports.api';
-import { error as SnackBarError, info } from 'actions/snackbar/snackbar.action';
+import {
+  generateIncomePdfReport,
+  generateIncomeReport
+} from 'api/reports.api';
+import {
+  error,
+  error as SnackBarError,
+  info
+} from 'actions/snackbar/snackbar.action';
 
 interface RevenueStandardProps {
   classes: any;
@@ -38,6 +45,7 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
   const location:any = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [reportData, setReportData] = useState<any>(null);
+  const [reportQuery, setReportQuery] = useState<any>({});
 
   useEffect(() => {
     if(location.state && location.state.reportQuery){
@@ -46,8 +54,8 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
     }
     window.history.replaceState({}, document.title);
   }, [location]);
-  
-  const runReport = async (params?:any) => {
+
+  const formatReportParams = (params: any) => {
     const paramObject:any = {};
     paramObject.reportType = 1;
     paramObject.reportData = 1;
@@ -70,6 +78,12 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
       paramObject.startDate = startDate.toISOString().slice(0,10);
       paramObject.endDate = endDate.toISOString().slice(0,10);
     }
+    setReportQuery(paramObject);
+    return paramObject;
+  }
+
+  const runReport = async (params?:any) => {
+    const paramObject = formatReportParams(params);
     try {
       setIsLoading(true);
       const result = await generateIncomeReport(paramObject);
@@ -88,7 +102,6 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
     }
     history.replace({state:undefined});
   }
-  
 
   const handleMenuButtonClick = (event: any, id: number) => {
     event.stopPropagation();
@@ -113,6 +126,26 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
     }
   }
 
+  const generatePdfReport = async() => {
+    try {
+      setIsLoading(true);
+      const {
+        status,
+        incomeReportUrl,
+        message
+      } = await generateIncomePdfReport(reportQuery);
+      if (status === 1) {
+        window.open(incomeReportUrl)
+      } else {
+        dispatch(error(message));
+      }
+    } catch (e) {
+      dispatch(error(e.message));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleMenuToolbarListClick = (event: any, id: number) => {
     event.stopPropagation();
     switch (id) {
@@ -131,10 +164,26 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
         }, 200);
         break;
       case 1:
-        dispatch(info('This feature is still under development'));
+        generatePdfReport();
         break;
       case 2:
-        dispatch(info('This feature is still under development'));
+        dispatch(
+          setModalDataAction({
+            'data': {
+              modalTitle: 'Send this Report',
+              removeFooter: false,
+              reportName: 'income',
+              reportData: {
+                ...reportQuery,
+
+              }
+            },
+            'type': modalTypes.EMAIL_REPORT_MODAL,
+          })
+        );
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         break;
       default:
         dispatch(info('This feature is still under development'));
@@ -148,7 +197,7 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
       ) : reportData ? (
         <div>
           <div className={classes.menuToolbarContainer}>
-            <BCMenuToolbarButton 
+            <BCMenuToolbarButton
               buttonText='More Actions'
               items={MORE_ITEMS}
               handleClick={handleMenuToolbarListClick}

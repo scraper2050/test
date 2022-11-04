@@ -289,7 +289,25 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         generatePdfReport();
         break;
       case 2:
-        dispatch(info('This feature is still under development'));
+        const customerIds = customers.length ? JSON.stringify(customers.map((customer: any) => customer._id)) : undefined;
+        dispatch(
+          setModalDataAction({
+            'data': {
+              modalTitle: 'Send this Report',
+              removeFooter: false,
+              reportName: 'ar',
+              reportData: {
+                reportData: 2,
+                asOf: formatDateYMD(asOf),
+              ...(customerIds && {customerIds})
+              }
+            },
+            'type': modalTypes.EMAIL_REPORT_MODAL,
+          })
+        );
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         break;
       default:
         dispatch(info('This feature is still under development'));
