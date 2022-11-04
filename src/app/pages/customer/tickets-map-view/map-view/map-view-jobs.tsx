@@ -1,4 +1,5 @@
 import Config from 'config';
+import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import { Grid, withStyles } from '@material-ui/core';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
@@ -63,7 +64,9 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       }
 
       if(selectedDate) {
-        filter = filter && parseISOMoment(job.scheduleDate).isSame(selectedDate, 'day');
+        const offset = moment.parseZone().utcOffset();
+        const parsedDate = moment(job.scheduleDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toString();
+        filter = filter && parseISOMoment(parsedDate).isSame(selectedDate, 'day');
       }
       return filter;
     });

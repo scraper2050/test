@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import moment from 'moment';
 import { Grid, withStyles } from '@material-ui/core';
 import {useDispatch, useSelector} from 'react-redux';
 import MemoizedMap from 'app/components/bc-map-with-marker-list/bc-map-with-marker-list';
@@ -60,7 +61,9 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       }
 
       if(selectedDate) {
-        filter = filter && parseISOMoment(ticket.dueDate).isSame(selectedDate, 'day');
+        const offset = moment.parseZone().utcOffset();
+        const parsedDate = moment(ticket.dueDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toString();
+        filter = filter && parseISOMoment(parsedDate).isSame(selectedDate, 'day');
       }
       return filter;
     });
