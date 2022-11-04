@@ -56,6 +56,35 @@ export const createMemorizedReport = async (params: any) => {
   }
 }
 
+export const generateIncomePdfReport = async (params: any) => {
+  const queryParams = Object.keys(params).reduce((acc: string, key: string, index, arr) => `${acc}${key}=${params[key]}${index < arr.length -1 ? '&' : ''}`, '?' );
+  try {
+    const response: any = await request(`/generateIncomeReportPdf${queryParams}`, 'GET', {});
+    return response.data;
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const generateIncomeEmailTemplate = async (params: any) => {
+  const queryParams = Object.keys(params).reduce((acc: string, key: string, index, arr) => `${acc}${key}=${params[key]}${index < arr.length -1 ? '&' : ''}`, '?' );
+  try {
+    const response: any = await request(`/getReportEmailTemplate/incomeReport${queryParams}`, 'GET', {});
+    return response.data;
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const sendIncomeEmail = async (params: any) => {
+  try {
+    const response: any = await request('/sendReport/incomeReport', 'POST', params);
+    return response.data;
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
 export const generateAccountReceivableReport = async (type: number, asOf: string, customerIds?: string[]) => {
   const ids = customerIds ? JSON.stringify(customerIds) : null;
 
@@ -75,6 +104,24 @@ export const generateAccountReceivablePdfReport = async (type: number, asOf: str
   const params = `?reportData=${type}&asOf=${asOf}${ids ? '&customerIds='+ids : ''}`
   try {
     const response: any = await request(`/generateReportPdf/AccountReceivableReport${params}`, 'GET', {});
+    return response.data;
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const generateAccountReceivableEmailTemplate = async () => {
+  try {
+    const response: any = await request('/getReportEmailTemplate/accountReceivableReport', 'GET', {});
+    return response.data;
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const sendAccountReceivableEmail = async (params: any) => {
+  try {
+    const response: any = await request('/sendReport/accountReceivableReport', 'POST', params);
     return response.data;
   } catch {
     return {status: 0, message: `Something went wrong`};

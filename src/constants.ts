@@ -124,6 +124,7 @@ export const modalTypes = {
   'RECORD_SYNC_STATUS_MODAL' : 'record_sync_status_modal',
   'ADVANCE_FILTER_INVOICE_MODAL' : 'ADVANCE_FILTER_INVOICE_MODAL',
   'CUSTOMIZE_AR_REPORT_MODAL' : 'CUSTOMIZE_AR_REPORT_MODAL',
+  'EMAIL_REPORT_MODAL': 'EMAIL_REPORT_MODAL',
 };
 
 export const rejectionReason = [

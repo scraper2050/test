@@ -256,7 +256,23 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
         generatePdfReport();
         break;
       case 2:
-        dispatch(info('This feature is still under development'));
+        dispatch(
+          setModalDataAction({
+            'data': {
+              modalTitle: 'Send this Report',
+              removeFooter: false,
+              reportName: 'ar',
+              reportData: {
+                reportData: 1,
+                asOf: formatDateYMD(asOfDate),
+              }
+            },
+            'type': modalTypes.EMAIL_REPORT_MODAL,
+          })
+        );
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         break;
       default:
         dispatch(info('This feature is still under development'));
