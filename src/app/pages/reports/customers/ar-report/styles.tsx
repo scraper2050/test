@@ -5,6 +5,7 @@ import {
   GRAY3, LIGHT_BLUE,
 } from "../../../../../constants";
 import styled from "styled-components";
+import * as CONSTANTS from "../../../../../constants";
 
 export default (theme: Theme): any => ({
   pageContainer: {
@@ -17,6 +18,8 @@ export default (theme: Theme): any => ({
   },
   menuToolbarContainer: {
     flex: 1,
+    display: 'flex',
+    alignItems: 'center',
   },
   label: {
     fontSize: 10,
@@ -60,32 +63,32 @@ export default (theme: Theme): any => ({
   },
   customSummaryTitle: {
     fontWeight: '700',
-    fontSize: 22,
+    fontSize: 26,
     color: GRAY2,
     margin: '0 0 20px 0',
   },
   customSummaryLabel: {
-    fontWeight: '700',
-    fontSize: 9,
-    color: GRAY3,
+    fontWeight: 'bold',
+    fontSize: 11,
+    color: 'black',
     margin: 0,
   },
   customSummaryValue: {
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: 13,
     color: GRAY1,
     margin: 0,
   },
   customSummaryTotalLabel: {
   fontWeight: '500',
-    fontSize: 11,
-    color: GRAY3,
+    fontSize: 13,
+    color: 'black',
     margin: 0,
     textAlign: 'right',
   },
   customSummaryTotalValue: {
     fontWeight: '700',
-    fontSize: 14,
+    fontSize: 16,
     color: GRAY2,
     margin: 0,
     textAlign: 'right',
@@ -94,7 +97,18 @@ export default (theme: Theme): any => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: '0 50px',
+    padding: '0 180px 0 320px',
+  },
+  'roundBackground': {
+    'backgroundColor': CONSTANTS.GRAY4,
+    'borderRadius': '50%',
+    'color': 'white',
+    'height': '28px',
+    'width': '28px',
+    '&:hover': {
+      'opacity': '0.7',
+      'backgroundColor': CONSTANTS.PRIMARY_BLUE
+    }
   },
 });
 

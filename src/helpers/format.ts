@@ -49,7 +49,7 @@ export const parseISOMoment = (date: string) => {
 export const parseISODate = (date: string) => {
   if(!date) return date;
   const offset = moment.parseZone().utcOffset();
-  const dateObj = moment(date).subtract(offset, 'minutes').toDate();
+  const dateObj = moment(date).subtract(offset, 'minutes').add(1, 'hours').hour(0).toDate();
   return dateObj;
 /*  const dateObj = new Date(date)
   const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;

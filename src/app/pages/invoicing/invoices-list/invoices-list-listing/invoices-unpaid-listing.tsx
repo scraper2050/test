@@ -232,7 +232,7 @@ const DataContainer = styled.div`
 export default withStyles(styles, { 'withTheme': true })(InvoicingUnpaidListing);
 
 
-const PaymentStatus = styled.div<{status: string}>`
+export const PaymentStatus = styled.div<{status: string}>`
   width: 75px;
   background-color: ${props => props.status === 'overdue' || props.status === 'due today'? '#F5005768' : props.status === 'due soon' ? '#E5F7FF' : PRIMARY_GREEN};
   background-image: ${props => props.status === 'overdue' ? 'repeating-linear-gradient(-60deg,#F5005720 0px 8px,#F5005701 8px 12px);' : 'none'};

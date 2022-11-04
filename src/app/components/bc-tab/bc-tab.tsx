@@ -15,9 +15,10 @@ interface BCTabsProps {
   responsiveLabel?: boolean;
   variant?: string;
   disabled?: boolean;
+  minWidth?: string;
 }
 
-function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, responsiveLabel = false, variant = 'scrollable', disabled = false }: BCTabsProps): JSX.Element {
+function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, responsiveLabel = false, variant = 'scrollable', disabled = false, minWidth = '' }: BCTabsProps): JSX.Element {
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     onChangeTab(newValue);
   };
@@ -28,6 +29,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, r
       onChange={handleTabChange}
       value={curTab}
       variant={variant}
+      minWidth={minWidth}
       scrollButtons="on"
       chip={chip ? 1 : 0}
     >
@@ -119,13 +121,13 @@ const FlexDiv = styled.div`
   }
 `
 
-const StyledTabs = styled(Tabs)<{chip: boolean|number, variant: any}>`
+const StyledTabs = styled(Tabs)<{chip: boolean|number, variant: any, minWidth: string}>`
   border-bottom: 1px solid #C4C4C4;
   .MuiTab-root {
     font-size: 16px;
     line-height: 20px;
     color: #000;
-    min-width: 190px;
+    min-width: ${props => props.minWidth || '190px'};
     text-transform: uppercase;
     padding-top: 0;
 

@@ -13,6 +13,7 @@ import {
   Checkbox,
   withStyles,
   Tooltip,
+  Box,
 } from '@material-ui/core';
 import {
   closeModalAction,
@@ -50,6 +51,8 @@ import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
 import {error} from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import {resetEmailState} from "../../../actions/email/email.action";
+import { setTimeout } from 'timers';
+import { PaymentStatus } from 'app/pages/invoicing/invoices-list/invoices-list-listing/invoices-unpaid-listing';
 
 
 const SHOW_OPTIONS = [
@@ -98,7 +101,8 @@ const useDebounceInputStyles = makeStyles(() =>
 
 function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): JSX.Element {
   const dispatch = useDispatch();
-  const [selectedIndexes, setSelectedIndexes] = useState<string[]>([]);
+  const [selectedInvoices, setSelectedInvoices] = useState<any[]>([]);
+  const [invoicesToDispatch, setInvoicesToDispatch] = useState<any[]>([]);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [showValue, setShowValue] = useState<string>('unpaid');
@@ -122,69 +126,162 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   );
 
   const handleRowClick = (event: any, row: any) => {
-    if (selectedIndexes.length === 0 && !customerValue) setCustomerValue(row.original.customer);
-    const found = selectedIndexes.indexOf(row.original._id);
-    const newList = [...selectedIndexes];
-    if (found >= 0) {
-      newList.splice(found, 1)
-      setSelectedIndexes(newList);
-    } else {
-      newList.push(row.original._id);
-      setSelectedIndexes(newList);
+
+    // if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
+      const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
+      const newList = [...selectedInvoices];
+      let localInvoiceListClone = [...localInvoiceList]
+      if (found >= 0) {
+        newList.splice(found, 1)
+        //remove from top
+        localInvoiceListClone.splice(found, 1)
+        //push to the bottom of localInvoice, only if it contains same customer as the local invoice
+        //since we pushed it to the first, use the last row of the localinvoice for comparison
+        if (localInvoiceListClone[localInvoiceListClone.length - 1]?.customer?._id === row.original?.customer?._id) {
+          localInvoiceListClone.push(row.original)
+        }
+        
+      } else {
+        newList.unshift(row.original);//unshift new whole row
+        
+        //remove it from local list at the original position
+        localInvoiceListClone =  localInvoiceListClone.filter(inv=>inv._id !== row.original._id)
+        //push to the top        
+        localInvoiceListClone.unshift(row.original)
+        
     }
-  };
+    setSelectedInvoices(newList);
+    setLocalInvoiceList(localInvoiceListClone)
+
+    };
 
   const handleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     if (e.target.checked) {
-      setSelectedIndexes(localInvoiceList.map((invoice) => invoice._id));
+      // setSelectedIndexes(localInvoiceList.map((invoice) => invoice._id));
+      setSelectedInvoices(localInvoiceList)
     } else {
-      setSelectedIndexes([]);
+      setSelectedInvoices([]);
     }
   }
 
   const handleCustomerChange = (event: any, newValue: any) => {
     setCustomerValue(newValue);
-    if (!newValue) setSelectedIndexes([]);
+    if (!newValue) setSelectedInvoices([]);
   };
 
   const handleSend = async(e: any) => {
-    e.stopPropagation();
-    try {
-      const response = await getInvoiceEmailTemplate(selectedIndexes);
-      const {emailTemplate: emailDefault, status, message} = response.data
-      if (status === 1) {
-        const data = {
-          'modalTitle': 'Send Multiple Invoices',
-          'customerEmail': customerValue?.info?.email,
-          'handleClick': () => {},
-          'ids': selectedIndexes,
-          'typeText': 'Invoice',
-          'className': 'wideModalTitle',
-          'customerId': customerValue?._id,
-        };
-        dispatch(setModalDataAction({
-          data: {...data, emailDefault},
-          'type': modalTypes.EMAIL_JOB_REPORT_MODAL
-        }));
-        dispatch(resetEmailState());
-        dispatch(setCurrentPageIndex(0));
-        dispatch(getAllInvoicesAPI());
+    // e.stopPropagation();
+    
+      //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
+      //..then group the responses
+    
+    const invoicesToDispatchClone:any[] = [] 
+    
+    //cycle thru the array for individual objects
+    for (let i = 0; i < selectedInvoices.length; i++) {
+      const invoice = selectedInvoices[i];
+      if (invoice.contactsObj.length > 0) {
+        const email = invoice.contactsObj[0].email;
+
+        //first check if email is in array
+
+        // if in state, ignore, else filter to get similar invoices, then send to BE and get templates
+        if (invoicesToDispatchClone.some(inv => inv.customerEmail === email)) {
+          //do nothing
+          
+          continue;
+        } else {
+          const tempArray = selectedInvoices.filter(inv => inv.contactsObj[0]?.email === email);
+          const invoicesArray:any = []
+          tempArray.map((inv) => {
+            invoicesArray.push(inv._id)
+          })
+          try {
+            const response = await getInvoiceEmailTemplate(invoicesArray);
+            const {emailTemplate: emailDefault, status, message} = response.data
+            if (status === 1) {
+              const data = {
+                'modalTitle': 'Send Invoices',
+                'customerEmail': email,
+                'handleClick': () => { },
+                'ids': invoicesArray,
+                'typeText': 'Invoice',
+                'className': 'wideModalTitle',
+                'customerId': invoice.customer?._id,
+              };
+              const combined: any = { ...data, emailDefault }
+              
+              invoicesToDispatchClone.push(combined)
+              
+            }
+          } catch (e) {
+            //setIsLoading(false);
+            console.log(e)
+            
+          }
+        }
       } else {
-        dispatch(error(message));
+        // do as before,, send to default email instead
+
+        //check if in array
+        if (invoicesToDispatchClone.some(inv => inv.customerEmail === customerValue?.info?.email)) {
+          //do nothing
+          continue;
+        } else {
+
+        //filter to get those with empty contactObj's first
+          const contactlessInvoices = selectedInvoices.filter(inv => inv.contactsObj.length === 0)
+          if (contactlessInvoices.length) {
+            //get the id's
+            const invoicesArray:any = []
+            contactlessInvoices.map((inv) => {
+              invoicesArray.push(inv._id)
+            })
+             try {
+            const response = await getInvoiceEmailTemplate(invoicesArray);
+            const {emailTemplate: emailDefault, status, message} = response.data
+            if (status === 1) {
+              const data = {
+                'modalTitle': 'Send Invoices',
+                'customerEmail': invoice.customer?.info?.email,
+                'handleClick': () => { },
+                'ids': invoicesArray,
+                'typeText': 'Invoice',
+                'className': 'wideModalTitle',
+                'customerId': invoice.customer?._id,
+              };
+              const combined: any = { ...data, emailDefault }
+              invoicesToDispatchClone.push(combined)
+              
+            }
+          } catch (e) {
+            console.log(e)
+          }
+          
+          }
+         }
+
       }
-    } catch (e) {
-      //setIsLoading(false);
-      console.log(e)
-      let message = 'Unknown Error'
-      if (e instanceof Error) {
-        message = e.message
-      }
-      dispatch(error(message));
     }
+
+    dispatch(setModalDataAction({
+      data: {
+        multiple: true,
+        multipleInvoices: invoicesToDispatchClone,
+        'customerId': customerValue?._id,
+        "modalTitle": "Send Invoices",
+       },
+      'type': modalTypes.EMAIL_JOB_REPORT_MODAL
+    }));
+
+    dispatch(resetEmailState());
+    dispatch(setCurrentPageIndex(0));
+    dispatch(getAllInvoicesAPI());
   };
 
   const closeModal = () => {
+    
     dispatch(setCurrentPageIndex(0));
     dispatch(getAllInvoicesAPI());
     dispatch(closeModalAction());
@@ -226,28 +323,44 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         <Checkbox
           color="primary"
           classes={{root: classes.checkbox}}
-          checked={selectedIndexes.length === localInvoiceList.length}
-          indeterminate={selectedIndexes.length > 0 && selectedIndexes.length < localInvoiceList.length}
+          checked={selectedInvoices.length === localInvoiceList.length}
+          indeterminate={selectedInvoices.length > 0 && selectedInvoices.length < localInvoiceList.length}
           disabled={!customerValue}
           onChange={handleSelectAll}
         />
-        <span>Invoice ID</span>
+         <span>Status</span>
       </>,
-      'accessor': 'invoiceId',
+      'accessor': 'paid',
       'className': 'font-bold',
       'sortable': false,
-      Cell({row}: any) {
-        return <div>
+      Cell({ row }: any) {
+        // for payment 
+        let status = 'open';
+        if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
+        else if (moment(row.original.dueDate).isSame(moment(), 'day')) status = 'due today'
+        else if (moment(row.original.dueDate).diff(moment(), 'day') <= 7) status = 'due soon'
+        return <Box display="flex" flexDirection="row">
           <Checkbox
             color="primary"
             classes={{root: classes.checkbox}}
-            checked={selectedIndexes.indexOf(row.original._id) >= 0}
+            checked={selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) >= 0 }
           />
-          <span>
-            {row.original.invoiceId}
-          </span>
-        </div>;
+          <PaymentStatus status={status}>
+            {status}
+          </PaymentStatus>
+        </Box>;
       },
+    },
+    
+    {
+      Cell({ row }: any) {
+        return <div>
+          {row.original.invoiceId}
+        </div>
+      },
+      'Header': 'Invoice ID',
+      'accessor': 'invoiceId',
+      'className': 'font-bold',
     },
     {
       Cell({ row }: any) {
@@ -277,46 +390,25 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'Header': 'Amount Due',
       'width': 20
     },
-    {
-      Cell({ row }: any) {
-        const { status = '' } = row.original;
-        const textStatus = status.split('_').join(' ').toLowerCase();
-        return (
-          <div>
-            <CSButtonSmall
-              variant="contained"
-              style={{
-                backgroundColor: PAYMENT_STATUS_COLORS[status],
-                color: '#fff',
-              }}
-            >
-              <span style={{ textTransform: 'capitalize' }}>{textStatus}</span>
-            </CSButtonSmall>
-          </div>
 
-        )
-      },
-      'Header': 'Payment Status',
-      'accessor': 'paid',
-    },
     { Cell({ row }: any) {
-        return row.original.lastEmailSent
-          ? formatDatTimelll(row.original.lastEmailSent)
+        return row.original.contactsObj.length>0
+          ? row.original.contactsObj[0]?.name
           : 'N/A';
       },
-      'Header': 'Last Emailed',
-      'accessor': 'lastEmailSent',
+      'Header': 'Contact',
+      'accessor': 'row.original.contactsObj[0]?.name',
       'className': 'font-bold',
       'sortable': true
     },
-    {
-      Cell({ row }: any) {
-        return row.original.createdAt
-          ? formatDateMMMDDYYYY(row.original.createdAt)
+
+    { Cell({ row }: any) {
+        return row.original.contactsObj.length>0
+          ? row.original.contactsObj[0]?.email
           : 'N/A';
       },
-      'Header': 'Invoice Date',
-      'accessor': 'createdAt',
+      'Header': 'Email',
+      'accessor': 'row.original.contactsObj[0]?.email',
       'className': 'font-bold',
       'sortable': true
     },
@@ -329,9 +421,16 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         'amountToBeApplied': 0,
         'checked': 0,
       }));
-      setLocalInvoiceList([...newInvoiceList]);
+      const allInvoices:any[] =[...selectedInvoices,...newInvoiceList]
+      //if item is in newInvoice list and is already in selecedInvoices, do not show it
+      const uniqueInvoiceList :any[] =allInvoices.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t._id === value._id 
+        ))
+      )
+      setLocalInvoiceList(uniqueInvoiceList);
     } else {
-      setLocalInvoiceList([]);
+      setLocalInvoiceList([...selectedInvoices]);
     }
   }, [invoiceList])
 
@@ -344,12 +443,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{width: '100%', paddingLeft: 65, paddingRight: 45}}>
               <Grid item xs={5}>
                   <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
-                  <Autocomplete
+                <Autocomplete
                     disabled={loading}
                     getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
                     getOptionDisabled={(option) => !option.isActive}
                     id={'tags-standard'}
                     onChange={(ev: any, newValue: any) => handleCustomerChange(ev, newValue)}
+                    disableClearable={customerValue !== null}
                     options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
                     renderInput={params => <TextField
                       {...params}
@@ -430,7 +530,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             {!isSuccess && (
               <Button
                 color={'primary'}
-                disabled={selectedIndexes.length === 0}
+                disabled={selectedInvoices.length === 0}
                 onClick={handleSend}
                 disableElevation={true}
                 //disabled={isSubmitting || loading || !isValid()}

@@ -712,8 +712,8 @@ function BCModal() {
         });
         // data.maxHeight='100%';
         setComponent(<BcArReportModal
-          payment={data.payment}
-          dateRange={data.dateRange}
+          asOfDate={data.asOf}
+          selectedCustomers={data.customers}
         />);
         break;
       case modalTypes.COMPANY_LOCATION_MODAL:
