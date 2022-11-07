@@ -385,13 +385,6 @@ function EmailJobReportModal({ classes, data }: any) {
       customerId: data?.multipleInvoices[invoiceInMultipleView - 1]?.customerId,
     });
 
-    // const invoicesToSendClone = [...invoicesToSend];
-
-    // console.log("this is what you will meet ", invoicesToSend[invoiceInMultipleView - 1])
-    // FormikSetFieldValue('to',tempReceipients );
-    // invoicesToSendClone.pop();
-    // setInvoicesToSend(invoicesToSendClone);
-
     setInvoiceInMultipleView(invoiceInMultipleView - 1);
   };
 
