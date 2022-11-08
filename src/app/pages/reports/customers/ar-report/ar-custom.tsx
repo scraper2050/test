@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {
-  IconButton,
-  withStyles
-} from '@material-ui/core';
+import {withStyles} from '@material-ui/core';
 
 import styles from './styles';
 import BCCircularLoader
@@ -14,8 +11,10 @@ import {
 } from 'api/reports.api';
 import {error, info} from 'actions/snackbar/snackbar.action';
 import {
-  formatCurrency, formatDate,
-  formatDateYMD, formatShortDateNoDay
+  formatCurrency,
+  formatDate,
+  formatDateYMD,
+  formatShortDateNoDay
 } from "../../../../../helpers/format";
 import {LIGHT_BLUE, modalTypes, PRIMARY_BLUE} from "../../../../../constants";
 import BCMenuToolbarButton from "../../../../components/bc-menu-toolbar-button";
@@ -23,10 +22,7 @@ import {
   openModalAction,
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
-import {
-  DataGrid, GridCellParams,
-  GridColDef,
-} from '@material-ui/data-grid';
+import {DataGrid, GridCellParams, GridColDef,} from '@material-ui/data-grid';
 import styled from "styled-components";
 import {useHistory, useLocation} from "react-router-dom";
 import BCBackButtonNoLink
@@ -58,22 +54,21 @@ interface CUSTOM_REPORT {
 }
 
 const MORE_ITEMS = [
-  {id: 0, title:'Customize'},
-  {id: 1, title:'Export to PDF'},
-  {id: 2, title:'Send Report'},
+  {id: 0, title: 'Customize'},
+  {id: 1, title: 'Export to PDF'},
+  {id: 2, title: 'Send Report'},
 ]
-
 
 
 const ARCustomReport = ({classes}: RevenueStandardProps) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation<{asOf: string, customers: any[], bucket: string, selectedCustomer: any}>();
-  const { companyName } = useSelector(({ profile }: any) => profile)
+  const location = useLocation<{ asOf: string, customers: any[], bucket: string, selectedCustomer: any }>();
+  const {companyName} = useSelector(({profile}: any) => profile)
   const [isLoading, setIsLoading] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
   const [bucket, setBucket] = useState<string | null>(null || location?.state?.bucket);
-  const [selectedCustomer, setSelectedCustomer] = useState<any[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   // const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [reportData, setReportData] = useState<CUSTOM_REPORT | null>(null);
@@ -82,25 +77,34 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
 
 
   const columnsBuckets: GridColDef[] = [
-    { field: 'customer', headerName: 'Customer', flex: 1, disableColumnMenu: true },
-    { field: 'Current',
+    {
+      field: 'customer',
+      headerName: 'Customer',
+      flex: 1,
+      disableColumnMenu: true
+    },
+    {
+      field: 'Current',
       headerName: 'Current',
       flex: 1, disableColumnMenu: true,
       align: 'right',
       headerAlign: 'right',
       valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
         {cellValues.formattedValue}
       </ClickableCell>
     },
-    { field: '1 - 30',
+    {
+      field: '1 - 30',
       headerName: '1  - 30',
       headerAlign: 'right',
       flex: 1,
       disableColumnMenu: true,
       align: 'right',
       valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
         {cellValues.formattedValue}
       </ClickableCell>
     },
@@ -112,7 +116,8 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       headerAlign: 'right',
       align: 'right',
       valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
         {cellValues.formattedValue}
       </ClickableCell>
     },
@@ -124,7 +129,8 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       headerAlign: 'right',
       align: 'right',
       valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
         {cellValues.formattedValue}
       </ClickableCell>
     },
@@ -136,7 +142,8 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       headerAlign: 'right',
       align: 'right',
       valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
         {cellValues.formattedValue}
       </ClickableCell>
     },
@@ -148,25 +155,37 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       align: 'right',
       headerAlign: 'right',
       valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleTotalClick(cellValues)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleTotalClick(cellValues)}>
         {cellValues.formattedValue}
       </ClickableCell>
     },
   ];
 
   const columnsInvoices: GridColDef[] = [
-    { field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true },
+    {field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true},
     {
       field: 'invoice',
       headerName: 'Invoice',
       flex: 1,
       disableColumnMenu: true,
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleInvoiceClick(cellValues)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleInvoiceClick(cellValues)}>
         {cellValues.value}
       </ClickableCell>
     },
-    { field: 'customer', headerName: 'Customer',flex: 1, disableColumnMenu: true, },
-    { field: 'dueDate', headerName: 'Due Date',flex: 1, disableColumnMenu: true,  },
+    {
+      field: 'customer',
+      headerName: 'Customer',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'dueDate',
+      headerName: 'Due Date',
+      flex: 1,
+      disableColumnMenu: true,
+    },
     {
       field: 'amount',
       headerName: 'Amount',
@@ -174,11 +193,19 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       disableColumnMenu: true,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (cellValues) => <ClickableCell onClick={() => handleInvoiceClick(cellValues)}>
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleInvoiceClick(cellValues)}>
         {cellValues.value}
       </ClickableCell>
     },
-    { field: 'balance', headerName: 'Open Balance',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+    {
+      field: 'balance',
+      headerName: 'Open Balance',
+      flex: 1,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right'
+    },
   ];
 
   const formatReportBuckets = (report: any) => {
@@ -196,7 +223,10 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       }
     });
 
-    const tempCustomer = customerAgingBuckets.map(({customer, agingBuckets}: any) => {
+    const tempCustomer = customerAgingBuckets.map(({
+                                                     customer,
+                                                     agingBuckets
+                                                   }: any) => {
       const customerBuckets = {...BUCKETS};
       let total = 0;
       agingBuckets?.forEach((bucket: any) => {
@@ -236,7 +266,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
 
     });
 
-    setSelectedCustomer([customer]);
+    setSelectedCustomer(customer);
     setReportData({
       outstanding: formatCurrency(bucket.totalUnpaid),
       totalAmount: formatCurrency(totalAmount),
@@ -268,7 +298,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     }
   }
 
-  const generatePdfReport = async() => {
+  const generatePdfReport = async () => {
     try {
       setIsLoading(true);
       const customerIds = customers.length ? customers.map((customer: any) => customer._id) : undefined;
@@ -322,7 +352,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
               reportData: {
                 reportData: 2,
                 asOf: formatDateYMD(asOf),
-              ...(customerIds && {customerIds})
+                ...(customerIds && {customerIds})
               }
             },
             'type': modalTypes.EMAIL_REPORT_MODAL,
@@ -364,7 +394,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
   };
 
   const handleInvoiceClick = (params: GridCellParams) => {
-    history.replace({state:{ ...location.state, bucket, selectedCustomer }});
+    history.replace({state: {...location.state, bucket, selectedCustomer}});
     history.push({
       'pathname': `/main/invoicing/view/${params.id}`,
     });
@@ -381,6 +411,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
   }
 
   useEffect(() => {
+    setBucket(null);
     getReportData();
   }, [location]);
 
@@ -399,8 +430,8 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         :
         <div className={classes.pageContainer}>
           <div className={classes.toolbar}>
-            <div className={classes.menuToolbarContainer} >
-              {!!bucket && <BCBackButtonNoLink func={handleReturnReport} /> }
+            <div className={classes.menuToolbarContainer}>
+              {!!bucket && <BCBackButtonNoLink func={handleReturnReport}/>}
             </div>
             <BCMenuToolbarButton
               buttonText='More Actions'
@@ -413,14 +444,21 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
             <div className={classes.customSummaryColumn}>
               <p className={classes.customSummaryTitle}>{companyName}</p>
               <p className={classes.customSummaryLabel}>As Of</p>
-              <p className={classes.customSummaryValue}>{formatShortDateNoDay(asOf)}</p>
+              <p
+                className={classes.customSummaryValue}>{formatShortDateNoDay(asOf)}</p>
             </div>
             <div className={classes.customSummaryColumn}>
               <p className={classes.customSummaryTitle}>&nbsp;</p>
-              <p className={classes.customSummaryLabel}>Customer{bucket ? '' : '(s)'}</p>
-              {customers.length ?
-                (bucket ? selectedCustomer : customers).map((customer: any) => <p className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
-                : 'All'
+              <p
+                className={classes.customSummaryLabel}>Customer{bucket ? '' : '(s)'}</p>
+              {bucket ?
+                <p
+                  className={classes.customSummaryValue}>{selectedCustomer?.profile?.displayName}</p>
+              : customers.length ?
+                  customers.map((customer: any) =>
+                  <p
+                    className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
+              : 'All'
               }
             </div>
             {bucket ? <>
@@ -432,23 +470,29 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
               </> :
               <div/>
             }
-            <div className={classes.customSummaryColumn} style={{alignItems: 'flex-end'}}>
+            <div className={classes.customSummaryColumn}
+                 style={{alignItems: 'flex-end'}}>
               <p className={classes.customSummaryTitle}>A/R REPORT</p>
-              <p className={classes.customSummaryTotalLabel}>Total Outstanding</p>
-              <p className={classes.customSummaryTotalValue}>{reportData?.outstanding}</p>
+              <p className={classes.customSummaryTotalLabel}>Total
+                Outstanding</p>
+              <p
+                className={classes.customSummaryTotalValue}>{reportData?.outstanding}</p>
             </div>
           </div>
 
-          {currentPage === 0 && <div className={classes.customSubSummaryContainer}>
+          {currentPage === 0 &&
+          <div className={classes.customSubSummaryContainer}>
             {reportData?.aging.map((data, index) => <div key={data.title}>
-              <p className={classes.label} style={{fontSize: 10}}>{data.title}</p>
-              <p className={classes.value} style={{margin: '10px 0', fontSize: 14}}>{data.value}</p>
+                <p className={classes.label}
+                   style={{fontSize: 10}}>{data.title}</p>
+                <p className={classes.value}
+                   style={{margin: '10px 0', fontSize: 14}}>{data.value}</p>
               </div>
             )}
           </div>}
 
           {reportData?.customersData &&
-          <div style={{height: 'max-content', width: '100%'}}>
+
             <BCDataGrid
               pagination
               autoHeight
@@ -480,7 +524,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
               // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               // onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
             />
-          </div>
+
           }
         </div>
       }
@@ -556,7 +600,15 @@ const BCDataGrid = styled(DataGrid)`
 //   )}
 // </div>)
 
-const CustomFooter = ({total, totalAmount, rowsCount, pageNumber, pageSize, handleChangePage, handleChangeRowsPerPage}: any) => <>
+const CustomFooter = ({
+                        total,
+                        totalAmount,
+                        rowsCount,
+                        pageNumber,
+                        pageSize,
+                        handleChangePage,
+                        handleChangeRowsPerPage
+                      }: any) => <>
   {/*{Math.floor(rowsCount / pageSize) === pageNumber && */}
   <div className="GrandTotalContainer">
     <strong>Total Outstanding</strong>
