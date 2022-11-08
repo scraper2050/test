@@ -25,6 +25,7 @@ export const updateCommissionAPI = async (params: {
   type: string;
   id: string;
   commission: number;
+  commissionEffectiveDate: Date;
 }) => {
   try {
     const response: any = await request("/updateCommission", 'PUT', params, false);

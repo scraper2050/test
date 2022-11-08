@@ -71,5 +71,24 @@ export default (theme: Theme): any => ({
   },
   grey4 : {
     color: '#BDBDBD',
+  },
+  datePicker: {
+    borderRadius: '8px',
+    paddingRight: 0,
+    '& .MuiInputBase-input': {
+      padding: '14px 0 13px 13px !important',
+    },
+    '& button': {
+      paddingLeft: 3,
+      paddingRight: 3,
+    },
+  },
+  inputCommision: {
+    '& .MuiInputBase-input': {
+      padding: '14px 0 13px 13px !important',
+    },
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '8px',
+    },
   }
 });

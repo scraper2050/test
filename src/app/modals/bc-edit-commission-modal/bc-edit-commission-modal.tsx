@@ -1,3 +1,9 @@
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import classNames from 'classnames';
+import DateFnsUtils from '@date-io/date-fns';
 import BCSent from '../../components/bc-sent';
 import {
   Button,
@@ -5,7 +11,9 @@ import {
   DialogContent,
   Grid,
   TextField,
-  Typography, withStyles
+  Typography,
+  withStyles,
+  Box,
 } from '@material-ui/core';
 import React, {useState} from 'react';
 import {
@@ -33,6 +41,7 @@ function BcEditCommissionModal({
   const [error, setError] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
   const [commission, setCommission] = useState<number>(vendorCommission.commission);
+  const [effectiveDate, setEffectiveDate] = useState<Date>(new Date());
   const dispatch = useDispatch();
 
   const closeModal = () => {
@@ -60,6 +69,7 @@ function BcEditCommissionModal({
       id: vendorCommission._id,
       type: vendorCommission.type,
       commission,
+      commissionEffectiveDate: effectiveDate,
     }
     const contractor = await updateCommissionAPI(params);
     if (contractor.status === 0) {
@@ -107,7 +117,7 @@ function BcEditCommissionModal({
                   <TextField
                     autoFocus
                     autoComplete={'off'}
-                    className={classes.fullWidth}
+                    className={classNames([classes.fullWidth, classes.inputCommision])}
                     id={'outlined-textarea'}
                     label={''}
                     name={'amount'}
@@ -124,6 +134,30 @@ function BcEditCommissionModal({
               </Grid>
             </Grid>
 
+            <Grid item xs={12}>
+              <Grid container direction={'row'} spacing={3}>
+                <Grid container item justify={'flex-end'} alignItems={'center'}
+                      xs={3}>
+                  <Typography variant={'button'} style={{ whiteSpace: 'nowrap' }}>EFFECTIVE DATE</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                      autoOk
+                      onChange={(value) => value && setEffectiveDate(value)}
+                      format={'MM/dd/yy'}
+                      variant={'inline'}
+                      inputVariant={'outlined'}
+                      value={effectiveDate}
+                      fullWidth
+                      InputProps={{
+                        className: classes.datePicker,
+                      }}
+                    />
+                  </MuiPickersUtilsProvider>
+                </Grid>
+              </Grid>
+            </Grid>
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={3}>
                 <Grid container item justify={'flex-end'} alignItems={'center'}
@@ -163,9 +197,19 @@ function BcEditCommissionModal({
                 </Grid>
               </Grid>
             </Grid>
+
+            {/* <Grid item xs={12}>
+              <Box fontSize={12} style={{background:'red',width: '500px !important'}}>
+                * Changes to Commission will only be applied from Effective Date and onwards.
+              </Box>
+            </Grid> */}
+
           </Grid>
         }
       </DialogContent>
+      <div style={{fontSize: 12, textAlign: 'center', color: '#828282'}}>
+        * Changes to Commission will only be applied from Effective Date and onwards.
+      </div>
 
       <DialogActions classes={{
         'root': classes.dialogActions
