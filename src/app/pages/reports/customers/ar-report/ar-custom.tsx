@@ -29,7 +29,8 @@ import {
 } from '@material-ui/data-grid';
 import styled from "styled-components";
 import {useHistory, useLocation} from "react-router-dom";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import BCBackButtonNoLink
+  from "../../../../components/bc-back-button/bc-back-button-no-link";
 
 interface RevenueStandardProps {
   classes: any;
@@ -82,15 +83,25 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
 
   const columnsBuckets: GridColDef[] = [
     { field: 'customer', headerName: 'Customer', flex: 1, disableColumnMenu: true },
-    { field: 'Current', headerName: 'Current',flex: 1, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+    { field: 'Current',
+      headerName: 'Current',
+      flex: 1, disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
+        {cellValues.formattedValue}
+      </ClickableCell>
+    },
     { field: '1 - 30',
       headerName: '1  - 30',
       headerAlign: 'right',
       flex: 1,
       disableColumnMenu: true,
       align: 'right',
+      valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
       renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
-        {cellValues.value}
+        {cellValues.formattedValue}
       </ClickableCell>
     },
     {
@@ -100,9 +111,9 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       disableColumnMenu: true,
       headerAlign: 'right',
       align: 'right',
+      valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
       renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
-        {cellValues.value}
-
+        {cellValues.formattedValue}
       </ClickableCell>
     },
     {
@@ -112,9 +123,9 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       disableColumnMenu: true,
       headerAlign: 'right',
       align: 'right',
+      valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
       renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
-        {cellValues.value}
-
+        {cellValues.formattedValue}
       </ClickableCell>
     },
     {
@@ -124,11 +135,23 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       disableColumnMenu: true,
       headerAlign: 'right',
       align: 'right',
+      valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
       renderCell: (cellValues) => <ClickableCell onClick={() => handleAmountClick(cellValues.id as string, cellValues.field)}>
-        {cellValues.value}
+        {cellValues.formattedValue}
       </ClickableCell>
     },
-    { field: 'total', headerName: 'Total',flex: 1.2, disableColumnMenu: true, align: 'right', headerAlign: 'right' },
+    {
+      field: 'total',
+      headerName: 'Total',
+      flex: 1.2,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      valueFormatter: (cellValues) => formatCurrency(cellValues.value as number, ''),
+      renderCell: (cellValues) => <ClickableCell onClick={() => handleTotalClick(cellValues)}>
+        {cellValues.formattedValue}
+      </ClickableCell>
+    },
   ];
 
   const columnsInvoices: GridColDef[] = [
@@ -167,7 +190,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       BUCKETS[globalAgingBuckets[key].label] = '';
       if (index > 0) {
         temp.push({
-          title: globalAgingBuckets[key].label.substr(0, 11),
+          title: globalAgingBuckets[key].label,
           value: formatCurrency(globalAgingBuckets[key].totalUnpaid)
         });
       }
@@ -185,7 +208,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         customerId: customer?._id,
         customer: customer?.profile?.displayName || customer?.contactName,
         ...customerBuckets,
-        total: total ? formatCurrency(total) : '',
+        total: total ? total : '',
       }
     });
 
@@ -322,6 +345,24 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     formatReportInvoices(selectedBucket, selectedCustomer.customer);
   };
 
+  const handleTotalClick = (values: GridCellParams) => {
+    const customerId = values.id;
+    const {customerAgingBuckets} = originalData;
+    const selectedCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customerId);
+    const invoices = selectedCustomer.agingBuckets.reduce((acc: any[], bucket: any) => {
+
+      acc.push(...bucket.invoices);
+      return acc;
+    }, []);
+    setBucket('Total');
+    const totalBucket = {
+      label: 'Total',
+      totalUnpaid: values.value,
+      invoices,
+    }
+    formatReportInvoices(totalBucket, selectedCustomer.customer);
+  };
+
   const handleInvoiceClick = (params: GridCellParams) => {
     history.replace({state:{ ...location.state, bucket, selectedCustomer }});
     history.push({
@@ -359,14 +400,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         <div className={classes.pageContainer}>
           <div className={classes.toolbar}>
             <div className={classes.menuToolbarContainer} >
-              {!!bucket && <IconButton
-                className={classes.roundBackground}
-                color={'default'}
-                onClick={handleReturnReport}
-              >
-                <ArrowBackIcon fontSize={'small'}/>
-              </IconButton>
-              }
+              {!!bucket && <BCBackButtonNoLink func={handleReturnReport} /> }
             </div>
             <BCMenuToolbarButton
               buttonText='More Actions'
