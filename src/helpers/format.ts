@@ -56,8 +56,8 @@ export const parseISODate = (date: string) => {
   return new Date(dateObj.getTime() + userTimezoneOffset);*/
 }
 
-export const formatCurrency = (value: number|null|undefined, nullValue: string = '') => {
-  if (!value && nullValue) return nullValue;
+export const formatCurrency = (value: number|null|undefined, nullValue?: string) => {
+  if (!value && nullValue !== undefined) return nullValue;
 
   const tempValue = value ? value : 0;
   const hasFrac = Math.ceil(tempValue) !== tempValue

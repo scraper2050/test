@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from "react-redux";
-import {Typography, withStyles} from '@material-ui/core';
+import {Button, Typography, withStyles} from '@material-ui/core';
 
 import styles, {SummaryContainer} from './styles';
 import BCCircularLoader
@@ -26,6 +26,7 @@ import {
   openModalAction,
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
+import {useHistory} from "react-router-dom";
 
 interface RevenueStandardProps {
   classes: any;
@@ -51,6 +52,7 @@ const chartColors = ['#349785', PRIMARY_BLUE, PRIMARY_BLUE, PRIMARY_BLUE, '#F500
 
 const ARStandardReport = ({classes}: RevenueStandardProps) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [reportType, setReportType] = useState('0');
   const [report, setReport] = useState<any>(null);
@@ -279,6 +281,13 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
     }
   };
 
+  const generateCustomReport = () => {
+    history.push({
+      pathname: '/main/reports/ar',
+      state: {type: 'custom', asOf: asOfDate, customers: []}
+    });
+  }
+
   useEffect(() => {
     getReportData();
   }, [asOfDate]);
@@ -316,6 +325,12 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
               onApply={(values) => setReportType(values[0])}
             />
             &nbsp;&nbsp;&nbsp;&nbsp;
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={generateCustomReport}
+            >Generate Report</Button>
+
             <div className={classes.menuToolbarContainer} />
             <BCMenuToolbarButton
               buttonText='More Actions'
