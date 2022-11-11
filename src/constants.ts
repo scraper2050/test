@@ -113,6 +113,7 @@ export const modalTypes = {
   'EDIT_TIERS_MODAL': 'edit-tiers-modal',
   'RESCEDULE_JOB_MODAL': 'reschedule_job_modal',
   'EDIT_COMMISSION_MODAL': 'edit_commission_modal',
+  'VIEW_COMMISSION_HISTORY_MODAL': 'view_commission_history_modal',
   'PAYROLL_RECORD_PAYMENT_MODAL': 'payroll_record_payment_modal',
   'PAYROLL_DETAIL_PAYMENT_MODAL': 'payroll_detail_payment_modal',
   'COMPANY_LOCATION_MODAL': 'company_location_modal',

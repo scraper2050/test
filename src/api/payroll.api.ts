@@ -41,6 +41,21 @@ export const updateCommissionAPI = async (params: {
   }
 }
 
+export const getCommissionHistoryAPI = async (vendorId: string) => {
+  try {
+    const response: any = await request(`/getCommissionHistory/${vendorId}`, 'OPTIONS', {});
+    const {status, message, history} = response.data;
+    if (status === 1 || status === 200) {
+      const data = history;
+      return {data, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
 export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null) => {
   try {
     const offset = new Date().getTimezoneOffset() / 60;

@@ -18,7 +18,8 @@ import {
 import React, {useState} from 'react';
 import {
   closeModalAction,
-  setModalDataAction
+  setModalDataAction,
+  openModalAction,
 } from 'actions/bc-modal/bc-modal.action';
 import {useDispatch} from 'react-redux';
 import styled from "styled-components";
@@ -28,6 +29,7 @@ import {updateCommissionAPI} from "../../../api/payroll.api";
 import {error as snackError, success} from "../../../actions/snackbar/snackbar.action";
 import {setContractor} from "../../../actions/payroll/payroll.action";
 import {Contractor} from "../../../actions/payroll/payroll.types";
+import {modalTypes} from "../../../constants";
 
 interface Props {
   classes: any;
@@ -39,14 +41,16 @@ function BcEditCommissionModal({
                                  vendorCommission,
                                }: Props): JSX.Element {
   const [error, setError] = useState(false);
+  const [warning, setWarning] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
   const [commission, setCommission] = useState<number>(vendorCommission.commission);
   const [effectiveDate, setEffectiveDate] = useState<Date>(new Date());
   const dispatch = useDispatch();
 
-  const closeModal = () => {
-    if (error) {
+  const closeModal = (forceClose? :boolean) => {
+    if ((error || warning) && !forceClose) {
       setError(false);
+      setWarning(false);
       return;
     }
     dispatch(closeModalAction());
@@ -58,11 +62,44 @@ function BcEditCommissionModal({
     }, 200);
   };
 
+  const viewHistory = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': `${vendorCommission.vendor} \n Commission History`,
+        'vendorId': vendorCommission._id,
+        'handleGoingBack': () => {
+          dispatch(setModalDataAction({
+            'data': {
+              'modalTitle': 'Edit Commission',
+              'vendorCommission': vendorCommission,
+            },
+            'type': modalTypes.EDIT_COMMISSION_MODAL
+          }));
+      
+          setTimeout(() => {
+            dispatch(openModalAction());
+          }, 200);
+        }
+      },
+      'type': modalTypes.VIEW_COMMISSION_HISTORY_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const submit = async() => {
     const commissionInt = (commission);
     if (commissionInt < 1 || commissionInt >= 100) {
       setError(true);
       return;
+    }
+    if((effectiveDate < new Date(new Date().setHours(new Date().getHours() - 1))) && !warning){
+      setWarning(true);
+      return;
+    } else {
+      setWarning(false);
     }
     setSubmitting(true);
     const params = {
@@ -78,20 +115,29 @@ function BcEditCommissionModal({
     } else {
       dispatch(success(contractor.message));
       dispatch(setContractor(contractor.data));
-      closeModal();
+      closeModal(warning);
     }
   }
 
   return (
     <DataContainer className={'new-modal-design'}>
-      <DialogContent classes={{'root': classes.dialogContent}}>
-        {error ?
+      <DialogContent classes={{'root': !error && !warning ? classes.dialogContent : null}}>
+        {error ? (
           <BCSent
             title={'Please enter an amount between 1 to 100 only.'}
             type={'error'}
             showLine={false}
           />
-          :
+        ) : warning ?(
+          <BCSent
+            title={'You have selected a previous date.\n Do you want to proceed?'}
+            titlePadding={'0'}
+            subtitle={'Note: Payroll amounts will be recalculated.'}
+            type={'error'}
+            color={'#00AAFF'}
+            showLine={false}
+          />
+        ) : (
           <Grid container direction={'column'} spacing={1}>
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={3}>
@@ -197,50 +243,77 @@ function BcEditCommissionModal({
                 </Grid>
               </Grid>
             </Grid>
-
-            {/* <Grid item xs={12}>
-              <Box fontSize={12} style={{background:'red',width: '500px !important'}}>
-                * Changes to Commission will only be applied from Effective Date and onwards.
-              </Box>
-            </Grid> */}
-
           </Grid>
+        )
         }
       </DialogContent>
-      <div style={{fontSize: 12, textAlign: 'center', color: '#828282'}}>
-        * Changes to Commission will only be applied from Effective Date and onwards.
-      </div>
+      {!error && !warning && (
+        <div style={{fontSize: 12, textAlign: 'center', color: '#828282'}}>
+          * Changes to Commission will only be applied from Effective Date and onwards.
+        </div>
+      )}
 
       <DialogActions classes={{
         'root': classes.dialogActions
       }}>
-        <Button
-          aria-label={'record-payment'}
-          classes={{
-            'root': classes.closeButton
-          }}
-          disabled={isSubmitting}
-          onClick={() => closeModal()}
-          variant={'outlined'}>
-          {error ? 'Close' : 'Cancel'}
-        </Button>
+        <div>
+          {!error && !warning && (
+            <Button
+              aria-label={'cancel-edit-commission'}
+              classes={{
+                'root': classes.closeButton
+              }}
+              disabled={isSubmitting}
+              onClick={() => closeModal()}
+              variant={'outlined'}>
+              Cancel
+            </Button>
+          )}
+        </div>
+        <div>
+          {!error && !warning && (
+            <Button
+              aria-label={'view-history-commission'}
+              classes={{
+                'root': classes.viewHistoryButton
+              }}
+              disabled={isSubmitting}
+              onClick={viewHistory}
+              variant={'outlined'}>
+              View History
+            </Button>
+          )} 
+          
+          {(error || warning) && (
+            <Button
+              aria-label={'cancel-edit-commission'}
+              classes={{
+                'root': classes.closeButton
+              }}
+              disabled={isSubmitting}
+              onClick={() => closeModal()}
+              variant={'outlined'}>
+              {error ? 'Close' : 'Cancel'}
+            </Button>
+          )}
 
-        {!error &&
-        <Button
-          disabled={isSubmitting}
-          aria-label={'create-job'}
-          classes={{
-            root: classes.submitButton,
-            disabled: classes.submitButtonDisabled
-          }}
-          color="primary"
-          type={'submit'}
-          variant={'contained'}
-          onClick={() => submit()}
-        >
-          Save
-        </Button>
-        }
+          {!error && (
+            <Button
+              disabled={isSubmitting}
+              aria-label={'submit-edit-commission'}
+              classes={{
+                root: classes.submitButton,
+                disabled: classes.submitButtonDisabled
+              }}
+              color="primary"
+              type={'submit'}
+              variant={'contained'}
+              onClick={() => submit()}
+            >
+              Submit
+            </Button>
+          )}
+        </div>
 
       </DialogActions>
     </DataContainer>
