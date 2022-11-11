@@ -7,13 +7,15 @@ import {ERROR_RED, PRIMARY_GREEN} from "../../constants";
 
 interface Props {
   title: string;
+  titlePadding?: string;
   type?: string;
   subtitle?: string;
+  subtitlePadding?: string;
   showLine?: boolean;
   color?:string;
 }
-export default function BCSent({title, type = 'success', subtitle, showLine = true, color}:Props) {
-  const componentStyles = styles();
+export default function BCSent({title, titlePadding = '', type = 'success', subtitle, subtitlePadding = '', showLine = true, color}:Props) {
+  const componentStyles = styles({titlePadding, subtitlePadding});
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function BCSent({title, type = 'success', subtitle, showLine = tr
         <WarningIcon style={{color: color || ERROR_RED, fontSize: 100}}/>
       }
       <br/>
-      <span className={componentStyles.title}>{title}</span>
+      {title?.split('\n').map((text, textIndex) => <span key={textIndex} className={componentStyles.title}>{text}</span>)}
       {subtitle &&
         <>
           <br/><br/>
@@ -43,7 +45,7 @@ export default function BCSent({title, type = 'success', subtitle, showLine = tr
   )
 }
 
-const styles = makeStyles((theme: Theme) =>
+const styles = makeStyles<Theme, {titlePadding?: string; subtitlePadding?: string;}>((theme: Theme) =>
   createStyles({
     container: {
       height: '40vh',
@@ -57,13 +59,13 @@ const styles = makeStyles((theme: Theme) =>
       fontSize: 30,
       fontWeight: 'bold',
       textAlign: 'center',
-      padding: '0 80px',
+      padding: props => props.titlePadding ? props.titlePadding : '0 80px',
     },
     subtitle: {
       color: '#4F4F4F',
       fontSize: 14,
       textAlign: 'center',
-      padding: '0 80px',
+      padding: props => props.subtitlePadding ? props.subtitlePadding : '0 80px',
     }
   })
 )
