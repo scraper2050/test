@@ -29,7 +29,7 @@ function BcPaymentHistoryModal({
     getCommissionHistoryAPI(vendorId)
       .then((response) => {
         if (response.status === 1 || response.status === 200) {
-          setHistories(response.data)
+          setHistories(response.data || [])
           setLoading(false);
         } else {
           dispatch(error(response.message));
@@ -75,7 +75,7 @@ function BcPaymentHistoryModal({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {histories.map((history: any) => {
+                {histories.reverse().map((history: any) => {
                   const editDate = moment(history.updatedAt);
                   const effectiveDate = moment(history.effectiveDate);
                   return (
