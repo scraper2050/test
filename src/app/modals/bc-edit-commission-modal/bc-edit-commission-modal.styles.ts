@@ -3,8 +3,9 @@ import * as CONSTANTS from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
-    padding: '25px  40px 25px 0 !important',
-    backgroundColor: 'auto'
+    padding: '25px  40px !important',
+    backgroundColor: 'auto',
+    justifyContent: 'space-between'
   },
   dialogContent: {
     borderTop: '1px solid #EAECF3',
@@ -33,11 +34,16 @@ export default (theme: Theme): any => ({
   },
   closeButton: {
     color: '#4F4F4F',
-    borderColor: '#4F4F4F',
-    width: '80px !important',
-    height: '34px',
-    fontSize: '16px !important',
-    padding: '0 12px',
+    borderColor: '#D0D3DC',
+    fontSize: '14px !important',
+    padding: '13px 30px',
+    textTransform:'none',
+  },
+  viewHistoryButton: {
+    color: CONSTANTS.TABLE_ACTION_BUTTON,
+    borderColor: '#D0D3DC',
+    fontSize: '14px !important',
+    padding: '13px 30px',
     textTransform:'none',
   },
   submitButton: {
@@ -49,9 +55,8 @@ export default (theme: Theme): any => ({
       borderColor: CONSTANTS.TABLE_ACTION_BUTTON_HOVER,
     },
     minWidth: '80px !important',
-    height: '34px',
-    fontSize: '16px !important',
-    padding: '0 12px',
+    fontSize: '14px !important',
+    padding: '13px 30px',
     textTransform:'none',
   },
   submitButtonDisabled : {
@@ -71,5 +76,24 @@ export default (theme: Theme): any => ({
   },
   grey4 : {
     color: '#BDBDBD',
+  },
+  datePicker: {
+    borderRadius: '8px',
+    paddingRight: 0,
+    '& .MuiInputBase-input': {
+      padding: '14px 0 13px 13px !important',
+    },
+    '& button': {
+      paddingLeft: 3,
+      paddingRight: 3,
+    },
+  },
+  inputCommision: {
+    '& .MuiInputBase-input': {
+      padding: '14px 0 13px 13px !important',
+    },
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '8px',
+    },
   }
 });

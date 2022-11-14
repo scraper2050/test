@@ -117,7 +117,7 @@ function EmailJobReportModal({ classes, data }: any) {
 
   useEffect(() => {
     // console.log('invoice==>', invoiceToView)
-    if (invoiceToView?.customerId) {
+    if (invoiceToView?.customerId ) {
       getCustomersContact(invoiceToView?.customerId)
         .then((res) => {
           if (res.status === 1) {
@@ -135,7 +135,7 @@ function EmailJobReportModal({ classes, data }: any) {
               const initialContact = custContacts.filter(
                 (contact: any) => invoiceToView?.customerEmail === contact.email
               );
-              if (initialContact) {
+              if (initialContact && !invoiceToView?.receipients) {
                 FormikSetFieldValue('to', initialContact);
               }
             }
@@ -185,10 +185,10 @@ function EmailJobReportModal({ classes, data }: any) {
     enableReinitialize: true,
     initialValues: {
       from: profileState.companyEmail,
-      to: [{ email: invoiceToView.customerEmail }],
+      to: invoiceToView?.receipients || [{ email: invoiceToView.customerEmail }],
       subject: invoiceToView?.emailDefault?.subject,
       message: invoiceToView?.emailDefault?.message,
-      sendToMe: false,
+      sendToMe: invoiceToView?.emailDefault?.sendToMe || false,
     },
 
     onSubmit: (values: any, { setSubmitting }: any) => {
@@ -238,17 +238,40 @@ function EmailJobReportModal({ classes, data }: any) {
 
   const slideNextInvoice = (e: any) => {
     e.stopPropagation();
-    //invoice to view next is invoiceInMultipleView +1
-    setInvoiceToView({
-      id: data?.multipleInvoices[invoiceInMultipleView + 1]?.id,
-      ids: data?.multipleInvoices[invoiceInMultipleView + 1]?.ids,
-      customerEmail:
-        data?.multipleInvoices[invoiceInMultipleView + 1]?.customerEmail,
-      customer: data?.multipleInvoices[invoiceInMultipleView + 1]?.customer,
-      emailDefault:
-        data?.multipleInvoices[invoiceInMultipleView + 1]?.emailDefault,
-      customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
-    });
+    
+    if (invoicesToSend[invoiceInMultipleView + 1]) {
+        //use it
+       const tempEmailDefault = {
+        subject:invoicesToSend[invoiceInMultipleView + 1]?.subject,
+        message:invoicesToSend[invoiceInMultipleView + 1]?.message,
+        sendToMe:invoicesToSend[invoiceInMultipleView + 1]?.sendToMe,
+      }
+
+      const tempReceipients = [...invoicesToSend[invoiceInMultipleView + 1]?.to]
+     
+      setInvoiceToView({
+        id: data?.multipleInvoices[invoiceInMultipleView + 1]?.id,
+        ids: data?.multipleInvoices[invoiceInMultipleView + 1]?.ids,
+        customerEmail:
+          data?.multipleInvoices[invoiceInMultipleView + 1]?.customerEmail,
+        customer: data?.multipleInvoices[invoiceInMultipleView + 1]?.customer,
+        emailDefault: tempEmailDefault,
+        receipients:tempReceipients,
+        customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
+      });
+
+    } else {
+       setInvoiceToView({
+        id: data?.multipleInvoices[invoiceInMultipleView + 1]?.id,
+        ids: data?.multipleInvoices[invoiceInMultipleView + 1]?.ids,
+        customerEmail:
+          data?.multipleInvoices[invoiceInMultipleView + 1]?.customerEmail,
+        customer: data?.multipleInvoices[invoiceInMultipleView + 1]?.customer,
+        emailDefault:
+          data?.multipleInvoices[invoiceInMultipleView + 1]?.emailDefault,
+        customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
+      });
+    }  
 
     const invoicesToSendClone = [...invoicesToSend];
 
@@ -258,25 +281,35 @@ function EmailJobReportModal({ classes, data }: any) {
       ids: data?.multipleInvoices[invoiceInMultipleView]?.ids,
       customerId: data?.multipleInvoices[invoiceInMultipleView]?.customerId,
     }
-    invoicesToSendClone.push(tempObj);
+
+    // console.log(tempObj)
+    
+    invoicesToSendClone.splice(invoiceInMultipleView,1,tempObj)
+    // }
+    // invoicesToSendClone.push(tempObj);
     setInvoicesToSend(invoicesToSendClone);
 
     setInvoiceInMultipleView(invoiceInMultipleView + 1);
+
+    
   };
 
   const sendAll = () => {
-    setSendAllButtonState('Sending Invoices...')
+    // setSendAllButtonState('Sending Invoices...')
 
-    //temp object for final invoice that is not in `invoicesToSend`
+
+    const invoicesToSendClone = [...invoicesToSend];
     const tempObj = {
       ...form.values,
       ids: data?.multipleInvoices[invoiceInMultipleView]?.ids,
       customerId: data?.multipleInvoices[invoiceInMultipleView]?.customerId,
     }
-      
-    //collect form.values
-    const arr = [...invoicesToSend, tempObj];
-    arr.map((invoice) => {
+    invoicesToSendClone.splice(invoiceInMultipleView,1,tempObj)
+    setInvoicesToSend(invoicesToSendClone);
+    
+
+    
+    invoicesToSendClone.map((invoice) => {
 
       //form object
        const params: any = {
@@ -298,7 +331,7 @@ function EmailJobReportModal({ classes, data }: any) {
         copyToMyself: invoice.sendToMe,
       };
 
-      
+            
       dispatch(
         sendEmailAction.fetch({
           email:
@@ -313,21 +346,44 @@ function EmailJobReportModal({ classes, data }: any) {
   };
 
   const slidePreviousInvoice = () => {
-    //invoice to view next is invoiceInMultipleView -1
+    console.log('holla',invoicesToSend)
+
+    
+    //is viewing the final one, so add it to invoices to Send for memorization
+    const invoicesToSendClone = [...invoicesToSend];
+    const tempObj = {
+      ...form.values,
+      ids: data?.multipleInvoices[invoiceInMultipleView]?.ids,
+      customerId: data?.multipleInvoices[invoiceInMultipleView]?.customerId,
+    }
+    invoicesToSendClone.splice(invoiceInMultipleView,1,tempObj)
+    setInvoicesToSend(invoicesToSendClone);
+
+    
+    //obviously there's something to show from invoicesToSend
+    //create temporary emailDefault
+    const tempEmailDefault = {
+      subject:invoicesToSend[invoiceInMultipleView - 1]?.subject,
+      message:invoicesToSend[invoiceInMultipleView - 1]?.message,
+      sendToMe:invoicesToSend[invoiceInMultipleView - 1]?.sendToMe,
+    }
+
+    const tempReceipients = [...invoicesToSend[invoiceInMultipleView - 1]?.to]
+    tempReceipients.forEach(receipient => {
+      delete receipient.name;
+      delete receipient.phone;
+    })
+
     setInvoiceToView({
       id: data?.multipleInvoices[invoiceInMultipleView - 1]?.id,
       ids: data?.multipleInvoices[invoiceInMultipleView - 1]?.ids,
       customerEmail:
         data?.multipleInvoices[invoiceInMultipleView - 1]?.customerEmail,
       customer: data?.multipleInvoices[invoiceInMultipleView - 1]?.customer,
-      emailDefault:
-        data?.multipleInvoices[invoiceInMultipleView - 1]?.emailDefault,
+      emailDefault: tempEmailDefault,
+      receipients:tempReceipients,
       customerId: data?.multipleInvoices[invoiceInMultipleView - 1]?.customerId,
     });
-
-    const invoicesToSendClone = [...invoicesToSend];
-    invoicesToSendClone.pop();
-    setInvoicesToSend(invoicesToSendClone);
 
     setInvoiceInMultipleView(invoiceInMultipleView - 1);
   };
