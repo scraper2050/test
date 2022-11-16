@@ -95,7 +95,7 @@ const ARCustomReport = ({classes}: any) => {
                 style={{marginLeft: 35}}>
                 <ClickableCell
                   onClick={() => handleLocationClick(cellValues)}>
-                  {cellValues.id !== '-1' ? cellValues.formattedValue : `(${cellValues.value?.toString().toLowerCase()})`}
+                  {cellValues.value}
                 </ClickableCell>
               </span>
             </>
