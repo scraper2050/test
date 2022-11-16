@@ -34,8 +34,6 @@ function ARReportPage({ classes }: any) {
     dispatch(setReportShowing(false))
   }, []);
 
-  console.log(location.state)
-
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>

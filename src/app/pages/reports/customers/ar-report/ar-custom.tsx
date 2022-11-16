@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {withStyles} from '@material-ui/core';
 
 import styles from './styles';
@@ -15,49 +15,31 @@ import {
   formatCurrency,
   formatDate,
   formatDateYMD,
-  formatShortDateNoDay
 } from "../../../../../helpers/format";
-import {LIGHT_BLUE, modalTypes, PRIMARY_BLUE} from "../../../../../constants";
+import { modalTypes } from "../../../../../constants";
 import BCMenuToolbarButton from "../../../../components/bc-menu-toolbar-button";
 import {
   openModalAction,
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
 import {
-  DataGrid,
   GridCellParams,
   GridColDef,
-  GridRowData,
 } from '@material-ui/data-grid';
-import styled from "styled-components";
 import {useHistory, useLocation} from "react-router-dom";
 import BCBackButtonNoLink
   from "../../../../components/bc-back-button/bc-back-button-no-link";
+import BcDataGrid, {
+  CUSTOM_REPORT,
+  ReportData
+} from "../../../../components/bc-data-grid/bc-data-grid";
+import { ClickableCell } from 'app/components/bc-data-grid/bc-clickable-cell';
+import BcReportSummary
+  from "../../../../components/bc-data-grid/bc-report-summary";
+import BcReportSubSummary
+  from "../../../../components/bc-data-grid/bc-report-subsummary";
+import styled from "styled-components";
 
-interface RevenueStandardProps {
-  classes: any;
-}
-
-interface ReportData {
-  title: string;
-  value: string;
-}
-
-interface CUSTOM_REPORT {
-  outstanding: string,
-  totalAmount: string,
-  aging: ReportData[],
-  customersData: {
-    id: string;
-    customer: string;
-    current: string;
-    1_30: string;
-    31_60: string;
-    61_90: string;
-    over91: string;
-    total: string;
-  }[]
-}
 
 const MORE_ITEMS = [
   {id: 0, title: 'Customize'},
@@ -65,14 +47,21 @@ const MORE_ITEMS = [
   {id: 2, title: 'Send Report'},
 ];
 
+const BUCKETS = ['Current', '1 - 30', '31 - 60', '61 - 90', '91 and Over'];
 
+const formatAddress = (address: any) => {
+  if (!address) return 'N/A';
 
-const ARCustomReport = ({classes}: RevenueStandardProps) => {
+  const {street, state, city, zipcode }= address;
+
+  return `${street}, ${city}, ${state} ${zipcode}`;
+}
+
+const ARCustomReport = ({classes}: any) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<{ asOf: string, customers: any[], bucket: string, customer: any, subdivision: any }>();
   const {state} = location;
-  const {companyName} = useSelector(({profile}: any) => profile)
   const [isLoading, setIsLoading] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
   const [divisionData, setDivisionData] = useState<any>(null);
@@ -90,7 +79,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     {
       field: 'customer',
       headerName: 'Customer',
-      flex: 1,
+      flex: 1.5,
       disableColumnMenu: true,
       renderCell: (cellValues) => {
         if (selectedCustomer) {
@@ -103,8 +92,11 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
             return <>
               <span
                 title={cellValues.formattedValue?.toString()}
-                style={{marginLeft: 25}}>
-                {cellValues.formattedValue}
+                style={{marginLeft: 35}}>
+                <ClickableCell
+                  onClick={() => handleLocationClick(cellValues)}>
+                  {cellValues.id !== '-1' ? cellValues.formattedValue : `(${cellValues.value?.toString().toLowerCase()})`}
+                </ClickableCell>
               </span>
             </>
           }
@@ -252,7 +244,97 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       flex: 1,
       disableColumnMenu: true,
       align: 'right',
-      headerAlign: 'right'
+      headerAlign: 'right',
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleInvoiceClick(cellValues)}>
+        {cellValues.value}
+      </ClickableCell>
+    },
+  ];
+
+  const columnsSubdivisionInvoices: GridColDef[] = [
+    {field: 'id', headerName: 'Id', hide: true},
+    {
+      field: 'date',
+      headerName: 'Date',
+      flex: 1,
+      disableColumnMenu: true,
+      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      renderCell: (cellValues => {
+        if (cellValues.row.bucket) {
+          return <>
+            <ExpandLessIcon style={{fontSize: 12}}/>
+            <strong style={{fontSize: 12}}>{cellValues.value}</strong>
+          </>
+        } else {
+          return <span style={{marginLeft: 25}}>{cellValues.value}</span>
+        }
+      })
+    },
+    {
+      field: 'contact',
+      headerName: 'Contact name',
+      flex: 1,
+      disableColumnMenu: true,
+      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      flex: 1.5,
+      disableColumnMenu: true,
+      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      renderCell: (cellValues) => <EllipseSpan
+        title={cellValues.value?.toString()}>{cellValues.value}</EllipseSpan>
+    },
+    {
+      field: 'invoice',
+      headerName: 'Invoice',
+      flex: 1,
+      disableColumnMenu: true,
+      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      renderCell: (cellValues) => <ClickableCell
+        onClick={() => handleInvoiceClick(cellValues)}>
+        {cellValues.value}
+      </ClickableCell>
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      flex: 1,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      renderCell: (cellValues) => {
+        if (cellValues.row.bucket) {
+          return <span>{cellValues.value}</span>
+        } else {
+          return <ClickableCell
+            onClick={() => handleInvoiceClick(cellValues)}>
+            {cellValues.value}
+          </ClickableCell>
+        }
+      }
+    },
+    {
+      field: 'balance',
+      headerName: 'Open Balance',
+      flex: 1,
+      disableColumnMenu: true,
+      align: 'right',
+      headerAlign: 'right',
+      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      renderCell: (cellValues) => {
+        if (cellValues.row.bucket) {
+          return <span>{cellValues.value}</span>
+        } else {
+          return <ClickableCell
+            onClick={() => handleInvoiceClick(cellValues)}>
+            {cellValues.value}
+          </ClickableCell>
+        }
+      }
     },
   ];
 
@@ -339,7 +421,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
     });
 
     setReportData({
-      outstanding: tempLocation[0].total,
+      outstanding: formatCurrency(tempLocation[0].total),
       totalAmount: '',
       aging: [],
       customersData: tempLocation,
@@ -359,13 +441,63 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
         amount: formatCurrency(invoice.total),
         balance: formatCurrency(invoice.balanceDue),
       }
-
     });
 
     setSelectedCustomer(customer);
     setSelectedLocation(location);
     setReportData({
       outstanding: formatCurrency(bucket.totalUnpaid),
+      totalAmount: formatCurrency(totalAmount),
+      aging: [],
+      customersData: tempInvoices,
+    });
+  }
+
+  const formatReportLocationInvoices = (location: any) => {
+    let totalAmount = 0;
+    let totalOutstanding = 0;
+
+    const tempInvoices = location.agingBuckets.sort((a: any, b: any) => BUCKETS.indexOf(a.label) - BUCKETS.indexOf(b.label)).reduce((acc: any[], bucket: any) => {
+      let bucketAmount = 0;
+      let bucketBalance = 0;
+      const bucketInvoices = bucket.invoices.map((invoice: any) => {
+        totalAmount += invoice.total;
+        totalOutstanding += invoice.balanceDue;
+        bucketAmount += invoice.total;
+        bucketBalance += invoice.balanceDue;
+        return {
+          id: invoice._id,
+          bucket: false,
+          address: formatAddress(invoice.jobLocation?.address),
+          invoice: invoice.invoiceId,
+          contact: invoice.invoiceContact?.name || invoice.customerContact?.name || 'N/A',
+          date: formatDate(invoice.dueDate),
+          amount: formatCurrency(invoice.total),
+          balance: formatCurrency(invoice.balanceDue),
+        }
+      });
+
+      acc.push ({
+        id: bucket.label,
+        bucket: true,
+        date: bucket.label,
+        invoice: '',
+        contact: '',
+        dueDate: '',
+        amount: formatCurrency(bucketAmount),
+        balance: formatCurrency(bucketBalance),
+      });
+
+      acc.push(...bucketInvoices);
+
+      return acc;
+    }, []);
+
+
+
+    setSelectedLocation(location.jobLocation);
+    setReportData({
+      outstanding: formatCurrency(totalOutstanding),
       totalAmount: formatCurrency(totalAmount),
       aging: [],
       customersData: tempInvoices,
@@ -499,9 +631,13 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       formatReportInvoices(selectedBucket, tempCustomer.customer);
     } else {
       const tempLocation = divisionData.find((locationBucket: any) => locationBucket.jobLocation._id === location?._id);
-      const selectedBucket = tempLocation.agingBuckets.find((bucket: any) => bucket.label === bucketLabel);
-      setBucket(bucketLabel);
-      formatReportInvoices(selectedBucket, tempCustomer.customer, tempLocation.jobLocation);
+      if (bucketLabel) {
+        const selectedBucket = tempLocation.agingBuckets.find((bucket: any) => bucket.label === bucketLabel);
+        setBucket(bucketLabel);
+        formatReportInvoices(selectedBucket, tempCustomer.customer, tempLocation.jobLocation);
+      } else {
+        formatReportLocationInvoices(tempLocation);
+      }
     }
   };
 
@@ -523,6 +659,12 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
       setIsLoading(false);
     }
 
+  };
+
+  const handleLocationClick = async(values: GridCellParams) => {
+    const currentLocation = divisionData[values.row.index - 1];
+    setBucket(null);
+    formatReportLocationInvoices(currentLocation);
   };
 
   const handleTotalClick = (values: GridCellParams) => {
@@ -559,10 +701,6 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
   }
 
   const handleReturnReport = () => {
-    // const state = location.state;
-    // delete state.bucket;
-    // delete state.selectedCustomer;
-    // history.replace({state});
     if (selectedLocation) {
       setBucket(null);
       setSelectedLocation(null);
@@ -582,7 +720,7 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
 
   useEffect(() => {
     const handleRefresh = async() => {
-      if (!isRefreshed && originalData && location?.state?.bucket) {
+      if (!isRefreshed && originalData && (location?.state?.bucket || location?.state?.subdivision)) {
         console.log('I have state')
         const {bucket, customer, subdivision} = location.state;
         if (subdivision) {
@@ -620,101 +758,21 @@ const ARCustomReport = ({classes}: RevenueStandardProps) => {
             />
           </div>
 
-          <div className={classes.customSummaryContainer}>
-            <div className={classes.customSummaryColumn}>
-              <p className={classes.customSummaryTitle}>{companyName}</p>
-              <p className={classes.customSummaryLabel}>As Of</p>
-              <p
-                className={classes.customSummaryValue}>{formatShortDateNoDay(asOf)}</p>
-            </div>
-            <div className={classes.customSummaryColumn}>
-              <p className={classes.customSummaryTitle}>&nbsp;</p>
-              <p
-                className={classes.customSummaryLabel}>Customer{bucket ? '' : '(s)'}</p>
-              {selectedCustomer ?
-                <p
-                  className={classes.customSummaryValue}>{selectedCustomer?.profile?.displayName}</p>
-              : customers.length ?
-                  customers.map((customer: any) =>
-                  <p
-                    className={classes.customSummaryValue}>{customer?.profile?.displayName}</p>)
-              : 'All'
-              }
-            </div>
-            {selectedLocation &&
-              <div className={classes.customSummaryColumn}>
-                <p className={classes.customSummaryTitle}>&nbsp;</p>
-                <p
-                  className={classes.customSummaryLabel}>Subdivision</p>
-                <p
-                className={classes.customSummaryValue}>{selectedLocation.name}</p>
-              </div>
-            }
-            {bucket ? <>
-                <div className={classes.customSummaryColumn}>
-                  <p className={classes.customSummaryTitle}>&nbsp;</p>
-                  <p
-                    className={classes.customSummaryLabel}>{bucket} {bucket.indexOf('-') > 0 ? 'days past due' : ''}</p>
-                </div>
-              </> :
-              <div/>
-            }
-            <div className={classes.customSummaryColumn}
-                 style={{alignItems: 'flex-end'}}>
-              <p className={classes.customSummaryTitle}>A/R REPORT</p>
-              <p className={classes.customSummaryTotalLabel}>Total
-                Outstanding</p>
-              <p
-                className={classes.customSummaryTotalValue}>{reportData?.outstanding}</p>
-            </div>
-          </div>
+          <BcReportSummary
+            asOf={asOf}
+            bucket={bucket}
+            selectedCustomer={selectedCustomer}
+            customers={customers}
+            selectedLocation={selectedLocation}
+            total={reportData?.outstanding} />
 
-          {currentPage === 0 &&
-          <div className={classes.customSubSummaryContainer}>
-            {reportData?.aging.map((data, index) => <div key={data.title}>
-                <p className={classes.label}
-                   style={{fontSize: 10}}>{data.title}</p>
-                <p className={classes.value}
-                   style={{margin: '10px 0', fontSize: 14}}>{data.value}</p>
-              </div>
-            )}
-          </div>}
+          {currentPage === 0 && <BcReportSubSummary reportData={reportData} />}
 
-          {reportData?.customersData &&
-
-            <BCDataGrid
-              pagination
-              autoHeight
-              disableSelectionOnClick
-              rows={reportData?.customersData}
-              columns={bucket ? columnsInvoices : columnsBuckets}
-
-              // page={currentPage}
-              pageSize={reportData?.customersData?.length ?? 0}
-              // rowsPerPageOptions={[5, 10, 50]}
-              components={{
-                Footer: CustomFooter,
-              }}
-              componentsProps={{
-                footer: {
-                  total: reportData?.outstanding,
-                  totalAmount: reportData?.totalAmount,
-                  // rowsCount: reportData?.customersData.length,
-                  // pageNumber: currentPage,
-                  // pageSize,
-                  // handleChangePage: (event: any, pageNumber: number) => setCurrentPage(pageNumber),
-                  // handleChangeRowsPerPage: (event: any) => {
-                  //   setCurrentPage(0);
-                  //   setPageSize(event.target.value);
-                  // },
-                }
-              }}
-              // onCellClick={handleOnCellClick}
-              // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-              // onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
-            />
-
-          }
+          <BcDataGrid
+            reportData={reportData}
+            showFooter={!(!bucket && selectedLocation)}
+            columns={bucket ? columnsInvoices : (selectedLocation ? columnsSubdivisionInvoices : columnsBuckets)}
+          />
         </div>
       }
     </div>
@@ -726,123 +784,10 @@ export default withStyles(
   {'withTheme': true}
 )(ARCustomReport);
 
-const BCDataGrid = styled(DataGrid)`
-    border: 0;
-    margin-bottom: 30px;
 
-  .MuiDataGrid-columnSeparator {
-    display: none;
-  }
 
-  .MuiDataGrid-cell:focus {
-    outline: none;
-  }
-
-  .MuiDataGrid-columnHeaderTitleContainer {
-    padding: 0;
-  }
-
-  .MuiDataGrid-footerContainer {
-    justify-content: flex-start;
-  }
-
-  .MuiToolbar-gutters {
-    padding-left: 10px;
-  }
-
-  .MuiTablePagination-spacer {
-    flex: 0;
-  }
-
-  .MuiTablePagination-root {
-    color: rgba(0, 0, 0, 0.87);
-    overflow: auto;
-    font-size: 0.875rem;
-    border-bottom: none;
-    border-top: 2px solid rgba(224, 224, 224, 1);
-  }
-
-  .GrandTotalContainer {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px 10px;
-    background-color: ${LIGHT_BLUE};
-    strong {
-      flex: 1;
-      padding: 0 5px;
-    }
-    strong:not(:first-of-type) {
-      text-align: right;
-    }
-  }
+const EllipseSpan = styled.span`
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 `
-
-
-// const CustomHeader = withStyles(
-//   styles,
-//   {'withTheme': true}
-// )(({classes, headerData}: {classes: any, headerData: ReportData[]}) => <div className={classes.customSubSummaryContainer}>
-//   {headerData.map((data, index) => <div key={data.title}>
-//     <p className={classes.label} style={{fontSize: 10}}>{data.title}</p>
-//     <p className={classes.value} style={{margin: '10px 0', fontSize: 14}}>{data.value}</p>
-//     </div>
-//   )}
-// </div>)
-
-const CustomFooter = ({
-                        total,
-                        totalAmount,
-                        rowsCount,
-                        pageNumber,
-                        pageSize,
-                        handleChangePage,
-                        handleChangeRowsPerPage
-                      }: any) => <>
-  {/*{Math.floor(rowsCount / pageSize) === pageNumber && */}
-  <div className="GrandTotalContainer">
-    <strong>Total Outstanding</strong>
-    <strong>&nbsp;</strong>
-    <strong>&nbsp;</strong>
-    <strong>&nbsp;</strong>
-    <strong>{totalAmount}</strong>
-    <strong>{total}</strong>
-  </div>
-  {/*<TablePagination*/}
-  {/*  ActionsComponent={BCTablePagination}*/}
-  {/*  style={{width: '80vw'}}*/}
-  {/*  //colSpan={5}*/}
-  {/*  count={rowsCount}*/}
-  {/*  onChangePage={handleChangePage}*/}
-  {/*  onChangeRowsPerPage={handleChangeRowsPerPage}*/}
-  {/*  page={pageNumber}*/}
-  {/*  rowsPerPage={pageSize}*/}
-  {/*  rowsPerPageOptions={[*/}
-  {/*    {*/}
-  {/*      label: '5',*/}
-  {/*      value: 5*/}
-  {/*    }, {*/}
-  {/*      label: '10',*/}
-  {/*      value: 10*/}
-  {/*    }, {*/}
-  {/*      label: '25',*/}
-  {/*      value: 25*/}
-  {/*    }, {*/}
-  {/*      label: 'All',*/}
-  {/*      value: rowsCount + 1*/}
-  {/*    }*/}
-  {/*  ]}*/}
-  {/*  SelectProps={{*/}
-  {/*    'inputProps': {'aria-label': 'rows per page'},*/}
-  {/*    'native': false*/}
-  {/*  }}*/}
-  {/*/>*/}
-</>
-
-const ClickableCell = styled.span<{isBold?: boolean}>`
-  cursor: pointer;
-  font-weight: ${props => props.isBold ? 'bold' : 'normal'};
-  :hover {
-    color: ${PRIMARY_BLUE};
-    text-decoration: underline;
-  }
-`;
