@@ -75,6 +75,17 @@ pipelines:
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
               DISTRIBUTION_ID: 'E17AYQHQYHYHNY'
+    - step:
+        name: E2E-Tests
+        script:
+          - pipe: atlassian/trigger-pipeline:5.0.1
+            variables:
+              BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+              BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+              REPOSITORY: 'https://bitbucket.org/blueclerk/blueclerk-e2e'
+              REF_TYPE: 'branch'
+              REF_NAME: 'master'
+              WAIT: 'true'
 
     testing:
     - step:
