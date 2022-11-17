@@ -57,6 +57,13 @@ const formatAddress = (address: any) => {
   return `${street}, ${city}, ${state} ${zipcode}`;
 }
 
+interface DIVISION_DATA {
+  customer: any;
+  customerAgingBucket: any[];
+  jobLocationAgingBuckets: any[],
+  totalUnpaid: number;
+}
+
 const ARCustomReport = ({classes}: any) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -64,7 +71,7 @@ const ARCustomReport = ({classes}: any) => {
   const {state} = location;
   const [isLoading, setIsLoading] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
-  const [divisionData, setDivisionData] = useState<any>(null);
+  const [divisionData, setDivisionData] = useState<DIVISION_DATA|null>(null);
   const [bucket, setBucket] = useState<string | null>(null || location?.state?.bucket);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
@@ -381,16 +388,17 @@ const ARCustomReport = ({classes}: any) => {
     });
   }
 
-  const formatReportSubdivision = (locations: any[], customerId: string) => {
-    const {customer, agingBuckets} = originalData.customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customerId);
+  const formatReportSubdivision = (divisionData: DIVISION_DATA) => {
+    const {customer, customerAgingBucket, jobLocationAgingBuckets} = divisionData;
     const firstRow = {
       jobLocation: {
         _id: customer._id,
         name: customer?.profile?.displayName || customer?.contactName
       },
-      agingBuckets
+      agingBuckets: customerAgingBucket
     };
-    const tempLocation = [firstRow, ...locations].map(({
+
+    const tempLocation = [firstRow, ...jobLocationAgingBuckets].map(({
       jobLocation,
       agingBuckets
     }: any, index: any) => {
@@ -429,6 +437,7 @@ const ARCustomReport = ({classes}: any) => {
   }
 
   const formatReportInvoices = (bucket: any, customer: any, location: any = null) => {
+    debugger;
     let totalAmount = 0;
     const tempInvoices = bucket.invoices.map((invoice: any) => {
       totalAmount += invoice.total;
@@ -504,7 +513,7 @@ const ARCustomReport = ({classes}: any) => {
     });
   }
 
-  const getReportData = async () => {
+  const getReportData = async (showData: boolean) => {
     try {
       setIsLoading(true);
       const customerIds = customers.length ? customers.map((customer: any) => customer._id) : undefined;
@@ -516,9 +525,7 @@ const ARCustomReport = ({classes}: any) => {
       if (status === 1) {
         setCurrentPage(0);
         setOriginalData(report);
-        if (!location.state.customer) {
-          formatReportBuckets(report);
-        }
+        if (showData) formatReportBuckets(report);
       } else {
         dispatch(error(message));
       }
@@ -613,7 +620,7 @@ const ARCustomReport = ({classes}: any) => {
         setBucket(values.field);
         formatReportInvoices(selectedBucket, tempCustomer.customer);
       } else { // Subdivision
-        const currentLocation = divisionData[values.row.index - 1];
+        const currentLocation = divisionData?.jobLocationAgingBuckets[values.row.index - 1];
         const selectedBucket = currentLocation.agingBuckets.find((bucket: any) => bucket.label === values.field);
         setBucket(values.field);
         formatReportInvoices(selectedBucket, selectedCustomer, currentLocation.jobLocation);
@@ -621,35 +628,33 @@ const ARCustomReport = ({classes}: any) => {
     }
   };
 
-  const filterCustomer = (customerId: string, bucketLabel: string, location?: any) => {
-    const {customerAgingBuckets} = originalData;
-    const tempCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customerId);
-
+  const filterCustomer = (customer: any, customerBucket: any[], bucketLabel: string, location?: any) => {
     if (!selectedCustomer) {
-      const selectedBucket = tempCustomer.agingBuckets.find((bucket: any) => bucket.label === bucketLabel);
+      const selectedBucket = customerBucket.find((bucket: any) => bucket.label === bucketLabel);
       setBucket(bucketLabel);
-      formatReportInvoices(selectedBucket, tempCustomer.customer);
+      formatReportInvoices(selectedBucket, customer);
     } else {
-      const tempLocation = divisionData.find((locationBucket: any) => locationBucket.jobLocation._id === location?._id);
+      const tempLocation = divisionData?.jobLocationAgingBuckets.find((locationBucket: any) => locationBucket.jobLocation._id === location?._id);
       if (bucketLabel) {
         const selectedBucket = tempLocation.agingBuckets.find((bucket: any) => bucket.label === bucketLabel);
         setBucket(bucketLabel);
-        formatReportInvoices(selectedBucket, tempCustomer.customer, tempLocation.jobLocation);
+        formatReportInvoices(selectedBucket, customer, tempLocation.jobLocation);
       } else {
         formatReportLocationInvoices(tempLocation);
       }
     }
   };
 
-  const handleCustomerClick = async(customerId: string) => {
+  const handleCustomerClick = async(customerId: string, showData: boolean = true) => {
     try {
       setIsLoading(true);
-      const {status, message, report: {jobLocationAgingBuckets, customer}} = await generateAccountReceivableReportSubdivisions(formatDateYMD(asOf), customerId);
+      const {status, message, report} = await generateAccountReceivableReportSubdivisions(formatDateYMD(asOf), customerId);
+      const {customer} = report;
       setSelectedCustomer(customer);
-      formatReportSubdivision(jobLocationAgingBuckets, customer._id);
+      if (showData) formatReportSubdivision(report);
 
       if (status === 1) {
-        setDivisionData(jobLocationAgingBuckets);
+        setDivisionData(report);
       } else {
         dispatch(error(message));
       }
@@ -662,7 +667,7 @@ const ARCustomReport = ({classes}: any) => {
   };
 
   const handleLocationClick = async(values: GridCellParams) => {
-    const currentLocation = divisionData[values.row.index - 1];
+    const currentLocation = divisionData?.jobLocationAgingBuckets[values.row.index - 1];
     setBucket(null);
     formatReportLocationInvoices(currentLocation);
   };
@@ -672,7 +677,7 @@ const ARCustomReport = ({classes}: any) => {
     const {customerAgingBuckets} = originalData;
 
     let selected = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customerId);
-    if (!selected) selected = divisionData.find((customerBucket: any) => customerBucket.jobLocation._id === customerId);
+    if (!selected) selected = divisionData?.jobLocationAgingBuckets.find((customerBucket: any) => customerBucket.jobLocation._id === customerId);
     const invoices = selected.agingBuckets.reduce((acc: any[], bucket: any) => {
 
       acc.push(...bucket.invoices);
@@ -694,6 +699,7 @@ const ARCustomReport = ({classes}: any) => {
   };
 
   const handleInvoiceClick = (params: GridCellParams) => {
+    debugger;
     history.replace({state: {...location.state, bucket, customer: selectedCustomer, subdivision: selectedLocation}});
     history.push({
       'pathname': `/main/invoicing/view/${params.id}`,
@@ -704,7 +710,7 @@ const ARCustomReport = ({classes}: any) => {
     if (selectedLocation) {
       setBucket(null);
       setSelectedLocation(null);
-      formatReportSubdivision(divisionData, selectedCustomer._id);
+      if (divisionData) formatReportSubdivision(divisionData);
     } else {
       setSelectedCustomer(null);
       setBucket(null);
@@ -715,24 +721,27 @@ const ARCustomReport = ({classes}: any) => {
 
   useEffect(() => {
     setBucket(null);
-    getReportData();
+    const {bucket, customer, subdivision} = location.state;
+    if (!originalData) getReportData(!subdivision);
+    if (subdivision) {
+      handleCustomerClick(customer._id, !bucket)
+    }
   }, [location]);
 
   useEffect(() => {
     const handleRefresh = async() => {
       if (!isRefreshed && originalData && (location?.state?.bucket || location?.state?.subdivision)) {
-        console.log('I have state')
         const {bucket, customer, subdivision} = location.state;
         if (subdivision) {
           if (divisionData) {
-            filterCustomer(customer._id, bucket, subdivision);
+            filterCustomer(divisionData.customer._id, divisionData.customerAgingBucket, bucket, subdivision);
             setRefreshed(true);
-          } else {
-            await handleCustomerClick(customer._id);
           }
         } else {
+          const {customerAgingBuckets} = originalData;
+          const tempCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customer._id);
           setBucket(bucket);
-          filterCustomer(customer._id, bucket);
+          filterCustomer(tempCustomer.customer, tempCustomer.agingBuckets, bucket);
           setRefreshed(true);
         }
       }
