@@ -23,7 +23,8 @@ interface Props {
 
 const ITEMS = [
   {id: 0, title:'Edit Commission'},
-  {id: 1, title:'Payment History'},
+  {id: 1, title:'View Edit History'},
+  {id: 2, title:'Payment History'},
 ]
 
 function Payroll({classes}: Props) {
@@ -76,6 +77,20 @@ function Payroll({classes}: Props) {
     }, 200);
   }
 
+  const viewHistory = (vendor: any) => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': `${vendor.vendor} \n Commission History`,
+        'vendorId': vendor._id,
+      },
+      'type': modalTypes.VIEW_COMMISSION_HISTORY_MODAL
+    }));
+
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
   const handleMenuButtonClick = (event: any, id: number, row:any) => {
     event.stopPropagation();
     switch (id) {
@@ -83,6 +98,9 @@ function Payroll({classes}: Props) {
         editCommission(row);
         break;
       case 1:
+        viewHistory(row);
+        break;
+      case 2:
         const contractorName = row.vendor.replace(/[\/ ]/g, '');
         localStorage.setItem('nestedRouteKey', `${contractorName}`);
         console.log({row})

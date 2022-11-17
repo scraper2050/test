@@ -25,12 +25,28 @@ export const updateCommissionAPI = async (params: {
   type: string;
   id: string;
   commission: number;
+  commissionEffectiveDate: Date;
 }) => {
   try {
     const response: any = await request("/updateCommission", 'PUT', params, false);
     const {status, message, contractor, employee} = response.data;
     if (status === 1) {
       const data = (contractor ? normalizeData(contractor, 'vendor') : normalizeData(employee, 'employee'));
+      return {data, status, message};
+    } else {
+      return {status, message};
+    }
+  } catch {
+    return {status: 0, message: `Something went wrong`};
+  }
+}
+
+export const getCommissionHistoryAPI = async (vendorId: string) => {
+  try {
+    const response: any = await request(`/getCommissionHistory/${vendorId}`, 'OPTIONS', {});
+    const {status, message, history} = response.data;
+    if (status === 1 || status === 200) {
+      const data = history;
       return {data, status, message};
     } else {
       return {status, message};
