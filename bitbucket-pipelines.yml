@@ -82,7 +82,7 @@ pipelines:
             variables:
               BITBUCKET_USERNAME: $BITBUCKET_USERNAME
               BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
-              REPOSITORY: 'https://bitbucket.org/blueclerk/blueclerk-e2e'
+              REPOSITORY: 'blueclerk-e2e'
               REF_TYPE: 'branch'
               REF_NAME: 'master'
               WAIT: 'true'
