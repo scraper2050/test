@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch} from "react-redux";
 import {withStyles} from '@material-ui/core';
 
@@ -50,11 +50,17 @@ const MORE_ITEMS = [
 const BUCKETS = ['Current', '1 - 30', '31 - 60', '61 - 90', '91 and Over'];
 
 const formatAddress = (address: any) => {
-  if (!address) return 'N/A';
+  if (!address) return '';
 
   const {street, state, city, zipcode }= address;
+  const temp = [];
 
-  return `${street}, ${city}, ${state} ${zipcode}`;
+  street?.trim() && temp.push(street);
+  city?.trim() && temp.push(city);
+  state?.trim() && temp.push(state);
+  zipcode?.trim() && temp.push(zipcode);
+
+  return temp.join(', ');
 }
 
 interface DIVISION_DATA {
@@ -67,7 +73,7 @@ interface DIVISION_DATA {
 const ARCustomReport = ({classes}: any) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation<{ asOf: string, customers: any[], bucket: string, customer: any, subdivision: any }>();
+  const location = useLocation<{ asOf: string, customers: any[], bucket: string, customer: any, subdivision: any, showDivisions: boolean }>();
   const {state} = location;
   const [isLoading, setIsLoading] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
@@ -75,10 +81,11 @@ const ARCustomReport = ({classes}: any) => {
   const [bucket, setBucket] = useState<string | null>(null || location?.state?.bucket);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
-  const [isRefreshed, setRefreshed] = useState(false);
+  const [customerDivisions, setCustomerDivisions] = useState(location?.state?.showDivisions || false);
   const [currentPage, setCurrentPage] = useState(0);
   const [reportData, setReportData] = useState<CUSTOM_REPORT | null>(null);
   const {asOf, customers = []} = state || {asOf: new Date(), customers: []};
+  const isRefreshed = useRef(false);
 
   const columnsBuckets: GridColDef[] = [
     {field: 'id', headerName: 'Id', hide: true},
@@ -428,6 +435,7 @@ const ARCustomReport = ({classes}: any) => {
       return row;
     });
 
+    setCustomerDivisions(true);
     setReportData({
       outstanding: formatCurrency(tempLocation[0].total),
       totalAmount: '',
@@ -437,7 +445,6 @@ const ARCustomReport = ({classes}: any) => {
   }
 
   const formatReportInvoices = (bucket: any, customer: any, location: any = null) => {
-    debugger;
     let totalAmount = 0;
     const tempInvoices = bucket.invoices.map((invoice: any) => {
       totalAmount += invoice.total;
@@ -479,7 +486,7 @@ const ARCustomReport = ({classes}: any) => {
           bucket: false,
           address: formatAddress(invoice.jobLocation?.address),
           invoice: invoice.invoiceId,
-          contact: invoice.invoiceContact?.name || invoice.customerContact?.name || 'N/A',
+          contact: invoice.invoiceContact?.name || invoice.customerContact?.name || '',
           date: formatDate(invoice.dueDate),
           amount: formatCurrency(invoice.total),
           balance: formatCurrency(invoice.balanceDue),
@@ -629,7 +636,7 @@ const ARCustomReport = ({classes}: any) => {
   };
 
   const filterCustomer = (customer: any, customerBucket: any[], bucketLabel: string, location?: any) => {
-    if (!selectedCustomer) {
+    if (!selectedCustomer || !location) {
       const selectedBucket = customerBucket.find((bucket: any) => bucket.label === bucketLabel);
       setBucket(bucketLabel);
       formatReportInvoices(selectedBucket, customer);
@@ -649,9 +656,10 @@ const ARCustomReport = ({classes}: any) => {
     try {
       setIsLoading(true);
       const {status, message, report} = await generateAccountReceivableReportSubdivisions(formatDateYMD(asOf), customerId);
-      const {customer} = report;
+      const {customer, jobLocationAgingBuckets} = report
+      const filteredBuckets = jobLocationAgingBuckets.filter((bucket: any) => bucket !== null);
       setSelectedCustomer(customer);
-      if (showData) formatReportSubdivision(report);
+      if (showData) formatReportSubdivision({...report, jobLocationAgingBuckets: filteredBuckets});
 
       if (status === 1) {
         setDivisionData(report);
@@ -699,19 +707,26 @@ const ARCustomReport = ({classes}: any) => {
   };
 
   const handleInvoiceClick = (params: GridCellParams) => {
-    debugger;
-    history.replace({state: {...location.state, bucket, customer: selectedCustomer, subdivision: selectedLocation}});
+    history.replace({
+      state: {
+        ...location.state,
+        bucket,
+        customer: selectedCustomer,
+        subdivision: selectedLocation,
+        showDivisions: customerDivisions,
+      }});
     history.push({
       'pathname': `/main/invoicing/view/${params.id}`,
     });
   }
 
   const handleReturnReport = () => {
-    if (selectedLocation) {
+    if (customerDivisions && (selectedLocation || bucket)) {
       setBucket(null);
       setSelectedLocation(null);
       if (divisionData) formatReportSubdivision(divisionData);
     } else {
+      setCustomerDivisions(false);
       setSelectedCustomer(null);
       setBucket(null);
       formatReportBuckets(originalData);
@@ -721,28 +736,28 @@ const ARCustomReport = ({classes}: any) => {
 
   useEffect(() => {
     setBucket(null);
-    const {bucket, customer, subdivision} = location.state;
+    const {bucket, customer, subdivision, showDivisions} = location.state;
     if (!originalData) getReportData(!subdivision);
-    if (subdivision) {
+    if (showDivisions) {
       handleCustomerClick(customer._id, !bucket)
     }
   }, [location]);
 
   useEffect(() => {
     const handleRefresh = async() => {
-      if (!isRefreshed && originalData && (location?.state?.bucket || location?.state?.subdivision)) {
-        const {bucket, customer, subdivision} = location.state;
-        if (subdivision) {
+      const {bucket, customer, subdivision, showDivisions} = location.state;
+      if (!isRefreshed.current && (bucket || subdivision)) {
+        if (showDivisions && subdivision) {
           if (divisionData) {
-            filterCustomer(divisionData.customer._id, divisionData.customerAgingBucket, bucket, subdivision);
-            setRefreshed(true);
+            filterCustomer(divisionData.customer, divisionData.customerAgingBucket, bucket, subdivision);
+            isRefreshed.current = true;
           }
-        } else {
+        } else if (originalData) {
           const {customerAgingBuckets} = originalData;
           const tempCustomer = customerAgingBuckets.find((customerBucket: any) => customerBucket.customer._id === customer._id);
           setBucket(bucket);
           filterCustomer(tempCustomer.customer, tempCustomer.agingBuckets, bucket);
-          setRefreshed(true);
+          isRefreshed.current = true;
         }
       }
     };
