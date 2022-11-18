@@ -270,7 +270,7 @@ const ARCustomReport = ({classes}: any) => {
     {field: 'id', headerName: 'Id', hide: true},
     {
       field: 'date',
-      headerName: 'Date',
+      headerName: 'Due Date',
       flex: 1,
       disableColumnMenu: true,
       cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
