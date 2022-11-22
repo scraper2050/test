@@ -1,7 +1,7 @@
 import React from 'react';
 import {DataGrid, GridColDef} from "@material-ui/data-grid";
 import styled from "styled-components";
-import {GRAY6, LIGHT_BLUE} from "../../../constants";
+import {GRAY6, LIGHT_BLUE, PRIMARY_BLUE} from "../../../constants";
 
 export interface ReportData {
   title: string;
@@ -21,7 +21,8 @@ export interface CUSTOM_REPORT {
     61_90: string;
     over91: string;
     total: string;
-  }[]
+  }[];
+  gridHeight?: number;
 }
 
 interface Props {
@@ -37,13 +38,24 @@ export default function BcDataGrid({reportData, columns, showFooter = true}:Prop
 
   return <BCDataGrid
       // pagination
+      height={reportData.gridHeight}
       autoHeight
       disableSelectionOnClick
       rows={reportData?.customersData}
       columns={columns}
       // page={currentPage}
       pageSize={reportData?.customersData?.length ?? 0}
-      getRowClassName={(params) => params.row.bucket ? 'bucket-row' : ''}
+      getRowClassName={(params) => {
+        const {rowType} =params.row;
+        switch (rowType) {
+          case 'bucket':
+            return 'bucket-row';
+          case 'totals':
+            return 'totals-row';
+          default:
+            return '';
+        }
+      }}
       // rowsPerPageOptions={[5, 10, 50]}
       components={{
         Footer: showFooter ? CustomFooter : undefined,
@@ -69,9 +81,17 @@ export default function BcDataGrid({reportData, columns, showFooter = true}:Prop
 
 }
 
-const BCDataGrid = styled(DataGrid)`
-    border: 0;
-    margin-bottom: 30px;
+const BCDataGrid = styled(DataGrid)<{height: number | undefined}>`
+  border: 0;
+  margin-bottom: 30px;
+
+  .MuiDataGrid-windowContainer {
+    height: ${props => props.height ? (props.height + 52)+'px !important' : 'auto'};
+  }
+
+  .MuiDataGrid-dataContainer {
+    height: ${props => props.height ? props.height+'px !important' : 'auto'};
+  }
 
   .MuiDataGrid-columnSeparator {
     display: none;
@@ -123,6 +143,13 @@ const BCDataGrid = styled(DataGrid)`
   .bucket-row {
     max-height: 26px!important;
     min-height: 26px!important;
+    background-color: ${GRAY6};
+  }
+
+  .totals-row {
+    max-height: 26px!important;
+    min-height: 26px!important;
+    background-color: ${LIGHT_BLUE};
   }
 
   .no-border {
@@ -132,7 +159,7 @@ const BCDataGrid = styled(DataGrid)`
     min-height: 26px!important;
     font-weight: 700;
     font-size: 12px;
-    background-color: ${GRAY6};
+    background-color: transparent;
   }
 `
 

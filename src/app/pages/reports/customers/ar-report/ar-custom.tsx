@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch} from "react-redux";
-import {withStyles} from '@material-ui/core';
+import {Popover, Popper, Typography, withStyles} from '@material-ui/core';
 
 import styles from './styles';
 import BCCircularLoader
@@ -39,7 +39,9 @@ import BcReportSummary
 import BcReportSubSummary
   from "../../../../components/bc-data-grid/bc-report-subsummary";
 import styled from "styled-components";
+import {BcPopper} from "../../../../components/bc-data-grid/bc-popper";
 
+const GRID_ROW_HEIGHT = 52.3;
 
 const MORE_ITEMS = [
   {id: 0, title: 'Customize'},
@@ -60,7 +62,7 @@ const formatAddress = (address: any) => {
   state?.trim() && temp.push(state);
   zipcode?.trim() && temp.push(zipcode);
 
-  return temp.join(', ');
+  return temp.slice(0,1).join(', ');
 }
 
 interface DIVISION_DATA {
@@ -86,6 +88,9 @@ const ARCustomReport = ({classes}: any) => {
   const [reportData, setReportData] = useState<CUSTOM_REPORT | null>(null);
   const {asOf, customers = []} = state || {asOf: new Date(), customers: []};
   const isRefreshed = useRef(false);
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLSpanElement | null>(null);
+  const popUpData = useRef<{data: any, type: string}>({data: null, type:''});
 
   const columnsBuckets: GridColDef[] = [
     {field: 'id', headerName: 'Id', hide: true},
@@ -273,13 +278,15 @@ const ARCustomReport = ({classes}: any) => {
       headerName: 'Due Date',
       flex: 1,
       disableColumnMenu: true,
-      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
       renderCell: (cellValues => {
-        if (cellValues.row.bucket) {
+        if (cellValues.row.rowType === 'bucket') {
           return <>
             <ExpandLessIcon style={{fontSize: 12}}/>
             <strong style={{fontSize: 12}}>{cellValues.value}</strong>
           </>
+        } else if (cellValues.row.rowType === 'totals') {
+          return <span style={{fontSize: 12}}>{cellValues.value}</span>
         } else {
           return <span style={{marginLeft: 25}}>{cellValues.value}</span>
         }
@@ -290,23 +297,29 @@ const ARCustomReport = ({classes}: any) => {
       headerName: 'Contact name',
       flex: 1,
       disableColumnMenu: true,
-      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
+      renderCell: (cellValues) => <span
+        onMouseEnter={(e) => handleHover(e, cellValues.row.contactInfo, 'contact')}
+        onMouseLeave={closePopup}> {cellValues.value}
+      </span>,
     },
     {
       field: 'address',
       headerName: 'Address',
       flex: 1.5,
       disableColumnMenu: true,
-      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
-      renderCell: (cellValues) => <EllipseSpan
-        title={cellValues.value?.toString()}>{cellValues.value}</EllipseSpan>
+      cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
+      renderCell: (cellValues) => <span
+        onMouseEnter={(e) => handleHover(e, cellValues.row.address, 'address')}
+        onMouseLeave={closePopup}> {formatAddress(cellValues.value)}
+      </span>
     },
     {
       field: 'invoice',
       headerName: 'Invoice',
       flex: 1,
       disableColumnMenu: true,
-      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
       renderCell: (cellValues) => <ClickableCell
         onClick={() => handleInvoiceClick(cellValues)}>
         {cellValues.value}
@@ -319,15 +332,17 @@ const ARCustomReport = ({classes}: any) => {
       disableColumnMenu: true,
       align: 'right',
       headerAlign: 'right',
-      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
       renderCell: (cellValues) => {
-        if (cellValues.row.bucket) {
-          return <span>{cellValues.value}</span>
-        } else {
+        if (cellValues.row.rowType === 'data') {
           return <ClickableCell
             onClick={() => handleInvoiceClick(cellValues)}>
             {cellValues.value}
           </ClickableCell>
+        } else {
+          return <span style={{fontWeight: cellValues.row.rowType === 'totals' ? 'bold' : 'normal'}}>
+            {cellValues.value}
+          </span>
         }
       }
     },
@@ -338,15 +353,17 @@ const ARCustomReport = ({classes}: any) => {
       disableColumnMenu: true,
       align: 'right',
       headerAlign: 'right',
-      cellClassName: (params: GridCellParams) => params.row.bucket ? 'no-border' : '',
+      cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
       renderCell: (cellValues) => {
-        if (cellValues.row.bucket) {
-          return <span>{cellValues.value}</span>
-        } else {
+        if (cellValues.row.rowType === 'data') {
           return <ClickableCell
             onClick={() => handleInvoiceClick(cellValues)}>
             {cellValues.value}
           </ClickableCell>
+        } else {
+          return <span style={{fontWeight: cellValues.row.rowType === 'totals' ? 'bold' : 'normal'}}>
+            {cellValues.value}
+          </span>
         }
       }
     },
@@ -473,38 +490,58 @@ const ARCustomReport = ({classes}: any) => {
     let totalAmount = 0;
     let totalOutstanding = 0;
 
+    let height = 0;
+
     const tempInvoices = location.agingBuckets.sort((a: any, b: any) => BUCKETS.indexOf(a.label) - BUCKETS.indexOf(b.label)).reduce((acc: any[], bucket: any) => {
       let bucketAmount = 0;
       let bucketBalance = 0;
+      height += GRID_ROW_HEIGHT;
       const bucketInvoices = bucket.invoices.map((invoice: any) => {
+        height += GRID_ROW_HEIGHT;
         totalAmount += invoice.total;
         totalOutstanding += invoice.balanceDue;
         bucketAmount += invoice.total;
         bucketBalance += invoice.balanceDue;
         return {
           id: invoice._id,
-          bucket: false,
-          address: formatAddress(invoice.jobLocation?.address),
+          rowType: 'data',
+          address: {name: invoice.jobLocation?.name, ...invoice.jobLocation?.address},
           invoice: invoice.invoiceId,
           contact: invoice.invoiceContact?.name || invoice.customerContact?.name || '',
           date: formatDate(invoice.dueDate),
           amount: formatCurrency(invoice.total),
           balance: formatCurrency(invoice.balanceDue),
+          contactInfo: {
+            email: invoice.invoiceContact?.email,
+            name: invoice.invoiceContact?.name,
+            phone: invoice.invoiceContact?.phone
+          }
         }
       });
 
       acc.push ({
         id: bucket.label,
-        bucket: true,
+        rowType: 'bucket',
         date: bucket.label,
+        invoice: '',
+        contact: '',
+        dueDate: '',
+        amount: '',
+        balance: '',
+      });
+
+      acc.push(...bucketInvoices);
+
+      acc.push ({
+        id: `${bucket.label}-totals`,
+        rowType: 'totals',
+        date: '',
         invoice: '',
         contact: '',
         dueDate: '',
         amount: formatCurrency(bucketAmount),
         balance: formatCurrency(bucketBalance),
       });
-
-      acc.push(...bucketInvoices);
 
       return acc;
     }, []);
@@ -517,6 +554,7 @@ const ARCustomReport = ({classes}: any) => {
       totalAmount: formatCurrency(totalAmount),
       aging: [],
       customersData: tempInvoices,
+      gridHeight: height,
     });
   }
 
@@ -765,6 +803,17 @@ const ARCustomReport = ({classes}: any) => {
   }, [originalData, divisionData])
 
 
+  const handleHover = (event: React.MouseEvent<HTMLSpanElement>, data: any, type: string) => {
+    setAnchorEl(event.currentTarget);
+    popUpData.current = {data, type};
+  };
+
+  const closePopup = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(null);
+  };
+
+
+
   return (
     <div style={{padding: '20px 20px 0 20px'}}>
       {isLoading ?
@@ -797,6 +846,7 @@ const ARCustomReport = ({classes}: any) => {
             showFooter={!(!bucket && selectedLocation)}
             columns={bucket ? columnsInvoices : (selectedLocation ? columnsSubdivisionInvoices : columnsBuckets)}
           />
+          <BcPopper {...popUpData.current} anchor={anchorEl} />
         </div>
       }
     </div>
