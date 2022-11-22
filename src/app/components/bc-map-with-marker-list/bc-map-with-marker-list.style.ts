@@ -55,6 +55,17 @@ export default (theme: Theme): any => ({
     top: 10,
     left: 10,
     cursor: 'pointer',
+    '&:before':{
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left:-4,
+      width: '12px',
+      height: '2px',
+      display: 'block',
+      background:'red',
+      transform: 'rotate(45deg)',
+    }
   },
   markerOverlayContainer: {
     width: 400,
