@@ -65,8 +65,8 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
 
       if(selectedDate) {
         const offset = moment.parseZone().utcOffset();
-        const parsedDate = moment(job.scheduleDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toString();
-        const parsedSelectedDate = moment(selectedDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toString();
+        const parsedDate = moment(job.scheduleDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).format();
+        const parsedSelectedDate = moment(selectedDate).format();
         filter = filter && parseISOMoment(parsedDate).isSame(parseISOMoment(parsedSelectedDate), 'day');
       }
       return filter;
