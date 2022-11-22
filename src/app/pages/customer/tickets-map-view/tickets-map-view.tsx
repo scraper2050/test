@@ -103,6 +103,15 @@ function TicketsWithMapView({ classes }: any) {
     }
   }, [])
 
+  useEffect(() => {
+    const jsdIframe = document.getElementsByName('JSD widget')
+    jsdIframe[0] && (jsdIframe[0].style.display = 'none');
+    return () => {
+      jsdIframe[0] && (jsdIframe[0].style.display = 'initial');
+    }
+  }, [])
+  
+
   const [filterOpenTickets, setFilterOpenTickets] = useState<FilterTickets>({
     'customerNames': null,
     'jobId': '',

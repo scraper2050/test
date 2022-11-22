@@ -63,7 +63,8 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       if(selectedDate) {
         const offset = moment.parseZone().utcOffset();
         const parsedDate = moment(ticket.dueDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toString();
-        filter = filter && parseISOMoment(parsedDate).isSame(selectedDate, 'day');
+        const parsedSelectedDate = moment(selectedDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toString();
+        filter = filter && parseISOMoment(parsedDate).isSame(parseISOMoment(parsedSelectedDate), 'day');
       }
       return filter;
     });
