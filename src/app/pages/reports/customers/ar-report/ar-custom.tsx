@@ -203,7 +203,7 @@ const ARCustomReport = ({classes}: any) => {
     {field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true},
     {
       field: 'invoice',
-      headerName: 'Invoice',
+      headerName: 'Invoice #',
       flex: 1,
       disableColumnMenu: true,
       renderCell: (cellValues) => <ClickableCell
@@ -302,7 +302,7 @@ const ARCustomReport = ({classes}: any) => {
     },
     {
       field: 'invoice',
-      headerName: 'Invoice',
+      headerName: 'Invoice #',
       flex: 1,
       disableColumnMenu: true,
       cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
@@ -454,7 +454,7 @@ const ARCustomReport = ({classes}: any) => {
       return {
         id: invoice._id,
         date: formatDate(invoice.issuedDate),
-        invoice: invoice.invoiceId,
+        invoice: invoice.invoiceId.replace('Invoice ', ''),
         customer: customer?.profile?.displayName || customer?.contactName,
         dueDate: formatDate(invoice.dueDate),
         amount: formatCurrency(invoice.total),
@@ -496,7 +496,7 @@ const ARCustomReport = ({classes}: any) => {
           rowType: 'data',
           address: invoice.jobSite?.name,
           addressInfo: {name: invoice.jobSite?.name, ...invoice.jobSite?.address},
-          invoice: invoice.invoiceId,
+          invoice: invoice.invoiceId.replace('Invoice ', ''),
           contact: contact?.name || '',
           date: formatDate(invoice.dueDate),
           amount: formatCurrency(invoice.total),
@@ -760,8 +760,11 @@ const ARCustomReport = ({classes}: any) => {
 
   useEffect(() => {
     setBucket(null);
+    setSelectedCustomer(null);
+    setSelectedLocation(null);
     const {bucket, customer, subdivision, showDivisions} = location.state;
-    if (!originalData) getReportData(!subdivision);
+
+    getReportData(!subdivision);
     if (showDivisions) {
       handleCustomerClick(customer._id, !bucket)
     }
