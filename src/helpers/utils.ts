@@ -20,5 +20,5 @@ export const getJobTypesFromTicket = (ticket: any) => {
 }
 
 export const getJobTypesTitle = (jobTypes: any) => {
-  return jobTypes.length === 0 ? '' : jobTypes.length === 1 ? jobTypes[0] : 'Multiple Jobs';
+  return jobTypes.length === 0 ? 'N/A' : jobTypes.length === 1 ? jobTypes[0] : 'Multiple Jobs';
 }
