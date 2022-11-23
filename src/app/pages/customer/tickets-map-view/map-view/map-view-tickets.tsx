@@ -61,10 +61,13 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       }
 
       if(selectedDate) {
-        const offset = moment.parseZone().utcOffset();
-        const parsedDate = moment(ticket.dueDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).format();
-        const parsedSelectedDate = moment(selectedDate).format();
-        filter = filter && parseISOMoment(parsedDate).isSame(parseISOMoment(parsedSelectedDate), 'day');
+        // const offset = moment.parseZone().utcOffset();
+        const parsedDate = moment.utc(ticket.dueDate).isValid() ? moment.utc(ticket.dueDate).format().slice(0,10) : '';
+        const parsedSelectedDate = moment(selectedDate).isValid() ? moment(selectedDate).format().slice(0,10) : '';
+        if(parsedDate === parsedSelectedDate){
+          console.log('ini itu', parsedDate , parsedSelectedDate)
+        }
+        filter = filter && parsedDate === parsedSelectedDate;
       }
       return filter;
     });
