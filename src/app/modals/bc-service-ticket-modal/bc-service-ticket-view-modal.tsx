@@ -61,7 +61,7 @@ function BCViewServiceTicketModal({
     if (job.tasks) {
       job.tasks.forEach((task: any) => title.push(task.jobType?.title))
     } else if (job.jobType) {
-      title.push(job.jobType.title || '');
+      title.push(job.jobType.title || 'N/A');
     }
     return title;
   }
@@ -140,11 +140,11 @@ function BCViewServiceTicketModal({
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid item style={{width: '40%'}}>
           <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
-          <Typography variant={'h6'} className={'bigText'}>{job?.customer?.profile?.displayName || ''}</Typography>
+          <Typography variant={'h6'} className={'bigText'}>{job?.customer?.profile?.displayName || 'N/A'}</Typography>
         </Grid>
         <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : ''}</Typography>
+          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs />
         <Grid item xs />
@@ -153,11 +153,11 @@ function BCViewServiceTicketModal({
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>subdivision</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || ''}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>job address</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || ''}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
@@ -167,21 +167,21 @@ function BCViewServiceTicketModal({
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>
-            <Typography variant={'h6'} className={'previewText'}></Typography>
+            <Typography variant={'h6'} className={'previewText'}>N/A</Typography>
           </Grid>
         </Grid>
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>contact associated</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name ||''}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name ||'N/A'}</Typography>
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.customerPO || ''}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
           </Grid>
           <Grid item style={{width: '50%'}}>
             <Typography variant={'caption'} className={'previewCaption'}>note</Typography>
-            <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.note || ''}</Typography>
+            <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.note || 'N/A'}</Typography>
           </Grid>
         </Grid>
         <Grid container className={classNames('modalContent', classes.lastContent)} justify={'space-between'}>

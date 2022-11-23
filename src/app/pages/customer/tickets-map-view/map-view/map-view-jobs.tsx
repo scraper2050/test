@@ -64,10 +64,13 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       }
 
       if(selectedDate) {
-        const offset = moment.parseZone().utcOffset();
-        const parsedDate = moment(job.scheduleDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).format();
-        const parsedSelectedDate = moment(selectedDate).format();
-        filter = filter && parseISOMoment(parsedDate).isSame(parseISOMoment(parsedSelectedDate), 'day');
+        // const offset = moment.parseZone().utcOffset();
+        const parsedDate = moment.utc(job.scheduleDate).isValid() ? moment.utc(job.scheduleDate).format().slice(0,10) : '';
+        const parsedSelectedDate = moment(selectedDate).isValid() ? moment(selectedDate).format().slice(0,10) : '';
+        if(parsedDate === parsedSelectedDate){
+          console.log('ini itu', parsedDate , parsedSelectedDate)
+        }
+        filter = filter && parsedDate === parsedSelectedDate;
       }
       return filter;
     });
