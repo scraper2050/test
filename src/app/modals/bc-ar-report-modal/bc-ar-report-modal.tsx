@@ -56,8 +56,12 @@ function BcArReportModal({
     onSubmit: (values: any, { setSubmitting }: any) => {
       history.push({
         pathname: '/main/reports/ar',
-        state: {type: 'custom', asOf: values.asOf, customers: values.filterCustomer ? values.customers : []}
-        });
+        state: {
+          type: 'custom',
+          asOf: values.asOf,
+          customers: values.filterCustomer ? values.customers : [],
+        }
+      });
       closeModal();
     }
   });

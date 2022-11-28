@@ -51,20 +51,6 @@ const MORE_ITEMS = [
 
 const BUCKETS = ['Current', '1 - 30', '31 - 60', '61 - 90', '91 and Over'];
 
-const formatAddress = (address: any) => {
-  if (!address) return '';
-
-  const {street, state, city, zipcode }= address;
-  const temp = [];
-
-  street?.trim() && temp.push(street);
-  city?.trim() && temp.push(city);
-  state?.trim() && temp.push(state);
-  zipcode?.trim() && temp.push(zipcode);
-
-  return temp.slice(0,1).join(', ');
-}
-
 interface DIVISION_DATA {
   customer: any;
   customerAgingBucket: any[];
@@ -217,7 +203,7 @@ const ARCustomReport = ({classes}: any) => {
     {field: 'date', headerName: 'Date', flex: 1, disableColumnMenu: true},
     {
       field: 'invoice',
-      headerName: 'Invoice',
+      headerName: 'Invoice #',
       flex: 1,
       disableColumnMenu: true,
       renderCell: (cellValues) => <ClickableCell
@@ -310,13 +296,13 @@ const ARCustomReport = ({classes}: any) => {
       disableColumnMenu: true,
       cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
       renderCell: (cellValues) => <span
-        onMouseEnter={(e) => handleHover(e, cellValues.row.address, 'address')}
-        onMouseLeave={closePopup}> {formatAddress(cellValues.value)}
+        onMouseEnter={(e) => handleHover(e, cellValues.row.addressInfo, 'address')}
+        onMouseLeave={closePopup}> {cellValues.value}
       </span>
     },
     {
       field: 'invoice',
-      headerName: 'Invoice',
+      headerName: 'Invoice #',
       flex: 1,
       disableColumnMenu: true,
       cellClassName: (params: GridCellParams) => params.row.rowType === 'data' ?  '' : 'no-border',
@@ -468,7 +454,7 @@ const ARCustomReport = ({classes}: any) => {
       return {
         id: invoice._id,
         date: formatDate(invoice.issuedDate),
-        invoice: invoice.invoiceId,
+        invoice: invoice.invoiceId.replace('Invoice ', ''),
         customer: customer?.profile?.displayName || customer?.contactName,
         dueDate: formatDate(invoice.dueDate),
         amount: formatCurrency(invoice.total),
@@ -502,20 +488,20 @@ const ARCustomReport = ({classes}: any) => {
         totalOutstanding += invoice.balanceDue;
         bucketAmount += invoice.total;
         bucketBalance += invoice.balanceDue;
+
+        const contact = invoice.invoiceContact ||  invoice.customerContact;
+
         return {
           id: invoice._id,
           rowType: 'data',
-          address: {name: invoice.jobLocation?.name, ...invoice.jobLocation?.address},
-          invoice: invoice.invoiceId,
-          contact: invoice.invoiceContact?.name || invoice.customerContact?.name || '',
+          address: invoice.jobSite?.name,
+          addressInfo: {name: invoice.jobSite?.name, ...invoice.jobSite?.address},
+          invoice: invoice.invoiceId.replace('Invoice ', ''),
+          contact: contact?.name || '',
           date: formatDate(invoice.dueDate),
           amount: formatCurrency(invoice.total),
           balance: formatCurrency(invoice.balanceDue),
-          contactInfo: {
-            email: invoice.invoiceContact?.email,
-            name: invoice.invoiceContact?.name,
-            phone: invoice.invoiceContact?.phone
-          }
+          contactInfo: contact,
         }
       });
 
@@ -774,8 +760,11 @@ const ARCustomReport = ({classes}: any) => {
 
   useEffect(() => {
     setBucket(null);
+    setSelectedCustomer(null);
+    setSelectedLocation(null);
     const {bucket, customer, subdivision, showDivisions} = location.state;
-    if (!originalData) getReportData(!subdivision);
+
+    getReportData(!subdivision);
     if (showDivisions) {
       handleCustomerClick(customer._id, !bucket)
     }

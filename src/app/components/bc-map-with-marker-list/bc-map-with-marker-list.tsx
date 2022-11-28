@@ -112,7 +112,6 @@ function BCMapWithMarkerWithList({
   const mapRef = useRef<any>();
   const [bounds, setBounds] = useState<any>(null);
   const [zoom, setZoom] = useState(11);
-  const [points, setPoints] = useState<any>([]);
   const locationCoordinate = useRef<any>({});
   const overlappingCoordinates = useRef<any>([]);
 
@@ -165,37 +164,34 @@ function BCMapWithMarkerWithList({
     }
   }, [selected])
   
-  useEffect(() => {
-    const mappedPoints = list.map((ticket: any) => {
-      if(selected._id ===ticket._id){
-        ticket.customer = selected.customer
-      }
-      let lat:any = centerLat;
-      let lng:any = centerLng;
-      if (ticket.jobSite) {
-        lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : centerLat;
-        lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : centerLng;
-      } else if (ticket.jobLocation) {
-        lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : centerLat;
-        lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : centerLng;
-      } else if (ticket.customer) {
-        lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : centerLat;
-        lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : centerLng;
-      }
-      return ({
-        type: "Feature",
-        properties: { cluster: false, ticketId: ticket._id, ticket },
-        geometry: {
-          type: "Point",
-          coordinates: [
-            parseFloat(lng),
-            parseFloat(lat)
-          ]
-        },
-      })
-    });
-    setPoints(mappedPoints)
-  }, [selected])
+  const points = list.map((ticket: any) => {
+    if(selected._id ===ticket._id && !isTicket){
+      ticket.customer = selected.customer
+    }
+    let lat:any = centerLat;
+    let lng:any = centerLng;
+    if (ticket.jobSite) {
+      lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : centerLat;
+      lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : centerLng;
+    } else if (ticket.jobLocation) {
+      lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : centerLat;
+      lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : centerLng;
+    } else if (ticket.customer) {
+      lat = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[1] ? ticket.customer.location.coordinates[1] : centerLat;
+      lng = ticket.customer.location && ticket.customer.location.coordinates && ticket.customer.location.coordinates[0] ? ticket.customer.location.coordinates[0] : centerLng;
+    }
+    return ({
+      type: "Feature",
+      properties: { cluster: false, ticketId: ticket._id, ticket },
+      geometry: {
+        type: "Point",
+        coordinates: [
+          parseFloat(lng),
+          parseFloat(lat)
+        ]
+      },
+    })
+  });
 
   const { clusters, supercluster } = useSupercluster({
     points,
@@ -226,8 +222,8 @@ function BCMapWithMarkerWithList({
   }, [clusters])
 
   useEffect(() => {
-    if(mapRef.current && !streamingTickets){
-      mapRef.current.setZoom(11)
+    if(mapRef.current && (!streamingTickets || !isTicket)){
+      mapRef.current.setZoom(15)
     }
   }, [list])
 

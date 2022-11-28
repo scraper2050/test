@@ -12,10 +12,28 @@ interface PROPS{
   anchor: null | ReferenceObject;
 }
 
+const formatAddress = (address: any) => {
+  if (!address) return '';
+
+  const {street, state, city, zipcode }= address;
+  const temp = [];
+
+  const temp1 = [];
+
+  state?.trim() && temp1.push(state);
+  zipcode?.trim() && temp1.push(zipcode);
+  const temp3 = temp1.join(', ');
+
+  street?.trim() && temp.push(street);
+  city?.trim() && temp.push(city);
+  temp3 && temp.push(temp3);
+
+  return temp.join('<br />');
+}
+
 export const BcPopper = ({type, data, anchor}: PROPS) => {
   const open = Boolean(anchor);
   const id = open ? 'simple-popover' : undefined;
-  console.log(data, anchor);
 
   return data && <Popper
     id={id}
@@ -77,16 +95,16 @@ const Container = styled.div<{isBold?: boolean}>`
 
 const Contact = ({data}: any) => <>
   <Typography variant="h6">{data.name}</Typography>
-  <div>
+  {data.email && <div>
     <EmailIcon style={{color: GRAY3, fontSize: 14}}/><p>{data.email}</p>
-  </div>
-  <div>
+  </div>}
+  {data.phone && <div>
     <PhoneIcon style={{color: GRAY3, fontSize: 14}}/><p>{data.phone}</p>
-  </div>
+  </div>}
 </>
 
 
 const Address = ({data}: any) => <>
   <Typography variant="h6">{data.name}</Typography>
-  <span>{data.street}<br/>{data.city}<br/>{data.state}, {data.zipcode}</span>
+  <span dangerouslySetInnerHTML={{__html: formatAddress(data)}}/>
 </>
