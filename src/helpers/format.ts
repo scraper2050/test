@@ -6,8 +6,11 @@ export const formatDate = (date: string): string | undefined => {
   }
 };
 
-export const formatDateMMMDDYYYY = (date: string): string | undefined => {
+export const formatDateMMMDDYYYY = (date: string, isLocal?: boolean): string | undefined => {
   if (typeof date !== undefined && date !== null) {
+    if(isLocal){
+      return moment(date).format('MMM DD, YYYY');
+    }
     return moment.utc(date).format('MMM DD, YYYY');
   } else {
     return 'N/A'
