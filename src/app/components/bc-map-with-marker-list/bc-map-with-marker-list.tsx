@@ -114,6 +114,7 @@ function BCMapWithMarkerWithList({
   const [zoom, setZoom] = useState(11);
   const locationCoordinate = useRef<any>({});
   const overlappingCoordinates = useRef<any>([]);
+  const [_, setRefresh] = useState(0)
 
   let centerLat = coordinates?.lat || DEFAULT_COORD.lat;
   let centerLng = coordinates?.lng || DEFAULT_COORD.lng;
@@ -219,13 +220,8 @@ function BCMapWithMarkerWithList({
       }
     })
     overlappingCoordinates.current = Object.values(locationCoordinate.current).filter((coordinates: any) => coordinates.length > 1)
+    setRefresh(refresh => refresh + 1)
   }, [clusters])
-
-  useEffect(() => {
-    if(mapRef.current && (!streamingTickets || !isTicket)){
-      mapRef.current.setZoom(15)
-    }
-  }, [list])
 
   const OverlappingMarker = ({ data }: any) => {
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
