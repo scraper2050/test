@@ -111,7 +111,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
     { Cell({ row }: any) {
       return row.original.lastEmailSent
-        ? formatDateMMMDDYYYY(row.original.lastEmailSent)
+        ? formatDateMMMDDYYYY(row.original.lastEmailSent,true)
         : 'N/A';
     },
     'Header': 'Last Emailed',

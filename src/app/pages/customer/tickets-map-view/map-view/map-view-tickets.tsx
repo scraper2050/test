@@ -64,9 +64,6 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         // const offset = moment.parseZone().utcOffset();
         const parsedDate = moment.utc(ticket.dueDate).isValid() ? moment.utc(ticket.dueDate).format().slice(0,10) : '';
         const parsedSelectedDate = moment(selectedDate).isValid() ? moment(selectedDate).format().slice(0,10) : '';
-        if(parsedDate === parsedSelectedDate){
-          console.log('ini itu', parsedDate , parsedSelectedDate)
-        }
         filter = filter && parsedDate === parsedSelectedDate;
       }
       return filter;
