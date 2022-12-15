@@ -9,6 +9,7 @@ import { SocketMessage } from 'helpers/contants';
 import Config from './config';
 import { io } from 'socket.io-client';
 import { pushNotification } from 'actions/notifications/notifications.action';
+import { setNewMessage } from 'actions/chat/bc-chat.action';
 const LoginPage = React.lazy(() => import('./app/pages/auth/login/login'));
 const SignUpPage = React.lazy(() => import('./app/pages/auth/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
@@ -88,6 +89,9 @@ function App() {
         'extraHeaders': { 'Authorization': token }
       });
       customerSocket.on(SocketMessage.CREATENOTIFICATION, data => {
+        if(data.notificationType === 'NewChat') {
+          dispatch(setNewMessage(data))
+        }
         dispatch(pushNotification(data));
       });
 
