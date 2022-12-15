@@ -86,6 +86,7 @@ function BCViewJobRequestModal({
   const theme = useTheme();
   const { contacts } = useSelector((state: any) => state.contacts);
   const { user }: any = useSelector(({ auth }: any) => auth);
+  const { newMessage }: any = useSelector(({ chat }: any) => chat);
   const customerContact =
     jobRequest.customerContact && contacts.find((contact: any) => contact.userId === jobRequest.customerContact._id)?.name;
 
@@ -112,6 +113,13 @@ function BCViewJobRequestModal({
       getChatContent(jobRequest._id);
     }
   }, [jobRequest])
+
+  useEffect(() => {
+    if (jobRequest?._id && newMessage?.metadata.jobRequest === jobRequest._id) {
+      getChatContent(jobRequest._id);
+      // dispatch()
+    }
+  }, [newMessage])
 
 
   // TODO make sure canEdit
