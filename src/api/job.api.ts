@@ -17,6 +17,9 @@ import { refreshJobs,
   setNextJobsCursor,
   setTotal
 } from 'actions/job/job.action';
+import {
+  setMapTechnicianJobs
+} from 'actions/map-technician-jobs/map-technician-jobs.action'
 
 const compareByDate = (a: any, b: any) => {
   if (new Date(a.updatedAt) > new Date(b.updatedAt)) {
@@ -181,6 +184,30 @@ export const getAllJobsByCustomerAPI = (pageSize = 2020, customerId:string) => {
         })
         .catch(err => {
           dispatch(setJobLoading(false));
+          return reject(err);
+        });
+    });
+  };
+};
+
+export const getAllJobsByTechnicianAndDateAPI = (technicianIds:any, jobDate:any) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      const optionObj:any = {
+        pageSize: 2020,
+      }
+      if(jobDate){
+        optionObj.startDate = moment(jobDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(jobDate).format('YYYY-MM-DD');
+      }
+      optionObj.technicianIds = technicianIds.map((tech:any) => tech.id)
+      request(`/getJobs`, 'post', optionObj)
+        .then((res: any) => {
+          let jobs = res.data.jobs;
+          dispatch(setMapTechnicianJobs(jobs));
+          return resolve(res.data);
+        })
+        .catch(err => {
           return reject(err);
         });
     });
