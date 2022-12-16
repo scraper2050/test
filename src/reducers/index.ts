@@ -73,6 +73,8 @@ import { DiscountItemsReducer as discountItems} from './discount.reducer'
 import { DiscountState } from 'actions/discount/discount.types';
 import { reportReducer as reportState } from './report.reducer'
 import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './advance-filter.reducer'
+import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-technician-filter.reducer'
+import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer'
 
 
 export interface ReducerParamsInterface {
@@ -154,6 +156,8 @@ const appReducer = combineReducers({
   discountItems,
   reportState,
   advanceFilterInvoiceState,
+  mapTechnicianFilterState,
+  mapTechnicianJobsState,
 });
 
 const rootReducer = (state: any, action: any) => {

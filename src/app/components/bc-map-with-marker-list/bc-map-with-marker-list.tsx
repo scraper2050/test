@@ -45,6 +45,8 @@ interface BCMapWithMarkerListProps {
   getServiceTicketDetail?: any;
   getJobLocation?: any;
   getJobSite?: any;
+  selectedTechnician?: {name: string;id: string}[];
+  technicianColorCode?: any;
 }
 function createMapOptions() {
   return {
@@ -61,6 +63,7 @@ const superClusterOptions = {
   map: (props:any) => ({
     includeTicket: !!props.ticket?.ticketId,
     includeRequest: !!props.ticket?.requestId,
+    includeJob: !!props.ticket?.jobId,
   }),
   reduce: (acc:any, props:any) => {
     if(!!props.includeTicket) {
@@ -68,6 +71,9 @@ const superClusterOptions = {
     }
     if(!!props.includeRequest) {
       acc.includeRequest = true;
+    }
+    if(!!props.includeJob) {
+      acc.includeJob = true;
     }
   },
 }
@@ -82,6 +88,9 @@ const calculateColor = (cluster:any) => {
   return 'rgb(130,130,130)'
 }
 const calculateBorder = (cluster:any) => {
+  if(cluster.properties?.includeJob){
+    return '3px solid black'
+  }
   if(cluster.properties?.includeTicket){
     return '3px solid #2477FF'
   }
@@ -108,6 +117,8 @@ function BCMapWithMarkerWithList({
   getServiceTicketDetail = ()=>{},
   getJobLocation = ()=>{},
   getJobSite = ()=>{},
+  selectedTechnician = [],
+  technicianColorCode = {},
 }: BCMapWithMarkerListProps) {
   const mapRef = useRef<any>();
   const [bounds, setBounds] = useState<any>(null);
@@ -298,15 +309,34 @@ function BCMapWithMarkerWithList({
                     return IconPending;
                 }
               }
-              const status = isTicket 
+              const status = isTicket && !datum.ticket?.jobId
               ? datum.ticket?.ticketId 
                 ? -1
                 : -2 
               : datum.ticket?.status;
-            const CustomIcon = getStatusIcon(status);
+              const CustomIcon = getStatusIcon(status);
+              let  technicianColor:any;
+              if (datum.ticket?.jobId) {
+                technicianColor = technicianColorCode[selectedTechnician.findIndex((tech:{name:string;id:string}) => tech.id === datum.ticket.tasks[0].contractor?._id || tech.id === datum.ticket.tasks[0].technician._id)]
+              }
               return (
-                <div key={idx} className={classes.listItemContainer} onClick={() => handleItemClick(datum.ticket._id)}>
-                  <CustomIcon style={{marginRight: 5}}/> {title}{title && location ? ' - ' : ''}{location}
+                <div 
+                  key={idx}
+                  className={classes.listItemContainer}
+                  onClick={() => handleItemClick(datum.ticket._id)}
+                >
+                  <CustomIcon
+                    style={{
+                      marginRight: 5,
+                      border: isTicket && datum.ticket?.jobId ? `3px solid ${technicianColor}` : 'none', 
+                      borderRadius: '50%',
+                      width: 25,
+                      height: 25,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  /> {title}{title && location ? ' - ' : ''}{location}
                 </div>
               )
             })}
@@ -380,6 +410,11 @@ function BCMapWithMarkerWithList({
               </Marker>
             );
           } else {
+            let  technicianColor:any;
+            if (ticket.jobId) {
+              technicianColor = technicianColorCode[selectedTechnician.findIndex((tech:{name:string;id:string}) => tech.id === ticket.tasks[0].contractor?._id || tech.id === ticket.tasks[0].technician._id)]
+            }
+
             return (
               <BCMapMarker
                 key={`marker-${cluster.properties.ticketId}`}
@@ -398,6 +433,7 @@ function BCMapWithMarkerWithList({
                 getServiceTicketDetail={getServiceTicketDetail}
                 getJobLocation={getJobLocation}
                 getJobSite={getJobSite}
+                technicianColor={technicianColor}
               />
             );
           }

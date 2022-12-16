@@ -34,6 +34,8 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({ticket2Job: serviceTicket.ticket2Job}));
   const { refresh } = useSelector(({ serviceTicket }: any) => ({refresh: serviceTicket.refresh}));
   const { tickets } = useSelector(({ serviceTicket }: any) => ({tickets: serviceTicket.tickets}));
+  const { techniciansJobs } = useSelector(({ mapTechnicianJobsState }: any) => ({techniciansJobs: mapTechnicianJobsState.jobs}));
+  const selectedTechnician: any = useSelector(({mapTechnicianFilterState}: any) => mapTechnicianFilterState.selectedTechnician)
   const { streaming: streamingTickets } = useSelector(({ serviceTicket }: any) => ({
     streaming: serviceTicket.stream,
   }));
@@ -95,7 +97,9 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       socket.on(SocketMessage.SERVICE_TICKETS, data => {
         const {count, serviceTicket, jobRequest, total} = data;
         if (serviceTicket) {
-          tempRefTicket.current.push(serviceTicket);
+          if(tempRefTicket.current.findIndex((existingTickets) => existingTickets._id === serviceTicket._id) === -1){
+            tempRefTicket.current.push(serviceTicket);
+          }
           if (count % 25 === 0 || count === total) {
             setIsLoading(false);
             setAllTickets([...tempRefTicket.current]);
@@ -139,8 +143,8 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }, [refresh]);
 
   useEffect(() => {
-    setFilteredTickets(filterOpenTickets(allTickets));
-  }, [allTickets, selectedDate, filterTickets])
+    setFilteredTickets([...filterOpenTickets(allTickets), ...techniciansJobs]);
+  }, [allTickets, selectedDate, filterTickets, techniciansJobs])
 
   useEffect(() => {
     if(ticket2Job){
@@ -183,6 +187,16 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
     dispatch(setServiceTicket(updatedTickets));
   }
 
+  const technicianColorCode:any = {
+    0: '#EF5DA8',
+    1: '#349785',
+    2: '#FA8029',
+    3: '#5D5FEF',
+    4: 'yellow',
+    5: 'purple',
+    6: 'blue',
+  }
+
   return (
     <Grid container item lg={12}>
       <Grid
@@ -193,7 +207,10 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       >
         <MemoizedMap
           reactAppGoogleKeyFromConfig={Config.REACT_APP_GOOGLE_KEY}
+          // list={[...filteredTickets, ...techniciansJobs]}
           list={filteredTickets}
+          selectedTechnician={selectedTechnician}
+          technicianColorCode={technicianColorCode}
           isTicket={true}
           streamingTickets={streamingTickets}
           selected={selected}
@@ -209,7 +226,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
         />
       </Grid>
 
-      <SidebarTickets tickets={filteredTickets} isLoading={isLoading}/>
+      <SidebarTickets tickets={filteredTickets} isLoading={isLoading} selectedTechnician={selectedTechnician} technicianColorCode={technicianColorCode} />
     </Grid>
   );
 }
