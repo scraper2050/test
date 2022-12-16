@@ -95,6 +95,14 @@ export default (theme: Theme): any => ({
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
   },
+  menuContainerAutocomplete: {
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    '&& .MuiAutocomplete-option': {
+      paddingLeft: 45,
+      justifyContent: 'space-between',
+    },
+  },
   menu: {
     paddingTop: 0,
     paddingBottom: 0,
