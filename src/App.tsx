@@ -90,7 +90,7 @@ function App() {
       });
       customerSocket.on(SocketMessage.CREATENOTIFICATION, data => {
         if(data.notificationType === 'NewChat') {
-          dispatch(setNewMessage(data))
+          dispatch(setNewMessage(data.metadata))
         }
         dispatch(pushNotification(data));
       });
