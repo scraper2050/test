@@ -8,6 +8,7 @@ import styles from "./bc-map-filter.styles";
 import {makeStyles} from "@material-ui/core/styles";
 import BCMapFilter from "./bc-map-filter";
 import BCMapFilterRoute from "./bc-map-filter-route";
+import BCMapFilterTech from "./bc-map-filter-tech"
 
 const useStyles = makeStyles(theme => ({
   funnel: {
@@ -43,6 +44,7 @@ function BCMapFilterHead({
   employees,
   vendors,
   jobTypes,
+  showTechFilter,
 }: any): JSX.Element {
   const mapStyles = useStyles();
   const [dateValue, setDateValue] = useState<any>(null);
@@ -152,6 +154,11 @@ function BCMapFilterHead({
             : null
         }
       </div>
+      {showTechFilter && (
+        <div style={{minWidth: 200, paddingRight: 10}}>
+          <BCMapFilterTech />
+        </div>
+      )}
       <span className={"datepicker_wrapper"} >
         <button
           className="prev_btn"

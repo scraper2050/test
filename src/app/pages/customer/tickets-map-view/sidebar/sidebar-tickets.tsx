@@ -23,6 +23,8 @@ interface SidebarTicketsProps {
   classes: any;
   tickets:any[];
   isLoading: boolean;
+  selectedTechnician?: {name: string;id: string}[];
+  technicianColorCode?: any;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -74,7 +76,7 @@ const useSidebarStyles = makeStyles(theme =>
 
 const PAGE_SIZE = 6;
 
-function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
+function SidebarTickets({ classes, tickets, isLoading, selectedTechnician = [], technicianColorCode = {} }: SidebarTicketsProps) {
   const mapStyles = useStyles();
   const dispatch = useDispatch();
   const sidebarStyles = useSidebarStyles();
@@ -196,34 +198,47 @@ function SidebarTickets({ classes, tickets, isLoading }: SidebarTicketsProps) {
                     <BCCircularLoader heightValue={'200px'}/>
                   </div>
                   : paginatedTickets.length
-                    ? paginatedTickets.map((x: any, i: any) => (
-                      <div
-                        className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
-                        id={`openTicket${i}`}
-                        key={i}
-                        onClick={() => {
-                          handleOpenTicketCardClick(x, i);
-                        }}
-                      >
-                        <div className={'ticket_title'}>
-                          <span
-                            className={`job-status job-status_${x.ticketId ? '-1' : x.requestId ? '-2' : x.status}`}/>
-                          <h3>
-                            {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
-                          </h3>
-                        </div>
-                        <div className={'location_desc_container'}>
-                          <div className={'card_location'}>
-                            <h4>
-                              {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
-                            </h4>
+                    ? paginatedTickets.map((x: any, i: any) => {
+                      let  technicianColor:any;
+                      if (x.jobId) {
+                        technicianColor = technicianColorCode[selectedTechnician.findIndex((tech:{name:string;id:string}) => tech.id === x.tasks[0].contractor?._id || tech.id === x.tasks[0].technician._id)]
+                      }
+                      return (
+                        <div
+                          className={`ticketItemDiv ${selectedTicket._id === x._id ? 'ticketItemDiv_active' : ''}`}
+                          id={`openTicket${i}`}
+                          key={i}
+                          onClick={() => {
+                            handleOpenTicketCardClick(x, i);
+                          }}
+                        >
+                          <div className={'ticket_title'}>
+                            <span
+                              className={`job-status job-status_${x.ticketId ? '-1' : x.requestId ? '-2' : x.status}`}
+                              style={{
+                                border: x.jobId ? `3px solid ${technicianColor}` : 'none', 
+                                borderRadius: '50%',
+                                width: 22,
+                                height: 22,
+                              }}
+                            />
+                            <h3>
+                              {x.customer && x.customer.profile && x.customer.profile.displayName ? x.customer.profile.displayName : ''}
+                            </h3>
+                          </div>
+                          <div className={'location_desc_container'}>
+                            <div className={'card_location'}>
+                              <h4>
+                                {x.jobLocation && x.jobLocation.name ? x.jobLocation.name : ` `}
+                              </h4>
+                            </div>
+                          </div>
+                          <div className={'ticket_marker'}>
+                            <RoomIcon />
                           </div>
                         </div>
-                        <div className={'ticket_marker'}>
-                          <RoomIcon/>
-                        </div>
-                      </div>
-                    ))
+                      )
+                    })
                     : <BCNoResults message={'No tickets with this search criteria'} />
               }
             </div>

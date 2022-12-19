@@ -300,6 +300,7 @@ function TicketsWithMapView({ classes }: any) {
               employees={employees}
               vendors={vendors}
               jobTypes={jobTypes}
+              showTechFilter={curTab === 0}
             />
             <button className={'buttonLegend'} onClick={() => setShowLegendDialog(true)}>Legend</button>
             <Info className={'infoLegend'} fontSize={'default'} onClick={() => setShowLegendDialog(true)}/>

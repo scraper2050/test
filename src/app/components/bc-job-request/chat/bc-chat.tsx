@@ -54,9 +54,15 @@ function BCChat({
     setInput(e.target.value);
   }
 
-  const handleKeyUp = ({key}: any) => {
+  const handleDownUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const {key, ctrlKey} = e;
     if (key === 'Enter') {
-      handleSubmit()
+      if (ctrlKey) {
+        setInput(state => `${state}\n`)
+      } else {
+        e.preventDefault();
+        handleSubmit();
+      }
     }
   }
 
@@ -148,6 +154,7 @@ function BCChat({
             value={input}
             id={'chat-text-input'}
             onChange={handleChange}
+            onKeyDown={handleDownUp}
             multiline={true}
             className={classes.textInput}
             placeholder="Write a message..."

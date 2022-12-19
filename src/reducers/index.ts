@@ -13,6 +13,7 @@ import { jobReducer as jobState } from './jobs.reducer';
 import {jobRequestsReducer as jobRequests} from './job-request.reducer'
 import { PayrollReducer as payroll } from './payroll.reducer';
 import { CalendarReducer as calendar } from './calendar.reducer';
+import { ChatReducer as chat } from './chat.reducer';
 import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
@@ -67,10 +68,13 @@ import { EmailState, EmailReducer as email } from './email.reducer';
 import {removeQBAuthStateLocalStorage} from "../utils/local-storage.service";
 import {PayrollState} from "../actions/payroll/payroll.types";
 import {CalendarState} from "../actions/calendar/bc-calendar.types";
+import {ChatState} from "../actions/chat/bc-chat.types";
 import { DiscountItemsReducer as discountItems} from './discount.reducer'
 import { DiscountState } from 'actions/discount/discount.types';
 import { reportReducer as reportState } from './report.reducer'
 import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './advance-filter.reducer'
+import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-technician-filter.reducer'
+import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer'
 
 
 export interface ReducerParamsInterface {
@@ -91,6 +95,7 @@ export interface RootState {
   map: mapState;
   payroll: PayrollState;
   calendar: CalendarState;
+  chat: ChatState;
   discountItems: DiscountState;
   paymentList: PaymentsState;
   invoicesForBulkPayments: InvoicesForBulkPaymentsState;
@@ -147,9 +152,12 @@ const appReducer = combineReducers({
   map,
   payroll,
   calendar,
+  chat,
   discountItems,
   reportState,
   advanceFilterInvoiceState,
+  mapTechnicianFilterState,
+  mapTechnicianJobsState,
 });
 
 const rootReducer = (state: any, action: any) => {

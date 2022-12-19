@@ -43,6 +43,7 @@ import BCJobRequestMap
   from "../../components/bc-job-request/shared/bc-job-request-map";
 import BcJobRequestRepair
   from "../../components/bc-job-request/repair/bc-job-request-repair";
+import { setNewMessage } from 'actions/chat/bc-chat.action';
 
 const initialJobRequestState = {
   customer: {
@@ -86,6 +87,7 @@ function BCViewJobRequestModal({
   const theme = useTheme();
   const { contacts } = useSelector((state: any) => state.contacts);
   const { user }: any = useSelector(({ auth }: any) => auth);
+  const { newMessage }: any = useSelector(({ chat }: any) => chat);
   const customerContact =
     jobRequest.customerContact && contacts.find((contact: any) => contact.userId === jobRequest.customerContact._id)?.name;
 
@@ -93,7 +95,7 @@ function BCViewJobRequestModal({
   const jobSites = useSelector((state: any) => state.jobSites.data);
 
   const [curTab, setCurTab] = useState(jobRequest.tab ? jobRequest.tab : 0);
-  const [chatContent, setChatContent] = useState([]);
+  const [chatContent, setChatContent] = useState<any[]>([]);
   const [unreadChatCount, setUnreadChatCount] = useState(0)
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [changeRequest, setChangeRequest] = useState(false);
@@ -112,6 +114,13 @@ function BCViewJobRequestModal({
       getChatContent(jobRequest._id);
     }
   }, [jobRequest])
+
+  useEffect(() => {
+    if (jobRequest?._id && newMessage?.jobRequest._id === jobRequest._id) {
+      setChatContent(state => ([...state, newMessage]));
+      dispatch(setNewMessage(null));
+    }
+  }, [newMessage])
 
 
   // TODO make sure canEdit
@@ -138,13 +147,11 @@ function BCViewJobRequestModal({
         setChatContent(result.chats);
         if (result.chats.length > 0) {
           const lastMessage = result.chats[result.chats.length - 1];
-        if (!lastMessage.readStatus.isRead)
-          setTimeout(() => {
-            markJobRequestChatRead(id, lastMessage._id);
-          }, 4000);
-        }
-        if(result.unreadChat){
-          setUnreadChatCount(result.unreadChat)
+          setUnreadChatCount(result.unreadChat || 0)
+        // if (!lastMessage.readStatus.isRead)
+        //   setTimeout(() => {
+        //     markJobRequestChatRead(id, lastMessage._id);
+        //   }, 4000);
         }
       } else {
         console.log(result.message);
@@ -204,8 +211,17 @@ function BCViewJobRequestModal({
     }, 200);
   };
 
-  const handleTabChange = (newValue: number) => {
+  const handleTabChange = async (newValue: number) => {
     setCurTab(newValue);
+    if (newValue === 1 && chatContent.length > 0) {
+      try {
+        const lastMessage = chatContent[chatContent.length - 1];
+        if (!lastMessage.readStatus.isRead) markJobRequestChatRead(jobRequest._id, lastMessage._id);
+        setUnreadChatCount(0);
+      } catch (e) {
+        console.log(e.message)
+      }
+    }
   };
 
   const getJobSitesOnNewLocationHandler = (customerId: string, locationId: string) => {
