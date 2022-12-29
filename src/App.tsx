@@ -9,7 +9,8 @@ import { SocketMessage } from 'helpers/contants';
 import Config from './config';
 import { io } from 'socket.io-client';
 import { pushNotification } from 'actions/notifications/notifications.action';
-import { setNewMessage } from 'actions/chat/bc-chat.action';
+import { setMessageRead, setNewMessage } from 'actions/chat/bc-chat.action';
+import { RootState } from 'reducers';
 const LoginPage = React.lazy(() => import('./app/pages/auth/login/login'));
 const SignUpPage = React.lazy(() => import('./app/pages/auth/signup/signup'));
 const RecoverPage = React.lazy(() => import('./app/pages/recover/recover'));
@@ -20,7 +21,10 @@ const MainPage = React.lazy(() => import('./app/pages/main/main'));
 function App() {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const { user, token } = useSelector(({ auth }: any) => auth);
+  const { user, token } = useSelector(({ auth }: RootState) => auth);
+  const { modal } = useSelector((state: any) => state);
+
+
   const dispatch = useDispatch();
   const AuthenticationCheck =
     isAuthenticated
@@ -89,10 +93,18 @@ function App() {
         'extraHeaders': { 'Authorization': token }
       });
       customerSocket.on(SocketMessage.CREATENOTIFICATION, data => {
-        if(data.notificationType === 'NewChat') {
-          dispatch(setNewMessage(data.metadata))
+        if (data.notificationType === 'NewChat') {
+          dispatch(pushNotification(data));
+          // console.log(modal.type, modal.data?.jobRequest?._id, data.metadata.jobRequest?._id)
+          // if (modal.type === 'view-job-request-modal') {
+          dispatch(setNewMessage(data.metadata));
+          // }
+        } else if (data.notificationType === 'ChatRead') {
+          dispatch(setMessageRead(data.metadata));
+        } else {
+          dispatch(pushNotification(data));
         }
-        dispatch(pushNotification(data));
+
       });
 
       return () => {
