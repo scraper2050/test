@@ -22,8 +22,6 @@ function App() {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const { user, token } = useSelector(({ auth }: RootState) => auth);
-  const { modal } = useSelector((state: any) => state);
-
 
   const dispatch = useDispatch();
   const AuthenticationCheck =
