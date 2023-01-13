@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core/styles';
 
 export default (theme: Theme): any => ({
   chatContainer: {
-    height: 412,
+    height: '43vh',
     padding: '25px 100px',
     overflow: 'scroll',
     overflowX: 'hidden',
@@ -24,7 +24,7 @@ export default (theme: Theme): any => ({
   },
   currentUserChat: {
     display: 'flex',
-    flexDirection : 'row-reverse',
+    flexDirection: 'row-reverse',
     '& div.textbox': {
       flex: 9,
       display: 'flex',
@@ -38,7 +38,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#00AAFF',
       padding: '10px 20px',
       fontSize: 14,
-      wordBreak:'break-word',
+      wordBreak: 'break-word',
       whiteSpace: 'pre-line',
     },
     '& div.arrow': {
@@ -64,7 +64,7 @@ export default (theme: Theme): any => ({
   },
   otherUserChat: {
     display: 'flex',
-    flexDirection : 'row',
+    flexDirection: 'row',
     '& div.textbox': {
       flex: 9,
       display: 'flex',
@@ -77,7 +77,7 @@ export default (theme: Theme): any => ({
       backgroundColor: '#E5F7FF',
       padding: '10px 20px',
       fontSize: 14,
-      wordBreak:'break-word',
+      wordBreak: 'break-word',
       whiteSpace: 'pre-line',
     },
     '& div.arrow': {
@@ -115,15 +115,15 @@ export default (theme: Theme): any => ({
   imagesContainer: {
     borderTop: '1px solid #D0D3DC',
     display: 'flex',
-    position:'absolute',
-    bottom:100,
-    width:'100%',
-    overflow:'auto',
-    backgroundColor:'white'
+    position: 'absolute',
+    bottom: 100,
+    width: '100%',
+    overflow: 'auto',
+    backgroundColor: 'white'
   },
   imageContainer: {
-    display:'flex',
-    alignItems:'center',
+    display: 'flex',
+    alignItems: 'center',
     height: 120,
     marginRight: 20,
   },
@@ -154,15 +154,15 @@ export default (theme: Theme): any => ({
   },
   inputContainer: {
     flex: 10,
-    margin:'15px 0px',
+    margin: '15px 0px',
   },
   textInput: {
     flex: 10,
     alignItems: 'flex-start',
     padding: '15px 0 4px 15px',
-    border:'1px solid #EAECF3',
-    borderRadius:8,
-    minHeight:76,
+    border: '1px solid #EAECF3',
+    borderRadius: 8,
+    minHeight: 76,
     fontSize: 15,
     color: '#333333',
   },
@@ -174,6 +174,6 @@ export default (theme: Theme): any => ({
     '& svg': {
       cursor: 'pointer',
     },
-    marginLeft:5
+    marginLeft: 5
   },
 });
