@@ -52,8 +52,11 @@ function BCChat({
     textBox?.focus();
     if (chatContent.length) {
       setStartId(chatContent[Math.max(chatContent.length - MESSAGE_BATCH, 0)]._id);
-      const lastChat = document.getElementById(chatContent[chatContent.length - 1]._id);
-      lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setTimeout(() => {
+        const lastChat = document.getElementById(chatContent[chatContent.length - 1]._id);
+        lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 500)
+
     }
   }, [visible, chatContent])
 
