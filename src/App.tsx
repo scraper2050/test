@@ -22,6 +22,7 @@ function App() {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const { user, token } = useSelector(({ auth }: RootState) => auth);
+  const { type: modalType, data: dataType } = useSelector(({ modal }: any) => modal);
 
   const dispatch = useDispatch();
   const AuthenticationCheck =
@@ -93,10 +94,9 @@ function App() {
       customerSocket.on(SocketMessage.CREATENOTIFICATION, data => {
         if (data.notificationType === 'NewChat') {
           dispatch(pushNotification(data));
-          // console.log(modal.type, modal.data?.jobRequest?._id, data.metadata.jobRequest?._id)
-          // if (modal.type === 'view-job-request-modal') {
-          dispatch(setNewMessage(data.metadata));
-          // }
+          if (modalType === 'view-job-request-modal' && dataType.jobRequest._id === data.metadata.jobRequest?._id) {
+            dispatch(setNewMessage(data.metadata));
+          }
         } else if (data.notificationType === 'ChatRead') {
           dispatch(setMessageRead(data.metadata));
         } else {
@@ -110,7 +110,7 @@ function App() {
         customerSocket.close();
       };
     }
-  }, [token]);
+  }, [token, modalType]);
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Router>

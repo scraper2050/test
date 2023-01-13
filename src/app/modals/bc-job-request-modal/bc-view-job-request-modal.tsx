@@ -220,7 +220,6 @@ function BCViewJobRequestModal({
   const handleTabChange = async (newValue: number) => {
     setCurTab(newValue);
     if (newValue === 1 && chatContent.length > 0) {
-      console.log('ffffffffff');
       try {
         const lastMessage = chatContent[chatContent.length - 1];
         if (!lastMessage.readStatus.isRead) markJobRequestChatRead(jobRequest._id, lastMessage._id);
@@ -329,7 +328,7 @@ function BCViewJobRequestModal({
     visible={curTab === 1}
     isChatLoading={isChatLoading}
     chatContent={chatContent}
-    onSubmit={() => getChatContent(jobRequest._id)}
+    onSubmit={(message) => setChatContent(state => ([...state, message]))}
     user={user}
     errorDispatcher={errorDispatcher}
     postJobRequestChat={postJobRequestChat}

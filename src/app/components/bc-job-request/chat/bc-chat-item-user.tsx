@@ -19,15 +19,15 @@ function BCChatItemUser({
   idx,
   totalItemsCount
 }: PROPS): JSX.Element {
-  const elemRef = useCallback((node) => {
-    if (node !== null) {
-      const lastChat = document.getElementById('last-chat-element');
-      lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      // This ref function wait till the last element of the dom is rendered, so then, it scrollsdowns
-    }
-  }, [])
+  // const elemRef = useCallback((node) => {
+  //   if (node !== null) {
+  //     const lastChat = document.getElementById('last-chat-element');
+  //     lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  //     // This ref function wait till the last element of the dom is rendered, so then, it scrollsdowns
+  //   }
+  // }, [])
   return (
-    <div key={item._id} className={classes.chatItemContainer} id={idx === totalItemsCount - 1 ? 'last-chat-element' : ''}>
+    <div key={item._id} className={classes.chatItemContainer} id={item._id}>
       <div className={classes.currentUserChat}>
         <div className='avatar'>
           <img src={item.user.profile.imageUrl || noAvatar} alt="user avatar" />
@@ -67,7 +67,7 @@ function BCChatItemUser({
         <div className={classes.timeStamp}>{formatDatTimelll(item.createdAt)}</div>
         {item?.readStatus?.isRead && <div className={classes.readStatus}>Read by {item.readStatus.readBy?.profile?.displayName}</div>}
       </div>
-      {idx === totalItemsCount - 1 && (<div ref={elemRef}></div>)}
+      {/* {idx === totalItemsCount - 1 && (<div ref={elemRef}></div>)} */}
     </div>
   )
 }
