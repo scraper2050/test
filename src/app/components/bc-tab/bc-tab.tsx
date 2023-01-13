@@ -111,7 +111,7 @@ const FlexDiv = styled.div`
     margin-right: 5px;
   }
 
-  @media (max-width: 1420px) {
+  @media (max-width: 1575px) {
     span.responsive {
       display: none;
     }
@@ -137,7 +137,7 @@ const StyledTabs = styled(Tabs)<{chip: boolean|number, variant: any, minwidth: s
       }
     }
   }
-  @media (max-width: 1420px) {
+  @media (max-width: 1575px) {
     .MuiTab-root {
       min-width: 70px;
     }
@@ -173,7 +173,7 @@ const ImageWrapper = styled('div')`
       padding-top: 4px;
     }
 
-    @media (max-width: 1420px) {
+    @media (max-width: 1575px) {
       span.responsive, span.label-loading {
         display: none;
       }
