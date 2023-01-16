@@ -8,6 +8,7 @@ export interface AdvanceFilterInvoiceState {
     checkJobId: boolean;
     jobId: string;
     checkPoNumber: boolean;
+    checkMissingPo: boolean;
     poNumber: string;
     checkPaymentStatus: boolean;
     selectedPaymentStatus: string;
