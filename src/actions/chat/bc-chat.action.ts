@@ -7,3 +7,10 @@ export const setNewMessage = (payload: any) => {
   };
 };
 
+export const setMessageRead = (payload: any) => {
+  return {
+    payload,
+    type: types.SET_MESSAGE_READ,
+  };
+};
+

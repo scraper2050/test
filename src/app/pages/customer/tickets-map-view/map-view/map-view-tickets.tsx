@@ -23,7 +23,7 @@ import {
 import {setTicketSelected} from "actions/map/map.actions";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
 import { clearJobSiteStore, getJobSites, loadingJobSites } from "actions/job-site/job-site.action";
-import { getAllJobTypesAPI } from 'api/job.api';
+import { getAllJobTypesAPI, getAllJobsByTechnicianAndDateAPI } from 'api/job.api';
 import {getServiceTicketDetail} from "api/service-tickets.api";
 import { getJobLocation } from 'api/job-location.api';
 import { getJobSite } from 'api/job-site.api';
@@ -41,6 +41,7 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
   }));
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
   const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const mapTechnicianFilterData: any = useSelector(({mapTechnicianFilterState}: any) => mapTechnicianFilterState)
 
   const tempRefTicket = useRef<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -155,6 +156,9 @@ function MapViewTicketsScreen({ classes, filter: filterTickets, selectedDate }: 
       dispatch(setServiceTicket(tempTickets));
       tempRefTicket.current = tempRefTicket.current?.filter((ticket: any) => ticket._id !== ticket2Job);
       dispatch(setTicket2JobID(''));
+      if(mapTechnicianFilterData.selectedTechnician?.length){
+        dispatch(getAllJobsByTechnicianAndDateAPI(mapTechnicianFilterData.selectedTechnician, mapTechnicianFilterData.jobDate))
+      }
     }
   }, [ticket2Job])
 

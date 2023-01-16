@@ -22,7 +22,7 @@ import {
   clearJobSiteStore,
   getJobSites
 } from "actions/job-site/job-site.action";
-import {error as errorSnackBar} from "actions/snackbar/snackbar.action";
+import { error as errorSnackBar } from "actions/snackbar/snackbar.action";
 import { modalTypes } from "../../../constants";
 import { getContacts } from "api/contacts.api";
 import {
@@ -33,7 +33,7 @@ import {
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import BCJobRequestWindow
   from "../../components/bc-job-request/window/bc-job-request-window";
-import {getJobLocationsAction} from "actions/job-location/job-location.action";
+import { getJobLocationsAction } from "actions/job-location/job-location.action";
 import BCJobRequestWindowHeader
   from "../../components/bc-job-request/window/bc-job-request-header"
 import BCJobRequestRepairHeader
@@ -44,6 +44,7 @@ import BCJobRequestMap
 import BcJobRequestRepair
   from "../../components/bc-job-request/repair/bc-job-request-repair";
 import { setNewMessage } from 'actions/chat/bc-chat.action';
+import { RootState } from 'reducers';
 
 const initialJobRequestState = {
   customer: {
@@ -87,7 +88,7 @@ function BCViewJobRequestModal({
   const theme = useTheme();
   const { contacts } = useSelector((state: any) => state.contacts);
   const { user }: any = useSelector(({ auth }: any) => auth);
-  const { newMessage }: any = useSelector(({ chat }: any) => chat);
+  const { newMessage, messageRead }: any = useSelector(({ chat }: RootState) => chat);
   const customerContact =
     jobRequest.customerContact && contacts.find((contact: any) => contact.userId === jobRequest.customerContact._id)?.name;
 
@@ -106,7 +107,7 @@ function BCViewJobRequestModal({
       referenceNumber: jobRequest.customer._id,
     };
     dispatch(getContacts(data));
-    dispatch(getJobLocationsAction({customerId: jobRequest.customer?._id, isActive: true}));
+    dispatch(getJobLocationsAction({ customerId: jobRequest.customer?._id, isActive: true }));
   }, []);
 
   useEffect(() => {
@@ -119,8 +120,20 @@ function BCViewJobRequestModal({
     if (jobRequest?._id && newMessage?.jobRequest._id === jobRequest._id) {
       setChatContent(state => ([...state, newMessage]));
       dispatch(setNewMessage(null));
+      markJobRequestChatRead(jobRequest._id, newMessage._id);
     }
   }, [newMessage])
+
+  useEffect(() => {
+    if (jobRequest?._id && messageRead?.jobRequest._id === jobRequest._id) {
+      const tempChat = [...chatContent]
+      for (const chat of tempChat) {
+        chat.readStatus = messageRead.readStatus;
+        if (chat._id === messageRead._id) break;
+      }
+      setChatContent(tempChat);
+    }
+  }, [messageRead])
 
 
   // TODO make sure canEdit
@@ -145,14 +158,7 @@ function BCViewJobRequestModal({
       const result = await getJobRequestChat(id);
       if (result.status === 1) {
         setChatContent(result.chats);
-        if (result.chats.length > 0) {
-          const lastMessage = result.chats[result.chats.length - 1];
-          setUnreadChatCount(result.unreadChat || 0)
-        // if (!lastMessage.readStatus.isRead)
-        //   setTimeout(() => {
-        //     markJobRequestChatRead(id, lastMessage._id);
-        //   }, 4000);
-        }
+        setUnreadChatCount(result.unreadChat || 0);
       } else {
         console.log(result.message);
         dispatch(SnackBarError(`Something went wrong when retrieving comments`));
@@ -294,7 +300,7 @@ function BCViewJobRequestModal({
             </Button>
           </>
           }
-          <div style={{flex: 1}}/>
+          <div style={{ flex: 1 }} />
           <Button
             onClick={handleClose}
             variant={'outlined'}
@@ -302,15 +308,15 @@ function BCViewJobRequestModal({
             Close
           </Button>
           {jobRequest.status === 0 &&
-          <>
-            <Button
-              color={'primary'}
-              onClick={createJob}
-              variant={'contained'}
-            >
-              Create Job
-            </Button>
-          </>
+            <>
+              <Button
+                color={'primary'}
+                onClick={createJob}
+                variant={'contained'}
+              >
+                Create Job
+              </Button>
+            </>
           }
         </DialogActions>
       }
@@ -322,13 +328,13 @@ function BCViewJobRequestModal({
     visible={curTab === 1}
     isChatLoading={isChatLoading}
     chatContent={chatContent}
-    onSubmit={() => getChatContent(jobRequest._id)}
+    onSubmit={(message) => setChatContent(state => ([...state, message]))}
     user={user}
     errorDispatcher={errorDispatcher}
     postJobRequestChat={postJobRequestChat}
   />
 
-  const errorDispatcher = (message:string) => {
+  const errorDispatcher = (message: string) => {
     dispatch(errorSnackBar(message))
   }
 
@@ -357,12 +363,12 @@ function BCViewJobRequestModal({
           },
         ]}
       />
-      <div className={'modalDataContainer'} style={{maxHeight: '60vh'}}>
+      <div className={'modalDataContainer'} style={{ maxHeight: '60vh' }}>
         <SwipeableViews
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={curTab}
           disabled
-          slideStyle={{overflow: 'hidden'}}
+          slideStyle={{ overflow: 'hidden' }}
         >
           {renderJobRequestContent()}
           {renderMessageTab()}

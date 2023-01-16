@@ -229,7 +229,7 @@ const BCMapFilterTech = ({classes}:any) => {
                     <Button
                       aria-label={'apply'}
                       color={'primary'}
-                      disabled={isSubmitting || !FormikValues.jobDate || !FormikValues.selectedTechnician}
+                      disabled={isSubmitting || !FormikValues.jobDate || !FormikValues.selectedTechnician?.length}
                       type={'submit'}
                       size={"large"}
                       variant={'contained'}>Apply</Button>

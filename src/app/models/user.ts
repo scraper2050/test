@@ -7,6 +7,8 @@ export interface UserModel {
   permissions: Permissions;
   info: Info;
   company: string;
+  user: any;
+  token: string;
 }
 
 export interface Auth {
