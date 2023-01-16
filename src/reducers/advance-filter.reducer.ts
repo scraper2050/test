@@ -14,6 +14,7 @@ export const initialAdvanceFilterInvoiceState: AdvanceFilterInvoiceState = {
   checkJobId: false,
   jobId: '',
   checkPoNumber: false,
+  checkMissingPo: false,
   poNumber: '',
   checkPaymentStatus: false,
   selectedPaymentStatus: '',
