@@ -275,7 +275,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       <DialogContent classes={{ 'root': classes.dialogContent }}>
         <div>
           <Grid container>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -347,7 +347,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -367,7 +367,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -387,7 +387,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Grid container>
                   <Grid item xs={8}>
@@ -423,7 +423,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
             </Grid>
           </Grid>
           <Grid container>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -452,7 +452,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   disabled={!FormikValues.selectedCustomer}
@@ -495,7 +495,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   disabled={!FormikValues.selectedCustomer}
@@ -525,7 +525,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -579,7 +579,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
             </Grid>
           </Grid>
           <Grid container>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -600,7 +600,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -629,7 +629,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -667,7 +667,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
                 </div>
               </Grid>
             </Grid>
-            <Grid item md={6} lg={3} container justifyContent={'center'}>
+            <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{width: 'calc(100% - 20px)'}}>
                 <Checkbox
                   color="primary"
@@ -704,7 +704,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       }}>
         <Grid
           container
-          justifyContent={'space-between'}>
+          justify={'space-between'}>
           <Grid item />
           <Grid item>
             <Button
