@@ -1,5 +1,6 @@
 import {
   Box,
+  IconButton,
   InputBase,
   withStyles
 } from '@material-ui/core';
@@ -13,6 +14,7 @@ import BCChatItemFriend from "./bc-chat-item-friend";
 import BCChatItemUser from "./bc-chat-item-user";
 import styled from "styled-components";
 import BCChatNoMessage from "./no-message";
+import classNames from 'classnames';
 
 
 interface PROPS {
@@ -45,6 +47,7 @@ function BCChat({
   const [input, setInput] = useState('');
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [startId, setStartId] = useState('');
+  const [replyItem, setReplyItem] = useState<any>(null);
   const inputFileRef: any = useRef(null);
 
   useEffect(() => {
@@ -81,15 +84,19 @@ function BCChat({
       try {
         setIsSendingMessage(true);
         const formData = new FormData();
-        formData.append('message', input.trim())
+        formData.append('message', input.trim());
         if (images?.length) {
-          images.forEach((image: any) => formData.append('images', image))
+          images.forEach((image: any) => formData.append('images', image));
+        }
+        if (replyItem) {
+          formData.append('replyToId', replyItem._id);
         }
         const result = await postJobRequestChat(jobRequestID, formData);
         if (result.status === 1) {
           onSubmit(result.chat);
           setInput('');
           setImages([]);
+          setReplyItem(null);
           inputFileRef.current.value = null;
         } else {
           console.log(result.message);
@@ -112,11 +119,16 @@ function BCChat({
     element?.focus();
   }
 
+  const scrolltoMessgae = (id: string) => {
+    const replyMessage = document.getElementById(id);
+    if (replyMessage) replyMessage?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const renderChatContent = (item: any, idx: number, items: any[]) => {
     if (item.user._id !== user._id) {
-      return <BCChatItemFriend key={item._id} item={item} idx={idx} totalItemsCount={items.length} />
+      return <BCChatItemFriend key={item._id} item={item} onReply={() => setReplyItem(item)} onReplyPressed={scrolltoMessgae} />
     } else {
-      return <BCChatItemUser key={item._id} item={item} idx={idx} totalItemsCount={items.length} />
+      return <BCChatItemUser key={item._id} item={item} onReply={() => setReplyItem(item)} onReplyPressed={scrolltoMessgae} />
     }
   }
 
@@ -141,7 +153,13 @@ function BCChat({
   }
 
   return <>
-    <div className={classes.chatContainer} id="chat-container" onScroll={(e) => handleScroll(e)}>
+    <div
+      className={classNames({
+        [classes.chatContainer]: true,
+        [classes.imagesVisible]: images?.length > 0,
+      })}
+      id="chat-container"
+      onScroll={(e) => handleScroll(e)}>
       {isChatLoading ? (
         <BCCircularLoader heightValue={'100%'} />
       ) : (
@@ -173,6 +191,21 @@ function BCChat({
       </div>
       <div style={{ flex: 1 }} />
     </div>
+    {replyItem && <div className={classes.replyContainer}>
+      <div style={{ flex: 2 }}>&nbsp;</div>
+      <div style={{ flex: 10 }}>
+        <span>Replying to <strong>{replyItem.user?.profile?.displayName}</strong>&nbsp;&nbsp;</span>
+        <CancelIcon
+          className={classes.cancelIcon}
+          fontSize='inherit'
+          onClick={() => setReplyItem(null)}
+        />
+        <br />
+        <span className={classes.replyText}>{replyItem.message ? replyItem.message.substring(0, 25) : ''}</span>
+      </div>
+      <div style={{ flex: 2 }}>&nbsp;</div>
+    </div>
+    }
     <div className={classes.chatInputContainer}>
       <div className={classes.attachButton}>
         <Box onClick={handleAttach}>
