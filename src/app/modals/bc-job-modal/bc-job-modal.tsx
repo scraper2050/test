@@ -36,8 +36,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   convertMilitaryTime,
   formatDate,
-  formatISOToDateString,
-  formatToMilitaryTime, parseISODate,
+  formatISOToDateStringFixedDate,
+  formatToMilitaryTimeWithOffset, parseISODate,
   shortenStringWithElipsis,
 } from 'helpers/format';
 import styled from 'styled-components';
@@ -441,10 +441,10 @@ function BCJobModal({
         : '',
       scheduleDate: parseISODate(jobValue.scheduleDate),
       scheduledStartTime: jobValue?.scheduledStartTime
-        ? formatISOToDateString(jobValue.scheduledStartTime)
+        ? formatISOToDateStringFixedDate(jobValue.scheduledStartTime)
         : null,
       scheduledEndTime: jobValue.scheduledEndTime
-        ? formatISOToDateString(jobValue.scheduledEndTime)
+        ? formatISOToDateStringFixedDate(jobValue.scheduledEndTime)
         : null,
       ticketId: jobValue.ticket._id,
       jobLocationId: jobValue.jobLocation
@@ -473,9 +473,9 @@ function BCJobModal({
       tempData.customerId = customer?._id;
 
       if (values.scheduledStartTime)
-        tempData.scheduledStartTime = formatToMilitaryTime(values.scheduledStartTime);
+        tempData.scheduledStartTime = formatToMilitaryTimeWithOffset(values.scheduledStartTime);
       if (values.scheduledEndTime)
-        tempData.scheduledEndTime = formatToMilitaryTime(values.scheduledEndTime);
+        tempData.scheduledEndTime = formatToMilitaryTimeWithOffset(values.scheduledEndTime);
 
       if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
 

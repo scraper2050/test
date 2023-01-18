@@ -36,11 +36,16 @@ export const formatTime = (time: Date) => moment(time).utc().format('hh:mm a');
 
 export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:ss');
 
+export const formatToMilitaryTimeWithOffset = (time: Date) => moment(time).subtract(6,'hours').format('HH:mm:ss');
+
 export const formatDatTimelll = (time: Date) => moment(time).format('lll');
 
 export const formatDatTimell = (time: Date) => moment(time).format('ll');
 
 export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format('YYYY-MM-DDTHH:mm:ss')).toDate()
+  .toString();
+
+export const formatISOToDateStringFixedDate = (date: string): string => moment(moment.utc(date).set('date',new Date().getDate()).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
 
 export const parseISOMoment = (date: string) => {
