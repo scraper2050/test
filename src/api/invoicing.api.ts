@@ -114,6 +114,9 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
         optionObj.keyword = keyword
       }
       if(advanceFilterInvoiceData){
+        
+        optionObj.missingPO = advanceFilterInvoiceData.checkMissingPo;
+
         if(advanceFilterInvoiceData.invoiceDateRange){
           optionObj.startDate = moment(advanceFilterInvoiceData.invoiceDateRange.startDate).format('YYYY-MM-DD');
           optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDateRange.endDate).format('YYYY-MM-DD');

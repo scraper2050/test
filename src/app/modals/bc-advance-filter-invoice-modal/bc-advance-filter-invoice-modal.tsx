@@ -121,6 +121,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
       checkJobId: advanceFilterInvoiceData.checkJobId,
       jobId: advanceFilterInvoiceData.jobId,
       checkPoNumber: advanceFilterInvoiceData.checkPoNumber,
+      checkMissingPo: advanceFilterInvoiceData.checkMissingPo,
       poNumber: advanceFilterInvoiceData.poNumber,
       checkPaymentStatus: advanceFilterInvoiceData.checkPaymentStatus,
       selectedPaymentStatus: advanceFilterInvoiceData.selectedPaymentStatus,
@@ -164,6 +165,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     checkInvoiceId,
     checkJobId,
     checkPoNumber,
+    checkMissingPo,
     checkPaymentStatus,
     checkCustomer,
     checkContact,
@@ -214,6 +216,10 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     if(!checkPoNumber) {
       FormikSetFieldValue('poNumber', '');
     }
+    if(checkMissingPo) {
+      FormikSetFieldValue('checkPoNumber', false);
+      FormikSetFieldValue('poNumber', '');
+    }
     if(!checkPaymentStatus) {
       FormikSetFieldValue('selectedPaymentStatus', '');
     }
@@ -251,6 +257,7 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
     checkInvoiceId,
     checkJobId,
     checkPoNumber,
+    checkMissingPo,
     checkPaymentStatus,
     checkCustomer,
     checkContact,
@@ -382,17 +389,31 @@ function BCAdvanceFilterInvoiceModal({ classes, handleFilterSubmit }: any) {
             </Grid>
             <Grid item md={6} lg={3} container justify={'center'}>
               <Grid item style={{maxWidth: 'calc(100% - 20px)'}}>
-                <Checkbox
-                  color="primary"
-                  className={classes.checkbox}
-                  checked={FormikValues.checkPoNumber}
-                  onChange={(e) => FormikSetFieldValue('checkPoNumber', e.target.checked)}
-                />
-                P.O. NUMBER
+                <Grid container>
+                  <Grid item xs={8}>
+                    <Checkbox
+                      color="primary"
+                      disabled={FormikValues.checkMissingPo}
+                      className={classes.checkbox}
+                      checked={FormikValues.checkPoNumber}
+                      onChange={(e) => FormikSetFieldValue('checkPoNumber', e.target.checked)}
+                    />
+                    P.O. NUMBER
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Checkbox
+                      color="primary"
+                      className={classes.checkbox}
+                      checked={FormikValues.checkMissingPo}
+                      onChange={(e) => FormikSetFieldValue('checkMissingPo', e.target.checked)}
+                    />
+                    MISSING P.O.
+                  </Grid>
+                </Grid>
                 <div className={classes.inputRow}>
                   <CustomTextField
                     variant='outlined'
-                    disabled={!FormikValues.checkPoNumber}
+                    disabled={!FormikValues.checkPoNumber || FormikValues.checkMissingPo}
                     onChange={FormikHandleChange}
                     name={'poNumber'}
                     value={FormikValues.poNumber}

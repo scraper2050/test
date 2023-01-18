@@ -1,8 +1,9 @@
 import { Theme } from '@material-ui/core/styles';
+import { GRAY1, GRAY3, GRAY6 } from '../../../../constants';
 
 export default (theme: Theme): any => ({
   chatContainer: {
-    height: '43vh',
+    height: '42vh',
     padding: '25px 100px',
     overflow: 'scroll',
     overflowX: 'hidden',
@@ -22,11 +23,32 @@ export default (theme: Theme): any => ({
   chatItemContainer: {
     marginBottom: 10,
   },
+  replyContainer: {
+    display: 'flex',
+    color: GRAY1,
+    fontSize: 10,
+    paddingTop: 10,
+  },
+  replyText: {
+    color: GRAY3,
+  },
   currentUserChat: {
     display: 'flex',
     flexDirection: 'row-reverse',
+    '& div.replyBox': {
+      backgroundColor: GRAY6,
+      color: GRAY3,
+      padding: 4,
+      margin: '0 5px',
+      borderRadius: 5,
+      cursor: 'pointer',
+      fontSize: 10,
+    },
+    '& div.avatarReply': {
+      marginTop: 28,
+    },
     '& div.textbox': {
-      flex: 9,
+      // flex: 9,
       display: 'flex',
       justifyContent: 'flex-start',
       flexDirection: 'row-reverse'
@@ -34,6 +56,8 @@ export default (theme: Theme): any => ({
     '& div.textbox-content': {
       maxWidth: 640,
       color: 'white',
+      flex: 1,
+      textAlign: 'right',
       borderRadius: 5,
       backgroundColor: '#00AAFF',
       padding: '10px 20px',
@@ -44,7 +68,8 @@ export default (theme: Theme): any => ({
     '& div.arrow': {
       width: 0,
       height: 0,
-      position: 'relative',
+      position: 'absolute',
+      right: -7,
       top: 7,
       borderTop: '7px solid transparent',
       borderBottom: '7px solid transparent',
@@ -61,17 +86,40 @@ export default (theme: Theme): any => ({
       height: 24,
       borderRadius: '50%',
     },
+    '& .replyButton': {
+      position: 'absolute',
+      left: -24,
+      top: -7,
+    },
   },
   otherUserChat: {
     display: 'flex',
     flexDirection: 'row',
+    '& div.replyBox': {
+      backgroundColor: GRAY6,
+      color: GRAY3,
+      padding: 4,
+      margin: '0 5px',
+      borderRadius: 5,
+      cursor: 'pointer',
+      fontSize: 10,
+    },
+    '& .replyButton': {
+      position: 'absolute',
+      right: -24,
+      top: -7,
+    },
+    '& div.avatarReply': {
+      marginTop: 28,
+    },
     '& div.textbox': {
-      flex: 9,
+      // flex: 9,
       display: 'flex',
       justifyContent: 'flex-start',
     },
     '& div.textbox-content': {
       maxWidth: 640,
+      flex: 1,
       color: '#4f4f4f',
       borderRadius: 5,
       backgroundColor: '#E5F7FF',
@@ -83,8 +131,9 @@ export default (theme: Theme): any => ({
     '& div.arrow': {
       width: 0,
       height: 0,
-      position: 'relative',
+      position: 'absolute',
       top: 7,
+      left: -7,
       borderTop: '7px solid transparent',
       borderBottom: '7px solid transparent',
       borderRight: '7px solid #E5F7FF',
@@ -115,11 +164,14 @@ export default (theme: Theme): any => ({
   imagesContainer: {
     borderTop: '1px solid #D0D3DC',
     display: 'flex',
-    position: 'absolute',
-    bottom: 100,
+    // position: 'absolute',
+    // bottom: 100,
     width: '100%',
     overflow: 'auto',
     backgroundColor: 'white'
+  },
+  imagesVisible: {
+    height: '23vh',
   },
   imageContainer: {
     display: 'flex',
@@ -176,4 +228,7 @@ export default (theme: Theme): any => ({
     },
     marginLeft: 5
   },
+  cancelIcon: {
+    cursor: 'pointer',
+  }
 });

@@ -2,52 +2,53 @@ import {
   IconButton,
   withStyles
 } from '@material-ui/core';
-import React, { useCallback } from 'react';
+import React from 'react';
 import styles from './bc-chat.styles';
 import { formatDatTimelll } from "../../../../helpers/format";
 import noAvatar from '../../../../assets/img/avatars/NoImageFound.png';
-
+import ReplyIcon from '@material-ui/icons/Reply';
+import classnames from 'classnames';
 
 interface PROPS {
   classes?: any,
   item: any,
-  idx: number,
-  totalItemsCount: number,
+  onReply: () => void;
+  onReplyPressed: (id: string) => void;
 }
 
 function BCChatItemFriend({
   classes,
   item,
-  idx,
-  totalItemsCount
+  onReply,
+  onReplyPressed,
 }: PROPS): JSX.Element {
-  // const elemRef = useCallback((node) => {
-  //   if (node !== null) {
-  //     const lastChat = document.getElementById('last-chat-element');
-  //     lastChat?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  //     // This ref function wait till the last element of the dom is rendered, so then, it scrollsdowns
-  //   }
-  // }, [])
-
+  const { replyTo } = item;
   return (
     <div key={item._id} className={classes.chatItemContainer} id={item._id}>
       <div className={classes.otherUserChat}>
-        <div className='avatar'>
+        <div className={classnames('avatar', { avatarReply: !!replyTo })}>
           <img src={item.user.profile.imageUrl || noAvatar} alt="user avatar" />
         </div>
         {item.message !== "" &&
-          <>
-            <div className='arrow' />
-            <div className='textbox'>
-              <div className='textbox-content'>
-                {item.message}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {replyTo &&
+              <div className='replyBox' onClick={() => onReplyPressed(replyTo._id)}>
+                <span>{`${replyTo.message.slice(0, 15)}... ${formatDatTimelll(replyTo.updatedAt)} by ${replyTo.user.profile.displayName}`}</span>
               </div>
+            }
+            <div style={{ position: 'relative' }}>
+              <div className='arrow' />
+              <div className='textbox'>
+                <div className='textbox-content'>
+                  {item.message}
+                </div>
+              </div>
+              <IconButton size="small" className='replyButton' onClick={onReply}>
+                <ReplyIcon fontSize="small" />
+              </IconButton>
             </div>
-          </>
+          </div>
         }
-        {/* <IconButton>
-          <MoreVertIcon />
-        </IconButton> */}
       </div>
       {!!item.images?.length && (
         <div className={classes.otherUserChat}>
@@ -72,7 +73,6 @@ function BCChatItemFriend({
       <div className={classes.bottomItemContainer}>
         <div className={classes.timeStamp}>{formatDatTimelll(item.createdAt)}</div>
       </div>
-      {/* {idx === totalItemsCount - 1 && (<div ref={elemRef}></div>)} */}
     </div>
   )
 }
