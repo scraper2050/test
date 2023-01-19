@@ -265,7 +265,6 @@ function NewCustomerPage({classes}: Props) {
                           name={'email'}
                           onChange={handleChange}
                           placeholder={'Email'}
-                          required
                           type={'email'}
                         />
                       </FormGroup>
