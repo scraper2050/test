@@ -257,7 +257,7 @@ function NewCustomerPage({classes}: Props) {
                       item
                       sm={12}
                       xs={12}>
-                      <FormGroup className={'required'}>
+                      <FormGroup>
                         <InputLabel className={classes.label}>
                           {'Email'}
                         </InputLabel>
