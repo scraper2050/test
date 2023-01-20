@@ -394,7 +394,7 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                       className={classes.paper}
                       item
                       sm={12}>
-                      <FormGroup className={'required'}>
+                      <FormGroup>
                         <InputLabel className={classes.label}>
                           {'Email'}
                         </InputLabel>
@@ -402,7 +402,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
                           name={'email'}
                           handleChange={formikChange}
                           placeholder={'Email'}
-                          required
                           dense={true}
                           type={'email'}
                           value={FormikValues.email}
