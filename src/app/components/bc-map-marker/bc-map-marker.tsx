@@ -73,7 +73,6 @@ function BCMapMarker({
       localStorage.removeItem('afterCancelJob')
     }
   }, [streamingTickets])
-  
 
   useEffect(() => {
     if (selected._id === ticket._id) {
@@ -319,16 +318,16 @@ function BCMapMarker({
   >
     {(() => {
       const status = isTicket && !ticket.jobId
-        ? ticket?.ticketId 
+        ? ticket?.ticketId
           ? -1
-          : -2 
+          : -2
         : ticket?.status;
       CustomIcon = getStatusIcon(status);
     })()}
     <span
       id={id}
       style={{
-        border: isTicket && ticket.jobId ? `3px solid ${technicianColor}` : 'none', 
+        border: isTicket && ticket.jobId ? `3px solid ${technicianColor}` : 'none',
         borderRadius: '50%',
         width: 25,
         height: 25,
@@ -366,8 +365,8 @@ function BCMapMarker({
           <InfoIcon
             className={'info-button'}
             onClick={() => isTicket && !ticket.jobId
-              ? ticket?.ticketId 
-                ? openViewTicketModal(ticket) 
+              ? ticket?.ticketId
+                ? openViewTicketModal(ticket)
                 : openViewJobRequestModal(ticket)
               : openDetailJobModal(ticket)}
           />
@@ -384,7 +383,7 @@ function BCMapMarker({
           <span><strong>{tech}</strong></span>
         </div>
       ))}
-      {isTicket && ticket.customer?._id && !ticket.jobId && 
+      {isTicket && ticket.customer?._id && !ticket.jobId &&
         <div className={'button-wrapper-ticket'}>
           <div>
             {ticket?.ticketId && <Button disabled={streamingTickets && !!localStorage.getItem('afterCancelJob')} onClick={() => openEditTicketModal(ticket)}>Edit Ticket</Button>}
