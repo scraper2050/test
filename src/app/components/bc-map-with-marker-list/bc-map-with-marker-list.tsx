@@ -57,7 +57,7 @@ function createMapOptions() {
 
 const Marker = ({ children } : any) => children;
 
-const superClusterOptions = { 
+const superClusterOptions = {
   radius: 75,
   maxZoom: 15,
   map: (props:any) => ({
@@ -175,7 +175,7 @@ function BCMapWithMarkerWithList({
       }
     }
   }, [selected])
-  
+
   const points = list.map((ticket: any) => {
     if(selected._id ===ticket._id && !isTicket){
       ticket.customer = selected.customer
@@ -310,9 +310,9 @@ function BCMapWithMarkerWithList({
                 }
               }
               const status = isTicket && !datum.ticket?.jobId
-              ? datum.ticket?.ticketId 
+              ? datum.ticket?.ticketId
                 ? -1
-                : -2 
+                : -2
               : datum.ticket?.status;
               const CustomIcon = getStatusIcon(status);
               let  technicianColor:any;
@@ -320,7 +320,7 @@ function BCMapWithMarkerWithList({
                 technicianColor = technicianColorCode[selectedTechnician.findIndex((tech:{name:string;id:string}) => tech.id === datum.ticket.tasks[0].contractor?._id || tech.id === datum.ticket.tasks[0].technician._id)]
               }
               return (
-                <div 
+                <div
                   key={idx}
                   className={classes.listItemContainer}
                   onClick={() => handleItemClick(datum.ticket._id)}
@@ -328,7 +328,7 @@ function BCMapWithMarkerWithList({
                   <CustomIcon
                     style={{
                       marginRight: 5,
-                      border: isTicket && datum.ticket?.jobId ? `3px solid ${technicianColor}` : 'none', 
+                      border: isTicket && datum.ticket?.jobId ? `3px solid ${technicianColor}` : 'none',
                       borderRadius: '50%',
                       width: 25,
                       height: 25,
@@ -397,7 +397,7 @@ function BCMapWithMarkerWithList({
                     mapRef.current.panTo({ lat, lng });
                   }}
                 >
-                  <span 
+                  <span
                     style={{
                       color: calculateColor(cluster),
                       marginTop: -40,
