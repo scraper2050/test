@@ -40,8 +40,9 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       keyword: invoiceList.keywordUnpaid,
     })
   );
-  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
-
+  const [selectionRange, setSelectionRange] = useState<Range | null>(location?.state?.option?.selectionRange || null);
+  const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
+  const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
@@ -154,20 +155,21 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
   useEffect(() => {
     dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0));
-    dispatch(setCurrentUnpaidPageIndex(0));
+    dispatch(setCurrentUnpaidPageIndex(location?.state?.option?.currentPageIndex || 0));
     return () => {
       dispatch(setUnpaidKeyword(''));
       dispatch(setCurrentUnpaidPageIndex(currentPageIndex));
       dispatch(setCurrentUnpaidPageSize(currentPageSize));
     }
   }, [selectionRange]);
-
   useEffect(() => {
-    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize 
+      || location?.state?.option?.currentPageIndex || location?.state?.option?.lastNextCursor || location?.state?.option?.lastPrevCursor )){
       dispatch(setUnpaidKeyword(location.state.option.search));
-      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search , selectionRange));
       dispatch(setCurrentUnpaidPageSize(location.state.option.pageSize));
-      dispatch(setCurrentUnpaidPageIndex(0));
+      dispatch(setCurrentUnpaidPageIndex(location?.state?.option?.currentPageIndex || 0));
+      setSelectionRange(location?.state?.option?.selectionRange)
       window.history.replaceState({}, document.title)
     }
   }, [location]);
@@ -179,6 +181,10 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         keyword,
         currentPageSize,
         tab: 0,
+        currentPageIndex,
+        lastNextCursor,
+        lastPrevCursor, 
+        selectionRange,
       }
     });
   };
@@ -207,9 +213,11 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
+          setLastPrevCursor(isPrev ? prevCursor : undefined)
+          setLastNextCursor(isNext ? nextCursor : undefined)
           dispatch(getUnpaidInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
-        }
+        }}
         total={total}
         currentPageIndex={currentPageIndex}
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentUnpaidPageIndex(num))}
