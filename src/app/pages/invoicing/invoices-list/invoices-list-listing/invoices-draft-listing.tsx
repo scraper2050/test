@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
 import { formatDatTimelll } from 'helpers/format';
@@ -38,6 +38,9 @@ function InvoicingDraftListing({ classes, theme }: any) {
       keyword: invoiceList.keywordDraft,
     })
   );
+
+  const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
+  const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
 
   const columns: any = [
     {
@@ -85,9 +88,9 @@ function InvoicingDraftListing({ classes, theme }: any) {
   useEffect(() => {
     if(location?.state?.tab === 2 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setDraftKeyword(location.state.option.search));
-      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search));
+      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search));
       dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
-      dispatch(setCurrentDraftPageIndex(0));
+      dispatch(setCurrentDraftPageIndex(location?.state?.option?.currentPageIndex || 0));
       window.history.replaceState({}, document.title)
     }
   }, [location]);
@@ -99,6 +102,9 @@ function InvoicingDraftListing({ classes, theme }: any) {
         keyword,
         currentPageSize,
         tab: 2,
+        currentPageIndex,
+        lastNextCursor,
+        lastPrevCursor, 
       }
     });
   };
@@ -115,9 +121,11 @@ function InvoicingDraftListing({ classes, theme }: any) {
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
+          setLastPrevCursor(isPrev ? prevCursor : undefined)
+          setLastNextCursor(isNext ? nextCursor : undefined)
           dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword))
-        }
+        }}
         total={total}
         currentPageIndex={currentPageIndex}
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentDraftPageIndex(num))}
