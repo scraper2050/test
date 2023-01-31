@@ -155,7 +155,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
   useEffect(() => {
     dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0));
-    dispatch(setCurrentUnpaidPageIndex(location?.state?.option?.currentPageIndex || 0));
+    dispatch(setCurrentUnpaidPageIndex(0));
     return () => {
       dispatch(setUnpaidKeyword(''));
       dispatch(setCurrentUnpaidPageIndex(currentPageIndex));

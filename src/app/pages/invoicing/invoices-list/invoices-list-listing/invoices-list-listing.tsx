@@ -55,6 +55,8 @@ function InvoicingListListing({ classes, theme }: any) {
   // const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   
   const [fetchInvoices, setFetchInvoices] = useState(false);
+  const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
+  const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
 
   const advanceFilterInvoiceData: any = useSelector(({advanceFilterInvoiceState}: any) => advanceFilterInvoiceState)
 
@@ -216,11 +218,12 @@ function InvoicingListListing({ classes, theme }: any) {
   }, [fetchInvoices]);
 
   useEffect(() => {
-    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
+    if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize || location?.state?.option?.lastPrevCursor
+      || location?.state?.option?.lastNextCursor || location?.state?.option?.currentPageIndex)){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllInvoicesAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , advanceFilterInvoiceData));
+      dispatch(getAllInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search , advanceFilterInvoiceData));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
-      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageIndex(location?.state?.option?.currentPageIndex || 0));
       window.history.replaceState({}, document.title)
     }
   }, [location]);
@@ -232,6 +235,9 @@ function InvoicingListListing({ classes, theme }: any) {
         keyword,
         currentPageSize,
         tab: 1,
+        currentPageIndex,
+        lastNextCursor,
+        lastPrevCursor, 
       }
     });
   };
@@ -382,9 +388,11 @@ function InvoicingListListing({ classes, theme }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
+          setLastPrevCursor(isPrev ? prevCursor : undefined)
+          setLastNextCursor(isNext ? nextCursor : undefined)
           dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, advanceFilterInvoiceData))
-        }
+        }}
         total={total}
         currentPageIndex={currentPageIndex}
         setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
