@@ -29,6 +29,11 @@ const normalizeTiers = (tiers:any) => {
 
   tiers.forEach((tier:any) => {
     obj[tier.tier._id] = tier;
+
+    if (((tier.charge % 1) !== 0)
+    && tier.charge !== undefined) {
+    obj[tier.tier._id].charge = Number(tier.charge).toFixed(2)
+    }
   });
 
   return obj;
