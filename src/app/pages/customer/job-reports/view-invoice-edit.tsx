@@ -4,25 +4,25 @@ import { useHistory } from "react-router-dom";
 import { withStyles } from "@material-ui/core";
 import styles from "../customer.styles";
 import styled from "styled-components";
-import {useLocation, useParams} from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import BCEditInvoice from "../../../components/bc-invoice/bc-edit-invoice";
 import { getAllPaymentTermsAPI } from "api/payment-terms.api";
-import {loadInvoiceItems} from "actions/invoicing/items/items.action";
-import {resetEmailState} from "actions/email/email.action";
-import {getInvoiceEmailTemplate} from "api/emailDefault.api";
-import {openModalAction, setModalDataAction} from "actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
-import {error as errorSnackBar, success} from "actions/snackbar/snackbar.action";
-import {getAllSalesTaxAPI} from "api/tax.api";
-import {getCustomerDetailAction, getCustomers, resetCustomer} from "actions/customer/customer.action";
-import {getCompanyProfile} from "api/user.api";
+import { loadInvoiceItems } from "actions/invoicing/items/items.action";
+import { resetEmailState } from "actions/email/email.action";
+import { getInvoiceEmailTemplate } from "api/emailDefault.api";
+import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { modalTypes } from "../../../../constants";
+import { error as errorSnackBar, success } from "actions/snackbar/snackbar.action";
+import { getAllSalesTaxAPI } from "api/tax.api";
+import { getCustomerDetailAction, getCustomers, resetCustomer } from "actions/customer/customer.action";
+import { getCompanyProfile } from "api/user.api";
 import { getItems } from 'api/items.api'
-import {callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI} from "api/invoicing.api";
+import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI } from "api/invoicing.api";
 
 const newInvoice = {
   createdAt: new Date().toISOString(),
-  items:[],
+  items: [],
   isDraft: true,
 }
 
@@ -30,20 +30,20 @@ function ViewInvoice() {
   const dispatch = useDispatch();
   const history = useHistory();
   let { invoice } = useParams<any>();
-  const { user } = useSelector(({ auth }:any) => auth);
+  const { user } = useSelector(({ auth }: any) => auth);
   const { state } = useLocation<any>();
   const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
-  const {'data': paymentTerms} = useSelector(({paymentTerms}: any) => paymentTerms);
+  const { 'data': paymentTerms } = useSelector(({ paymentTerms }: any) => paymentTerms);
 
   const customerId = state ? state.customerId : '';
 
-  const {customerObj: customer, data: customersData, customers} = useSelector(({ customers }:any) => customers);
+  const { customerObj: customer, data: customersData, customers } = useSelector(({ customers }: any) => customers);
   const taxes = useSelector(({ tax }: any) => tax.data);
 
   useEffect(() => {
-    async function getCompany (company: string) {
+    async function getCompany(company: string) {
       const res = await getCompanyProfile(user.company as string);
-      setInvoiceDetail({...invoiceDetail, company: res.company});
+      setInvoiceDetail({ ...invoiceDetail, company: res.company });
 
     }
     if (user && !invoice) {
@@ -52,7 +52,7 @@ function ViewInvoice() {
     }
 
     if (customerId) {
-      dispatch(getCustomerDetailAction({customerId}));
+      dispatch(getCustomerDetailAction({ customerId }));
     } else {
       dispatch(resetCustomer());
       dispatch(getCustomers());
@@ -64,10 +64,10 @@ function ViewInvoice() {
 
   }, []);
 
-  const showSendInvoiceModalHandler = async (invoiceId:string, customerId:string) => {
+  const showSendInvoiceModalHandler = async (invoiceId: string, customerId: string) => {
     try {
       const response = await getInvoiceEmailTemplate(invoiceId);
-      const {emailTemplate: emailDefault, status, message} = response.data;
+      const { emailTemplate: emailDefault, status, message } = response.data;
       if (status === 1) {
         dispatch(setModalDataAction({
           data: {
@@ -95,7 +95,7 @@ function ViewInvoice() {
     }
   }
 
-  const updateInvoiceHandler = (data:any) => {
+  const updateInvoiceHandler = (data: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setModalDataAction({
         data: {
@@ -118,11 +118,11 @@ function ViewInvoice() {
         invoiceId: data.invoice_id,
         issuedDate: new Date(data.invoice_date).toISOString(),
         dueDate: new Date(data.due_date).toISOString(),
-        ...(data.paymentTerm && {paymentTermId: data.paymentTerm}),
+        ...(data.paymentTerm && { paymentTermId: data.paymentTerm }),
         note: data.note,
         isDraft: data.isDraft,
         items: JSON.stringify(data.items.map((o: any) => {
-          const item: any ={
+          const item: any = {
             description: o.description ?? '',
             price: parseFloat(o.price),
             quantity: parseInt(o.quantity),
@@ -140,7 +140,7 @@ function ViewInvoice() {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
-        const {status, invoice, quickbookInvoice} = response;
+        const { status, invoice, quickbookInvoice } = response;
         dispatch(setModalDataAction({
           data: {
             modalTitle: 'Status',
@@ -161,7 +161,7 @@ function ViewInvoice() {
     });
   }
 
-  const createInvoiceHandler = (data:any) => {
+  const createInvoiceHandler = (data: any) => {
     return new Promise((resolve, reject) => {
       const params: any = {
         invoiceNumber: data.invoiceId,
@@ -172,7 +172,7 @@ function ViewInvoice() {
         isDraft: data.isDraft,
         customerId: data.customer._id,
         items: JSON.stringify(data.items.map((o: any) => {
-          const item: any ={
+          const item: any = {
             description: o.description ?? '',
             price: parseFloat(o.price),
             quantity: parseInt(o.quantity),
@@ -198,12 +198,19 @@ function ViewInvoice() {
         },
         type: modalTypes.RECORD_SYNC_STATUS_MODAL,
       }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
+
+      if (!data.isDraft) {
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      }
 
       callCreateInvoiceAPI(params).then((response: any) => {
-        const {status, invoice, quickbookInvoice} = response;
+        if (data.isDraft) {
+          history.goBack()
+          return
+        }
+        const { status, invoice, quickbookInvoice } = response;
         dispatch(setModalDataAction({
           data: {
             modalTitle: 'Status',
@@ -223,15 +230,15 @@ function ViewInvoice() {
     });
   }
 
-  const voidInvoiceHandler = (invoiceId:string) => {
+  const voidInvoiceHandler = (invoiceId: string) => {
     dispatch(
       setModalDataAction({
         'data': {
           'data': {
             handleOnConfirm: async () => {
               try {
-                const res:any = await voidInvoiceAPI({invoiceId})
-                if(res.status === 1){
+                const res: any = await voidInvoiceAPI({ invoiceId })
+                if (res.status === 1) {
                   dispatch(success(res.message));
                   history.push({
                     'pathname': `/main/invoicing/invoices-list`,
@@ -257,7 +264,7 @@ function ViewInvoice() {
   }
 
   if ((customerId && !customer?._id) || (!customerId && customers?.length === 0) || !invoiceDetail.company)
-    return<BCCircularLoader heightValue={'200px'} />
+    return <BCCircularLoader heightValue={'200px'} />
 
   return (
     <MainContainer>
