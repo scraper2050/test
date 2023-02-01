@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, ChangeEvent} from 'react';
+import React, { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import debounce from 'lodash.debounce';
@@ -42,15 +42,15 @@ import {
   setKeyword,
 } from 'actions/invoicing/invoicing.action';
 import BCDateRangePicker
-  , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";
+, { Range } from "../../components/bc-date-range-picker/bc-date-range-picker";
 import DropDownMenu
   from "../../components/bc-select-dropdown/bc-select-dropdown";
-import {PAYMENT_STATUS_COLORS} from "../../../helpers/contants";
+import { PAYMENT_STATUS_COLORS } from "../../../helpers/contants";
 import moment from "moment/moment";
-import {getInvoiceEmailTemplate} from "../../../api/emailDefault.api";
-import {error} from "../../../actions/snackbar/snackbar.action";
-import {modalTypes} from "../../../constants";
-import {resetEmailState} from "../../../actions/email/email.action";
+import { getInvoiceEmailTemplate } from "../../../api/emailDefault.api";
+import { error } from "../../../actions/snackbar/snackbar.action";
+import { modalTypes } from "../../../constants";
+import { resetEmailState } from "../../../actions/email/email.action";
 import { setTimeout } from 'timers';
 import { PaymentStatus } from 'app/pages/invoicing/invoices-list/invoices-list-listing/invoices-unpaid-listing';
 
@@ -128,32 +128,23 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const handleRowClick = (event: any, row: any) => {
 
     // if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
-      const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) 
-      const newList = [...selectedInvoices];
-      let localInvoiceListClone = [...localInvoiceList]
-      if (found >= 0) {
-        newList.splice(found, 1)
-        //remove from top
-        localInvoiceListClone.splice(found, 1)
-        //push to the bottom of localInvoice, only if it contains same customer as the local invoice
-        //since we pushed it to the first, use the last row of the localinvoice for comparison
-        if (localInvoiceListClone[localInvoiceListClone.length - 1]?.customer?._id === row.original?.customer?._id) {
-          localInvoiceListClone.push(row.original)
-        }
-        
-      } else {
-        newList.unshift(row.original);//unshift new whole row
-        
-        //remove it from local list at the original position
-        localInvoiceListClone =  localInvoiceListClone.filter(inv=>inv._id !== row.original._id)
-        //push to the top        
-        localInvoiceListClone.unshift(row.original)
-        
+    const found = selectedInvoices.findIndex((invoice => invoice._id === row.original._id))
+    const selectedInvoicesListClone = [...selectedInvoices];
+    let localInvoiceListClone = [...localInvoiceList]
+    if (found >= 0) {
+      selectedInvoicesListClone.splice(found, 1)
+      localInvoiceListClone.splice(found, 1)
+      localInvoiceListClone.splice(selectedInvoicesListClone.length, 0, row.original)
+    } else {
+      selectedInvoicesListClone.push(row.original);
+      localInvoiceListClone = localInvoiceListClone.filter(inv => inv._id !== row.original._id)
+      localInvoiceListClone.splice(selectedInvoicesListClone.length - 1, 0, row.original)
+
     }
-    setSelectedInvoices(newList);
+    setSelectedInvoices(selectedInvoicesListClone);
     setLocalInvoiceList(localInvoiceListClone)
 
-    };
+  };
 
   const handleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
@@ -170,14 +161,14 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     if (!newValue) setSelectedInvoices([]);
   };
 
-  const handleSend = async(e: any) => {
+  const handleSend = async (e: any) => {
     // e.stopPropagation();
-    
-      //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
-      //..then group the responses
-    
-    const invoicesToDispatchClone:any[] = [] 
-    
+
+    //need to sort the data as per emails.. for same email, push the indices toether and send to BE,, else just send single
+    //..then group the responses
+
+    const invoicesToDispatchClone: any[] = []
+
     //cycle thru the array for individual objects
     for (let i = 0; i < selectedInvoices.length; i++) {
       const invoice = selectedInvoices[i];
@@ -189,17 +180,17 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         // if in state, ignore, else filter to get similar invoices, then send to BE and get templates
         if (invoicesToDispatchClone.some(inv => inv.customerEmail === email)) {
           //do nothing
-          
+
           continue;
         } else {
           const tempArray = selectedInvoices.filter(inv => inv.contactsObj[0]?.email === email);
-          const invoicesArray:any = []
+          const invoicesArray: any = []
           tempArray.map((inv) => {
             invoicesArray.push(inv._id)
           })
           try {
             const response = await getInvoiceEmailTemplate(invoicesArray);
-            const {emailTemplate: emailDefault, status, message} = response.data
+            const { emailTemplate: emailDefault, status, message } = response.data
             if (status === 1) {
               const data = {
                 'modalTitle': 'Send Invoices',
@@ -211,14 +202,14 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 'customerId': invoice.customer?._id,
               };
               const combined: any = { ...data, emailDefault }
-              
+
               invoicesToDispatchClone.push(combined)
-              
+
             }
           } catch (e) {
             //setIsLoading(false);
             console.log(e)
-            
+
           }
         }
       } else {
@@ -230,37 +221,37 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
           continue;
         } else {
 
-        //filter to get those with empty contactObj's first
+          //filter to get those with empty contactObj's first
           const contactlessInvoices = selectedInvoices.filter(inv => inv.contactsObj.length === 0)
           if (contactlessInvoices.length) {
             //get the id's
-            const invoicesArray:any = []
+            const invoicesArray: any = []
             contactlessInvoices.map((inv) => {
               invoicesArray.push(inv._id)
             })
-             try {
-            const response = await getInvoiceEmailTemplate(invoicesArray);
-            const {emailTemplate: emailDefault, status, message} = response.data
-            if (status === 1) {
-              const data = {
-                'modalTitle': 'Send Invoices',
-                'customerEmail': invoice.customer?.info?.email,
-                'handleClick': () => { },
-                'ids': invoicesArray,
-                'typeText': 'Invoice',
-                'className': 'wideModalTitle',
-                'customerId': invoice.customer?._id,
-              };
-              const combined: any = { ...data, emailDefault }
-              invoicesToDispatchClone.push(combined)
-              
+            try {
+              const response = await getInvoiceEmailTemplate(invoicesArray);
+              const { emailTemplate: emailDefault, status, message } = response.data
+              if (status === 1) {
+                const data = {
+                  'modalTitle': 'Send Invoices',
+                  'customerEmail': invoice.customer?.info?.email,
+                  'handleClick': () => { },
+                  'ids': invoicesArray,
+                  'typeText': 'Invoice',
+                  'className': 'wideModalTitle',
+                  'customerId': invoice.customer?._id,
+                };
+                const combined: any = { ...data, emailDefault }
+                invoicesToDispatchClone.push(combined)
+
+              }
+            } catch (e) {
+              console.log(e)
             }
-          } catch (e) {
-            console.log(e)
+
           }
-          
-          }
-         }
+        }
 
       }
     }
@@ -271,7 +262,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         multipleInvoices: invoicesToDispatchClone,
         'customerId': customerValue?._id,
         "modalTitle": "Send Invoices",
-       },
+      },
       'type': modalTypes.EMAIL_JOB_REPORT_MODAL
     }));
 
@@ -281,7 +272,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   };
 
   const closeModal = () => {
-    
+
     dispatch(setCurrentPageIndex(0));
     dispatch(getAllInvoicesAPI());
     dispatch(closeModalAction());
@@ -299,8 +290,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       currentPageSize,
       undefined,
       undefined,
-      '' ,
-      {invoiceDateRange: selectionRange},
+      '',
+      { invoiceDateRange: selectionRange },
       customerValue?._id,
       isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
       showValue === 'all'
@@ -322,13 +313,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'Header': () => <>
         <Checkbox
           color="primary"
-          classes={{root: classes.checkbox}}
+          classes={{ root: classes.checkbox }}
           checked={selectedInvoices.length === localInvoiceList.length}
           indeterminate={selectedInvoices.length > 0 && selectedInvoices.length < localInvoiceList.length}
           disabled={!customerValue}
           onChange={handleSelectAll}
         />
-         <span>Status</span>
+        <span>Status</span>
       </>,
       'accessor': 'paid',
       'className': 'font-bold',
@@ -342,8 +333,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         return <Box display="flex" flexDirection="row">
           <Checkbox
             color="primary"
-            classes={{root: classes.checkbox}}
-            checked={selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) >= 0 }
+            classes={{ root: classes.checkbox }}
+            checked={selectedInvoices.findIndex((invoice => invoice._id === row.original._id)) >= 0}
           />
           <PaymentStatus status={status}>
             {status}
@@ -351,7 +342,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         </Box>;
       },
     },
-    
+
     {
       Cell({ row }: any) {
         return <div>
@@ -391,8 +382,9 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'width': 20
     },
 
-    { Cell({ row }: any) {
-        return row.original.contactsObj.length>0
+    {
+      Cell({ row }: any) {
+        return row.original.contactsObj.length > 0
           ? row.original.contactsObj[0]?.name
           : 'N/A';
       },
@@ -402,8 +394,9 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'sortable': true
     },
 
-    { Cell({ row }: any) {
-        return row.original.contactsObj.length>0
+    {
+      Cell({ row }: any) {
+        return row.original.contactsObj.length > 0
           ? row.original.contactsObj[0]?.email
           : 'N/A';
       },
@@ -421,11 +414,11 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         'amountToBeApplied': 0,
         'checked': 0,
       }));
-      const allInvoices:any[] =[...selectedInvoices,...newInvoiceList]
+      const allInvoices: any[] = [...selectedInvoices, ...newInvoiceList]
       //if item is in newInvoice list and is already in selecedInvoices, do not show it
-      const uniqueInvoiceList :any[] =allInvoices.filter((value, index, self) =>
+      const uniqueInvoiceList: any[] = allInvoices.filter((value, index, self) =>
         index === self.findIndex((t) => (
-          t._id === value._id 
+          t._id === value._id
         ))
       )
       setLocalInvoiceList(uniqueInvoiceList);
@@ -436,47 +429,47 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   return (
     <DataContainer className={'new-modal-design'}>
-        {isSuccess ? (
-          <BCSent title={'The payment was recorded.'}/>
-        ) : (
+      {isSuccess ? (
+        <BCSent title={'The payment was recorded.'} />
+      ) : (
           <>
-            <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{width: '100%', paddingLeft: 65, paddingRight: 45}}>
+            <Grid container className={'modalPreview'} justify={'space-between'} spacing={2} style={{ width: '100%', paddingLeft: 65, paddingRight: 45 }}>
               <Grid item xs={5}>
-                  <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>Customer</Typography>
                 <Autocomplete
-                    disabled={loading}
-                    getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
-                    getOptionDisabled={(option) => !option.isActive}
-                    id={'tags-standard'}
-                    onChange={(ev: any, newValue: any) => handleCustomerChange(ev, newValue)}
-                    disableClearable={customerValue !== null}
-                    options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
-                    renderInput={params => <TextField
-                      {...params}
-                      InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
-                      variant={'outlined'}
-                      // error={isCustomerErrorDisplayed}
-                      // helperText={isCustomerErrorDisplayed && 'Please Select A Customer'}
-                    />
-                    }
-                    value={customerValue}
+                  disabled={loading}
+                  getOptionLabel={option => option.profile?.displayName ? option.profile.displayName : ''}
+                  getOptionDisabled={(option) => !option.isActive}
+                  id={'tags-standard'}
+                  onChange={(ev: any, newValue: any) => handleCustomerChange(ev, newValue)}
+                  disableClearable={customerValue !== null}
+                  options={customers && customers.length !== 0 ? customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0) : []}
+                  renderInput={params => <TextField
+                    {...params}
+                    InputProps={{ ...params.InputProps, style: { background: '#fff' } }}
+                    variant={'outlined'}
+                  // error={isCustomerErrorDisplayed}
+                  // helperText={isCustomerErrorDisplayed && 'Please Select A Customer'}
                   />
-                <div style={{width: 10}} >&nbsp;</div>
+                  }
+                  value={customerValue}
+                />
+                <div style={{ width: 10 }} >&nbsp;</div>
               </Grid>
 
               <Grid item xs={4} >
-                <Typography variant={'caption'} className={'previewCaption'} style={{marginLeft: 12}}>Date Range</Typography>
+                <Typography variant={'caption'} className={'previewCaption'} style={{ marginLeft: 12 }}>Date Range</Typography>
                 <BCDateRangePicker
                   range={selectionRange}
                   onChange={setSelectionRange}
                   showClearButton={true}
                   title={'Filter by Invoice Date...'}
-                  classes={{button: classes.datePicker}}
+                  classes={{ button: classes.datePicker }}
                 />
               </Grid>
 
               <Grid item xs={2}>
-                  <Typography variant={'caption'} className={'previewCaption'}>SHOW</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>SHOW</Typography>
                 <DropDownMenu
                   // minwidth='180px'
                   selectedItem={showValue}
@@ -484,7 +477,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   onSelect={(e, item) => setShowValue(item.value)}
                 />
               </Grid>
-              <Grid item xs={1}/>
+              <Grid item xs={1} />
             </Grid>
             <DialogContent classes={{ root: classes.dialogContent }}>
               <BCTableContainer
@@ -499,7 +492,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                     isPrev ? prevCursor : undefined,
                     isNext ? nextCursor : undefined,
                     '',
-                    {invoiceDateRange: selectionRange},
+                    { invoiceDateRange: selectionRange },
                     customerValue?._id,
                     isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
                     showValue === 'all'
@@ -515,33 +508,33 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
             </DialogContent>
           </>
         )}
-        <div className={'modalDataContainer'}>
-          <DialogActions style={{paddingRight: 80}}>
-            {/* <Typography variant={'h5'}>
+      <div className={'modalDataContainer'}>
+        <DialogActions style={{ paddingRight: 80 }}>
+          {/* <Typography variant={'h5'}>
               {!!FormikValues.totalAmount && `Total Amount: $${FormikValues.totalAmount}`}
             </Typography> */}
-            <Button
-              disableElevation={true}
-              onClick={() => closeModal()}
-              variant={'outlined'}
-            >
-              Cancel
+          <Button
+            disableElevation={true}
+            onClick={() => closeModal()}
+            variant={'outlined'}
+          >
+            Cancel
             </Button>
-            {!isSuccess && (
-              <Button
-                color={'primary'}
-                disabled={selectedInvoices.length === 0}
-                onClick={handleSend}
-                disableElevation={true}
-                //disabled={isSubmitting || loading || !isValid()}
-                type={'submit'}
-                variant={'contained'}
-              >
-                Send
-              </Button>
-            )}
-          </DialogActions>
-        </div>
+          {!isSuccess && (
+            <Button
+              color={'primary'}
+              disabled={selectedInvoices.length === 0}
+              onClick={handleSend}
+              disableElevation={true}
+              //disabled={isSubmitting || loading || !isValid()}
+              type={'submit'}
+              variant={'contained'}
+            >
+              Send
+            </Button>
+          )}
+        </DialogActions>
+      </div>
     </DataContainer >
   );
 };
