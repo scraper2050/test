@@ -24,7 +24,7 @@ const initialState: InvoiceItemsState = {
 
 const tierListInitialState: any = {
   'error': '',
-  'loading': false,
+  'loading': true,
   'tiers': []
 };
 
@@ -65,16 +65,19 @@ export const InvoiceItemsReducer: Reducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        'itemObj': { ...action.payload,
-          '_id': action.payload.itemId },
-        'items': state.items.map((item:Item) => item._id === action.payload.itemId
+        'itemObj': {
+          ...action.payload,
+          '_id': action.payload.itemId
+        },
+        'items': state.items.map((item: Item) => item._id === action.payload.itemId
           ? {
             ...item,
             ...action.payload,
             'tax': action.payload.tax
               ? 1
               : 0,
-            '_id': action.payload.itemId }
+            '_id': action.payload.itemId
+          }
           : item),
         'loadingObj': false
       };
