@@ -26,6 +26,7 @@ import { createStyles, makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { CSButtonSmall } from "helpers/custom";
+import TableFilterService from 'utils/table-filter';
 import {
   formatCurrency,
   formatDateMMMDDYYYY,
@@ -111,10 +112,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const customers = useSelector(({ customers }: any) => customers.data);
   const debounceInputStyles = useDebounceInputStyles();
 
-  // const invoiceList = useSelector(getFilteredList);
-  const { invoiceList, loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
+  const getFilteredList = (state: any) => {
+    return TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  };
+
+  const invoiceList = useSelector(getFilteredList);
+  const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
     ({ invoiceList }: any) => ({
-      invoiceList: invoiceList.data,
       loading: invoiceList.loading,
       prevCursor: invoiceList.prevCursor,
       nextCursor: invoiceList.nextCursor,
