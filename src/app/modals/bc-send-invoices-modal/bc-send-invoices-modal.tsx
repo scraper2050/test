@@ -218,15 +218,15 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
         }
       } else {
         // do as before,, send to default email instead
-
+        const email = invoice.customer.info.email
         //check if in array
-        if (invoicesToDispatchClone.some(inv => inv.customerEmail === customerValue?.info?.email)) {
+        if (invoicesToDispatchClone.some(inv => inv.customerEmail === customerValue?.info?.email || inv.customerEmail === email)) {
           //do nothing
           continue;
         } else {
 
           //filter to get those with empty contactObj's first
-          const contactlessInvoices = selectedInvoices.filter(inv => inv.contactsObj.length === 0)
+          const contactlessInvoices = selectedInvoices.filter(inv => inv.contactsObj.length === 0 && inv.customer.info.email === email)
           if (contactlessInvoices.length) {
             //get the id's
             const invoicesArray: any = []
@@ -241,7 +241,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   'modalTitle': 'Send Invoices',
                   'customerEmail': invoice.customer?.info?.email,
                   'handleClick': () => { },
-                  'ids': [invoice._id],
+                  'ids': invoicesArray,
                   'typeText': 'Invoice',
                   'className': 'wideModalTitle',
                   'customerId': invoice.customer?._id,
