@@ -106,9 +106,13 @@ function ViewInvoice() {
         },
         type: modalTypes.RECORD_SYNC_STATUS_MODAL,
       }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
+
+      if (!data.isDraft) {
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      }
+
       // this is to set Hour to 12:00 so when backend generate invoice for email it wont render wrong date because of timezone difference
       data.invoice_date = new Date(data.invoice_date)
       data.invoice_date = data.invoice_date.setHours(data.invoice_date.getHours() + 12)
@@ -140,6 +144,11 @@ function ViewInvoice() {
       if (data.customer_po) params.customerPO = data.customer_po;
 
       updateInvoiceAPI(params).then((response: any) => {
+        if (data.isDraft) {
+          dispatch(success(`Draft ${data.invoiceId + 1 || ''} Updated`));
+          history.replace(`/main/invoicing/invoices-list`, history.location.state)
+          return
+        }
         const { status, invoice, quickbookInvoice } = response;
         dispatch(setModalDataAction({
           data: {
@@ -207,6 +216,7 @@ function ViewInvoice() {
 
       callCreateInvoiceAPI(params).then((response: any) => {
         if (data.isDraft) {
+          dispatch(success(`Draft Invoice ${data.company.currentInvoiceId + 1 || ''} Created`));
           history.goBack()
           return
         }
