@@ -2,8 +2,8 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import {withStyles, Tooltip} from "@material-ui/core";
-import React, {useEffect, useState, useRef} from 'react';
+import { withStyles, Tooltip } from "@material-ui/core";
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EmailInvoiceButton from '../email.invoice';
 import {
@@ -11,24 +11,26 @@ import {
   formatDateMMMDDYYYY,
 } from 'helpers/format';
 import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import {GRAY2, PRIMARY_GREEN} from "../../../../../constants";
+import { GRAY2, PRIMARY_GREEN } from "../../../../../constants";
 import BCDateRangePicker
-  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-import {getUnpaidInvoicesAPI} from 'api/invoicing.api';
-import {setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize, setUnpaidKeyword} from 'actions/invoicing/invoicing.action';
+, { Range } from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+import { getUnpaidInvoicesAPI } from 'api/invoicing.api';
+import { setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize, setUnpaidKeyword } from 'actions/invoicing/invoicing.action';
 import moment from "moment";
+import TableFilterService from 'utils/table-filter';
 
-// const getFilteredList = (state: any) => {
-//   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.unpaid);
-//   return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
-// };
+const getSortedInvoices = (state: any) => {
+  return TableFilterService.filterByDateDesc(state?.invoiceList.unpaid);
+};
 
 function InvoicingUnpaidListing({ classes, theme }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
   const callUnpaidInvoicesCount = useRef(0);
-  const { unpaidInvoices, loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+
+  const unpaidInvoices = useSelector(getSortedInvoices)
+  const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
     ({ invoiceList }: any) => ({
       unpaidInvoices: invoiceList.unpaid,
       loading: invoiceList.loadingUnpaid,
@@ -53,17 +55,18 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   }))(Tooltip);
 
   const columns: any = [
-    { Cell({ row }: any) {
-      let status = 'open';
-      if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
-      else if (moment(row.original.dueDate).isSame(moment(), 'day')) status = 'due today'
-      else if (moment(row.original.dueDate).diff(moment(), 'day') <= 7) status = 'due soon'
+    {
+      Cell({ row }: any) {
+        let status = 'open';
+        if (moment(row.original.dueDate).isBefore(moment(), 'day')) status = 'overdue'
+        else if (moment(row.original.dueDate).isSame(moment(), 'day')) status = 'due today'
+        else if (moment(row.original.dueDate).diff(moment(), 'day') <= 7) status = 'due soon'
 
-      return (
-        <PaymentStatus status={status}>
-          {status}
-        </PaymentStatus>
-      )
+        return (
+          <PaymentStatus status={status}>
+            {status}
+          </PaymentStatus>
+        )
       },
       'Header': 'Status',
       'accessor': 'paid',
@@ -72,7 +75,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'width': 10
     },
     {
-      Cell({row}: any) {
+      Cell({ row }: any) {
         return <span>{formatDateMMMDDYYYY(row.original.dueDate)}</span>
       },
       'Header': 'Due Date',
@@ -95,7 +98,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       },
     },
     {
-      Cell({row}: any) {
+      Cell({ row }: any) {
         return <span>{row.original.invoiceId?.substring(8)}</span>
       },
       'Header': 'Invoice ID',
@@ -110,15 +113,16 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'width': 20
     },
 
-    { Cell({ row }: any) {
-      return row.original.lastEmailSent
-        ? formatDateMMMDDYYYY(row.original.lastEmailSent,true)
-        : 'N/A';
-    },
-    'Header': 'Last Emailed',
-    'accessor': 'lastEmailSent',
-    'className': 'font-bold',
-    'sortable': true
+    {
+      Cell({ row }: any) {
+        return row.original.lastEmailSent
+          ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
+          : 'N/A';
+      },
+      'Header': 'Last Emailed',
+      'accessor': 'lastEmailSent',
+      'className': 'font-bold',
+      'sortable': true
     },
     {
       'Header': 'Invoice Date',
@@ -129,7 +133,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     {
       Cell({ row }: any) {
         return (
-          <BCQbSyncStatus data={row.original}/>
+          <BCQbSyncStatus data={row.original} />
         );
       },
       //'Header': 'Integrations',
@@ -141,9 +145,9 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       Cell({ row }: any) {
         // return <div className={customStyles.centerContainer}>
         return <EmailInvoiceButton
-            Component={<span className={classes.reminderText}>Send Reminder</span>}
-            invoice={row.original}
-          />;
+          Component={<span className={classes.reminderText}>Send Reminder</span>}
+          invoice={row.original}
+        />;
         // </div>;
       },
       'Header': 'Actions',
@@ -163,10 +167,10 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     }
   }, [selectionRange]);
   useEffect(() => {
-    if(location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize 
-      || location?.state?.option?.currentPageIndex || location?.state?.option?.lastNextCursor || location?.state?.option?.lastPrevCursor )){
+    if (location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize
+      || location?.state?.option?.currentPageIndex || location?.state?.option?.lastNextCursor || location?.state?.option?.lastPrevCursor)) {
       dispatch(setUnpaidKeyword(location.state.option.search));
-      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search , selectionRange));
+      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search, selectionRange));
       dispatch(setCurrentUnpaidPageSize(location.state.option.pageSize));
       dispatch(setCurrentUnpaidPageIndex(location?.state?.option?.currentPageIndex || 0));
       setSelectionRange(location?.state?.option?.selectionRange)
@@ -174,7 +178,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     }
   }, [location]);
 
-  const showInvoiceDetail = (id:string) => {
+  const showInvoiceDetail = (id: string) => {
     history.push({
       'pathname': `view/${id}`,
       'state': {
@@ -183,7 +187,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         tab: 0,
         currentPageIndex,
         lastNextCursor,
-        lastPrevCursor, 
+        lastPrevCursor,
         selectionRange,
       }
     });
@@ -197,7 +201,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       onChange={setSelectionRange}
       showClearButton={true}
       title={'Filter by Invoice Date...'}
-      classes={{button: classes.noLeftMargin}}
+      classes={{ button: classes.noLeftMargin }}
     />
   }
 
@@ -213,7 +217,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
+        fetchFunction={(num: number, isPrev: boolean, isNext: boolean, query: string) => {
           setLastPrevCursor(isPrev ? prevCursor : undefined)
           setLastNextCursor(isNext ? nextCursor : undefined)
           dispatch(getUnpaidInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
@@ -240,9 +244,9 @@ const DataContainer = styled.div`
 export default withStyles(styles, { 'withTheme': true })(InvoicingUnpaidListing);
 
 
-export const PaymentStatus = styled.div<{status: string}>`
+export const PaymentStatus = styled.div<{ status: string }>`
   width: 75px;
-  background-color: ${props => props.status === 'overdue' || props.status === 'due today'? '#F5005768' : props.status === 'due soon' ? '#E5F7FF' : PRIMARY_GREEN};
+  background-color: ${props => props.status === 'overdue' || props.status === 'due today' ? '#F5005768' : props.status === 'due soon' ? '#E5F7FF' : PRIMARY_GREEN};
   background-image: ${props => props.status === 'overdue' ? 'repeating-linear-gradient(-60deg,#F5005720 0px 8px,#F5005701 8px 12px);' : 'none'};
   font-weight: bold;
   color: ${props => props.status === 'overdue' ? '#F50057' : props.status === 'open' ? 'white' : GRAY2};
