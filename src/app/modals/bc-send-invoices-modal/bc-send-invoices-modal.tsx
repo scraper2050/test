@@ -241,7 +241,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   'modalTitle': 'Send Invoices',
                   'customerEmail': invoice.customer?.info?.email,
                   'handleClick': () => { },
-                  'ids': invoicesArray,
+                  'ids': [invoice._id],
                   'typeText': 'Invoice',
                   'className': 'wideModalTitle',
                   'customerId': invoice.customer?._id,
