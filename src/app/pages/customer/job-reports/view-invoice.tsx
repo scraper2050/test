@@ -174,13 +174,19 @@ function ViewInvoice({ classes, theme }: any) {
   // });
 
   const handleBackButtonClick = () => {
-    if(location?.state?.keyword || location?.state?.currentPageSize){
+    if(location?.state?.keyword || location?.state?.currentPageSize  || location?.state?.currentPageIndex 
+      || location?.state?.lastNextCursor || location?.state?.lastPrevCursor || location?.state?.selectionRange
+      ){
       history.replace({
         'pathname': '/main/invoicing/invoices-list',
         'state': {
           'option': {
             search: location?.state?.keyword || '',
             pageSize: location?.state?.currentPageSize || 10,
+            currentPageIndex: location?.state?.currentPageIndex || 0,
+            lastNextCursor: location?.state?.lastNextCursor,
+            lastPrevCursor: location?.state?.lastPrevCursor,
+            selectionRange: location?.state?.selectionRange || null
           },
           'tab': location?.state?.tab || 0,
         }

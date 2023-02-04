@@ -1,6 +1,12 @@
 /* eslint-disable react/jsx-handler-names */
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
+import { useFormik } from 'formik';
+import styled from 'styled-components';
 import * as yup from 'yup';
-import { Button,
+import {
+  Button,
   FormControl,
   MenuItem,
   Select,
@@ -12,12 +18,9 @@ import { Button,
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core';
-import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
-import React, { useState, useEffect } from 'react';
+
+import {validateDecimalAmount, replaceAmountToDecimal} from 'utils/validation'
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { useFormik } from 'formik';
 import BCInput from 'app/components/bc-input/bc-input';
 import { Item } from 'actions/invoicing/items/items.types';
 import { updateInvoiceItem } from 'actions/invoicing/items/items.action';
@@ -75,13 +78,13 @@ const StyledInput = withStyles((theme: Theme) =>
 )(InputBase);
 
 interface ModalProps {
-    item: Item;
-    classes: any;
+  item: Item;
+  classes: any;
 }
 
-function BCInvoiceEditModal({ item, classes }:ModalProps) {
+function BCInvoiceEditModal({ item, classes }: ModalProps) {
   const { _id, name, isFixed, isJobType, description, tax, tiers } = item;
-  const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
+  const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
@@ -96,7 +99,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
   };
 
   const activeTiers = Object.keys(tiers)
-    .map(tier_id => ({...tiers[tier_id].tier, charge: tiers[tier_id].charge ? `${tiers[tier_id].charge}` : ''}))
+    .map(tier_id => ({ ...tiers[tier_id].tier, charge: tiers[tier_id].charge ? `${tiers[tier_id].charge}` : '' }))
     .filter(tier => tier.isActive)
 
   const formik = useFormik({
@@ -122,12 +125,12 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
         values.tax = 0;
       }
       // dispatch(updateInvoiceItem.fetch(values));
-      const tiers: {['string']:{_id: string; charge: string;}} = values.tiers;
+      const tiers: { ['string']: { _id: string; charge: string; } } = values.tiers;
       const tierArr = Object.values(tiers).map(tier => ({
-        tierId: tier._id, 
+        tierId: tier._id,
         charge: tier.charge ? parseFloat(tier.charge) : 0
       }))
-      if(tierArr.filter((tier)=> !tier.charge).length){
+      if (tierArr.filter((tier) => !tier.charge).length) {
         dispatch(errorSnackBar('Tier Prices cannot be empty'));
         return setIsSubmitting(false);
       }
@@ -141,7 +144,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
         tiers: tierArr
       }
       let response;
-      if(isAdd){
+      if (isAdd) {
         response = await addItem(itemObject).catch((err: { message: any; }) => {
           dispatch(errorSnackBar(err.message));
         });
@@ -188,23 +191,25 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
   }, [itemObj]);
 
 
+
+
   return <DataContainer>
-    <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
+    <hr style={{ height: '1px', background: '#D0D3DC', borderWidth: '0px' }} />
     <form onSubmit={formik.handleSubmit}>
-      <DialogContent classes={{'root': classes.dialogContent}}>
+      <DialogContent classes={{ 'root': classes.dialogContent }}>
         <Grid container alignItems={'center'}>
-          <Grid 
-            item 
-            xs={12} 
-            sm={3} 
-            container 
-            alignItems={'center'} 
-            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'} 
-            style={{padding: '0 7px'}}
+          <Grid
+            item
+            xs={12}
+            sm={3}
+            container
+            alignItems={'center'}
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+            style={{ padding: '0 7px' }}
           >
-            <span style={{color: '#4F4F4F', fontWeight: 500}}>ITEM NAME</span>
+            <span style={{ color: '#4F4F4F', fontWeight: 500 }}>ITEM NAME</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} alignItems='center' style={{ padding: '0 7px' }}>
             <BCInput
               error={formik.touched.name && Boolean(formik.errors.name)}
               handleChange={formik.handleChange}
@@ -213,12 +218,12 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               value={formik.values.name}
               margin={'none'}
               inputProps={{
-                style : {
+                style: {
                   padding: '12px 14px',
                 },
               }}
               InputProps={{
-                style:{
+                style: {
                   borderRadius: 8,
                   marginTop: 10,
                 },
@@ -231,12 +236,12 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'} 
-            style={{padding: '0 7px'}}
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+            style={{ padding: '0 7px' }}
           >
-            <span style={{color: '#4F4F4F', fontWeight: 500, marginTop: 20}}>DESCRIPTION</span>
+            <span style={{ color: '#4F4F4F', fontWeight: 500, marginTop: 20 }}>DESCRIPTION</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} alignItems='center' style={{ padding: '0 7px' }}>
             <BCInput
               error={formik.touched.description && Boolean(formik.errors.description)}
               handleChange={formik.handleChange}
@@ -246,12 +251,12 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
               multiline
               margin={'none'}
               inputProps={{
-                style : {
+                style: {
                   padding: '12px 14px',
                 },
               }}
               InputProps={{
-                style:{
+                style: {
                   borderRadius: 8,
                   marginTop: 10,
                 },
@@ -264,19 +269,19 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
-            style={{padding: '0 7px'}}
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+            style={{ padding: '0 7px' }}
           />
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} alignItems='center' style={{ padding: '0 7px' }}>
             <FormControlLabel
-              classes={{label: classes.checkboxLabel}}
+              classes={{ label: classes.checkboxLabel }}
               control={
                 <Checkbox
                   color={'primary'}
                   checked={formik.values.isJobType}
                   onChange={formik.handleChange}
                   name="isJobType"
-                  classes={{root: classes.checkboxInput}}
+                  classes={{ root: classes.checkboxInput }}
                 />
               }
               label={`This Item is also a Job Type`}
@@ -288,12 +293,12 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
-            style={{padding: '0 7px'}}
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+            style={{ padding: '0 7px' }}
           >
-            <span style={{color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap'}}>CHARGE TYPE</span>
+            <span style={{ color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap' }}>CHARGE TYPE</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} alignItems='center' style={{ padding: '0 7px' }}>
             <Select
               error={formik.touched.isFixed && Boolean(formik.errors.isFixed)}
               input={<StyledInput />}
@@ -314,12 +319,12 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
             sm={3}
             container
             alignItems={'center'}
-            justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
-            style={{padding: '0 7px'}}
+            justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+            style={{ padding: '0 7px' }}
           >
-            <span style={{color: '#4F4F4F', fontWeight: 500}}>TAX</span>
+            <span style={{ color: '#4F4F4F', fontWeight: 500 }}>TAX</span>
           </Grid>
-          <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+          <Grid item xs={12} sm={9} alignItems='center' style={{ padding: '0 7px' }}>
             <FormControl>
               <Select
                 error={formik.touched.tax && Boolean(formik.errors.tax)}
@@ -344,29 +349,35 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
                 sm={3}
                 container
                 alignItems={'center'}
-                justify={window.innerWidth< 600 ? 'flex-start' : 'flex-end'} 
-                style={{padding: '0 7px'}}
+                justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+                style={{ padding: '0 7px' }}
               >
-                <span style={{color: '#4F4F4F', fontWeight: 500}}>TIER {tier.name}</span>
+                <span style={{ color: '#4F4F4F', fontWeight: 500 }}>TIER {tier.name}</span>
               </Grid>
-              <Grid item xs={12} sm={9} alignItems='center' style={{padding: '0 7px'}}>
+              <Grid item xs={12} sm={9} alignItems='center' style={{ padding: '0 7px' }}>
                 <FormControl>
+
                   <BCInput
-                    handleChange={(e: {target: {value: string;}}) => {
-                      formik.setFieldValue(`tiers.${tier._id}.charge`, e.target.value.replace(/[^0-9]/g,''))
+                    onBlur={(e: React.ChangeEvent<HTMLInputElement> ) => {
+                      formik.setFieldValue(`tiers.${tier._id}.charge`, replaceAmountToDecimal(e.target.value))
+                    }}
+                    handleChange={(e: React.ChangeEvent<HTMLInputElement> ) => {
+                      const amount = e.target.value
+                      if (!validateDecimalAmount(amount)) return
+                      formik.setFieldValue(`tiers.${tier._id}.charge`, amount)
                     }}
                     name={`tiers.${tier._id}.charge`}
                     value={`${formik.values.tiers[tier._id].charge}`}
                     margin={'none'}
                     inputProps={{
-                      style : {
+                      style: {
                         padding: '12px 14px',
                         width: 110,
                       },
                     }}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                      style:{
+                      style: {
                         borderRadius: 8,
                         marginTop: 10,
                       },
@@ -378,7 +389,7 @@ function BCInvoiceEditModal({ item, classes }:ModalProps) {
           ))}
         </Grid>
       </DialogContent>
-      <hr style={{height: '1px', background: '#D0D3DC', borderWidth: '0px'}}/>
+      <hr style={{ height: '1px', background: '#D0D3DC', borderWidth: '0px' }} />
       <DialogActions classes={{
         'root': classes.dialogActions
       }}>
@@ -458,5 +469,5 @@ const DataContainer = styled.div`
 
 export default withStyles(
   styles,
-  {'withTheme': true}
+  { 'withTheme': true }
 )(BCInvoiceEditModal);
