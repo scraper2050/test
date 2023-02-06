@@ -1,7 +1,7 @@
 import { VendorActionType, VendorsState } from 'actions/vendor/vendor.types';
 import { Reducer } from 'redux';
 import { cancelOrFinishContractActions } from 'actions/vendor/vendor.action';
-import {ContractorPayment} from "../actions/payroll/payroll.types";
+import { ContractorPayment } from "../actions/payroll/payroll.types";
 
 const initialVendors: VendorsState = {
   loading: false,
@@ -22,9 +22,11 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
         ...state,
         'contractLoading': false,
         'response': action.payload.message,
-        'data': state.data.map((vendor:any) => vendor._id === action.payload._id
-          ? { ...vendor,
-            'status': action.payload.status }
+        'data': state.data.map((vendor: any) => vendor._id === action.payload._id
+          ? {
+            ...vendor,
+            'status': action.payload.status
+          }
           : vendor)
       };
     case cancelOrFinishContractActions.cancelled().type.toString():
@@ -59,12 +61,12 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
       };
     case VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT:
     case VendorActionType.DELETE_SINGLE_VENDOR_PAYMENT:
-      const payments = [...state.vendorPayments];
+      const payments = [...state.vendorPayments || []];
       let index;
       index = payments.findIndex((payment: ContractorPayment) => payment._id === action.payload._id);
       if (index >= 0) {
         if (action.type === VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT)
-          payments[index] = {...payments[index], ...action.payload};
+          payments[index] = { ...payments[index], ...action.payload };
         else
           payments.splice(index, 1);
       }
