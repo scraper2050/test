@@ -1,40 +1,40 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Button,
   withStyles
 } from "@material-ui/core";
 import styles from './payroll.styles';
-import {useHistory, useLocation} from "react-router-dom";
-import BCTableContainer  from "../../components/bc-table-container/bc-table-container";
+import { useHistory, useLocation } from "react-router-dom";
+import BCTableContainer from "../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../components/bc-menu-more";
 import {
   openModalAction,
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../constants";
-import {useDispatch, useSelector} from "react-redux";
+import { modalTypes } from "../../../constants";
+import { useDispatch, useSelector } from "react-redux";
 import {
   formatCurrency, formatDateYMD,
 } from "../../../helpers/format";
 import BCDateRangePicker
-  , {Range} from "../../components/bc-date-range-picker/bc-date-range-picker";
-import {HighlightOff} from "@material-ui/icons";
+, { Range } from "../../components/bc-date-range-picker/bc-date-range-picker";
+import { HighlightOff } from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
-import {getPayrollBalance,refreshContractorPayment} from "../../../actions/payroll/payroll.action";
-import {Contractor} from "../../../actions/payroll/payroll.types";
+import { getPayrollBalance, refreshContractorPayment } from "../../../actions/payroll/payroll.action";
+import { Contractor } from "../../../actions/payroll/payroll.types";
 
 interface Props {
   classes: any;
 }
 
 const ITEMS = [
-  {id: 0, title:'Record Payment'},
-  {id: 1, title:'Past Payment'},
+  { id: 0, title: 'Record Payment' },
+  { id: 1, title: 'Past Payment' },
   // {id: 2, title:'View Details'},
 ]
 
-function Payroll({classes}: Props) {
+function Payroll({ classes }: Props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
@@ -47,7 +47,7 @@ function Payroll({classes}: Props) {
     'pageSize': prevPage ? prevPage.pageSize : 10,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
-  const [selectionRange, setSelectionRange] = useState<Range|null>(null);
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
   useEffect(() => {
@@ -56,14 +56,14 @@ function Payroll({classes}: Props) {
     } else {
       dispatch(getPayrollBalance());
     }
-    if(refresh){
+    if (refresh) {
       dispatch(refreshContractorPayment(false));
     }
   }, [selectionRange, refresh]);
 
   useEffect(() => {
     setTableData(selectedIDs.length > 0 ?
-      contractors.filter((item: any) => selectedIDs.indexOf(item._id) >=0) : contractors);
+      contractors.filter((item: any) => selectedIDs.indexOf(item._id) >= 0) : contractors);
   }, [selectedIDs, contractors])
 
   const recordPayment = (vendor: any) => {
@@ -81,7 +81,7 @@ function Payroll({classes}: Props) {
     }, 200);
   }
 
-  const handleMenuButtonClick = (event: any, id: number, row:any) => {
+  const handleMenuButtonClick = (event: any, id: number, row: any) => {
     event.stopPropagation();
     switch (id) {
       case 0:
@@ -109,10 +109,11 @@ function Payroll({classes}: Props) {
       'sortable': true,
     },
     {
-      'Header': 'Total Amount',
-      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.commissionTotal),
+      'Header': 'Total Balance',
+      'accessor': (originalRow: any, rowIndex: number) => formatCurrency(originalRow.commissionTotal - originalRow.creditAvailable),
       'className': 'font-bold',
       'sortable': true,
+      'sortType': (a: any, b: any) => (a.original.commissionTotal - a.original.creditAvailable) - (b.original.commissionTotal - b.original.creditAvailable)
     },
     // {
     //   'Header': 'Due Date',
@@ -120,12 +121,13 @@ function Payroll({classes}: Props) {
     //   'className': 'font-bold',
     //   'sortable': true,
     // },
-    { Cell({ row }: any) {
+    {
+      Cell({ row }: any) {
         return (
           <BCMenuButton
             icon={MoreHorizIcon}
             items={ITEMS}
-            handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)}/>
+            handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />
         )
       },
       'Header': 'Actions',
@@ -135,7 +137,7 @@ function Payroll({classes}: Props) {
     },
   ];
 
-  function renderDateRangePicker () {
+  function renderDateRangePicker() {
     return <BCDateRangePicker
       noDay
       range={selectionRange}
@@ -144,23 +146,23 @@ function Payroll({classes}: Props) {
     />;
   }
 
-  function renderMenu () {
+  function renderMenu() {
     return (
       <BCItemsFilter
-        items={contractors.map((item: Contractor) => ({id: item._id, value: item.vendor}))}
+        items={contractors.map((item: Contractor) => ({ id: item._id, value: item.vendor }))}
         selected={selectedIDs}
         onApply={setSelectedIDs}
-        />
+      />
     )
   }
 
   const renderClearFilterButton = () => {
-    return(selectedIDs.length > 0 ?
-      <div style={{flex: 1, alignItems: 'center', justifyContent: 'flex-end', display: 'flex'}}>
+    return (selectedIDs.length > 0 || selectionRange ?
+      <div style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', display: 'flex' }}>
         <Button
           variant={'text'}
           className={classes.filterClearButton}
-          onClick={() => setSelectedIDs([])}
+          onClick={() => { setSelectedIDs([]); setSelectionRange(null) }}
           endIcon={<HighlightOff />}
         >Clear Filters</Button></div> : null
     )
@@ -173,11 +175,11 @@ function Payroll({classes}: Props) {
       isLoading={loading}
       //onRowClick={handleRowClick}
       search
-      searchPlaceholder = 'Search...'
+      searchPlaceholder='Search...'
       setPage={setCurrentPage}
       tableData={tableData}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker(), renderClearFilterButton()].map((tool:any, idx:number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
+      toolbar={[renderMenu(), renderDateRangePicker(), renderClearFilterButton()].map((tool: any, idx: number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
     />
   )
 }
