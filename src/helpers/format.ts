@@ -8,7 +8,7 @@ export const formatDate = (date: string): string | undefined => {
 
 export const formatDateMMMDDYYYY = (date: string, isLocal?: boolean): string | undefined => {
   if (typeof date !== undefined && date !== null) {
-    if(isLocal){
+    if (isLocal) {
       return moment(date).format('MMM DD, YYYY');
     }
     return moment.utc(date).format('MMM DD, YYYY');
@@ -26,6 +26,8 @@ export const formatDateYMD = (date: Date | string) => moment(date).format('YYYY-
 
 export const formatDateTimeYMD = (date: Date | string) => moment(date).format('YYYY-MM-DDTHH:mm:ss');
 
+export const formatYMDDateTime = (date: Date | string) => moment(date).format('YYYY-MM-DD HH:mm:ss');
+
 export const formatShortDate = (date: Date) => moment(date).format('ddd, MMM. DD, YYYY');
 
 export const formatShortDateNoDay = (date: Date | string) => moment(date).format('MMM. DD, YYYY');
@@ -36,7 +38,7 @@ export const formatTime = (time: Date) => moment(time).utc().format('hh:mm a');
 
 export const formatToMilitaryTime = (time: Date) => moment(time).format('HH:mm:ss');
 
-export const formatToMilitaryTimeWithOffset = (time: Date) => moment(time).subtract(6,'hours').format('HH:mm:ss');
+export const formatToMilitaryTimeWithOffset = (time: Date) => moment(time).subtract(6, 'hours').format('HH:mm:ss');
 
 export const formatDatTimelll = (time: Date) => moment(time).format('lll');
 
@@ -45,7 +47,7 @@ export const formatDatTimell = (time: Date) => moment(time).format('ll');
 export const formatISOToDateString = (date: string): string => moment(moment.utc(date).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
 
-export const formatISOToDateStringFixedDate = (date: string): string => moment(moment.utc(date).set('date',new Date().getDate()).format('YYYY-MM-DDTHH:mm:ss')).toDate()
+export const formatISOToDateStringFixedDate = (date: string): string => moment(moment.utc(date).set('date', new Date().getDate()).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
 
 export const parseISOMoment = (date: string) => {
@@ -55,16 +57,16 @@ export const parseISOMoment = (date: string) => {
 }
 
 export const parseISODate = (date: string) => {
-  if(!date) return date;
+  if (!date) return date;
   const offset = moment.parseZone().utcOffset();
   const dateObj = moment(date).subtract(offset, 'minutes').add(1, 'hours').hour(0).toDate();
   return dateObj;
-/*  const dateObj = new Date(date)
-  const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
-  return new Date(dateObj.getTime() + userTimezoneOffset);*/
+  /*  const dateObj = new Date(date)
+    const userTimezoneOffset = dateObj.getTimezoneOffset() * 60000;
+    return new Date(dateObj.getTime() + userTimezoneOffset);*/
 }
 
-export const formatCurrency = (value: number|null|undefined, nullValue?: string) => {
+export const formatCurrency = (value: number | null | undefined, nullValue?: string) => {
   if (!value && nullValue !== undefined) return nullValue;
 
   const tempValue = value ? value : 0;
@@ -121,11 +123,11 @@ export const emailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|
 
 export const digitsOnly = /^\d+$/;
 
-export const shortenStringWithElipsis = (input: string, targetLength = 24):string => {
-  if(input.length < targetLength) {
+export const shortenStringWithElipsis = (input: string, targetLength = 24): string => {
+  if (input.length < targetLength) {
     return input
   } else {
-    return `${input.slice(0,targetLength)}...`
+    return `${input.slice(0, targetLength)}...`
   }
 }
 
