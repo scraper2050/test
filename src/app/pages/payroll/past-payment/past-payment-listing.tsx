@@ -14,11 +14,8 @@ import {
 } from "../../../../actions/bc-modal/bc-modal.action";
 import { modalTypes } from "../../../../constants";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  formatCurrency, formatDate,
-  formatDateYMD,
-  formatShortDateNoDay
-} from "../../../../helpers/format";
+import { formatCurrency, formatDate, formatYMDDateTime } from "../../../../helpers/format";
+import { sortArrByDate } from '../../../../utils/table-sort'
 import BCDateRangePicker, { Range } from "../../../components/bc-date-range-picker/bc-date-range-picker";
 import { HighlightOff } from "@material-ui/icons";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
@@ -34,6 +31,7 @@ import {
 } from "../../../../actions/payroll/payroll.types";
 import moment from "moment";
 import { voidPayment, voidAdvancePayment } from 'api/payroll.api'
+import { setPayments } from 'actions/invoicing/payments/payments.action';
 
 interface Props {
   classes: any;
@@ -82,6 +80,8 @@ function PastPayments({ classes }: Props) {
   }, [selectedIDs, contractors]);
 
   useEffect(() => {
+    dispatch(setPayments(sortArrByDate(payments, 'createdAt')))
+
     if (selectionRange) {
       const filtered = payments.filter((payment: ContractorPayment) =>
         moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
@@ -181,15 +181,9 @@ function PastPayments({ classes }: Props) {
     }
   }
   const sortByDate = (a: any, b: any) => {
-    const dateA = formatDateYMD(a.original.paidAt)!;
-    const dateB = formatDateYMD(b.original.paidAt)!;
-    if (dateA < dateB) {
-      return -1;
-    }
-    if (dateA > dateB) {
-      return 1;
-    }
-    return 0;
+    const dateA = formatYMDDateTime(a.original.paidAt);
+    const dateB = formatYMDDateTime(b.original.paidAt);
+    return dateB.localeCompare(dateA)
   }
   const columns: any = [
     {
