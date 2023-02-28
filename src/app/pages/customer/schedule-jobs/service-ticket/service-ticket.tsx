@@ -26,7 +26,7 @@ import BCDateRangePicker, {Range}
   from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import moment from "moment";
 
-function ServiceTicket({ classes }: any) {
+function ServiceTicket({ classes, hidden }: any) {
   // console.log({classes})
   const dispatch = useDispatch();
   const [showAllTickets, toggleShowAllTickets] = useState(false);
@@ -232,10 +232,10 @@ function ServiceTicket({ classes }: any) {
   ];
 
   useEffect(() => {
-    if (refresh) {
+    if (refresh && !hidden) {
       dispatch(getAllServiceTicketAPI());
     }
-  }, [refresh]);
+  }, [refresh, hidden]);
 
   const handleRowClick = (event: any, row: any) => {
   };
