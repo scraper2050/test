@@ -34,8 +34,8 @@ function ScheduleJobsPage({ classes }: any) {
       dispatch(refreshServiceTickets(true));
       localStorage.setItem('prevPage', 'schedule')
     }
-    // dispatch(getCustomers());
-    dispatch(loadInvoiceItems.fetch());
+    dispatch(getCustomers());
+    // dispatch(loadInvoiceItems.fetch());
     dispatch(getAllJobTypesAPI());
     return () => {
       dispatch(refreshServiceTickets(false));
