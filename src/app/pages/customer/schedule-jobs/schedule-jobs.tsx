@@ -36,7 +36,7 @@ function ScheduleJobsPage({ classes }: any) {
     }
     // dispatch(getCustomers());
     dispatch(loadInvoiceItems.fetch());
-    // dispatch(getAllJobTypesAPI());
+    dispatch(getAllJobTypesAPI());
     return () => {
       dispatch(refreshServiceTickets(false));
     }

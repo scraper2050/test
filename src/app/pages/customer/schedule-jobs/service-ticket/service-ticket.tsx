@@ -232,10 +232,16 @@ function ServiceTicket({ classes, hidden }: any) {
   ];
 
   useEffect(() => {
-    if (refresh && !hidden) {
+    if (refresh) {
       dispatch(getAllServiceTicketAPI());
     }
-  }, [refresh, hidden]);
+  }, [refresh]);
+
+  useEffect(() => {
+    if (!hidden) {
+      dispatch(getAllServiceTicketAPI());
+    }
+  }, [hidden]);
 
   const handleRowClick = (event: any, row: any) => {
   };
