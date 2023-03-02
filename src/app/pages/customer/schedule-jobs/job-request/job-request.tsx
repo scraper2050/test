@@ -20,7 +20,7 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import {getJobRequestDescription} from "../../../../../helpers/job";
 
-function JobRequest({ classes }: any) {
+function JobRequest({ classes, hidden }: any) {
   const dispatch = useDispatch();
   const { isLoading = true, jobRequests, refresh = true, total, prevCursor, nextCursor, lastPageCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ jobRequests }: any) => ({
@@ -133,26 +133,30 @@ function JobRequest({ classes }: any) {
     const [IconComponent, setIconComponent] = useState<null | IconComponentType>(null);
 
     useEffect(() => {
-      if(selectedStatus !== '-1'){
-        setIconComponent(statusReference[selectedStatus].icon || null);
-      } else {
-        setIconComponent(null);
+      if(!hidden){
+        if(selectedStatus !== '-1'){
+          setIconComponent(statusReference[selectedStatus].icon || null);
+        } else {
+          setIconComponent(null);
+        }
+        if(loadCount.current !== 0){
+          dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+          dispatch(setCurrentPageIndex(0));
+        } else {
+          dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, '0', keyword, selectionRange));
+          dispatch(setCurrentPageIndex(0));
+        }
       }
-      if(loadCount.current !== 0){
-        dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
-        dispatch(setCurrentPageIndex(0));
-      } else {
-        dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, '0', keyword, selectionRange));
-        dispatch(setCurrentPageIndex(0));
-      }
-    }, [selectedStatus]);
+    }, [selectedStatus, hidden]);
 
     useEffect(() => {
-      if(loadCount.current !== 0){
-        dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
-        dispatch(setCurrentPageIndex(0));
+      if(hidden) {
+        if(loadCount.current !== 0){
+          dispatch(getAllJobRequestAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+          dispatch(setCurrentPageIndex(0));
+        }
       }
-    }, [selectionRange]);
+    }, [selectionRange, hidden]);
 
     return (
       <>
@@ -228,22 +232,26 @@ function JobRequest({ classes }: any) {
   }
 
   useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
+    if(!hidden) {
+      if (refresh) {
+        dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
+        dispatch(setCurrentPageIndex(0));
+        dispatch(setCurrentPageSize(10));
+      }
+      setTimeout(() => {
+        loadCount.current++;
+      }, 1000);
+    }
+  }, [refresh, hidden]);
+
+  useEffect(() => {
+    if(!hidden) {
+      dispatch(getAllJobRequestAPI());
+      dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
-    setTimeout(() => {
-      loadCount.current++;
-    }, 1000);
-  }, [refresh]);
-
-  useEffect(() => {
-    dispatch(getAllJobRequestAPI());
-    dispatch(setKeyword(''));
-    dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
-  }, [])
+  }, [hidden])
 
 
   const handleRowClick = (event: any, row: any) => {

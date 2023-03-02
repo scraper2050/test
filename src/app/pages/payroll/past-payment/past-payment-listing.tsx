@@ -1,49 +1,49 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Button,
   withStyles
 } from "@material-ui/core";
 import styles from '../payroll.styles';
-import {useLocation} from "react-router-dom";
-import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
+import { useLocation } from "react-router-dom";
+import BCTableContainer from "../../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../components/bc-menu-more";
 import {
   openModalAction,
   setModalDataAction
 } from "../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
-import {useDispatch, useSelector} from "react-redux";
-import {
-  formatCurrency, formatDate,
-  formatDateYMD,
-  formatShortDateNoDay
-} from "../../../../helpers/format";
-import BCDateRangePicker, {Range} from "../../../components/bc-date-range-picker/bc-date-range-picker";
-import {HighlightOff} from "@material-ui/icons";
+import { modalTypes } from "../../../../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { formatCurrency, formatDate, formatYMDDateTime } from "../../../../helpers/format";
+import { sortArrByDate } from '../../../../utils/table-sort'
+import BCDateRangePicker, { Range } from "../../../components/bc-date-range-picker/bc-date-range-picker";
+import { HighlightOff } from "@material-ui/icons";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
+import { getAllPaymentsAPI } from '../../../../api/payment.api'
 import {
   getContractorPayments,
   getContractors,
+  setContractorPayments
 } from "../../../../actions/payroll/payroll.action";
 import {
   Contractor,
   ContractorPayment
 } from "../../../../actions/payroll/payroll.types";
 import moment from "moment";
-import {voidPayment, voidAdvancePayment} from 'api/payroll.api'
+import { voidPayment, voidAdvancePayment } from 'api/payroll.api'
+import { setPayments } from 'actions/invoicing/payments/payments.action';
 
 interface Props {
   classes: any;
 }
 
 const ITEMS = [
-  {id: 0, title:'Edit'},
-  {id: 1, title:'Delete'},
-  {id: 2, title:'View Detail'},
+  { id: 0, title: 'Edit' },
+  { id: 1, title: 'Delete' },
+  { id: 2, title: 'View Detail' },
 ]
 
-function PastPayments({classes}: Props) {
+function PastPayments({ classes }: Props) {
   const dispatch = useDispatch();
   const location = useLocation<any>();
   const locationState = location.state;
@@ -59,24 +59,29 @@ function PastPayments({classes}: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
+  const isFiltered = selectedIDs.length > 0 || selectionRange !== null;
+
   useEffect(() => {
     dispatch(getContractors());
     const obj: any = location.state;
     if (obj?.contractor) {
       setSelectedIDs([obj.contractor._id]);
-    } else {
-      dispatch(getContractorPayments());
+    }
+    return () => {
+      dispatch(setContractorPayments([]))
     }
   }, []);
 
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
     if (cont) {
-      dispatch(getContractorPayments({id: cont._id, type: cont.type}));
+      dispatch(getContractorPayments({ id: cont._id, type: cont.type }));
     }
-  }, [selectedIDs]);
+  }, [selectedIDs, contractors]);
 
   useEffect(() => {
+    dispatch(setPayments(sortArrByDate(payments, 'createdAt')))
+
     if (selectionRange) {
       const filtered = payments.filter((payment: ContractorPayment) =>
         moment(payment.paidAt).isBetween(selectionRange?.startDate, selectionRange?.endDate, 'day', '[]')
@@ -88,13 +93,13 @@ function PastPayments({classes}: Props) {
   }, [selectionRange, payments]);
 
   const editPayment = (payment: any) => {
-    if(payment.__t === 'AdvancePaymentVendor') {
+    if (payment.__t === 'AdvancePaymentVendor') {
       dispatch(setModalDataAction({
         data: {
           modalTitle: 'Edit Advance Payment',
           advancePayment: payment,
           payroll: payment.payedPerson,
-          dateRange: {startDate: payment.startDate, endDate: payment.endDate},
+          dateRange: { startDate: payment.startDate, endDate: payment.endDate },
         },
         'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
       }));
@@ -104,7 +109,7 @@ function PastPayments({classes}: Props) {
           modalTitle: 'Edit Payment',
           payment,
           payroll: payment.payedPerson,
-          dateRange: {startDate: payment.startDate, endDate: payment.endDate},
+          dateRange: { startDate: payment.startDate, endDate: payment.endDate },
         },
         'type': modalTypes.PAYROLL_RECORD_PAYMENT_MODAL
       }));
@@ -147,7 +152,7 @@ function PastPayments({classes}: Props) {
     }, 200);
   }
 
-  const handleMenuButtonClick = (event: any, id: number, row:any) => {
+  const handleMenuButtonClick = (event: any, id: number, row: any) => {
     switch (id) {
       case 0:
         editPayment(row);
@@ -161,7 +166,7 @@ function PastPayments({classes}: Props) {
     }
   }
 
-  const renderPayrollTypeText = (string:string) => {
+  const renderPayrollTypeText = (string: string) => {
     switch (string) {
       case 'PaymentVendor':
         return 'Payroll Payment'
@@ -169,13 +174,17 @@ function PastPayments({classes}: Props) {
       case 'AdvancePaymentVendor':
         return 'Advance Payment'
         break;
-    
+
       default:
         return string
         break;
     }
   }
-
+  const sortByDate = (a: any, b: any) => {
+    const dateA = formatYMDDateTime(a.original.paidAt);
+    const dateB = formatYMDDateTime(b.original.paidAt);
+    return dateB.localeCompare(dateA)
+  }
   const columns: any = [
     {
       'Header': 'Vendor',
@@ -194,6 +203,7 @@ function PastPayments({classes}: Props) {
       'accessor': (originalRow: any) => formatDate(originalRow.paidAt),
       'className': 'font-bold',
       'sortable': true,
+      'sortType': sortByDate,
     },
     {
       'Header': 'Amount',
@@ -217,17 +227,18 @@ function PastPayments({classes}: Props) {
       'Header': 'Notes',
       'accessor': (originalRow: any) =>
         originalRow.note ?
-          (originalRow.note.length < 100 ? originalRow.note : originalRow.note.substring(0, 100)+'...')
+          (originalRow.note.length < 100 ? originalRow.note : originalRow.note.substring(0, 100) + '...')
           : '',
       'sortable': true,
       'className': classes.tableCellWrap,
     },
-    { Cell({ row }: any) {
+    {
+      Cell({ row }: any) {
         return (
           <BCMenuButton
             icon={MoreHorizIcon}
             items={ITEMS}
-            handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)}/>
+            handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />
         )
       },
       'Header': 'Actions',
@@ -237,28 +248,32 @@ function PastPayments({classes}: Props) {
     },
   ];
 
-  function renderDateRangePicker () {
+  function renderDateRangePicker() {
     return <BCDateRangePicker range={selectionRange} onChange={setSelectionRange} />
   }
 
-  function renderMenu () {
+  function renderMenu() {
     return (
       <BCItemsFilter
-        items={contractors.map((item: Contractor) => ({id: item._id, value: item.vendor}))}
+        items={contractors.map((item: Contractor) => ({ id: item._id, value: item.vendor }))}
         selected={selectedIDs}
         single={true}
         onApply={setSelectedIDs}
-        />
+      />
     )
   }
 
   const renderClearFilterButton = () => {
-    return(selectedIDs.length > 0 ?
-      <div style={{flex: 1, alignItems: 'center', justifyContent: 'flex-end', display: 'flex'}}>
+    return (selectedIDs.length > 0 || selectionRange ?
+      <div style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', display: 'flex' }}>
         <Button
           variant={'text'}
           className={classes.filterClearButton}
-          onClick={() => setSelectedIDs([])}
+          onClick={() => {
+            setSelectedIDs([])
+            setSelectionRange(null)
+            dispatch(setContractorPayments([]))
+          }}
           endIcon={<HighlightOff />}
         >Clear Filters</Button></div> : null
     )
@@ -270,12 +285,13 @@ function PastPayments({classes}: Props) {
       currentPage={currentPage}
       isLoading={loading}
       //onRowClick={handleRowClick}
+      initialMsg={isFiltered ? 'No records found!' : 'Please select a vendor'}
       search
-      searchPlaceholder = 'Search...'
+      searchPlaceholder='Search...'
       setPage={setCurrentPage}
       tableData={filteredPayments}
       toolbarPositionLeft={true}
-      toolbar={[renderMenu(), renderDateRangePicker()].map((tool:any, idx:number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
+      toolbar={[renderMenu(), renderDateRangePicker(), renderClearFilterButton()].map((tool: any, idx: number) => <React.Fragment key={idx}>{tool}</React.Fragment>)}
     />
   )
 }
