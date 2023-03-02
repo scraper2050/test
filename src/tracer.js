@@ -13,7 +13,7 @@ export const setUpTracer = () => {
     url: "https://otlp.telemetryhub.com/v1/traces",
     headers: {
       "content-type": "application/json",
-      "x-telemetryhub-key": "d9b960bc-cb9a-4b16-b2ac-f2835e70bb65:398c17cb-61ee-45d5-a9f3-264ca51d570c:4114641"
+      "x-telemetryhub-key": process.env.TELEMETRY_KEY
     }
   })));
 
