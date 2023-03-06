@@ -10,6 +10,7 @@ import store from './store';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './scss/index.scss';
 import clearCache from 'utils/cachecleaner';
+import { setUpTracer } from './tracer';
 
 clearCache(false);
 
@@ -22,6 +23,7 @@ const THEME = createMuiTheme({
 });
 
 LogRocket.init('lt4dnt/blueclerk');
+setUpTracer();
 
 ReactDOM.render(
   <MuiThemeProvider theme={THEME}>
