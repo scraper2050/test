@@ -5,9 +5,9 @@ import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { DocumentLoadInstrumentation } from "@opentelemetry/instrumentation-document-load";
 import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
 
-export const setUpTracer = () => {
   // Create a provider for activating and tracking spans
   const tracerProvider = new WebTracerProvider();
+
   // Configure the exporter with TelemetryHub's endpoint and access token
   tracerProvider.addSpanProcessor(new BatchSpanProcessor(new OTLPTraceExporter({
     url: "https://otlp.telemetryhub.com/v1/traces",
@@ -17,6 +17,9 @@ export const setUpTracer = () => {
     }
   })));
 
+  // Register the tracer to receive spans from instrumentation (see below)
+  tracerProvider.register();
+  
   registerInstrumentations({
     instrumentations: [
       new DocumentLoadInstrumentation(),
@@ -26,8 +29,3 @@ export const setUpTracer = () => {
     ],
     tracerProvider: tracerProvider,
   });
-  
-  // Register the tracer to receive spans from instrumentation (see below)
-  tracerProvider.register();
-}
-
