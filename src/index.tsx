@@ -1,7 +1,6 @@
 import * as CONSTANTS from './constants';
 import * as serviceWorker from './serviceWorker';
 import App from './App';
-import LogRocket from 'logrocket';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -22,7 +21,6 @@ const THEME = createMuiTheme({
   }
 });
 
-LogRocket.init('lt4dnt/blueclerk');
 setUpTracer();
 
 ReactDOM.render(
