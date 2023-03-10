@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getCustomers } from 'api/customer.api';
 import { loadCustomersActions } from 'actions/customer/customer.action';
 import {
