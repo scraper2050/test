@@ -396,7 +396,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     <DataContainer id={'0'}>
       <BCTableContainer
         columns={columns}
-        isLoading={isLoading}
+        isLoading={isLoading || isFetchingMore}
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Jobs...'}
