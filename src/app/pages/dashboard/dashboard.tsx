@@ -56,7 +56,7 @@ function DashboardPage({ classes }: any): JSX.Element {
       />,
       'link': '/main/customers/schedule',
       'cb': () => {
-        prefetchPage({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: 10, previousCursor: '', nextCursor:''}})
+        prefetchPage({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: 10, nextCursor:''}})
       }
     },
     {
@@ -142,8 +142,7 @@ function DashboardPage({ classes }: any): JSX.Element {
   useEffect(() => {
     dispatch(loadingVendors());
     dispatch(getVendors());
-    // dispatch(getAllJobsAPI())
-    prefetchPage({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: 10,  previousCursor: '', nextCursor:''}})
+    prefetchPage({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: 10, nextCursor:''}})
 
   }, []);
 
