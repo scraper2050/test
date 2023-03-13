@@ -30,23 +30,26 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const {refresh = true,   currentPageIndex, currentPageSize, keyword} = useSelector(
+  const {refresh = true,   currentPageIndex, currentPageSize, prevCursor, nextCursor, keyword} = useSelector(
     ({ jobState }: any) => ({ 
       refresh: jobState.refresh,
       currentPageIndex: jobState.currentPageIndex,
       currentPageSize: jobState.currentPageSize,
       keyword: jobState.keyword,
+      prevCursor: jobState.prevCursor, 
+      nextCursor: jobState.nextCursor,
     })
   );
   const prefetchJobs = usePrefetch('listJobs')
-  const {data, isFetching, isSuccess, isLoading } = useListJobsQuery({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: currentPageSize,  previousCursor: '', nextCursor:''} });
-
-  const { jobs = [], total=0, previousCursor ='', nextCursor='' } = data || {}
-
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  const [pageCursor, setPageCursor] = useState({nextCursor: '', previousCursor: '', seekingNext: true});
+  const [isFetchingMore, setIsFetchingMore] = useState(true);
   const loadCount = useRef<number>(0);
+  
+  const {data, isFetching, isSuccess, isLoading } = useListJobsQuery({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: currentPageSize,  ...(pageCursor?.seekingNext ? {nextCursor: nextCursor} : {previousCursor: prevCursor} )} });
+  const { jobs = [], total=0, previousCursor =''  } = data || {}
 
   const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setFilterMenuAnchorEl(event.currentTarget);
@@ -227,11 +230,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     };*/
 
     useEffect(() => {
-      if(!isFetching && isSuccess && !isLoading){
-        dispatch(setPreviousJobsCursor(previousCursor))
-        dispatch(setNextJobsCursor(nextCursor))
+      if(!isFetching && isSuccess && isFetchingMore  ){
+        setIsFetchingMore(false)
+        const { previousCursor, nextCursor} = data || {}
+        setPageCursor((prev) => {
+          return ({...prev, previousCursor, nextCursor })
+        })
       }
-    },[isFetching, isSuccess, isLoading])
+    },[data?.previousCursor, data?.nextCursor])
 
     useEffect(() => {
       if(selectedStatus !== '-1' && selectedStatus !== '-2'){
@@ -367,10 +373,24 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     }
   };
 
-  const handleFetching = useCallback((num: number) => {
-    const {previousCursor, nextCursor} = data || {};
-    prefetchJobs(({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: num, previousCursor , nextCursor }}))
-  },[])
+  const handleFetching = (num: number, isPrev:boolean, isNext:boolean, query :string) => {
+    const {previousCursor = '', nextCursor = ''} = pageCursor;
+    setIsFetchingMore(true)
+
+    if(isPrev){
+      setPageCursor(prev =>({...prev, seekingNext: false}))
+    } else {
+      setPageCursor(prev =>({...prev, seekingNext: true}))
+    }
+    if(!isPrev && !isNext){
+      dispatch(setPreviousJobsCursor(''));
+      dispatch(setNextJobsCursor(''));
+    } else {
+      dispatch(setPreviousJobsCursor(previousCursor));
+      dispatch(setNextJobsCursor(nextCursor));
+    }
+    dispatch(setCurrentPageSize(num));
+  } 
 
   return (
     <DataContainer id={'0'}>
