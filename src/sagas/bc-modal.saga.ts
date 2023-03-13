@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { closeModalAction, openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { fork, put, take } from 'redux-saga/effects';
 

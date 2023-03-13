@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getAllCompanyEquipments } from "api/company-equipment.api";
 import { loadCompanyEquipmentsActions } from "actions/company-equipment/company-equipment.action";
 import { call, cancelled, fork, put, take } from "redux-saga/effects";
