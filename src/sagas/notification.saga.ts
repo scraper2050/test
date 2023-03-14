@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { acceptRejectVendorAPI } from 'api/vendor.api';
 import { acceptOrRejectContractNotificationAction, dismissNotificationAction, loadNotificationsActions, markNotificationAsRead } from 'actions/notifications/notifications.action';
 import {

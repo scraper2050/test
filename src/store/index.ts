@@ -4,13 +4,11 @@ import rootReducer from '../reducers';
 import rootSaga from 'sagas';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { apiRTK } from 'services/jobs';
 
 const initialState = {};
 
 const sagaMiddleware = createSagaMiddleware();
-const jobsMiddleware = apiRTK.middleware
-const middleware = [sagaMiddleware, ReduxThunk,jobsMiddleware];
+const middleware = [sagaMiddleware, ReduxThunk];
 
 const store = createStore(
   rootReducer,

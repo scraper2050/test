@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { all, call, cancelled, put, takeLatest } from 'redux-saga/effects';
 import { SalesTaxProps, createSalesTax, updateSalesTax } from 'api/tax.api';
 import { createSalesTaxAction, updateSalesTaxAction } from 'actions/tax/tax.action';
