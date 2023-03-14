@@ -94,7 +94,6 @@ const formatNumber = (number: number) => {
 export const convertMilitaryTime = (time: string) => {
   let timeAr = time.match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
   if (timeAr.length > 1) {
-    //@ts-ignore
     timeAr = timeAr.slice(1); // Remove full string match value.
     timeAr[3] = Number(timeAr[0]) < 12 ? ' AM' : ' PM'; // Set AM/PM
     const hoursAsInt = parseInt(timeAr[0]);

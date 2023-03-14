@@ -75,7 +75,6 @@ import { reportReducer as reportState } from './report.reducer'
 import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './advance-filter.reducer'
 import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-technician-filter.reducer'
 import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer'
-import { apiRTK } from 'services/jobs';
 
 
 export interface ReducerParamsInterface {
@@ -159,7 +158,6 @@ const appReducer = combineReducers({
   advanceFilterInvoiceState,
   mapTechnicianFilterState,
   mapTechnicianJobsState,
-  [apiRTK.reducerPath]: apiRTK.reducer,
 });
 
 const rootReducer = (state: any, action: any) => {
