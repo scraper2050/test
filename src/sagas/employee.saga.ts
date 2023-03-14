@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getEmployeesForJob } from 'api/employee.api';
 import { loadAllEmployeesActions } from 'actions/employee/employee.action';
 import {

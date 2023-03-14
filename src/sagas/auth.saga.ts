@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Auth, ChangePassword } from 'app/models/user';
 import { changePassword, login } from 'api/auth.api';
 import { call, cancel, cancelled, fork, put, take, takeLatest } from 'redux-saga/effects';

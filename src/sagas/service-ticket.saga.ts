@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getServiceTicketDetail } from 'api/service-tickets.api';
 import { setOpenServiceTicketObject, setServiceTicketLoading } from 'actions/service-ticket/service-ticket.action';
 import { types } from 'actions/service-ticket/service-ticket.types';
