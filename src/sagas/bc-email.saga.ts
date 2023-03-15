@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { call, cancelled, put, takeLatest } from 'redux-saga/effects';
 import { emailJobReport } from 'api/job-report.api';
 import { updateEmailHistory } from 'actions/customer/job-report/job-report.action';

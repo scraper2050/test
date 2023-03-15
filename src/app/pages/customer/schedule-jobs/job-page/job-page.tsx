@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Checkbox, FormControlLabel, withStyles, Menu, MenuItem } from '@material-ui/core';
@@ -13,8 +13,7 @@ import {
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize, setKeyword, setPreviousJobsCursor,
-  setNextJobsCursor } from 'actions/job/job.action';
+import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -23,33 +22,30 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import moment from "moment";
 import {getVendor} from "../../../../../helpers/job";
-import { useListJobsQuery, usePrefetch } from '../../../../../services/jobs'
 
 function JobPage({ classes, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const {refresh = true,   currentPageIndex, currentPageSize, prevCursor, nextCursor, keyword} = useSelector(
-    ({ jobState }: any) => ({ 
+  const { isLoading = true, jobs, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+    ({ jobState }: any) => ({
+      isLoading: jobState.isLoading,
+      jobs: jobState.data,
       refresh: jobState.refresh,
+      prevCursor: jobState.prevCursor,
+      nextCursor: jobState.nextCursor,
+      total: jobState.total,
       currentPageIndex: jobState.currentPageIndex,
       currentPageSize: jobState.currentPageSize,
       keyword: jobState.keyword,
-      prevCursor: jobState.prevCursor, 
-      nextCursor: jobState.nextCursor,
     })
   );
-  const prefetchJobs = usePrefetch('listJobs')
+
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
-  const [pageCursor, setPageCursor] = useState({nextCursor: '', previousCursor: '', seekingNext: true});
-  const [isFetchingMore, setIsFetchingMore] = useState(true);
   const loadCount = useRef<number>(0);
-  
-  const {data, isFetching, isSuccess, isLoading } = useListJobsQuery({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: currentPageSize,  ...(pageCursor?.seekingNext ? {nextCursor: nextCursor} : {previousCursor: prevCursor} )} });
-  const { jobs = [], total=0, previousCursor =''  } = data || {}
 
   const handleFilterClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setFilterMenuAnchorEl(event.currentTarget);
@@ -230,16 +226,6 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     };*/
 
     useEffect(() => {
-      if(!isFetching && isSuccess && isFetchingMore  ){
-        setIsFetchingMore(false)
-        const { previousCursor, nextCursor} = data || {}
-        setPageCursor((prev) => {
-          return ({...prev, previousCursor, nextCursor })
-        })
-      }
-    },[data?.previousCursor, data?.nextCursor])
-
-    useEffect(() => {
       if(selectedStatus !== '-1' && selectedStatus !== '-2'){
         setIconComponent(statusReference[selectedStatus].icon);
         // toggleShowAllJobs(false);
@@ -250,12 +236,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         setIconComponent(null);
       }
       if(loadCount.current !== 0){
+        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectedStatus]);
 
     useEffect(() => {
       if(loadCount.current !== 0){
+        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectionRange]);
@@ -346,6 +334,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     if (refresh) {
+      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -355,6 +344,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   }, [refresh]);
 
   useEffect(() => {
+    dispatch(getAllJobsAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
@@ -373,30 +363,11 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     }
   };
 
-  const handleFetching = (num: number, isPrev:boolean, isNext:boolean, query :string) => {
-    const {previousCursor = '', nextCursor = ''} = pageCursor;
-    setIsFetchingMore(true)
-
-    if(isPrev){
-      setPageCursor(prev =>({...prev, seekingNext: false}))
-    } else {
-      setPageCursor(prev =>({...prev, seekingNext: true}))
-    }
-    if(!isPrev && !isNext){
-      dispatch(setPreviousJobsCursor(''));
-      dispatch(setNextJobsCursor(''));
-    } else {
-      dispatch(setPreviousJobsCursor(previousCursor));
-      dispatch(setNextJobsCursor(nextCursor));
-    }
-    dispatch(setCurrentPageSize(num));
-  } 
-
   return (
     <DataContainer id={'0'}>
       <BCTableContainer
         columns={columns}
-        isLoading={isLoading || isFetchingMore}
+        isLoading={isLoading}
         onRowClick={handleRowClick}
         search
         searchPlaceholder={'Search Jobs...'}
@@ -404,8 +375,8 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
-        fetchFunction={
-          handleFetching
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
+          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
         currentPageIndex={currentPageIndex}

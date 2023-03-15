@@ -20,7 +20,6 @@ import {
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../constants';
-import { usePrefetch } from '../../../services/jobs'
 
 interface RowStatusTypes {
   row: {
@@ -36,7 +35,6 @@ interface StatusTypes {
 
 function DashboardPage({ classes }: any): JSX.Element {
   const dispatch = useDispatch();
-  const prefetchPage = usePrefetch('listJobs');
   const vendors = useSelector((state: any) => state.vendors);
 
   const history = useHistory();
@@ -54,10 +52,7 @@ function DashboardPage({ classes }: any): JSX.Element {
         height={25}
         width={25}
       />,
-      'link': '/main/customers/schedule',
-      'cb': () => {
-        prefetchPage({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: 10, nextCursor:''}})
-      }
+      'link': '/main/customers/schedule'
     },
     {
       'text': 'Tickets',
@@ -142,8 +137,6 @@ function DashboardPage({ classes }: any): JSX.Element {
   useEffect(() => {
     dispatch(loadingVendors());
     dispatch(getVendors());
-    prefetchPage({url:'/getJobs', type:'post', isCustomerAPI: false, data: {pageSize: 10, nextCursor:''}})
-
   }, []);
 
   const openVendorModal = () => {
@@ -180,7 +173,7 @@ function DashboardPage({ classes }: any): JSX.Element {
                 spacing={4}>
                 {
                   buttonLinks.map((button:any, linkIdx: number) => {
-                    const { text, icon, link, cb } = button;
+                    const { text, icon, link } = button;
                     return (
                       <Grid
                         key={linkIdx}
@@ -190,7 +183,7 @@ function DashboardPage({ classes }: any): JSX.Element {
                         xs={12} >
                         <BCButtonDashboard
                           icon={icon}
-                          onClick={() =>{ history.push(link); cb?.()}}
+                          onClick={() => history.push(link)}
                           text={text}
                         />
                       </Grid>
