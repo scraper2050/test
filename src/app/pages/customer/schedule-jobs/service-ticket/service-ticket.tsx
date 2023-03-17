@@ -268,6 +268,12 @@ function ServiceTicket({ classes, hidden }: any) {
       loadCount.current++;
     }, 1000);
   }, [hidden]);
+  useEffect(() => {
+    dispatch(getAllServiceTicketsAPI());
+    dispatch(setKeyword(''));
+    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentPageSize(10));
+  }, [])
 
   const handleRowClick = (event: any, row: any) => {
   };
