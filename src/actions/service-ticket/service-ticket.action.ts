@@ -69,6 +69,48 @@ export const setClearOpenTicketFilterState = (openTicketFilterObj: any) => {
   };
 };
 
+export const setPreviousServiceTicketCursor = (prevCursor: string) => {
+  return {
+    'payload': prevCursor,
+    'type': types.SET_PREVIOUS_SERVICE_TICKET_CURSOR
+  };
+};
+
+export const setNextServiceTicketCursor = (nextCursor: string) => {
+  return {
+    'payload': nextCursor,
+    'type': types.SET_NEXT_SERVICE_TICKET_CURSOR
+  };
+};
+
+export const setTotal = (total: number) => {
+  return {
+    'payload': total,
+    'type': types.SET_SERVICE_TICKET_TOTAL
+  };
+};
+
+export const setCurrentPageIndex = (currentPageIndex: number) => {
+  return {
+    'payload': currentPageIndex,
+    'type': types.SET_CURRENT_SERVICE_TICKET_PAGE_INDEX
+  };
+};
+
+export const setCurrentPageSize = (currentPageSize: number) => {
+  return {
+    'payload': currentPageSize,
+    'type': types.SET_CURRENT_SERVICE_TICKET_PAGE_SIZE
+  };
+};
+
+export const setKeyword = (keyword: string) => {
+  return {
+    'payload': keyword,
+    'type': types.SET_SERVICE_TICKET_SEARCH_KEYWORD
+  };
+};
+
 export const setSelectedCustomers = (customers: any[]) => {
   return {
     'payload': customers,

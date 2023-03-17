@@ -2,15 +2,17 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import InfoIcon from '@material-ui/icons/Info';
 import {
   getAllServiceTicketAPI,
-  getServiceTicketDetail
+  getServiceTicketDetail,
+  getAllServiceTicketsAPI
 } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
 import { formatDate } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
 import {Checkbox, FormControlLabel, withStyles} from "@material-ui/core";
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/service-ticket/service-ticket.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
@@ -31,22 +33,23 @@ function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
   const [showAllTickets, toggleShowAllTickets] = useState(false);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
+  const loadCount = useRef<number>(0);
   const customStyles = useCustomStyles();
-  const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
-    'isLoading': serviceTicket.isLoading,
-    'refresh': serviceTicket.refresh,
-    'tickets': serviceTicket.tickets
+  const { isLoading = true, tickets, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(({ serviceTicket }: any) => ({
+    isLoading: serviceTicket.isLoading,
+    refresh: serviceTicket.refresh,
+    tickets: serviceTicket.tickets,
+    prevCursor: serviceTicket.prevCursor,
+    nextCursor: serviceTicket.nextCursor,
+    total: serviceTicket.total,
+    currentPageIndex: serviceTicket.currentPageIndex,
+    currentPageSize: serviceTicket.currentPageSize,
+    keyword: serviceTicket.keyword,
   }));
   const filteredTickets = tickets.filter((ticket: any) => {
     let cond = true
 
-    if (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
-    if (selectionRange) {
-      const offset = moment.parseZone().utcOffset();
-      const parsedDate = moment(ticket.dueDate).subtract(offset, 'minutes').add(1, 'hours').hour(0).toDate();
-      cond = cond &&
-        moment(parsedDate).isBetween(selectionRange.startDate, selectionRange.endDate, 'day', '[]');
-    }
+    // if (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     return cond;
   })
 
@@ -81,6 +84,19 @@ function ServiceTicket({ classes, hidden }: any) {
   };
 
   function Toolbar() {
+    useEffect(() => {
+      if(loadCount.current !== 0){
+        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange));
+        dispatch(setCurrentPageIndex(0));
+      }
+    }, [showAllTickets]);
+
+    useEffect(() => {
+      if(loadCount.current !== 0){
+        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange));
+        dispatch(setCurrentPageIndex(0));
+      }
+    }, [selectionRange]);
     return <>
       <FormControlLabel
         classes={{root: classes.noMarginRight}}
@@ -233,14 +249,24 @@ function ServiceTicket({ classes, hidden }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllServiceTicketAPI());
+      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
     }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
   }, [refresh]);
 
   useEffect(() => {
     if (!hidden) {
-      dispatch(getAllServiceTicketAPI());
+      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
     }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
   }, [hidden]);
 
   const handleRowClick = (event: any, row: any) => {
@@ -258,6 +284,16 @@ function ServiceTicket({ classes, hidden }: any) {
         tableData={filteredTickets}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
+        manualPagination
+        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
+          dispatch(getAllServiceTicketsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, showAllTickets, query === '' ? '' : query || keyword, selectionRange))
+        }
+        total={total}
+        currentPageIndex={currentPageIndex}
+        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+        currentPageSize={currentPageSize}
+        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+        setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
       />
     </DataContainer>
   );
