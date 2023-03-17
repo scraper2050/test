@@ -21,6 +21,12 @@ const initialServiceTicket = {
   'notifications': [],
   'selectedCustomers': [],
   'ticket2Job': '',
+  'prevCursor': '',
+  'nextCursor': '',
+  'total': 0,
+  'currentPageIndex': 0,
+  'currentPageSize': 10,
+  'keyword': '',
 };
 
 export default (state = initialServiceTicket, { payload, type }: ReducerParamsInterface) => {
@@ -50,6 +56,36 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
         ...state,
         'isLoading': payload
       };
+      case types.SET_PREVIOUS_SERVICE_TICKET_CURSOR:
+        return {
+          ...state,
+          prevCursor: payload,
+        };
+      case types.SET_NEXT_SERVICE_TICKET_CURSOR:
+        return {
+          ...state,
+          nextCursor: payload,
+        };
+      case types.SET_SERVICE_TICKET_TOTAL:
+        return {
+          ...state,
+          total: payload,
+        };
+      case types.SET_CURRENT_SERVICE_TICKET_PAGE_INDEX:
+        return {
+          ...state,
+          currentPageIndex: payload,
+        };
+      case types.SET_CURRENT_SERVICE_TICKET_PAGE_SIZE:
+        return {
+          ...state,
+          currentPageSize: payload,
+        };
+      case types.SET_SERVICE_TICKET_SEARCH_KEYWORD:
+        return {
+          ...state,
+          keyword: payload,
+        };
     case types.SET_OPEN_SERVICE_TICKET:
       return {
         ...state,
