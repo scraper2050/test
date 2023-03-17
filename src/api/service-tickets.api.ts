@@ -4,10 +4,10 @@ import moment from 'moment';
 import axios from 'axios';
 
 const compareByDate = (a: any, b: any) => {
-  if (new Date(a.dueDate) > new Date(b.dueDate)) {
+  if (new Date(a.createdAt) > new Date(b.createdAt)) {
     return 1;
   }
-  if (new Date(a.dueDate) < new Date(b.dueDate)) {
+  if (new Date(a.createdAt) < new Date(b.createdAt)) {
     return -1;
   }
   return 0;
@@ -71,9 +71,9 @@ export const getAllServiceTicketsAPI = (pageSize = 10, previousCursor = '', next
       request(`/getServiceTickets`, 'post', optionObj, undefined, undefined, cancelTokenGetAllServiceTicketsAPI)
         .then((res: any) => {
           let tempServiceTickets = res.data.serviceTickets;
-          tempServiceTickets = tempServiceTickets.map((tempServiceTicket: {dueDate?:string;createdAt:string})=>({
+          tempServiceTickets = tempServiceTickets.map((tempServiceTicket: {createdAt:string})=>({
             ...tempServiceTicket,
-            dueDate: tempServiceTicket.dueDate ? tempServiceTicket.dueDate : tempServiceTicket.createdAt
+            createdAt: tempServiceTicket.createdAt
           }));
           tempServiceTickets.sort(compareByDate);
           
