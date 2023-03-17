@@ -107,7 +107,7 @@ function Main(): any {
 
   const initialHeaderLoad = () => {
     dispatch(loadNotificationsActions.fetch());
-    // dispatch(loadInvoiceItems.fetch());
+    dispatch(loadInvoiceItems.fetch());
     dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
   }
 
