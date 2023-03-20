@@ -236,14 +236,14 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         setIconComponent(null);
       }
       if(loadCount.current !== 0){
-        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectedStatus]);
 
     useEffect(() => {
       if(loadCount.current !== 0){
-        dispatch(getAllJobsAPI(currentPageSize, undefined, undefined, selectedStatus, keyword, selectionRange));
+        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectionRange]);
@@ -334,7 +334,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobsAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
+      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -376,7 +376,7 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
-          dispatch(getAllJobsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
+          dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
         }
         total={total}
         currentPageIndex={currentPageIndex}
