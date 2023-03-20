@@ -91,7 +91,7 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
 
       request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
-          let tempJobs = res.data.jobs;
+          let tempJobs = res.data.jobsAggregate;
           tempJobs = tempJobs.map((tempJob: any)=>
           {
            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
@@ -104,13 +104,14 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
 
             return {
             ...tempJob,
-            customer: tempJob.customerObj,
-            jobLocation: tempJob.jobLocationObj,
-            jobSite : tempJob.jobSite,
+            customer: tempJob.customerObj[0],
+            jobLocation: tempJob.jobLocationObj[0],
+            jobSite : tempJob.jobSiteObj[0],
             updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
             tasks: tempTasks
             }
         });
+        console.log(tempJobs);
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
           // dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
