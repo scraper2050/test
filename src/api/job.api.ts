@@ -62,14 +62,13 @@ export const getAllJobTypes = () => {
   });
 };
 let cancelTokenGetAllJobsAPI:any;
-export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
       const optionObj:any = {
-        pageSize,
-        previousCursor,
-        nextCursor
+        pageSize: pageSize,
+        currentPage: currentPageIndex
       };
       if(status !== '-1'){
         optionObj.status = Number(status);
@@ -93,14 +92,29 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
       request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
-          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+          tempJobs = tempJobs.map((tempJob: any)=>
+          {
+           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            return {
+              ...tempTask, 
+              technician : tempJob.technicianObj[index],
+              contractors : tempJob.contractorsObj[index],              
+            }
+           })
+
+            return {
             ...tempJob,
-            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
-          }));
+            customer: tempJob.customerObj,
+            jobLocation: tempJob.jobLocationObj,
+            jobSite : tempJob.jobSite,
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+            tasks: tempTasks
+            }
+        });
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
-          dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
-          dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
+          // dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
+          // dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
