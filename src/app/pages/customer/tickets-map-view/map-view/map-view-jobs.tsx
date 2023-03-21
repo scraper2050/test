@@ -87,7 +87,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
   }, [filterJobs])
 
   const getJobsData = () => {
-    dispatch(getAllJobsAPI(2020, undefined, undefined, statusFilter, jobIdFilter));
+    dispatch(getAllJobsAPI(2020, undefined, statusFilter, jobIdFilter));
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(2020));

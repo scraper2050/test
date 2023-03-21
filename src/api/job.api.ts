@@ -62,14 +62,13 @@ export const getAllJobTypes = () => {
   });
 };
 let cancelTokenGetAllJobsAPI:any;
-export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
       const optionObj:any = {
-        pageSize,
-        previousCursor,
-        nextCursor
+        pageSize: pageSize,
+        currentPage: currentPageIndex
       };
       if(status !== '-1'){
         optionObj.status = Number(status);
@@ -93,14 +92,30 @@ export const getAllJobsAPI = (pageSize = 10, previousCursor = '', nextCursor = '
       request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
-          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+          tempJobs = tempJobs.map((tempJob: any)=>
+          {
+           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            return {
+              ...tempTask, 
+              technician : tempJob.technicianObj[index],
+              contractor : tempJob.contractorsObj[index],              
+            }
+           })
+
+            return {
             ...tempJob,
-            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
-          }));
+            customer: tempJob.customerObj[0],
+            jobLocation: tempJob.jobLocationObj[0],
+            jobSite : tempJob.jobSiteObj[0],
+            ticket : tempJob.ticketObj[0],
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+            tasks: tempTasks
+            }
+          });
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
-          dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
-          dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
+          // dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
+          // dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
@@ -144,10 +159,26 @@ export const getTodaysJobsAPI = (status = '-1', keyword?: string) => {
       request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetTodaysJobsAPI)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
-          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+          tempJobs = tempJobs.map((tempJob: any)=>
+          {
+           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            return {
+              ...tempTask, 
+              technician : tempJob.technicianObj[index],
+              contractor : tempJob.contractorsObj[index],              
+            }
+           })
+
+            return {
             ...tempJob,
-            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
-          }));
+            customer: tempJob.customerObj[0],
+            jobLocation: tempJob.jobLocationObj[0],
+            jobSite : tempJob.jobSiteObj[0],
+            ticket : tempJob.ticketObj[0],
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+            tasks: tempTasks
+            }
+          });
           tempJobs.sort(compareByDate);
           dispatch(setTodaysJobs(tempJobs.reverse()));
           dispatch(setTodaysJobLoading(false));
@@ -172,10 +203,26 @@ export const getAllJobsByCustomerAPI = (pageSize = 2020, customerId:string) => {
       request(`/getJobs`, 'post', {customerId, pageSize})
         .then((res: any) => {
           let tempJobs = res.data.jobs;
-          tempJobs = tempJobs.map((tempJob: {updatedAt?:string;createdAt:string})=>({
-            ...tempJob, 
-            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
-          }));
+          tempJobs = tempJobs.map((tempJob: any)=>
+          {
+           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            return {
+              ...tempTask, 
+              technician : tempJob.technicianObj[index],
+              contractor : tempJob.contractorsObj[index],              
+            }
+           })
+
+            return {
+            ...tempJob,
+            customer: tempJob.customerObj[0],
+            jobLocation: tempJob.jobLocationObj[0],
+            jobSite : tempJob.jobSiteObj[0],
+            ticket : tempJob.ticketObj[0],
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+            tasks: tempTasks
+            }
+          });
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
           dispatch(setJobLoading(false));
@@ -203,8 +250,28 @@ export const getAllJobsByTechnicianAndDateAPI = (technicianIds:any, jobDate:any)
       optionObj.technicianIds = technicianIds.map((tech:any) => tech.id)
       request(`/getJobs`, 'post', optionObj)
         .then((res: any) => {
-          let jobs = res.data.jobs;
-          dispatch(setMapTechnicianJobs(jobs));
+          let tempJobs = res.data.jobs;
+          tempJobs = tempJobs.map((tempJob: any)=>
+          {
+           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            return {
+              ...tempTask, 
+              technician : tempJob.technicianObj[index],
+              contractor : tempJob.contractorsObj[index],              
+            }
+           })
+
+            return {
+            ...tempJob,
+            customer: tempJob.customerObj[0],
+            jobLocation: tempJob.jobLocationObj[0],
+            jobSite : tempJob.jobSiteObj[0],
+            ticket : tempJob.ticketObj[0],
+            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+            tasks: tempTasks
+            }
+          });
+          dispatch(setMapTechnicianJobs(tempJobs));
           return resolve(res.data);
         })
         .catch(err => {
@@ -219,7 +286,29 @@ export const getAllJobAPI = async (param?: {}) => {
   let responseData;
   try {
     const response: any = await request('/getJobs', 'POST', body, false);
+    let tempJobs = response.data.jobs;
+    tempJobs = tempJobs.map((tempJob: any)=>
+    {
+      let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+      return {
+        ...tempTask, 
+        technician : tempJob.technicianObj[index],
+        contractor : tempJob.contractorsObj[index],              
+      }
+      })
+
+      return {
+      ...tempJob,
+      customer: tempJob.customerObj[0],
+      jobLocation: tempJob.jobLocationObj[0],
+      jobSite : tempJob.jobSiteObj[0],
+      ticket : tempJob.ticketObj[0],
+      updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+      tasks: tempTasks
+      }
+    });
     responseData = response.data;
+    responseData.jobs = tempJobs;
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
