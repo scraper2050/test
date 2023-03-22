@@ -13,8 +13,8 @@ const compareByDate = (a: any, b: any) => {
   return 0;
 };
 
-export const getAllServiceTicketAPI = async (param?: {}) => {
-  const body = param || {};
+export const getAllServiceTicketAPI =  (param?: {pageSize: 2020}) => {
+  const body = param || {pageSize: 2020};
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setServiceTicketLoading(true));
