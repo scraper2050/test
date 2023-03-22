@@ -107,7 +107,7 @@ function BCJobRequestGlass({
               rowItems.push({value: rawValue ? 'Yes' : 'No'});
               break;
             case 'glassSize':
-              rowItems.push({value: rawValue.size});
+              rowItems.push({value: rawValue ? rawValue.size : 4192});
               glass.windowType > 1 && rowItems.push({
                 label: 'Sash glass type',
                 value: rawValue.windowType

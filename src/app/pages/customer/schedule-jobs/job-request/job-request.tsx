@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { withStyles, Menu, MenuItem } from '@material-ui/core';
+import { withStyles, Grid, Menu, MenuItem } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
+import BCTabs from '../../../../components/bc-tab/bc-tab';
+import SwipeableViews from 'react-swipeable-views';
 import { getAllJobRequestAPI } from 'api/job-request.api';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
@@ -245,43 +247,72 @@ function JobRequest({ classes, hidden }: any) {
   }, [refresh, hidden]);
 
   useEffect(() => {
-    if(!hidden) {
       dispatch(getAllJobRequestAPI());
       dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
-    }
-  }, [hidden])
+  }, [])
 
-
+  const handleTabChange = (newValue: number) => {
+  };
   const handleRowClick = (event: any, row: any) => {
     openDetailJobRequestModal(row.original);
   };
 
   return (
-    <DataContainer id={'0'}>
-      <BCTableContainer
-        columns={columns}
-        isLoading={isLoading}
-        onRowClick={handleRowClick}
-        search
-        searchPlaceholder={'Search Job Requests...'}
-        tableData={jobRequests}
-        toolbarPositionLeft={true}
-        toolbar={Toolbar()}
-        manualPagination
-        lastPageCursorImplemented
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string, isLastPage: boolean) =>
-          dispatch(getAllJobRequestAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange , isLastPage ? lastPageCursor : undefined))
-        }
-        total={total}
-        currentPageIndex={currentPageIndex}
-        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
-        currentPageSize={currentPageSize}
-        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-        setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
-      />
-    </DataContainer>
+    <div className={classes.pageMainContainer}>
+      <div className={classes.pageContainer}>
+        <div className={classes.pageContent}>
+          <BCTabs
+              curTab={0}
+              indicatorColor={'primary'}
+              onChangeTab={handleTabChange}
+              tabsData={[
+                {
+                  'label': 'Job Requests',
+                  'value': 0
+                }
+              ]}
+            />
+          <SwipeableViews index={0}>
+            <div
+              className={classes.dataContainer}
+              hidden={false}
+              id={'0'}>
+              <BCTableContainer
+                columns={columns}
+                isLoading={isLoading}
+                onRowClick={handleRowClick}
+                search
+                searchPlaceholder={'Search Job Requests...'}
+                tableData={jobRequests}
+                toolbarPositionLeft={true}
+                toolbar={Toolbar()}
+                manualPagination
+                lastPageCursorImplemented
+                fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string, isLastPage: boolean) =>
+                  dispatch(getAllJobRequestAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, selectedStatus, query === '' ? '' : query || keyword, selectionRange , isLastPage ? lastPageCursor : undefined))
+                }
+                total={total}
+                currentPageIndex={currentPageIndex}
+                setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+                currentPageSize={currentPageSize}
+                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+                setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
+              />
+            </div>
+            <div
+              hidden={true}
+              id={'1'}>
+                <Grid
+                  item
+                  xs={12}
+                />
+            </div>
+          </SwipeableViews>
+        </div>
+      </div>
+    </div>
   );
 }
 

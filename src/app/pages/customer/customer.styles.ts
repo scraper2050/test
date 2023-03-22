@@ -53,6 +53,15 @@ export default (theme: Theme): any => ({
   'filterMenuItemSelected': {
     'backgroundColor': '#E5F7FF !important',
   },
+  'addButtonArea': {
+    'display': 'flex',
+    'justifyContent': 'flex-end',
+    'padding': '20px 30px 5px 0',
+    'position': 'absolute',
+    'right': '0',
+    'top': 55,
+    zIndex: 99,
+  },
   'filterMenu': {
     'height': 'calc(100% - 10px)',
     'marginTop': 5,
