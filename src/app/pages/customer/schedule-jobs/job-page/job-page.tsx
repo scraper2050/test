@@ -381,24 +381,25 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   }
 
   useEffect(() => {    
-    dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange));
-    if(customers.length == 0) {
-      dispatch(getCustomers());
+    if (refresh) {
+      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange));    
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
     }
-    dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
     setTimeout(() => {
       loadCount.current++;
     }, 1000);
-  }, []);
+  }, [refresh]);
 
-  // useEffect(() => {
-  //   dispatch(getAllJobsAPI());
-  //   dispatch(setKeyword(''));
-  //   dispatch(setCurrentPageIndex(0));
-  //   dispatch(setCurrentPageSize(10));
-  //   console.log("arrive1");
-  // }, [])
+  useEffect(() => {
+    dispatch(getAllJobsAPI());
+    if(customers.length == 0) {
+      dispatch(getCustomers());
+    }
+    dispatch(setKeyword(''));
+    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentPageSize(10));
+  }, [])
 
   const handleTabChange = (newValue: number) => {
   };

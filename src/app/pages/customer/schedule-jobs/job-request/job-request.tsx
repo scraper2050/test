@@ -234,16 +234,14 @@ function JobRequest({ classes, hidden }: any) {
   }
 
   useEffect(() => {
-    if(!hidden) {
-      if (refresh) {
-        dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
-        dispatch(setCurrentPageIndex(0));
-        dispatch(setCurrentPageSize(10));
-      }
-      setTimeout(() => {
-        loadCount.current++;
-      }, 1000);
+    if (refresh) {
+      dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
     }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
   }, [refresh, hidden]);
 
   useEffect(() => {

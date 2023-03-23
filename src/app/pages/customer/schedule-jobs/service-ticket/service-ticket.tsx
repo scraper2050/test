@@ -298,6 +298,16 @@ function ServiceTicket({ classes, hidden }: any) {
   ];
 
   useEffect(() => {
+    if (refresh) {
+      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
+    }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
+  }, [refresh]);
+  useEffect(() => {
     dispatch(getAllServiceTicketsAPI());
     if(customers.length == 0) {
       dispatch(getCustomers());
