@@ -134,6 +134,13 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
         }
       },
     },
+    groupLabel : {
+      'font-size': '16px',
+      'line-height': '20px',
+      'color': '#000',
+      'border-radius': '7px',
+      'padding-left': '28px'
+    },
     minimumMargin: {
       minHeight: '20px !important',
       margin: '0 !important',
@@ -171,9 +178,25 @@ function BCAdminSidebar({
       'link': '/main/customers/new-customer'
     },
     {
-      'label': 'Schedule/Jobs',
-      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><WatchLaterOutlinedIcon/></Badge>,
+      'label': 'Schedule',
+      'parent': true,
       'link': '/main/customers/schedule'
+    },
+    {
+      'label': 'Jobs',
+      'link': '/main/customers/schedule/jobs',
+      'group': 'Schedule',
+    },
+    {
+      'label': 'Tickets',
+      'link': '/main/customers/schedule/tickets',
+      'group': 'Schedule',
+    },
+    {
+      'label': 'Job Requests',
+      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"></Badge>,
+      'link': '/main/customers/schedule/job-requests',
+      'group': 'Schedule',
     },
     {
       'label': 'Calendar',
@@ -373,7 +396,51 @@ function BCAdminSidebar({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
-
+  const subGroupBar = (item : any) => {
+    console.log("arriveasdf");
+    return pathName.split("/main/")[1] && 
+    Object.values(groupBy(LINK_DATA.filter((childitem: any) => childitem.link.startsWith(item.link) && childitem.parent != true), 'group'))
+      .map((group: any, groupIdx: number) => (
+        <Accordion key={groupIdx} defaultExpanded className={sidebarStyles.accordion}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            className={sidebarStyles.accordionSummary}
+            classes={{
+              root: sidebarStyles.minimumMargin,
+              expanded: sidebarStyles.minimumMargin,
+              expandIcon: sidebarStyles.expandIcon,
+            }}>
+            <span className={sidebarStyles.groupLabel}>{open && group[0].group}</span>
+          </AccordionSummary>
+          <AccordionDetails className={sidebarStyles.accordionDetails}>
+            <ul>
+              {group.map((subitem: any, idx: number) => {
+                return (
+                  <li key={idx}>
+                    <Tooltip
+                      arrow
+                      title={subitem.label}
+                      disableHoverListener={open}
+                    >
+                      <StyledListItem
+                        button
+                        onClick={() => onClickLink(subitem.link)}
+                        selected={
+                          pathName === subitem.link ||
+                          pathName === `${subitem.link}/${nestedRouteKey}`
+                        }>
+                        {subitem.icon && subitem.icon}
+                        {open && <span className='menuLabel sub-menu'>{subitem.label}</span>}
+                      </StyledListItem>
+                    </Tooltip>
+                  </li>
+                )
+              })}
+            </ul>
+          </AccordionDetails>
+        </Accordion>
+      ))
+  }
   const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
     ? AvatarImg
     : user?.profile?.imageUrl;
@@ -442,7 +509,8 @@ function BCAdminSidebar({
             } else {
               mainPath = 'dashboard';
             }
-            return item.link.startsWith(`/main/${mainPath}`) && mainPath !== 'reports'
+            
+            return item.link.startsWith(`/main/${mainPath}`) && mainPath !== 'reports' && item.group == undefined && item.parent == undefined
               ? <li key={idx}>
                 <Tooltip
                   arrow
@@ -461,7 +529,7 @@ function BCAdminSidebar({
                   </StyledListItem>
                 </Tooltip>
               </li>
-              : null;
+              : item.link.startsWith(`/main/${mainPath}`) && item.parent == true ? subGroupBar(item) :null;
           })}
         </ul>
 
@@ -571,6 +639,9 @@ const StyledListItem = styled(ListItem)`
   & > .menuLabel {
     padding-left: 30px;
     white-space: nowrap;
+  };
+  & > .sub-menu {
+    padding-left: 54px;
   };
   &.Mui-selected {
     color: #fff;
