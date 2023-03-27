@@ -312,6 +312,7 @@ function ServiceTicket({ classes, hidden }: any) {
     if(customers.length == 0) {
       dispatch(getCustomers());
     }
+    dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));

@@ -139,12 +139,22 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
     subCategory : {
       'padding' : '0px 10px !important'
     },
+    subCategoryClose : {
+      'padding' : '0px 0px !important'
+    },
     groupLabel : {
       'font-size': '16px',
       'line-height': '20px',
       'color': '#000',
       'border-radius': '7px',
       'padding-left': '28px'
+    },
+    groupLabelClose : {
+      'font-size': '16px',
+      'line-height': '20px',
+      'color': '#000',
+      'border-radius': '7px',
+      'padding-left': '0px !important'
     },
     minimumMargin: {
       minHeight: '20px !important',
@@ -418,10 +428,16 @@ function BCAdminSidebar({
               expanded: sidebarStyles.minimumMargin,
               expandIcon: sidebarStyles.expandIcon,
             }}>
-            <span className={sidebarStyles.groupLabel}>{open && group[0].group}</span>
+            <span className={classnames({
+                [sidebarStyles.groupLabel]: true,
+                [sidebarStyles.groupLabelClose]: !open
+              })}>{open && group[0].group}</span>
           </AccordionSummary>
           <AccordionDetails className={sidebarStyles.accordionDetails}>
-            <ul className={sidebarStyles.subCategory}>
+            <ul className={classnames({
+          [sidebarStyles.subCategory]: true,
+          [sidebarStyles.subCategoryClose]: !open
+        })}>
               {group.map((subitem: any, idx: number) => {
                 return (
                   <li key={idx}>
