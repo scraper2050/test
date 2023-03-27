@@ -165,14 +165,14 @@ function JobReportsPage({ classes, theme }: any) {
   }, []);
 
   useEffect(() => {
-    dispatch(getAllJobReportsAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
+    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange));
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
   useEffect(() => {
     if(location?.state?.option?.search || location?.state?.option?.pageSize){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllJobReportsAPI(location.state.option.pageSize, undefined, undefined, location.state.option.search , selectionRange));
+      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
@@ -249,15 +249,25 @@ function JobReportsPage({ classes, theme }: any) {
                 toolbarPositionLeft={true}
                 toolbar={Toolbar()}
                 manualPagination
-                fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
-                }
+                // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+                //   dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, query === '' ? '' : query || keyword, selectionRange))
+                // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
+                setCurrentPageIndexFunction={(num: number) => 
+                  {
+                    dispatch(setCurrentPageIndex(num));
+                    dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange))
+                  }}
                 currentPageSize={currentPageSize}
-                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-                setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
+                setCurrentPageSizeFunction={(num: number) => {
+                  dispatch(setCurrentPageSize(num));
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange))
+                }}
+                setKeywordFunction={(query: string) => {
+                  dispatch(setKeyword(query));
+                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange))
+                }}
               />
             </div>
             <div

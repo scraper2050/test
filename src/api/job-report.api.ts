@@ -10,14 +10,13 @@ import {
 } from 'actions/customer/job-report/job-report.action';
 
 let cancelTokenGetAllJobReportsAPI:any;
-export const getAllJobReportsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+export const getAllJobReportsAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobReportLoading(true));
       const optionObj:any = {
         pageSize,
-        previousCursor,
-        nextCursor
+        currentPage: currentPageIndex
       };
       if(keyword){
         optionObj.keyword = keyword
@@ -37,6 +36,40 @@ export const getAllJobReportsAPI = (pageSize = 10, previousCursor = '', nextCurs
       request(`/getAllJobReports`, 'OPTIONS', optionObj, undefined, undefined, cancelTokenGetAllJobReportsAPI)
         .then((res: any) => {
           let tempReports = res.data.reports;
+          tempReports = tempReports.map((tempReport: any)=>
+          {
+            let tempJob = tempReport.jobObj[0];
+            let tempTasks = tempJob?.tasks.map((tempTask: any, index: any) => {
+              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+                const currentItem = tempReport?.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+                return {
+                  ...tempJobType,
+                  jobType : currentItem
+                }
+              });
+              const currenttechnician = tempJob.technicianObj?.filter((item: any) => item._id == tempTask.technician)[0];
+              const currentcontractor = tempJob.contractorsObj?.filter((item: any) => item._id == tempTask.contractor)[0];
+              return {
+                ...tempTask, 
+                technician : currenttechnician,
+                contractor : currentcontractor,     
+                jobTypes: tempJobTypes,         
+              }
+            })
+
+            return {
+              ...tempReport,
+              invoice : tempReport.invoiceObj[0],
+              company : tempReport.companyObj[0],    
+              job : {
+                ...tempJob,
+                customer: tempReport.customerObj[0],
+                jobLocation: tempReport.jobLocationObj[0],
+                jobSite : tempReport.jobSiteObj[0],        
+                tasks: tempTasks
+              }
+            }
+          });
           dispatch(setJobReport(tempReports));
           dispatch(setPreviousJobReportsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
           dispatch(setNextJobReportsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
@@ -58,7 +91,42 @@ export const getAllJobReportsAPI = (pageSize = 10, previousCursor = '', nextCurs
 export const getJobReports = async (data: any) => {
   try {
     const response: any = await request('/getAllJobReports', 'GET', false);
-    return response.data;
+    let tempReports = response.data.reports;
+    tempReports = tempReports.map((tempReport: any)=>
+    {
+      let tempJob = tempReport.jobObj[0];
+      let tempTasks = tempJob?.tasks.map((tempTask: any, index: any) => {
+        let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+          const currentItem = tempReport?.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+          return {
+            ...tempJobType,
+            jobType : currentItem
+          }
+        });
+        const currenttechnician = tempJob.technicianObj?.filter((item: any) => item._id == tempTask.technician)[0];
+        const currentcontractor = tempJob.contractorsObj?.filter((item: any) => item._id == tempTask.contractor)[0];
+        return {
+          ...tempTask, 
+          technician : currenttechnician,
+          contractor : currentcontractor,     
+          jobTypes: tempJobTypes,         
+        }
+      })
+
+      return {
+        ...tempReport,
+        invoice : tempReport.invoiceObj[0],
+        company : tempReport.companyObj[0],    
+        job : {
+          ...tempJob,
+          customer: tempReport.customerObj[0],
+          jobLocation: tempReport.jobLocationObj[0],
+          jobSite : tempReport.jobSiteObj[0],        
+          tasks: tempTasks
+        }
+      }
+    });
+    return tempReports;
   } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||

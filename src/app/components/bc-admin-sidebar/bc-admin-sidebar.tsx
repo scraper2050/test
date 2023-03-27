@@ -48,6 +48,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import LockIcon from '@material-ui/icons/Lock';
+import TicketIcon from '@material-ui/icons/ConfirmationNumber';
+import RequestIcon from '@material-ui/icons/Alarm';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import ContactsIcon from '@material-ui/icons/Contacts';
@@ -184,17 +186,19 @@ function BCAdminSidebar({
     },
     {
       'label': 'Jobs',
+      'icon': <WorkIcon/>,
       'link': '/main/customers/schedule/jobs',
       'group': 'Schedule',
     },
     {
       'label': 'Tickets',
+      'icon': <TicketIcon/>,
       'link': '/main/customers/schedule/tickets',
       'group': 'Schedule',
     },
     {
       'label': 'Job Requests',
-      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"></Badge>,
+      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><RequestIcon/></Badge>,
       'link': '/main/customers/schedule/job-requests',
       'group': 'Schedule',
     },
@@ -639,9 +643,6 @@ const StyledListItem = styled(ListItem)`
   & > .menuLabel {
     padding-left: 30px;
     white-space: nowrap;
-  };
-  & > .sub-menu {
-    padding-left: 54px;
   };
   &.Mui-selected {
     color: #fff;
