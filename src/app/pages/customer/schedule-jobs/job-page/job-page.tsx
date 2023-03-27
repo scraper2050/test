@@ -7,6 +7,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import BCTabs from '../../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import { getAllJobsAPI } from 'api/job.api';
+import { getAllJobTypesAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
 import { statusReference } from 'helpers/contants';
@@ -396,6 +397,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     if(customers.length == 0) {
       dispatch(getCustomers());
     }
+    dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
