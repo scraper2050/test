@@ -52,7 +52,7 @@ function DashboardPage({ classes }: any): JSX.Element {
         height={25}
         width={25}
       />,
-      'link': '/main/customers/schedule'
+      'link': '/main/customers/schedule/jobs'
     },
     {
       'text': 'Tickets',
