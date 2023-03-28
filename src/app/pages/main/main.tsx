@@ -45,7 +45,10 @@ const InvoicingPurchaseOrderPage = React.lazy(() => import('../invoicing/purchas
 const InvoicingEstimatesPage = React.lazy(() => import('../invoicing/estimates/estimates'));
 const TechnicianPage = React.lazy(() => import('../employee/technicians/technicians'));
 const OfficeAdminPage = React.lazy(() => import('../employee/office-admin/office-admin'));
-const ScheduleJobsPage = React.lazy(() => import('../customer/schedule-jobs/schedule-jobs'));
+
+const ScheduleJobsPage = React.lazy(() => import('../customer/schedule-jobs/job-page/job-page'));
+const ScheduleServiceTicketsPage = React.lazy(() => import('../customer/schedule-jobs/service-ticket/service-ticket'));
+const ScheduleJobRequestsPage = React.lazy(() => import('../customer/schedule-jobs/job-request/job-request'));
 const CalendarPage = React.lazy(() => import('../customer/calendar/calendar'));
 const ManagersPage = React.lazy(() => import('../employee/managers/managers'));
 const GroupPage = React.lazy(() => import('../employee/group/group'));
@@ -368,10 +371,28 @@ function Main(): any {
                   title={'Customers'}
                 />
                 {/* For dev */}
-                <AuthRoute
+                {/* <AuthRoute
                   Component={ScheduleJobsPage}
                   exact
                   path={'/main/customers/schedule'}
+                  title={'Customers'}
+                /> */}
+                <AuthRoute
+                  Component={ScheduleJobsPage}
+                  exact
+                  path={'/main/customers/schedule/jobs'}
+                  title={'Customers'}
+                />
+                <AuthRoute
+                  Component={ScheduleServiceTicketsPage}
+                  exact
+                  path={'/main/customers/schedule/tickets'}
+                  title={'Customers'}
+                />
+                <AuthRoute
+                  Component={ScheduleJobRequestsPage}
+                  exact
+                  path={'/main/customers/schedule/job-requests'}
                   title={'Customers'}
                 />
                 <AuthRoute

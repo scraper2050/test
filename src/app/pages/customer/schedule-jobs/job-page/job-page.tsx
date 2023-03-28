@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Checkbox, FormControlLabel, withStyles, Menu, MenuItem } from '@material-ui/core';
+import { Checkbox, FormControlLabel, withStyles, Grid, Menu, MenuItem } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
+import BCTabs from '../../../../components/bc-tab/bc-tab';
+import SwipeableViews from 'react-swipeable-views';
 import { getAllJobsAPI } from 'api/job.api';
+import { getAllJobTypesAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
 import { statusReference } from 'helpers/contants';
@@ -14,7 +17,7 @@ import {
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
-
+import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import BCJobStatus from '../../../../components/bc-job-status';
@@ -22,8 +25,9 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import moment from "moment";
 import {getVendor} from "../../../../../helpers/job";
+import { CSButton } from "../../../../../helpers/custom";
 
-function JobPage({ classes, currentPage, setCurrentPage }: any) {
+function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
@@ -97,7 +101,52 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     }
     return `${startTime} - ${endTime}`;
   }
+  const openCreateTicketModal = () => {
+    if (customers.length !== 0) {
+      dispatch(setModalDataAction({
+        'data': {
+          'modalTitle': 'New Service Ticket',
+          'removeFooter': false,
+          'className': 'serviceTicketTitle',
+          'error': {
+            'status': false,
+            'message': ''
+          }
+        },
+        'type': modalTypes.CREATE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      dispatch(setModalDataAction({
+        'data': {
+          'removeFooter': false,
+          'error': {
+            'status': true,
+            'message': 'You must add customers to create a service ticket'
+          }
+        },
+        'type': modalTypes.CREATE_TICKET_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    }
+  };
 
+  const openJobModal = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Create Job',
+        'removeFooter': false
+      },
+      'type': modalTypes.CREATE_JOB_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
   const openEditJobModal = (job: any) => {
     dispatch(
       setModalDataAction({
@@ -332,9 +381,9 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
     );
   }
 
-  useEffect(() => {
+  useEffect(() => {    
     if (refresh) {
-      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange));
+      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange));    
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -345,12 +394,17 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     dispatch(getAllJobsAPI());
+    if(customers.length == 0) {
+      dispatch(getCustomers());
+    }
+    dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
   }, [])
 
-
+  const handleTabChange = (newValue: number) => {
+  };
   const handleRowClick = (event: any, row: any) => {
     if (
       [0, 4].includes(row.original.status) &&
@@ -364,28 +418,78 @@ function JobPage({ classes, currentPage, setCurrentPage }: any) {
   };
 
   return (
-    <DataContainer id={'0'}>
-      <BCTableContainer
-        columns={columns}
-        isLoading={isLoading}
-        onRowClick={handleRowClick}
-        search
-        searchPlaceholder={'Search Jobs...'}
-        tableData={filteredJobs}
-        toolbarPositionLeft={true}
-        toolbar={Toolbar()}
-        manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
-          dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
-        }
-        total={total}
-        currentPageIndex={currentPageIndex}
-        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentPageIndex(num))}
-        currentPageSize={currentPageSize}
-        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
-        setKeywordFunction={(query: string) => dispatch(setKeyword(query))}
-      />
-    </DataContainer>
+    <div className={classes.pageMainContainer}>
+      <div className={classes.pageContainer}>
+        <div className={classes.pageContent}>
+          <BCTabs
+            curTab={0}
+            indicatorColor={'primary'}
+            onChangeTab={handleTabChange}
+            tabsData={[
+              {
+                'label': 'Jobs',
+                'value': 0
+              }
+            ]}
+          />
+          <div className={classes.addButtonArea}>
+            <CSButton
+              aria-label={'new-ticket'}
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => openCreateTicketModal()}>
+              {'New Ticket'}
+            </CSButton>
+          </div>
+          <SwipeableViews index={0}>
+            <div
+              className={classes.dataContainer}
+              hidden={false}
+              id={'0'}>
+              <BCTableContainer
+                columns={columns}
+                isLoading={isLoading}
+                onRowClick={handleRowClick}
+                search
+                searchPlaceholder={'Search Jobs...'}
+                tableData={filteredJobs}
+                toolbarPositionLeft={true}
+                toolbar={Toolbar()}
+                manualPagination
+                // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
+                //   dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, query === '' ? '' : query || keyword, selectionRange))
+                // }
+                total={total}
+                currentPageIndex={currentPageIndex}
+                setCurrentPageIndexFunction={(num: number) => 
+                  {
+                    dispatch(setCurrentPageIndex(num));
+                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
+                  }}
+                currentPageSize={currentPageSize}
+                setCurrentPageSizeFunction={(num: number) => {
+                  dispatch(setCurrentPageSize(num));
+                  dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange))
+                }}
+                setKeywordFunction={(query: string) => {
+                  dispatch(setKeyword(query));
+                  dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
+                }}
+              />
+            </div>
+            <div
+              hidden={true}
+              id={'1'}>
+                <Grid
+                  item
+                  xs={12}
+                />
+            </div>
+          </SwipeableViews>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -395,4 +499,4 @@ const DataContainer = styled.div`
   overflow: hidden;
 `;
 
-export default withStyles(styles, { withTheme: true })(JobPage);
+export default withStyles(styles, { withTheme: true })(JobsPage);

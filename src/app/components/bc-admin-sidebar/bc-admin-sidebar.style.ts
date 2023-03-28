@@ -1,11 +1,15 @@
 import * as CONSTANTS from '../../../constants';
 import { Theme } from '@material-ui/core/styles';
+import { NoEncryption } from '@material-ui/icons';
 export default (theme: Theme): any => ({
   'bcSideBar': {
     'backgroundColor': CONSTANTS.ADMIN_SIDEBAR_BG,
     '&::-webkit-scrollbar': {
       'display': 'none',
     }
+  },
+  'hidden' : {
+    'display': 'none',
   },
   'bcSideBarCompanyLogo': {
     'width': '100%',

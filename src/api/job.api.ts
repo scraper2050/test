@@ -94,11 +94,19 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any)=>
           {
-           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+            let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+              const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+              return {
+                ...tempJobType,
+                jobType : currentItem
+              }
+            });
             return {
               ...tempTask, 
               technician : tempJob.technicianObj[index],
-              contractor : tempJob.contractorsObj[index],              
+              contractor : tempJob.contractorsObj[index],     
+              jobTypes: tempJobTypes,         
             }
            })
 
@@ -161,13 +169,21 @@ export const getTodaysJobsAPI = (status = '-1', keyword?: string) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any)=>
           {
-           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-            return {
-              ...tempTask, 
-              technician : tempJob.technicianObj[index],
-              contractor : tempJob.contractorsObj[index],              
-            }
-           })
+            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+                const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+                return {
+                  ...tempJobType,
+                  jobType : currentItem
+                }
+              });
+              return {
+                ...tempTask, 
+                technician : tempJob.technicianObj[index],
+                contractor : tempJob.contractorsObj[index],     
+                jobTypes: tempJobTypes,         
+              }
+            })
 
             return {
             ...tempJob,
@@ -205,13 +221,21 @@ export const getAllJobsByCustomerAPI = (pageSize = 2020, customerId:string) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any)=>
           {
-           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-            return {
-              ...tempTask, 
-              technician : tempJob.technicianObj[index],
-              contractor : tempJob.contractorsObj[index],              
-            }
-           })
+            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+                const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+                return {
+                  ...tempJobType,
+                  jobType : currentItem
+                }
+              });
+              return {
+                ...tempTask, 
+                technician : tempJob.technicianObj[index],
+                contractor : tempJob.contractorsObj[index],     
+                jobTypes: tempJobTypes,         
+              }
+            })
 
             return {
             ...tempJob,
@@ -253,13 +277,21 @@ export const getAllJobsByTechnicianAndDateAPI = (technicianIds:any, jobDate:any)
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any)=>
           {
-           let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-            return {
-              ...tempTask, 
-              technician : tempJob.technicianObj[index],
-              contractor : tempJob.contractorsObj[index],              
-            }
-           })
+            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+                const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+                return {
+                  ...tempJobType,
+                  jobType : currentItem
+                }
+              });
+              return {
+                ...tempTask, 
+                technician : tempJob.technicianObj[index],
+                contractor : tempJob.contractorsObj[index],     
+                jobTypes: tempJobTypes,         
+              }
+            })
 
             return {
             ...tempJob,
@@ -290,11 +322,19 @@ export const getAllJobAPI = async (param?: {}) => {
     tempJobs = tempJobs.map((tempJob: any)=>
     {
       let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-      return {
-        ...tempTask, 
-        technician : tempJob.technicianObj[index],
-        contractor : tempJob.contractorsObj[index],              
-      }
+        let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+          const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
+          return {
+            ...tempJobType,
+            jobType : currentItem
+          }
+        });
+        return {
+          ...tempTask, 
+          technician : tempJob.technicianObj[index],
+          contractor : tempJob.contractorsObj[index],     
+          jobTypes: tempJobTypes,         
+        }
       })
 
       return {

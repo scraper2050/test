@@ -48,6 +48,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import LockIcon from '@material-ui/icons/Lock';
+import TicketIcon from '@material-ui/icons/ConfirmationNumber';
+import RequestIcon from '@material-ui/icons/Alarm';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import ContactsIcon from '@material-ui/icons/Contacts';
@@ -133,10 +135,31 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
           'padding': '0 10px',
         }
       },
+    },    
+    subCategory : {
+      'padding' : '0px 10px !important'
+    },
+    subCategoryClose : {
+      'padding' : '0px 0px !important'
+    },
+    groupLabel : {
+      'font-size': '16px',
+      'line-height': '20px',
+      'color': '#000',
+      'border-radius': '7px',
+      'padding-left': '28px'
+    },
+    groupLabelClose : {
+      'font-size': '16px',
+      'line-height': '20px',
+      'color': '#000',
+      'border-radius': '7px',
+      'padding-left': '0px !important'
     },
     minimumMargin: {
       minHeight: '20px !important',
-      margin: '0 !important',
+      'margin-top': '0 !important',
+      'margin-bottom': '0 !important',
     },
     expandIcon: {
       padding: '0 12px',
@@ -171,9 +194,27 @@ function BCAdminSidebar({
       'link': '/main/customers/new-customer'
     },
     {
-      'label': 'Schedule/Jobs',
-      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><WatchLaterOutlinedIcon/></Badge>,
+      'label': 'Schedule',
+      'parent': true,
       'link': '/main/customers/schedule'
+    },
+    {
+      'label': 'Jobs',
+      'icon': <WorkIcon/>,
+      'link': '/main/customers/schedule/jobs',
+      'group': 'Schedule',
+    },
+    {
+      'label': 'Tickets',
+      'icon': <TicketIcon/>,
+      'link': '/main/customers/schedule/tickets',
+      'group': 'Schedule',
+    },
+    {
+      'label': 'Job Requests',
+      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><RequestIcon/></Badge>,
+      'link': '/main/customers/schedule/job-requests',
+      'group': 'Schedule',
     },
     {
       'label': 'Calendar',
@@ -373,7 +414,57 @@ function BCAdminSidebar({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
-
+  const subGroupBar = (item : any) => {
+    console.log("arriveasdf");
+    return pathName.split("/main/")[1] && 
+    Object.values(groupBy(LINK_DATA.filter((childitem: any) => childitem.link.startsWith(item.link) && childitem.parent != true), 'group'))
+      .map((group: any, groupIdx: number) => (
+        <Accordion key={groupIdx} defaultExpanded className={sidebarStyles.accordion}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            className={sidebarStyles.accordionSummary}
+            classes={{
+              root: sidebarStyles.minimumMargin,
+              expanded: sidebarStyles.minimumMargin,
+              expandIcon: sidebarStyles.expandIcon,
+            }}>
+            <span className={classnames({
+                [sidebarStyles.groupLabel]: true,
+                [sidebarStyles.groupLabelClose]: !open
+              })}>{open && group[0].group}</span>
+          </AccordionSummary>
+          <AccordionDetails className={sidebarStyles.accordionDetails}>
+            <ul className={classnames({
+          [sidebarStyles.subCategory]: true,
+          [sidebarStyles.subCategoryClose]: !open
+        })}>
+              {group.map((subitem: any, idx: number) => {
+                return (
+                  <li key={idx}>
+                    <Tooltip
+                      arrow
+                      title={subitem.label}
+                      disableHoverListener={open}
+                    >
+                      <StyledListItem
+                        button
+                        onClick={() => onClickLink(subitem.link)}
+                        selected={
+                          pathName === subitem.link ||
+                          pathName === `${subitem.link}/${nestedRouteKey}`
+                        }>
+                        {subitem.icon && subitem.icon}
+                        {open && <span className='menuLabel sub-menu'>{subitem.label}</span>}
+                      </StyledListItem>
+                    </Tooltip>
+                  </li>
+                )
+              })}
+            </ul>
+          </AccordionDetails>
+        </Accordion>
+      ))
+  }
   const imageUrl = user?.profile?.imageUrl === '' || user?.profile?.imageUrl === null
     ? AvatarImg
     : user?.profile?.imageUrl;
@@ -442,7 +533,8 @@ function BCAdminSidebar({
             } else {
               mainPath = 'dashboard';
             }
-            return item.link.startsWith(`/main/${mainPath}`) && mainPath !== 'reports'
+            
+            return item.link.startsWith(`/main/${mainPath}`) && mainPath !== 'reports' && item.group == undefined && item.parent == undefined
               ? <li key={idx}>
                 <Tooltip
                   arrow
@@ -461,7 +553,7 @@ function BCAdminSidebar({
                   </StyledListItem>
                 </Tooltip>
               </li>
-              : null;
+              : item.link.startsWith(`/main/${mainPath}`) && item.parent == true ? subGroupBar(item) :null;
           })}
         </ul>
 
