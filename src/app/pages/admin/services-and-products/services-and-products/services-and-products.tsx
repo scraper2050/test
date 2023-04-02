@@ -2,7 +2,7 @@ import BCTableContainer from 'app/components/bc-table-container/bc-table-contain
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './services-and-products.styles';
-import { Button, Fab, Grid, withStyles } from '@material-ui/core';
+import { Button, Fab, Grid, withStyles, Tooltip } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -297,6 +297,19 @@ function AdminServiceAndProductsPage({ classes }:Props) {
           'width': 60
         },
         {
+          Cell({ row }: any) {
+            const {description} = row.original
+            return (
+              <Tooltip
+                arrow
+                title={description}
+              >
+                <div className="flex items-center">
+                    {description?.length > 30 ? `${description?.substr(0, 30)}...` : description}
+                </div>
+              </Tooltip>
+            );
+          },
           'Header': 'Description',
           'accessor': 'description',
           'sortable': false,
