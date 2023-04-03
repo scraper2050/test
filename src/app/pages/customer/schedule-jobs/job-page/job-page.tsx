@@ -6,7 +6,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import BCTabs from '../../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
-import { getAllJobsAPI } from 'api/job.api';
+import { getAllJobsAPI, getJobsListAPI } from 'api/job.api';
 import { getAllJobTypesAPI } from 'api/job.api';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
@@ -32,10 +32,11 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const { isLoading = true, jobs, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+  const { isLoading = true, jobs, jobsList, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
+      jobsList: jobState.jobsList,
       refresh: jobState.refresh,
       prevCursor: jobState.prevCursor,
       nextCursor: jobState.nextCursor,
@@ -45,6 +46,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
       keyword: jobState.keyword,
     })
   );
+  console.log("jobsList", jobsList);
 
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
@@ -77,7 +79,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   })
 
   function getJobLocation(originalRow: any, rowIndex: number) {
-    return originalRow?.jobLocation?.name || '-'
+    return originalRow?.jobLocationObj[0]?.name || '-'
   }
 
   function getJobTime(originalRow: any, rowIndex: number) {
@@ -394,10 +396,10 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     dispatch(getAllJobsAPI());
-    if(customers.length == 0) {
-      dispatch(getCustomers());
-    }
-    dispatch(getAllJobTypesAPI());
+    // if(customers.length == 0) {
+    //   dispatch(getCustomers());
+    // }
+    // dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
@@ -406,6 +408,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const handleTabChange = (newValue: number) => {
   };
   const handleRowClick = (event: any, row: any) => {
+    console.log('row', row)
     if (
       [0, 4].includes(row.original.status) &&
       (!row.original.employeeType ||
