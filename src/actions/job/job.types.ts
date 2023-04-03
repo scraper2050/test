@@ -1,6 +1,5 @@
 export const types = {
   'SET_JOBS': 'SET_JOB',
-  'SET_JOBS_LIST': 'SET_JOBS_LIST',
   'SET_SCHEDULED_JOBS': 'SET_SCHEDULED_JOBS',
   'SET_TODAYS_JOBS': 'SET_TODAYS_JOBS',
   'SET_PREVIOUS_JOBS_CURSOR': 'SET_PREVIOUS_JOBS_CURSOR',
@@ -113,7 +112,6 @@ export interface JobsState {
   streaming?: boolean;
   readonly refresh: boolean;
   readonly data?: Job[];
-  readonly jobsList?: Job[];
   readonly scheduledJobs?: Job[];
   readonly todaysJobs?: Job[];
   readonly jobObj?: Job;

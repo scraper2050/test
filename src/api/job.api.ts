@@ -11,7 +11,6 @@ import {
 import { refreshJobs,
   setJobLoading,
   setJobs,
-  setJobsList,
   setTodaysJobLoading,
   setTodaysJobs,
   setPreviousJobsCursor,
@@ -93,7 +92,6 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
       request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
-          console.log('tempJobsBefore', tempJobs);
           tempJobs = tempJobs.map((tempJob: any)=>
           {
             let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
@@ -123,86 +121,7 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
             }
           });
           tempJobs.sort(compareByDate);
-          console.log('tempJobsAfter', tempJobs);
           dispatch(setJobs(tempJobs.reverse()));
-          // dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
-          // dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
-          dispatch(setTotal(res.data.total ? res.data.total : 0));
-          dispatch(setJobLoading(false));
-          dispatch(refreshJobs(false));
-          return resolve(res.data);
-        })
-        .catch(err => {
-          dispatch(setJobLoading(false));
-          dispatch(setJobs([]));
-          if(err.message !== 'axios canceled'){
-            return reject(err);
-          }
-        });
-    });
-  };
-};
-export const getJobsListAPI = (pageSize = 10, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
-  return (dispatch: any) => {
-    return new Promise((resolve, reject) => {
-      dispatch(setJobLoading(true));
-      const optionObj:any = {
-        pageSize: pageSize,
-        currentPage: currentPageIndex
-      };
-      if(status !== '-1'){
-        optionObj.status = Number(status);
-      }
-      if(keyword){
-        optionObj.keyword = keyword
-      }
-      if(selectionRange){
-        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
-        optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
-      }
-      if(cancelTokenGetAllJobsAPI) {
-        cancelTokenGetAllJobsAPI.cancel('axios canceled');
-        setTimeout(() => {
-          dispatch(setJobLoading(true));
-        }, 0);
-      }
-      
-      cancelTokenGetAllJobsAPI = axios.CancelToken.source();
-
-      request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
-        .then((res: any) => {
-          let tempJobs = res.data.jobs;
-          // tempJobs = tempJobs.map((tempJob: any)=>
-          // {
-          //   let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-          //   let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
-          //     const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
-          //     return {
-          //       ...tempJobType,
-          //       jobType : currentItem
-          //     }
-          //   });
-          //   return {
-          //     ...tempTask, 
-          //     technician : tempJob.technicianObj[index],
-          //     contractor : tempJob.contractorsObj[index],     
-          //     jobTypes: tempJobTypes,         
-          //   }
-          //  })
-
-          //   return {
-          //   ...tempJob,
-          //   customer: tempJob.customerObj[0],
-          //   jobLocation: tempJob.jobLocationObj[0],
-          //   jobSite : tempJob.jobSiteObj[0],
-          //   ticket : tempJob.ticketObj[0],
-          //   updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-          //   tasks: tempTasks
-          //   }
-          // });
-          tempJobs.sort(compareByDate);
-          console.log(tempJobs);
-          dispatch(setJobsList(tempJobs.reverse()));
           // dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
           // dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
           dispatch(setTotal(res.data.total ? res.data.total : 0));

@@ -5,7 +5,6 @@ import { JobActionType, JobsState, types } from "../actions/job/job.types";
 
 const initialJob: JobsState = {
   data: [],
-  jobsList: [],
   scheduledJobs: [],
   todaysJobs: [],
   isLoading: false,
@@ -118,12 +117,6 @@ export const jobReducer: Reducer<any> = (
         ...state,
         'isLoading': false,
         data: [...payload],
-      };
-    case types.SET_JOBS_LIST:
-      return {
-        ...state,
-        'isLoading': false,
-        jobsList: [...payload],
       };
     case types.SET_SCHEDULED_JOBS:
       return {
