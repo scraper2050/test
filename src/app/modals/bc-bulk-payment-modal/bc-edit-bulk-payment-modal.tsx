@@ -135,12 +135,10 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             setIsSuccess(true);
             setSubmitting(false);
           } else {
-            console.log(response.message);
             dispatch(error(response.message))
             setSubmitting(false);
           }
         }).catch((e: any) => {
-          console.log(e.message);
           dispatch(error(e.message));
           setSubmitting(false);
         })
@@ -357,7 +355,6 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   }, [paymentList])
 
   useEffect(() => {
-    // console.log('ini itu localPaymentList', localPaymentList)
     setFieldValue('totalAmount', localPaymentList.reduce((total, payment) => {
       return total + payment.amountToBeApplied;
     }, 0))

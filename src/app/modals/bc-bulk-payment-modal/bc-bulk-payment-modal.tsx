@@ -159,12 +159,10 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
             setIsSuccess(true);
             setSubmitting(false);
           } else {
-            console.log(response.message);
             dispatch(error(response.message))
             setSubmitting(false);
           }
         }).catch((e: any) => {
-          console.log(e.message);
           dispatch(error(e.message));
           setSubmitting(false);
         })
@@ -402,7 +400,6 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   }, [invoiceList])
 
   useEffect(() => {
-    // console.log('ini itu localInvoiceList', localInvoiceList)
     setFieldValue('totalAmount', localInvoiceList.reduce((total, invoice) => {
       return total + invoice.amountToBeApplied;
     }, 0))

@@ -72,7 +72,6 @@ function BCViewJobModal({
   job = initialJobState,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  //console.log(job);
   const calculateJobType = (task: any) => {
     let title: string[] = [];
     task.jobTypes.forEach((type: any) => title.push(type.jobType?.title))
@@ -96,7 +95,7 @@ function BCViewJobModal({
   useEffect(() => {
     const data: any = {
       type: 'Customer',
-      referenceNumber: job.customer._id,
+      referenceNumber: job.customer,
     };
     dispatch(getContacts(data));
     dispatch(getEmployeesForJobAction());

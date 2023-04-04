@@ -59,7 +59,6 @@ function EmployeeProfilePage({ classes }: any) {
       }
     } catch (err) {
       return true;
-      console.log(err);
     }
   }
 

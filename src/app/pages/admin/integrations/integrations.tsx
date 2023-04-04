@@ -56,7 +56,6 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
               data: returnUrl.substring(index),
               redirectUri: encodeURIComponent(redirectUri)
             };
-            // console.log({data});
             await window.clearInterval(pollOAuth);
             await win.close();
             const response = await quickbooksAuthenticate(data);

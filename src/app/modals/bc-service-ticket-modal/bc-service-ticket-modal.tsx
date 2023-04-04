@@ -152,7 +152,6 @@ function BCServiceTicketModal({
         tasks: FormikValues.jobTypes.map((jobType: any) => ({jobType: jobType.jobTypeId || jobType._id})),
         customer: customers.find((customer: any) => customer?._id === FormikValues.customerId),
       }
-      // console.log({ticket, FormikValues, tempTicket});
       history.push({
         'state': {
           ...jobLocationValue,

@@ -188,7 +188,6 @@ function AdminVendorsPage({ classes }: any) {
       renderViewMore(row);
     } else {
       // TODO: add action
-      console.log(`Remind ${row.original?.contractorEmail}`);
     }
   };
 

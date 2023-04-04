@@ -148,7 +148,6 @@ function CreateEstimates({ classes }: any) {
         delete o.unit;
         return o;
       }));
-      console.log(data);
       callCreateEstimatesAPI(data).then((response: any) => {
         history.push(redirectURL);
         // Missing an argument
@@ -156,7 +155,6 @@ function CreateEstimates({ classes }: any) {
         return resolve(response);
       })
         .catch((err: any) => {
-          console.log(err);
           reject(err);
         });
     });

@@ -50,7 +50,6 @@ function BCQbDisconnectModal({
       `;
       win.document.head.appendChild(script);
     } else {
-      console.log(response.data.message)
       dispatch(error(response.data.message));
     }
     closeModal();

@@ -415,7 +415,6 @@ function BCAdminSidebar({
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
   const subGroupBar = (item : any) => {
-    console.log("arriveasdf");
     return pathName.split("/main/")[1] && 
     Object.values(groupBy(LINK_DATA.filter((childitem: any) => childitem.link.startsWith(item.link) && childitem.parent != true), 'group'))
       .map((group: any, groupIdx: number) => (

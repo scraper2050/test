@@ -11,6 +11,7 @@ import {
 import { refreshJobs,
   setJobLoading,
   setJobs,
+  setJobsList,
   setTodaysJobLoading,
   setTodaysJobs,
   setPreviousJobsCursor,
@@ -122,8 +123,53 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
           });
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
-          // dispatch(setPreviousJobsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
-          // dispatch(setNextJobsCursor(res.data.nextCursor ? res.data.nextCursor : ''));
+          dispatch(setTotal(res.data.total ? res.data.total : 0));
+          dispatch(setJobLoading(false));
+          dispatch(refreshJobs(false));
+          return resolve(res.data);
+        })
+        .catch(err => {
+          dispatch(setJobLoading(false));
+          dispatch(setJobs([]));
+          if(err.message !== 'axios canceled'){
+            return reject(err);
+          }
+        });
+    });
+  };
+};
+export const getJobsListAPI = (pageSize = 10, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null) => {
+  return (dispatch: any) => {
+    return new Promise((resolve, reject) => {
+      dispatch(setJobLoading(true));
+      const optionObj:any = {
+        pageSize: pageSize,
+        currentPage: currentPageIndex
+      };
+      if(status !== '-1'){
+        optionObj.status = Number(status);
+      }
+      if(keyword){
+        optionObj.keyword = keyword
+      }
+      if(selectionRange){
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
+      }
+      if(cancelTokenGetAllJobsAPI) {
+        cancelTokenGetAllJobsAPI.cancel('axios canceled');
+        setTimeout(() => {
+          dispatch(setJobLoading(true));
+        }, 0);
+      }
+      
+      cancelTokenGetAllJobsAPI = axios.CancelToken.source();
+
+      request(`/getJobs`, 'post', optionObj, undefined, undefined, cancelTokenGetAllJobsAPI)
+        .then((res: any) => {
+          let tempJobs = res.data.jobs;
+          tempJobs.sort(compareByDate);
+          dispatch(setJobsList(tempJobs.reverse()));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));
@@ -394,7 +440,6 @@ export const callCreateJobAPI = (data: any) => {
         return resolve(res.data);
       })
       .catch(err => {
-        console.log(err);
         return reject(err);
       });
   });

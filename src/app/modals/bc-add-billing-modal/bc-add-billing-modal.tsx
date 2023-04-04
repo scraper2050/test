@@ -127,7 +127,6 @@ function BCServiceTicketModal({
       zipcode: ticket.zipcode
     },
     onSubmit: (values, { setSubmitting }) => {
-      console.log(values)
       setSubmitting(true);
       const tempData = {
         ...ticket,
@@ -242,7 +241,6 @@ function BCServiceTicketModal({
       );
     }, 200);
   };
-  console.log(FormikValues)
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   } else {

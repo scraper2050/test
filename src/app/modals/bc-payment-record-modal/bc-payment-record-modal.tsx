@@ -168,7 +168,6 @@ function BcPaymentRecordModal({
         setSubmitting(false);
           //closeModal()
       }).catch((e: any) => {
-        console.log(e.message);
         dispatch(error(e.message));
         setSubmitting(false);
       })

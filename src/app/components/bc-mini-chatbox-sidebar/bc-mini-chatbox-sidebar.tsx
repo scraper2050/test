@@ -59,16 +59,13 @@ const BCMiniChatboxSidebar = ({ classes, jobRequestId, name }: MiniSidebarProps)
         formData.append('message', input)
         const result = await postJobRequestChat(jobRequestId, formData);
         if(result.status === 1) {
-          console.log(result)
           getChatContent(jobRequestId);
           setInput('');
         } else {
-          console.log(result.message);
           dispatch(SnackBarError(`Something went wrong when sending chat`));
         }
         setIsSendingMessage(false);
       } catch (error) {
-        console.log(error);
         dispatch(SnackBarError(`Something went wrong when sending chat`));
         setIsSendingMessage(false);
       }
@@ -86,12 +83,10 @@ const BCMiniChatboxSidebar = ({ classes, jobRequestId, name }: MiniSidebarProps)
       if(result.status === 1) {
         setChatContent(result.chats);
       } else {
-        console.log(result.message);
         dispatch(SnackBarError(`Something went wrong when retreiving chats`));
       }
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       dispatch(SnackBarError(`Something went wrong when retreiving chats`));
       setIsLoading(false);
     }

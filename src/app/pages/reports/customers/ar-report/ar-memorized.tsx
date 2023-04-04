@@ -58,12 +58,10 @@ const RevenueMemorizedReport = ({ classes }: RevenueMemorizedProps) => {
       if(result.status === 1) {
         setMemorizedReportData(result.memorizedReports)
       } else {
-        console.log(result.message)
         dispatch(SnackBarError(`Something went wrong`))
       }
       setIsLoading(false);
     } catch (error) {
-      console.log(error)
       dispatch(SnackBarError(`Something went wrong`))
       setIsLoading(false);
     }
@@ -178,12 +176,10 @@ const RevenueMemorizedReport = ({ classes }: RevenueMemorizedProps) => {
       if(result.status === 1) {
         setReportData(result);
       } else {
-        console.log(result.message);
         dispatch(SnackBarError(`Something went wrong`));
       }
       setIsLoading(false);
     } catch (error) {
-      console.log(error)
       dispatch(SnackBarError(`Something went wrong`));
       setIsLoading(false);
     }

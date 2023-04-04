@@ -83,7 +83,6 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
         break;
       case RoleEnums.Manager:
         response = await dispatch(createManager(data));
-        console.log(response)
         if (response.status) {
           await renderGoBack(location.state)
           dispatch(success("Employee created successfully."));
