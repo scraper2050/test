@@ -74,7 +74,6 @@ function EmailPreferencePage() {
       }
     } catch (err) {
       return true;
-      console.log(err);
     }
   }
 

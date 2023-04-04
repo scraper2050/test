@@ -160,12 +160,10 @@ function BCViewJobRequestModal({
         setChatContent(result.chats);
         setUnreadChatCount(result.unreadChat || 0);
       } else {
-        console.log(result.message);
         dispatch(SnackBarError(`Something went wrong when retrieving comments`));
       }
       setIsChatLoading(false);
     } catch (error) {
-      console.log(error);
       dispatch(SnackBarError(`Something went wrong when retrieving comments`));
       setIsChatLoading(false);
     }

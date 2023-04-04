@@ -46,7 +46,6 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
       keyword: jobState.keyword,
     })
   );
-  console.log("jobsList", jobsList);
 
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
@@ -396,10 +395,6 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     dispatch(getAllJobsAPI());
-    // if(customers.length == 0) {
-    //   dispatch(getCustomers());
-    // }
-    // dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
@@ -408,7 +403,6 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const handleTabChange = (newValue: number) => {
   };
   const handleRowClick = (event: any, row: any) => {
-    console.log('row', row)
     if (
       [0, 4].includes(row.original.status) &&
       (!row.original.employeeType ||

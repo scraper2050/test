@@ -127,13 +127,11 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
         setIsLoading(false);
       } else {
         dispatch(error("Something went wrong! Can't get invoice prefix data"));
-        console.log(res);
         closeModal();
       }
     })
     .catch((err: Error| AxiosError) => {
       dispatch(error("Something went wrong! Can't get invoice prefix data"));
-      console.log(err);
       closeModal();
     });
   }, []);
@@ -167,7 +165,6 @@ function BCEditInvoiceNumberModal({classes}: any): JSX.Element {
       } catch (err) {
         dispatch(error("Something went wrong!"));
         setSubmitting(false);
-        console.log(err);
       }
     },
   })

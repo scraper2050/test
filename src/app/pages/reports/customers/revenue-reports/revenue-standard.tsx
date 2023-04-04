@@ -49,7 +49,6 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
 
   useEffect(() => {
     if(location.state && location.state.reportQuery){
-      // console.log(location.state.reportQuery);
       runReport(location.state.reportQuery);
     }
     window.history.replaceState({}, document.title);
@@ -91,12 +90,10 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
         setReportData(result);
         dispatch(setReportShowing(true));
       } else {
-        console.log(result.message);
         dispatch(SnackBarError(`Something went wrong`));
       }
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       dispatch(SnackBarError(`Something went wrong`));
       setIsLoading(false);
     }

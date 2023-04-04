@@ -99,12 +99,10 @@ function BCChat({
           setReplyItem(null);
           inputFileRef.current.value = null;
         } else {
-          console.log(result.message);
           errorDispatcher(`Something went wrong when sending chat`);
         }
         setIsSendingMessage(false);
       } catch (error) {
-        console.log(error);
         errorDispatcher(`Something went wrong when sending chat`);
         setIsSendingMessage(false);
       }
@@ -133,14 +131,12 @@ function BCChat({
   }
 
   const partialRenderChat = () => {
-    console.log(startId);
     // const ind = startId ? chatContent.findIndex((chat: any) => chat._id === startId) : Math.max(chatContent.length - 5, 0);
     const ind = chatContent.findIndex((chat: any) => chat._id === startId);
     return chatContent.slice(ind).map(renderChatContent)
   }
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-    console.log({ startId })
     if (e.currentTarget.scrollTop === 0) {
       setTimeout(() => {
         const lastChat = document.getElementById(startId);

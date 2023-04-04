@@ -62,7 +62,6 @@ function SharedFormItemsContainer({ classes,
     tempArray[index].taxAmount = parseFloat(((tempArray[index].price * tempArray[index].quantity) * (tempArray[index].tax / 100)).toFixed(2)); // eslint-disable-line
     tempArray[index].total = (tempArray[index].price * tempArray[index].quantity) + tempArray[index].taxAmount; // eslint-disable-line
     setItems(tempArray);
-    //console.log('tempArray: '+JSON.stringify(tempArray, null, 4));
 
   };
 
@@ -87,7 +86,6 @@ function SharedFormItemsContainer({ classes,
           tax
         };
       });
-     // console.log('newItems: '+ JSON.stringify(newItems, null, 4));
       setItems([...newItems]);
     }
 
@@ -98,15 +96,12 @@ function SharedFormItemsContainer({ classes,
   const addItem = () => {
 
     const newData = [{ ...itemSchema }];
-    console.log('items before tempArray: '+JSON.stringify(items, null, 4));
     const tempArray = [
       ...items,
       ...newData
     ];
-   //console.log('addItem: '+JSON.stringify(newData, null, 4));
 
     setItems(tempArray);
-    console.log('tempArray: '+JSON.stringify(tempArray, null, 4));
     setRefreshColumns(true);
   };
 
@@ -134,12 +129,10 @@ function SharedFormItemsContainer({ classes,
     ? [{ 'tax': taxFromItems }]
     : taxes;
 
-// if(invoiceItems.length > 0) console.log('invoiceItems: '+JSON.stringify(invoiceItems, null, 4));
 
   useEffect(() => {
     if (taxes && invoiceItems && refereshColumns) {
       let columnData = [...columns];
-     // console.log('columnData: '+JSON.stringify(columnData, null, 4));
       columnData = columnData.map(column => {
         if (!column.fieldType) {
           return column;
@@ -249,10 +242,6 @@ function SharedFormItemsContainer({ classes,
     return <BCCircularLoader heightValue={'50px'} />;
   }
 
-  //console.log('jobTypes: '+JSON.stringify(jobTypes, null, 4));
-  //console.log('invoiceItems: '+JSON.stringify(invoiceItems, null, 4));
-
-  //console.log('log-items tableData: '+JSON.stringify(items, null, 4));
 
   return <>
     <BCTableContainer

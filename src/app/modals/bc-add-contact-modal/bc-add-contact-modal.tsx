@@ -312,7 +312,6 @@ function BCAddContactModal({
 
                 dispatch(error(response.message))
               } else {
-                console.log('dito sa apply')
 
                 dispatch(error("Something went wrong!"))
               }
@@ -323,7 +322,6 @@ function BCAddContactModal({
               dispatch(error(err.message))
             } else {
               dispatch(error("Something went wrong!"))
-              console.log(err)
             }
           } finally {
             await setSubmitting(false);

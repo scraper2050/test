@@ -128,7 +128,6 @@ function BcPayrollPaymentRecordModal({
         }
         setSubmitting(false);
       } catch(e) {
-        console.log(e)
         let message = 'Unknown Error'
         if (error instanceof Error) {
           message = error.message
@@ -415,7 +414,6 @@ function BcPayrollPaymentRecordModal({
         }
         setSubmitting(false);
       } catch(e) {
-        console.log(e)
         let message = 'Unknown Error'
         if (error instanceof Error) {
           message = error.message

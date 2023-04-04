@@ -8,7 +8,6 @@ export const getCustomers = async (active = true, inactive = false) => {
   let responseData;
   try {
     const response: any = await request('/getCustomers', 'POST', body, false);
-    console.log('response', response)
     responseData = response.data;
     if (response.status === 200) {
       responseData = {
@@ -17,7 +16,6 @@ export const getCustomers = async (active = true, inactive = false) => {
       };
     }
   } catch (err) {
-    console.log('err', err)
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||

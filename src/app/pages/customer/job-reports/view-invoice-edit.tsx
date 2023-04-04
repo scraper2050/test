@@ -91,7 +91,6 @@ function ViewInvoice() {
       }
     } catch (e) {
       dispatch(errorSnackBar('Something went wrong. Please try again'));
-      console.log(e);
     }
   }
 
@@ -257,7 +256,6 @@ function ViewInvoice() {
                   dispatch(errorSnackBar(res.message));
                 }
               } catch (error) {
-                console.log(error);
                 dispatch(errorSnackBar(`Something went wrong`))
               }
             }

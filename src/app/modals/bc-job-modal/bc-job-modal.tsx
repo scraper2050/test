@@ -182,7 +182,6 @@ function BCJobModal({
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
 
-  //console.log({job})
 
   let { ticket = {} } = job;
 
@@ -467,7 +466,6 @@ function BCJobModal({
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: (values: any, { setSubmitting }: any) => {
-      //console.log({values});
       const tempData = {...values};
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
       tempData.customerId = customer?._id;
@@ -502,7 +500,6 @@ function BCJobModal({
       }
 
       const requestObj = formatRequestObj(tempData)
-      //console.log({requestObj,}, JSON.stringify(tasks));
 
       const editJob = async(tempData: any) => {
         tempData.jobId = job._id;

@@ -29,7 +29,6 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
   const { customerObj, loading } = useSelector(({ customers }:any) => customers);
   const { companyName, companyEmail, logoUrl, phone, city, state, street, zipCode } = useSelector(({ profile }:any) => profile);
 
-  console.log("log-invoiceDetail", invoiceDetail);
 
   const columns = [
     {
@@ -377,7 +376,6 @@ function BCSharedFormModal({ onSubmit, formData, formId, onClose, theme }:any) {
             xs={4}>
             <div className={'bill-details'}>
               <p>
-                {console.log(customerContact)}
                 {'Contact Details '}
               </p>
               <h4>

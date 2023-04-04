@@ -72,7 +72,6 @@ function BCViewJobModal({
   job = initialJobState,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  //console.log(job);
   const calculateJobType = (task: any) => {
     let title: string[] = [];
     task.jobTypes.forEach((type: any) => title.push(type.jobType?.title))

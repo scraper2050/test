@@ -9,7 +9,6 @@ export const updateDiscount = async (item:any) => {
     }
     return response.data;
   } catch (err) {
-    console.log(err)
     if (err instanceof Error) {
       throw new Error(err.message);
     } else {
@@ -26,7 +25,6 @@ export const addDiscount = async (item:any) => {
     }
     return response.data;
   } catch (err) {
-    console.log(err)
     if (err instanceof Error) {
       throw new Error(err.message);
     } else {

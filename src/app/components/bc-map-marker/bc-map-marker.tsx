@@ -238,7 +238,6 @@ function BCMapMarker({
         data = serviceTicket;
       }
     } catch (e) {
-      console.log(e);
     }
     const modalDataAction = {
       'data': {
