@@ -65,14 +65,14 @@ export default function EmailReportButton({ jobReport, Component }: EmailReportP
   }
 
   const data = {
-    'customer': job.customer.profile
-      ? job.customer.profile.displayName
-      : jobReport.customerName,
-    'customerEmail': job.customer.info
-      ? job.customer.info.email
+    'customer': job?.customer?.profile
+      ? job?.customer?.profile?.displayName
+      : jobReport?.customerName,
+    'customerEmail': job?.customer?.info
+      ? job?.customer?.info?.email
       : '',
     'handleClick': sendReport,
-    'id': job.jobId || job._id,
+    'id': job?.jobId || job?._id,
     'typeText': 'Job Report'
   };
 
