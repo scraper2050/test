@@ -98,7 +98,6 @@ function BCDeleteJobModal({
           SetIsSubmitting(false);
           dispatch(error("Something went wrong!"));
         }
-        //console.log(responseTicket)
       } else {
         await dispatch(refreshServiceTickets(true));
         await dispatch(refreshJobs(false));

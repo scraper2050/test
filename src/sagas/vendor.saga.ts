@@ -29,18 +29,14 @@ import { vendorStatusToNumber } from 'actions/vendor/vendor.types';
  */
 
 export function *handleCancelOrFinish(action: { payload: any }) {
-  console.log('called');
   yield put(cancelOrFinishContractActions.fetching());
   try {
     const result = yield call(finishVendorApi, action.payload);
-    console.log('api');
     if (result.status !== 0) {
-      console.log('result');
       yield put(cancelOrFinishContractActions.success({ '_id': action.payload.contractId,
         'message': result.message,
         'status': vendorStatusToNumber[action.payload.status] }));
     } else {
-      console.log('error');
       yield put(cancelOrFinishContractActions.fault(result.message));
     }
   } catch (error) {

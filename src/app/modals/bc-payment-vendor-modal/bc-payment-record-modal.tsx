@@ -133,11 +133,9 @@ function BcPaymentVendorEditModal({
           setSubmitting(false);
           //closeModal()
         } else {
-          console.log(response.message);
           dispatch(error(response.message))
         }
       }).catch((e: any) => {
-        console.log(e.message);
         dispatch(error(e.message));
         setSubmitting(false);
       })

@@ -43,7 +43,6 @@ export const getPayrollBalance = (startDate: string|null = null, endDate: string
 };
 
 export const recordPaymentContractor = (params: any) => {
-  console.log({params});
   return async (dispatch: any) => {
     const contractors: any = await recordPaymentContractorAPI(params);
     if (contractors.status === 0) {

@@ -35,7 +35,6 @@ export default function EmailButton({ data, Component, showLoader = true, errorD
         }
       } catch (e) {
         setIsLoading(false);
-        console.log(e)
         let message = 'Unknown Error'
         if (e instanceof Error) {
           message = e.message

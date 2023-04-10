@@ -46,7 +46,6 @@ function VendorPayment({classes}: Props) {
   });
 
   const editPayment = (payment: any) => {
-    console.log({payment});
     dispatch(setModalDataAction({
       data: {
         modalTitle: 'Edit Payment',

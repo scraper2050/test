@@ -46,7 +46,6 @@ function BcPaymentTermsModal({ token, user }: BCSidebarProps) {
 
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log("log-value", (event.target as HTMLInputElement).value);
     dispatch(updatePaymentTermsAction((event.target as HTMLInputElement).value, user?.company as string));
     setValue((event.target as HTMLInputElement).value);
     dispatch(success('Default payment type successfully updated'));

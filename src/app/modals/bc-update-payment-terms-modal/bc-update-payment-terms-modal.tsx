@@ -48,7 +48,6 @@ function BcUpdatePaymentTermsModal({ token, user, customerId }: BCSidebarProps) 
 
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log("log-value", (event.target as HTMLInputElement).value);
     dispatch(updateCustomerPaymentTermsAction((event.target as HTMLInputElement).value, customerId as string));
     setValue((event.target as HTMLInputElement).value);
     setTimeout(() => {
@@ -56,8 +55,6 @@ function BcUpdatePaymentTermsModal({ token, user, customerId }: BCSidebarProps) 
       dispatch(getCustomerDetailAction({ customerId }));
     }, 500);
   };
-
-  console.log("log-customerObj", customerObj?.paymentTerm?._id);
 
   useEffect(() => {
     dispatch(getAllPaymentTermsAPI());

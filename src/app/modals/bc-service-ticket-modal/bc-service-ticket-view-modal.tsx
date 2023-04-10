@@ -55,7 +55,6 @@ function BCViewServiceTicketModal({
                           job = initialJobState,
                         }: any): JSX.Element {
   const dispatch = useDispatch();
-  // console.log(job);
   const calculateJobType = () => {
     let title = [];
     if (job.tasks) {

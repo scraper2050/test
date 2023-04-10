@@ -51,7 +51,6 @@ function BCEditCutomerInfoModal({ classes, customerInfo }: any) {
   const [nameLabelState, setNameLabelState] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const timeoutID = useRef<NodeJS.Timeout|null>(null);
-  //console.log({customerInfo})
 
   const [positionValue, setPositionValue] = useState({
     'lang':

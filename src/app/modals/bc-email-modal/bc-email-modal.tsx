@@ -116,7 +116,6 @@ function EmailJobReportModal({ classes, data }: any) {
   }, []);
 
   useEffect(() => {
-    // console.log('invoice==>', invoiceToView)
     if (invoiceToView?.customerId ) {
       getCustomersContact(invoiceToView?.customerId)
         .then((res) => {
@@ -282,7 +281,6 @@ function EmailJobReportModal({ classes, data }: any) {
       customerId: data?.multipleInvoices[invoiceInMultipleView]?.customerId,
     }
 
-    // console.log(tempObj)
     
     invoicesToSendClone.splice(invoiceInMultipleView,1,tempObj)
     // }
@@ -346,7 +344,6 @@ function EmailJobReportModal({ classes, data }: any) {
   };
 
   const slidePreviousInvoice = () => {
-    console.log('holla',invoicesToSend)
 
     
     //is viewing the final one, so add it to invoices to Send for memorization

@@ -84,7 +84,7 @@ function JobReportsPage({ classes, theme }: any) {
     },
     {
       'Header': 'Technician',
-      'accessor': (originalRow: any) => originalRow.job.tasks.length === 1 ? originalRow.job.tasks[0]?.technician?.profile?.displayName : 'Multiple Techs',
+      'accessor': (originalRow: any) => originalRow.job?.tasks?.length === 1 ? originalRow.job?.tasks[0]?.technician?.profile?.displayName : 'Multiple Techs',
       'className': 'font-bold',
       'sortable': true
     },

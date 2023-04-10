@@ -18,6 +18,12 @@ export const setJobs = (jobs: any) => {
     'type': types.SET_JOBS
   };
 };
+export const setJobsList = (jobs: any) => {
+  return {
+    'payload': jobs,
+    'type': types.SET_JOBS_LIST
+  };
+};
 export const setTodaysJobs = (jobs: any) => {
   return {
     'payload': jobs,

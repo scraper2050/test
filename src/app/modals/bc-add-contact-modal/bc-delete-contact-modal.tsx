@@ -65,7 +65,6 @@ function BCDeleteContactModal({
       }
     } catch (err) {
       dispatch(error("Something went wrong!"));
-      console.log(err)
     } finally {
       closeModal();
     }

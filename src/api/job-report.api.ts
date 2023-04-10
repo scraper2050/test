@@ -53,7 +53,7 @@ export const getAllJobReportsAPI = (pageSize = 10, currentPageIndex = 0, keyword
                 ...tempTask, 
                 technician : currenttechnician,
                 contractor : currentcontractor,     
-                jobTypes: tempJobTypes,         
+                jobTypes: tempJobTypes,
               }
             })
 

@@ -1,10 +1,10 @@
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
-import React, { useEffect, useRef, useState } from 'react';
-import { formatDateTimeYMD, formatDateYMD, parseISODate } from 'helpers/format';
-import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import React, {useEffect, useRef, useState} from 'react';
+import {formatDateTimeYMD, formatDateYMD, parseISODate} from 'helpers/format';
+import {refreshServiceTickets} from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
-import { useFormik } from 'formik';
+import {useFormik} from 'formik';
 import {
   Button,
   Checkbox,
@@ -25,7 +25,7 @@ import {
   closeModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   clearJobSiteStore,
   getJobSites,
@@ -38,7 +38,7 @@ import {
 } from 'actions/job-location/job-location.action';
 import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { getContacts } from 'api/contacts.api';
+import {getContacts} from 'api/contacts.api';
 import {
   convertMilitaryTime,
   formatDate,
@@ -48,41 +48,41 @@ import {
   error as SnackBarError,
   success,
 } from 'actions/snackbar/snackbar.action';
-import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
-import { modalTypes } from '../../../constants';
-import { refreshJobs } from '../../../actions/job/job.action';
-import { stringSortCaseInsensitive } from '../../../helpers/sort';
+import {getEmployeesForJobAction} from 'actions/employees-for-job/employees-for-job.action';
+import {modalTypes} from '../../../constants';
+import {refreshJobs} from '../../../actions/job/job.action';
+import {stringSortCaseInsensitive} from '../../../helpers/sort';
 import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
-import { createFilterOptions } from '@material-ui/lab/Autocomplete';
-import { useHistory } from 'react-router-dom';
+import {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import {useHistory} from 'react-router-dom';
 
 function BCServiceTicketModal({
-  classes,
-  ticket = {
-    customer: {
-      _id: '',
-    },
-    source: 'blueclerk',
-    jobSite: '',
-    jobLocation: '',
-    jobType: '',
-    note: '',
-    updateFlag: '',
-    dueDate: new Date(),
-    customerContactId: '',
-    customerPO: '',
-    images: [],
-    postCode: '',
-  },
-  error = {
-    status: false,
-    message: '',
-  },
-  onSubmit,
-  detail = false,
-  allowEditWithJob = false,
-  refreshTicketAfterEditing = true,
-}: any): JSX.Element {
+                                classes,
+                                ticket = {
+                                  customer: {
+                                    _id: '',
+                                  },
+                                  source: 'blueclerk',
+                                  jobSite: '',
+                                  jobLocation: '',
+                                  jobType: '',
+                                  note: '',
+                                  updateFlag: '',
+                                  dueDate: new Date(),
+                                  customerContactId: '',
+                                  customerPO: '',
+                                  images: [],
+                                  postCode: '',
+                                },
+                                error = {
+                                  status: false,
+                                  message: '',
+                                },
+                                onSubmit,
+                                detail = false,
+                                allowEditWithJob = false,
+                                refreshTicketAfterEditing = true,
+                              }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
   const [isHomeOccupied, setHomeOccupied] = useState(false);
@@ -93,8 +93,8 @@ function BCServiceTicketModal({
   const [thumbs, setThumbs] = useState<any[]>([]);
   const isFieldsDisabled = !!ticket.jobCreated && !allowEditWithJob;
 
-  const { loading, data } = useSelector(
-    ({ employeesForJob }: any) => employeesForJob
+  const {loading, data} = useSelector(
+    ({employeesForJob}: any) => employeesForJob
   );
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
@@ -124,7 +124,7 @@ function BCServiceTicketModal({
       };
 
       await dispatch(getContacts(data));
-      await dispatch(getJobLocationsAction({ customerId, isActive: true }));
+      await dispatch(getJobLocationsAction({customerId, isActive: true}));
     }
 
     await setFieldValue(fieldName, customerId);
@@ -157,7 +157,7 @@ function BCServiceTicketModal({
     await setJobSiteValue([]);
     await setJobLocationValue(newValue);
     if (locationId !== '') {
-      await dispatch(getJobSites({ customerId, locationId }));
+      await dispatch(getJobSites({customerId, locationId}));
     } else {
       await dispatch(clearJobSiteStore());
     }
@@ -185,14 +185,9 @@ function BCServiceTicketModal({
         customerContactId: FormikValues.customerContactId,
         customerPO: FormikValues.customerPO,
         images: FormikValues.images,
-        tasks: FormikValues.jobTypes.map((jobType: any) => ({
-          jobType: jobType.jobTypeId || jobType._id,
-        })),
-        customer: customers.find(
-          (customer: any) => customer?._id === FormikValues.customerId
-        ),
-      };
-      // console.log({ticket, FormikValues, tempTicket});
+        tasks: FormikValues.jobTypes.map((jobType: any) => ({jobType: jobType.jobTypeId || jobType._id})),
+        customer: customers.find((customer: any) => customer?._id === FormikValues.customerId),
+      }
       history.push({
         state: {
           ...jobLocationValue,
@@ -284,7 +279,7 @@ function BCServiceTicketModal({
   const mapTask = (tasks: any) => {
     if (tasks)
       return tasks.map((t: any) => {
-        return { jobTypeId: t.jobType };
+        return {jobTypeId: t.jobType};
       });
     else return [];
   };
@@ -316,7 +311,7 @@ function BCServiceTicketModal({
       customerPO: ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       images: ticket.images !== undefined ? ticket.images : [],
     },
-    onSubmit: (values, { setSubmitting }) => {
+    onSubmit: (values, {setSubmitting}) => {
       const tempData = {
         ...ticket,
         ...values,
@@ -326,7 +321,7 @@ function BCServiceTicketModal({
         (image: any) => image instanceof File
       );
 
-      const editTicketObj = { ...values, ticketId: '' };
+      const editTicketObj = {...values, ticketId: ''};
       const updateHomeOccupationStatus = () => {
         if (jobSiteValue.isHomeOccupied === isHomeOccupied) return;
         jobSiteValue.isHomeOccupied = isHomeOccupied;
@@ -391,7 +386,7 @@ function BCServiceTicketModal({
         }
       } else {
         delete tempData.customer;
-        const formatedRequest = { ...formatRequestObj(tempData) };
+        const formatedRequest = {...formatRequestObj(tempData)};
         formatedRequest.jobTypes = JSON.stringify(
           JSON.parse(formatedRequest.jobTypes).map((jt: any) => ({
             jobTypeId: jt._id,
@@ -449,12 +444,12 @@ function BCServiceTicketModal({
     },
   });
 
-  const customers = useSelector(({ customers }: any) => customers.data);
+  const customers = useSelector(({customers}: any) => customers.data);
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
-  const { contacts } = useSelector((state: any) => state.contacts);
+  const {contacts} = useSelector((state: any) => state.contacts);
 
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);
@@ -490,7 +485,7 @@ function BCServiceTicketModal({
     dispatch(getEmployeesForJobAction());
 
     if (ticket.customer?._id !== '') {
-      dispatch(getJobLocationsAction({ customerId: ticket.customer?._id }));
+      dispatch(getJobLocationsAction({customerId: ticket.customer?._id}));
 
       const data: any = {
         type: 'Customer',
@@ -676,16 +671,16 @@ function BCServiceTicketModal({
               options={
                 customers && customers.length !== 0
                   ? customers.sort((a: any, b: any) =>
-                      a.profile.displayName > b.profile.displayName
-                        ? 1
-                        : b.profile.displayName > a.profile.displayName
-                        ? -1
-                        : 0
-                    )
+                    a.profile.displayName > b.profile.displayName
+                      ? 1
+                      : b.profile.displayName > a.profile.displayName
+                      ? -1
+                      : 0
+                  )
                   : []
               }
               renderInput={(params) => (
-                <TextField required {...params} variant={'standard'} />
+                <TextField required {...params} variant={'standard'}/>
               )}
             />
           </Grid>
@@ -710,14 +705,14 @@ function BCServiceTicketModal({
           </Grid>
           <Grid container item xs={4}>
             <FormControlLabel
-              classes={{ label: classes.checkboxLabel }}
+              classes={{label: classes.checkboxLabel}}
               control={
                 <Checkbox
                   color={'primary'}
                   checked={jobSiteValue.isHomeOccupied || isHomeOccupied}
                   onChange={() => setHomeOccupied((v) => !v)}
                   name="isHomeOccupied"
-                  classes={{ root: classes.checkboxInput }}
+                  classes={{root: classes.checkboxInput}}
                 />
               }
               label={`HOUSE IS OCCUPIED`}
@@ -764,12 +759,12 @@ function BCServiceTicketModal({
                 options={
                   jobLocations && jobLocations.length !== 0
                     ? jobLocations.sort((a: any, b: any) =>
-                        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                      )
+                      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                    )
                     : []
                 }
                 renderInput={(params) => (
-                  <TextField {...params} variant={'outlined'} />
+                  <TextField {...params} variant={'outlined'}/>
                 )}
                 value={jobLocationValue}
               />
@@ -798,12 +793,12 @@ function BCServiceTicketModal({
                 options={
                   jobSites && jobSites.length !== 0
                     ? jobSites.sort((a: any, b: any) =>
-                        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                      )
+                      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                    )
                     : []
                 }
                 renderInput={(params) => (
-                  <TextField {...params} variant={'outlined'} />
+                  <TextField {...params} variant={'outlined'}/>
                 )}
                 filterOptions={(options, params) => {
                   const filtered = filter(options, params);
@@ -834,7 +829,7 @@ function BCServiceTicketModal({
                 getOptionDisabled={(option) => !option.isJobType}
                 disabled={detail || !!ticket.jobCreated}
                 getOptionLabel={(option) => {
-                  const { title, description } = option;
+                  const {title, description} = option;
                   return `${title || '...'}${
                     description ? ' - ' + description : ''
                   }`;
@@ -847,32 +842,32 @@ function BCServiceTicketModal({
                 options={
                   items && items.length !== 0
                     ? stringSortCaseInsensitive(
-                        items.map(
-                          (item: { name: string; jobType: string }) => ({
-                            ...item,
-                            title: item.name,
-                            _id: item.jobType,
-                          })
-                        ),
-                        'title'
-                      ).sort(
-                        (
-                          a: { isJobType: boolean },
-                          b: { isJobType: boolean }
-                        ) =>
-                          a.isJobType.toString() > b.isJobType.toString()
-                            ? -1
-                            : 1
-                      )
+                    items.map(
+                      (item: { name: string; jobType: string }) => ({
+                        ...item,
+                        title: item.name,
+                        _id: item.jobType,
+                      })
+                    ),
+                    'title'
+                    ).sort(
+                    (
+                      a: { isJobType: boolean },
+                      b: { isJobType: boolean }
+                    ) =>
+                      a.isJobType.toString() > b.isJobType.toString()
+                        ? -1
+                        : 1
+                    )
                     : []
                 }
-                classes={{ popper: classes.popper }}
+                classes={{popper: classes.popper}}
                 renderOption={(option: {
                   title: string;
                   description: string;
                   isJobType: string;
                 }) => {
-                  const { title, description, isJobType } = option;
+                  const {title, description, isJobType} = option;
                   if (!isJobType) {
                     return '';
                   } else {
@@ -927,14 +922,14 @@ function BCServiceTicketModal({
                     options={
                       contacts && contacts.length !== 0
                         ? contacts
-                            .filter((contact: any) => contact.isActive)
-                            .sort((a: any, b: any) =>
-                              a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                            )
+                          .filter((contact: any) => contact.isActive)
+                          .sort((a: any, b: any) =>
+                            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                          )
                         : []
                     }
                     renderInput={(params) => (
-                      <TextField {...params} variant={'outlined'} />
+                      <TextField {...params} variant={'outlined'}/>
                     )}
                     renderTags={(tagValue, getTagProps) =>
                       tagValue.map((option, index) => {
@@ -945,7 +940,7 @@ function BCServiceTicketModal({
                                 ? ' - ' + option.description
                                 : ''
                             }`}
-                            {...getTagProps({ index })}
+                            {...getTagProps({index})}
                             // disabled={disabledChips.includes(option._id) || !job._id}
                           />
                         );
@@ -987,7 +982,7 @@ function BCServiceTicketModal({
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item container xs={4} style={{ paddingTop: 0 }}>
+            <Grid item container xs={4} style={{paddingTop: 0}}>
               <BCDragAndDrop
                 images={thumbs}
                 onDrop={(files) => handleImageDrop(files)}
@@ -1041,6 +1036,7 @@ function BCServiceTicketModal({
     </DataContainer>
   );
 }
+
 const Label = styled.div`
   color: red;
   font-size: 15px;
@@ -1080,4 +1076,4 @@ const DataContainer = styled.div`
   }
 `;
 
-export default withStyles(styles, { withTheme: true })(BCServiceTicketModal);
+export default withStyles(styles, {withTheme: true})(BCServiceTicketModal);

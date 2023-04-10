@@ -33,7 +33,6 @@ import moment from "moment";
 import { CSButton } from "../../../../../helpers/custom";
 
 function ServiceTicket({ classes, hidden }: any) {
-  // console.log({classes})
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   const [showAllTickets, toggleShowAllTickets] = useState(false);
