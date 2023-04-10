@@ -325,9 +325,12 @@ function BCServiceTicketModal(
       const editTicketObj = {...values, ticketId: ''};
       const updateHomeOccupationStatus = () => {
         if (jobSiteValue.isHomeOccupied === isHomeOccupied) return;
-        jobSiteValue.isHomeOccupied = isHomeOccupied;
-        jobSiteValue.jobSiteId = jobSiteValue._id;
-        dispatch(updateJobSiteAction(jobSiteValue));
+        const newJobSiteValue = {
+          ...jobSiteValue,
+          jobSiteId: jobSiteValue._id,
+          isHomeOccupied
+        };
+        dispatch(updateJobSiteAction(newJobSiteValue));
       };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
@@ -975,7 +978,7 @@ function BCServiceTicketModal(
                   control={
                     <Checkbox
                       color={'primary'}
-                      checked={jobSiteValue.isHomeOccupied || isHomeOccupied}
+                      checked={jobSiteValue?.isHomeOccupied || isHomeOccupied}
                       onChange={(e) => {
                         formikChange(e)
                         setHomeOccupied((v) => !v)
@@ -1007,6 +1010,15 @@ function BCServiceTicketModal(
                     handleChange={formikChange}
                     name={'customerEmail'}
                     value={FormikValues.customerEmail}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
+                  <BCInput
+                    disabled={detail || isFieldsDisabled}
+                    handleChange={formikChange}
+                    name={'customerPhone'}
+                    value={FormikValues.customerPhone}
                   />
                 </Grid>
               </Grid>
