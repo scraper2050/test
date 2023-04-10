@@ -1000,7 +1000,7 @@ function BCServiceTicketModal(
                     disabled={detail || isFieldsDisabled}
                     handleChange={formikChange}
                     name={'customerName'}
-                    value={FormikValues.customerName}
+                    value={FormikValues?.customerName}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1009,7 +1009,7 @@ function BCServiceTicketModal(
                     disabled={detail || isFieldsDisabled}
                     handleChange={formikChange}
                     name={'customerEmail'}
-                    value={FormikValues.customerEmail}
+                    value={FormikValues?.customerEmail}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1018,7 +1018,7 @@ function BCServiceTicketModal(
                     disabled={detail || isFieldsDisabled}
                     handleChange={formikChange}
                     name={'customerPhone'}
-                    value={FormikValues.customerPhone}
+                    value={FormikValues?.customerPhone}
                   />
                 </Grid>
               </Grid>
