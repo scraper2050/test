@@ -56,33 +56,34 @@ import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {useHistory} from 'react-router-dom';
 
-function BCServiceTicketModal({
-                                classes,
-                                ticket = {
-                                  customer: {
-                                    _id: '',
-                                  },
-                                  source: 'blueclerk',
-                                  jobSite: '',
-                                  jobLocation: '',
-                                  jobType: '',
-                                  note: '',
-                                  updateFlag: '',
-                                  dueDate: new Date(),
-                                  customerContactId: '',
-                                  customerPO: '',
-                                  images: [],
-                                  postCode: '',
-                                },
-                                error = {
-                                  status: false,
-                                  message: '',
-                                },
-                                onSubmit,
-                                detail = false,
-                                allowEditWithJob = false,
-                                refreshTicketAfterEditing = true,
-                              }: any): JSX.Element {
+function BCServiceTicketModal(
+  {
+    classes,
+    ticket = {
+      customer: {
+        _id: '',
+      },
+      source: 'blueclerk',
+      jobSite: '',
+      jobLocation: '',
+      jobType: '',
+      note: '',
+      updateFlag: '',
+      dueDate: new Date(),
+      customerContactId: '',
+      customerPO: '',
+      images: [],
+      postCode: '',
+    },
+    error = {
+      status: false,
+      message: '',
+    },
+    onSubmit,
+    detail = false,
+    allowEditWithJob = false,
+    refreshTicketAfterEditing = true,
+  }: any): JSX.Element {
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
   const [isHomeOccupied, setHomeOccupied] = useState(false);
@@ -703,21 +704,7 @@ function BCServiceTicketModal({
               errorText={!isFieldsDisabled && FormikErrors.dueDate}
             />
           </Grid>
-          <Grid container item xs={4}>
-            <FormControlLabel
-              classes={{label: classes.checkboxLabel}}
-              control={
-                <Checkbox
-                  color={'primary'}
-                  checked={jobSiteValue.isHomeOccupied || isHomeOccupied}
-                  onChange={() => setHomeOccupied((v) => !v)}
-                  name="isHomeOccupied"
-                  classes={{root: classes.checkboxInput}}
-                />
-              }
-              label={`HOUSE IS OCCUPIED`}
-            />
-          </Grid>
+
         </Grid>
         <div className={'modalDataContainer'}>
           <Grid
@@ -886,6 +873,7 @@ function BCServiceTicketModal({
                 getOptionSelected={() => false}
               />
             </Grid>
+
           </Grid>
 
           <Grid
@@ -979,6 +967,47 @@ function BCServiceTicketModal({
                       ? ' Notes are required while updating the ticket.'
                       : null}
                   </Label>
+                </Grid>
+              </Grid>
+              <Grid container item xs>
+                <FormControlLabel
+                  classes={{label: classes.checkboxLabel}}
+                  control={
+                    <Checkbox
+                      color={'primary'}
+                      checked={jobSiteValue.isHomeOccupied || isHomeOccupied}
+                      onChange={(e) => {
+                        formikChange(e)
+                        setHomeOccupied((v) => !v)
+                      }}
+                      name="isHomeOccupied"
+                      classes={{root: classes.checkboxInput}}
+                    />
+                  }
+                  label={`HOUSE IS OCCUPIED`}
+                />
+              </Grid>
+
+              <Grid container>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    Name
+                  </Typography>
+                  <BCInput
+                    disabled={detail || isFieldsDisabled}
+                    handleChange={formikChange}
+                    name={'customerName'}
+                    value={FormikValues.customerName}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
+                  <BCInput
+                    disabled={detail || isFieldsDisabled}
+                    handleChange={formikChange}
+                    name={'customerEmail'}
+                    value={FormikValues.customerEmail}
+                  />
                 </Grid>
               </Grid>
             </Grid>
