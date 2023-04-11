@@ -311,6 +311,10 @@ function BCServiceTicketModal(
           : '',
       customerPO: ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       images: ticket.images !== undefined ? ticket.images : [],
+      isHomeOccupied: ticket.isHomeOccupied || false,
+      customerName: ticket.customerName || '',
+      customerEmail: ticket.customerEmail || '',
+      customerPhone: ticket.customerPhone || ''
     },
     onSubmit: (values, {setSubmitting}) => {
       const tempData = {
