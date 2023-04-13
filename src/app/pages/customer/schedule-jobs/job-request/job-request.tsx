@@ -22,7 +22,7 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import {getJobRequestDescription} from "../../../../../helpers/job";
 
-const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
+const activeJobRequest = process.env.REACT_APP_JOB_REQUEST_ACTIVE
 
 function JobRequest({ classes, hidden }: any) {
   const dispatch = useDispatch();

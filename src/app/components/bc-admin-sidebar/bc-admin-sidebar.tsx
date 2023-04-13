@@ -173,7 +173,7 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
+const activeJobRequest = process.env.REACT_APP_JOB_REQUEST_ACTIVE
 
 function BCAdminSidebar({
                           user,

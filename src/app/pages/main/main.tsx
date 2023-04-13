@@ -103,7 +103,7 @@ const RevenueReportsPage = React.lazy(() => import('../reports/customers/revenue
 const ARReportsPage = React.lazy(() => import('../reports/customers/ar-report'));
 const NewPayrollReportsPage = React.lazy(() => import('../reports/vendors/payroll-reports/payroll'));
 
-const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
+const activeJobRequest = process.env.REACT_APP_JOB_REQUEST_ACTIVE
 
 function Main(): any {
   const dispatch = useDispatch();
