@@ -99,6 +99,8 @@ const RevenueReportsPage = React.lazy(() => import('../reports/customers/revenue
 const ARReportsPage = React.lazy(() => import('../reports/customers/ar-report'));
 const NewPayrollReportsPage = React.lazy(() => import('../reports/vendors/payroll-reports/payroll'));
 
+const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
+
 function Main(): any {
   const dispatch = useDispatch();
   const notifications = useSelector((state: any) => state.notifications)
@@ -111,7 +113,9 @@ function Main(): any {
   const initialHeaderLoad = () => {
     dispatch(loadNotificationsActions.fetch());
     dispatch(loadInvoiceItems.fetch());
-    dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
+    if(activeJobRequest) {
+      dispatch(getAllJobRequestAPI(undefined, undefined, undefined, '-1', '', undefined));
+    }
   }
 
   const showNotificationDetails = (state?: boolean) => {
