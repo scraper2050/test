@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { ListItem, makeStyles, Menu, MenuItem, useMediaQuery, useTheme } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import React, {useEffect} from "react";
+import {
+  ListItem,
+  makeStyles,
+  Menu,
+  MenuItem,
+  useMediaQuery,
+  useTheme
+} from "@material-ui/core";
+import {createStyles, Theme, withStyles} from "@material-ui/core/styles";
 import styles from "./bc-admin-sidebar.style";
-import { useHistory, useLocation } from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import classnames from "classnames";
 import Drawer from "@material-ui/core/Drawer";
 import AvatarImg from "../../../assets/img/user_avatar.png";
@@ -12,10 +19,9 @@ import styled from "styled-components";
 import * as CONSTANTS from '../../../constants';
 import ListIcon from '@material-ui/icons/List';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import WatchLaterOutlinedIcon from '@material-ui/icons/WatchLaterOutlined';
 import MapIcon from '@material-ui/icons/Map';
 import DescriptionIcon from '@material-ui/icons/Description';
-import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
+import {removeUserFromLocalStorage} from "../../../utils/local-storage.service";
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Badge from '@material-ui/core/Badge';
@@ -57,11 +63,11 @@ import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
 import HistoryIcon from '@material-ui/icons/History';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
-import { CompanyProfileStateType } from "../../../actions/user/user.types";
+import {CompanyProfileStateType} from "../../../actions/user/user.types";
 import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
-import { ReactComponent as CollectIcon } from 'assets/img/icons/sidebar/reports/collect.svg'
-import { ReactComponent as AmountIcon } from 'assets/img/icons/sidebar/reports/amount.svg'
-import { ReactComponent as PayrollIcon } from 'assets/img/icons/sidebar/reports/payroll.svg'
+import {ReactComponent as CollectIcon} from 'assets/img/icons/sidebar/reports/collect.svg'
+import {ReactComponent as AmountIcon} from 'assets/img/icons/sidebar/reports/amount.svg'
+import {ReactComponent as PayrollIcon} from 'assets/img/icons/sidebar/reports/payroll.svg'
 
 interface BCSidebarProps {
   user: any;
@@ -69,8 +75,8 @@ interface BCSidebarProps {
   open: boolean;
   profileState: CompanyProfileStateType;
   numberOfJobRequest: number;
-  showNotificationDetails: (state?:boolean) => void;
-  getCompanyProfile: (companyId:string) => void;
+  showNotificationDetails: (state?: boolean) => void;
+  getCompanyProfile: (companyId: string) => void;
   logoutAndReset: () => void;
 }
 
@@ -136,20 +142,20 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
         }
       },
     },
-    subCategory : {
-      'padding' : '0px 10px !important'
+    subCategory: {
+      'padding': '0px 10px !important'
     },
-    subCategoryClose : {
-      'padding' : '0px 0px !important'
+    subCategoryClose: {
+      'padding': '0px 0px !important'
     },
-    groupLabel : {
+    groupLabel: {
       'font-size': '16px',
       'line-height': '20px',
       'color': '#000',
       'border-radius': '7px',
       'padding-left': '28px'
     },
-    groupLabelClose : {
+    groupLabelClose: {
       'font-size': '16px',
       'line-height': '20px',
       'color': '#000',
@@ -170,15 +176,15 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
 const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
 
 function BCAdminSidebar({
-    user,
-    classes,
-    open,
-    profileState,
-    numberOfJobRequest,
-    showNotificationDetails,
-    getCompanyProfile,
-    logoutAndReset,
-  }: BCSidebarProps) {
+                          user,
+                          classes,
+                          open,
+                          profileState,
+                          numberOfJobRequest,
+                          showNotificationDetails,
+                          getCompanyProfile,
+                          logoutAndReset,
+                        }: BCSidebarProps) {
   const history = useHistory();
   const location = useLocation();
   const pathName = location.pathname;
@@ -215,7 +221,7 @@ function BCAdminSidebar({
     {
       'label': 'Job Requests',
       'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><RequestIcon/></Badge>,
-      'link': activeJobRequest ? '/main/customers/schedule/job-requests' : '#',
+      'link': '/main/customers/schedule/job-requests',
       'group': 'Schedule',
     },
     {
@@ -391,7 +397,7 @@ function BCAdminSidebar({
     },
     {
       'label': 'Revenue',
-      'icon': <CollectIcon />,
+      'icon': <CollectIcon/>,
       'link': '/main/reports/revenue',
       'group': 'Customers',
     },
@@ -523,7 +529,8 @@ function BCAdminSidebar({
           [classes.bcSideBarCompanyLogo]: true,
           [avatarStyles.companyLogo]: !open
         })}>
-          <img src={profileState?.logoUrl === '' ?  NoCompanyLogo : profileState.logoUrl}/>
+          <img
+            src={profileState?.logoUrl === '' ? NoCompanyLogo : profileState.logoUrl}/>
         </div>
 
         <ul>
@@ -554,7 +561,7 @@ function BCAdminSidebar({
                   </StyledListItem>
                 </Tooltip>
               </li>
-              : item.link.startsWith(`/main/${mainPath}`) && item.parent == true ? subGroupBar(item) :null;
+              : item.link.startsWith(`/main/${mainPath}`) && item.parent == true ? subGroupBar(item) : null;
           })}
         </ul>
 
@@ -563,9 +570,10 @@ function BCAdminSidebar({
           pathName.split("/main/")[1] && pathName.split("/main/")[1].startsWith('reports/') &&
           Object.values(groupBy(LINK_DATA.filter((item: any) => item.link.startsWith('/main/reports/')), 'group'))
             .map((group: any, groupIdx: number) => (
-              <Accordion key={groupIdx} defaultExpanded className={sidebarStyles.accordion}>
+              <Accordion key={groupIdx} defaultExpanded
+                         className={sidebarStyles.accordion}>
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
+                  expandIcon={<ExpandMoreIcon/>}
                   className={sidebarStyles.accordionSummary}
                   classes={{
                     root: sidebarStyles.minimumMargin,
@@ -592,7 +600,8 @@ function BCAdminSidebar({
                                 pathName === `${item.link}/${nestedRouteKey}`
                               }>
                               {item.icon && item.icon}
-                              {open && <span className='menuLabel'>{item.label}</span>}
+                              {open &&
+                              <span className='menuLabel'>{item.label}</span>}
                             </StyledListItem>
                           </Tooltip>
                         </li>
@@ -616,8 +625,9 @@ function BCAdminSidebar({
                 alt={user && user.profile && user.profile.displayName}
                 src={imageUrl}
               />
-              <strong className='menuLabel'>{user && user.profile && user.profile.displayName}</strong>
-              <ArrowDropUpIcon style={{ color: CONSTANTS.PRIMARY_GRAY }}/>
+              <strong
+                className='menuLabel'>{user && user.profile && user.profile.displayName}</strong>
+              <ArrowDropUpIcon style={{color: CONSTANTS.PRIMARY_GRAY}}/>
             </StyledFooterItem>
             <Menu
               PaperProps={{
@@ -627,21 +637,21 @@ function BCAdminSidebar({
               }}
               id="sidebar-profile-menu"
               anchorEl={anchorEl}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+              anchorOrigin={{vertical: "top", horizontal: "center"}}
+              transformOrigin={{vertical: "bottom", horizontal: "center"}}
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleCloseProfileMenu}
             >
               <MenuItem onClick={handleViewProfile}>
                 <ListItemIcon>
-                  <AccountCircleIcon fontSize="small" />
+                  <AccountCircleIcon fontSize="small"/>
                 </ListItemIcon>
                 View Profile
               </MenuItem>
               <MenuItem onClick={handleClickLogout}>
                 <ListItemIcon>
-                  <ExitToAppIcon fontSize="small" />
+                  <ExitToAppIcon fontSize="small"/>
                 </ListItemIcon>
                 Logout
               </MenuItem>
@@ -661,14 +671,18 @@ const StyledListItem = styled(ListItem)`
   height: 40px;
   color: #000;
   border-radius: 7px;
+
   & > .menuLabel {
     padding-left: 30px;
     white-space: nowrap;
-  };
+  }
+;
+
   &.Mui-selected {
     color: #fff;
     background-color: ${CONSTANTS.SECONDARY_DARK_GREY};
-  };
+  }
+;
 `;
 
 const StyledFooterItem = styled(ListItem)`
@@ -676,12 +690,14 @@ const StyledFooterItem = styled(ListItem)`
   line-height: 20px;
   color: #000;
   border-radius: 7px;
+
   & > .menuLabel {
     padding-left: 35px;
-  };
+  }
+;
 `;
 
 export default withStyles(
   styles,
-  { 'withTheme': true }
+  {'withTheme': true}
 )(BCAdminSidebar);
