@@ -135,7 +135,7 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
           'padding': '0 10px',
         }
       },
-    },    
+    },
     subCategory : {
       'padding' : '0px 10px !important'
     },
@@ -166,6 +166,8 @@ const useSidebarStyles = makeStyles((theme: Theme) =>
     }
   }),
 );
+
+const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
 
 function BCAdminSidebar({
     user,
@@ -213,7 +215,7 @@ function BCAdminSidebar({
     {
       'label': 'Job Requests',
       'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><RequestIcon/></Badge>,
-      'link': '/main/customers/schedule/job-requests',
+      'link': activeJobRequest ? '/main/customers/schedule/job-requests' : '#',
       'group': 'Schedule',
     },
     {
@@ -415,7 +417,7 @@ function BCAdminSidebar({
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
   const subGroupBar = (item : any) => {
-    return pathName.split("/main/")[1] && 
+    return pathName.split("/main/")[1] &&
     Object.values(groupBy(LINK_DATA.filter((childitem: any) => childitem.link.startsWith(item.link) && childitem.parent != true), 'group'))
       .map((group: any, groupIdx: number) => (
         <Accordion key={groupIdx} defaultExpanded className={sidebarStyles.accordion}>
@@ -532,7 +534,7 @@ function BCAdminSidebar({
             } else {
               mainPath = 'dashboard';
             }
-            
+
             return item.link.startsWith(`/main/${mainPath}`) && mainPath !== 'reports' && item.group == undefined && item.parent == undefined
               ? <li key={idx}>
                 <Tooltip
