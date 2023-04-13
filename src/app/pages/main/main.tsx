@@ -48,7 +48,11 @@ const OfficeAdminPage = React.lazy(() => import('../employee/office-admin/office
 
 const ScheduleJobsPage = React.lazy(() => import('../customer/schedule-jobs/job-page/job-page'));
 const ScheduleServiceTicketsPage = React.lazy(() => import('../customer/schedule-jobs/service-ticket/service-ticket'));
-const ScheduleJobRequestsPage = React.lazy(() => import('../customer/schedule-jobs/job-request/job-request'));
+const ScheduleJobRequestsPage = React.lazy(() => process.env.REACT_APP_JOB_REQUEST_ACTIVE ?
+  import('../customer/schedule-jobs/job-request/job-request'):
+  import('../customer/schedule-jobs/job-request/no-job-request')
+);
+
 const CalendarPage = React.lazy(() => import('../customer/calendar/calendar'));
 const ManagersPage = React.lazy(() => import('../employee/managers/managers'));
 const GroupPage = React.lazy(() => import('../employee/group/group'));
@@ -99,7 +103,7 @@ const RevenueReportsPage = React.lazy(() => import('../reports/customers/revenue
 const ARReportsPage = React.lazy(() => import('../reports/customers/ar-report'));
 const NewPayrollReportsPage = React.lazy(() => import('../reports/vendors/payroll-reports/payroll'));
 
-const activeJobRequest = process.env.JOB_REQUEST_ACTIVE
+const activeJobRequest = process.env.REACT_APP_JOB_REQUEST_ACTIVE
 
 function Main(): any {
   const dispatch = useDispatch();
