@@ -138,7 +138,6 @@ export const getPaymentsByContractorAPI = async (type?: string, id?: string) => 
       return {status, message};
     }
   } catch(e) {
-    console.log(e);
     return {status: 0, message: `Something went wrong`};
   }
 }
@@ -171,7 +170,6 @@ export const updateAdvancePaymentContractorAPI = async (params: any) => {
       return {status, message};
     }
   } catch(e) {
-    console.log(e);
     return {status: 0, message: `Something went wrong`};
   }
 }
@@ -205,7 +203,6 @@ export const updatePaymentContractorAPI = async (params: any) => {
       return {status, message};
     }
   } catch(e) {
-    console.log(e);
     return {status: 0, message: `Something went wrong`};
   }
 }

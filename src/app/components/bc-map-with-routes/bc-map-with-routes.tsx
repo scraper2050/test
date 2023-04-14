@@ -70,7 +70,6 @@ function BCMapWithRoutes({
         DEFAULT_COORD.lng;
 
       coordinates.push({ lat: jobLat, lng: jobLong });
-      //console.log({coordinates, index})
     });
     return {
       ...jobRoute,

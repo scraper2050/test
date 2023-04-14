@@ -28,7 +28,6 @@ export const getEmployees = async () => {
     responseData = response.data;
   } catch (err) {
     /*responseData = err.data;
-    console.log(err);
     if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
       throw new Error(
         err.data.errors ||
@@ -73,10 +72,8 @@ export const addTechnician = async (data: UserProfile) => {
   try {
     const response: any = await request("/createTechnician", "POST", data, false);
     responseData = response.data;
-    console.log(responseData);
   } catch (err) {
     /*responseData = err.data;
-    console.log(err);
     if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
       throw new Error(
         err.data.errors ||
@@ -97,7 +94,6 @@ export const addManager = async (data: UserProfile) => {
     responseData = response.data;
   } catch (err) {
     /*responseData = err.data;
-    console.log(err);
     if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
       throw new Error(
         err.data.errors ||
@@ -118,7 +114,6 @@ export const addOfficeAdmin = async (data: UserProfile) => {
     responseData = response.data;
   } catch (err) {
     /*responseData = err.data;
-    console.log(err);
     if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
       throw new Error(
         err.data.errors ||

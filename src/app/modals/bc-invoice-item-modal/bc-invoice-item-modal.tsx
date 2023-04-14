@@ -99,7 +99,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
   };
 
   const activeTiers = Object.keys(tiers)
-    .map(tier_id => ({ ...tiers[tier_id].tier, charge: tiers[tier_id].charge ? `${tiers[tier_id].charge}` : '' }))
+    .map(tier_id => ({ ...tiers[tier_id].tier, charge: tiers[tier_id].charge !== null && typeof tiers[tier_id].charge !== 'undefined'  ? `${tiers[tier_id].charge}` : '' }))
     .filter(tier => tier.isActive)
 
   const formik = useFormik({
@@ -128,9 +128,14 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
       const tiers: { ['string']: { _id: string; charge: string; } } = values.tiers;
       const tierArr = Object.values(tiers).map(tier => ({
         tierId: tier._id,
-        charge: tier.charge ? parseFloat(tier.charge) : 0
+        charge: !(typeof tier.charge === 'undefined' || tier.charge === null || tier.charge === '')
+          ? parseFloat(tier.charge).toFixed(2)
+          : null
       }))
-      if (tierArr.filter((tier) => !tier.charge).length) {
+
+      const invalidCharge = tierArr.filter(tier => typeof tier.charge === 'undefined' || tier.charge === null);
+
+      if (invalidCharge.length) {
         dispatch(errorSnackBar('Tier Prices cannot be empty'));
         return setIsSubmitting(false);
       }

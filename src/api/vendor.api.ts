@@ -8,7 +8,6 @@ export const getCompanyContracts = async () => {
     const response: any = await request('/getCompanyContracts', 'POST', {}, false);
     responseData = response.data;
   } catch (err) {
-    console.log(err);
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(`Something went wrong`);
@@ -40,7 +39,6 @@ export const getContractorDetail = async (data: any, type: string = 'vendor') =>
       )
     }
   } catch (err) {
-    console.log(err);
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||

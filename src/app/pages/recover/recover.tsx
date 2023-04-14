@@ -102,7 +102,6 @@ function RecoverPage({ classes }: Props): JSX.Element {
             dispatch(success("Reset password success, please check your email."));
             history.push('/');
           } else {
-            console.log(res, 'res');
             setErrMessage(res.data.message);
           }
         })

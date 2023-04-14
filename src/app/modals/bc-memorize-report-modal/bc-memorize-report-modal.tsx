@@ -146,7 +146,6 @@ function BCMemorizeReportModal({ classes, data }: any) {
       setIsSuccess(true);
       setIsLoading(false);
     } else {
-      console.log(result.message);
       dispatch(SnackBarError(`Something went wrong`));
       setIsLoading(false);
     }

@@ -8,7 +8,6 @@ export const getCustomers = async (active = true, inactive = false) => {
   let responseData;
   try {
     const response: any = await request('/getCustomers', 'POST', body, false);
-
     responseData = response.data;
     if (response.status === 200) {
       responseData = {

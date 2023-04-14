@@ -103,7 +103,6 @@ function Payroll({classes}: Props) {
       case 2:
         const contractorName = row.vendor.replace(/[\/ ]/g, '');
         localStorage.setItem('nestedRouteKey', `${contractorName}`);
-        console.log({row})
         history.push({
           'pathname': `/main/payroll/pastpayment/${contractorName}`,
           'state': {

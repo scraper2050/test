@@ -694,7 +694,6 @@ function BCEditInvoice({
         }}
       >
         {({submitForm, handleChange, setFieldValue, values, isSubmitting, errors}) => {
-          //console.log({errors})
 
           return (
             <Form>

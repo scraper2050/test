@@ -15,7 +15,6 @@ interface Props {
 function VendorProfile({ profile, back }: Props) {
   const image = useSelector((state: any) => state.image);
 
-  console.log(profile);
 
   const cancel = () => {
     back();

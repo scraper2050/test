@@ -296,8 +296,6 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
     if (report) formatReport();
   }, [report, reportType])
 
-  // console.log(chartData)
-
   return (
     <div style={{padding: '20px 20px 0 20px', height: '85vh'}}>
       {isLoading ?

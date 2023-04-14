@@ -22,6 +22,8 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import {getJobRequestDescription} from "../../../../../helpers/job";
 
+const activeJobRequest = process.env.REACT_APP_JOB_REQUEST_ACTIVE
+
 function JobRequest({ classes, hidden }: any) {
   const dispatch = useDispatch();
   const { isLoading = true, jobRequests, refresh = true, total, prevCursor, nextCursor, lastPageCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
@@ -235,7 +237,9 @@ function JobRequest({ classes, hidden }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
+      if (activeJobRequest) {
+        dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
+      }
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -245,10 +249,10 @@ function JobRequest({ classes, hidden }: any) {
   }, [refresh, hidden]);
 
   useEffect(() => {
-      dispatch(getAllJobRequestAPI());
-      dispatch(setKeyword(''));
-      dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+    if (activeJobRequest) dispatch(getAllJobRequestAPI());
+    dispatch(setKeyword(''));
+    dispatch(setCurrentPageIndex(0));
+    dispatch(setCurrentPageSize(10));
   }, [])
 
   const handleTabChange = (newValue: number) => {

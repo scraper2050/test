@@ -11,7 +11,6 @@ export const getInvoiceEmailTemplate = async (invoiceId: string|string[]) => {
     const response: any = await request(`/getInvoiceEmailTemplate?${params}`, "GET", {}, false);
     return response;
   } catch (err) {
-    console.log(err)
     throw new Error(`Something went wrong`);
   }
 };

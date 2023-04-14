@@ -10,13 +10,11 @@ export const quickbooksGetUri = async (data: any) => {
 };
 
 export const quickbooksAuthenticate = async (data: any) => {
-  const url = `/QBCallback?${data.data}&redirectUri=${data.redirectUri}`
-  console.log (url)
+  const url = `/QBCallback?${data.data}&redirectUri=${data.redirectUri}`;
   try {
     const response: any = await request(url, "GET", null, false);
     return response;
   } catch (err) {
-    console.log(err);
     throw new Error(`Something went wrong`);
   }
 };
