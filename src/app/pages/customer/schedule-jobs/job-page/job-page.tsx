@@ -394,11 +394,9 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    dispatch(getAllJobsAPI());
-    dispatch(setKeyword(''));
-    dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
-  }, [])
+    console.log('refetch', keyword);
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
+  }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange])
 
   const handleTabChange = (newValue: number) => {
   };
@@ -470,8 +468,9 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                   dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange))
                 }}
                 setKeywordFunction={(query: string) => {
+                  console.log('setkeyword', query);
                   dispatch(setKeyword(query));
-                  dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
+                  // dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
                 }}
               />
             </div>
