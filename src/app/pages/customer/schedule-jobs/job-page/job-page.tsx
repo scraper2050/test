@@ -468,7 +468,6 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                   dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange))
                 }}
                 setKeywordFunction={(query: string) => {
-                  console.log('setkeyword', query);
                   dispatch(setKeyword(query));
                   // dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
                 }}
