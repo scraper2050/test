@@ -154,12 +154,12 @@ function BCMapWithMarkerWithList({
       if (selected._id) {
         let lat = centerLat;
         let lng = centerLng;
-        if (selected.jobSite) {
+        if (selected.jobSite && (selected.jobSite?.location?.coordinates[0] && selected.jobSite?.location?.coordinates[1])) {
           lat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : lat;
           lng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : lng;
           lat -= 0.002;
           lng += 0.002;
-        } else if (selected.jobLocation) {
+        } else if (selected.jobLocation && (selected.jobLocation?.location?.coordinates[0] && selected.jobLocation?.location?.coordinates[1])) {
           lat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : lat;
           lng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : lng;
           lat -= 0.002;
@@ -182,10 +182,10 @@ function BCMapWithMarkerWithList({
     }
     let lat:any = centerLat;
     let lng:any = centerLng;
-    if (ticket.jobSite) {
+    if (ticket.jobSite && (ticket.jobSite?.location?.coordinates[0] && ticket.jobSite?.location?.coordinates[1])) {
       lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : centerLat;
       lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : centerLng;
-    } else if (ticket.jobLocation) {
+    } else if (ticket.jobLocation && (ticket.jobLocation?.location?.coordinates[0] && ticket.jobLocation?.location?.coordinates[1])) {
       lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : centerLat;
       lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : centerLng;
     } else if (ticket.customer) {
