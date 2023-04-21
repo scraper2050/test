@@ -26,6 +26,7 @@ import BCDateRangePicker
 import moment from "moment";
 import {getVendor} from "../../../../../helpers/job";
 import { CSButton } from "../../../../../helpers/custom";
+import debounce from 'lodash.debounce';
 
 function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
@@ -222,7 +223,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     },
     {
       Header: 'Technician',
-      accessor: getVendor,
+      accessor: 'technician',
       id: 'technician',
       className: classes.capitalize,
       sortable: true,
@@ -230,14 +231,14 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     },
     {
       Header: 'Customer',
-      accessor: 'customer.profile.displayName',
+      accessor: 'customer',
       className: 'font-bold',
       sortable: true,
     },
     {
       Header: 'Subdivision',
       id: 'job-location',
-      accessor: getJobLocation,
+      accessor: 'subdivision',
       sortable: true,
     },
     {
@@ -254,7 +255,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     {
       Header: 'Time',
       id: 'job-time',
-      accessor: getJobTime,
+      accessor: 'scheduleTime',
       sortable: true,
       width: 40,
     },
@@ -412,6 +413,10 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     }
   };
 
+  const desbouncedSearchFunction = debounce((keyword: string) => {
+    dispatch(setKeyword(keyword));
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,keyword, selectionRange))
+  }, 500);
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -468,8 +473,9 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                   dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange))
                 }}
                 setKeywordFunction={(query: string) => {
-                  dispatch(setKeyword(query));
+                  // dispatch(setKeyword(query));
                   // dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
+                  desbouncedSearchFunction(query);
                 }}
               />
             </div>
