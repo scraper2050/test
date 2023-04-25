@@ -329,6 +329,13 @@ function BCServiceTicketModal(
       const editTicketObj = {...values, ticketId: ''};
       const updateHomeOccupationStatus = () => {
         if (jobSiteValue.isHomeOccupied === isHomeOccupied) return;
+        
+        //Verify if the location payload meets the requirements of the backend => location: {long: 0, lat: 0}
+        if (jobSiteValue?.location && jobSiteValue?.location?.coordinates.length && (!jobSiteValue?.long && !jobSiteValue?.lat)) {
+          jobSiteValue.location.long = jobSiteValue.location.coordinates[0];
+          jobSiteValue.location.lat = jobSiteValue.location.coordinates[1];
+        }
+
         const newJobSiteValue = {
           ...jobSiteValue,
           jobSiteId: jobSiteValue._id,
