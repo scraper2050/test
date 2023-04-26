@@ -106,7 +106,7 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
             return {
               ...tempTask, 
               technician : tempJob.technicianObj[index],
-              contractor : tempJob.contractorsObj[index],
+              contractor : tempJob.contractorsObj[index],     
               jobTypes: tempJobTypes,         
             }
            })

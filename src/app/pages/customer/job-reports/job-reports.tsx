@@ -254,11 +254,10 @@ function JobReportsPage({ classes, theme }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
+                setCurrentPageIndexFunction={(num: number) => 
                   {
                     dispatch(setCurrentPageIndex(num));
-                    if(apiCall)
-                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange))
+                    dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {

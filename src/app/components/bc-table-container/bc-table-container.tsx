@@ -80,7 +80,7 @@ function BCTableContainer({
       setSearchText('');
       setKeywordFunction('');
       fetchFunction(currentPageSize, undefined, undefined, '');
-      setCurrentPageIndexFunction(0, false);
+      setCurrentPageIndexFunction(0);
     } else {
       setSearchText('');
       if (setPage !== undefined) {
