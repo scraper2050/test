@@ -124,11 +124,11 @@ function BCTableContent({
 
   const handleChangePage = (event: any, newPage: any): any => {
     window.scrollTo(0, 20);
-
     if(manualPagination){
       if(newPage === 0) {
         fetchFunction(pageSize, undefined, undefined);
       } else if (newPage === Math.max(0, Math.ceil(total / pageSize) - 1) && lastPageCursorImplemented) {
+        console.log('newPage', newPage)
         fetchFunction(pageSize, undefined, undefined, undefined, true);
       } else {
         fetchFunction(pageSize, newPage < pageIndex, newPage > pageIndex);
@@ -173,7 +173,7 @@ function BCTableContent({
     }
     gotoPage(newPage);
     if(manualPagination){
-      setCurrentPageIndexFunction(newPage);
+      setCurrentPageIndexFunction(newPage, true);
     }
   };
 
@@ -181,7 +181,7 @@ function BCTableContent({
     if(manualPagination){
       fetchFunction(Number(event.target.value));
       setCurrentPageSizeFunction(Number(event.target.value))
-      setCurrentPageIndexFunction(0);
+      setCurrentPageIndexFunction(0, false);
     }
 
     const delay = 100;

@@ -462,10 +462,11 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => 
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
                   {
                     dispatch(setCurrentPageIndex(num));
-                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
+                    if(apiCall)
+                      dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
