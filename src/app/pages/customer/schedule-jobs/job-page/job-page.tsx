@@ -223,7 +223,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     },
     {
       Header: 'Technician',
-      accessor: 'technician',
+      accessor: getVendor,
       id: 'technician',
       className: classes.capitalize,
       sortable: true,
@@ -231,14 +231,14 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     },
     {
       Header: 'Customer',
-      accessor: 'customer',
+      accessor: 'customer.profile.displayName',
       className: 'font-bold',
       sortable: true,
     },
     {
       Header: 'Subdivision',
       id: 'job-location',
-      accessor: 'subdivision',
+      accessor: getJobLocation,
       sortable: true,
     },
     {
@@ -255,7 +255,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     {
       Header: 'Time',
       id: 'job-time',
-      accessor: 'scheduleTime',
+      accessor: getJobTime,
       sortable: true,
       width: 40,
     },
