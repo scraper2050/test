@@ -8,12 +8,12 @@ const config = {
     'AIzaSyAhohptKzKOOndCrj_6R-gIzYUfMQ3Gs-c',
   'apiBaseURL':
     process.env.REACT_APP_API_URL ||
-    'http://localhost:3006/api/v1/',
+    'https://blueclerk-node-api.deploy.blueclerk.com/api/v1/',
   'apiCustomerURL':
     process.env.REACT_APP_CUSTOMER_API_URL ||
     'https://staging-customer.blueclerk.com/api/v1/',
   'appBaseURL': process.env.REACT_APP_BASE_URL || 'http://localhost:3000/',
-  'socketServer': process.env.REACT_APP_SOCKET_URL || 'http://localhost:3006/',
+  'socketServer': process.env.REACT_APP_SOCKET_URL || 'https://blueclerk-node-api.deploy.blueclerk.com/',
   'customerSocketServer': process.env.REACT_APP_CUSTOMER_SOCKET_URL || 'https://staging-customer.blueclerk.com',
   'quickbooks_clientId': 'ABpcfFS7x9n3cNJQ3eojqsD0hzHV4wFbF9bHyYHzq8G6vC5b2Z',
   'quickbooks_clientSecret': 'W9RXt15hXNzcryKKkHmMxKBCGlRVBMyRJK5V1nO9',
