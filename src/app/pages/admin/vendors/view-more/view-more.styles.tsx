@@ -27,6 +27,7 @@ export default (theme: Theme): any => ({
   },
   displayNameContainer: {
     marginLeft: 10,
+    width: '27rem'
   },
   switchLabelInActive: {
     color: MENU_TEXT_COLOR,

@@ -84,7 +84,9 @@ function JobReportsPage({ classes, theme }: any) {
     },
     {
       'Header': 'Technician',
-      'accessor': (originalRow: any) => originalRow.job?.tasks?.length === 1 ? originalRow.job?.tasks[0]?.technician?.profile?.displayName : 'Multiple Techs',
+      'accessor': (originalRow: any) => {
+        return originalRow?.contractorsObj?.length === 1 ? originalRow?.contractorsObj[0]?.info?.displayName : 'N/A';
+      },
       'className': 'font-bold',
       'sortable': true
     },
@@ -176,7 +178,7 @@ function JobReportsPage({ classes, theme }: any) {
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
-    } 
+    }
   }, [location]);
 
 
@@ -249,12 +251,12 @@ function JobReportsPage({ classes, theme }: any) {
                 toolbarPositionLeft={true}
                 toolbar={Toolbar()}
                 manualPagination
-                // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+                // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
                 //   dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, query === '' ? '' : query || keyword, selectionRange))
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => 
+                setCurrentPageIndexFunction={(num: number) =>
                   {
                     dispatch(setCurrentPageIndex(num));
                     dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange))

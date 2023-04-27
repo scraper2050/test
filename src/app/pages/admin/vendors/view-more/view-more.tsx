@@ -309,7 +309,7 @@ function CompanyProfilePage({classes}: any) {
                               Name</Typography>
                             <BCInput
                               disabled
-                              value={displayName || 'Not Set'}
+                              value={displayName}
                               handleChange={() => {
                               }}
                               className={classes.displayNameInput}

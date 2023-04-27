@@ -70,17 +70,17 @@ function BCSetDisplayNameModal({classes, props}: any): JSX.Element {
           <Typography variant={'body1'} className={classes.displayNameInfo}>
             Vendor display name is only for internal use.
           </Typography>
-          <Typography variant={'caption'}>Display
-            Name</Typography>
-          <BCInput
-            value={FormikValues?.displayName}
-            handleChange={formikChange}
-            name={'displayName'}
-          />
+          <Grid className={classes.displayNameContainer}>
+            <BCInput
+              value={FormikValues?.displayName}
+              handleChange={formikChange}
+              name={'displayName'}
+            />
+          </Grid>
         </Grid>
         <CSButton
           aria-label={'display-name'}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !FormikValues?.displayName}
           variant="contained"
           color="primary"
           size="small"

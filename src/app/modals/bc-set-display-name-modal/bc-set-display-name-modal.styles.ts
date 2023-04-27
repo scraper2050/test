@@ -5,6 +5,10 @@ export default (theme: Theme): any => ({
     marginBottom: 10
   },
   displayNameInfo: {
-    marginBottom: 20
+    marginBottom: 20,
+    textAlign: 'center'
+  },
+  displayNameContainer: {
+    width: '27rem'
   }
 });
