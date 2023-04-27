@@ -115,6 +115,18 @@ export const finishVendorApi = ({ contractId }:AcceptRejectContractProps) => {
   });
 };
 
+export const setVendorDisplayNameApi = ({ contractorId, displayName }:any) => {
+return new Promise((resolve, reject) => {
+    request(`/updateVendorDisplayName`, 'post', { contractorId, displayName })
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 export const remindVendorApi = ({ contractId }:AcceptRejectContractProps) => {
   return new Promise((resolve, reject) => {
     request(`/remindContractor`, 'post', { contractId })

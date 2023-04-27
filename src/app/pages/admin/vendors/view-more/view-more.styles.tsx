@@ -25,10 +25,17 @@ export default (theme: Theme): any => ({
     marginRight: 10,
     paddingRight: 10,
   },
+  displayNameContainer: {
+    marginLeft: 10,
+  },
   switchLabelInActive: {
     color: MENU_TEXT_COLOR,
   },
   switchLabelActive: {
     color: PRIMARY_GREEN,
+  },
+  displayNameInput: {
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 });

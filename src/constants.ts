@@ -126,6 +126,7 @@ export const modalTypes = {
   'ADVANCE_FILTER_INVOICE_MODAL' : 'ADVANCE_FILTER_INVOICE_MODAL',
   'CUSTOMIZE_AR_REPORT_MODAL' : 'CUSTOMIZE_AR_REPORT_MODAL',
   'EMAIL_REPORT_MODAL': 'EMAIL_REPORT_MODAL',
+  'SET_DISPLAY_NAME_MODAL': 'set-display-name-modal',
 };
 
 export const rejectionReason = [
