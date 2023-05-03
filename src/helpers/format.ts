@@ -50,6 +50,15 @@ export const formatISOToDateString = (date: string): string => moment(moment.utc
 export const formatISOToDateStringFixedDate = (date: string): string => moment(moment.utc(date).set('date', new Date().getDate()).format('YYYY-MM-DDTHH:mm:ss')).toDate()
   .toString();
 
+export const formatToUTC = (date: string): string => {
+  if (date) {
+    const timeZone = moment.parseZone().utcOffset();
+    const dateObj = moment(date).subtract(timeZone, 'minutes');
+    return dateObj.format('YYYY-MM-DDTHH:mm:ss');
+  }
+  return '';
+};
+
 export const parseISOMoment = (date: string) => {
   const offset = moment.parseZone().utcOffset();
   const dateObj = moment(date).subtract(offset, 'minutes');

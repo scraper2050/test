@@ -395,13 +395,13 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    console.log('refetch', keyword);
     dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
   }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange])
 
   const handleTabChange = (newValue: number) => {
   };
   const handleRowClick = (event: any, row: any) => {
+    console.log('row.original', row.original)
     if (
       [0, 4].includes(row.original.status) &&
       (!row.original.employeeType ||
@@ -462,10 +462,11 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => 
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
                   {
                     dispatch(setCurrentPageIndex(num));
-                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
+                    if(apiCall)
+                      dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {

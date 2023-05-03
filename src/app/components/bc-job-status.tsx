@@ -93,8 +93,8 @@ function BCJobStatus({status, size= 'normal', data}:Props) {
     data.tasks.forEach(task=>{
       task.jobTypes.forEach((job:{status:number; jobType:{title:string;}}) => {
         tasks.push({
-          technician: tempData.technician || '',
-          jobTitle: tempData.jobType || '',
+          technician: task?.technician?.profile?.displayName || '',
+          jobTitle: job?.jobType?.title || '',
           jobStatus: job.status,
           icon: statusReference[`${job.status}`].icon
         })
