@@ -27,6 +27,8 @@ import {
 } from 'actions/customer/customer.action';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {error} from "../../../../../../actions/snackbar/snackbar.action";
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface LocationStateTypes {
   customerName: string;
@@ -50,6 +52,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
   const [filteredTickets, setFilteredTickets] = useState<any>([]);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -283,6 +286,13 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
     }
   }, [refresh]);
 
+
+  useEffect(() => {
+    dispatch(refreshServiceTickets(true));
+    return () => {
+      dispatch(refreshServiceTickets(false));
+    }
+  }, [currentLocation])
 
   return (
     <>

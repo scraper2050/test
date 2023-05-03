@@ -16,7 +16,7 @@ import {
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
+import { refreshJobs, setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -27,6 +27,7 @@ import moment from "moment";
 import {getVendor} from "../../../../../helpers/job";
 import { CSButton } from "../../../../../helpers/custom";
 import debounce from 'lodash.debounce';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
       keyword: jobState.keyword,
     })
   );
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');
@@ -393,6 +395,13 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
       loadCount.current++;
     }, 1000);
   }, [refresh]);
+
+  useEffect(() => {
+    dispatch(refreshJobs(true));
+    return () => {
+      dispatch(refreshJobs(false));
+    }
+  }, [currentLocation])
 
   useEffect(() => {
     console.log('refetch', keyword);

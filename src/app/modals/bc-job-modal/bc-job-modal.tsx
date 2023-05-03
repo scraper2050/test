@@ -66,6 +66,7 @@ import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const initialTask = {
   employeeType: 0,
@@ -170,6 +171,7 @@ function BCJobModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
   const { contacts } = useSelector((state: any) => state.contacts);
   const openServiceTicketFilter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
@@ -336,7 +338,10 @@ function BCJobModal({
         : job.ticket.customer;
     dispatch(getInventory());
     dispatch(getEmployeesForJobAction());
-    dispatch(getVendors());
+    dispatch(getVendors({
+      workType: currentLocation?.workTypeId,
+      companyLocation: currentLocation?.locationId
+    }));
     dispatch(getAllJobTypesAPI());
     dispatch(getJobLocationsAction({customerId: customerId}));
 

@@ -37,6 +37,7 @@ import {
 import { getServiceTicketDetail } from 'api/service-tickets.api';
 import { getJobLocation } from 'api/job-location.api';
 import { getJobSite } from 'api/job-site.api';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function MapViewTicketsScreen({
   classes,
@@ -75,7 +76,8 @@ function MapViewTicketsScreen({
   const mapTechnicianFilterData: any = useSelector(
     ({ mapTechnicianFilterState }: any) => mapTechnicianFilterState
   );
-
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  
   const tempRefTicket = useRef<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [allTickets, setAllTickets] = useState<any[]>([]);
@@ -119,6 +121,13 @@ function MapViewTicketsScreen({
       dispatch(refreshServiceTickets(false));
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(refreshServiceTickets(true));
+    return () => {
+      dispatch(refreshServiceTickets(false));
+    };
+  }, [currentLocation]);
 
   useEffect(() => {
     if (refresh) {

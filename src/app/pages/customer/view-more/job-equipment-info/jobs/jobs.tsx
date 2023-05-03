@@ -16,6 +16,8 @@ import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/custome
 import { Job } from 'actions/job/job.types';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import BCJobStatus from "../../../../../components/bc-job-status";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { refreshJobs } from 'actions/job/job.action';
 
 interface LocationStateTypes {
   customerName: string;
@@ -38,6 +40,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
   const [filteredJobs, setFilterJobs] = useState<Job[] | []>([]);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -283,6 +286,13 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
       dispatch(getCustomerDetailAction({ customerId }));
     }
   }, [refresh]);
+
+  useEffect(() => {
+    dispatch(refreshJobs(true));
+    return () => {
+      dispatch(refreshJobs(false));
+    }
+  }, [currentLocation])
 
   useEffect(() => {
     if (!refresh) {

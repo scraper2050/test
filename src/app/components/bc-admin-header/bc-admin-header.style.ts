@@ -211,5 +211,13 @@ export default (theme: Theme): any => ({
   },
   'bcHeaderToggleButton': {
     'backgroundColor': CONSTANTS.PRIMARY_GRAY,
-  }
+  },
+  'bcDropdownLocation': {
+    "display": "flex",
+    "align-items": "end",
+    "margin-right": "1rem",
+  },
+  "bcDropdownLocationIcon": {
+    "margin-right": "0.1rem"
+  },
 });

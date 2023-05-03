@@ -20,6 +20,8 @@ import {
 } from "actions/bc-modal/bc-modal.action";
 import {error} from "actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../../constants";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 
 function TicketPage() {
   const dispatch = useDispatch();
@@ -29,6 +31,7 @@ function TicketPage() {
   const [events, setEvents] = useState<BCEVENT[]>([]);
 
   const calendarState = useSelector((state: RootState) => state.calendar);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
@@ -70,6 +73,13 @@ function TicketPage() {
       dispatch(getAllServiceTicketAPI());
     }
   }, [refresh]);
+
+  useEffect(() => {
+    dispatch(refreshServiceTickets(true));
+    return () => {
+      dispatch(refreshServiceTickets(false));
+    }
+  }, [currentLocation])
 
   const onTitleChange = (id: number, type: string) => {
     const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));

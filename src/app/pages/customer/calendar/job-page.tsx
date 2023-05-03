@@ -21,6 +21,7 @@ import {
   setModalDataAction
 } from "../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../constants";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function JobPage() {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ function JobPage() {
   const [refresh, setRefresh] = useState(true);
 
   const calendarState = useSelector((state: RootState) => state.calendar);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const getTitle = (job: any, type: string) => {
     switch (type) {
@@ -62,6 +64,8 @@ function JobPage() {
       startDate: moment(currentDate).utc().startOf('month').toDate(),
       endDate: moment(currentDate).utc().endOf('month').toDate(),
       pageSize: 1000,
+      workType: currentLocation?.workTypeId,
+      companyLocation: currentLocation?.locationId
     }
     setRefresh(true);
     setEvents([]);
@@ -85,7 +89,7 @@ function JobPage() {
       dispatch(error(e.message));
       setRefresh(false);
     })
-  }, [currentDate]);
+  }, [currentDate,currentLocation]);
 
   const onTitleChange = (id: number, type: string) => {
     const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));

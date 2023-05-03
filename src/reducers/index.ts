@@ -74,7 +74,9 @@ import { DiscountState } from 'actions/discount/discount.types';
 import { reportReducer as reportState } from './report.reducer'
 import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './advance-filter.reducer'
 import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-technician-filter.reducer'
-import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer'
+import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer';
+import { WorkTypeReducer as workTypes } from './work-type.reducer';
+import { FilterLocationReducer as currentLocation } from "./filter-location.reducer";
 
 
 export interface ReducerParamsInterface {
@@ -158,6 +160,8 @@ const appReducer = combineReducers({
   advanceFilterInvoiceState,
   mapTechnicianFilterState,
   mapTechnicianJobsState,
+  workTypes,
+  currentLocation
 });
 
 const rootReducer = (state: any, action: any) => {

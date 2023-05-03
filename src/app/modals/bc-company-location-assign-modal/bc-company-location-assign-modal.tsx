@@ -1,0 +1,332 @@
+import { useFormik } from "formik";
+import styles from "./bc-company-location-assign-modal.styles";
+import { Button, Chip, DialogActions, DialogContent, Grid, TextField, Typography, withStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { Autocomplete } from "@material-ui/lab";
+import { getWorkType } from "actions/work-type/work-type.action";
+import {useDispatch, useSelector} from 'react-redux';
+import styled from "styled-components";
+import * as CONSTANTS from '../../../constants';
+import { closeModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { getEmployees } from "actions/employee/employee.action";
+import { getVendors } from "actions/vendor/vendor.action";
+import * as Yup from "yup";
+import { UpdateCompanyLocationAction } from "actions/user/user.action";
+import { CompanyLocation } from "actions/user/user.types";
+import { allStates } from "utils/constants";
+
+
+interface API_PARAMS {
+  companyLocationId?: string;
+  name: string;
+  isMainLocation: string;
+  isActive: string;
+  contactName?: string;
+  email?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  phone?: string;
+  workTypes?: string[];
+  assignedVendors?: {
+    vendorId: string,
+    workTypes: string[]
+  }[];
+  assignedEmployees?: {
+    employeeId: string,
+    workTypes: string[]
+  }[]
+}
+
+interface formAssignWorkType {
+  assignee: any;
+  workTypes: any[]
+} 
+
+const assignSchema = Yup.object().shape({
+  workTypes: Yup.array().required('Required'),
+  assignee: Yup.object().required('Required'),
+});
+
+function BCCompanyLocationAssignModal({
+    classes,
+    companyLocation,
+    assignee
+  }: { classes: any, companyLocation: CompanyLocation, assignee: "Employee" | "Vendor" }): JSX.Element {
+    const employees = useSelector((state: any) => state.employees.data);
+    const vendors = useSelector((state: any) => state.vendors.data);
+
+    const [vendorList, setVendorList] = useState([]);
+    const [employeeList, setEmployeeList] = useState([]);
+
+
+    const dispatch = useDispatch();
+  
+    useEffect(() => {
+      dispatch(getEmployees())
+      dispatch(getVendors())
+    }, [])
+
+    useEffect(() => {
+      try {
+        setEmployeeList(employees?.map((res: any) => {return {_id: res._id, name: res.profile?.displayName}}));
+      } catch (error) {}
+    }, [employees])
+
+    useEffect(() => {
+      try {
+        setVendorList(vendors.map((res: any) => {return {_id: res.contractor._id, name: res?.contractor?.info?.companyName}}));
+      } catch (error) {}
+    },[vendors]);
+
+    let initalValues: formAssignWorkType = {
+      assignee: '',
+      workTypes: []
+    };
+
+    const {
+        'values': FormikValues,
+        'handleSubmit': FormikSubmit,
+        isSubmitting,
+        setFieldValue,
+        setFieldTouched,
+        submitForm,
+        touched,
+        errors
+      } = useFormik({
+        initialValues: initalValues,
+        onSubmit: (values, { setSubmitting }) => {
+          let assigneeList = [
+            {
+              [assignee == "Employee" ? 'employeeId' : 'vendorId']: values.assignee?._id,
+              workTypes: values.workTypes.map((res: any) => res._id)
+            }
+          ];
+
+          const oldAssignedVendors = companyLocation.assignedVendors?.map(res => {
+            return {
+              vendorId: res?.vendor?._id,
+              workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+            }
+          });
+          const oldAssignedEmployee = companyLocation.assignedEmployees?.map(res => {
+            return {
+              employeeId: res?.employee?._id,
+              workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+            }
+          });
+
+          let payload: API_PARAMS = {
+            companyLocationId: companyLocation?._id,
+            name:  companyLocation?.name,
+            isMainLocation: companyLocation.isMainLocation.toString(),
+            isActive: companyLocation.isActive.toString(),
+            contactName: companyLocation.contactName,
+            email: companyLocation?.info?.companyEmail,
+            street: companyLocation?.address?.street,
+            city: companyLocation?.address?.city,
+            state: allStates.find((state) => state.name === companyLocation?.address?.state)?.name || '',
+            zipCode: companyLocation?.address?.zipCode,
+            phone: companyLocation?.contact?.phone,
+            workTypes: companyLocation?.workTypes ? companyLocation?.workTypes.map(res => res._id): [],
+          };
+
+          if (assignee == "Employee") {
+            payload.assignedEmployees = oldAssignedEmployee?.concat(assigneeList as any);
+            payload.assignedVendors = oldAssignedVendors
+
+          }else{
+            payload.assignedVendors = oldAssignedVendors?.concat(assigneeList as any);
+            payload.assignedEmployees = oldAssignedEmployee
+          }
+
+          dispatch(UpdateCompanyLocationAction(payload, (status) => {
+            if (status) closeModal();
+            else {
+              setSubmitting(false);
+            }
+          }))
+        },
+        validationSchema: assignSchema
+      })
+
+          
+    const changeField = (name: string, value: any) => {
+      setFieldValue(name, value);
+      setFieldTouched(name, true);
+    }
+
+    const closeModal = () => {
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    };
+  
+  
+    return (
+      <DataContainer>
+        <form onSubmit={FormikSubmit}>
+            <DialogContent classes={{ 'root': classes.dialogContent }}>
+              <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                      <Grid container item justify={'flex-end'}
+                            style={{marginTop: 8}} xs={3}>
+                          <Typography variant={'button'}>Work Type</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Autocomplete
+                          getOptionLabel={option => {
+                            return `${option?.title || ''}`
+                          }}
+                          id={'tags-standard'}
+                          multiple
+                          onChange={(ev: any, newValue: any) => changeField("workTypes",newValue)}
+                          options={companyLocation?.workTypes ?? []}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              variant={'outlined'}
+                            />
+                          )}
+                          renderTags={(tagValue, getTagProps) =>
+                            tagValue.map((option, index) => {
+                              return (
+                                <Chip
+                                  label={`${option?.title || ''}`}
+                                  {...getTagProps({ index })}
+                                />
+                              );
+                            }
+                            )
+                          }
+                          value={FormikValues.workTypes}
+                          getOptionSelected={() => false}
+                        />
+                      </Grid>
+                    </Grid>
+                    <Grid container direction={'row'} spacing={1}>
+                      <Grid container item justify={'flex-end'}
+                            style={{marginTop: 8}} xs={3}>
+                          <Typography variant={'button'}>{assignee}</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Autocomplete
+                          getOptionLabel={(option: any) => {
+                            return `${option?.name || ''}`
+                          }}
+                          id={'tags-standard'}
+                          onChange={(ev: any, newValue: any) => changeField("assignee",newValue)}
+                          options={assignee == "Employee" ? employeeList : vendorList}
+                          renderInput={(params) => (
+                            <TextField
+                              error={
+                                touched.assignee &&
+                                Boolean(errors.assignee)
+                              }
+                              helperText={
+                                touched.assignee &&
+                                errors.assignee
+                              }
+                              {...params}
+                              variant={'outlined'}
+                            />
+                          )}
+                          value={FormikValues.assignee}
+                        />
+                      </Grid>
+                    </Grid>
+                </Grid>
+            </DialogContent>
+        </form>
+          <DialogActions classes={{'root': classes.dialogActions}}>
+            <Button
+              aria-label={'record-payment'}
+              classes={{
+                'root': classes.closeButton
+              }}
+              disabled={isSubmitting}
+              onClick={() => closeModal()}
+              variant={'outlined'}>
+              Cancel
+            </Button>
+
+            <Button
+              disabled={isSubmitting}
+              aria-label={'create-job'}
+              classes={{
+                root: classes.submitButton,
+                disabled: classes.submitButtonDisabled
+              }}
+              color="primary"
+              onClick={submitForm}
+              variant={'contained'}>
+              Submit
+            </Button>
+
+          </DialogActions>
+      </DataContainer>
+    )
+  }
+
+const DataContainer = styled.div`
+    margin: auto 0;
+
+    .MuiFormLabel-root {
+      font-style: normal;
+      font-weight: normal;
+      width: 800px;
+      font-size: 20px;
+      color: ${CONSTANTS.PRIMARY_DARK};
+      /* margin-bottom: 6px; */
+    }
+    .MuiFormControl-marginNormal {
+      margin-top: .5rem !important;
+      margin-bottom: 1rem !important;
+      /* height: 20px !important; */
+    }
+    .MuiInputBase-input {
+      color: #383838;
+      font-size: 16px;
+      padding: 12px 14px;
+    }
+    .MuiOutlinedInput-root{
+      border-radius: 8px;
+      padding: 2px;
+    }
+    .MuiInputAdornment-positionStart {
+      margin-right: 0;
+    }
+    .MuiInputAdornment-root + .MuiInputBase-input {
+      padding: 12px 14px 12px 0;
+    }
+    .MuiOutlinedInput-multiline {
+      padding: 0;
+    }
+    .required > label:after {
+      margin-left: 3px;
+      content: "*";
+      color: red;
+    }
+
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+`
+
+  export default withStyles(
+    styles,
+    { 'withTheme': true }
+  )(BCCompanyLocationAssignModal);

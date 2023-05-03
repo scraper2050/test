@@ -55,6 +55,7 @@ import {stringSortCaseInsensitive} from '../../../helpers/sort';
 import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {useHistory} from 'react-router-dom';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function BCServiceTicketModal(
   {
@@ -100,6 +101,7 @@ function BCServiceTicketModal(
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
   const history = useHistory();
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const filter = createFilterOptions();
 
@@ -325,6 +327,12 @@ function BCServiceTicketModal(
       tempData.images = tempData.images.filter(
         (image: any) => image instanceof File
       );
+
+      //add devision and location field
+      if (currentLocation?.locationId && currentLocation?.workTypeId) {
+        tempData.workType = currentLocation?.workTypeId;
+        tempData.companyLocation = currentLocation?.locationId;
+      }
 
       const editTicketObj = {...values, ticketId: ''};
       const updateHomeOccupationStatus = () => {

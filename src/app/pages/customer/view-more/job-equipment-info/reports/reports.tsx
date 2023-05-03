@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "helpers/format";
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {loadJobReportsActions} from "../../../../../../actions/customer/job-report/job-report.action";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface LocationStateTypes {
   customerName: string;
@@ -22,6 +23,7 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   const { loading: isLoading = true, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
 
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
   const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
@@ -129,6 +131,10 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   useEffect(() => {
     dispatch(loadJobReportsActions.fetch());
   }, []);
+
+  useEffect(() => {
+    dispatch(loadJobReportsActions.fetch());
+  }, [currentLocation])
 
   useEffect(() => {
     if (jobReports) {

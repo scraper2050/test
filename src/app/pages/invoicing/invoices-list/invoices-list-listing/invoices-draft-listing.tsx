@@ -14,6 +14,7 @@ import {
   setCurrentDraftPageSize,
   setDraftKeyword,
 } from 'actions/invoicing/invoicing.action';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.draft);
@@ -41,6 +42,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
 
   const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const columns: any = [
     {
@@ -83,7 +85,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
       dispatch(setCurrentDraftPageIndex(currentPageIndex));
       dispatch(setCurrentDraftPageSize(currentPageSize));
     }
-  }, []);
+  }, [currentLocation]);
 
   useEffect(() => {
     if(location?.state?.tab === 2 && (location?.state?.option?.search || location?.state?.option?.pageSize)){

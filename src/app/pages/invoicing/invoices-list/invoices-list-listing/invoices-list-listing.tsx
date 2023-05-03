@@ -28,6 +28,7 @@ import {
 } from 'actions/invoicing/invoicing.action';
 import { resetAdvanceFilterInvoice } from 'actions/advance-filter/advance-filter.action'
 import { initialAdvanceFilterInvoiceState } from 'reducers/advance-filter.reducer';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -59,6 +60,7 @@ function InvoicingListListing({ classes, theme }: any) {
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
 
   const advanceFilterInvoiceData: any = useSelector(({advanceFilterInvoiceState}: any) => advanceFilterInvoiceState)
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
@@ -216,6 +218,10 @@ function InvoicingListListing({ classes, theme }: any) {
     }
     setFetchInvoices(false);
   }, [fetchInvoices]);
+
+  useEffect(() => {
+    setFetchInvoices(true);
+  }, [currentLocation])
 
   useEffect(() => {
     if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize || location?.state?.option?.lastPrevCursor

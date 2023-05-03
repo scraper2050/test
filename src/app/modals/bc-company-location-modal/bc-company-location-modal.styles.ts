@@ -3,6 +3,12 @@ import * as CONSTANTS from "../../../constants";
 import {LABEL_GREY, PRIMARY_BLUE} from "../../../constants";
 
 export default (theme: Theme): any => ({
+  popper: {
+    '& li[aria-disabled="true"]': {
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  },
   dialogActions: {
     padding: '25px  40px 25px 0 !important',
     backgroundColor: 'auto'

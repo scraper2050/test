@@ -4,6 +4,7 @@ import styles from './bc-company-location-modal.styles';
 import {useFormik} from 'formik';
 import {
   Button,
+  Chip,
   DialogActions,
   DialogContent,
   Grid,
@@ -11,12 +12,12 @@ import {
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
 import {
   Business as BusinessIcon,
@@ -35,7 +36,9 @@ import {CompanyLocation} from "../../../actions/user/user.types";
 import BCSent from "../../components/bc-sent";
 import {allStates} from "../../../utils/constants";
 import AutoComplete from "../../components/bc-autocomplete/bc-autocomplete_2";
-
+import { Autocomplete } from '@material-ui/lab';
+import { getWorkType } from 'actions/work-type/work-type.action';
+import { getContractors } from 'actions/payroll/payroll.action';
 const companyLocationSchema = Yup.object().shape({
   locationName: Yup.string().required('Required'),
   contactEmail: Yup.string().matches(emailRegExp, 'Email address is not valid'),
@@ -55,6 +58,15 @@ interface API_PARAMS {
   state?: string;
   zipCode?: string;
   phone?: string;
+  workTypes?: string[];
+  assignedVendors?: {
+    vendorId: string,
+    workTypes: string[]
+  }[];
+  assignedEmployees?: {
+    employeeId: string,
+    workTypes: string[]
+  }[]
 }
 
 
@@ -65,6 +77,12 @@ function BCCompanyLocationModal({
   const [showWarning, setShowWarning] = useState(false);
   const dispatch = useDispatch();
 
+  const workTypes = useSelector((state: any) => state.workTypes.data);
+
+  useEffect(() => {
+    dispatch(getWorkType())
+    dispatch(getContractors())
+  }, [])
 
   const form = useFormik({
     initialValues: {
@@ -81,8 +99,30 @@ function BCCompanyLocationModal({
       state: allStates.find((state) => state.name === companyLocation?.address?.state) ,
       zipCode: companyLocation?.address?.zipCode || '',
       isActive: companyLocation?.isActive || true,
+      workTypes: companyLocation?.workTypes || [],
     },
     onSubmit: (values: any, {setSubmitting}: any) => {
+      let oldAssignedVendors: any[] = [];
+      let oldAssignedEmployee: any[] = []
+
+      if (companyLocation?.assignedEmployees) {
+        companyLocation.assignedEmployees?.map(res => {
+          return {
+            employeeId: res?.employee?._id,
+            workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+          }
+        });
+      }
+
+      if (companyLocation?.assignedVendors) {
+        oldAssignedVendors = companyLocation?.assignedVendors?.map(res => {
+          return {
+            vendorId: res?.vendor?._id,
+            workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+          }
+        });
+      }
+
       const params: API_PARAMS = {
         companyLocationId: FormikValues.id,
         name: FormikValues.locationName,
@@ -95,6 +135,9 @@ function BCCompanyLocationModal({
         state: FormikValues.state?.name || '',
         zipCode: FormikValues.zipCode,
         phone: FormikValues.contactNumber,
+        workTypes: FormikValues.workTypes.map(res => res._id),
+        assignedVendors : oldAssignedVendors,
+        assignedEmployees : oldAssignedEmployee
       };
 
       Object.entries(params).forEach(([key, value]) => {
@@ -136,7 +179,7 @@ function BCCompanyLocationModal({
     touched,
     setFieldTouched,
   } = form;
-
+    
   const changeField = (name: string, value: any) => {
     setFieldValue(name, value);
     setFieldTouched(name, true);
@@ -442,7 +485,45 @@ function BCCompanyLocationModal({
                     </Grid>
                   </Grid>
                 </Grid>
-
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                      <Grid container item justify={'flex-end'}
+                            style={{marginTop: 8}} xs={3}>
+                          <Typography variant={'button'}>Work Types</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Autocomplete
+                          getOptionLabel={option => {
+                            return `${option.title || ''}`
+                          }}
+                          id={'tags-standard'}
+                          multiple
+                          onChange={(ev: any, newValue: any) => changeField("workTypes",newValue)}
+                          options={workTypes}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              variant={'outlined'}
+                            />
+                          )}
+                          classes={{popper: classes.popper}}
+                          renderTags={(tagValue, getTagProps) =>
+                            tagValue.map((option, index) => {
+                              return (
+                                <Chip
+                                  label={`${option.title || ''}`}
+                                  {...getTagProps({ index })}
+                                />
+                              );
+                            }
+                            )
+                          }
+                          value={FormikValues.workTypes}
+                          getOptionSelected={() => false}
+                        />
+                      </Grid>
+                    </Grid>
+                </Grid>
               </Grid>
             </DialogContent>
           </>
@@ -502,6 +583,7 @@ const DataContainer = styled.div`
   }
   .MuiOutlinedInput-root{
     border-radius: 8px;
+    padding: 2px;
   }
   .MuiInputAdornment-positionStart {
     margin-right: 0;

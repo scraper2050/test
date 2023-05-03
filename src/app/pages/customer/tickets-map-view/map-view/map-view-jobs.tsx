@@ -19,6 +19,8 @@ import {RootState} from "reducers";
 import {CompanyProfileStateType} from "actions/user/user.types";
 import {setTicketSelected} from "actions/map/map.actions";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { refreshJobs } from 'actions/job/job.action';
 
 interface Props {
   classes: any;
@@ -43,7 +45,8 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
 
   const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState('0');
-  const [jobIdFilter, setJobIdFilter] = useState('')
+  const [jobIdFilter, setJobIdFilter] = useState('');
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
     
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -72,6 +75,7 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       return filter;
     });
   };
+  
 
   useEffect(() => {
     if(filterJobs.jobStatus.length === 1){
@@ -99,6 +103,13 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
       getJobsData();
     }
   }, [refresh]);
+
+  useEffect(() => {
+    dispatch(refreshJobs(true));
+    return () => {
+      dispatch(refreshJobs(false));
+    }
+  }, [currentLocation]);
 
   useEffect(() => {
     getJobsData();

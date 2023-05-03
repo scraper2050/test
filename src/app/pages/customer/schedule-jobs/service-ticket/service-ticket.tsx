@@ -3,7 +3,6 @@ import BCTabs from '../../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import InfoIcon from '@material-ui/icons/Info';
 import {
-  getAllServiceTicketAPI,
   getServiceTicketDetail,
   getAllServiceTicketsAPI
 } from 'api/service-tickets.api';
@@ -14,7 +13,7 @@ import styles from '../../customer.styles';
 import {Checkbox, FormControlLabel, withStyles, Grid} from "@material-ui/core";
 import React, {useEffect, useState, useRef} from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/service-ticket/service-ticket.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
@@ -29,8 +28,8 @@ import {
 import {error} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker, {Range}
   from "../../../../components/bc-date-range-picker/bc-date-range-picker";
-import moment from "moment";
 import { CSButton } from "../../../../../helpers/custom";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
@@ -55,7 +54,9 @@ function ServiceTicket({ classes, hidden }: any) {
 
     // if (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     return cond;
-  })
+  });
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+
   const openCreateTicketModal = () => {
     if (customers.length !== 0) {
       dispatch(setModalDataAction({
@@ -316,6 +317,13 @@ function ServiceTicket({ classes, hidden }: any) {
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10));
   }, [])
+
+  useEffect(() => {
+    dispatch(refreshServiceTickets(true));
+    return () => {
+      dispatch(refreshServiceTickets(false));
+    }
+  }, [currentLocation])
 
   const handleRowClick = (event: any, row: any) => {
   };

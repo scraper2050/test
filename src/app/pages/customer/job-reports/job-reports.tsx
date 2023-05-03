@@ -20,6 +20,7 @@ import {
   setCurrentPageSize,
   setKeyword
 } from 'actions/customer/job-report/job-report.action'
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function JobReportsPage({ classes, theme }: any) {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ function JobReportsPage({ classes, theme }: any) {
   const history = useHistory();
 
   const location = useLocation<any>();
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   // const locationState = location.state;
 
@@ -163,6 +165,15 @@ function JobReportsPage({ classes, theme }: any) {
       dispatch(setCurrentPageSize(currentPageSize));
     }
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllJobReportsAPI());
+    return () => {
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(currentPageIndex));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
+  }, [currentLocation]);
 
   useEffect(() => {
     dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange));

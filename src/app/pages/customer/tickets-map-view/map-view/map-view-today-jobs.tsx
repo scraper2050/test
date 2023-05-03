@@ -14,6 +14,8 @@ import {RootState} from "reducers";
 import {CompanyProfileStateType} from "actions/user/user.types";
 import {setTicketSelected} from "actions/map/map.actions";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { refreshJobs } from "actions/job/job.action";
+import { ICurrentLocation } from "actions/filter-location/filter.location.types";
 
 interface Props {
   classes: any;
@@ -37,6 +39,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   }));
   const selected = useSelector((state: RootState) => state.map.ticketSelected);
   const {coordinates}: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const filterScheduledJobs = (jobs: any) => {
     return jobs.filter((job: any) => {
@@ -84,6 +87,10 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
       getJobsData();
     }
   }, [refresh]);
+  
+  useEffect(() => {
+    dispatch(refreshJobs(true))
+  }, [currentLocation]);
 
   useEffect(() => {
     getJobsData();

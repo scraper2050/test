@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ClickAwayListener, Grow, Paper, Popper, useMediaQuery, useTheme } from "@material-ui/core";
+import { Button, ClickAwayListener, Grow, Paper, Popper, Select, useMediaQuery, useTheme } from "@material-ui/core";
 import { withStyles, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import styles from "./bc-admin-header.style";
 import AppBar from "@material-ui/core/AppBar";
@@ -24,6 +24,11 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import LocationOn from '@material-ui/icons/LocationOn';
+import { useDispatch, useSelector } from "react-redux";
+import { CompanyProfileStateType } from "actions/user/user.types";
+import { getCompanyLocationsAction } from "actions/user/user.action";
+import { setCurrentLocation } from "actions/filter-location/filter.location.action";
 
 interface Props {
   classes: any;
@@ -34,6 +39,7 @@ interface Props {
   showNotificationDetails: (state?:boolean) => void;
   openModalHandler: (type:any, data:any, itemId:any, metadata?:any) => void;
   jobRequests: any;
+  user: any;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -139,6 +145,7 @@ function BCAdminHeader({
   showNotificationDetails,
   openModalHandler,
   jobRequests,
+  user,
 }: Props): JSX.Element {
   const fabStyles = useStyles();
   const headerStyles = useHeaderStyles();
@@ -153,10 +160,59 @@ function BCAdminHeader({
   const [profileOpen, setProfileOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(menuAnchorEl);
+  const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const dispatch = useDispatch();
+  const [assignedlocations, setAssignedLocations] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState(0);
 
   useEffect(() => {
     initialLoad()
+    dispatch(getCompanyLocationsAction());
   }, []);
+
+  useEffect(() => {
+    if(profileState.locations){
+      let locationDevisions: any[] = [];
+      profileState.locations?.forEach(location => {
+        if (user.__t == "Employee") {
+          location.assignedEmployees?.forEach(assignedEmployee => {
+            if (assignedEmployee?.employee?._id == user?._id) {
+              assignedEmployee?.workTypes.forEach((workType: any) => {
+                locationDevisions.push({
+                  locationId: location?._id,
+                  workTypeId: workType?._id,
+                  employeeId: assignedEmployee?.employee._id,
+                  name: `${location.name}(${workType?.title})`
+                })
+              })
+            }
+          })
+        }else{
+          location.assignedVendors?.forEach(assignedVendor => {
+            if (assignedVendor?.vendor?._id == user?.company) {
+              assignedVendor?.workTypes.forEach((workType: any) => {
+                locationDevisions.push({
+                  locationId: location?._id,
+                  workTypeId: workType?._id,
+                  vendorId: assignedVendor?.vendor._id,
+                  name: `${location.name}(${workType?.title})`
+                })
+              })
+            }
+          })
+        }
+      })
+      setAssignedLocations(locationDevisions);
+    }
+  }, [profileState.locations]);
+
+  useEffect(() => {
+    setSelectedLocation(0);
+    if (assignedlocations[0]) {
+      localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[0]))
+      dispatch(setCurrentLocation(assignedlocations[0]))
+    }
+  }, [assignedlocations]);
 
   const notificationPopover = notificationOpen ? 'notification-popper' : undefined;
 
@@ -224,6 +280,13 @@ function BCAdminHeader({
       'link': '/main/admin'
     },
   ];
+
+  const handleLocationChange = (params: any) => {
+    setSelectedLocation(params.target.value);
+    localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[params.target.value]))
+    dispatch(setCurrentLocation(assignedlocations[params.target.value]));
+  }
+
 
   return (
     <>
@@ -308,6 +371,25 @@ function BCAdminHeader({
         </div>
 
         <div className={classes.bcAdminHeaderTools} >
+          <div className={classes.bcDropdownLocation}>
+            <div className={classes.bcDropdownLocationIcon}>
+              <LocationOn fontSize={'small'} color={'action'}/>
+            </div>
+            <Select
+              id="select-location"
+              disableUnderline={true}
+              value={selectedLocation}
+              onChange={handleLocationChange}
+            >
+              {
+                assignedlocations?.map((res: any,index: number) => {
+                  return (
+                    <MenuItem value={index} key={index}>{res.name}</MenuItem>
+                  )
+                })
+              }
+            </Select>
+          </div>
           <div className={searchStyles.search}>
             <div className={searchStyles.searchIcon}>
               <SearchIcon color={'action'}/>

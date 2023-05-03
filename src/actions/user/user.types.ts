@@ -40,7 +40,9 @@ export interface CompanyLocation {
     state?: string;
     zipCode?: string;
   }
-
+  workTypes?: any[],
+  assignedVendors?: any[],
+  assignedEmployees?: any[],
 }
 
 export interface CompanyProfileOtherState {
@@ -103,6 +105,7 @@ export enum CompanyProfileActonType {
   ON_FETCH_ERROR = "COMPANY_PROFILE_FETCH_FAILED",
   ON_INPUT_ERROR = 'VALIDATION_FAILED',
   SET_LOCATIONS = 'SET_LOCATIONS',
+  SET_SELECTED_LOCATION = 'SET_SELECTED_LOCATIONS',
   UPDATE_LOCATION = 'UPDATE_LOCATION',
   ADD_LOCATION = 'ADD_LOCATION ',
 }

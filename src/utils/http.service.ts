@@ -1,6 +1,7 @@
 import config from 'config';
 import { getLocalStorageToken } from './local-storage.service';
 import axios, { AxiosRequestConfig, Method, CancelTokenSource } from 'axios';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const api = config.apiBaseURL;
 const customerApi = config.apiCustomerURL;
@@ -43,6 +44,16 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean, enct
   if(cancelTokenSource){
     request.cancelToken = cancelTokenSource.token
   }
+
+  //add current location & work type location params
+  let currentLocation = localStorage.getItem("currentLocation");
+  if (currentLocation) {
+    try {
+      let currentLocationJSON = JSON.parse(currentLocation) as ICurrentLocation;
+      request.params = {...request.params, workType: currentLocationJSON.workTypeId, companyLocation: currentLocationJSON.locationId};
+    } catch (error) {}
+  }
+
   axios(request)
     .then(res => {
       if(res?.data?.status === 0 && res?.data?.message === 'Session is expired or you are already logged out, please login again') {

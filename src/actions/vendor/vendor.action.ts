@@ -15,9 +15,9 @@ export const loadingVendors = () => {
   };
 };
 
-export const getVendors = () => {
+export const getVendors = (filter?: any) => {
   return async (dispatch: any) => {
-    const vendors: any = await getCompanyContracts();
+    const vendors: any = await getCompanyContracts(filter);
     dispatch(setVendors(vendors));
   };
 };

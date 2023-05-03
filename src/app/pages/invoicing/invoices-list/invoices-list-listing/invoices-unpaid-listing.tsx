@@ -18,6 +18,7 @@ import { getUnpaidInvoicesAPI } from 'api/invoicing.api';
 import { setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize, setUnpaidKeyword } from 'actions/invoicing/invoicing.action';
 import moment from "moment";
 import TableFilterService from 'utils/table-filter';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const getSortedInvoices = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList.unpaid);
@@ -45,6 +46,8 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(location?.state?.option?.selectionRange || null);
   const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
@@ -177,6 +180,16 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       window.history.replaceState({}, document.title)
     }
   }, [location]);
+
+  useEffect(() => {
+    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0));
+    dispatch(setCurrentUnpaidPageIndex(0));
+    return () => {
+      dispatch(setUnpaidKeyword(''));
+      dispatch(setCurrentUnpaidPageIndex(currentPageIndex));
+      dispatch(setCurrentUnpaidPageSize(currentPageSize));
+    }
+  }, [currentLocation])
 
   const showInvoiceDetail = (id: string) => {
     history.push({
