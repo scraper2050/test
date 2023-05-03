@@ -173,7 +173,7 @@ function BCTableContent({
     }
     gotoPage(newPage);
     if(manualPagination){
-      setCurrentPageIndexFunction(newPage);
+      setCurrentPageIndexFunction(newPage, true);
     }
   };
 
@@ -181,7 +181,7 @@ function BCTableContent({
     if(manualPagination){
       fetchFunction(Number(event.target.value));
       setCurrentPageSizeFunction(Number(event.target.value))
-      setCurrentPageIndexFunction(0);
+      setCurrentPageIndexFunction(0, false);
     }
 
     const delay = 100;
