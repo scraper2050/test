@@ -401,7 +401,6 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const handleTabChange = (newValue: number) => {
   };
   const handleRowClick = (event: any, row: any) => {
-    console.log('row.original', row.original)
     if (
       [0, 4].includes(row.original.status) &&
       (!row.original.employeeType ||
