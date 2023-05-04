@@ -337,7 +337,10 @@ function BCJobModal({
         ? job.ticket.customer?._id
         : job.ticket.customer;
     dispatch(getInventory());
-    dispatch(getEmployeesForJobAction());
+    dispatch(getEmployeesForJobAction({
+        workType: currentLocation?.workTypeId,
+        companyLocation: currentLocation?.locationId
+    }));
     dispatch(getVendors({
       workType: currentLocation?.workTypeId,
       companyLocation: currentLocation?.locationId

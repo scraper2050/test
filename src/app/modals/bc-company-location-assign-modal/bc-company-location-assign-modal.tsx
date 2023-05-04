@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import styles from "./bc-company-location-assign-modal.styles";
-import { Button, Chip, DialogActions, DialogContent, Grid, TextField, Typography, withStyles } from "@material-ui/core";
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField, Typography, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Autocomplete } from "@material-ui/lab";
 import {useDispatch, useSelector} from 'react-redux';
@@ -106,7 +106,7 @@ function BCCompanyLocationAssignModal({
 
           let payload: API_PARAMS = {
             companyLocationId: companyLocation?._id,
-            workTypes: companyLocation?.workTypes ? companyLocation?.workTypes.map(res => res._id): [],
+            workTypes: companyLocation.workTypes ? companyLocation.workTypes.map(res => res._id): [],
           };
 
           if (page == "Employee") {

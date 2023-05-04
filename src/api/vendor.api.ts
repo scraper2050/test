@@ -3,14 +3,14 @@ import {normalizeData} from "./payroll.api";
 import {ContractorPayment} from "../actions/payroll/payroll.types";
 
 export const getCompanyContracts = async (filter?: any) => {
-  let body: any = {};
-  if (filter?.workType && filter?.companyLocation) {
-    body["workType"] = filter.workType;
-    body["companyLocation"] = filter.companyLocation;
-  }
-
+  
   let responseData = null;
   try {
+    let body: any = {};
+    if (filter?.workType && filter?.companyLocation) {
+      body["workType"] = filter.workType;
+      body["companyLocation"] = filter.companyLocation;
+    }
     const response: any = await request('/getCompanyContracts', 'POST', body, false);
     responseData = response.data;
   } catch (err) {

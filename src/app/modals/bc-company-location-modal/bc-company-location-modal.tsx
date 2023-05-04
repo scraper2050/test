@@ -5,8 +5,11 @@ import {useFormik} from 'formik';
 import {
   Button,
   Chip,
+  Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   TextField,
   Typography,
@@ -73,11 +76,13 @@ interface API_PARAMS {
 function BCCompanyLocationModal({
                                   classes,
                                   companyLocation,
-                                }: { classes: any, companyLocation: CompanyLocation }): JSX.Element {
+                                  companyLocationList,
+                                }: { classes: any, companyLocation: CompanyLocation, companyLocationList: CompanyLocation[] }): JSX.Element {
   const [showWarning, setShowWarning] = useState(false);
   const dispatch = useDispatch();
 
   const workTypes = useSelector((state: any) => state.workTypes.data);
+  const [openWarning, setOpenWarning] = useState(false);
 
   useEffect(() => {
     dispatch(getWorkType())
@@ -194,7 +199,11 @@ function BCCompanyLocationModal({
       setShowWarning(true);
       return;
     } else {
-      submitForm();
+      if (FormikValues.workTypes.length && (!companyLocationList.length || (companyLocationList.length && !companyLocationList.filter((res: any) => res.workTypes?.length).length))) {
+        setOpenWarning(true);
+      }else{
+        submitForm();
+      }
     }
   }
 
@@ -207,6 +216,15 @@ function BCCompanyLocationModal({
       }));
     }, 200);
   };
+      
+  const handleWarningCreateLocation = (action: string) => {
+    if (action == "close") {
+      setOpenWarning(false);
+    }else{
+      setOpenWarning(false);
+      submitForm();
+    }
+  }
 
   return (
     <DataContainer className={'new-modal-design'} style={{marginTop: -20}}>
@@ -555,6 +573,26 @@ function BCCompanyLocationModal({
         </Button>
 
       </DialogActions>
+
+      <Dialog
+        open={openWarning}
+        onClose={()=> handleWarningCreateLocation('close')}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Activate Multiple Locations"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          Please note that when you add new locations, ensure that all new jobs are assigned to the correct location. Your first location added will automatically be designated as the Main location, and all jobs will now be assigned to the first work type and location. Please be aware that there may be additional charges when activating additional locations.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={ () => handleWarningCreateLocation('close')}>Cancel</Button>
+          <Button onClick={ () => handleWarningCreateLocation('submit')} autoFocus>Active</Button>
+        </DialogActions>  
+      </Dialog>
 
     </DataContainer>
   );

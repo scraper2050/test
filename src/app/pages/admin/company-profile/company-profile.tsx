@@ -177,6 +177,7 @@ function CompanyProfilePage({ classes }: any) {
             contact: {phone: profileState?.phone || ''},
             info: {companyEmail: profileState?.companyEmail || ''},
           },
+          companyLocationList: profileState.locations,
           removeFooter: false,
         },
         type: modalTypes.COMPANY_LOCATION_MODAL,
@@ -241,15 +242,18 @@ function CompanyProfilePage({ classes }: any) {
                   className={classes.dataContainer}
                   hidden={curTab !== 1}
                   id={'1'}>
-                  <TabEmployeesGrid companyLocation={location}>
-                  </TabEmployeesGrid>
+                    {location && <TabEmployeesGrid companyLocation={location}>
+                    </TabEmployeesGrid>
+                    }
                 </div>
                 <div
                   className={classes.dataContainer}
                   hidden={curTab !== 2}
                   id={'2'}>
-                  <TabVendorsGrid companyLocation={location}>
-                  </TabVendorsGrid>
+                  {
+                    location && <TabVendorsGrid companyLocation={location}>
+                    </TabVendorsGrid>
+                  }
                 </div>
               </SwipeableViews>
             </div>

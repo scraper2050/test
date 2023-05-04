@@ -174,14 +174,21 @@ function BCAdminHeader({
     if(profileState.locations){
       let locationDevisions: any[] = [];
       profileState.locations?.forEach(location => {
-        if (user.__t == "Employee") {
+        if(user._id == profileState.companyAdmin){
+          location?.workTypes?.forEach(workType => {
+            locationDevisions.push({
+              locationId: location?._id,
+              workTypeId: workType?._id,
+              name: `${location.name}(${workType?.title})`
+            })
+          })
+        }else if (user.__t == "Employee") {
           location.assignedEmployees?.forEach(assignedEmployee => {
             if (assignedEmployee?.employee?._id == user?._id) {
               assignedEmployee?.workTypes.forEach((workType: any) => {
                 locationDevisions.push({
                   locationId: location?._id,
                   workTypeId: workType?._id,
-                  employeeId: assignedEmployee?.employee._id,
                   name: `${location.name}(${workType?.title})`
                 })
               })
@@ -194,7 +201,6 @@ function BCAdminHeader({
                 locationDevisions.push({
                   locationId: location?._id,
                   workTypeId: workType?._id,
-                  vendorId: assignedVendor?.vendor._id,
                   name: `${location.name}(${workType?.title})`
                 })
               })
@@ -209,8 +215,10 @@ function BCAdminHeader({
   useEffect(() => {
     setSelectedLocation(0);
     if (assignedlocations[0]) {
-      localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[0]))
-      dispatch(setCurrentLocation(assignedlocations[0]))
+      localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[0]));
+      dispatch(setCurrentLocation(assignedlocations[0]));
+    }else{
+      localStorage.removeItem("currentLocation");
     }
   }, [assignedlocations]);
 
@@ -371,25 +379,29 @@ function BCAdminHeader({
         </div>
 
         <div className={classes.bcAdminHeaderTools} >
-          <div className={classes.bcDropdownLocation}>
-            <div className={classes.bcDropdownLocationIcon}>
-              <LocationOn fontSize={'small'} color={'action'}/>
-            </div>
-            <Select
-              id="select-location"
-              disableUnderline={true}
-              value={selectedLocation}
-              onChange={handleLocationChange}
-            >
-              {
-                assignedlocations?.map((res: any,index: number) => {
-                  return (
-                    <MenuItem value={index} key={index}>{res.name}</MenuItem>
-                  )
-                })
-              }
-            </Select>
-          </div>
+          {
+            assignedlocations.length > 0 && (
+              <div className={classes.bcDropdownLocation}>
+                <div className={classes.bcDropdownLocationIcon}>
+                  <LocationOn fontSize={'small'} color={'action'}/>
+                </div>
+                <Select
+                  id="select-location"
+                  disableUnderline={true}
+                  value={selectedLocation}
+                  onChange={handleLocationChange}
+                >
+                  {
+                    assignedlocations?.map((res: any,index: number) => {
+                      return (
+                        <MenuItem value={index} key={index}>{res.name}</MenuItem>
+                      )
+                    })
+                  }
+                </Select>
+              </div>
+            )
+          }
           <div className={searchStyles.search}>
             <div className={searchStyles.searchIcon}>
               <SearchIcon color={'action'}/>

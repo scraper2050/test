@@ -3,6 +3,7 @@ import {DEFAULT_COORD} from "../../utils/constants";
 export interface CompanyProfile {
   companyName: string;
   companyEmail: string;
+  companyAdmin?: string;
   logoUrl?: string;
   street?: string;
   city?: string;
@@ -59,6 +60,7 @@ export interface CompanyProfileRes {
 export const companyProfileState: CompanyProfile = {
   companyName: '',
   companyEmail: '',
+  companyAdmin: '',
   fax: '',
   phone: '',
   city: '',

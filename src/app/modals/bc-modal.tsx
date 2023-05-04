@@ -738,7 +738,7 @@ function BCModal() {
         });
         // data.maxHeight='100%';
         setComponent(<BCCompanyLocationModal
-          companyLocation={data.companyLocation}
+          companyLocation={data.companyLocation} companyLocationList={data.companyLocationList}
         />);
         break;
       case modalTypes.WARNING_MODAL:
