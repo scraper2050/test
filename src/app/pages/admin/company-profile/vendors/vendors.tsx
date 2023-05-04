@@ -5,7 +5,7 @@ import { Chip, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from "./vendors.style";
-import { CSButton } from 'helpers/custom';
+import { CSButton, CSButtonSmall } from 'helpers/custom';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../../constants';
 import { CompanyLocation } from 'actions/user/user.types';
@@ -53,6 +53,25 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
         </div>
         }
     },
+    {
+      'Header': 'Action',
+      'className': 'font-bold',
+      'Cell'({ row }: any) {
+        return <div className={'flex items-center'}>
+          {
+            <CSButtonSmall
+              variant="outlined"
+              color="secondary"
+              size="small"
+              aria-label={'edit-ticket'}
+              onClick={() => removeAssignedVendor(row.original)}
+            >
+              Remove
+            </CSButtonSmall>
+          }
+        </div>
+        }
+    },
   ];
 
   const resetLocationState = () => {
@@ -66,17 +85,61 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
     };
   }, []);
 
+  const removeAssignedVendor = (row: any) => {
+    if (companyLocation?._id) {
+      dispatch(setModalDataAction({
+        'data': {
+          'companyLocation': companyLocation,
+          'assignee':row,
+          'page': 'Vendor',
+          'removeFooter': false
+        },
+  
+        'type': modalTypes.LOCATION_ASSIGN_DELETE_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    }
+  }
+
+  const updateAssinedVendor = (ev: Event,row: any) => {
+    let formData = {
+      ...row.original,
+      assignee: {
+        _id: row.original.vendor._id, 
+        name: row.original.vendor?.info?.companyName
+      }
+    };
+
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Assign Vendor',
+        'companyLocation': companyLocation,
+        'page': 'Vendor',
+        "formMode": "edit",
+        "formData": formData,
+        'removeFooter': false
+      },
+
+      'type': modalTypes.LOCATION_ASSIGN_MODAL
+    }));
+    
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
 
   const openAssignModal = () => {
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Assign Vendor',
         'companyLocation': companyLocation,
-        'assignee': 'Vendor',
+        'page': 'Vendor',
         'removeFooter': false
       },
 
-      'type': modalTypes.ASSIGN_VENDOR_MODAL
+      'type': modalTypes.LOCATION_ASSIGN_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
@@ -102,6 +165,7 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
           currentPage={currentPage}
           search
           searchPlaceholder={'Search Vendors....'}
+          onRowClick={updateAssinedVendor}
           setPage={setCurrentPage}
           tableData={companyLocation?.assignedVendors ?? []}
         />

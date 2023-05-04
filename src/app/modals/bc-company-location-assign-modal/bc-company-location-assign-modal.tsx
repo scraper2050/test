@@ -3,7 +3,6 @@ import styles from "./bc-company-location-assign-modal.styles";
 import { Button, Chip, DialogActions, DialogContent, Grid, TextField, Typography, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Autocomplete } from "@material-ui/lab";
-import { getWorkType } from "actions/work-type/work-type.action";
 import {useDispatch, useSelector} from 'react-redux';
 import styled from "styled-components";
 import * as CONSTANTS from '../../../constants';
@@ -11,23 +10,11 @@ import { closeModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.
 import { getEmployees } from "actions/employee/employee.action";
 import { getVendors } from "actions/vendor/vendor.action";
 import * as Yup from "yup";
-import { UpdateCompanyLocationAction } from "actions/user/user.action";
+import {  UpdateCompanyLocationAssignmentsAction } from "actions/user/user.action";
 import { CompanyLocation } from "actions/user/user.types";
-import { allStates } from "utils/constants";
-
 
 interface API_PARAMS {
   companyLocationId?: string;
-  name: string;
-  isMainLocation: string;
-  isActive: string;
-  contactName?: string;
-  email?: string;
-  street?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  phone?: string;
   workTypes?: string[];
   assignedVendors?: {
     vendorId: string,
@@ -45,15 +32,17 @@ interface formAssignWorkType {
 } 
 
 const assignSchema = Yup.object().shape({
-  workTypes: Yup.array().required('Required'),
-  assignee: Yup.object().required('Required'),
+  workTypes: Yup.array().required("Required"),
+  assignee: Yup.object().required("Required"),
 });
 
 function BCCompanyLocationAssignModal({
     classes,
     companyLocation,
-    assignee
-  }: { classes: any, companyLocation: CompanyLocation, assignee: "Employee" | "Vendor" }): JSX.Element {
+    page,
+    formMode,
+    formData
+  }: { classes: any, companyLocation: CompanyLocation, page: "Employee" | "Vendor",formMode: "add" | "edit",formData: any }): JSX.Element {
     const employees = useSelector((state: any) => state.employees.data);
     const vendors = useSelector((state: any) => state.vendors.data);
 
@@ -70,20 +59,31 @@ function BCCompanyLocationAssignModal({
 
     useEffect(() => {
       try {
-        setEmployeeList(employees?.map((res: any) => {return {_id: res._id, name: res.profile?.displayName}}));
+        let filteredEmployees = employees?.filter((employee: any) => companyLocation.assignedEmployees?.find(assignedEmployee => assignedEmployee.employee._id != employee._id) || employee._id == formData?.employee._id);
+        setEmployeeList(filteredEmployees.map((res: any) => {return {_id: res._id, name: res.profile?.displayName}}));
       } catch (error) {}
     }, [employees])
 
     useEffect(() => {
       try {
-        setVendorList(vendors.map((res: any) => {return {_id: res.contractor._id, name: res?.contractor?.info?.companyName}}));
+        let filteredVendors = vendors?.filter((vendor: any) => companyLocation.assignedVendors?.find(assignedVendor => (assignedVendor.vendor._id != vendor.contractor._id) || vendor.contractor._id == formData?.vendor._id));
+        setVendorList(filteredVendors.map((res: any) => {return {_id: res.contractor._id, name: res?.contractor?.info?.companyName}}));
       } catch (error) {}
-    },[vendors]);
+    },[vendors])
 
     let initalValues: formAssignWorkType = {
       assignee: '',
       workTypes: []
     };
+    
+    useEffect(() => {
+      if (formMode == "edit" && formData) {
+        initalValues.assignee = formData.assignee;
+        try {
+          initalValues.workTypes = formData.workTypes
+        } catch (error) {}
+      }
+    }, [vendorList,employeeList])
 
     const {
         'values': FormikValues,
@@ -99,49 +99,35 @@ function BCCompanyLocationAssignModal({
         onSubmit: (values, { setSubmitting }) => {
           let assigneeList = [
             {
-              [assignee == "Employee" ? 'employeeId' : 'vendorId']: values.assignee?._id,
+              [page == "Employee" ? 'employeeId' : 'vendorId']: values.assignee?._id,
               workTypes: values.workTypes.map((res: any) => res._id)
             }
           ];
 
-          const oldAssignedVendors = companyLocation.assignedVendors?.map(res => {
-            return {
-              vendorId: res?.vendor?._id,
-              workTypes: res?.workTypes?.map((workType: any) => workType?._id)
-            }
-          });
-          const oldAssignedEmployee = companyLocation.assignedEmployees?.map(res => {
-            return {
-              employeeId: res?.employee?._id,
-              workTypes: res?.workTypes?.map((workType: any) => workType?._id)
-            }
-          });
-
           let payload: API_PARAMS = {
             companyLocationId: companyLocation?._id,
-            name:  companyLocation?.name,
-            isMainLocation: companyLocation.isMainLocation.toString(),
-            isActive: companyLocation.isActive.toString(),
-            contactName: companyLocation.contactName,
-            email: companyLocation?.info?.companyEmail,
-            street: companyLocation?.address?.street,
-            city: companyLocation?.address?.city,
-            state: allStates.find((state) => state.name === companyLocation?.address?.state)?.name || '',
-            zipCode: companyLocation?.address?.zipCode,
-            phone: companyLocation?.contact?.phone,
             workTypes: companyLocation?.workTypes ? companyLocation?.workTypes.map(res => res._id): [],
           };
 
-          if (assignee == "Employee") {
+          if (page == "Employee") {
+            const oldAssignedEmployee = companyLocation.assignedEmployees?.filter(res => res.employee?._id != values.assignee?._id).map(res => {
+              return {
+                employeeId: res?.employee?._id,
+                workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+              }
+            });  
             payload.assignedEmployees = oldAssignedEmployee?.concat(assigneeList as any);
-            payload.assignedVendors = oldAssignedVendors
-
           }else{
+            const oldAssignedVendors = companyLocation.assignedVendors?.filter(res => res.vendor?._id != values.assignee?._id).map(res => {
+              return {
+                vendorId: res?.vendor?._id,
+                workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+              }
+            });
             payload.assignedVendors = oldAssignedVendors?.concat(assigneeList as any);
-            payload.assignedEmployees = oldAssignedEmployee
           }
 
-          dispatch(UpdateCompanyLocationAction(payload, (status) => {
+          dispatch(UpdateCompanyLocationAssignmentsAction(payload, (status) => {
             if (status) closeModal();
             else {
               setSubmitting(false);
@@ -189,6 +175,14 @@ function BCCompanyLocationAssignModal({
                           options={companyLocation?.workTypes ?? []}
                           renderInput={(params) => (
                             <TextField
+                              error={
+                                touched.assignee &&
+                                Boolean(errors.assignee)
+                              }
+                              helperText={
+                                touched.assignee &&
+                                errors.assignee
+                              }
                               {...params}
                               variant={'outlined'}
                             />
@@ -212,16 +206,17 @@ function BCCompanyLocationAssignModal({
                     <Grid container direction={'row'} spacing={1}>
                       <Grid container item justify={'flex-end'}
                             style={{marginTop: 8}} xs={3}>
-                          <Typography variant={'button'}>{assignee}</Typography>
+                          <Typography variant={'button'}>{page}</Typography>
                       </Grid>
                       <Grid item xs={9}>
                         <Autocomplete
+                          disableClearable
                           getOptionLabel={(option: any) => {
                             return `${option?.name || ''}`
                           }}
                           id={'tags-standard'}
                           onChange={(ev: any, newValue: any) => changeField("assignee",newValue)}
-                          options={assignee == "Employee" ? employeeList : vendorList}
+                          options={page == "Employee" ? employeeList : vendorList}
                           renderInput={(params) => (
                             <TextField
                               error={

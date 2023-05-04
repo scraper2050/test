@@ -88,20 +88,60 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
   }, []);
 
   const removeAssignedEmplyee = (row: any) => {
-    console.log(row);
+    if (companyLocation?._id) {
+      dispatch(setModalDataAction({
+        'data': {
+          'companyLocation': companyLocation,
+          'assignee':row,
+          'page': 'Employee',
+          'removeFooter': false
+        },
+  
+        'type': modalTypes.LOCATION_ASSIGN_DELETE_MODAL
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    }
   }
 
+  const updateAssinedEmployee = (ev: Event,row: any) => {
+    let formData = {
+      ...row.original,
+      assignee: {
+        _id: row.original.employee._id, 
+        name: row.original.employee.profile?.displayName
+      }
+    };
+    
+    dispatch(setModalDataAction({
+      'data': {
+        'modalTitle': 'Assign Employee',
+        'companyLocation': companyLocation,
+        'page': 'Employee',
+        "formMode": "edit",
+        "formData": formData,
+        'removeFooter': false
+      },
+
+      'type': modalTypes.LOCATION_ASSIGN_MODAL
+    }));
+    
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
 
   const openAssignModal = () => {
     dispatch(setModalDataAction({
       'data': {
         'modalTitle': 'Assign Employee',
         'companyLocation': companyLocation,
-        'assignee': 'Employee',
+        'page': 'Employee',
         'removeFooter': false
       },
 
-      'type': modalTypes.ASSIGN_VENDOR_MODAL
+      'type': modalTypes.LOCATION_ASSIGN_MODAL
     }));
     setTimeout(() => {
       dispatch(openModalAction());
@@ -127,7 +167,9 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
           currentPage={currentPage}
           search
           searchPlaceholder={'Search Employees....'}
+          onRowClick={updateAssinedEmployee}
           setPage={setCurrentPage}
+          
           tableData={companyLocation?.assignedEmployees ?? []}
         />
     </DataContainer>
