@@ -37,7 +37,7 @@ import {
   convertMilitaryTime,
   formatDate,
   formatISOToDateStringFixedDate,
-  formatToMilitaryTimeWithOffset, parseISODate,
+  formatToMilitaryTime, parseISODate,
   shortenStringWithElipsis,
 } from 'helpers/format';
 import styled from 'styled-components';
@@ -478,10 +478,14 @@ function BCJobModal({
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
       tempData.customerId = customer?._id;
 
-      if (values.scheduledStartTime)
-        tempData.scheduledStartTime = formatToMilitaryTimeWithOffset(values.scheduledStartTime);
-      if (values.scheduledEndTime)
-        tempData.scheduledEndTime = formatToMilitaryTimeWithOffset(values.scheduledEndTime);
+      if (values.scheduledStartTime){
+        // format local time as UTC without adjusting the time
+        tempData.scheduledStartTime = moment(values.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      }
+      if (values.scheduledEndTime){
+        // format local time as UTC without adjusting the time
+        tempData.scheduledEndTime = moment(values.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      }
 
       if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
 
