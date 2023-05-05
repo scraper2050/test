@@ -87,7 +87,7 @@ pipelines:
               REF_NAME: 'master'
               WAIT: 'true'
 
-    testing:
+    test:
     - step:
         name: Build
         caches:
@@ -95,7 +95,7 @@ pipelines:
         script:
           - unset CI
           - yarn install
-          - yarn build
+          - yarn build:test
         artifacts:
           - build/**
     - step:
@@ -107,7 +107,7 @@ pipelines:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
-              S3_BUCKET: 'blueclerk-testing'
+              S3_BUCKET: 'blueclerk-react-test-deployment'
               LOCAL_PATH: 'build'
               ACL: 'public-read'
 
@@ -116,4 +116,4 @@ pipelines:
               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
               AWS_DEFAULT_REGION: 'us-east-1'
-              DISTRIBUTION_ID: 'E2WUPD9FPCPR34'
+              DISTRIBUTION_ID: 'E1V19VX69NRM1U'
