@@ -5,10 +5,12 @@ import { Chip, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from "./vendors.style";
-import { CSButton, CSButtonSmall } from 'helpers/custom';
+import { CSButton, CSButtonSmall, CSIconButton } from 'helpers/custom';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../../constants';
 import { CompanyLocation } from 'actions/user/user.types';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocation: CompanyLocation | null}) {
   const dispatch = useDispatch();
@@ -58,17 +60,22 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
       'className': 'font-bold',
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          {
-            <CSButtonSmall
-              variant="outlined"
-              color="secondary"
+            <CSIconButton
+              color="primary"
+              size="small"
+              aria-label={'edit-ticket'}
+              onClick={() => updateAssinedVendor(row.original)}
+            >
+              <EditIcon />
+            </CSIconButton>
+            <CSIconButton
+              color="primary"
               size="small"
               aria-label={'edit-ticket'}
               onClick={() => removeAssignedVendor(row.original)}
             >
-              Remove
-            </CSButtonSmall>
-          }
+              <DeleteIcon />
+            </CSIconButton>
         </div>
         }
     },
@@ -103,12 +110,12 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
     }
   }
 
-  const updateAssinedVendor = (ev: Event,row: any) => {
+  const updateAssinedVendor = (row: any) => {
     let formData = {
-      ...row.original,
+      ...row,
       assignee: {
-        _id: row.original.vendor._id, 
-        name: row.original.vendor?.info?.companyName
+        _id: row.vendor._id, 
+        name: row.vendor?.info?.companyName
       }
     };
 
@@ -165,7 +172,6 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
           currentPage={currentPage}
           search
           searchPlaceholder={'Search Vendors....'}
-          onRowClick={updateAssinedVendor}
           setPage={setCurrentPage}
           tableData={companyLocation?.assignedVendors ?? []}
         />

@@ -25,6 +25,7 @@ import moment from "moment";
 import {getPayrollReportAPI} from "../../../../api/payroll.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import classNames from "classnames";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface Props {
   classes: any;
@@ -48,6 +49,7 @@ function PayrollInvoices({classes}: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
   const [totals, setTotals] = useState({invoices: 0, commissions: 0});
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const isFiltered =  selectedIDs.length > 0 || selectionRange;
 
@@ -66,6 +68,11 @@ function PayrollInvoices({classes}: Props) {
     dispatch(getContractors());
     getData();
   }, []);
+  
+  useEffect(() => {
+    dispatch(getContractors());
+    getData();
+  }, [currentLocation])
 
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);

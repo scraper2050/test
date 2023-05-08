@@ -123,6 +123,7 @@ function MapViewTicketsScreen({
   }, []);
 
   useEffect(() => {
+    dispatch(refreshServiceTickets(false));
     dispatch(refreshServiceTickets(true));
     return () => {
       dispatch(refreshServiceTickets(false));
@@ -181,6 +182,11 @@ function MapViewTicketsScreen({
             setIsLoading(false);
             setAllTickets([...tempRefTicket.current]);
           }
+          console.log(tempRefTicket.current);
+          console.log(count);
+          console.log(total);
+          
+          
           if (count === total) {
             socket.close();
             dispatch(streamServiceTickets(false));

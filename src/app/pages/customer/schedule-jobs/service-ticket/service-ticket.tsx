@@ -319,11 +319,12 @@ function ServiceTicket({ classes, hidden }: any) {
   }, [])
 
   useEffect(() => {
+    dispatch(refreshServiceTickets(false));
     dispatch(refreshServiceTickets(true));
     return () => {
       dispatch(refreshServiceTickets(false));
     }
-  }, [currentLocation])
+  }, [currentLocation]);
 
   const handleRowClick = (event: any, row: any) => {
   };

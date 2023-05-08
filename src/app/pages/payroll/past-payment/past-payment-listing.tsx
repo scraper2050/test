@@ -32,6 +32,7 @@ import {
 import moment from "moment";
 import { voidPayment, voidAdvancePayment } from 'api/payroll.api'
 import { setPayments } from 'actions/invoicing/payments/payments.action';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface Props {
   classes: any;
@@ -58,6 +59,7 @@ function PastPayments({ classes }: Props) {
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const isFiltered = selectedIDs.length > 0 || selectionRange !== null;
 
@@ -70,7 +72,7 @@ function PastPayments({ classes }: Props) {
     return () => {
       dispatch(setContractorPayments([]))
     }
-  }, []);
+  }, [currentLocation]);
 
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);

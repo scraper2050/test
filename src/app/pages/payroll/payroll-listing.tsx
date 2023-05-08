@@ -23,6 +23,7 @@ import { HighlightOff } from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
 import { getPayrollBalance, refreshContractorPayment } from "../../../actions/payroll/payroll.action";
 import { Contractor } from "../../../actions/payroll/payroll.types";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface Props {
   classes: any;
@@ -49,6 +50,7 @@ function Payroll({ classes }: Props) {
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   useEffect(() => {
     if (selectionRange) {
@@ -59,7 +61,7 @@ function Payroll({ classes }: Props) {
     if (refresh) {
       dispatch(refreshContractorPayment(false));
     }
-  }, [selectionRange, refresh]);
+  }, [selectionRange, refresh, currentLocation]);
 
   useEffect(() => {
     setTableData(selectedIDs.length > 0 ?

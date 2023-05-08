@@ -83,8 +83,6 @@ function JobPage() {
           })
         );
         setEvents(events);
-        console.log(events);
-        
       }
       setRefresh(false);
     }).catch((e) => {

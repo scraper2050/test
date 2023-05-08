@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CompanyProfileStateType } from "actions/user/user.types";
 import { getCompanyLocationsAction } from "actions/user/user.action";
 import { setCurrentLocation } from "actions/filter-location/filter.location.action";
+import { ICurrentLocation } from "actions/filter-location/filter.location.types";
 
 interface Props {
   classes: any;
@@ -163,7 +164,8 @@ function BCAdminHeader({
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const dispatch = useDispatch();
   const [assignedlocations, setAssignedLocations] = useState<any[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState(0);
+  const [selectedLocation, setSelectedLocation] = useState<number>(0);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   useEffect(() => {
     initialLoad()
@@ -171,10 +173,10 @@ function BCAdminHeader({
   }, []);
 
   useEffect(() => {
-    if(profileState.locations){
+    if(!currentLocation?.locationId && profileState.locations && profileState.locations.length){
       let locationDevisions: any[] = [];
       profileState.locations?.forEach(location => {
-        if(user._id == profileState.companyAdmin){
+        if(user._id == profileState.companyAdmin || user?.canAccessAllLocations){
           location?.workTypes?.forEach(workType => {
             locationDevisions.push({
               locationId: location?._id,
@@ -208,17 +210,28 @@ function BCAdminHeader({
           })
         }
       })
+
+      if(user._id == profileState.companyAdmin || user?.canAccessAllLocations){
+        locationDevisions.unshift({
+          name: "All"
+        });
+      }
+
+      //Remove location storage when any location is not provide
+      if (!locationDevisions.length) {
+        localStorage.removeItem("currentLocation");
+      }
       setAssignedLocations(locationDevisions);
     }
   }, [profileState.locations]);
 
   useEffect(() => {
-    setSelectedLocation(0);
-    if (assignedlocations[0]) {
-      localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[0]));
-      dispatch(setCurrentLocation(assignedlocations[0]));
-    }else{
-      localStorage.removeItem("currentLocation");
+    if(!currentLocation?.locationId && assignedlocations.length){
+      setSelectedLocation(0);
+      if (assignedlocations[0]) {
+        localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[0]));
+        dispatch(setCurrentLocation(assignedlocations[0]));
+      }
     }
   }, [assignedlocations]);
 
@@ -261,10 +274,10 @@ function BCAdminHeader({
       'label': 'Invoicing',
       'link': '/main/invoicing'
     },
-    {
-      'label': 'Tags',
-      'link': '/main/tags/purchasedtag'
-    },
+    // {
+    //   'label': 'Tags',
+    //   'link': '/main/tags/purchasedtag'
+    // },
     {
       'label': 'Payroll',
       'link': '/main/payroll'

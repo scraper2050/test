@@ -1,4 +1,4 @@
-import { UserProfile } from "actions/employee/employee.types";
+import { UserProfile, updateEmployeeLocPermParam } from "actions/employee/employee.types";
 import request from "utils/http.service";
 
 export const getEmployeesForJob = async (filter?: any) => {
@@ -148,6 +148,17 @@ export const updateAdminRole = async (data: UserProfile) => {
   let responseData;
   try {
     const response: any = await request("/updateEmployeeRole", "POST", data, false);
+    responseData = response.data;
+  } catch (err) {
+    if(err) throw new Error(`Something went wrong`);
+  }
+  return responseData;
+}
+
+export const updateLocPermission = async (data: updateEmployeeLocPermParam) => {
+  let responseData;
+  try {
+    const response: any = await request("/updateEmployeeLocPermission", "POST", data, false);
     responseData = response.data;
   } catch (err) {
     if(err) throw new Error(`Something went wrong`);

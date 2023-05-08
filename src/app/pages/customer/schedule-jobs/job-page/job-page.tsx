@@ -397,6 +397,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   }, [refresh]);
 
   useEffect(() => {
+    dispatch(refreshJobs(false));
     dispatch(refreshJobs(true));
     return () => {
       dispatch(refreshJobs(false));

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import styles from './bc-admin-profile.style';
-import { Grid, withStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Grid, withStyles } from '@material-ui/core';
 import NoLogoImage from 'assets/img/avatars/NoImageFound.png';
 import NoCompanyLogo from 'assets/img/avatars/NoCompanyLogo.png';
+import { updateEmployeeLocPermission, updateEmployeeRole } from 'actions/employee/employee.action';
+import { error, info, success } from 'actions/snackbar/snackbar.action';
+import { useDispatch } from 'react-redux';
+import { updateEmployeeLocPermParam } from 'actions/employee/employee.types';
 
 interface Props {
   avatar: Avatar;
@@ -17,6 +21,7 @@ interface Props {
   schema?: any;
   userProfile?: boolean;
   openAddContactModal?: (passedProps:any) => void;
+  employeeDetails?: any
 }
 
 interface Avatar {
@@ -50,6 +55,28 @@ function BCAdminProfile(props: Props) {
     userProfile = true,
     openAddContactModal,
   } = props;
+  const dispatch = useDispatch();
+  const [showAllLocation, setShowLocation] = useState<boolean>(props.employeeDetails?.canAccessAllLocations ?? false);
+  const handleShowAllLocation = async (event: any) => {
+    setShowLocation(event.target.checked);
+
+		let response: any;
+    try {
+      let params: updateEmployeeLocPermParam = {
+        employeeId: props.employeeDetails?._id,
+        canAccessAllLocations: event.target.checked
+      }
+
+      response = await dispatch(updateEmployeeLocPermission(params));
+      if (response.status) {
+				dispatch(success("Employee Location Permission updated successfully."));
+      } else if (!!response?.message) {
+        dispatch(info(response.message));
+      }
+    } catch (err) {
+      dispatch(error('Something went wrong, please try other role'));
+    }
+  }
 
   return (
     <div className={classes.profilePane}>
@@ -150,6 +177,21 @@ function BCAdminProfile(props: Props) {
             }
           </Grid>
         </div>
+        <div className={classes.updateArea}>
+          <FormControlLabel
+            classes={{label: classes.checkboxLabel}}
+            control={
+              <Checkbox
+                color={'primary'}
+                checked={showAllLocation}
+                onChange={handleShowAllLocation}
+                name="ShowAllLocation"
+              />
+            }
+            label={"All Location"}
+          />
+        </div>
+
       </div>
     </div >
   );

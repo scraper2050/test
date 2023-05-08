@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Popover, Popper, Typography, withStyles} from '@material-ui/core';
 
 import styles from './styles';

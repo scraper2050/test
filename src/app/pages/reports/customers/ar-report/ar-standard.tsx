@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Button, Typography, withStyles} from '@material-ui/core';
 
 import styles, {SummaryContainer} from './styles';
@@ -27,6 +27,7 @@ import {
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
 import {useHistory} from "react-router-dom";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface RevenueStandardProps {
   classes: any;
@@ -60,6 +61,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
   const [chartData, setChartData] = useState<any[]>([]);
   const [xLabels, setXLabels] = useState<string[]>([]);
   const [asOfDate, setAsOfDate] = useState(new Date());
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const chartOptions = {
     chart: {
@@ -290,7 +292,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
 
   useEffect(() => {
     getReportData();
-  }, [asOfDate]);
+  }, [asOfDate,currentLocation]);
 
   useEffect(() => {
     if (report) formatReport();

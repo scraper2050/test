@@ -48,7 +48,10 @@ export default (): any => ({
     'align-self': 'center',
   },
   'infoArea': {
-    'flex': '80%',
+    'flex': '50%',
+  },
+  'updateArea': {
+    'flex': '25%',
   },
   'infoAreaFullwidth': {
     'flex': '100%',

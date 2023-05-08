@@ -19,6 +19,7 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
   import { getAllPaymentsAPI } from 'api/payment.api';
 import { RootState } from 'reducers';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const getFilteredList = (state: any) => {
   const sortedPayments = TableFilterService.filterByDateDesc(state?.paymentList.data);
@@ -59,6 +60,7 @@ function InvoicingPaymentListing({ classes, theme }: any) {
       dispatch(openModalAction());
     }, 200);
   };
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const columns: any = [
     {
@@ -127,6 +129,10 @@ function InvoicingPaymentListing({ classes, theme }: any) {
     // }
     dispatch(getAllPaymentsAPI());
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllPaymentsAPI());
+  }, [currentLocation])
 
   // useEffect(() => {
   //   dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));

@@ -5,10 +5,12 @@ import { Chip, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styles from "./employees.style";
-import { CSButton, CSButtonSmall } from 'helpers/custom';
+import { CSButton, CSButtonSmall, CSIconButton } from 'helpers/custom';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../../constants';
 import { CompanyLocation } from 'actions/user/user.types';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLocation: CompanyLocation | null}) {
   const dispatch = useDispatch();
@@ -58,17 +60,22 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
       'className': 'font-bold',
       'Cell'({ row }: any) {
         return <div className={'flex items-center'}>
-          {
-            <CSButtonSmall
-              variant="outlined"
-              color="secondary"
+            <CSIconButton
+              color="primary"
               size="small"
               aria-label={'edit-ticket'}
-              onClick={() => removeAssignedEmplyee(row.original)}
+              onClick={() => updateAssinedEmployee(row.original)}
             >
-              Remove
-            </CSButtonSmall>
-          }
+              <EditIcon />
+            </CSIconButton>
+            <CSIconButton
+              color="primary"
+              size="small"
+              aria-label={'edit-ticket'}
+              onClick={() => removeAssignedEmployee(row.original)}
+            >
+              <DeleteIcon />
+            </CSIconButton>
         </div>
         }
     },
@@ -87,7 +94,7 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
     
   }, []);
 
-  const removeAssignedEmplyee = (row: any) => {
+  const removeAssignedEmployee = (row: any) => {
     if (companyLocation?._id) {
       dispatch(setModalDataAction({
         'data': {
@@ -105,12 +112,12 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
     }
   }
 
-  const updateAssinedEmployee = (ev: Event,row: any) => {
+  const updateAssinedEmployee = (row: any) => {
     let formData = {
-      ...row.original,
+      ...row,
       assignee: {
-        _id: row.original.employee._id, 
-        name: row.original.employee.profile?.displayName
+        _id: row.employee._id, 
+        name: row.employee.profile?.displayName
       }
     };
     
@@ -167,7 +174,6 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
           currentPage={currentPage}
           search
           searchPlaceholder={'Search Employees....'}
-          onRowClick={updateAssinedEmployee}
           setPage={setCurrentPage}
           
           tableData={companyLocation?.assignedEmployees ?? []}

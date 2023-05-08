@@ -45,9 +45,7 @@ function BCCompanyLocationAssignModal({
   }: { classes: any, companyLocation: CompanyLocation, page: "Employee" | "Vendor",formMode: "add" | "edit",formData: any }): JSX.Element {
     const employees = useSelector((state: any) => state.employees.data);
     const vendors = useSelector((state: any) => state.vendors.data);
-
-    const [vendorList, setVendorList] = useState([]);
-    const [employeeList, setEmployeeList] = useState([]);
+    const [assigneeList, setAssigneeList] = useState([]);
 
 
     const dispatch = useDispatch();
@@ -58,17 +56,29 @@ function BCCompanyLocationAssignModal({
     }, [])
 
     useEffect(() => {
-      try {
-        let filteredEmployees = employees?.filter((employee: any) => companyLocation.assignedEmployees?.find(assignedEmployee => assignedEmployee.employee._id != employee._id) || employee._id == formData?.employee._id);
-        setEmployeeList(filteredEmployees.map((res: any) => {return {_id: res._id, name: res.profile?.displayName}}));
-      } catch (error) {}
+      if (page == "Employee") {
+        try {
+          let filteredEmployees = employees;
+          if (companyLocation?.assignedEmployees?.length) {
+            let assignedEmployees = companyLocation.assignedEmployees.map(res => res.employee._id);
+            filteredEmployees = employees?.filter((employee: any) => !assignedEmployees.includes(employee._id) || employee._id == formData?.employee._id);
+          }
+          setAssigneeList(filteredEmployees.map((res: any) => {return {_id: res._id, name: res.profile?.displayName}}));
+        } catch (error) {}
+      }
     }, [employees])
-
+    
     useEffect(() => {
-      try {
-        let filteredVendors = vendors?.filter((vendor: any) => companyLocation.assignedVendors?.find(assignedVendor => (assignedVendor.vendor._id != vendor.contractor._id) || vendor.contractor._id == formData?.vendor._id));
-        setVendorList(filteredVendors.map((res: any) => {return {_id: res.contractor._id, name: res?.contractor?.info?.companyName}}));
-      } catch (error) {}
+      if (page == "Vendor") {
+        try {
+          let filteredVendors = vendors.filter((vendor: any) => vendor.contractor?._id);
+          if (companyLocation?.assignedVendors?.length) {
+            let assignedVendors = companyLocation.assignedVendors.map(res => res.vendor._id);
+            filteredVendors = vendors?.filter((vendor: any) => vendor.contractor?._id == formData?.vendor?._id || !assignedVendors.includes(vendor.contractor?._id));          
+          }
+          setAssigneeList(filteredVendors.map((res: any) => {return {_id: res?.contractor?._id, name: res?.contractor?.info?.companyName}}));
+        } catch (error) {}
+      }
     },[vendors])
 
     let initalValues: formAssignWorkType = {
@@ -83,7 +93,7 @@ function BCCompanyLocationAssignModal({
           initalValues.workTypes = formData.workTypes
         } catch (error) {}
       }
-    }, [vendorList,employeeList])
+    }, [assigneeList])
 
     const {
         'values': FormikValues,
@@ -110,7 +120,7 @@ function BCCompanyLocationAssignModal({
           };
 
           if (page == "Employee") {
-            const oldAssignedEmployee = companyLocation.assignedEmployees?.filter(res => res.employee?._id != values.assignee?._id).map(res => {
+            const oldAssignedEmployee = companyLocation.assignedEmployees?.filter(res => res.employee?._id != values.assignee?._id && res.employee?._id != formData?.assignee?._id).map(res => {
               return {
                 employeeId: res?.employee?._id,
                 workTypes: res?.workTypes?.map((workType: any) => workType?._id)
@@ -118,7 +128,7 @@ function BCCompanyLocationAssignModal({
             });  
             payload.assignedEmployees = oldAssignedEmployee?.concat(assigneeList as any);
           }else{
-            const oldAssignedVendors = companyLocation.assignedVendors?.filter(res => res.vendor?._id != values.assignee?._id).map(res => {
+            const oldAssignedVendors = companyLocation.assignedVendors?.filter(res => res.vendor?._id != values.assignee?._id && res.vendor?._id != formData?.assignee?._id).map(res => {
               return {
                 vendorId: res?.vendor?._id,
                 workTypes: res?.workTypes?.map((workType: any) => workType?._id)
@@ -173,20 +183,23 @@ function BCCompanyLocationAssignModal({
                           multiple
                           onChange={(ev: any, newValue: any) => changeField("workTypes",newValue)}
                           options={companyLocation?.workTypes ?? []}
-                          renderInput={(params) => (
+                          renderInput={(params) => {
+                            return (
                             <TextField
                               error={
-                                touched.assignee &&
-                                Boolean(errors.assignee)
+                                touched.workTypes &&
+                                Boolean(errors.workTypes) &&
+                                !FormikValues.workTypes.length
                               }
                               helperText={
-                                touched.assignee &&
-                                errors.assignee
+                                touched.workTypes &&
+                                errors.workTypes &&
+                                !FormikValues.workTypes.length
                               }
                               {...params}
                               variant={'outlined'}
                             />
-                          )}
+                          )}}
                           renderTags={(tagValue, getTagProps) =>
                             tagValue.map((option, index) => {
                               return (
@@ -199,7 +212,6 @@ function BCCompanyLocationAssignModal({
                             )
                           }
                           value={FormikValues.workTypes}
-                          getOptionSelected={() => false}
                         />
                       </Grid>
                     </Grid>
@@ -216,7 +228,7 @@ function BCCompanyLocationAssignModal({
                           }}
                           id={'tags-standard'}
                           onChange={(ev: any, newValue: any) => changeField("assignee",newValue)}
-                          options={page == "Employee" ? employeeList : vendorList}
+                          options={assigneeList}
                           renderInput={(params) => (
                             <TextField
                               error={
