@@ -160,6 +160,7 @@ function CompanyProfilePage({ classes }: any) {
           companyLocation: fullItem,
           //modalTitle: 'Add New Location',
           removeFooter: false,
+          companyLocationList: profileState.locations,
         },
         type: modalTypes.COMPANY_LOCATION_MODAL,
       })

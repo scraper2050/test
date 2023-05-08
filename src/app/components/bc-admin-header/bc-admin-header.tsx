@@ -173,7 +173,7 @@ function BCAdminHeader({
   }, []);
 
   useEffect(() => {
-    if(!currentLocation?.locationId && profileState.locations && profileState.locations.length){
+    if(profileState.locations && profileState.locations.length){
       let locationDevisions: any[] = [];
       profileState.locations?.forEach(location => {
         if(user._id == profileState.companyAdmin || user?.canAccessAllLocations){
@@ -223,7 +223,7 @@ function BCAdminHeader({
       }
       setAssignedLocations(locationDevisions);
     }
-  }, [profileState.locations]);
+  }, [profileState.locations, profileState.refresh_location]);
 
   useEffect(() => {
     if(!currentLocation?.locationId && assignedlocations.length){
