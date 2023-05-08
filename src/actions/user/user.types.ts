@@ -51,6 +51,7 @@ export interface CompanyProfileOtherState {
   inputError: {[k: string]: boolean};
   serverError: any;
   isLoading: boolean;
+  refresh_location?: boolean;
 }
 export interface CompanyProfileRes {
   status?: number;
@@ -109,5 +110,5 @@ export enum CompanyProfileActonType {
   SET_LOCATIONS = 'SET_LOCATIONS',
   SET_SELECTED_LOCATION = 'SET_SELECTED_LOCATIONS',
   UPDATE_LOCATION = 'UPDATE_LOCATION',
-  ADD_LOCATION = 'ADD_LOCATION ',
+  ADD_LOCATION = 'ADD_LOCATION '
 }

@@ -24,7 +24,6 @@ export default (): any => ({
     'border-radius': '10px',
     'padding': '3rem',
     'min-height': '15rem',
-    'align-items': 'center'
   },
   'buttonPane': {
     'display': 'flex',
@@ -51,7 +50,7 @@ export default (): any => ({
     'flex': '50%',
   },
   'updateArea': {
-    'flex': '25%',
+    'flex': '40%',
   },
   'infoAreaFullwidth': {
     'flex': '100%',

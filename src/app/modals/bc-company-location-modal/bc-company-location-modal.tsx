@@ -33,7 +33,8 @@ import * as Yup from "yup";
 import {emailRegExp, phoneRegExp, zipCodeRegExp} from "../../../helpers/format";
 import {
   AddCompanyLocationAction,
-  UpdateCompanyLocationAction
+  UpdateCompanyLocationAction,
+  getCompanyLocationsAction
 } from "../../../actions/user/user.action";
 import {CompanyLocation} from "../../../actions/user/user.types";
 import BCSent from "../../components/bc-sent";
@@ -169,6 +170,8 @@ function BCCompanyLocationModal({
           }
         }))
       }
+
+      dispatch(getCompanyLocationsAction());
     },
     validationSchema: companyLocationSchema,
   });
