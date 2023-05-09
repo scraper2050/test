@@ -193,7 +193,7 @@ function BCAdminProfile(props: Props) {
                   name="ShowAllLocation"
                 />
               }
-              label={"Access All Location"}
+              label={"Access All Locations"}
             />
           }
         </div>

@@ -128,6 +128,7 @@ export const modalTypes = {
   'EMAIL_REPORT_MODAL': 'EMAIL_REPORT_MODAL',
   'LOCATION_ASSIGN_MODAL': 'LOCATION_ASSIGN_MODAL',
   'LOCATION_ASSIGN_DELETE_MODAL': 'LOCATION_ASSIGN_DELETE_MODAL',
+  'SET_DISPLAY_NAME_MODAL': 'set-display-name-modal',
 };
 
 export const rejectionReason = [

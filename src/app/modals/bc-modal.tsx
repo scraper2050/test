@@ -75,6 +75,8 @@ import BCMemorizeReportModal from "./bc-memorize-report-modal/bc-memorize-report
 import BcRecordSyncStatusModal from "./bc-record-sync-modal/bc-record-sync-modal";
 import BCAdvanceFilterInvoiceModal from "./bc-advance-filter-invoice-modal/bc-advance-filter-invoice-modal";
 import BcArReportModal from "./bc-ar-report-modal/bc-ar-report-modal";
+import BCSetDisplayNameModal
+  from "./bc-set-display-name-modal/bc-set-display-name-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -818,7 +820,15 @@ function BCModal() {
         });
         setComponent(<CompanyLocationAssignDeleteModal companyLocation={data.companyLocation} assignee={data.assignee} page={data.page}/>);
         break;
-
+      case modalTypes.SET_DISPLAY_NAME_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCSetDisplayNameModal props={data} />);
+        break;
       default:
         setComponent(null);
     }
