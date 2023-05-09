@@ -108,26 +108,41 @@ function BCCompanyLocationModal({
       workTypes: companyLocation?.workTypes || [],
     },
     onSubmit: (values: any, {setSubmitting}: any) => {
+      let workTypes = FormikValues.workTypes.map(res => res._id);
       let oldAssignedVendors: any[] = [];
-      let oldAssignedEmployee: any[] = []
+      let oldAssignedEmployee: any[] = [];
 
       if (companyLocation?.assignedEmployees) {
-        companyLocation.assignedEmployees?.map(res => {
+        let filteredAssignedEmployees = companyLocation.assignedEmployees?.filter(res => {
+          return res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))
+        });
+
+        oldAssignedEmployee = filteredAssignedEmployees?.map(res => {
+          let filteredWorkTypes = res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))
           return {
             employeeId: res?.employee?._id,
-            workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+            workTypes: filteredWorkTypes?.map((workType: any) => workType?._id)
           }
         });
       }
 
       if (companyLocation?.assignedVendors) {
-        oldAssignedVendors = companyLocation?.assignedVendors?.map(res => {
+        let filteredAssignedVendors = companyLocation.assignedVendors?.filter(res => {
+          return res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))
+        });
+
+        oldAssignedVendors = filteredAssignedVendors?.map(res => {
+          let filteredWorkTypes = res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))
           return {
             vendorId: res?.vendor?._id,
-            workTypes: res?.workTypes?.map((workType: any) => workType?._id)
+            workTypes: filteredWorkTypes?.map((workType: any) => workType?._id)
           }
         });
       }
+
+      console.log(oldAssignedEmployee);
+      console.log(oldAssignedVendors);
+      
 
       const params: API_PARAMS = {
         companyLocationId: FormikValues.id,
@@ -141,7 +156,7 @@ function BCCompanyLocationModal({
         state: FormikValues.state?.name || '',
         zipCode: FormikValues.zipCode,
         phone: FormikValues.contactNumber,
-        workTypes: FormikValues.workTypes.map(res => res._id),
+        workTypes: workTypes,
         assignedVendors : oldAssignedVendors,
         assignedEmployees : oldAssignedEmployee
       };

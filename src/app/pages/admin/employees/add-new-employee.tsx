@@ -261,7 +261,7 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
                             name="ShowAllLocation"
                           />
                         }
-                        label={"All Location"}
+                        label={"Access All Locations"}
                       />
                   </Grid>
                 </div>}
