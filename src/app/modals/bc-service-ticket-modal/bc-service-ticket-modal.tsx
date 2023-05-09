@@ -55,6 +55,7 @@ import {stringSortCaseInsensitive} from '../../../helpers/sort';
 import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {useHistory} from 'react-router-dom';
+import { callCreateHomeOwner } from 'api/home-owner.api';
 
 function BCServiceTicketModal(
   {
@@ -316,7 +317,7 @@ function BCServiceTicketModal(
       customerEmail: ticket.customerEmail || '',
       customerPhone: ticket.customerPhone || ''
     },
-    onSubmit: (values, {setSubmitting}) => {
+    onSubmit: async (values, {setSubmitting}) => {
       const tempData = {
         ...ticket,
         ...values,
@@ -407,6 +408,23 @@ function BCServiceTicketModal(
             jobTypeId: jt._id,
           }))
         );
+        // Create home owner if needed
+        if (formatedRequest.isHomeOccupied) {
+          const homeOwnerData = {
+            firstName: formatedRequest.customerName ?? '',
+            email: formatedRequest.customerEmail ?? '',
+            phone: formatedRequest.customerPhone ?? '',
+            addressStreet: formatedRequest.jobLocation ?? '',
+          };
+          await callCreateHomeOwner(homeOwnerData)
+            .then((response: any) => {
+              if(response.status !== 1) {
+                dispatch(SnackBarError(response.message));
+                return;
+              }
+              formatedRequest.homeOwnerId = response.homeOwner._id;
+            });
+        }
         callCreateTicketAPI(formatedRequest)
           .then((response: any) => {
             if (response.status === 0) {
@@ -1001,38 +1019,42 @@ function BCServiceTicketModal(
                   label={`HOUSE IS OCCUPIED`}
                 />
               </Grid>
-
-              <Grid container>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>
-                    Name
-                  </Typography>
-                  <BCInput
-                    disabled={detail || isFieldsDisabled}
-                    handleChange={formikChange}
-                    name={'customerName'}
-                    value={FormikValues?.customerName}
-                  />
+              
+              { 
+                jobSiteValue?.isHomeOccupied || isHomeOccupied ? (
+                <Grid container>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>
+                      Name
+                    </Typography>
+                    <BCInput
+                      disabled={detail || isFieldsDisabled}
+                      handleChange={formikChange}
+                      name={'customerName'}
+                      value={FormikValues?.customerName}
+                    />
+                  </Grid>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
+                    <BCInput
+                      disabled={detail || isFieldsDisabled}
+                      handleChange={formikChange}
+                      name={'customerEmail'}
+                      value={FormikValues?.customerEmail}
+                    />
+                  </Grid>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
+                    <BCInput
+                      disabled={detail || isFieldsDisabled}
+                      handleChange={formikChange}
+                      name={'customerPhone'}
+                      value={FormikValues?.customerPhone}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
-                  <BCInput
-                    disabled={detail || isFieldsDisabled}
-                    handleChange={formikChange}
-                    name={'customerEmail'}
-                    value={FormikValues?.customerEmail}
-                  />
-                </Grid>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
-                  <BCInput
-                    disabled={detail || isFieldsDisabled}
-                    handleChange={formikChange}
-                    name={'customerPhone'}
-                    value={FormikValues?.customerPhone}
-                  />
-                </Grid>
-              </Grid>
+                ) : null
+              }
             </Grid>
             <Grid item container xs={4} style={{paddingTop: 0}}>
               <BCDragAndDrop
