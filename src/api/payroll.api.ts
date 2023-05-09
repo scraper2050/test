@@ -247,7 +247,7 @@ export const normalizeData = (item: any, type: string) => {
     case 'vendor':
     case 'contractor':
       return ({
-        vendor: item.info.companyName,
+        vendor: item?.info?.displayName ?? item?.info?.companyName,
         email: item.info.companyEmail,
         phone: item.contact?.phone || '',
         address: item.address,
