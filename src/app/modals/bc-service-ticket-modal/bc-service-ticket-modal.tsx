@@ -313,12 +313,13 @@ function BCServiceTicketModal(
       customerPO: ticket?.customerPO !== undefined ? ticket?.customerPO : [],
       images: ticket.images !== undefined ? ticket.images : [],
       isHomeOccupied: ticket.isHomeOccupied || false,
-      customerName: ticket.customerName || '',
-      customerEmail: ticket.customerEmail || '',
-      customerPhone: ticket.customerPhone || ''
+      customerFirstName: ticket.homeOwner?.profile.firstName || '',
+      customerLastName: ticket.homeOwner?.profile.lastName || '',
+      customerEmail: ticket.homeOwner?.info.email || '',
+      customerPhone: ticket.homeOwner?.contact.phone || ''
     },
     onSubmit: async (values, {setSubmitting}) => {
-      const tempData = {
+      const tempData = { // TODO add validation in the forms 
         ...ticket,
         ...values,
       };
@@ -411,7 +412,8 @@ function BCServiceTicketModal(
         // Create home owner if needed
         if (formatedRequest.isHomeOccupied) {
           const homeOwnerData = {
-            firstName: formatedRequest.customerName ?? '',
+            firstName: formatedRequest.customerFirstName ?? '',
+            lastName: formatedRequest.customerLastName ?? '',
             email: formatedRequest.customerEmail ?? '',
             phone: formatedRequest.customerPhone ?? '',
             addressStreet: formatedRequest.jobLocation ?? '',
@@ -1007,7 +1009,7 @@ function BCServiceTicketModal(
                   control={
                     <Checkbox
                       color={'primary'}
-                      checked={jobSiteValue?.isHomeOccupied || isHomeOccupied}
+                      checked={FormikValues.isHomeOccupied || isHomeOccupied}
                       onChange={(e) => {
                         formikChange(e)
                         setHomeOccupied((v) => !v)
@@ -1021,17 +1023,28 @@ function BCServiceTicketModal(
               </Grid>
               
               { 
-                jobSiteValue?.isHomeOccupied || isHomeOccupied ? (
+                FormikValues.isHomeOccupied || isHomeOccupied ? (
                 <Grid container>
                   <Grid justify={'space-between'} xs>
                     <Typography variant={'caption'} className={'previewCaption'}>
-                      Name
+                      Firstname
                     </Typography>
                     <BCInput
                       disabled={detail || isFieldsDisabled}
                       handleChange={formikChange}
-                      name={'customerName'}
-                      value={FormikValues?.customerName}
+                      name={'customerFirstName'}
+                      value={FormikValues?.customerFirstName}
+                    />
+                  </Grid>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>
+                      Lastname
+                    </Typography>
+                    <BCInput
+                      disabled={detail || isFieldsDisabled}
+                      handleChange={formikChange}
+                      name={'customerLastName'}
+                      value={FormikValues?.customerLastName}
                     />
                   </Grid>
                   <Grid justify={'space-between'} xs>
