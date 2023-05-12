@@ -1,5 +1,5 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Tooltip } from "@material-ui/core";
@@ -18,13 +18,19 @@ import { getUnpaidInvoicesAPI } from 'api/invoicing.api';
 import { setCurrentUnpaidPageIndex, setCurrentUnpaidPageSize, setUnpaidKeyword } from 'actions/invoicing/invoicing.action';
 import moment from "moment";
 import TableFilterService from 'utils/table-filter';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
 
 const getSortedInvoices = (state: any) => {
   return TableFilterService.filterByDateDesc(state?.invoiceList.unpaid);
 };
 
 function InvoicingUnpaidListing({ classes, theme }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
@@ -46,7 +52,6 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(location?.state?.option?.selectionRange || null);
   const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
@@ -161,7 +166,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0));
+    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0, divisionParams));
     dispatch(setCurrentUnpaidPageIndex(0));
     return () => {
       dispatch(setUnpaidKeyword(''));
@@ -173,23 +178,13 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
     if (location?.state?.tab === 0 && (location?.state?.option?.search || location?.state?.option?.pageSize
       || location?.state?.option?.currentPageIndex || location?.state?.option?.lastNextCursor || location?.state?.option?.lastPrevCursor)) {
       dispatch(setUnpaidKeyword(location.state.option.search));
-      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search, selectionRange));
+      dispatch(getUnpaidInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search, selectionRange, undefined,divisionParams));
       dispatch(setCurrentUnpaidPageSize(location.state.option.pageSize));
       dispatch(setCurrentUnpaidPageIndex(location?.state?.option?.currentPageIndex || 0));
       setSelectionRange(location?.state?.option?.selectionRange)
       window.history.replaceState({}, document.title)
     }
   }, [location]);
-
-  useEffect(() => {
-    dispatch(getUnpaidInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange, callUnpaidInvoicesCount.current === 0));
-    dispatch(setCurrentUnpaidPageIndex(0));
-    return () => {
-      dispatch(setUnpaidKeyword(''));
-      dispatch(setCurrentUnpaidPageIndex(currentPageIndex));
-      dispatch(setCurrentUnpaidPageSize(currentPageSize));
-    }
-  }, [currentLocation])
 
   const showInvoiceDetail = (id: string) => {
     history.push({
@@ -233,7 +228,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         fetchFunction={(num: number, isPrev: boolean, isNext: boolean, query: string) => {
           setLastPrevCursor(isPrev ? prevCursor : undefined)
           setLastNextCursor(isNext ? nextCursor : undefined)
-          dispatch(getUnpaidInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange))
+          dispatch(getUnpaidInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, selectionRange,undefined,divisionParams))
         }}
         total={total}
         currentPageIndex={currentPageIndex}

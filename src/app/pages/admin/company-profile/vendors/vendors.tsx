@@ -164,7 +164,7 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
               'float': 'right'
             }}
             variant="contained">
-            {'Add New'}
+            {'Add'}
           </CSButton>
         </div>
         <BCTableContainer

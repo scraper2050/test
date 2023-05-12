@@ -22,8 +22,16 @@ import {
 } from "../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../constants";
 import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { useParams } from 'react-router-dom';
+import { DivisionParams } from 'app/models/division';
 
 function JobPage() {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentStatus, setCurrentStatus] = useState(-1);
@@ -33,7 +41,6 @@ function JobPage() {
   const [refresh, setRefresh] = useState(true);
 
   const calendarState = useSelector((state: RootState) => state.calendar);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const getTitle = (job: any, type: string) => {
     switch (type) {
@@ -64,13 +71,11 @@ function JobPage() {
       startDate: moment(currentDate).utc().startOf('month').toDate(),
       endDate: moment(currentDate).utc().endOf('month').toDate(),
       pageSize: 1000,
-      workType: currentLocation?.workTypeId,
-      companyLocation: currentLocation?.locationId
     }
     setRefresh(true);
     setEvents([]);
     dispatch(clearSelectedEvent());
-    getAllJobAPI(params).then((data) => {
+    getAllJobAPI(params, divisionParams).then((data) => {
       const {status, jobs, total} = data;
       if (status === 1) {
         const events = jobs.map((job: Job) => ({
@@ -89,7 +94,7 @@ function JobPage() {
       dispatch(error(e.message));
       setRefresh(false);
     })
-  }, [currentDate,currentLocation]);
+  }, [currentDate]);
 
   const onTitleChange = (id: number, type: string) => {
     const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));

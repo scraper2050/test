@@ -40,7 +40,14 @@ export interface CompanyLocation {
     city?: string;
     state?: string;
     zipCode?: string;
-  }
+  },
+  billingAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  },
+  isAddressAsBillingAddress?: boolean,
   workTypes?: any[],
   assignedVendors?: any[],
   assignedEmployees?: any[],
@@ -51,7 +58,6 @@ export interface CompanyProfileOtherState {
   inputError: {[k: string]: boolean};
   serverError: any;
   isLoading: boolean;
-  refresh_location?: boolean;
 }
 export interface CompanyProfileRes {
   status?: number;

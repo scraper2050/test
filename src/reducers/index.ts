@@ -76,6 +76,7 @@ import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './adva
 import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-technician-filter.reducer'
 import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer';
 import { WorkTypeReducer as workTypes } from './work-type.reducer';
+import { DivisionReducer as divisions } from './division.reducer';
 import { FilterLocationReducer as currentLocation } from "./filter-location.reducer";
 
 
@@ -161,6 +162,7 @@ const appReducer = combineReducers({
   mapTechnicianFilterState,
   mapTechnicianJobsState,
   workTypes,
+  divisions,
   currentLocation
 });
 

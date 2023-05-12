@@ -25,14 +25,23 @@ import {
   CSIconButton,
   useCustomStyles
 } from "../../../../../helpers/custom";
-import {error} from "../../../../../actions/snackbar/snackbar.action";
+import {error, warning} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker, {Range}
   from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import { CSButton } from "../../../../../helpers/custom";
 import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { useParams } from 'react-router-dom';
+import { DivisionParams } from 'app/models/division';
 
 function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+  const divisions = useSelector((state: any) => state.divisions);
+
   const customers = useSelector(({ customers }: any) => customers.data);
   const [showAllTickets, toggleShowAllTickets] = useState(false);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
@@ -55,39 +64,43 @@ function ServiceTicket({ classes, hidden }: any) {
     // if (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     return cond;
   });
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const openCreateTicketModal = () => {
-    if (customers.length !== 0) {
-      dispatch(setModalDataAction({
-        'data': {
-          'modalTitle': 'New Service Ticket',
-          'removeFooter': false,
-          'className': 'serviceTicketTitle',
-          'error': {
-            'status': false,
-            'message': ''
-          }
-        },
-        'type': modalTypes.CREATE_TICKET_MODAL
-      }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
-    } else {
-      dispatch(setModalDataAction({
-        'data': {
-          'removeFooter': false,
-          'error': {
-            'status': true,
-            'message': 'You must add customers to create a service ticket'
-          }
-        },
-        'type': modalTypes.CREATE_TICKET_MODAL
-      }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
+    //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
+    if ((divisions.data?.length && divisionParams.workType && divisionParams.companyLocation) || !divisions.data?.length) {
+      if (customers.length !== 0) {
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'New Service Ticket',
+            'removeFooter': false,
+            'className': 'serviceTicketTitle',
+            'error': {
+              'status': false,
+              'message': ''
+            }
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      } else {
+        dispatch(setModalDataAction({
+          'data': {
+            'removeFooter': false,
+            'error': {
+              'status': true,
+              'message': 'You must add customers to create a service ticket'
+            }
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      }
+    }else{
+      dispatch(warning("Please select a division before creating a ticket."))
     }
   };
 
@@ -136,14 +149,14 @@ function ServiceTicket({ classes, hidden }: any) {
   function Toolbar() {
     useEffect(() => {
       if(loadCount.current !== 0){
-        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange));
+        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange, divisionParams));
         dispatch(setCurrentPageIndex(0));
       }
     }, [showAllTickets]);
 
     useEffect(() => {
       if(loadCount.current !== 0){
-        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange));
+        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange, divisionParams));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectionRange]);
@@ -299,7 +312,7 @@ function ServiceTicket({ classes, hidden }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange));
+      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange,divisionParams));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -308,23 +321,15 @@ function ServiceTicket({ classes, hidden }: any) {
     }, 1000);
   }, [refresh]);
   useEffect(() => {
-    dispatch(getAllServiceTicketsAPI());
+    dispatch(getAllServiceTicketsAPI(undefined,undefined,undefined,undefined,undefined,undefined,divisionParams));
     if(customers.length == 0) {
       dispatch(getCustomers());
     }
     dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
+    dispatch(setCurrentPageSize(10)); 
   }, [])
-
-  useEffect(() => {
-    dispatch(refreshServiceTickets(false));
-    dispatch(refreshServiceTickets(true));
-    return () => {
-      dispatch(refreshServiceTickets(false));
-    }
-  }, [currentLocation]);
 
   const handleRowClick = (event: any, row: any) => {
   };

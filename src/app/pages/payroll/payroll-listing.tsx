@@ -4,7 +4,7 @@ import {
   withStyles
 } from "@material-ui/core";
 import styles from './payroll.styles';
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import BCTableContainer from "../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../components/bc-menu-more";
@@ -23,7 +23,7 @@ import { HighlightOff } from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
 import { getPayrollBalance, refreshContractorPayment } from "../../../actions/payroll/payroll.action";
 import { Contractor } from "../../../actions/payroll/payroll.types";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
 
 interface Props {
   classes: any;
@@ -36,6 +36,12 @@ const ITEMS = [
 ]
 
 function Payroll({ classes }: Props) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
@@ -50,18 +56,17 @@ function Payroll({ classes }: Props) {
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   useEffect(() => {
     if (selectionRange) {
-      dispatch(getPayrollBalance(formatDateYMD(selectionRange.startDate), formatDateYMD(selectionRange.endDate)));
+      dispatch(getPayrollBalance(formatDateYMD(selectionRange.startDate), formatDateYMD(selectionRange.endDate), divisionParams));
     } else {
-      dispatch(getPayrollBalance());
+      dispatch(getPayrollBalance(undefined, undefined,divisionParams));
     }
     if (refresh) {
       dispatch(refreshContractorPayment(false));
     }
-  }, [selectionRange, refresh, currentLocation]);
+  }, [selectionRange, refresh]);
 
   useEffect(() => {
     setTableData(selectedIDs.length > 0 ?

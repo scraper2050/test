@@ -31,6 +31,7 @@ import BCEditPaymentConfirmModal from './bc-edit-payment-confirm-modal/bc-edit-p
 import BCMakeAdminConfirmModal from './bc-make-admin-employee-modal/bc-make-admin-employee-confirm';
 import EmailReportModal from './bc-email-modal/bc-email-report-modal';
 import CompanyLocationAssignModal from './bc-company-location-assign-modal/bc-company-location-assign-modal';
+import CompanyLocationBillingAddressModal from './bc-company-location-billing-address-modal/bc-company-location-billing-address-modal';
 import CompanyLocationAssignDeleteModal from './bc-delete-company-location-assign-modal/bc-delete-company-location-assign-modal';
 import CloseIcon from '@material-ui/icons/Close';
 import {
@@ -828,6 +829,15 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<BCSetDisplayNameModal props={data} />);
+        break;
+      case modalTypes.EDIT_BILLING_ADDRESS:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<CompanyLocationBillingAddressModal companyLocation={data.companyLocation} />);
         break;
       default:
         setComponent(null);

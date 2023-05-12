@@ -166,7 +166,7 @@ function TabEmployeesGrid({ classes, companyLocation}: {classes: any, companyLoc
               'float': 'right'
             }}
             variant="contained">
-            {'Add New'}
+            {'Add'}
           </CSButton>
         </div>
         <BCTableContainer
