@@ -37,13 +37,20 @@ import {
 import { getServiceTicketDetail } from 'api/service-tickets.api';
 import { getJobLocation } from 'api/job-location.api';
 import { getJobSite } from 'api/job-site.api';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
+import { useParams } from 'react-router-dom';
 
 function MapViewTicketsScreen({
   classes,
   filter: filterTickets,
   selectedDate,
 }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const { token } = useSelector(({ auth }: any) => auth);
   const { ticket2Job } = useSelector(({ serviceTicket }: any) => ({
@@ -76,7 +83,6 @@ function MapViewTicketsScreen({
   const mapTechnicianFilterData: any = useSelector(
     ({ mapTechnicianFilterState }: any) => mapTechnicianFilterState
   );
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
   
   const tempRefTicket = useRef<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -123,14 +129,6 @@ function MapViewTicketsScreen({
   }, []);
 
   useEffect(() => {
-    dispatch(refreshServiceTickets(false));
-    dispatch(refreshServiceTickets(true));
-    return () => {
-      dispatch(refreshServiceTickets(false));
-    };
-  }, [currentLocation]);
-
-  useEffect(() => {
     if (refresh) {
       setIsLoading(true);
       setAllTickets([]);
@@ -140,7 +138,7 @@ function MapViewTicketsScreen({
       });
 
       socket.on('connect', () => {
-        getOpenServiceTicketsStream(socket.id);
+        getOpenServiceTicketsStream(socket.id, divisionParams);
         dispatch(streamServiceTickets(true));
       });
 

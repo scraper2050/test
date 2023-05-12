@@ -96,5 +96,16 @@ export default (theme: Theme): any => ({
     border: `2px solid ${PRIMARY_BLUE}`,
     color: PRIMARY_BLUE,
     backgroundColor: '#E5F7FF',
+  },
+  billingAddress:{
+    marginTop: "43px"
+  },
+  billingAddressTtitle: {
+    padding: '45px 0px 12px 94px',
+  },
+  inputState: {
+    '&& .MuiAutocomplete-inputRoot': {
+      padding:"9.5px",
+    },
   }
 });

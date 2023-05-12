@@ -5,12 +5,13 @@ import {Grid, Typography} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "helpers/format";
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {loadJobReportsActions} from "../../../../../../actions/customer/job-report/job-report.action";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
+import { getAllJobReportsAPI } from 'api/job-report.api';
 
 interface LocationStateTypes {
   customerName: string;
@@ -18,12 +19,16 @@ interface LocationStateTypes {
 }
 
 function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
 
   const { loading: isLoading = true, jobReports, error } = useSelector(({ jobReport }: any) =>
     jobReport);
-
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
   const location = useLocation<any>();
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
@@ -129,12 +134,9 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   };
 
   useEffect(() => {
-    dispatch(loadJobReportsActions.fetch());
+    dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,divisionParams));
   }, []);
 
-  useEffect(() => {
-    dispatch(loadJobReportsActions.fetch());
-  }, [currentLocation])
 
   useEffect(() => {
     if (jobReports) {

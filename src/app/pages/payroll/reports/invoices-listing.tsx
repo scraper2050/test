@@ -4,7 +4,7 @@ import {
   withStyles
 } from "@material-ui/core";
 import styles from '../payroll.styles';
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import BCTableContainer  from "../../../components/bc-table-container/bc-table-container";
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -25,12 +25,18 @@ import moment from "moment";
 import {getPayrollReportAPI} from "../../../../api/payroll.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import classNames from "classnames";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
 
 interface Props {
   classes: any;
 }
 function PayrollInvoices({classes}: Props) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const location = useLocation<any>();
   const locationState = location.state;
@@ -49,13 +55,12 @@ function PayrollInvoices({classes}: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
   const [totals, setTotals] = useState({invoices: 0, commissions: 0});
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const isFiltered =  selectedIDs.length > 0 || selectionRange;
 
   const getData = async(type?: string, id?: string) => {
     setLoading(true);
-    const response: any = await getPayrollReportAPI();
+    const response: any = await getPayrollReportAPI(undefined,undefined,divisionParams);
     if (response.status === 1) {
       setInvoices(response.data);
     } else {
@@ -68,11 +73,6 @@ function PayrollInvoices({classes}: Props) {
     dispatch(getContractors());
     getData();
   }, []);
-  
-  useEffect(() => {
-    dispatch(getContractors());
-    getData();
-  }, [currentLocation])
 
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);

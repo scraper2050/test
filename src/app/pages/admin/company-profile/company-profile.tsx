@@ -33,6 +33,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { useTheme, withStyles } from '@material-ui/core';
 import TabEmployeesGrid  from "./employees/employees";
 import TabVendorsGrid  from "./vendors/vendors";
+import { getDivision } from 'actions/division/division.action';
 
 interface User {
   _id?: string,
@@ -77,6 +78,7 @@ function CompanyProfilePage({ classes }: any) {
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const [location, setLocation] = useState<CompanyLocation| null>(null);
   const [curTab, setCurTab] = useState(0);
+  const { user } = useSelector((state: any) => state.auth);
 
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
@@ -89,6 +91,10 @@ function CompanyProfilePage({ classes }: any) {
     dispatch(getCompanyLocationsAction());
   }, []);
 
+
+  useEffect(()=> {
+    if (user._id && profileState.locations?.length) dispatch(getDivision(user._id))
+  }, [profileState])
   const handleUpdateCompanyProfile = async (values: any) => {
     const {
       companyName,
@@ -236,6 +242,7 @@ function CompanyProfilePage({ classes }: any) {
                     {location &&
                       <BCCompanyProfile
                         fields={companyLocationFields(location)}
+                        companyLocation={location}
                       />
                     }
                 </div>

@@ -328,7 +328,7 @@ function BCServiceTicketModal(
         (image: any) => image instanceof File
       );
 
-      //add devision and location field
+      //add division and location field
       if (currentLocation?.locationId && currentLocation?.workTypeId) {
         tempData.workType = currentLocation?.workTypeId;
         tempData.companyLocation = currentLocation?.locationId;

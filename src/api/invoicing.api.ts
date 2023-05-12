@@ -23,6 +23,7 @@ import {
   setPreviousInvoicesCursor as setPreviousInvoicesForBulkPaymentsCursor,
 } from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
 import {SYNC_RESPONSE} from "../app/models/invoices";
+import { DivisionParams } from 'app/models/division';
 
 export const getTodos = async (params = {}) => {
   let responseData;
@@ -100,7 +101,7 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor =
 };
 
 let cancelTokenGetAllInvoicesAPI:any;
-export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, advanceFilterInvoiceData?:any, customerId?: string, dueDate?: Date|null, showPaid?: boolean) => {
+export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, advanceFilterInvoiceData?:any, customerId?: string, dueDate?: Date|null, showPaid?: boolean,  division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesLoading(true));
@@ -190,7 +191,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
 
       cancelTokenGetAllInvoicesAPI = axios.CancelToken.source();
 
-      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI)
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesAPI,undefined,division)
         .then((res: any) => {
           let tempInvoices = res.data.invoices || [];
           dispatch(setInvoices(tempInvoices.reverse()));
@@ -213,7 +214,7 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
 };
 
 let cancelTokenGetAllDraftInvoicesAPI:any;
-export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, recentOnly = false) => {
+export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setDraftInvoicesLoading(true));
@@ -238,7 +239,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
 
       cancelTokenGetAllDraftInvoicesAPI = axios.CancelToken.source();
 
-      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllDraftInvoicesAPI)
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllDraftInvoicesAPI,undefined,division)
         .then((res: any) => {
           let tempDraftInvoices = res.data.invoices;
           dispatch(setDraftInvoices(tempDraftInvoices.reverse()));
@@ -260,7 +261,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
 };
 
 let cancelTokenGetUnpaidInvoicesAPI:any;
-export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string,  selectionRange?:{startDate:Date;endDate:Date}|null, recentOnly = false) => {
+export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string,  selectionRange?:{startDate:Date;endDate:Date}|null, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setUnpaidInvoicesLoading(true));
@@ -290,7 +291,7 @@ export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCur
 
       cancelTokenGetUnpaidInvoicesAPI = axios.CancelToken.source();
 
-      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetUnpaidInvoicesAPI)
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetUnpaidInvoicesAPI,undefined, division)
         .then((res: any) => {
           const {invoices, pagination, total} = res.data;
           let tempUnpaidInvoices = res.data.invoices;

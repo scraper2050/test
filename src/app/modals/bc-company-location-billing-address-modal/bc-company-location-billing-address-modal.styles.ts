@@ -1,13 +1,15 @@
 import { Theme } from '@material-ui/core/styles';
-import { blue } from '@material-ui/core/colors';
 import * as CONSTANTS from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
-    'padding': '15px 24px !important'
+    padding: '25px  40px 25px 0 !important',
+    backgroundColor: 'auto'
   },
   dialogContent: {
-    'padding': '8px 24px !important'
+    borderTop: "1px solid #D0D3DC",
+    borderBottom: "1px solid #D0D3DC",
+    padding: "44px 30px!important"
   },
   submitButton: {
     color: CONSTANTS.PRIMARY_WHITE,
@@ -23,4 +25,9 @@ export default (theme: Theme): any => ({
     padding: '0 12px',
     textTransform: 'none',
   },
+  inputState: {
+    '&& .MuiAutocomplete-inputRoot': {
+      padding:"9.5px",
+    },
+  }
 });

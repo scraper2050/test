@@ -1,7 +1,6 @@
 import config from 'config';
 import { getLocalStorageToken } from './local-storage.service';
 import axios, { AxiosRequestConfig, Method, CancelTokenSource } from 'axios';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const api = config.apiBaseURL;
 const customerApi = config.apiCustomerURL;
@@ -17,7 +16,7 @@ const fetchToken = (isCustomerAPI = false) => {
   return token;
 };
 
-export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "", cancelTokenSource?: CancelTokenSource, isCustomerAPI = false ) => new Promise((resolve, reject) => {
+export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = "", cancelTokenSource?: CancelTokenSource, isCustomerAPI = false, queryParams?: any) => new Promise((resolve, reject) => {
   let token = '';
 
   if (!noHeaders) {
@@ -45,12 +44,10 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean, enct
     request.cancelToken = cancelTokenSource.token
   }
 
-  //add current location & work type location params
-  let currentLocation = localStorage.getItem("currentLocation");
-  if (currentLocation) {
+  //add current division params
+  if (queryParams) {
     try {
-      let currentLocationJSON = JSON.parse(currentLocation) as ICurrentLocation;
-      request.params = {...request.params, workType: currentLocationJSON.workTypeId, companyLocation: currentLocationJSON.locationId};
+      request.params = {...request.params, ...queryParams};
     } catch (error) {}
   }
 

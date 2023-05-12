@@ -30,6 +30,8 @@ import { CompanyProfileStateType } from "actions/user/user.types";
 import { getCompanyLocationsAction } from "actions/user/user.action";
 import { setCurrentLocation } from "actions/filter-location/filter.location.action";
 import { ICurrentLocation } from "actions/filter-location/filter.location.types";
+import { getDivision, refreshDeisions } from "actions/division/division.action";
+import { info, success } from "actions/snackbar/snackbar.action";
 
 interface Props {
   classes: any;
@@ -156,6 +158,9 @@ function BCAdminHeader({
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
   const location = useLocation();
   const pathName = location.pathname;
+  const urlParams = pathName?.split('/').slice(-2);
+  const [ companyLocation,workType ] = urlParams || [];
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -163,77 +168,40 @@ function BCAdminHeader({
   const isMenuOpen = Boolean(menuAnchorEl);
   const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
   const dispatch = useDispatch();
-  const [assignedlocations, setAssignedLocations] = useState<any[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<number>(0);
+  const history = useHistory();
+  const [selectedDivision, setSelectedDivision] = useState<number>(0);
   const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const divisions = useSelector((state: any) => state.divisions);
+  const divisionList = divisions.data;
 
   useEffect(() => {
     initialLoad()
-    dispatch(getCompanyLocationsAction());
+    if (user?._id && divisions.refresh) {
+      dispatch(getDivision(user?._id));
+    }
   }, []);
 
   useEffect(() => {
-    if(profileState.locations && profileState.locations.length){
-      let locationDevisions: any[] = [];
-      profileState.locations?.forEach(location => {
-        if(user._id == profileState.companyAdmin || user?.canAccessAllLocations){
-          location?.workTypes?.forEach(workType => {
-            locationDevisions.push({
-              locationId: location?._id,
-              workTypeId: workType?._id,
-              name: `${location.name}(${workType?.title})`
-            })
-          })
-        }else if (user.__t == "Employee") {
-          location.assignedEmployees?.forEach(assignedEmployee => {
-            if (assignedEmployee?.employee?._id == user?._id) {
-              assignedEmployee?.workTypes.forEach((workType: any) => {
-                locationDevisions.push({
-                  locationId: location?._id,
-                  workTypeId: workType?._id,
-                  name: `${location.name}(${workType?.title})`
-                })
-              })
-            }
-          })
-        }else{
-          location.assignedVendors?.forEach(assignedVendor => {
-            if (assignedVendor?.vendor?._id == user?.company) {
-              assignedVendor?.workTypes.forEach((workType: any) => {
-                locationDevisions.push({
-                  locationId: location?._id,
-                  workTypeId: workType?._id,
-                  name: `${location.name}(${workType?.title})`
-                })
-              })
-            }
-          })
+    if (divisionList.length && divisions.refresh) {
+      let selectedDivision = divisionList.findIndex((res: any) => {
+        return res.workTypeId == workType && res.locationId == companyLocation
+      });
+      if (selectedDivision > -1) {
+        if (selectedDivision) {
+          setSelectedDivision(selectedDivision);
+          if (divisionList[selectedDivision]) {
+            dispatch(setCurrentLocation(divisionList[selectedDivision]));
+          }
         }
-      })
-
-      if(user._id == profileState.companyAdmin || user?.canAccessAllLocations){
-        locationDevisions.unshift({
-          name: "All"
-        });
+      }else{
+        setSelectedDivision(0);
+        if (divisionList[0]) {
+          dispatch(setCurrentLocation(divisionList[0]));
+        }
       }
-
-      //Remove location storage when any location is not provide
-      if (!locationDevisions.length) {
-        localStorage.removeItem("currentLocation");
-      }
-      setAssignedLocations(locationDevisions);
+      dispatch(refreshDeisions(false));
     }
-  }, [profileState.locations, profileState.refresh_location]);
-
-  useEffect(() => {
-    if(!currentLocation?.locationId && assignedlocations.length){
-      setSelectedLocation(0);
-      if (assignedlocations[0]) {
-        localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[0]));
-        dispatch(setCurrentLocation(assignedlocations[0]));
-      }
-    }
-  }, [assignedlocations]);
+  }, [divisionList]);
 
   const notificationPopover = notificationOpen ? 'notification-popper' : undefined;
 
@@ -280,7 +248,7 @@ function BCAdminHeader({
     // },
     {
       'label': 'Payroll',
-      'link': '/main/payroll'
+      'link': currentLocation.workTypeId && currentLocation.locationId ? `/main/payroll/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/payroll`
     },
     /*
      * {
@@ -303,9 +271,15 @@ function BCAdminHeader({
   ];
 
   const handleLocationChange = (params: any) => {
-    setSelectedLocation(params.target.value);
-    localStorage.setItem("currentLocation",JSON.stringify(assignedlocations[params.target.value]))
-    dispatch(setCurrentLocation(assignedlocations[params.target.value]));
+    setSelectedDivision(params.target.value);
+
+    let selectedDivision = divisionList[params.target.value];
+    dispatch(info(`Viewing: ${selectedDivision.name}`));
+    dispatch(setCurrentLocation(selectedDivision));
+    history.push({
+      pathname: `/main/dashboard`,
+      state: {}
+    });
   }
 
 
@@ -393,7 +367,7 @@ function BCAdminHeader({
 
         <div className={classes.bcAdminHeaderTools} >
           {
-            assignedlocations.length > 0 && (
+            divisionList.length > 0 && (
               <div className={classes.bcDropdownLocation}>
                 <div className={classes.bcDropdownLocationIcon}>
                   <LocationOn fontSize={'small'} color={'action'}/>
@@ -401,11 +375,11 @@ function BCAdminHeader({
                 <Select
                   id="select-location"
                   disableUnderline={true}
-                  value={selectedLocation}
+                  value={selectedDivision}
                   onChange={handleLocationChange}
                 >
                   {
-                    assignedlocations?.map((res: any,index: number) => {
+                    divisionList?.map((res: any,index: number) => {
                       return (
                         <MenuItem value={index} key={index}>{res.name}</MenuItem>
                       )

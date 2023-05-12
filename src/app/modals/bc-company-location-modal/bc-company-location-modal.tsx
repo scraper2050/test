@@ -1,26 +1,29 @@
 import * as CONSTANTS from '../../../constants';
-import {LIGHT_GREY, PRIMARY_BLUE} from '../../../constants';
+import { LIGHT_GREY, PRIMARY_BLUE } from '../../../constants';
 import styles from './bc-company-location-modal.styles';
-import {useFormik} from 'formik';
+import { useFormik } from 'formik';
 import {
   Button,
+  Checkbox,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
+  FormControlLabel,
   Grid,
   TextField,
   Typography,
   withStyles
 } from '@material-ui/core';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import {
   Business as BusinessIcon,
@@ -30,19 +33,20 @@ import classnames from "classnames";
 import BCSwitch from "../../components/bc-switch";
 import '../../../scss/job-poup.scss';
 import * as Yup from "yup";
-import {emailRegExp, phoneRegExp, zipCodeRegExp} from "../../../helpers/format";
+import { emailRegExp, phoneRegExp, zipCodeRegExp } from "../../../helpers/format";
 import {
   AddCompanyLocationAction,
   UpdateCompanyLocationAction,
   getCompanyLocationsAction
 } from "../../../actions/user/user.action";
-import {CompanyLocation} from "../../../actions/user/user.types";
+import { CompanyLocation } from "../../../actions/user/user.types";
 import BCSent from "../../components/bc-sent";
-import {allStates} from "../../../utils/constants";
+import { allStates } from "../../../utils/constants";
 import AutoComplete from "../../components/bc-autocomplete/bc-autocomplete_2";
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { getWorkType } from 'actions/work-type/work-type.action';
 import { getContractors } from 'actions/payroll/payroll.action';
+import { getDivision } from 'api/division.api';
 const companyLocationSchema = Yup.object().shape({
   locationName: Yup.string().required('Required'),
   contactEmail: Yup.string().matches(emailRegExp, 'Email address is not valid'),
@@ -55,12 +59,17 @@ interface API_PARAMS {
   name: string;
   isMainLocation: string;
   isActive: string;
+  isAddressAsBillingAddress: string;
   contactName?: string;
   email?: string;
   street?: string;
   city?: string;
   state?: string;
   zipCode?: string;
+  billingStreet?: string;
+  billingCity?: string;
+  billingState?: string;
+  billingZipCode?: string;
   phone?: string;
   workTypes?: string[];
   assignedVendors?: {
@@ -75,10 +84,10 @@ interface API_PARAMS {
 
 
 function BCCompanyLocationModal({
-                                  classes,
-                                  companyLocation,
-                                  companyLocationList,
-                                }: { classes: any, companyLocation: CompanyLocation, companyLocationList: CompanyLocation[] }): JSX.Element {
+  classes,
+  companyLocation,
+  companyLocationList,
+}: { classes: any, companyLocation: CompanyLocation, companyLocationList: CompanyLocation[] }): JSX.Element {
   const [showWarning, setShowWarning] = useState(false);
   const dispatch = useDispatch();
 
@@ -88,13 +97,14 @@ function BCCompanyLocationModal({
   useEffect(() => {
     dispatch(getWorkType())
     dispatch(getContractors())
-  }, [])
+  }, [companyLocation]);
+
 
   const form = useFormik({
     initialValues: {
       id: companyLocation?._id || '',
       locationName: companyLocation?.name || '',
-      isMainLocation: companyLocation?.isMainLocation || false,
+      isMainLocation: companyLocation?.isMainLocation ?? false,
       divisionName: '',
       contactName: companyLocation?.contactName || '',
       contactNumber: companyLocation?.contact?.phone || '',
@@ -102,19 +112,24 @@ function BCCompanyLocationModal({
       fax: '',
       street: companyLocation?.address?.street || '',
       city: companyLocation?.address?.city || '',
-      state: allStates.find((state) => state.name === companyLocation?.address?.state) ,
+      state: allStates.find((state) => state.name === companyLocation?.address?.state),
       zipCode: companyLocation?.address?.zipCode || '',
-      isActive: companyLocation?.isActive || true,
+      isActive: companyLocation?.isActive ?? true,
       workTypes: companyLocation?.workTypes || [],
+      isAddressAsBillingAddress: companyLocation?.isAddressAsBillingAddress ?? false,
+      billingStreet: companyLocation?.billingAddress?.street || '',
+      billingCity: companyLocation?.billingAddress?.city || '',
+      billingState: allStates.find((state) => state.name === companyLocation?.billingAddress?.state),
+      billingZipCode: companyLocation?.billingAddress?.zipCode ?? '',
     },
-    onSubmit: (values: any, {setSubmitting}: any) => {
+    onSubmit: (values: any, { setSubmitting }: any) => {
       let workTypes = FormikValues.workTypes.map(res => res._id);
       let oldAssignedVendors: any[] = [];
       let oldAssignedEmployee: any[] = [];
 
       if (companyLocation?.assignedEmployees) {
         let filteredAssignedEmployees = companyLocation.assignedEmployees?.filter(res => {
-          return res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))
+          return res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))?.length
         });
 
         oldAssignedEmployee = filteredAssignedEmployees?.map(res => {
@@ -128,7 +143,7 @@ function BCCompanyLocationModal({
 
       if (companyLocation?.assignedVendors) {
         let filteredAssignedVendors = companyLocation.assignedVendors?.filter(res => {
-          return res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))
+          return res.workTypes.filter((workType: any) => workTypes.includes(workType?._id))?.length
         });
 
         oldAssignedVendors = filteredAssignedVendors?.map(res => {
@@ -139,10 +154,6 @@ function BCCompanyLocationModal({
           }
         });
       }
-
-      console.log(oldAssignedEmployee);
-      console.log(oldAssignedVendors);
-      
 
       const params: API_PARAMS = {
         companyLocationId: FormikValues.id,
@@ -157,8 +168,13 @@ function BCCompanyLocationModal({
         zipCode: FormikValues.zipCode,
         phone: FormikValues.contactNumber,
         workTypes: workTypes,
-        assignedVendors : oldAssignedVendors,
-        assignedEmployees : oldAssignedEmployee
+        isAddressAsBillingAddress: FormikValues.isAddressAsBillingAddress.toString(),
+        billingStreet: FormikValues.billingStreet,
+        billingCity: FormikValues.billingCity,
+        billingState: FormikValues.billingState?.name || '',
+        billingZipCode: FormikValues.billingZipCode,
+        assignedVendors: oldAssignedVendors,
+        assignedEmployees: oldAssignedEmployee,
       };
 
       Object.entries(params).forEach(([key, value]) => {
@@ -170,23 +186,23 @@ function BCCompanyLocationModal({
 
       if (companyLocation?._id) {
         dispatch(UpdateCompanyLocationAction(params, (status) => {
-          if (status) closeModal();
-          else {
+          if (status) {
+            closeModal();
+          }else {
             setSubmitting(false);
             setShowWarning(false);
           }
         }))
       } else {
         dispatch(AddCompanyLocationAction(params, (status) => {
-          if (status) closeModal();
-          else {
+          if (status){
+            closeModal();
+          }else {
             setSubmitting(false);
             setShowWarning(false);
           }
         }))
       }
-
-      dispatch(getCompanyLocationsAction());
     },
     validationSchema: companyLocationSchema,
   });
@@ -202,7 +218,7 @@ function BCCompanyLocationModal({
     touched,
     setFieldTouched,
   } = form;
-    
+
   const changeField = (name: string, value: any) => {
     setFieldValue(name, value);
     setFieldTouched(name, true);
@@ -219,7 +235,7 @@ function BCCompanyLocationModal({
     } else {
       if (FormikValues.workTypes.length && (!companyLocationList.length || (companyLocationList.length && !companyLocationList.filter((res: any) => res.workTypes?.length).length))) {
         setOpenWarning(true);
-      }else{
+      } else {
         submitForm();
       }
     }
@@ -234,18 +250,22 @@ function BCCompanyLocationModal({
       }));
     }, 200);
   };
-      
+
   const handleWarningCreateLocation = (action: string) => {
     if (action == "close") {
       setOpenWarning(false);
-    }else{
+    } else {
       setOpenWarning(false);
       submitForm();
     }
   }
 
+  const stateFilterOptions = createFilterOptions({
+    stringify: (option: any) => option.name + option.abbreviation,
+  });
+
   return (
-    <DataContainer className={'new-modal-design'} style={{marginTop: -20}}>
+    <DataContainer className={'new-modal-design'} style={{ marginTop: -20 }}>
       {showWarning ?
         <BCSent
           title={`Are you sure you want to set ${FormikValues.locationName} as your Default Headquarters?`}
@@ -273,11 +293,11 @@ function BCCompanyLocationModal({
             <strong>{companyLocation?._id ? 'Edit' : 'Add New'} Location</strong>
           </Typography>
           <Grid container className={classes.modalPreview}
-                justify={'space-around'}>
+            justify={'space-around'}>
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                <Grid container item justify={'flex-end'} style={{marginTop: 8}}
-                      xs={3}>
+                <Grid container item justify={'flex-end'} style={{ marginTop: 8 }}
+                  xs={3}>
                   <Typography variant={'button'}>LOCATION NAME</Typography>
                 </Grid>
                 <Grid item xs={9}>
@@ -304,16 +324,16 @@ function BCCompanyLocationModal({
                 </Grid>
                 <Grid item xs={9}>
                   <Button
-                    classes={{root: classnames(classes.hqButton, {[classes.hqButtonActive]: FormikValues.isMainLocation})}}
+                    classes={{ root: classnames(classes.hqButton, { [classes.hqButtonActive]: FormikValues.isMainLocation }) }}
                     onClick={() => changeField('isMainLocation', true)}
                     variant={'outlined'}
-                    startIcon={<BusinessIcon/>}
+                    startIcon={<BusinessIcon />}
                     endIcon={FormikValues.isMainLocation ? <CancelIcon
-                      style={{color: LIGHT_GREY}}
+                      style={{ color: LIGHT_GREY }}
                       onClick={(e) => {
                         changeField('isMainLocation', false);
                         e.stopPropagation();
-                      }}/> : null}
+                      }} /> : null}
                   >Set as HQ</Button>
                 </Grid>
               </Grid>
@@ -321,7 +341,7 @@ function BCCompanyLocationModal({
           </Grid>
 
           <>
-            <DialogContent classes={{'root': classes.dialogContent}}>
+            <DialogContent classes={{ 'root': classes.dialogContent }}>
               <Grid container direction={'column'} spacing={1}>
 
                 {/*<Grid item xs={12}>*/}
@@ -350,7 +370,7 @@ function BCCompanyLocationModal({
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={3}>
+                      alignItems={'center'} xs={3}>
                       <Typography variant={'button'}>CONTACT NAME</Typography>
                     </Grid>
                     <Grid item xs={9}>
@@ -372,7 +392,7 @@ function BCCompanyLocationModal({
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
-                          style={{marginTop: 8}} xs={3}>
+                      style={{ marginTop: 8 }} xs={3}>
                       <Typography variant={'button'}>CONTACT NUMBER</Typography>
                     </Grid>
                     <Grid item xs={9}>
@@ -382,7 +402,7 @@ function BCCompanyLocationModal({
                         id={'outlined-textarea'}
                         label={''}
                         name={'contactNumber'}
-                        onChange={(e) => validateNumber('contactNumber', e.target.value, 10 )}
+                        onChange={(e) => validateNumber('contactNumber', e.target.value, 10)}
                         type={'number'}
                         value={FormikValues.contactNumber}
                         variant={'outlined'}
@@ -396,7 +416,7 @@ function BCCompanyLocationModal({
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
-                          style={{marginTop: 8}} xs={3}>
+                      style={{ marginTop: 8 }} xs={3}>
                       <Typography variant={'button'}>CONTACT EMAIL</Typography>
                     </Grid>
                     <Grid item xs={9}>
@@ -442,7 +462,7 @@ function BCCompanyLocationModal({
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={3}>
+                      alignItems={'center'} xs={3}>
                       <Typography variant={'button'}>STREET</Typography>
                     </Grid>
                     <Grid item xs={9}>
@@ -464,7 +484,7 @@ function BCCompanyLocationModal({
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
-                          alignItems={'center'} xs={3}>
+                      alignItems={'center'} xs={3}>
                       <Typography variant={'button'}>CITY</Typography>
                     </Grid>
                     <Grid item xs={9}>
@@ -484,24 +504,25 @@ function BCCompanyLocationModal({
                 </Grid>
 
                 <Grid item xs={12}>
-                  <Grid container direction={'row'} spacing={1}>
+                  <Grid container direction={'row'} spacing={1} className={classes.inputState}>
                     <Grid container item justify={'flex-end'}
-                         style={{marginTop: 8}} xs={3}>
+                      style={{ marginTop: 8 }} xs={3}>
                       <Typography variant={'button'}>STATE</Typography>
                     </Grid>
                     <Grid item xs={4}>
                       <AutoComplete
+                        filterOptions={stateFilterOptions}
                         handleChange={formikChange}
                         name={"state"}
                         data={allStates}
                         value={FormikValues.state}
                         margin={"dense"}
-                        //placeholder={'Select state'}
+                      //placeholder={'Select state'}
                       />
                     </Grid>
 
                     <Grid container item justify={'flex-end'}
-                          style={{marginTop: 8}}  xs={2}>
+                      style={{ marginTop: 8 }} xs={2}>
                       <Typography variant={'button'}>ZIP</Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -511,7 +532,7 @@ function BCCompanyLocationModal({
                         id={'outlined-textarea'}
                         label={''}
                         name={'zipCode'}
-                        onChange={(e) => validateNumber('zipCode', e.target.value, 5 )}
+                        onChange={(e) => validateNumber('zipCode', e.target.value, 5)}
                         type={'number'}
                         value={FormikValues.zipCode}
                         variant={'outlined'}
@@ -523,49 +544,163 @@ function BCCompanyLocationModal({
                 </Grid>
                 <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
-                      <Grid container item justify={'flex-end'}
-                            style={{marginTop: 8}} xs={3}>
-                          <Typography variant={'button'}>Work Types</Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Autocomplete
-                          getOptionLabel={option => {
-                            return `${option.title || ''}`
-                          }}
-                          id={'tags-standard'}
-                          multiple
-                          onChange={(ev: any, newValue: any) => changeField("workTypes",newValue)}
-                          options={workTypes}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              variant={'outlined'}
-                            />
-                          )}
-                          classes={{popper: classes.popper}}
-                          renderTags={(tagValue, getTagProps) =>
-                            tagValue.map((option, index) => {
-                              return (
-                                <Chip
-                                  label={`${option.title || ''}`}
-                                  {...getTagProps({ index })}
-                                />
-                              );
-                            }
-                            )
-                          }
-                          value={FormikValues.workTypes}
-                          getOptionSelected={() => false}
-                        />
-                      </Grid>
+                    <Grid container item justify={'flex-end'}
+                      alignItems={'center'} xs={3}>
                     </Grid>
+                    <Grid item xs={9}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={FormikValues.isAddressAsBillingAddress}
+                            onChange={(e, checked) => changeField('isAddressAsBillingAddress', checked)}
+                            color="primary"
+                            name="isSetBillingAddress" />
+                        }
+                        label="Set as Billing Address"
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                      style={{ marginTop: 8 }} xs={3}>
+                      <Typography variant={'button'}>Work Types</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <Autocomplete
+                        getOptionLabel={option => {
+                          return `${option.title || ''}`
+                        }}
+                        id={'tags-standard'}
+                        multiple
+                        onChange={(ev: any, newValue: any) => changeField("workTypes", newValue)}
+                        options={workTypes}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant={'outlined'}
+                          />
+                        )}
+                        classes={{ popper: classes.popper }}
+                        renderTags={(tagValue, getTagProps) =>
+                          tagValue.map((option, index) => {
+                            return (
+                              <Chip
+                                label={`${option.title || ''}`}
+                                {...getTagProps({ index })}
+                              />
+                            );
+                          }
+                          )
+                        }
+                        value={FormikValues.workTypes}
+                        getOptionSelected={() => false}
+                      />
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </DialogContent>
           </>
+
+          {/* Billing Address */}
+          {
+            !FormikValues.isAddressAsBillingAddress &&
+            <div className={classes.billingAddress}>
+              <Divider />
+              <Grid container className={classes.billingAddressTtitle}>
+                <Typography variant={'button'}>Billing Address</Typography>
+              </Grid>
+              <DialogContent classes={{ 'root': classes.dialogContent }}>
+                <Grid container direction={'column'} spacing={1}>
+                  <Grid item xs={12}>
+                    <Grid container direction={'row'} spacing={1}>
+                      <Grid container item justify={'flex-end'}
+                        alignItems={'center'} xs={3}>
+                        <Typography variant={'button'}>STREET</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <TextField
+                          autoComplete={'off'}
+                          className={classes.fullWidth}
+                          id={'outlined-textarea'}
+                          label={''}
+                          name={'billingStreet'}
+                          onChange={formikChange}
+                          type={'text'}
+                          value={FormikValues.billingStreet}
+                          variant={'outlined'}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Grid container direction={'row'} spacing={1}>
+                      <Grid container item justify={'flex-end'}
+                        alignItems={'center'} xs={3}>
+                        <Typography variant={'button'}>CITY</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <TextField
+                          autoComplete={'off'}
+                          className={classes.fullWidth}
+                          id={'outlined-textarea'}
+                          label={''}
+                          name={'billingCity'}
+                          onChange={formikChange}
+                          type={'text'}
+                          value={FormikValues.billingCity}
+                          variant={'outlined'}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Grid container direction={'row'} spacing={1} className={classes.inputState}>
+                      <Grid container item justify={'flex-end'} style={{ marginTop: 8 }} xs={3}>
+                        <Typography variant={'button'}>STATE</Typography>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <AutoComplete
+                          filterOptions={stateFilterOptions}
+                          handleChange={formikChange}
+                          name={"billingState"}
+                          data={allStates}
+                          value={FormikValues.billingState}
+                          margin={"dense"}
+                        />
+                      </Grid>
+
+                      <Grid container item justify={'flex-end'} style={{ marginTop: 8 }} xs={2}>
+                        <Typography variant={'button'}>ZIP</Typography>
+                      </Grid>
+                      <Grid item xs={3}>
+                        <TextField
+                          autoComplete={'off'}
+                          className={classes.fullWidth}
+                          id={'outlined-textarea'}
+                          label={''}
+                          name={'billingZipCode'}
+                          onChange={(e) => validateNumber('billingZipCode', e.target.value, 5)}
+                          type={'number'}
+                          value={FormikValues.billingZipCode}
+                          variant={'outlined'}
+                          error={!!FormikErrors.billingZipCode}
+                          helperText={FormikErrors.billingZipCode}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </DialogContent>
+            </div>
+          }
         </form>
       }
-      <DialogActions classes={{'root': classes.dialogActions}}>
+      <DialogActions classes={{ 'root': classes.dialogActions }}>
         <Button
           aria-label={'record-payment'}
           classes={{
@@ -594,7 +729,7 @@ function BCCompanyLocationModal({
 
       <Dialog
         open={openWarning}
-        onClose={()=> handleWarningCreateLocation('close')}
+        onClose={() => handleWarningCreateLocation('close')}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -603,13 +738,13 @@ function BCCompanyLocationModal({
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-          Please note that when you add new locations, ensure that all new jobs are assigned to the correct location. Your first location added will automatically be designated as the Main location, and all jobs will now be assigned to the first work type and location. Please be aware that there may be additional charges when activating additional locations.
+            Please note that when you add new locations, ensure that all new jobs are assigned to the correct location. Your first location added will automatically be designated as the Main location, and all jobs will now be assigned to the first work type and location. Please be aware that there may be additional charges when activating additional locations.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={ () => handleWarningCreateLocation('close')}>Cancel</Button>
-          <Button onClick={ () => handleWarningCreateLocation('submit')} autoFocus>Active</Button>
-        </DialogActions>  
+          <Button onClick={() => handleWarningCreateLocation('close')}>Cancel</Button>
+          <Button onClick={() => handleWarningCreateLocation('submit')} autoFocus>Active</Button>
+        </DialogActions>
       </Dialog>
 
     </DataContainer>
@@ -674,5 +809,5 @@ const DataContainer = styled.div`
 
 export default withStyles(
   styles,
-  {'withTheme': true}
+  { 'withTheme': true }
 )(BCCompanyLocationModal);

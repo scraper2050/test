@@ -37,6 +37,7 @@ import {
   DIVISION_OPTIONS,
   ITEM_AND_SERVICE_OPTIONS,
 } from './constants'
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 
 function BCCustomizeRevenueReportModal({ classes }: any) {
@@ -45,6 +46,7 @@ function BCCustomizeRevenueReportModal({ classes }: any) {
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -177,7 +179,7 @@ function BCCustomizeRevenueReportModal({ classes }: any) {
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
       history.push({
-        'pathname': `/main/reports/revenue`,
+        'pathname': currentLocation.workTypeId && currentLocation.locationId ? `/main/reports/revenue/${currentLocation.locationId}/${currentLocation.workTypeId}` : "/main/reports/revenue",
         'state': {
           reportQuery: values,
           tab: 0,
