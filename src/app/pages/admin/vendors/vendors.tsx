@@ -95,18 +95,15 @@ function AdminVendorsPage({ classes }: any) {
   }
 
   const columns: any = [
-    /*
-     * {
-     *   'Cell'({ row }: any) {
-     *     return <div className={'flex items-center'}>
-     *       {row.index + 1}
-     *     </div>;
-     *   },
-     *   'Header': 'No#',
-     *   'sortable': true,
-     *   'width': 60
-     * },
-     */
+    {
+      'Header': 'Display Name',
+      'accessor': 'contractor.info.displayName',
+      'className': 'font-bold',
+      'sortable': true,
+      Cell({ row }: any) {
+        return <span>{row.original?.contractor?.info?.displayName  || row.original?.displayName || 'N/A' }</span>;
+      }
+    },
     {
       'Header': 'Company Name',
       'accessor': 'contractor.info.companyName',
@@ -221,7 +218,7 @@ function AdminVendorsPage({ classes }: any) {
         ? baseObj.contractor.info.companyName
         : 'N/A';
     const vendorId = baseObj.contractor._id;
-    const vendorObj:any = { 
+    const vendorObj:any = {
       vendorCompanyName,
       vendorId,
       currentPage,
