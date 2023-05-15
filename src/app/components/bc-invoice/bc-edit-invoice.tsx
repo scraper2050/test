@@ -644,6 +644,15 @@ function BCEditInvoice({
     }
     return invoiceData.createdAt?.split('T')[0];
   }
+  
+  console.log(invoiceData);
+  
+  let billingAddress = {
+    street: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.street ?? '' : invoiceData?.companyLocation?.billingAddress?.street ?? '') : invoiceData?.company?.address?.street,
+    city: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.city ?? '' : invoiceData?.companyLocation?.billingAddress?.city ?? '') : invoiceData?.company?.address?.city,
+    state: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.state ?? '' : invoiceData?.companyLocation?.billingAddress?.state ?? '') : invoiceData?.company?.address?.state,
+    zipCode: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.zipCode ?? '' : invoiceData?.companyLocation?.billingAddress?.zipCode ?? '') : invoiceData?.company?.address?.zipCode,
+  };
 
   return (
     <MuiThemeProvider theme={theme}>
@@ -769,7 +778,8 @@ function BCEditInvoice({
                             className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.info?.companyEmail}</span>
                           </div>
                           <div><StorefrontIcon
-                            className={invoiceStyles.storeIcons}/><span>{invoiceData?.company?.address?.street}, {invoiceData?.company?.address?.city}, {invoiceData?.company?.address?.state} {invoiceData?.company?.address?.zipCode}</span>
+                            className={invoiceStyles.storeIcons}/>
+                            <span>{billingAddress.street}, {billingAddress.city}, {billingAddress.state} {billingAddress.zipCode}</span>
                           </div>
                           <h5>VENDOR NUMBER</h5>
                           <div className={invoiceStyles.paddingContent}>{values.customer?.vendorId}</div>

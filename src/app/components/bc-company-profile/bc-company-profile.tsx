@@ -45,29 +45,26 @@ function BCCompanyProfile({ fields, classes, companyLocation }: Props) {
           </div>
         )}
       </div>
-      {
-        !companyLocation?.isAddressAsBillingAddress &&
-        <Grid container spacing={1} alignItems='center' className={classes.billingAddress}>
-          <Grid direction={'row'} xs={9}>
-            <Grid container className={classes.billingAddressTtitle}>
-              <span className={classes.filedLabel}>Billing Address</span>
-            </Grid>
-            <Grid container className={classes.billingAddressTtitle}>
-              <span className={classes.fieldText}>{companyLocation?.billingAddress?.street ? `${companyLocation?.billingAddress?.street}, ` : ' '}{companyLocation?.billingAddress?.city ? `${companyLocation?.billingAddress?.city}, ` : ' '} {companyLocation?.billingAddress?.state} {companyLocation?.billingAddress?.zipCode}</span>
-            </Grid>
+      <Grid container spacing={1} alignItems='center' className={classes.billingAddress}>
+        <Grid direction={'row'} xs={9}>
+          <Grid container className={classes.billingAddressTtitle}>
+            <span className={classes.filedLabel}>Billing Address</span>
           </Grid>
-          <Grid xs={3}>
-            <Button
-              aria-label={'update-billing-address'}
-              color="primary"
-              onClick={handleUpdate}
-              className={classes.billingAddressUpdate}
-              variant={'outlined'}>
-              Update
-            </Button>
+          <Grid container className={classes.billingAddressTtitle}>
+            <span className={classes.fieldText}>{companyLocation?.billingAddress?.street ? `${companyLocation?.billingAddress?.street}, ` : ' '}{companyLocation?.billingAddress?.city ? `${companyLocation?.billingAddress?.city}, ` : ' '} {companyLocation?.billingAddress?.state} {companyLocation?.billingAddress?.zipCode}</span>
           </Grid>
         </Grid>
-      }
+        <Grid xs={3}>
+          <Button
+            aria-label={'update-billing-address'}
+            color="primary"
+            onClick={handleUpdate}
+            className={classes.billingAddressUpdate}
+            variant={'outlined'}>
+            Update
+          </Button>
+        </Grid>
+      </Grid>
     </div>
   );
 }
