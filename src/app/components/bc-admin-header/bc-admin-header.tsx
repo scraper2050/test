@@ -285,7 +285,7 @@ function BCAdminHeader({
 
     dispatch(setModalDataAction({
       'data': {
-        message: `Changes Divison`,
+        // message: `Changes Divison`,
         subMessage: `Viewing: ${selectedDivision.name}`,
         action: confirmAction
       },
