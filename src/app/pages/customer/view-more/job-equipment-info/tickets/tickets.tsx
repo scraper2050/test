@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, useParams } from 'react-router-dom';
 import { modalTypes } from '../../../../../../constants';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { getAllJobTypesAPI } from 'api/job.api';
@@ -27,6 +27,8 @@ import {
 } from 'actions/customer/customer.action';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {error} from "../../../../../../actions/snackbar/snackbar.action";
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import { DivisionParams } from 'app/models/division';
 
 interface LocationStateTypes {
   customerName: string;
@@ -34,6 +36,12 @@ interface LocationStateTypes {
 }
 
 function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
@@ -268,7 +276,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
   useEffect(() => {
     if (refresh) {
       dispatch(getAllJobTypesAPI());
-      dispatch(getAllServiceTicketAPI());
+      dispatch(getAllServiceTicketAPI(undefined,divisionParams));
     }
 
     if (tickets) {
@@ -282,7 +290,6 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       dispatch(getCustomerDetailAction({ customerId }));
     }
   }, [refresh]);
-
 
   return (
     <>

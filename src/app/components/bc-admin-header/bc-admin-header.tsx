@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ClickAwayListener, Grow, Paper, Popper, useMediaQuery, useTheme } from "@material-ui/core";
+import { Button, ClickAwayListener, Grow, Paper, Popper, Select, useMediaQuery, useTheme } from "@material-ui/core";
 import { withStyles, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import styles from "./bc-admin-header.style";
 import AppBar from "@material-ui/core/AppBar";
@@ -24,6 +24,14 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import LocationOn from '@material-ui/icons/LocationOn';
+import { useDispatch, useSelector } from "react-redux";
+import { CompanyProfileStateType } from "actions/user/user.types";
+import { getCompanyLocationsAction } from "actions/user/user.action";
+import { setCurrentLocation } from "actions/filter-location/filter.location.action";
+import { ICurrentLocation } from "actions/filter-location/filter.location.types";
+import { getDivision, refreshDeisions } from "actions/division/division.action";
+import { info, success } from "actions/snackbar/snackbar.action";
 
 interface Props {
   classes: any;
@@ -34,6 +42,7 @@ interface Props {
   showNotificationDetails: (state?:boolean) => void;
   openModalHandler: (type:any, data:any, itemId:any, metadata?:any) => void;
   jobRequests: any;
+  user: any;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -139,6 +148,7 @@ function BCAdminHeader({
   showNotificationDetails,
   openModalHandler,
   jobRequests,
+  user,
 }: Props): JSX.Element {
   const fabStyles = useStyles();
   const headerStyles = useHeaderStyles();
@@ -148,15 +158,50 @@ function BCAdminHeader({
   const activeNotifications = notifications.filter((notification:NotificationItem) => !notification.dismissedStatus.isDismissed);
   const location = useLocation();
   const pathName = location.pathname;
+  const urlParams = pathName?.split('/').slice(-2);
+  const [ companyLocation,workType ] = urlParams || [];
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationEl, setNotificationEl] = React.useState<null | HTMLElement>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(menuAnchorEl);
+  const profileState: CompanyProfileStateType = useSelector((state: any) => state.profile);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [selectedDivision, setSelectedDivision] = useState<number>(0);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const divisions = useSelector((state: any) => state.divisions);
+  const divisionList = divisions.data;
 
   useEffect(() => {
     initialLoad()
+    if (user?._id && divisions.refresh) {
+      dispatch(getDivision(user?._id));
+    }
   }, []);
+
+  useEffect(() => {
+    if (divisionList.length && divisions.refresh) {
+      let selectedDivision = divisionList.findIndex((res: any) => {
+        return res.workTypeId == workType && res.locationId == companyLocation
+      });
+      if (selectedDivision > -1) {
+        if (selectedDivision) {
+          setSelectedDivision(selectedDivision);
+          if (divisionList[selectedDivision]) {
+            dispatch(setCurrentLocation(divisionList[selectedDivision]));
+          }
+        }
+      }else{
+        setSelectedDivision(0);
+        if (divisionList[0]) {
+          dispatch(setCurrentLocation(divisionList[0]));
+        }
+      }
+      dispatch(refreshDeisions(false));
+    }
+  }, [divisionList]);
 
   const notificationPopover = notificationOpen ? 'notification-popper' : undefined;
 
@@ -197,13 +242,13 @@ function BCAdminHeader({
       'label': 'Invoicing',
       'link': '/main/invoicing'
     },
-    {
-      'label': 'Tags',
-      'link': '/main/tags/purchasedtag'
-    },
+    // {
+    //   'label': 'Tags',
+    //   'link': '/main/tags/purchasedtag'
+    // },
     {
       'label': 'Payroll',
-      'link': '/main/payroll'
+      'link': currentLocation.workTypeId && currentLocation.locationId ? `/main/payroll/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/payroll`
     },
     /*
      * {
@@ -224,6 +269,19 @@ function BCAdminHeader({
       'link': '/main/admin'
     },
   ];
+
+  const handleLocationChange = (params: any) => {
+    setSelectedDivision(params.target.value);
+
+    let selectedDivision = divisionList[params.target.value];
+    dispatch(info(`Viewing: ${selectedDivision.name}`));
+    dispatch(setCurrentLocation(selectedDivision));
+    history.push({
+      pathname: `/main/dashboard`,
+      state: {}
+    });
+  }
+
 
   return (
     <>
@@ -308,6 +366,29 @@ function BCAdminHeader({
         </div>
 
         <div className={classes.bcAdminHeaderTools} >
+          {
+            divisionList.length > 0 && (
+              <div className={classes.bcDropdownLocation}>
+                <div className={classes.bcDropdownLocationIcon}>
+                  <LocationOn fontSize={'small'} color={'action'}/>
+                </div>
+                <Select
+                  id="select-location"
+                  disableUnderline={true}
+                  value={selectedDivision}
+                  onChange={handleLocationChange}
+                >
+                  {
+                    divisionList?.map((res: any,index: number) => {
+                      return (
+                        <MenuItem value={index} key={index}>{res.name}</MenuItem>
+                      )
+                    })
+                  }
+                </Select>
+              </div>
+            )
+          }
           <div className={searchStyles.search}>
             <div className={searchStyles.searchIcon}>
               <SearchIcon color={'action'}/>

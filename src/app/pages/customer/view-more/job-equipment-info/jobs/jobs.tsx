@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import styles from '../job-equipment-info.style';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory, useParams } from 'react-router-dom';
 import { formatDate, convertMilitaryTime } from "helpers/format";
 import { openModalAction, setModalDataAction, } from "actions/bc-modal/bc-modal.action";
 import { modalTypes } from "../../../../../../constants";
@@ -16,12 +16,19 @@ import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/custome
 import { Job } from 'actions/job/job.types';
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import BCJobStatus from "../../../../../components/bc-job-status";
+import { refreshJobs } from 'actions/job/job.action';
+import { DivisionParams } from 'app/models/division';
 
 interface LocationStateTypes {
   customerName: string;
   customerId: string;
 }
 function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
   const dispatch = useDispatch();
 
   const { isLoading = true, jobs, refresh = true } = useSelector(
@@ -273,7 +280,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobsByCustomerAPI(undefined, customerObj._id || location.state?.customerId));
+      dispatch(getAllJobsByCustomerAPI(undefined, customerObj._id || location.state?.customerId,divisionParams));
     }
 
     if (customerObj._id === '') {
@@ -286,7 +293,7 @@ function CustomersJobEquipmentInfoJobsPage({ classes }: any) {
 
   useEffect(() => {
     if (!refresh) {
-      dispatch(getAllJobsByCustomerAPI(undefined, customerObj._id || location.state?.customerId));
+      dispatch(getAllJobsByCustomerAPI(undefined, customerObj._id || location.state?.customerId,divisionParams));
     }
 
     if (customerObj._id === '') {

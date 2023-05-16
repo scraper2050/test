@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Button, Typography, withStyles} from '@material-ui/core';
 
 import styles, {SummaryContainer} from './styles';
@@ -26,7 +26,8 @@ import {
   openModalAction,
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
+import { DivisionParams } from 'app/models/division';
 
 interface RevenueStandardProps {
   classes: any;
@@ -51,6 +52,12 @@ const MORE_ITEMS = [
 const chartColors = ['#349785', PRIMARY_BLUE, PRIMARY_BLUE, PRIMARY_BLUE, '#F50057']
 
 const ARStandardReport = ({classes}: RevenueStandardProps) => {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
@@ -208,7 +215,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
       status,
       report,
       message
-    } = await generateAccountReceivableReport(1, formatDateYMD(asOfDate));
+    } = await generateAccountReceivableReport(1, formatDateYMD(asOfDate),undefined,divisionParams);
     if (status === 1) {
       setReport(report);
     } else {
@@ -224,7 +231,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
         status,
         reportUrl,
         message
-      } = await generateAccountReceivablePdfReport(1, formatDateYMD(asOfDate));
+      } = await generateAccountReceivablePdfReport(1, formatDateYMD(asOfDate),undefined,divisionParams);
       if (status === 1) {
         window.open(reportUrl)
       } else {

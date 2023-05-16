@@ -20,8 +20,18 @@ import {
 } from "actions/bc-modal/bc-modal.action";
 import {error} from "actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../../constants";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
+import { useParams } from 'react-router-dom';
+import { DivisionParams } from 'app/models/division';
 
 function TicketPage() {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentTitle, setCurrentTitle] = useState('Customer');
@@ -29,6 +39,7 @@ function TicketPage() {
   const [events, setEvents] = useState<BCEVENT[]>([]);
 
   const calendarState = useSelector((state: RootState) => state.calendar);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
@@ -67,9 +78,16 @@ function TicketPage() {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllServiceTicketAPI());
+      dispatch(getAllServiceTicketAPI(undefined, divisionParams));
     }
   }, [refresh]);
+
+  useEffect(() => {
+    dispatch(refreshServiceTickets(true));
+    return () => {
+      dispatch(refreshServiceTickets(false));
+    }
+  }, [currentLocation])
 
   const onTitleChange = (id: number, type: string) => {
     const eventsTemp = events.map((event) => ({...event, title: getTitle(event.data, type)}));

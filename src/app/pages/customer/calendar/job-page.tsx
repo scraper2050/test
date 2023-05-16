@@ -21,8 +21,17 @@ import {
   setModalDataAction
 } from "../../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../../constants";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { useParams } from 'react-router-dom';
+import { DivisionParams } from 'app/models/division';
 
 function JobPage() {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentStatus, setCurrentStatus] = useState(-1);
@@ -66,7 +75,7 @@ function JobPage() {
     setRefresh(true);
     setEvents([]);
     dispatch(clearSelectedEvent());
-    getAllJobAPI(params).then((data) => {
+    getAllJobAPI(params, divisionParams).then((data) => {
       const {status, jobs, total} = data;
       if (status === 1) {
         const events = jobs.map((job: Job) => ({

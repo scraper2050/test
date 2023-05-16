@@ -19,6 +19,7 @@ import {
 } from 'actions/invoicing/payments/payments.action';
 import { error, success } from 'actions/snackbar/snackbar.action';
 import {SYNC_RESPONSE} from "../app/models/payments";
+import { DivisionParams } from 'app/models/division';
 
 export const recordPayment: any = (params = {}) => {
   return (dispatch: any) => {
@@ -84,7 +85,7 @@ export const voidPayment: any = (params = {}) => {
 };
 
 let cancelTokenGetAllPaymentsAPI:any;
-export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, customerId?: string, dueDate?: Date|null, showPaid?: boolean) => {
+export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, customerId?: string, dueDate?: Date|null, showPaid?: boolean, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setPaymentsLoading(true));
@@ -120,7 +121,7 @@ export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor
 
       cancelTokenGetAllPaymentsAPI = axios.CancelToken.source();
 
-      request(`/getPayments`, 'GET', optionObj, undefined, undefined, cancelTokenGetAllPaymentsAPI)
+      request(`/getPayments`, 'GET', optionObj, undefined, undefined, cancelTokenGetAllPaymentsAPI,undefined,division)
         .then((res: any) => {
           const {payment, unsyncedPayments} = res.data;
           dispatch(setPayments(payment.reverse(), unsyncedPayments));

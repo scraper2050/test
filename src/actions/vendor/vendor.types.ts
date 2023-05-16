@@ -44,6 +44,7 @@ export enum VendorActionType {
   GET_SINGLE_VENDOR = 'getSingleVendor',
   UPDATE_SINGLE_VENDOR_PAYMENT = 'updateSingleVendorPayment',
   DELETE_SINGLE_VENDOR_PAYMENT = 'deleteSingleVendorPayment',
+  SET_VENDOR_DISPLAY_NAME = 'setVendorDisplayName',
 }
 
 export const vendorStatusToNumber:any = {

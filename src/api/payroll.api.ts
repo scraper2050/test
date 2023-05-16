@@ -2,6 +2,7 @@ import request from '../utils/http.service';
 import {sortByField} from "../helpers/sort";
 import { error, success } from 'actions/snackbar/snackbar.action';
 import { getContractorPayments, getPayrollBalance } from 'actions/payroll/payroll.action';
+import { DivisionParams } from 'app/models/division';
 
 export const getContractorsAPI = async () => {
   try {
@@ -56,11 +57,11 @@ export const getCommissionHistoryAPI = async (vendorId: string) => {
   }
 }
 
-export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null) => {
+export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null, division?: DivisionParams) => {
   try {
     const offset = new Date().getTimezoneOffset() / 60;
     const url = `/getPayrollBalance${startDate ? `?startDate=${startDate}&endDate=${endDate}&offset=${offset}` : ''}`
-    const response: any = await request(url, 'GET', {}, false);
+    const response: any = await request(url, 'GET', {}, false, undefined, undefined, undefined, division);
     const {status, message, vendors = [], employees = []} = response.data;
     if (status === 1) {
       const data = [
@@ -93,10 +94,10 @@ export const getPayrollBalanceAPI = async (startDate: string|null, endDate: stri
   }
 }
 
-export const getPaymentsByContractorAPI = async (type?: string, id?: string) => {
+export const getPaymentsByContractorAPI = async (type?: string, id?: string, division?: DivisionParams) => {
   try {
     const url = `/getPaymentsByContractor${type ? `?id=${id}&type=${type}`:''}`;
-    const response: any = await request(url, 'GET', {}, false);
+    const response: any = await request(url, 'GET', {}, false, undefined,undefined,undefined,division);
     const {status, message, payments, advancePayments} = response.data;
     if (status === 1) {
       const returnObj:any = {status, message, payments: []}
@@ -207,10 +208,10 @@ export const updatePaymentContractorAPI = async (params: any) => {
   }
 }
 
-export const getPayrollReportAPI = async (type?: string, id?: string) => {
+export const getPayrollReportAPI = async (type?: string, id?: string, division?: DivisionParams) => {
   try {
     const url = `/getPayrollReport${type ? `?id=${id}&type=${type}`:''}`
-    const response: any = await request(url, 'GET', {}, false);
+    const response: any = await request(url, 'GET', {}, false,undefined,undefined,undefined,division);
     const {status, message, vendors = [], employees = []} = response.data;
     if (status === 1) {
       const data = [
@@ -247,7 +248,7 @@ export const normalizeData = (item: any, type: string) => {
     case 'vendor':
     case 'contractor':
       return ({
-        vendor: item.info.companyName,
+        vendor: item?.info?.displayName ?? item?.info?.companyName,
         email: item.info.companyEmail,
         phone: item.contact?.phone || '',
         address: item.address,

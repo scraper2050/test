@@ -37,6 +37,7 @@ import {
 } from "../../../api/reports.api";
 import * as yup from 'yup';
 import BCSent from "../../components/bc-sent";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const validationSchema = yup.object().shape({
   to: yup.string().email('Please insert a valid email').required('Please add recipient'),
@@ -48,6 +49,7 @@ function EmailReportModal({ classes, reportData, reportName }: any) {
   const [loading, setLoading] = useState(true);
   const [sent, setSent] = useState(false);
   const [emailTemplate, setEmailTemplate] = useState({from: '', subject: '', message: '', })
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const closeModal = () => {
     dispatch(closeModalAction());
@@ -105,6 +107,8 @@ function EmailReportModal({ classes, reportData, reportName }: any) {
         subject: values.subject,
         message: values.message,
         copyToMyself: values.sendToMe,
+        workType: currentLocation?.workTypeId,
+        companyLocation: currentLocation?.locationId,
       }
       try {
         setLoading(true);

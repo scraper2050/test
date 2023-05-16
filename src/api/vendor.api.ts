@@ -2,10 +2,16 @@ import request from 'utils/http.service';
 import {normalizeData} from "./payroll.api";
 import {ContractorPayment} from "../actions/payroll/payroll.types";
 
-export const getCompanyContracts = async () => {
+export const getCompanyContracts = async (filter?: any) => {
+  
   let responseData = null;
   try {
-    const response: any = await request('/getCompanyContracts', 'POST', {}, false);
+    let body: any = {};
+    if (filter?.workType && filter?.companyLocation) {
+      body["workType"] = filter.workType;
+      body["companyLocation"] = filter.companyLocation;
+    }
+    const response: any = await request('/getCompanyContracts', 'POST', body, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
@@ -106,6 +112,18 @@ export const acceptRejectVendorAPI = ({ contractId, status }:AcceptRejectContrac
 export const finishVendorApi = ({ contractId }:AcceptRejectContractProps) => {
   return new Promise((resolve, reject) => {
     request(`/finishContract`, 'post', { contractId })
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+export const setVendorDisplayNameApi = ({ contractorId, displayName }:any) => {
+return new Promise((resolve, reject) => {
+    request(`/updateVendorDisplayName`, 'post', { contractorId, displayName })
       .then((res: any) => {
         return resolve(res.data);
       })
