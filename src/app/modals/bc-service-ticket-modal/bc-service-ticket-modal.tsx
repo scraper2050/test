@@ -56,6 +56,7 @@ import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {useHistory} from 'react-router-dom';
 import { callCreateHomeOwner } from 'api/home-owner.api';
+import { getHomeOwnerAction } from 'actions/home-owner/home-owner.action';
 
 function BCServiceTicketModal(
   {
@@ -88,6 +89,7 @@ function BCServiceTicketModal(
   const dispatch = useDispatch();
   const [notesLabelState, setNotesLabelState] = useState(false);
   const [isHomeOccupied, setHomeOccupied] = useState(false);
+  const [homeOwnerId, setHomeOwnerId] = useState("");
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
@@ -172,6 +174,7 @@ function BCServiceTicketModal(
     setFieldValue: any,
     newValue: any
   ) => {
+    dispatch(getHomeOwnerAction(newValue._id || FormikValues.jobSiteId, FormikValues.jobLocationId));
     if (newValue?._id) {
       setFieldValue(fieldName, newValue._id);
       setJobSiteValue(newValue);
@@ -319,7 +322,7 @@ function BCServiceTicketModal(
       customerPhone: ticket.homeOwner?.contact.phone || ''
     },
     onSubmit: async (values, {setSubmitting}) => {
-      const tempData = { // TODO add validation in the forms 
+      const tempData = {
         ...ticket,
         ...values,
       };
@@ -411,21 +414,32 @@ function BCServiceTicketModal(
         );
         // Create home owner if needed
         if (formatedRequest.isHomeOccupied) {
-          const homeOwnerData = {
-            firstName: formatedRequest.customerFirstName ?? '',
-            lastName: formatedRequest.customerLastName ?? '',
-            email: formatedRequest.customerEmail ?? '',
-            phone: formatedRequest.customerPhone ?? '',
-            addressStreet: formatedRequest.jobLocation ?? '',
-          };
-          await callCreateHomeOwner(homeOwnerData)
-            .then((response: any) => {
-              if(response.status !== 1) {
-                dispatch(SnackBarError(response.message));
-                return;
-              }
-              formatedRequest.homeOwnerId = response.homeOwner._id;
-            });
+          if(homeOwnerId !== '' && 
+            formatedRequest.customerFirstName === homeOwners[0].profile.firstName &&
+            formatedRequest.customerLastName === homeOwners[0].profile.lastName &&
+            formatedRequest.customerEmail === homeOwners[0].info.email &&
+            formatedRequest.customerPhone === homeOwners[0].contact.phone
+          ) {
+            formatedRequest.homeOwnerId = homeOwnerId;
+          }
+          else {
+            const homeOwnerData = {
+              firstName: formatedRequest.customerFirstName ?? '',
+              lastName: formatedRequest.customerLastName ?? '',
+              email: formatedRequest.customerEmail ?? '',
+              phone: formatedRequest.customerPhone ?? '',
+              subdivision: formatedRequest.jobLocationId ?? '',
+              address: formatedRequest.jobSiteId ?? '',
+            };
+            await callCreateHomeOwner(homeOwnerData)
+              .then((response: any) => {
+                if(response.status !== 1) {
+                  dispatch(SnackBarError(response.message));
+                  return;
+                }
+                formatedRequest.homeOwnerId = response.homeOwner._id;
+              });
+          }
         }
         callCreateTicketAPI(formatedRequest)
           .then((response: any) => {
@@ -485,6 +499,19 @@ function BCServiceTicketModal(
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
   const {contacts} = useSelector((state: any) => state.contacts);
+  const homeOwners = useSelector((state: any) => state.homeOwner.data);
+
+  useEffect(() => {
+    if (homeOwners && homeOwners.length > 0) {
+      if(FormikValues.customerFirstName === '') {
+        setFieldValue('customerFirstName', homeOwners[0].profile.firstName);
+        setFieldValue('customerLastName', homeOwners[0].profile.lastName);
+        setFieldValue('customerEmail', homeOwners[0].info.email);
+        setFieldValue('customerPhone', homeOwners[0].contact.phone);
+        setHomeOwnerId(homeOwners[0]._id); 
+      }
+    }
+  }, [homeOwners]);
 
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);
@@ -791,7 +818,13 @@ function BCServiceTicketModal(
               />
             </Grid>
             <Grid item xs>
-              <Typography variant={'caption'} className={'previewCaption'}>
+              <Typography 
+                variant={'caption'} 
+                className={
+                  FormikValues.isHomeOccupied || isHomeOccupied
+                  ? `required ${'previewCaption'}`
+                  : 'previewCaption'}
+                >
                 Job Address
               </Typography>
               <Autocomplete
@@ -1025,8 +1058,11 @@ function BCServiceTicketModal(
               { 
                 FormikValues.isHomeOccupied || isHomeOccupied ? (
                 <Grid container>
-                  <Grid justify={'space-between'} xs>
-                    <Typography variant={'caption'} className={'previewCaption'}>
+                  <Grid item xs>
+                    <Typography 
+                      variant={'caption'} 
+                      className={`required ${'previewCaption'}`}
+                    >
                       Firstname
                     </Typography>
                     <BCInput
@@ -1036,7 +1072,7 @@ function BCServiceTicketModal(
                       value={FormikValues?.customerFirstName}
                     />
                   </Grid>
-                  <Grid justify={'space-between'} xs>
+                  <Grid item xs>
                     <Typography variant={'caption'} className={'previewCaption'}>
                       Lastname
                     </Typography>
@@ -1047,8 +1083,13 @@ function BCServiceTicketModal(
                       value={FormikValues?.customerLastName}
                     />
                   </Grid>
-                  <Grid justify={'space-between'} xs>
-                    <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
+                  <Grid item xs>
+                    <Typography 
+                      variant={'caption'} 
+                      className={`required ${'previewCaption'}`}
+                    >
+                      Email
+                    </Typography>
                     <BCInput
                       disabled={detail || isFieldsDisabled}
                       handleChange={formikChange}
@@ -1056,8 +1097,13 @@ function BCServiceTicketModal(
                       value={FormikValues?.customerEmail}
                     />
                   </Grid>
-                  <Grid justify={'space-between'} xs>
-                    <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
+                  <Grid item xs>
+                    <Typography 
+                      variant={'caption'}
+                      className={`required ${'previewCaption'}`}
+                    >
+                      Phone
+                    </Typography>
                     <BCInput
                       disabled={detail || isFieldsDisabled}
                       handleChange={formikChange}

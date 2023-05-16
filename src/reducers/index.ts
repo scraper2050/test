@@ -75,7 +75,7 @@ import { reportReducer as reportState } from './report.reducer'
 import { AdvanceFilterInvoiceReducer as advanceFilterInvoiceState } from './advance-filter.reducer'
 import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-technician-filter.reducer'
 import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer'
-
+import homeOwner from './home-owner.reducer';
 
 export interface ReducerParamsInterface {
   payload: any;
@@ -158,6 +158,7 @@ const appReducer = combineReducers({
   advanceFilterInvoiceState,
   mapTechnicianFilterState,
   mapTechnicianJobsState,
+  homeOwner
 });
 
 const rootReducer = (state: any, action: any) => {

@@ -24,6 +24,19 @@ export const callGetAllHomeOwners = () => {
   });
 };
 
+export const callGetHomeownerByAddress = (address : string, subdivision : string) => {
+  return new Promise((resolve, reject) => {
+
+    request(`/homeOwner/all?address=${address}${subdivision ? `&subdivision=${subdivision}` : ''}`, 'get', undefined, false)
+    .then((res: any) => {
+      return resolve(res.data.homeOwners);
+    })
+    .catch(err => {
+      return reject(err);
+    });
+  });
+};
+
 export const callCreateHomeOwner = (data: any) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();

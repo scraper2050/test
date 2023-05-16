@@ -1282,7 +1282,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerPhone'}
-                    value={ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.info?.phone || 'N/A'}
+                    value={ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
                   />
                 </Grid>
               </Grid>
