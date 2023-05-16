@@ -40,6 +40,8 @@ import {
 } from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
 import { RootState } from 'reducers';
 import { error } from "actions/snackbar/snackbar.action";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -72,6 +74,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   const [isSuccess, setIsSuccess] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const debounceInputStyles = useDebounceInputStyles();
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const invoiceList = useSelector(getFilteredList);
   const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
@@ -82,7 +85,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       total: invoicesForBulkPayments.total,
       currentPageIndex: invoicesForBulkPayments.currentPageIndex,
       currentPageSize: invoicesForBulkPayments.currentPageSize,
-      keyword: invoicesForBulkPayments.keyword,
+      keyword: invoicesForBulkPayments.keyword,currentLocation
     })
   );
 
@@ -211,7 +214,11 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   const debouncedFetchFunction = useCallback(
     debounce((value, FormikValues) => {
       setKeyword(value);
-      dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
+      let divisionParams:DivisionParams = {
+        workType: currentLocation.workTypeId,
+        companyLocation: currentLocation.locationId,
+      };
+      dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid,divisionParams))
       dispatch(setCurrentPageIndex(0));
     }, 500),
     []
@@ -260,7 +267,11 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   };
 
   useEffect(() => {
-    dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid));
+    let divisionParams: DivisionParams = {
+      workType: currentLocation.workTypeId,
+      companyLocation: currentLocation.locationId,
+    };
+    dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid,divisionParams));
     dispatch(setCurrentPageIndex(0));
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
@@ -579,8 +590,13 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                 isLoading={loading}
                 tableData={localInvoiceList}
                 manualPagination
-                fetchFunction={(num: number, isPrev: boolean, isNext: boolean) =>
-                  dispatch(getAllInvoicesForBulkPaymentsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid))
+                fetchFunction={(num: number, isPrev: boolean, isNext: boolean) => {
+                    let divisionParams: DivisionParams = {
+                      workType: currentLocation.workTypeId,
+                      companyLocation: currentLocation.locationId,
+                    };
+                    dispatch(getAllInvoicesForBulkPaymentsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid, divisionParams))
+                  }
                 }
                 total={total}
                 currentPageIndex={currentPageIndex}

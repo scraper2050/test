@@ -19,6 +19,8 @@ import { getCustomerDetailAction, getCustomers, resetCustomer } from "actions/cu
 import { getCompanyProfile } from "api/user.api";
 import { getItems } from 'api/items.api'
 import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI } from "api/invoicing.api";
+import { getCompanyLocations } from "api/user.api";
+import { ICurrentLocation } from "actions/filter-location/filter.location.types";
 
 const newInvoice = {
   createdAt: new Date().toISOString(),
@@ -34,6 +36,7 @@ function ViewInvoice() {
   const { state } = useLocation<any>();
   const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
   const { 'data': paymentTerms } = useSelector(({ paymentTerms }: any) => paymentTerms);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const customerId = state ? state.customerId : '';
 
@@ -43,9 +46,11 @@ function ViewInvoice() {
   useEffect(() => {
     async function getCompany(company: string) {
       const res = await getCompanyProfile(user.company as string);
-      setInvoiceDetail({ ...invoiceDetail, company: res.company });
+      const companyLocations = await getCompanyLocations();
 
+      setInvoiceDetail({ ...invoiceDetail, company: res.company,locations: companyLocations.companyLocations });
     }
+
     if (user && !invoice) {
       getCompany(user.company as string);
       //dispatch(getCompanyProfileAction(user.company as string));
@@ -196,6 +201,11 @@ function ViewInvoice() {
         charges: 0,
       }
       if (data.customer_po) params.customerPO = data.customer_po;
+
+      if (currentLocation) {
+        params.workType = currentLocation.workTypeId;
+        params.companyLocation = currentLocation.locationId;
+      }
 
       dispatch(setModalDataAction({
         data: {

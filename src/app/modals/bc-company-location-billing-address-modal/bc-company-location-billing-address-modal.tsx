@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import styles from "./bc-company-location-billing-address-modal.styles";
 import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Grid, TextField, Typography, withStyles } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
 import * as CONSTANTS from '../../../constants';
@@ -46,7 +46,7 @@ function BCCompanyLocationBillingAddressModal({
     initialValues: {
       street: companyLocation?.billingAddress?.street || '',
       city: companyLocation?.billingAddress?.city || '',
-      state: allStates.find((state) => state.name === companyLocation?.billingAddress?.state),
+      state: allStates.find((state) => state.name === companyLocation?.billingAddress?.state) ?? null,
       zipCode: companyLocation?.billingAddress?.zipCode ?? '',
       isAddressAsBillingAddress: companyLocation.isAddressAsBillingAddress,
     },
@@ -67,7 +67,7 @@ function BCCompanyLocationBillingAddressModal({
         }
       }))
     },
-    validationSchema: billingAddressSchema,
+    validationSchema: billingAddressSchema
   })
 
   const closeModal = () => {
@@ -82,6 +82,9 @@ function BCCompanyLocationBillingAddressModal({
 
   const validateNumber = (field: string, value: string, max: number) => {
     if (value.length <= max) setFieldValue(field, value);
+    if (FormikValues.isAddressAsBillingAddress) {
+      changeField('isAddressAsBillingAddress', false);
+    }
   }
 
   const stateFilterOptions = createFilterOptions({
@@ -94,12 +97,19 @@ function BCCompanyLocationBillingAddressModal({
   }
 
   const handleSetBillingAdress = (isChecked:boolean) =>{
-    changeField('isAddressAsBillingAddress', isChecked);
     changeField('street', isChecked ? companyLocation.address?.street : "");
     changeField('city', isChecked ? companyLocation.address?.city : "");
-    changeField('state', isChecked ? companyLocation.address?.state : "");
+    changeField('state', isChecked ? allStates.find((state) => state.name === companyLocation?.address?.state) ?? null : null);
     changeField('zipCode', isChecked ? companyLocation.address?.zipCode : "");
+    changeField('isAddressAsBillingAddress', isChecked);
   }
+
+  const handleFormChange = (event:any) => {
+    formikChange(event);
+    if (FormikValues.isAddressAsBillingAddress) {
+      changeField('isAddressAsBillingAddress', false);
+    }
+  };
 
   return (
     <DataContainer>
@@ -119,7 +129,7 @@ function BCCompanyLocationBillingAddressModal({
                     id={'outlined-textarea'}
                     label={''}
                     name={'street'}
-                    onChange={formikChange}
+                    onChange={handleFormChange}
                     type={'text'}
                     value={FormikValues.street}
                     variant={'outlined'}
@@ -141,7 +151,7 @@ function BCCompanyLocationBillingAddressModal({
                     id={'outlined-textarea'}
                     label={''}
                     name={'city'}
-                    onChange={formikChange}
+                    onChange={handleFormChange}
                     type={'text'}
                     value={FormikValues.city}
                     variant={'outlined'}
@@ -158,7 +168,7 @@ function BCCompanyLocationBillingAddressModal({
                 <Grid item xs={4}>
                   <AutoComplete
                     filterOptions={stateFilterOptions}
-                    handleChange={formikChange}
+                    handleChange={handleFormChange}
                     name={"state"}
                     data={allStates}
                     value={FormikValues.state}

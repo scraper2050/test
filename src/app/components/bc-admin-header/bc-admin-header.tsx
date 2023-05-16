@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ClickAwayListener, Grow, Paper, Popper, Select, useMediaQuery, useTheme } from "@material-ui/core";
+import { Button, ClickAwayListener, Grid, Grow, Paper, Popper, Select, useMediaQuery, useTheme } from "@material-ui/core";
 import { withStyles, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import styles from "./bc-admin-header.style";
 import AppBar from "@material-ui/core/AppBar";
@@ -395,7 +395,15 @@ function BCAdminHeader({
                   {
                     divisionList?.map((res: any,index: number) => {
                       return (
-                        <MenuItem value={index} key={index} style={{fontSize: 14}}> {res.isMainLocation && (<BusinessIcon style={{color: GRAY3}} fontSize={"small"}/>)} {res.name}</MenuItem>
+                        <MenuItem value={index} key={index} style={{fontSize: 14}}> 
+                          <div className={classes.divisionList}>
+                            {res.name} 
+                            {
+                              res.isMainLocation && (
+                                  <BusinessIcon style={{color: GRAY3}} fontSize={"small"}/>
+                            )}
+                          </div>
+                        </MenuItem>
                       )
                     })
                   }

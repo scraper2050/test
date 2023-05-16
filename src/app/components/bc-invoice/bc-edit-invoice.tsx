@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -44,6 +44,8 @@ import {CSChip} from "../../../helpers/custom";
 import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 import {formatCurrency} from "../../../helpers/format";
+import { useSelector } from 'react-redux';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface Props {
   classes?: any;
@@ -526,6 +528,7 @@ function BCEditInvoice({
   const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
   const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const [options, setOptions] =  React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
 
@@ -644,15 +647,25 @@ function BCEditInvoice({
     }
     return invoiceData.createdAt?.split('T')[0];
   }
-  
-  console.log(invoiceData);
-  
+
   let billingAddress = {
-    street: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.street ?? '' : invoiceData?.companyLocation?.billingAddress?.street ?? '') : invoiceData?.company?.address?.street,
-    city: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.city ?? '' : invoiceData?.companyLocation?.billingAddress?.city ?? '') : invoiceData?.company?.address?.city,
-    state: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.state ?? '' : invoiceData?.companyLocation?.billingAddress?.state ?? '') : invoiceData?.company?.address?.state,
-    zipCode: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.zipCode ?? '' : invoiceData?.companyLocation?.billingAddress?.zipCode ?? '') : invoiceData?.company?.address?.zipCode,
+    street: invoiceData?.company?.address?.street,
+    city: invoiceData?.company?.address?.city,
+    state: invoiceData?.company?.address?.state,
+    zipCode: invoiceData?.company?.address?.zipCode,
   };
+
+  useEffect(()=>{
+    if (invoiceData.locations?.length && currentLocation.locationId) {
+      let filteredLocation = invoiceData.locations.find((res: any) => res._id === currentLocation.locationId);
+      if (filteredLocation) {
+        billingAddress.street =  filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.street : filteredLocation?.billingAddress?.street;
+        billingAddress.city = filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.city : filteredLocation?.billingAddress?.city;
+        billingAddress.state = filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.state : filteredLocation?.billingAddress?.state;
+        billingAddress.zipCode = filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.zipCode : filteredLocation?.billingAddress?.zipCode;
+      }
+    }
+  },[currentLocation])
 
   return (
     <MuiThemeProvider theme={theme}>
