@@ -25,7 +25,7 @@ import {ReactComponent as IconIncomplete} from "../../../assets/img/icons/map/ic
 import {ReactComponent as IconPending} from "../../../assets/img/icons/map/icon-pending.svg";
 import {ReactComponent as IconJobRequest} from "../../../assets/img/icons/map/icon-job-request.svg";
 import {ReactComponent as IconOpenServiceTicket} from "../../../assets/img/icons/map/icon-open-service-ticket.svg";
-
+import { PRIMARY_ORANGE } from "../../../constants";
 interface BCMapWithMarkerListProps {
   reactAppGoogleKeyFromConfig: string;
   list: any;
@@ -64,6 +64,7 @@ const superClusterOptions = {
     includeTicket: !!props.ticket?.ticketId,
     includeRequest: !!props.ticket?.requestId,
     includeJob: !!props.ticket?.jobId,
+    isHomeOccupied: !!props.ticket?.isHomeOccupied,
   }),
   reduce: (acc:any, props:any) => {
     if(!!props.includeTicket) {
@@ -79,6 +80,9 @@ const superClusterOptions = {
 }
 
 const calculateColor = (cluster:any) => {
+  if(cluster.properties?.isHomeOccupied){
+    return PRIMARY_ORANGE;
+  }
   if(cluster.properties?.includeRequest){
     return '#970505'
   }
@@ -125,7 +129,7 @@ function BCMapWithMarkerWithList({
   const [zoom, setZoom] = useState(11);
   const locationCoordinate = useRef<any>({});
   const overlappingCoordinates = useRef<any>([]);
-  const [_, setRefresh] = useState(0)
+  const [_, setRefresh] = useState(0);
 
   let centerLat = coordinates?.lat || DEFAULT_COORD.lat;
   let centerLng = coordinates?.lng || DEFAULT_COORD.lng;
