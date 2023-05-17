@@ -92,6 +92,7 @@ function BCMapFilterHead({
         'jobId': '',
         'contact': null,
         'jobStatus': [-1],
+        'isHomeOccupied': false,
       });
     }
   }
