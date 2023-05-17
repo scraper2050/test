@@ -264,6 +264,14 @@ function BCCompanyLocationModal({
     stringify: (option: any) => option.name + option.abbreviation,
   });
 
+  const handleSetBillingAdress = (isChecked:boolean) =>{
+    changeField('isAddressAsBillingAddress', isChecked);
+    changeField('billingStreet', isChecked ? FormikValues.street : "");
+    changeField('billingCity', isChecked ? FormikValues.city : "");
+    changeField('billingState', isChecked ? FormikValues.state : "");
+    changeField('billingZipCode', isChecked ? FormikValues.zipCode : "");
+  }
+
   return (
     <DataContainer className={'new-modal-design'} style={{ marginTop: -20 }}>
       {showWarning ?
@@ -552,7 +560,7 @@ function BCCompanyLocationModal({
                         control={
                           <Checkbox
                             checked={FormikValues.isAddressAsBillingAddress}
-                            onChange={(e, checked) => changeField('isAddressAsBillingAddress', checked)}
+                            onChange={(e, checked) => handleSetBillingAdress(checked)}
                             color="primary"
                             name="isSetBillingAddress" />
                         }
@@ -565,7 +573,7 @@ function BCCompanyLocationModal({
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
                       style={{ marginTop: 8 }} xs={3}>
-                      <Typography variant={'button'}>Work Types</Typography>
+                      <Typography variant={'button'}>WORK TYPES</Typography>
                     </Grid>
                     <Grid item xs={9}>
                       <Autocomplete

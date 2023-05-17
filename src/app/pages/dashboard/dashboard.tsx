@@ -20,6 +20,7 @@ import {
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../constants';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface RowStatusTypes {
   row: {
@@ -36,6 +37,7 @@ interface StatusTypes {
 function DashboardPage({ classes }: any): JSX.Element {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const history = useHistory();
 
@@ -136,9 +138,9 @@ function DashboardPage({ classes }: any): JSX.Element {
 
   useEffect(() => {
     dispatch(loadingVendors());
-    dispatch(getVendors());
-  }, []);
-
+    dispatch(getVendors({workType: currentLocation.workTypeId, companyLocation: currentLocation.locationId}));
+  }, [currentLocation]);
+  
   const openVendorModal = () => {
     dispatch(setModalDataAction({
       'data': {

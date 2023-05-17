@@ -44,7 +44,7 @@ export const getTodos = async (params = {}) => {
 };
 
 let cancelTokenGetAllInvoicesForBulkPaymentsAPI:any;
-export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, customerId?: string, dueDate?: Date|null, showPaid?: boolean) => {
+export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, customerId?: string, dueDate?: Date|null, showPaid?: boolean, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesForBulkPaymentsLoading(true));
@@ -79,7 +79,7 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor =
 
       cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
 
-      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
+      request(`/getInvoices`, 'post', optionObj, undefined, undefined, cancelTokenGetAllInvoicesForBulkPaymentsAPI,undefined,division)
         .then((res: any) => {
           let tempInvoices = res.data.invoices;
           dispatch(setInvoicesForBulkPayments(tempInvoices.reverse()));
