@@ -220,4 +220,8 @@ export default (theme: Theme): any => ({
   "bcDropdownLocationIcon": {
     "margin-right": "0.1rem"
   },
+  "divisionList": {
+    "display": "flex",
+    "alignItems": "center"
+  }
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ClickAwayListener, Grow, Paper, Popper, Select, useMediaQuery, useTheme } from "@material-ui/core";
+import { Button, ClickAwayListener, Grid, Grow, Paper, Popper, Select, useMediaQuery, useTheme } from "@material-ui/core";
 import { withStyles, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import styles from "./bc-admin-header.style";
 import AppBar from "@material-ui/core/AppBar";
@@ -27,11 +27,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import LocationOn from '@material-ui/icons/LocationOn';
 import { useDispatch, useSelector } from "react-redux";
 import { CompanyProfileStateType } from "actions/user/user.types";
-import { getCompanyLocationsAction } from "actions/user/user.action";
 import { setCurrentLocation } from "actions/filter-location/filter.location.action";
 import { ICurrentLocation } from "actions/filter-location/filter.location.types";
 import { getDivision, refreshDeisions } from "actions/division/division.action";
-import { info, success } from "actions/snackbar/snackbar.action";
+import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import {Business as BusinessIcon} from '@material-ui/icons';
+import { GRAY3 } from "../../../constants";
 
 interface Props {
   classes: any;
@@ -271,15 +272,28 @@ function BCAdminHeader({
   ];
 
   const handleLocationChange = (params: any) => {
-    setSelectedDivision(params.target.value);
+    const selectedDivision = divisionList[params.target.value];
 
-    let selectedDivision = divisionList[params.target.value];
-    dispatch(info(`Viewing: ${selectedDivision.name}`));
-    dispatch(setCurrentLocation(selectedDivision));
-    history.push({
-      pathname: `/main/dashboard`,
-      state: {}
-    });
+    const confirmAction = ()=> {
+      setSelectedDivision(params.target.value);
+      dispatch(setCurrentLocation(selectedDivision));
+      history.push({
+        pathname: `/main/dashboard`,
+        state: {}
+      });
+    }
+
+    dispatch(setModalDataAction({
+      'data': {
+        // message: `Changes Divison`,
+        subMessage: `Viewing: ${selectedDivision.name}`,
+        action: confirmAction
+      },
+      'type': CONSTANTS.modalTypes.WARNING_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
 
@@ -381,7 +395,15 @@ function BCAdminHeader({
                   {
                     divisionList?.map((res: any,index: number) => {
                       return (
-                        <MenuItem value={index} key={index}>{res.name}</MenuItem>
+                        <MenuItem value={index} key={index} style={{fontSize: 14}}> 
+                          <div className={classes.divisionList}>
+                            {res.name} 
+                            {
+                              res.isMainLocation && (
+                                  <BusinessIcon style={{color: GRAY3}} fontSize={"small"}/>
+                            )}
+                          </div>
+                        </MenuItem>
                       )
                     })
                   }

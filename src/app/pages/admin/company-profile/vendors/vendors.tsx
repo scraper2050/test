@@ -26,6 +26,15 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
 
   const columns: any = [
     {
+      'Header': 'Display Name',
+      'accessor': 'vendor.info.displayName',
+      'className': 'font-bold',
+      'sortable': true,
+      Cell({ row }: any) {
+        return <span>{row?.original.vendor?.info?.displayName  ||row.original?.displayName|| 'N/A'}</span>;
+      }
+    },
+    {
       'Header': 'Name',
       'accessor': 'vendor.info.companyName',
       'className': 'font-bold',
@@ -47,7 +56,7 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
             row.values.workTypes?.map((res: any, index: number) => {
               return (<Chip
                 label={res?.title}
-                variant="outlined" 
+                variant="outlined"
                 key={index}
                 />)
             })
@@ -101,7 +110,7 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
           'page': 'Vendor',
           'removeFooter': false
         },
-  
+
         'type': modalTypes.LOCATION_ASSIGN_DELETE_MODAL
       }));
       setTimeout(() => {
@@ -114,7 +123,7 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
     let formData = {
       ...row,
       assignee: {
-        _id: row.vendor._id, 
+        _id: row.vendor._id,
         name: row.vendor?.info?.companyName
       }
     };
@@ -131,7 +140,7 @@ function TabVendorsGrid({ classes, companyLocation}: {classes: any, companyLocat
 
       'type': modalTypes.LOCATION_ASSIGN_MODAL
     }));
-    
+
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
