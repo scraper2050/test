@@ -107,6 +107,10 @@ function MapViewTicketsScreen({
         }
       }
 
+      if (filterTickets.isHomeOccupied && filterTickets.isHomeOccupied === true) {
+        filter = filter && ticket.isHomeOccupied === true;
+      }
+
       if (selectedDate) {
         // const offset = moment.parseZone().utcOffset();
         const parsedDate = moment.utc(ticket.dueDate).isValid()

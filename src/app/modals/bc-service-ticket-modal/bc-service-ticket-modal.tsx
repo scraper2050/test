@@ -1044,7 +1044,24 @@ function BCServiceTicketModal(
                   </Label>
                 </Grid>
               </Grid>
-              <Grid container item xs>
+            </Grid>
+            <Grid item container xs={4} style={{paddingTop: 0}}>
+              <BCDragAndDrop
+                images={thumbs}
+                onDrop={(files) => handleImageDrop(files)}
+                onDelete={handleRemoveImage}
+                readonly={!!ticket.jobCreated}
+              />
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            className={'modalContent'}
+            justify={'space-between'}
+            spacing={4}
+          >
+            <Grid container xs={3} spacing={4}>
+              <Grid container xs={12} spacing={4}>
                 <FormControlLabel
                   classes={{label: classes.checkboxLabel}}
                   control={
@@ -1062,10 +1079,11 @@ function BCServiceTicketModal(
                   label={`HOUSE IS OCCUPIED`}
                 />
               </Grid>
-              
-              { 
-                FormikValues.isHomeOccupied || isHomeOccupied ? (
-                <Grid container>
+            </Grid>
+            { 
+              FormikValues.isHomeOccupied || isHomeOccupied ? (
+              <Grid container xs={9} spacing={4}>
+                <Grid container xs={12} spacing={4}>
                   <Grid item xs>
                     <Typography 
                       variant={'caption'} 
@@ -1120,17 +1138,9 @@ function BCServiceTicketModal(
                     />
                   </Grid>
                 </Grid>
-                ) : null
-              }
-            </Grid>
-            <Grid item container xs={4} style={{paddingTop: 0}}>
-              <BCDragAndDrop
-                images={thumbs}
-                onDrop={(files) => handleImageDrop(files)}
-                onDelete={handleRemoveImage}
-                readonly={!!ticket.jobCreated}
-              />
-            </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
 
           <DialogActions>
