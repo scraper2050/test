@@ -207,6 +207,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 'typeText': 'Invoice',
                 'className': 'wideModalTitle',
                 'customerId': invoice.customer?._id,
+                'from': invoice?.companyLocation?.billingAddress?.emailSender,
               };
               const combined: any = { ...data, emailDefault }
 
@@ -246,6 +247,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   'handleClick': () => { },
                   'ids': invoicesArray,
                   'typeText': 'Invoice',
+                  'from': invoice?.companyLocation?.billingAddress?.emailSender,
                   'className': 'wideModalTitle',
                   'customerId': invoice.customer?._id,
                 };

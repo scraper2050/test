@@ -29,5 +29,9 @@ export default (theme: Theme): any => ({
     '&& .MuiAutocomplete-inputRoot': {
       padding:"9.5px",
     },
-  }
+  },
+  fullWidth: {
+    width: '100%',
+    marginBottom: '3px',
+  },
 });

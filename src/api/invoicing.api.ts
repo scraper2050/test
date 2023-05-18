@@ -333,9 +333,9 @@ export const getInvoicingList = async (params = {}) => {
   return responseData.invoices;
 };
 
-export const getUnsyncedInvoices = async() => {
+export const getUnsyncedInvoices = async(division?: DivisionParams) => {
   try {
-    const response: any = await request('/getUnsyncedInvoices', 'GET');
+    const response: any = await request('/getUnsyncedInvoices', 'GET',undefined,undefined,undefined,undefined,undefined,division);
     const {status, message, invoices} = response.data;
     if (status === 1) return invoices;
     throw ({message});

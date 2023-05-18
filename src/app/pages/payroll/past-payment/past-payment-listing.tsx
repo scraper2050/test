@@ -66,6 +66,7 @@ function PastPayments({ classes }: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
+  
   const isFiltered = selectedIDs.length > 0 || selectionRange !== null;
 
   useEffect(() => {
@@ -123,8 +124,8 @@ function PastPayments({ classes }: Props) {
         message: 'Are you sure you want to delete this Payment Record?',
         subMessage: 'This action cannot be undone.',
         action: payment.__t === 'AdvancePaymentVendor'
-          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id })
-          : voidPayment({ type: 'vendor', paymentId: payment._id }),
+          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id }, divisionParams)
+          : voidPayment({ type: 'vendor', paymentId: payment._id }, divisionParams),
       },
       'type': modalTypes.WARNING_MODAL
     }));

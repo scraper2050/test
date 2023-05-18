@@ -97,6 +97,7 @@ function EmailJobReportModal({ classes, data }: any) {
       setInvoiceToView({
         id: data?.id,
         ids: data?.ids,
+        from: data?.from,
         customerEmail: data?.customerEmail,
         customer: data?.customer,
         emailDefault: data?.emailDefault,
@@ -107,6 +108,7 @@ function EmailJobReportModal({ classes, data }: any) {
       setInvoiceToView({
         id: data?.multipleInvoices[0]?.id,
         ids: data?.multipleInvoices[0]?.ids,
+        from: data?.multipleInvoices[0]?.from,
         customerEmail: data?.multipleInvoices[0]?.customerEmail,
         customer: data?.multipleInvoices[0]?.customer,
         emailDefault: data?.multipleInvoices[0]?.emailDefault,
@@ -183,7 +185,7 @@ function EmailJobReportModal({ classes, data }: any) {
   const form = useFormik({
     enableReinitialize: true,
     initialValues: {
-      from: profileState.companyEmail,
+      from: invoiceToView?.from ?? profileState.companyEmail ,
       to: invoiceToView?.receipients || [{ email: invoiceToView.customerEmail }],
       subject: invoiceToView?.emailDefault?.subject,
       message: invoiceToView?.emailDefault?.message,

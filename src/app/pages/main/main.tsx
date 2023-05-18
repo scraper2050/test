@@ -413,10 +413,28 @@ function Main(): any {
                   title={'Customers'}
                 />
                 <AuthRoute
+                    Component={ViewInvoicePage}
+                    exact
+                    path={'/main/customers/job-reports/view/:invoice'}
+                    title={'View Invoice'}
+                  />
+                <AuthRoute
                   Component={TicketsMapViewPage}
                   exact
                   path={'/main/customers/ticket-map-view/:companyLocation?/:workType?'}
                   title={'Map View'}
+                />
+                <AuthRoute
+                  Component={ViewJobReportsPage}
+                  /*
+                   * ActionData={{
+                   *   link: "/main/customers/job-reports/:jobId",
+                   *   title: "Job Reports",
+                   * }}
+                   */
+                  exact
+                  path={'/main/customers/job-reports/detail/:jobReportId'}
+                  title={'Job Reports'}
                 />
                 <AuthRoute
                   Component={JobReportsPage}
@@ -495,26 +513,6 @@ function Main(): any {
                   path={'/main/customers/location/:joblocation'}
                   title={'Customers'}
                 />
-
-                <AuthRoute
-                  Component={ViewJobReportsPage}
-                  /*
-                   * ActionData={{
-                   *   link: "/main/customers/job-reports/:jobId",
-                   *   title: "Job Reports",
-                   * }}
-                   */
-                  exact
-                  path={'/main/customers/job-reports/:jobReportId'}
-                  title={'Job Reports'}
-                />
-
-                  <AuthRoute
-                    Component={ViewInvoicePage}
-                    exact
-                    path={'/main/customers/job-reports/view/:invoice'}
-                    title={'View Invoice'}
-                  />
 
                   <AuthRoute
                     Component={ViewInvoicePage}
