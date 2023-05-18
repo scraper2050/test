@@ -397,11 +397,7 @@ function BCAdminHeader({
                       return (
                         <MenuItem value={index} key={index} style={{fontSize: 14}}> 
                           <div className={classes.divisionList}>
-                            {res.name} 
-                            {
-                              res.isMainLocation && (
-                                  <BusinessIcon style={{color: GRAY3}} fontSize={"small"}/>
-                            )}
+                            {res.name}
                           </div>
                         </MenuItem>
                       )

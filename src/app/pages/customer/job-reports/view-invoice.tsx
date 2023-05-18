@@ -24,6 +24,7 @@ import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
 import { modalTypes } from "../../../../constants";
 import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
+import { ICurrentLocation } from "actions/filter-location/filter.location.types";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -63,6 +64,7 @@ function ViewInvoice({ classes, theme }: any) {
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }:any) => auth);
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   useEffect(() => {
 
@@ -178,7 +180,7 @@ function ViewInvoice({ classes, theme }: any) {
       || location?.state?.lastNextCursor || location?.state?.lastPrevCursor || location?.state?.selectionRange
       ){
       history.replace({
-        'pathname': '/main/invoicing/invoices-list',
+        'pathname': currentLocation.locationId && currentLocation.workTypeId ? `/main/invoicing/invoices-list/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/invoicing/invoices-list`,
         'state': {
           'option': {
             search: location?.state?.keyword || '',

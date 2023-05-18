@@ -10,7 +10,7 @@ import { UpdateCompanyLocationBillingAddressAction } from "actions/user/user.act
 import { CompanyLocation } from "actions/user/user.types";
 import { allStates } from "utils/constants";
 import AutoComplete from "app/components/bc-autocomplete/bc-autocomplete_2";
-import { zipCodeRegExp } from "helpers/format";
+import { emailRegExp, zipCodeRegExp } from "helpers/format";
 import * as Yup from "yup";
 import { createFilterOptions } from "@material-ui/lab";
 
@@ -20,11 +20,13 @@ interface API_PARAMS {
   city?: string;
   state?: string;
   zipCode?: string;
+  emailSender?: string;
   isAddressAsBillingAddress? : boolean;
 }
 
 const billingAddressSchema = Yup.object().shape({
   zipCode: Yup.string().matches(zipCodeRegExp, 'Zip code is not valid'),
+  emailSender: Yup.string().matches(emailRegExp, 'Email address is not valid'),
 });
 
 function BCCompanyLocationBillingAddressModal({
@@ -49,6 +51,7 @@ function BCCompanyLocationBillingAddressModal({
       state: allStates.find((state) => state.name === companyLocation?.billingAddress?.state) ?? null,
       zipCode: companyLocation?.billingAddress?.zipCode ?? '',
       isAddressAsBillingAddress: companyLocation.isAddressAsBillingAddress,
+      emailSender: companyLocation?.billingAddress?.emailSender || ''
     },
     onSubmit: (values, { setSubmitting }) => {
       let payload: API_PARAMS = {
@@ -58,6 +61,7 @@ function BCCompanyLocationBillingAddressModal({
         state: FormikValues.state?.name || '',
         zipCode: FormikValues.zipCode,
         isAddressAsBillingAddress: FormikValues.isAddressAsBillingAddress,
+        emailSender: FormikValues.emailSender
       };
 
       dispatch(UpdateCompanyLocationBillingAddressAction(payload, (status) => {
@@ -118,6 +122,30 @@ function BCCompanyLocationBillingAddressModal({
           <Grid container direction={'column'} spacing={1}>
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
+                  <Grid container item justify={'flex-end'}
+                    style={{ marginTop: 8 }} xs={3}>
+                    <Typography variant={'button'}>Send invoices from</Typography>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <TextField
+                      autoComplete={'off'}
+                      className={classes.fullWidth}
+                      id={'outlined-textarea'}
+                      label={''}
+                      name={'emailSender'}
+                      onChange={formikChange}
+                      type={'email'}
+                      value={FormikValues.emailSender}
+                      variant={'outlined'}
+                      error={!!FormikErrors.emailSender}
+                      helperText={FormikErrors.emailSender}
+                    />
+                  </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Grid container direction={'row'} spacing={1}>
                 <Grid container item justify={'flex-end'}
                   alignItems={'center'} xs={3}>
                   <Typography variant={'button'}>STREET</Typography>
@@ -125,7 +153,6 @@ function BCCompanyLocationBillingAddressModal({
                 <Grid item xs={9}>
                   <TextField
                     autoComplete={'off'}
-                    className={classes.fullWidth}
                     id={'outlined-textarea'}
                     label={''}
                     name={'street'}
@@ -147,7 +174,6 @@ function BCCompanyLocationBillingAddressModal({
                 <Grid item xs={9}>
                   <TextField
                     autoComplete={'off'}
-                    className={classes.fullWidth}
                     id={'outlined-textarea'}
                     label={''}
                     name={'city'}

@@ -14,6 +14,7 @@ import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllSalesTaxAPI } from 'api/tax.api';
 import {modalTypes} from "../../../../../constants";
 import {formatCurrency} from "../../../../../helpers/format";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 function CreateInvoice({ classes }: any) {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ function CreateInvoice({ classes }: any) {
   const customers = useSelector(({ customers }: any) => customers.data);
   const { 'items': invoiceItems } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
   const taxes = useSelector(({ tax }: any) => tax.data);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const getCustomersDispatcher = () => {
     dispatch(getCustomers());
@@ -163,7 +165,7 @@ function CreateInvoice({ classes }: any) {
 
   };
 
-  const redirectURL = '/main/invoicing/invoices-list';
+  const redirectURL = currentLocation.locationId && currentLocation.workTypeId ? `/main/invoicing/invoices-list/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/invoicing/invoices-list`;
 
   const handleFormSubmit = (data: any) => {
     return new Promise((resolve, reject) => {
