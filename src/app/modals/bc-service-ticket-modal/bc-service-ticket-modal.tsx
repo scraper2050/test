@@ -300,7 +300,7 @@ function BCServiceTicketModal(
       });
     else return [];
   };
-
+  
   const {
     values: FormikValues,
     handleChange: formikChange,
@@ -373,6 +373,33 @@ function BCServiceTicketModal(
               })
             )
           );
+
+          // Create home owner if it has been updated or added
+          if (formatedRequest.isHomeOccupied) {
+            if(!ticket.isHomeOccupied || 
+              formatedRequest.customerFirstName !== ticket.homeOwner.profile.firstName ||
+              formatedRequest.customerLastName !== ticket.homeOwner.profile.lastName ||
+              formDataEmail.value !== ticket.homeOwner.info.email ||
+              formDataPhone.value !== ticket.homeOwner.contact.phone
+            ){
+              const homeOwnerData = {
+                firstName: formatedRequest.customerFirstName ?? '',
+                lastName: formatedRequest.customerLastName ?? '',
+                email: formDataEmail.value ?? '',
+                phone: formDataPhone.value ?? '',
+                subdivision: formatedRequest.jobLocationId ?? '',
+                address: formatedRequest.jobSiteId ?? '',
+              };
+              await callCreateHomeOwner(homeOwnerData)
+                .then((response: any) => {
+                  if(response.status !== 1) {
+                    dispatch(SnackBarError(response.message));
+                    return;
+                  }
+                  formatedRequest.homeOwnerId = response.homeOwner._id;
+                });
+            }
+          }
 
           callEditTicketAPI(formatedRequest)
             .then((response: any) => {
