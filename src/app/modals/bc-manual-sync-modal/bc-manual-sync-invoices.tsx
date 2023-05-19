@@ -11,7 +11,7 @@ import {
   closeModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import styled from 'styled-components';
 import styles from './bc-manual-sync-modal.styles';
 import BCTableContainer
@@ -31,6 +31,8 @@ import {SYNC_RESPONSE} from "../../models/invoices";
 import BCCircularLoader
   from "../../components/bc-circular-loader/bc-circular-loader";
 import BcSyncStatus from "./bc-sync-status";
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
 
 
 function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element {
@@ -40,10 +42,15 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
   const [isLoading, setLoading] = useState(true);
   const [isSyncing, setSyncing] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const getData = async () => {
     try {
-      const invoices = await getUnsyncedInvoices();
+      let divisionParams:DivisionParams = {
+        workType: currentLocation.workTypeId,
+        companyLocation: currentLocation.locationId,
+      };
+      const invoices = await getUnsyncedInvoices(divisionParams);
       setInvoices(invoices);
     } catch (e) {
       dispatch(error(e));

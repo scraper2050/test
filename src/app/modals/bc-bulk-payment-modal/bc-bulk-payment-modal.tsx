@@ -85,7 +85,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       total: invoicesForBulkPayments.total,
       currentPageIndex: invoicesForBulkPayments.currentPageIndex,
       currentPageSize: invoicesForBulkPayments.currentPageSize,
-      keyword: invoicesForBulkPayments.keyword,currentLocation
+      keyword: invoicesForBulkPayments.keyword,
     })
   );
 
@@ -156,7 +156,11 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       if(values.paymentType !== ''){
         paramObj.paymentType = paymentTypeReference.filter(type => type._id == values.paymentType)[0].label
       }
-      dispatch(recordPayment(paramObj))
+      let divisionParams:DivisionParams = {
+        workType: currentLocation.workTypeId,
+        companyLocation: currentLocation.locationId,
+      };
+      dispatch(recordPayment(paramObj,divisionParams))
         .then((response: any) => {
           if (response.status === 1) {
             setIsSuccess(true);

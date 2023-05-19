@@ -19,7 +19,7 @@ import {
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
@@ -27,6 +27,8 @@ import {modalTypes} from "../../../constants";
 import { voidPayment } from 'api/payment.api';
 import BCSentSync from "../../components/bc-sent-sync";
 import {formatCurrency} from "../../../helpers/format";
+import { DivisionParams } from 'app/models/division';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 interface ApiProps {
   customerId: string,
@@ -49,6 +51,7 @@ function BcPaymentRecordModal({
   const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
   const [invoice, setInvoice] = useState(invoiceOrg);
   const dispatch = useDispatch();
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const paymentTypes = [
     {
@@ -145,7 +148,11 @@ function BcPaymentRecordModal({
         request = recordPayment;
       }
 
-      dispatch(request(params)).then((response: any) => {
+      let divisionParams:DivisionParams = {
+        workType: currentLocation.workTypeId,
+        companyLocation: currentLocation.locationId,
+      };
+      dispatch(request(params,divisionParams)).then((response: any) => {
         const {status, payment, quickbookPayment, invoice: updatedInvoice, invoices, message} = response;
         if (status === 1) {
           const {
@@ -216,12 +223,16 @@ function BcPaymentRecordModal({
       },
       'type': modalTypes.PAYMENT_RECORD_MODAL
     });
+    let divisionParams:DivisionParams = {
+      workType: currentLocation.workTypeId,
+      companyLocation: currentLocation.locationId,
+    };
     dispatch(setModalDataAction({
       data: {
         modalTitle: '         ',
         message: 'Are you sure you want to void this payment?',
         subMessage: 'This action cannot be undone.',
-        action: voidPayment({type: 'customer', paymentId: payment._id}),
+        action: voidPayment({type: 'customer', paymentId: payment._id},divisionParams),
         closeAction,
       },
       'type': modalTypes.WARNING_MODAL

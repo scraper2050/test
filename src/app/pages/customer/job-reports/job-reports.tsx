@@ -198,7 +198,7 @@ function JobReportsPage({ classes, theme }: any) {
     const jobReportId = row.original._id;
     localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
-      'pathname': `job-reports/${jobReportId}`,
+      'pathname': `/main/customers/job-reports/detail/${jobReportId}`,
       'state': {
         keyword,
         currentPageSize,

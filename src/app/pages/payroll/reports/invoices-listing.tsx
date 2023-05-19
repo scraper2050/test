@@ -77,7 +77,7 @@ function PayrollInvoices({classes}: Props) {
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
     if (cont) {
-      dispatch(getContractorPayments({id: cont._id, type: cont.type}));
+      dispatch(getContractorPayments({id: cont._id, type: cont.type},divisionParams));
     }
   }, [selectedIDs]);
 

@@ -236,7 +236,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const showInvoiceDetail = (id:string) => {
     history.push({
-      'pathname': `view/${id}`,
+      'pathname': `/main/invoicing/view/${id}`,
       'state': {
         keyword,
         currentPageSize,

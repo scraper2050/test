@@ -46,6 +46,8 @@ export interface CompanyLocation {
     city?: string;
     state?: string;
     zipCode?: string;
+    emailSender?: string;
+    setUserAsSender?: boolean;
   },
   isAddressAsBillingAddress?: boolean,
   workTypes?: any[],

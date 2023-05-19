@@ -15,6 +15,8 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {getJobTypesFromJob} from "../../../helpers/utils";
 import classNames from "classnames";
 import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop'
+import { useSelector } from "react-redux";
+import { ICurrentLocation } from "actions/filter-location/filter.location.types";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -42,6 +44,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
   const history = useHistory();
   const location = useLocation<any>();
   const [invoiceDetailResult, setInvoiceDetailResult] = useState<boolean>(false);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const { job, invoiceCreated, invoice } = jobReportData;
 
@@ -82,7 +85,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
   const handleBackButtonClick = () => {
     if(location?.state?.keyword || location?.state?.currentPageSize){
       history.push({
-        'pathname': '/main/customers/job-reports',
+        'pathname': currentLocation.locationId && currentLocation.workTypeId ?  `/main/customers/job-reports/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/customers/job-reports`,
         'state': {
           'option': {
             search: location?.state?.keyword || '',
@@ -113,7 +116,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       });
     } else if(location?.state?.keyword || location?.state?.currentPageSize){
       history.push({
-        'pathname': '/main/customers/job-reports',
+        'pathname': currentLocation.locationId && currentLocation.workTypeId ?  `/main/customers/job-reports/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/customers/job-reports`,
         'state': {
           'option': {
             search: location?.state?.keyword || '',
@@ -124,7 +127,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       });
     } else {
       history.push({
-        'pathname': `/main/customers/job-reports`
+        'pathname': currentLocation.locationId && currentLocation.workTypeId ?  `/main/customers/job-reports/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/customers/job-reports`
       });
     }
   };
@@ -151,7 +154,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
 
   const showInvoice = () => {
     history.push({
-      'pathname': `view/${invoice._id}`,
+      'pathname': `/main/customers/job-reports/view/${invoice._id}`,
     });
   };
 
