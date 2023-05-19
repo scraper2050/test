@@ -4,6 +4,9 @@ import React, {useEffect, useRef, useState} from 'react';
 import {formatDateTimeYMD, formatDateYMD, parseISODate} from 'helpers/format';
 import {refreshServiceTickets} from 'actions/service-ticket/service-ticket.action';
 import styles from './bc-service-ticket-modal.styles';
+import BCEmailValidateInput from '../../components/bc-email-validate-input/bc-email-validate-input';
+import {FormDataModel} from '../../models/form-data';
+import BCPhoneNumberInput from '../../components/bc-phone-number-input/bc-phone-number-input';
 import {useFormik} from 'formik';
 import {
   Button,
@@ -96,7 +99,16 @@ function BCServiceTicketModal(
   const [isLoadingDatas, setIsLoadingDatas] = useState(false);
   const [thumbs, setThumbs] = useState<any[]>([]);
   const isFieldsDisabled = !!ticket.jobCreated && !allowEditWithJob;
-
+  const [formDataPhone, setFormDataPhone] = useState<FormDataModel>({
+    'errorMsg': 'Wrong phone format',
+    'validate': true,
+    'value': ticket.homeOwner?.contact.phone || '',
+  });
+  const [formDataEmail, setFormDataEmail] = useState<FormDataModel>({
+    'errorMsg': 'Wrong email format',
+    'validate': true,
+    'value': ticket.homeOwner?.info.email || '',
+  });
   const {loading, data} = useSelector(
     ({employeesForJob}: any) => employeesForJob
   );
@@ -174,7 +186,7 @@ function BCServiceTicketModal(
     setFieldValue: any,
     newValue: any
   ) => {
-    dispatch(getHomeOwnerAction(newValue._id || FormikValues.jobSiteId, FormikValues.jobLocationId));
+    dispatch(getHomeOwnerAction(newValue?._id || FormikValues.jobSiteId, FormikValues.jobLocationId));
     if (newValue?._id) {
       setFieldValue(fieldName, newValue._id);
       setJobSiteValue(newValue);
@@ -318,8 +330,6 @@ function BCServiceTicketModal(
       isHomeOccupied: ticket.isHomeOccupied || false,
       customerFirstName: ticket.homeOwner?.profile.firstName || '',
       customerLastName: ticket.homeOwner?.profile.lastName || '',
-      customerEmail: ticket.homeOwner?.info.email || '',
-      customerPhone: ticket.homeOwner?.contact.phone || ''
     },
     onSubmit: async (values, {setSubmitting}) => {
       const tempData = {
@@ -417,8 +427,8 @@ function BCServiceTicketModal(
           if(homeOwnerId !== '' && 
             formatedRequest.customerFirstName === homeOwners[0].profile.firstName &&
             formatedRequest.customerLastName === homeOwners[0].profile.lastName &&
-            formatedRequest.customerEmail === homeOwners[0].info.email &&
-            formatedRequest.customerPhone === homeOwners[0].contact.phone
+            formDataEmail.value === homeOwners[0].info.email &&
+            formDataPhone.value === homeOwners[0].contact.phone
           ) {
             formatedRequest.homeOwnerId = homeOwnerId;
           }
@@ -426,8 +436,8 @@ function BCServiceTicketModal(
             const homeOwnerData = {
               firstName: formatedRequest.customerFirstName ?? '',
               lastName: formatedRequest.customerLastName ?? '',
-              email: formatedRequest.customerEmail ?? '',
-              phone: formatedRequest.customerPhone ?? '',
+              email: formDataEmail.value ?? '',
+              phone: formDataPhone.value ?? '',
               subdivision: formatedRequest.jobLocationId ?? '',
               address: formatedRequest.jobSiteId ?? '',
             };
@@ -506,9 +516,16 @@ function BCServiceTicketModal(
       if(FormikValues.customerFirstName === '') {
         setFieldValue('customerFirstName', homeOwners[0].profile.firstName);
         setFieldValue('customerLastName', homeOwners[0].profile.lastName);
-        setFieldValue('customerEmail', homeOwners[0].info.email);
-        setFieldValue('customerPhone', homeOwners[0].contact.phone);
+        setFormDataEmail({
+          ...formDataEmail,
+          value: homeOwners[0].info.email
+        });
+        setFormDataPhone({
+          ...formDataPhone,
+          value: homeOwners[0].contact.phone
+        });
         setHomeOwnerId(homeOwners[0]._id); 
+        setHomeOccupied(true);
       }
     }
   }, [homeOwners]);
@@ -1081,7 +1098,7 @@ function BCServiceTicketModal(
                       variant={'caption'} 
                       className={`required ${'previewCaption'}`}
                     >
-                      Firstname
+                      First name
                     </Typography>
                     <BCInput
                       disabled={detail || isFieldsDisabled}
@@ -1092,7 +1109,7 @@ function BCServiceTicketModal(
                   </Grid>
                   <Grid item xs>
                     <Typography variant={'caption'} className={'previewCaption'}>
-                      Lastname
+                      Last name
                     </Typography>
                     <BCInput
                       disabled={detail || isFieldsDisabled}
@@ -1108,25 +1125,29 @@ function BCServiceTicketModal(
                     >
                       Email
                     </Typography>
-                    <BCInput
+                    <BCEmailValidateInput
+                      id={'email'}
+                      inputData={formDataEmail}
                       disabled={detail || isFieldsDisabled}
-                      handleChange={formikChange}
-                      name={'customerEmail'}
-                      value={FormikValues?.customerEmail}
-                    />
+                      label={''}
+                      onChange={(newEmail: FormDataModel) => setFormDataEmail(newEmail)}
+                      size={'small'}
+                      variant={'outlined'}
+                    />  
                   </Grid>
                   <Grid item xs>
                     <Typography 
-                      variant={'caption'}
-                      className={`required ${'previewCaption'}`}
-                    >
-                      Phone
+                        variant={'caption'}
+                        className={`required ${'previewCaption'}`}
+                      >
+                        Phone
                     </Typography>
-                    <BCInput
-                      disabled={detail || isFieldsDisabled}
-                      handleChange={formikChange}
-                      name={'customerPhone'}
-                      value={FormikValues?.customerPhone}
+                    <BCPhoneNumberInput
+                      changeData={(data: FormDataModel) => setFormDataPhone(data)}
+                      id={'phone_number'}
+                      inputData={formDataPhone}
+                      label={''}
+                      size={'small'}
                     />
                   </Grid>
                 </Grid>

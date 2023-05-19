@@ -1251,7 +1251,7 @@ function BCJobModal({
               <Grid container>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>
-                    Firstname
+                    First name
                   </Typography>
                   <BCInput
                     disabled={true}
@@ -1261,7 +1261,7 @@ function BCJobModal({
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>
-                    Lastname
+                    Last name
                   </Typography>
                   <BCInput
                     disabled={true}
