@@ -59,7 +59,7 @@ import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {useHistory} from 'react-router-dom';
 import { callCreateHomeOwner } from 'api/home-owner.api';
-import { getHomeOwnerAction } from 'actions/home-owner/home-owner.action';
+import { getHomeOwnerAction, clearHomeOwnerStore } from 'actions/home-owner/home-owner.action';
 
 function BCServiceTicketModal(
   {
@@ -100,12 +100,12 @@ function BCServiceTicketModal(
   const [thumbs, setThumbs] = useState<any[]>([]);
   const isFieldsDisabled = !!ticket.jobCreated && !allowEditWithJob;
   const [formDataPhone, setFormDataPhone] = useState<FormDataModel>({
-    'errorMsg': 'Wrong phone format',
+    'errorMsg': '',
     'validate': true,
     'value': ticket.homeOwner?.contact.phone || '',
   });
   const [formDataEmail, setFormDataEmail] = useState<FormDataModel>({
-    'errorMsg': 'Wrong email format',
+    'errorMsg': 'Occupied house must have email or phone number',
     'validate': true,
     'value': ticket.homeOwner?.info.email || '',
   });
@@ -290,6 +290,7 @@ function BCServiceTicketModal(
     if (!ticket.updateFlag) {
       dispatch(clearJobLocationStore());
       dispatch(clearJobSiteStore());
+      dispatch(clearHomeOwnerStore());
     }
   }, []);
 
@@ -539,20 +540,24 @@ function BCServiceTicketModal(
   const homeOwners = useSelector((state: any) => state.homeOwner.data);
 
   useEffect(() => {
-    if (homeOwners && homeOwners.length > 0) {
+    const filteredHomeOwners = homeOwners.filter((item: any) => {
+      return (item?.address === FormikValues.jobSiteId);
+    });
+    if (filteredHomeOwners && filteredHomeOwners.length > 0 && FormikValues.jobSiteId !== '') {
       if(FormikValues.customerFirstName === '') {
-        setFieldValue('customerFirstName', homeOwners[0].profile.firstName);
-        setFieldValue('customerLastName', homeOwners[0].profile.lastName);
+        setFieldValue('customerFirstName', filteredHomeOwners[0].profile.firstName);
+        setFieldValue('customerLastName', filteredHomeOwners[0].profile.lastName);
         setFormDataEmail({
           ...formDataEmail,
-          value: homeOwners[0].info.email
+          value: filteredHomeOwners[0].info.email
         });
         setFormDataPhone({
           ...formDataPhone,
-          value: homeOwners[0].contact.phone
+          value: filteredHomeOwners[0].contact.phone
         });
-        setHomeOwnerId(homeOwners[0]._id); 
+        setHomeOwnerId(filteredHomeOwners[0]._id); 
         setHomeOccupied(true);
+        FormikValues.isHomeOccupied = true;
       }
     }
   }, [homeOwners]);
