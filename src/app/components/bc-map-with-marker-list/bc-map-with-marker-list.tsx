@@ -93,7 +93,7 @@ const calculateBorder = (cluster:any) => {
     return '3px solid black'
   }
   if(cluster.properties?.includeTicket){
-    return cluster.properties?.isHomeOccupied ? PRIMARY_ORANGE : '3px solid #2477FF';
+    return cluster.properties?.isHomeOccupied ? '3px solid ' + PRIMARY_ORANGE : '3px solid #2477FF';
   }
   if(cluster.properties?.includeRequest){
     return '3px solid #970505'

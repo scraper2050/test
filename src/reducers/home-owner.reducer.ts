@@ -22,6 +22,11 @@ export default (state = initialHomeOwnerTypes, { payload, type }: ReducerParamsI
         ...state,
         loading: true,
       };
+    case HomeOwnerType.CLEAR_HOME_OWNER_STORE:
+      return {
+        ...state,
+        data: []
+      };
     case HomeOwnerType.FAILED:
       return {
         ...state,

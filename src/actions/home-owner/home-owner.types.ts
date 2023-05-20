@@ -13,4 +13,5 @@ export const types = {
     GET = 'getHomeOwner',
     SET = 'setHomeOwner',
     FAILED = 'getHomeOwnerFailed',
+    CLEAR_HOME_OWNER_STORE = 'clearHomeOwnerStore'
   }

@@ -22,3 +22,9 @@ export const setHomeOwner = (homeOwner: any) => {
       payload: homeOwner
     }
 }
+
+export const clearHomeOwnerStore = () => {
+  return {
+      type: HomeOwnerType.CLEAR_HOME_OWNER_STORE
+  }
+}
