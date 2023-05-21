@@ -55,7 +55,7 @@ import {stringSortCaseInsensitive} from '../../../helpers/sort';
 import BCDragAndDrop from '../../components/bc-drag-drop/bc-drag-drop';
 import {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {useHistory} from 'react-router-dom';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function BCServiceTicketModal(
   {
@@ -101,7 +101,7 @@ function BCServiceTicketModal(
   const employeesForJob = [...data];
   const jobTypesInput = useRef<HTMLInputElement>(null);
   const history = useHistory();
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const filter = createFilterOptions();
 
@@ -329,9 +329,12 @@ function BCServiceTicketModal(
       );
 
       //add division and location field
-      if (currentLocation?.locationId && currentLocation?.workTypeId) {
-        tempData.workType = currentLocation?.workTypeId;
-        tempData.companyLocation = currentLocation?.locationId;
+      if (currentDivision.data?.locationId) {
+        tempData.companyLocation = currentDivision.data?.locationId;
+      }
+      
+      if (currentDivision.data?.workTypeId) {
+        tempData.workType = currentDivision.data?.workTypeId;
       }
 
       const editTicketObj = {...values, ticketId: ''};

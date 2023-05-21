@@ -29,18 +29,11 @@ import {error, warning} from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker, {Range}
   from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import { CSButton } from "../../../../../helpers/custom";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { useParams } from 'react-router-dom';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
-  const divisions = useSelector((state: any) => state.divisions);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const customers = useSelector(({ customers }: any) => customers.data);
   const [showAllTickets, toggleShowAllTickets] = useState(false);
@@ -67,7 +60,7 @@ function ServiceTicket({ classes, hidden }: any) {
 
   const openCreateTicketModal = () => {
     //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
-    if ((divisions.data?.length && divisionParams.workType && divisionParams.companyLocation) || !divisions.data?.length) {
+    if ((currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != "All") || !currentDivision.isDivisionFeatureActivated) {
       if (customers.length !== 0) {
         dispatch(setModalDataAction({
           'data': {
@@ -149,14 +142,14 @@ function ServiceTicket({ classes, hidden }: any) {
   function Toolbar() {
     useEffect(() => {
       if(loadCount.current !== 0){
-        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange, divisionParams));
+        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange, currentDivision.params));
         dispatch(setCurrentPageIndex(0));
       }
     }, [showAllTickets]);
 
     useEffect(() => {
       if(loadCount.current !== 0){
-        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange, divisionParams));
+        dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, showAllTickets, keyword, selectionRange, currentDivision.params));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectionRange]);
@@ -312,7 +305,7 @@ function ServiceTicket({ classes, hidden }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange,divisionParams));
+      dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, showAllTickets, keyword, selectionRange,currentDivision.params));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -320,8 +313,9 @@ function ServiceTicket({ classes, hidden }: any) {
       loadCount.current++;
     }, 1000);
   }, [refresh]);
+  
   useEffect(() => {
-    dispatch(getAllServiceTicketsAPI(undefined,undefined,undefined,undefined,undefined,undefined,divisionParams));
+    dispatch(getAllServiceTicketsAPI(undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
     if(customers.length == 0) {
       dispatch(getCustomers());
     }
@@ -329,7 +323,7 @@ function ServiceTicket({ classes, hidden }: any) {
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
     dispatch(setCurrentPageSize(10)); 
-  }, [])
+  }, [currentDivision.params])
 
   const handleRowClick = (event: any, row: any) => {
   };

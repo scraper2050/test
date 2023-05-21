@@ -17,7 +17,7 @@ import {Sync as SyncIcon} from '@material-ui/icons';
 import InvoicingUnpaidListing
   from "./invoices-list-listing/invoices-unpaid-listing";
 import {RootState} from "../../../../reducers";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
@@ -27,13 +27,12 @@ function InvoiceList({ classes }: any) {
   const [curTab, setCurTab] = useState(location?.state?.tab || 0);
   const theme = useTheme();
 
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const [visibleTabs, setVisibleTabs] = useState<number[]>([0])
   const {loading, totalDraft, unSyncedInvoicesCount} = useSelector(({invoiceList}: any) => invoiceList);
   const { loading: loadingPayment, unSyncPaymentsCount } = useSelector(    ({ paymentList }: RootState) => (paymentList)
   );
-  const divisions = useSelector((state: any) => state.divisions);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
   const handleTabChange = (newValue: number) => {
     setCurTab(newValue);
     if (visibleTabs.indexOf(newValue) === -1) setVisibleTabs([...visibleTabs, newValue]);
@@ -64,7 +63,7 @@ function InvoiceList({ classes }: any) {
     switch (id) {
       case 0:
         //To ensure that all invoices are detected by the division, and check if the user has activated the division feature.
-        if ((divisions.data?.length && currentLocation.workTypeId && currentLocation.locationId) || !divisions.data?.length) {
+        if ((currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != "All") || !currentDivision.isDivisionFeatureActivated) {
           openCreateInvoicePage();
         }else{
           dispatch(warning("Please select a division before creating an invoice."));

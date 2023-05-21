@@ -259,6 +259,7 @@ function EmailJobReportModal({ classes, data }: any) {
         emailDefault: tempEmailDefault,
         receipients:tempReceipients,
         customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
+        from: data?.multipleInvoices[invoiceInMultipleView + 1]?.from,
       });
 
     } else {
@@ -271,6 +272,7 @@ function EmailJobReportModal({ classes, data }: any) {
         emailDefault:
           data?.multipleInvoices[invoiceInMultipleView + 1]?.emailDefault,
         customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
+        from: data?.multipleInvoices[invoiceInMultipleView + 1]?.from,
       });
     }  
 
@@ -382,6 +384,7 @@ function EmailJobReportModal({ classes, data }: any) {
       emailDefault: tempEmailDefault,
       receipients:tempReceipients,
       customerId: data?.multipleInvoices[invoiceInMultipleView - 1]?.customerId,
+      from: data?.multipleInvoices[invoiceInMultipleView - 1]?.from,
     });
 
     setInvoiceInMultipleView(invoiceInMultipleView - 1);

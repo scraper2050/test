@@ -69,7 +69,7 @@ import {ReactComponent as CollectIcon} from 'assets/img/icons/sidebar/reports/co
 import {ReactComponent as AmountIcon} from 'assets/img/icons/sidebar/reports/amount.svg'
 import {ReactComponent as PayrollIcon} from 'assets/img/icons/sidebar/reports/payroll.svg'
 import { useSelector } from "react-redux";
-import { ICurrentLocation } from "actions/filter-location/filter.location.types";
+import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
 interface BCSidebarProps {
   user: any;
@@ -191,9 +191,10 @@ function BCAdminSidebar({
   const location = useLocation();
   const pathName = location.pathname;
   const nestedRouteKey = localStorage.getItem('nestedRouteKey');
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const getLinkByDivision = (path: string) => {
-    return currentLocation.workTypeId && currentLocation.locationId ? `${path}/${currentLocation.locationId}/${currentLocation.workTypeId}` : path
+    return currentDivision.urlParams ? `${path}/${currentDivision.urlParams}` : path
   }
 
   const LINK_DATA = [

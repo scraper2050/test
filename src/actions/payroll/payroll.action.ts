@@ -15,10 +15,10 @@ export const setContractorsLoading = (isLoading: any) => {
   };
 };
 
-export const getContractors = () => {
+export const getContractors = (division?: DivisionParams) => {
   return async (dispatch: any) => {
     dispatch(setContractorsLoading(true));
-    const contractors: any = await getContractorsAPI();
+    const contractors: any = await getContractorsAPI(division);
     if (contractors.status === 0) {
       dispatch(error(contractors.message));
       dispatch(setContractors([]));

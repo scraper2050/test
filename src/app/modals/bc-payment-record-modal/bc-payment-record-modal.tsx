@@ -27,8 +27,7 @@ import {modalTypes} from "../../../constants";
 import { voidPayment } from 'api/payment.api';
 import BCSentSync from "../../components/bc-sent-sync";
 import {formatCurrency} from "../../../helpers/format";
-import { DivisionParams } from 'app/models/division';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface ApiProps {
   customerId: string,
@@ -51,7 +50,7 @@ function BcPaymentRecordModal({
   const [sent, setSent] = useState<null | {created: boolean,synced: boolean }>(null);
   const [invoice, setInvoice] = useState(invoiceOrg);
   const dispatch = useDispatch();
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const paymentTypes = [
     {
@@ -148,11 +147,7 @@ function BcPaymentRecordModal({
         request = recordPayment;
       }
 
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      dispatch(request(params,divisionParams)).then((response: any) => {
+      dispatch(request(params,currentDivision.params)).then((response: any) => {
         const {status, payment, quickbookPayment, invoice: updatedInvoice, invoices, message} = response;
         if (status === 1) {
           const {
@@ -223,16 +218,12 @@ function BcPaymentRecordModal({
       },
       'type': modalTypes.PAYMENT_RECORD_MODAL
     });
-    let divisionParams:DivisionParams = {
-      workType: currentLocation.workTypeId,
-      companyLocation: currentLocation.locationId,
-    };
     dispatch(setModalDataAction({
       data: {
         modalTitle: '         ',
         message: 'Are you sure you want to void this payment?',
         subMessage: 'This action cannot be undone.',
-        action: voidPayment({type: 'customer', paymentId: payment._id},divisionParams),
+        action: voidPayment({type: 'customer', paymentId: payment._id},currentDivision.params),
         closeAction,
       },
       'type': modalTypes.WARNING_MODAL

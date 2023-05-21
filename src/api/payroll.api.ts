@@ -4,9 +4,9 @@ import { error, success } from 'actions/snackbar/snackbar.action';
 import { getContractorPayments, getPayrollBalance } from 'actions/payroll/payroll.action';
 import { DivisionParams } from 'app/models/division';
 
-export const getContractorsAPI = async () => {
+export const getContractorsAPI = async (division?: DivisionParams) => {
   try {
-    const response: any = await request("/getContractors", 'GET', {}, false);
+    const response: any = await request("/getContractors", 'GET', {}, false,undefined,undefined,undefined,division);
     const {status, message, contractors = [], technicians = []} = response.data;
     if (status === 1) {
       const data = [

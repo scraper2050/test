@@ -30,8 +30,7 @@ import { updatePayment } from 'api/payment.api';
 import { error } from "actions/snackbar/snackbar.action";
 import { voidPayment } from 'api/payment.api';
 import { modalTypes } from '../../../constants';
-import { DivisionParams } from 'app/models/division';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -57,7 +56,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   const [localPaymentList, setLocalPaymentList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const inputStyles = useInputStyles();
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const paymentList = payments.line;
 
@@ -132,11 +131,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
       if(values.paymentType !== ''){
         paramObj.paymentType = paymentTypeReference.filter(type => type._id == values.paymentType)[0].label
       }
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      dispatch(updatePayment(paramObj, divisionParams))
+      dispatch(updatePayment(paramObj, currentDivision.params))
         .then((response: any) => {
           if (response.status === 1) {
             setIsSuccess(true);
@@ -215,16 +210,12 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
       },
       'type': modalTypes.EDIT_BULK_PAYMENT_MODAL
     });
-    let divisionParams:DivisionParams = {
-      workType: currentLocation.workTypeId,
-      companyLocation: currentLocation.locationId,
-    };
     dispatch(setModalDataAction({
       data: {
         modalTitle: '         ',
         message: 'Are you sure you want to void this bulk payment?',
         subMessage: 'This action cannot be undone.',
-        action: voidPayment({type: 'customer', paymentId: payments._id},divisionParams),
+        action: voidPayment({type: 'customer', paymentId: payments._id},currentDivision.params),
         closeAction,
       },
       'type': modalTypes.WARNING_MODAL

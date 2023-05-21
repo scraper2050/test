@@ -54,9 +54,7 @@ import { modalTypes } from "../../../constants";
 import { resetEmailState } from "../../../actions/email/email.action";
 import { setTimeout } from 'timers';
 import { PaymentStatus } from 'app/pages/invoicing/invoices-list/invoices-list-listing/invoices-unpaid-listing';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { DivisionParams } from 'app/models/division';
-
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 const SHOW_OPTIONS = [
   {
@@ -113,7 +111,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const [isSuccess, setIsSuccess] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const debounceInputStyles = useDebounceInputStyles();
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const getFilteredList = (state: any) => {
     return TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -277,21 +275,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
     dispatch(resetEmailState());
     dispatch(setCurrentPageIndex(0));
-    let divisionParams:DivisionParams = {
-      workType: currentLocation.workTypeId,
-      companyLocation: currentLocation.locationId,
-    };
-    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,divisionParams));
+    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
   };
 
   const closeModal = () => {
 
     dispatch(setCurrentPageIndex(0));
-    let divisionParams:DivisionParams = {
-      workType: currentLocation.workTypeId,
-      companyLocation: currentLocation.locationId,
-    };
-    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,divisionParams));
+    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
     dispatch(closeModalAction());
     setTimeout(() => {
       dispatch(setModalDataAction({
@@ -303,10 +293,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   useEffect(() => {
     dispatch(setCurrentPageIndex(0));
-    let divisionParams:DivisionParams = {
-      workType: currentLocation.workTypeId,
-      companyLocation: currentLocation.locationId,
-    };
     dispatch(getAllInvoicesAPI(
       currentPageSize,
       undefined,
@@ -316,7 +302,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       customerValue?._id,
       isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
       showValue === 'all',
-      divisionParams
+      currentDivision.params
     ));
   }, [customerValue, selectionRange, showValue]);
 
@@ -509,10 +495,6 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 onRowClick={handleRowClick}
                 manualPagination
                 fetchFunction={(num: number, isPrev: boolean, isNext: boolean) => {
-                  let divisionParams:DivisionParams = {
-                    workType: currentLocation.workTypeId,
-                    companyLocation: currentLocation.locationId,
-                  };
                   dispatch(getAllInvoicesAPI(
                     num || currentPageSize,
                     isPrev ? prevCursor : undefined,
@@ -522,7 +504,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                     customerValue?._id,
                     isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
                     showValue === 'all',
-                    divisionParams
+                    currentDivision.params
                   ))
                 }}
                 total={total}

@@ -15,7 +15,7 @@ import { CSButton } from "../../../../helpers/custom";
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
 import JobPage from "./job-page";
 import TicketPage from "./ticket-page";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { warning } from 'actions/snackbar/snackbar.action';
 
 function ScheduleJobsPage({ classes }: any) {
@@ -26,8 +26,7 @@ function ScheduleJobsPage({ classes }: any) {
   const history = useHistory();
   const locationState = location.state;
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
-  const divisions = useSelector((state: any) => state.divisions);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   useEffect(() => {
     if(localStorage.getItem('prevPage') === 'ticket-map-view'){
@@ -61,7 +60,7 @@ function ScheduleJobsPage({ classes }: any) {
 
   const openCreateTicketModal = () => {
     //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
-    if ((divisions.data?.length && currentLocation.workTypeId && currentLocation.locationId) || !divisions.data?.length) {
+    if ((currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != "All") || !currentDivision.isDivisionFeatureActivated) {
       if (customers.length !== 0) {
         dispatch(setModalDataAction({
           'data': {

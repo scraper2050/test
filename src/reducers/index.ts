@@ -77,7 +77,7 @@ import { MapTechnicianFilterReducer as mapTechnicianFilterState } from './map-te
 import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-technician-jobs.reducer';
 import { WorkTypeReducer as workTypes } from './work-type.reducer';
 import { DivisionReducer as divisions } from './division.reducer';
-import { FilterLocationReducer as currentLocation } from "./filter-location.reducer";
+import { FilterDivisionReducer as currentDivision } from "./filter-division.reducer";
 
 
 export interface ReducerParamsInterface {
@@ -163,7 +163,7 @@ const appReducer = combineReducers({
   mapTechnicianJobsState,
   workTypes,
   divisions,
-  currentLocation
+  currentDivision
 });
 
 const rootReducer = (state: any, action: any) => {

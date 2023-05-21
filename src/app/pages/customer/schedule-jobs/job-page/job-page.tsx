@@ -27,24 +27,17 @@ import moment from "moment";
 import { getVendor } from "../../../../../helpers/job";
 import { CSButton } from "../../../../../helpers/custom";
 import debounce from 'lodash.debounce';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { useParams } from 'react-router-dom';
-import { DivisionParams } from 'app/models/division';
 import { warning } from 'actions/snackbar/snackbar.action';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
-  const divisions = useSelector((state: any) => state.divisions);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const { isLoading = true, jobs, jobsList, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
+  const { isLoading = true, jobs, jobsList, refresh = false, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
@@ -116,7 +109,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
   }
   const openCreateTicketModal = () => {
     //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
-    if ((divisions.data?.length && divisionParams.workType && divisionParams.companyLocation) || !divisions.data?.length) {
+    if ((currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != "All") || !currentDivision.isDivisionFeatureActivated) {
       if (customers.length !== 0) {
         dispatch(setModalDataAction({
           'data': {
@@ -303,14 +296,14 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
         setIconComponent(null);
       }
       if (loadCount.current !== 0) {
-        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
+        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectedStatus]);
 
     useEffect(() => {
       if (loadCount.current !== 0) {
-        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
+        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectionRange]);
@@ -399,20 +392,20 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     );
   }
 
-  useEffect(() => {
-    if (refresh) {
-      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
-      dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
-    }
-    setTimeout(() => {
-      loadCount.current++;
-    }, 1000);
-  }, [refresh]);
+  useEffect(() => {    
+      if ((refresh && !currentDivision.isDivisionFeatureActivated) || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+        dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
+        dispatch(setCurrentPageIndex(0));
+        dispatch(setCurrentPageSize(10));
+      }
+      setTimeout(() => {
+        loadCount.current++;
+      }, 1000);
+  }, [refresh, currentDivision.params]);
 
   useEffect(() => {
     console.log('refetch', keyword);
-    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
   }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange])
 
   const handleTabChange = (newValue: number) => {
@@ -431,7 +424,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
 
   const desbouncedSearchFunction = debounce((keyword: string) => {
     dispatch(setKeyword(keyword));
-    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams))
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params))
   }, 500);
   return (
     <div className={classes.pageMainContainer}>
@@ -481,12 +474,12 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
                 setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => {
                   dispatch(setCurrentPageIndex(num));
                   if (apiCall)
-                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange, divisionParams))
+                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange, currentDivision.params))
                 }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams))
+                  dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   // dispatch(setKeyword(query));

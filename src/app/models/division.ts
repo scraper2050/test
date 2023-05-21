@@ -1,4 +1,4 @@
 export interface DivisionParams {
-    workType: string;
-    companyLocation: string;
+    workType?: string | string[];
+    companyLocation?: string | string[];
 }
