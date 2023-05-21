@@ -86,14 +86,14 @@ const calculateColor = (cluster:any) => {
   if(cluster.properties?.includeTicket){
     return '#2477FF'
   }
-  return cluster.properties?.isHomeOccupied ? PRIMARY_ORANGE : 'rgb(130,130,130)'
+  return cluster.properties?.isHomeOccupied ? '#db4b02' : 'rgb(130,130,130)'
 }
 const calculateBorder = (cluster:any) => {
   if(cluster.properties?.includeJob){
     return '3px solid black'
   }
   if(cluster.properties?.includeTicket){
-    return cluster.properties?.isHomeOccupied ? '3px solid ' + PRIMARY_ORANGE : '3px solid #2477FF';
+    return cluster.properties?.isHomeOccupied ? '3px solid #db4b02' : '3px solid #2477FF';
   }
   if(cluster.properties?.includeRequest){
     return '3px solid #970505'
