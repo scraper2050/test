@@ -69,7 +69,7 @@ export default (theme: Theme): any => ({
       'height': '100%',
       'justifyContent': 'center',
       'textDecoration': 'none',
-      'display': 'block',
+      'display': 'flex',
       'padding': '10px',
     },
     'width': '100%',
@@ -223,5 +223,10 @@ export default (theme: Theme): any => ({
   "divisionList": {
     "display": "flex",
     "alignItems": "center"
+  },
+  "flagWarning": {
+    "color": "red",
+    "fontWeight": 'bold',
+    "marginRight": "3px"
   }
 });

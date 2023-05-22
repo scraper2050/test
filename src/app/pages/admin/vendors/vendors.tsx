@@ -103,7 +103,21 @@ function AdminVendorsPage({ classes }: any) {
       'className': 'font-bold',
       'sortable': true,
       Cell({ row }: any) {
-        return <span>{row.original?.contractor?.info?.displayName  || row.original?.displayName || 'N/A' }</span>;
+        let isNotAssigned = "";
+        let isNotAssignedTooltip = "";
+        if (currentDivision.isDivisionFeatureActivated && !vendors.assignedVendors?.includes(row.original?.contractor?._id)) {
+          isNotAssigned = "!";
+          isNotAssignedTooltip = "This vendor is not assigned to any division or work type"
+        }
+
+        return <span>
+            <Tooltip title={isNotAssignedTooltip}>
+              <span style={{
+                color: "red",
+                fontWeight: 'bold'
+              }}>{isNotAssigned} </span>  
+            </Tooltip> 
+            {row.original?.contractor?.info?.displayName  || row.original?.displayName || 'N/A' }</span>;
       }
     },
     {
@@ -112,19 +126,7 @@ function AdminVendorsPage({ classes }: any) {
       'className': 'font-bold',
       'sortable': true,
       Cell({ row }: any) {
-        let isNotAssigned = "";
-        let isNotAssignedTooltip = "";
-        if (currentDivision.isDivisionFeatureActivated && !vendors.assignedVendors?.includes(row.original?.contractor?._id)) {
-          isNotAssigned = "!";
-          isNotAssignedTooltip = "The vendor is not assigned to any division or work type"
-        }
-        return <span>
-            <Tooltip title={isNotAssignedTooltip}>
-              <span style={{
-                color: "red",
-                fontWeight: 'bold'
-              }}>{isNotAssigned} </span>  
-            </Tooltip>  
+        return <span> 
             {row.original?.contractor?.info?.companyName || row.original?.contractorEmail}</span>;
       }
     },
