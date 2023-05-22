@@ -76,7 +76,7 @@ function BCCompanyLocationAssignModal({
           let assignedVendors = companyLocation.assignedVendors.map(res => res.vendor._id);
           filteredVendors = filteredVendors?.filter((vendor: any) => vendor.contractor?._id == formData?.vendor?._id || !assignedVendors.includes(vendor.contractor?._id));
         }
-        setAssigneeList(filteredVendors.map((res: any) => { return { _id: res?.contractor?._id, name: res?.contractor?.info?.companyName } }));
+        setAssigneeList(filteredVendors.map((res: any) => { return { _id: res?.contractor?._id, name: res?.contractor?.info?.displayName ? res?.contractor?.info?.displayName : res?.contractor?.info?.companyName } }));
       } catch (error) { }
     }
   }, [vendors])
