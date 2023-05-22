@@ -31,6 +31,7 @@ import { setCurrentDivision, setDivisionParams, setIsDivisionFeatureActivated } 
 import { ICurrentDivision, ISelectedDivision } from "actions/filter-division/fiter-division.types";
 import { getDivision, refreshDivision } from "actions/division/division.action";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { getVendors } from "actions/vendor/vendor.action";
 
 interface Props {
   classes: any;
@@ -172,10 +173,13 @@ function BCAdminHeader({
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const divisions = useSelector((state: any) => state.divisions);
   const divisionList = divisions.data;
+  const vendors = useSelector((state: any) => state.vendors);
+
 
   useEffect(() => {
     initialLoad()
     if (user?._id && divisions.refresh) {
+      dispatch(getVendors({assignedVendorsIncluded: true}));
       dispatch(getDivision(user?._id));
     }
   }, []);
@@ -273,8 +277,9 @@ function BCAdminHeader({
       'link': '/main/reports'
     },
     {
-      'label': 'Admin',
-      'link': '/main/admin'
+      'label': ' Admin',
+      'link': '/main/admin',
+      'flag': currentDivision.isDivisionFeatureActivated && vendors.data?.length != vendors.assignedVendors?.length
     },
   ];
 
@@ -347,6 +352,9 @@ function BCAdminHeader({
                     key={idx}
                     tabIndex={0}>
                     <Link to={item.link} onClick={handleClose}>
+                      {item.flag && (
+                        <span className={classes.flagWarning}>!</span>  
+                      )}
                       {item.label}
                     </Link>
                   </li>

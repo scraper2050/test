@@ -116,7 +116,7 @@ function AdminVendorsPage({ classes }: any) {
         let isNotAssignedTooltip = "";
         if (currentDivision.isDivisionFeatureActivated && !vendors.assignedVendors?.includes(row.original?.contractor?._id)) {
           isNotAssigned = "!";
-          isNotAssignedTooltip = "The vendor is not assigned to any division or work type"
+          isNotAssignedTooltip = "This vendor is not assigned to any division or work type"
         }
         return <span>
             <Tooltip title={isNotAssignedTooltip}>
