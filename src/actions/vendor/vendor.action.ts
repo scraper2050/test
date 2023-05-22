@@ -22,8 +22,9 @@ export const loadingVendors = () => {
 
 export const getVendors = (filter?: any) => {
   return async (dispatch: any) => {
-    const vendors: any = await getCompanyContracts(filter);
-    dispatch(setVendors(vendors));
+    const data = await getCompanyContracts(filter);
+    dispatch(setVendors(data.vendor));
+    dispatch(setAssignedVendors(data.assignedVendors));
   };
 };
 
@@ -49,6 +50,14 @@ export const setVendors = (vendors: any) => {
     'payload': vendors
   };
 };
+
+export const setAssignedVendors = (vendors: any) => {
+  return {
+    'type': VendorActionType.SET_ASSIGNED_VENDORS,
+    'payload': vendors
+  };
+};
+
 
 export const updateVendorPayment = (payment: any) => {
   return {
