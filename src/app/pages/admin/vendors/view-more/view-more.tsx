@@ -308,7 +308,7 @@ function CompanyProfilePage({classes}: any) {
                             <Typography variant={'caption'}>Display
                               Name</Typography>
                             <BCInput
-                              disabled
+                              readonly
                               value={displayName}
                               handleChange={() => {
                               }}
