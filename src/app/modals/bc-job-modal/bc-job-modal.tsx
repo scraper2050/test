@@ -23,6 +23,8 @@ import {
   TextField,
   Typography,
   withStyles,
+  FormControlLabel,
+  Checkbox
 } from '@material-ui/core';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
@@ -483,6 +485,8 @@ function BCJobModal({
         ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
+      isHomeOccupied: jobValue?.isHomeOccupied || ticket?.isHomeOccupied,
+      homeOwnerId: jobValue?.homeOwner || ticket?.homeOwner?._id || '',
     },
     validateOnMount: false,
     validateOnChange: false,
@@ -1285,6 +1289,63 @@ function BCJobModal({
                 <Grid item style={{width: '32%'}}/>
               </Grid>
             )}
+            <Grid container item xs>
+              <FormControlLabel
+                classes={{label: classes.checkboxLabel}}
+                control={
+                  <Checkbox
+                    color={'primary'}
+                    checked={FormikValues.isHomeOccupied }
+                    name="isHomeOccupied"
+                    classes={{root: classes.checkboxInput}}
+                    disabled={true}
+                  />
+                }
+                label={`HOUSE IS OCCUPIED`}
+              />
+            </Grid> 
+            { 
+              FormikValues.isHomeOccupied ? (
+              <Grid container>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    First name
+                  </Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerFirstName'}
+                    value={ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj[0]?.profile?.firstName ||'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    Last name
+                  </Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerLastName'}
+                    value={ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.profile?.lastName ||'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerEmail'}
+                    value={ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj[0]?.info?.email || 'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerPhone'}
+                    value={ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
+                  />
+                </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
 
           <DialogActions>
