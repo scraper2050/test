@@ -122,8 +122,7 @@ function BCCompanyLocationBillingAddressModal({
           <Grid container direction={'column'} spacing={1}>
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
-                  <Grid container item justify={'flex-end'}
-                    style={{ marginTop: 8 }} xs={3}>
+                  <Grid container item justify={'flex-end'} xs={3}>
                     <Typography variant={'button'}>Send invoices from</Typography>
                   </Grid>
                   <Grid item xs={5}>
@@ -140,10 +139,10 @@ function BCCompanyLocationBillingAddressModal({
                       error={!!FormikErrors.emailSender}
                       helperText={FormikErrors.emailSender}
                     />
+                    <small style={{textAlign: 'center', color: '#828282'}}>*If no email is set here, invoices will be sent from the logged in user</small>
                   </Grid>
                 </Grid>
             </Grid>
-
             <Grid item xs={12}>
               <Grid container direction={'row'} spacing={1}>
                 <Grid container item justify={'flex-end'}

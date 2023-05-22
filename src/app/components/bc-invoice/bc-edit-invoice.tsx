@@ -45,7 +45,7 @@ import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 import {formatCurrency} from "../../../helpers/format";
 import { useSelector } from 'react-redux';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface Props {
   classes?: any;
@@ -528,7 +528,7 @@ function BCEditInvoice({
   const [totalTax, setTotalTax] = useState(invoiceData.taxAmount || 0);
   const [totalAmount, setTotalAmount] = useState(invoiceData.total || 0);
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const [options, setOptions] =  React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
 
@@ -656,8 +656,8 @@ function BCEditInvoice({
   };
 
   useEffect(()=>{
-    if (invoiceData.locations?.length && currentLocation.locationId) {
-      let filteredLocation = invoiceData.locations.find((res: any) => res._id === currentLocation.locationId);
+    if (invoiceData.locations?.length && currentDivision.data?.locationId) {
+      let filteredLocation = invoiceData.locations.find((res: any) => res._id === currentDivision.data?.locationId);
       if (filteredLocation) {
         billingAddress.street =  filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.street : filteredLocation?.billingAddress?.street;
         billingAddress.city = filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.city : filteredLocation?.billingAddress?.city;
@@ -665,7 +665,7 @@ function BCEditInvoice({
         billingAddress.zipCode = filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.zipCode : filteredLocation?.billingAddress?.zipCode;
       }
     }
-  },[currentLocation])
+  },[currentDivision])
 
   return (
     <MuiThemeProvider theme={theme}>

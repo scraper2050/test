@@ -32,8 +32,7 @@ import {
 import moment from "moment";
 import { voidPayment, voidAdvancePayment } from 'api/payroll.api'
 import { setPayments } from 'actions/invoicing/payments/payments.action';
-import { DivisionParams } from 'app/models/division';
-
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 interface Props {
   classes: any;
 }
@@ -45,11 +44,7 @@ const ITEMS = [
 ]
 
 function PastPayments({ classes }: Props) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const location = useLocation<any>();
@@ -70,11 +65,17 @@ function PastPayments({ classes }: Props) {
   const isFiltered = selectedIDs.length > 0 || selectionRange !== null;
 
   useEffect(() => {
-    const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
-    if (cont) {
-      dispatch(getContractorPayments({ id: cont._id, type: cont.type },divisionParams));
+    handleClearFilter();
+  }, []);
+
+  useEffect(() => {
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
+      if (cont) {
+        dispatch(getContractorPayments({ id: cont._id, type: cont.type },currentDivision.params));
+      }
     }
-  }, [selectedIDs, contractors]);
+  }, [selectedIDs, contractors,currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
     dispatch(setPayments(sortArrByDate(payments, 'createdAt')))
@@ -124,8 +125,8 @@ function PastPayments({ classes }: Props) {
         message: 'Are you sure you want to delete this Payment Record?',
         subMessage: 'This action cannot be undone.',
         action: payment.__t === 'AdvancePaymentVendor'
-          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id }, divisionParams)
-          : voidPayment({ type: 'vendor', paymentId: payment._id }, divisionParams),
+          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id }, currentDivision.params)
+          : voidPayment({ type: 'vendor', paymentId: payment._id }, currentDivision.params),
       },
       'type': modalTypes.WARNING_MODAL
     }));
@@ -260,17 +261,19 @@ function PastPayments({ classes }: Props) {
     )
   }
 
+  const handleClearFilter = () => {
+    setSelectedIDs([])
+    setSelectionRange(null)
+    dispatch(setContractorPayments([]))
+  }
+
   const renderClearFilterButton = () => {
     return (selectedIDs.length > 0 || selectionRange ?
       <div style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', display: 'flex' }}>
         <Button
           variant={'text'}
           className={classes.filterClearButton}
-          onClick={() => {
-            setSelectedIDs([])
-            setSelectionRange(null)
-            dispatch(setContractorPayments([]))
-          }}
+          onClick={() => handleClearFilter()}
           endIcon={<HighlightOff />}
         >Clear Filters</Button></div> : null
     )

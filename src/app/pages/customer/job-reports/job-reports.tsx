@@ -20,15 +20,10 @@ import {
   setCurrentPageSize,
   setKeyword
 } from 'actions/customer/job-report/job-report.action'
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function JobReportsPage({ classes, theme }: any) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const customStyles = useCustomStyles();
@@ -165,24 +160,26 @@ function JobReportsPage({ classes, theme }: any) {
   }) : jobReports;
 
   useEffect(() => {
-    // dispatch(loadJobReportsActions.fetch());
-    dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,divisionParams));
-    return () => {
-      dispatch(setKeyword(''));
-      dispatch(setCurrentPageIndex(currentPageIndex));
-      dispatch(setCurrentPageSize(currentPageSize));
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      // dispatch(loadJobReportsActions.fetch());
+      dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,currentDivision.params));
+      return () => {
+        dispatch(setKeyword(''));
+        dispatch(setCurrentPageIndex(currentPageIndex));
+        dispatch(setCurrentPageSize(currentPageSize));
+      }
     }
-  }, []);
+  }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
-    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange,divisionParams));
+    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange,currentDivision.params));
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
   useEffect(() => {
     if(location?.state?.option?.search || location?.state?.option?.pageSize){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange, divisionParams));
+      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange, currentDivision.params));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
@@ -268,16 +265,16 @@ function JobReportsPage({ classes, theme }: any) {
                   {
                     dispatch(setCurrentPageIndex(num));
                     if(apiCall)
-                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange, divisionParams))
+                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange, currentDivision.params))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange, divisionParams))
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange, currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
-                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange, divisionParams))
+                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange, currentDivision.params))
                 }}
               />
             </div>

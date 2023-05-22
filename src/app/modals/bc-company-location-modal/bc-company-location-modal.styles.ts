@@ -14,7 +14,7 @@ export default (theme: Theme): any => ({
     backgroundColor: 'auto'
   },
   dialogContent: {
-    padding: '8px 200px !important',
+    padding: '8px 150px !important',
   },
   modalPreview: {
     backgroundColor: '#EAECF3',

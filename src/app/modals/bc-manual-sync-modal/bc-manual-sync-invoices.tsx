@@ -31,8 +31,7 @@ import {SYNC_RESPONSE} from "../../models/invoices";
 import BCCircularLoader
   from "../../components/bc-circular-loader/bc-circular-loader";
 import BcSyncStatus from "./bc-sync-status";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 
 function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element {
@@ -42,15 +41,11 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
   const [isLoading, setLoading] = useState(true);
   const [isSyncing, setSyncing] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const getData = async () => {
     try {
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      const invoices = await getUnsyncedInvoices(divisionParams);
+      const invoices = await getUnsyncedInvoices(currentDivision.params);
       setInvoices(invoices);
     } catch (e) {
       dispatch(error(e));

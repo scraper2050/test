@@ -21,7 +21,7 @@ import { logoutAction, resetStore } from 'actions/auth/auth.action';
 import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job-request/job-request.action';
 import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { info } from '../../../actions/snackbar/snackbar.action';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
@@ -114,7 +114,7 @@ function Main(): any {
   const { numberOfJobRequest } = useSelector((state: any) => state.jobRequests);
   const { jobRequests } = useSelector((state: any) => state.jobRequests);
   const snackbarState = useSelector((state: any) => state.snackbar);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const initialHeaderLoad = () => {
     dispatch(loadNotificationsActions.fetch());
@@ -312,9 +312,9 @@ function Main(): any {
                   title={'Tags'}
                 />
                 <AuthRoute
-                  Component={PayrollPage}
+                  Component={PastPaymentPage}
                   exact
-                  path={'/main/payroll/:companyLocation?/:workType?'}
+                  path={'/main/payroll/pastpayment/:contractorName'}
                   title={'Tags'}
                 />
                 <AuthRoute
@@ -324,15 +324,15 @@ function Main(): any {
                   title={'Tags'}
                 />
                 <AuthRoute
-                  Component={PastPaymentPage}
-                  exact
-                  path={'/main/payroll/pastpayment/:contractorName'}
-                  title={'Tags'}
-                />
-                <AuthRoute
                   Component={PayrollReportsPage}
                   exact
                   path={'/main/payroll/reports/:companyLocation?/:workType?'}
+                  title={'Tags'}
+                />
+                <AuthRoute
+                  Component={PayrollPage}
+                  exact
+                  path={'/main/payroll/:companyLocation?/:workType?'}
                   title={'Tags'}
                 />
                 <AuthRoute
@@ -537,7 +537,7 @@ function Main(): any {
                   <Redirect
                     exact
                     from={`/main/invoicing`}
-                    to={currentLocation.workTypeId && currentLocation.locationId ? `/main/invoicing/invoices-list/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/invoicing/invoices-list`}
+                    to={currentDivision.urlParams ? `/main/invoicing/invoices-list/${currentDivision.urlParams}` : `/main/invoicing/invoices-list`}
                   />
 
                   {/* <AuthRoute
@@ -758,7 +758,7 @@ function Main(): any {
                 <Redirect
                   exact
                   from={`/main/reports`}
-                  to={currentLocation.workTypeId && currentLocation.locationId ? `/main/reports/revenue/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/reports/revenue`}
+                  to={currentDivision.urlParams ? `/main/reports/revenue/${currentDivision.urlParams}` : `/main/reports/revenue`}
                 />
                 <AuthRoute
                   Component={RevenueReportsPage}

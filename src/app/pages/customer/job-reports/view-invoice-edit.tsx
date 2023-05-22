@@ -20,7 +20,7 @@ import { getCompanyProfile } from "api/user.api";
 import { getItems } from 'api/items.api'
 import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI } from "api/invoicing.api";
 import { getCompanyLocations } from "api/user.api";
-import { ICurrentLocation } from "actions/filter-location/filter.location.types";
+import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
 const newInvoice = {
   createdAt: new Date().toISOString(),
@@ -36,7 +36,7 @@ function ViewInvoice() {
   const { state } = useLocation<any>();
   const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
   const { 'data': paymentTerms } = useSelector(({ paymentTerms }: any) => paymentTerms);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const customerId = state ? state.customerId : '';
 
@@ -100,6 +100,8 @@ function ViewInvoice() {
   }
 
   const updateInvoiceHandler = (data: any) => {
+    console.log(data);
+    
     return new Promise((resolve, reject) => {
       dispatch(setModalDataAction({
         data: {
@@ -202,9 +204,12 @@ function ViewInvoice() {
       }
       if (data.customer_po) params.customerPO = data.customer_po;
 
-      if (currentLocation) {
-        params.workType = currentLocation.workTypeId;
-        params.companyLocation = currentLocation.locationId;
+      if (currentDivision.data?.locationId) {
+        params.companyLocation = currentDivision.data?.locationId;
+      }
+
+      if (currentDivision.data?.workTypeId) {
+        params.workType = currentDivision.data?.workTypeId;
       }
 
       dispatch(setModalDataAction({
@@ -260,7 +265,7 @@ function ViewInvoice() {
                 if (res.status === 1) {
                   dispatch(success(res.message));
                   history.push({
-                    'pathname': `/main/invoicing/invoices-list`,
+                    'pathname':  currentDivision.urlParams ? `/main/invoicing/invoices-list/${currentDivision.urlParams}` : "/main/invoicing/invoices-list",
                   });
                 } else {
                   dispatch(errorSnackBar(res.message));

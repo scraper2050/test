@@ -40,8 +40,7 @@ import {
 } from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
 import { RootState } from 'reducers';
 import { error } from "actions/snackbar/snackbar.action";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -74,7 +73,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   const [isSuccess, setIsSuccess] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const debounceInputStyles = useDebounceInputStyles();
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const invoiceList = useSelector(getFilteredList);
   const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
@@ -156,11 +155,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
       if(values.paymentType !== ''){
         paramObj.paymentType = paymentTypeReference.filter(type => type._id == values.paymentType)[0].label
       }
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      dispatch(recordPayment(paramObj,divisionParams))
+      dispatch(recordPayment(paramObj,currentDivision.params))
         .then((response: any) => {
           if (response.status === 1) {
             setIsSuccess(true);
@@ -218,11 +213,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   const debouncedFetchFunction = useCallback(
     debounce((value, FormikValues) => {
       setKeyword(value);
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid,divisionParams))
+      dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, prevCursor, nextCursor, value, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid,currentDivision.params))
       dispatch(setCurrentPageIndex(0));
     }, 500),
     []
@@ -271,11 +262,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   };
 
   useEffect(() => {
-    let divisionParams: DivisionParams = {
-      workType: currentLocation.workTypeId,
-      companyLocation: currentLocation.locationId,
-    };
-    dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid,divisionParams));
+    dispatch(getAllInvoicesForBulkPaymentsAPI(currentPageSize, '', '', FormikValues.query, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid,currentDivision.params));
     dispatch(setCurrentPageIndex(0));
   }, [FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid]);
 
@@ -595,11 +582,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                 tableData={localInvoiceList}
                 manualPagination
                 fetchFunction={(num: number, isPrev: boolean, isNext: boolean) => {
-                    let divisionParams: DivisionParams = {
-                      workType: currentLocation.workTypeId,
-                      companyLocation: currentLocation.locationId,
-                    };
-                    dispatch(getAllInvoicesForBulkPaymentsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid, divisionParams))
+                    dispatch(getAllInvoicesForBulkPaymentsAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, FormikValues.query === '' ? '' : FormikValues.query || keyword, undefined, FormikValues.customerId, FormikValues.dueDate, FormikValues.showPaid, currentDivision.params))
                   }
                 }
                 total={total}

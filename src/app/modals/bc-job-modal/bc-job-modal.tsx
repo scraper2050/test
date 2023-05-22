@@ -75,7 +75,8 @@ import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { DivisionParams } from 'app/models/division';
 
 const initialTask = {
   employeeType: 0,
@@ -187,7 +188,7 @@ function BCJobModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const { contacts } = useSelector((state: any) => state.contacts);
   const openServiceTicketFilter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
@@ -353,14 +354,13 @@ function BCJobModal({
         ? job.ticket.customer?._id
         : job.ticket.customer;
     dispatch(getInventory());
-    dispatch(getEmployeesForJobAction({
-        workType: currentLocation?.workTypeId,
-        companyLocation: currentLocation?.locationId
-    }));
-    dispatch(getVendors({
-      workType: currentLocation?.workTypeId,
-      companyLocation: currentLocation?.locationId
-    }));
+    let divisionParams: DivisionParams = {};
+    if (currentDivision.data?.name != "All") {
+      divisionParams = {workType: currentDivision.data?.workTypeId, companyLocation: currentDivision.data?.locationId};
+    }
+    
+    dispatch(getEmployeesForJobAction(divisionParams));
+    dispatch(getVendors(divisionParams));
     dispatch(getAllJobTypesAPI());
     dispatch(getJobLocationsAction({customerId: customerId}));
 

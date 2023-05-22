@@ -28,7 +28,7 @@ import {
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {error} from "../../../../../../actions/snackbar/snackbar.action";
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface LocationStateTypes {
   customerName: string;
@@ -36,13 +36,9 @@ interface LocationStateTypes {
 }
 
 function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
-
   const dispatch = useDispatch();
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const { isLoading = true, tickets, refresh = true } = useSelector(({ serviceTicket }: any) => ({
     'isLoading': serviceTicket.isLoading,
     'refresh': serviceTicket.refresh,
@@ -274,9 +270,9 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
   ];
 
   useEffect(() => {
-    if (refresh) {
+    if ((refresh && !currentDivision.isDivisionFeatureActivated) || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
       dispatch(getAllJobTypesAPI());
-      dispatch(getAllServiceTicketAPI(undefined,divisionParams));
+      dispatch(getAllServiceTicketAPI(undefined,currentDivision.params));
     }
 
     if (tickets) {
@@ -289,7 +285,7 @@ function CustomersJobEquipmentInfoTicketsPage({ classes }: any) {
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction({ customerId }));
     }
-  }, [refresh]);
+  }, [refresh, currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   return (
     <>

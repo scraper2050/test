@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { withStyles } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { useLocation, useHistory, useParams } from 'react-router-dom';
@@ -24,7 +24,7 @@ import {
   error as SnackBarError,
   info
 } from 'actions/snackbar/snackbar.action';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface RevenueStandardProps {
   classes: any;
@@ -41,11 +41,7 @@ const MORE_ITEMS = [
 ]
 
 const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -92,7 +88,7 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
     const paramObject = formatReportParams(params);
     try {
       setIsLoading(true);
-      const result = await generateIncomeReport(paramObject,divisionParams);
+      const result = await generateIncomeReport(paramObject,currentDivision.params);
       if(result.status === 1) {
         setReportData(result);
         dispatch(setReportShowing(true));
@@ -137,7 +133,7 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
         status,
         incomeReportUrl,
         message
-      } = await generateIncomePdfReport(reportQuery,divisionParams);
+      } = await generateIncomePdfReport(reportQuery,currentDivision.params);
       if (status === 1) {
         window.open(incomeReportUrl)
       } else {

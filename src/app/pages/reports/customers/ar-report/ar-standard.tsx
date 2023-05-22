@@ -27,7 +27,7 @@ import {
   setModalDataAction
 } from "../../../../../actions/bc-modal/bc-modal.action";
 import {useHistory, useParams} from "react-router-dom";
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface RevenueStandardProps {
   classes: any;
@@ -52,11 +52,7 @@ const MORE_ITEMS = [
 const chartColors = ['#349785', PRIMARY_BLUE, PRIMARY_BLUE, PRIMARY_BLUE, '#F50057']
 
 const ARStandardReport = ({classes}: RevenueStandardProps) => {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -215,7 +211,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
       status,
       report,
       message
-    } = await generateAccountReceivableReport(1, formatDateYMD(asOfDate),undefined,divisionParams);
+    } = await generateAccountReceivableReport(1, formatDateYMD(asOfDate),undefined,currentDivision.params);
     if (status === 1) {
       setReport(report);
     } else {
@@ -231,7 +227,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
         status,
         reportUrl,
         message
-      } = await generateAccountReceivablePdfReport(1, formatDateYMD(asOfDate),undefined,divisionParams);
+      } = await generateAccountReceivablePdfReport(1, formatDateYMD(asOfDate),undefined,currentDivision.params);
       if (status === 1) {
         window.open(reportUrl)
       } else {

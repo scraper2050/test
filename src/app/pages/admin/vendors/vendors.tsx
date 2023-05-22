@@ -17,6 +17,7 @@ import {CSButton, CSButtonSmall} from "../../../../helpers/custom";
 import {remindVendorApi} from "../../../../api/vendor.api";
 import {error, info} from "../../../../actions/snackbar/snackbar.action";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface StatusTypes {
   status: number;
@@ -51,6 +52,7 @@ function AdminVendorsPage({ classes }: any) {
   const [vendorStatus, setVendorStatus] = useState(true);
   const history = useHistory();
   const location = useLocation<any>();
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1, 5].includes(vendor.status)), [vendors]);
   const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1, 5].includes(vendor.status)), [vendors]);
@@ -110,7 +112,20 @@ function AdminVendorsPage({ classes }: any) {
       'className': 'font-bold',
       'sortable': true,
       Cell({ row }: any) {
-        return <span>{row.original?.contractor?.info?.companyName || row.original?.contractorEmail}</span>;
+        let isNotAssigned = "";
+        let isNotAssignedTooltip = "";
+        if (currentDivision.isDivisionFeatureActivated && !vendors.assignedVendors?.includes(row.original?.contractor?._id)) {
+          isNotAssigned = "!";
+          isNotAssignedTooltip = "The vendor is not assigned to any division or work type"
+        }
+        return <span>
+            <Tooltip title={isNotAssignedTooltip}>
+              <span style={{
+                color: "red",
+                fontWeight: 'bold'
+              }}>{isNotAssigned} </span>  
+            </Tooltip>  
+            {row.original?.contractor?.info?.companyName || row.original?.contractorEmail}</span>;
       }
     },
     {
@@ -156,11 +171,11 @@ function AdminVendorsPage({ classes }: any) {
     if (vendors) {
       setTableData(activeVendors);
     }
-  }, [vendors]);
+  }, [vendors, currentDivision.isDivisionFeatureActivated]);
 
   useEffect(() => {
     dispatch(loadingVendors());
-    dispatch(getVendors());
+    dispatch(getVendors({assignedVendorsIncluded: true}));
   }, []);
 
   const resetLocationState = () => {

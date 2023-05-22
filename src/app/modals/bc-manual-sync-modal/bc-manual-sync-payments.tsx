@@ -30,8 +30,7 @@ import BCCircularLoader
   from "../../components/bc-circular-loader/bc-circular-loader";
 import {getUnsyncedPayments, SyncPayments} from "../../../api/payment.api";
 import BcSyncStatus from "./bc-sync-status";
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 
 
@@ -42,15 +41,11 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
   const [isLoading, setLoading] = useState(true);
   const [isSyncing, setSyncing] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const getData = async () => {
     try {
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      const payments = await getUnsyncedPayments(divisionParams);
+      const payments = await getUnsyncedPayments(currentDivision.params);
       setPayments(payments.reverse());
     } catch (e) {
       dispatch(error(e));

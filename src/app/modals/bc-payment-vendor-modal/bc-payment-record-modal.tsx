@@ -24,9 +24,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
 import {modalTypes} from "../../../constants";
 import {formatCurrency} from "../../../helpers/format";
-import { DivisionParams } from 'app/models/division';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
-
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 interface ApiProps {
   customerId: string,
   invoiceId?:string,
@@ -46,7 +44,7 @@ function BcPaymentVendorEditModal({
 }: any): JSX.Element {
   const [sent, setSent] = useState(false);
   const dispatch = useDispatch();
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const paymentTypes = [
     {
@@ -130,11 +128,7 @@ function BcPaymentVendorEditModal({
         request = recordPayment;
       }
 
-      let divisionParams:DivisionParams = {
-        workType: currentLocation.workTypeId,
-        companyLocation: currentLocation.locationId,
-      };
-      dispatch(request(params,divisionParams)).then((response: any) => {
+      dispatch(request(params,currentDivision.params)).then((response: any) => {
         if (response.status === 1) {
           setSent(true);
           setSubmitting(false);

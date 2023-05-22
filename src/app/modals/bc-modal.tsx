@@ -78,6 +78,8 @@ import BCAdvanceFilterInvoiceModal from "./bc-advance-filter-invoice-modal/bc-ad
 import BcArReportModal from "./bc-ar-report-modal/bc-ar-report-modal";
 import BCSetDisplayNameModal
   from "./bc-set-display-name-modal/bc-set-display-name-modal";
+import BcDivisionConfirmModal from './bc-division-confirm-modal/bc-division-confirm-modal';
+import BcDivisionWarningModal from './bc-division-warning-modal/bc-division-warning-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -839,6 +841,29 @@ function BCModal() {
         });
         setComponent(<CompanyLocationBillingAddressModal companyLocation={data.companyLocation} />);
         break;
+      case modalTypes.DIVISION_CONFIRM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcDivisionConfirmModal
+          message={data.message}
+          action={data.action}
+        />);
+        break;
+        case modalTypes.DIVISION_WARNING_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BcDivisionWarningModal
+            action={data.action}
+          />);
+          break;
       default:
         setComponent(null);
     }
