@@ -1153,7 +1153,7 @@ function BCServiceTicketModal(
                   <Grid item xs>
                     <Typography 
                       variant={'caption'} 
-                      className={`required ${'previewCaption'}`}
+                      className={'previewCaption'}
                     >
                       Email
                     </Typography>
@@ -1170,7 +1170,7 @@ function BCServiceTicketModal(
                   <Grid item xs>
                     <Typography 
                         variant={'caption'}
-                        className={`required ${'previewCaption'}`}
+                        className={'previewCaption'}
                       >
                         Phone
                     </Typography>
