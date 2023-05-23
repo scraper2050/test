@@ -72,10 +72,12 @@ function EmailJobReportModal({ classes, data }: any) {
     );
   const { user } = useSelector((state: any) => state.auth);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
+  const [loadingCustomerContacts, setLoadingCustomerContacts] = useState<boolean>(false);
   const [invoiceToView, setInvoiceToView] = useState<any>({});
   const [invoiceInMultipleView, setInvoiceInMultipleView] = useState<number>(0);
   const [invoicesToSend, setInvoicesToSend] = useState<any[]>([]);
-  const [sendAllButtonState, setSendAllButtonState] = useState<string>("Send All")
+  const [sendAllButtonState, setSendAllButtonState] = useState<string>("Send All");
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState<boolean>(false);
   const dispatch = useDispatch();
   // data: {id, ids, customerEmail, customer, emailDefault, customerId, multiple, multipleInvoices}
 
@@ -120,6 +122,7 @@ function EmailJobReportModal({ classes, data }: any) {
 
   useEffect(() => {
     if (invoiceToView?.customerId ) {
+      setLoadingCustomerContacts(true);
       getCustomersContact(invoiceToView?.customerId)
         .then((res) => {
           if (res.status === 1) {
@@ -142,6 +145,7 @@ function EmailJobReportModal({ classes, data }: any) {
               }
             }
           }
+          setLoadingCustomerContacts(false);
         })
         .catch(() => {
           dispatch(
@@ -298,6 +302,7 @@ function EmailJobReportModal({ classes, data }: any) {
 
   const sendAll = () => {
     // setSendAllButtonState('Sending Invoices...')
+    setIsLoadingSubmit(true);
 
 
     const invoicesToSendClone = [...invoicesToSend];
@@ -347,6 +352,9 @@ function EmailJobReportModal({ classes, data }: any) {
     return setSendAllButtonState("Send All")
   };
 
+  useEffect(()=>{
+    if(!sent) setIsLoadingSubmit(false);
+  },[sent, error, loading])
   const slidePreviousInvoice = () => {
 
     
@@ -663,7 +671,8 @@ function EmailJobReportModal({ classes, data }: any) {
                           color="primary"
                           type={'button'}
                           onClick={slidePreviousInvoice}
-                          variant={'outlined'}
+                          variant={'outlined'}  
+                          disabled={customerContacts.length ? loadingCustomerContacts : false}
                         >
                           Back
                         </Button>
@@ -709,6 +718,7 @@ function EmailJobReportModal({ classes, data }: any) {
                             onClick={slideNextInvoice}
                               variant={'outlined'}
                               endIcon={<ChevronRight />}
+                            disabled={customerContacts.length ? loadingCustomerContacts : false}
                           >
                             Next
                           </Button>
@@ -722,7 +732,7 @@ function EmailJobReportModal({ classes, data }: any) {
                             color="primary"
                             onClick={sendAll}
                             variant={'contained'}
-                            disabled={sendAllButtonState !== 'Send All'}
+                            disabled={isLoadingSubmit}
                           >
                             {sendAllButtonState}
                           </Button>
