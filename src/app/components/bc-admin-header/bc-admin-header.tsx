@@ -279,7 +279,7 @@ function BCAdminHeader({
     {
       'label': ' Admin',
       'link': '/main/admin',
-      'flag': currentDivision.isDivisionFeatureActivated && vendors.data?.length != vendors.assignedVendors?.length
+      'flag': vendors.data?.length > 0 && vendors.data?.length != vendors.assignedVendors?.length
     },
   ];
 
