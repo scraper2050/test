@@ -7,7 +7,7 @@ import styles from '../customer.styles';
 import { Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
@@ -20,8 +20,11 @@ import {
   setCurrentPageSize,
   setKeyword
 } from 'actions/customer/job-report/job-report.action'
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function JobReportsPage({ classes, theme }: any) {
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const dispatch = useDispatch();
   const customStyles = useCustomStyles();
   // const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
@@ -85,7 +88,9 @@ function JobReportsPage({ classes, theme }: any) {
     },
     {
       'Header': 'Technician',
-      'accessor': (originalRow: any) => originalRow.job?.tasks?.length === 1 ? originalRow.job?.tasks[0]?.technician?.profile?.displayName : 'Multiple Techs',
+      'accessor': (originalRow: any) => {
+        return originalRow?.contractorsObj?.length === 1 ? originalRow?.contractorsObj[0]?.info?.displayName : 'N/A';
+      },
       'className': 'font-bold',
       'sortable': true
     },
@@ -156,18 +161,21 @@ function JobReportsPage({ classes, theme }: any) {
   }) : jobReports;
 
   useEffect(() => {
-    // dispatch(loadJobReportsActions.fetch());
-    dispatch(getAllJobReportsAPI());
-    return () => {
-      dispatch(setKeyword(''));
-      dispatch(setDateFilterRange(null));
-      dispatch(setCurrentPageIndex(currentPageIndex));
-      dispatch(setCurrentPageSize(currentPageSize));
+
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      // dispatch(loadJobReportsActions.fetch());
+      dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,currentDivision.params));
+      return () => {
+        dispatch(setKeyword(''));
+        dispatch(setDateFilterRange(null));
+        dispatch(setCurrentPageIndex(currentPageIndex));
+        dispatch(setCurrentPageSize(currentPageSize));
+      }
     }
-  }, []);
+  }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
-    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, dateFilterRange));
+    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, dateFilterRange, currentDivision.params));
     dispatch(setCurrentPageIndex(0));
   }, [dateFilterRange]);
 
@@ -175,7 +183,7 @@ function JobReportsPage({ classes, theme }: any) {
     if(location?.state?.option?.search || location?.state?.option?.pageSize || location?.state?.option?.pageIndex || location?.state?.option?.dateFilterRange){
       dispatch(setKeyword(location.state.option.search));
       dispatch(setDateFilterRange(location.state.option.dateFilterRange));
-      dispatch(getAllJobReportsAPI(location.state.option.pageSize, location?.state?.option?.pageIndex, location.state.option.search , location.state.option.dateFilterRange));
+      dispatch(getAllJobReportsAPI(location.state.option.pageSize, location?.state?.option?.pageIndex, location.state.option.search , location.state.option.dateFilterRange, currentDivision.params));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(location?.state?.option?.pageIndex));
       window.history.replaceState({}, document.title)
@@ -191,7 +199,7 @@ function JobReportsPage({ classes, theme }: any) {
     const jobReportId = row.original._id;
     localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
-      'pathname': `job-reports/${jobReportId}`,
+      'pathname': `/main/customers/job-reports/detail/${jobReportId}`,
       'state': {
         keyword,
         currentPageSize,
@@ -256,7 +264,7 @@ function JobReportsPage({ classes, theme }: any) {
                 toolbarPositionLeft={true}
                 toolbar={Toolbar()}
                 manualPagination
-                // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) => 
+                // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>
                 //   dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, query === '' ? '' : query || keyword, selectionRange))
                 // }
                 total={total}
@@ -265,20 +273,20 @@ function JobReportsPage({ classes, theme }: any) {
                   {
                     dispatch(setCurrentPageIndex(num));
                     if(apiCall)
-                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, dateFilterRange))
+                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, dateFilterRange, currentDivision.params))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, dateFilterRange))
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, dateFilterRange, currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
-                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, dateFilterRange))
+                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, dateFilterRange, currentDivision.params))
                 }}
                 setDateFilterRangeFunction={(range: Range) => {
                   dispatch(setDateFilterRange(range));
-                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, range))
+                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, range, currentDivision.params))
                 }}
               />
             </div>

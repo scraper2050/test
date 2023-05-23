@@ -1,7 +1,7 @@
 import {
   updateCompanyProfile,
   getCompanyProfile,
-  getCompanyLocations, createCompanyLocation, updateCompanyLocation
+  getCompanyLocations, createCompanyLocation, updateCompanyLocation, updateCompanyLocationAssignments, updateCompanyLocationBillingAddress
 } from 'api/user.api';
 import { CompanyProfile, CompanyProfileRes, CompanyProfileActonType } from '../../actions/user/user.types'
 import Geocode from "react-geocode";
@@ -74,6 +74,32 @@ export const AddCompanyLocationAction = (data: any, callback:(status: number) =>
 export const UpdateCompanyLocationAction = (data: any, callback:(status: number) => void) => {
   return async (dispatch: any) => {
     const {status, message, companyLocation} = await updateCompanyLocation(data);
+    if (status === 1) {
+      dispatch({type: CompanyProfileActonType.UPDATE_LOCATION, payload: companyLocation});
+      dispatch(success('Location updated successfully'));
+    } else {
+      dispatch(error(message));
+    }
+    callback(status);
+  }
+}
+
+export const UpdateCompanyLocationAssignmentsAction = (data: any, callback:(status: number) => void) => {
+  return async (dispatch: any) => {
+    const {status, message, companyLocation} = await updateCompanyLocationAssignments(data);
+    if (status === 1) {
+      dispatch({type: CompanyProfileActonType.UPDATE_LOCATION, payload: companyLocation});
+      dispatch(success('Location updated successfully'));
+    } else {
+      dispatch(error(message));
+    }
+    callback(status);
+  }
+}
+
+export const UpdateCompanyLocationBillingAddressAction = (data: any, callback:(status: number) => void) => {
+  return async (dispatch: any) => {
+    const {status, message, companyLocation} = await updateCompanyLocationBillingAddress(data);
     if (status === 1) {
       dispatch({type: CompanyProfileActonType.UPDATE_LOCATION, payload: companyLocation});
       dispatch(success('Location updated successfully'));

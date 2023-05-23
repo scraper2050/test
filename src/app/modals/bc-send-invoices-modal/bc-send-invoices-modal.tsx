@@ -54,7 +54,7 @@ import { modalTypes } from "../../../constants";
 import { resetEmailState } from "../../../actions/email/email.action";
 import { setTimeout } from 'timers';
 import { PaymentStatus } from 'app/pages/invoicing/invoices-list/invoices-list-listing/invoices-unpaid-listing';
-
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 const SHOW_OPTIONS = [
   {
@@ -111,6 +111,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const [isSuccess, setIsSuccess] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const debounceInputStyles = useDebounceInputStyles();
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const getFilteredList = (state: any) => {
     return TableFilterService.filterByDateDesc(state?.invoiceList.data);
@@ -204,6 +205,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 'typeText': 'Invoice',
                 'className': 'wideModalTitle',
                 'customerId': invoice.customer?._id,
+                'from': invoice?.companyLocation?.billingAddress?.emailSender,
               };
               const combined: any = { ...data, emailDefault }
 
@@ -243,6 +245,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   'handleClick': () => { },
                   'ids': invoicesArray,
                   'typeText': 'Invoice',
+                  'from': invoice?.companyLocation?.billingAddress?.emailSender,
                   'className': 'wideModalTitle',
                   'customerId': invoice.customer?._id,
                 };
@@ -272,13 +275,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
     dispatch(resetEmailState());
     dispatch(setCurrentPageIndex(0));
-    dispatch(getAllInvoicesAPI());
+    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
   };
 
   const closeModal = () => {
 
     dispatch(setCurrentPageIndex(0));
-    dispatch(getAllInvoicesAPI());
+    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
     dispatch(closeModalAction());
     setTimeout(() => {
       dispatch(setModalDataAction({
@@ -298,7 +301,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       { invoiceDateRange: selectionRange },
       customerValue?._id,
       isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
-      showValue === 'all'
+      showValue === 'all',
+      currentDivision.params
     ));
   }, [customerValue, selectionRange, showValue]);
 
@@ -499,7 +503,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                     { invoiceDateRange: selectionRange },
                     customerValue?._id,
                     isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
-                    showValue === 'all'
+                    showValue === 'all',
+                    currentDivision.params
                   ))
                 }}
                 total={total}

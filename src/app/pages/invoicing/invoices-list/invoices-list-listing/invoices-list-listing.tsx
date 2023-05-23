@@ -1,5 +1,5 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import {withStyles, Button, Tooltip, Badge} from "@material-ui/core";
@@ -28,7 +28,7 @@ import {
 } from 'actions/invoicing/invoicing.action';
 import { resetAdvanceFilterInvoice } from 'actions/advance-filter/advance-filter.action'
 import { initialAdvanceFilterInvoiceState } from 'reducers/advance-filter.reducer';
-
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
   return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
@@ -58,7 +58,9 @@ function InvoicingListListing({ classes, theme }: any) {
   const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
 
-  const advanceFilterInvoiceData: any = useSelector(({advanceFilterInvoiceState}: any) => advanceFilterInvoiceState)
+  const advanceFilterInvoiceData: any = useSelector(({advanceFilterInvoiceState}: any) => advanceFilterInvoiceState);
+
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
@@ -196,13 +198,13 @@ function InvoicingListListing({ classes, theme }: any) {
   useEffect(() => {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
-    dispatch(getAllInvoicesAPI(undefined, undefined, undefined, undefined, advanceFilterInvoiceData));
+    dispatch(getAllInvoicesAPI(undefined, undefined, undefined, undefined, advanceFilterInvoiceData,undefined,undefined,undefined,currentDivision.params));
     return () => {
       dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(currentPageIndex));
       dispatch(setCurrentPageSize(currentPageSize));
     }
-  }, []);
+  }, [currentDivision.params]);
 
   // useEffect(() => {
   //   dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, selectionRange));
@@ -211,7 +213,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   useEffect(() => {
     if(fetchInvoices){
-      dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, advanceFilterInvoiceData));
+      dispatch(getAllInvoicesAPI(currentPageSize, undefined, undefined, keyword, advanceFilterInvoiceData, undefined,undefined,undefined,currentDivision.params));
       dispatch(setCurrentPageIndex(0));
     }
     setFetchInvoices(false);
@@ -221,7 +223,7 @@ function InvoicingListListing({ classes, theme }: any) {
     if(location?.state?.tab === 1 && (location?.state?.option?.search || location?.state?.option?.pageSize || location?.state?.option?.lastPrevCursor
       || location?.state?.option?.lastNextCursor || location?.state?.option?.currentPageIndex)){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search , advanceFilterInvoiceData));
+      dispatch(getAllInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search , advanceFilterInvoiceData,undefined,undefined,undefined,currentDivision.params));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(location?.state?.option?.currentPageIndex || 0));
       window.history.replaceState({}, document.title)
@@ -230,7 +232,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const showInvoiceDetail = (id:string) => {
     history.push({
-      'pathname': `view/${id}`,
+      'pathname': `/main/invoicing/view/${id}`,
       'state': {
         keyword,
         currentPageSize,
@@ -391,7 +393,7 @@ function InvoicingListListing({ classes, theme }: any) {
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
           setLastPrevCursor(isPrev ? prevCursor : undefined)
           setLastNextCursor(isNext ? nextCursor : undefined)
-          dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, advanceFilterInvoiceData))
+          dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, advanceFilterInvoiceData,undefined,undefined,undefined,currentDivision.params))
         }}
         total={total}
         currentPageIndex={currentPageIndex}

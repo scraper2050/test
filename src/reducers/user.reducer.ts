@@ -14,7 +14,7 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
     case CompanyProfileActonType.UPDATE_SUCCESS:
       return { ...state }
     case CompanyProfileActonType.FETCH_SUCCESS: {
-      const { address, contact, info, paymentTerm } = action.payload;
+      const { address, contact, info, paymentTerm, admin } = action.payload;
       const newState = {
         companyName: info.companyName,
         companyEmail: info.companyEmail,
@@ -26,7 +26,8 @@ export const CompanyProfileReducer: Reducer<any> = (state = initialCompanyProfil
         street: address.street,
         zipCode: address.zipCode,
         coordinates: address.coordinates || DEFAULT_COORD,
-        paymentTerm: paymentTerm
+        paymentTerm: paymentTerm,
+        companyAdmin: admin
       }
       return { ...newState, locations: state.locations, inputError: {}, serverError: null }
     }

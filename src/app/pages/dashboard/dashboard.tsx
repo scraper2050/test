@@ -20,6 +20,8 @@ import {
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../constants';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { DivisionParams } from 'app/models/division';
 
 interface RowStatusTypes {
   row: {
@@ -36,6 +38,7 @@ interface StatusTypes {
 function DashboardPage({ classes }: any): JSX.Element {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const history = useHistory();
 
@@ -102,7 +105,7 @@ function DashboardPage({ classes }: any): JSX.Element {
     dispatch(getVendorDetailAction(vendorId));
 
     history.push({
-      'pathname': `admin/vendors/${vendorCompanyName}`,
+      'pathname': `/main/admin/vendors/${vendorCompanyName}`,
       'state': {
         ...vendorObj
       }
@@ -136,9 +139,13 @@ function DashboardPage({ classes }: any): JSX.Element {
 
   useEffect(() => {
     dispatch(loadingVendors());
-    dispatch(getVendors());
-  }, []);
-
+    let divisionParams: DivisionParams = {};
+    if (currentDivision.data?.name != "All") {
+      divisionParams = {workType: currentDivision.data?.workTypeId, companyLocation: currentDivision.data?.locationId};
+    }
+    dispatch(getVendors(divisionParams));
+  }, [currentDivision.data]);
+  
   const openVendorModal = () => {
     dispatch(setModalDataAction({
       'data': {
