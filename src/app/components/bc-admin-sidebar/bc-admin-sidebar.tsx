@@ -192,6 +192,7 @@ function BCAdminSidebar({
   const pathName = location.pathname;
   const nestedRouteKey = localStorage.getItem('nestedRouteKey');
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const vendors = useSelector((state: any) => state.vendors);
 
   const getLinkByDivision = (path: string) => {
     return currentDivision.urlParams ? `${path}/${currentDivision.urlParams}` : path
@@ -340,7 +341,8 @@ function BCAdminSidebar({
     {
       'label': 'Vendors',
       'icon': <StorefrontIcon/>,
-      'link': '/main/admin/vendors'
+      'link': '/main/admin/vendors',
+      'flag': currentDivision.isDivisionFeatureActivated && vendors.data?.length > 0 && vendors.data?.length != vendors.assignedVendors?.length
     },
     {
       'label': 'Payroll',
@@ -555,7 +557,7 @@ function BCAdminSidebar({
                   arrow
                   title={item.label}
                   disableHoverListener={open}
-                >
+                  >
                   <StyledListItem
                     button
                     onClick={() => onClickLink(item.link)}
@@ -563,8 +565,13 @@ function BCAdminSidebar({
                       pathName === item.link ||
                       pathName === `${item.link}/${nestedRouteKey}`
                     }>
+                    {item.flag && (
+                        <span className={classes.flagWarning}>!</span>  
+                    )}
+
                     {item.icon && item.icon}
-                    <span className='menuLabel'>{item.label}</span>
+                    <span className='menuLabel'>
+                      {item.label}</span>
                   </StyledListItem>
                 </Tooltip>
               </li>

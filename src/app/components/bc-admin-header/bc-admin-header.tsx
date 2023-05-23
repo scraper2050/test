@@ -260,7 +260,7 @@ function BCAdminHeader({
     // },
     {
       'label': 'Payroll',
-      'link': currentDivision.urlParams ? `/main/payroll/${currentDivision.urlParams}` : `/main/payroll`
+      'link':  currentDivision.isDivisionFeatureActivated && currentDivision.urlParams ? `/main/payroll/${currentDivision.urlParams}` : `/main/payroll`
     },
     /*
      * {
@@ -279,7 +279,7 @@ function BCAdminHeader({
     {
       'label': ' Admin',
       'link': '/main/admin',
-      'flag': currentDivision.isDivisionFeatureActivated && vendors.data?.length != vendors.assignedVendors?.length
+      'flag':  currentDivision.isDivisionFeatureActivated && vendors.data?.length > 0 && vendors.data?.length != vendors.assignedVendors?.length
     },
   ];
 
