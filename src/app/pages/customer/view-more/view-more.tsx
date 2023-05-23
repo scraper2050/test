@@ -33,11 +33,11 @@ function ViewMorePage({ classes }: any) {
   const customerState = useSelector((state: any) => state.customers);
   const location = useLocation<any>();
   const [showLocation, setShowLocation] = useState('active');
-  const customerObj = location.state;
+  const customerObject = location.state;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
 
-  const prevPage = customerObj && customerObj.prevPage ? customerObj.prevPage : null;
+  const prevPage = customerObject && customerObject.prevPage ? customerObject.prevPage : null;
   const filteredJobLocations = showLocation === 'all' ? jobLocations.data :
     jobLocations.data.filter((location: any) => showLocation === 'active' ? location.isActive : !location.isActive)
 
@@ -86,6 +86,7 @@ function ViewMorePage({ classes }: any) {
         ? baseObj._id
         : 'N/A';
     const customerObj = {
+      ...customerObject,
       customerName,
       customerId
     };
@@ -204,12 +205,12 @@ function ViewMorePage({ classes }: any) {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (customerObj.from === 1) {
+    if (customerObject.from === 1) {
       setCurTab(1);
-    } else if (customerObj.from === 2) {
+    } else if (customerObject.from === 2) {
       setCurTab(2);
     }
-  }, [customerObj]);
+  }, [customerObject]);
 
   useEffect(() => {
     dispatch(loadTierListItems.fetch());
@@ -217,7 +218,7 @@ function ViewMorePage({ classes }: any) {
 
   const handleTabChange = (newValue: number) => {
     const state = {
-      ...customerObj,
+      ...customerObject,
       'from': newValue
     };
 
@@ -243,7 +244,7 @@ function ViewMorePage({ classes }: any) {
   const openJobLocationModal = () => {
     dispatch(setModalDataAction({
       'data': {
-        'locationObj': customerObj,
+        'locationObj': customerObject,
         'modalTitle': 'New Subdivision',
         'removeFooter': false
       },
@@ -332,7 +333,7 @@ function ViewMorePage({ classes }: any) {
                   hidden={curTab !== 0}
                   id={'0'}>
                   <PageContainer className={'info_wrapper alignAddJobLocation'}>
-                    <CustomerInfoPage customerObj={customerObj} />
+                    <CustomerInfoPage customerObj={customerObject} />
                     <CSButton
                       aria-label={'delete'}
                       color={'primary'}
