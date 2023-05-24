@@ -1206,6 +1206,8 @@ function BCServiceTicketModal(
                       onChange={(newEmail: FormDataModel) => setFormDataEmail(newEmail)}
                       size={'small'}
                       variant={'outlined'}
+                      required={false}
+                      referenceEmail=" "
                     />  
                   </Grid>
                   <Grid item xs>
