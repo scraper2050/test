@@ -56,6 +56,10 @@ function MapViewJobsScreen({ classes, selectedDate, filter: filterJobs }: Props)
         filter = filter && (job.jobId.indexOf(filterJobs.jobId) >= 0);
       }
 
+      if (filterJobs.isHomeOccupied && filterJobs.isHomeOccupied === true) {
+        filter = filter && job.isHomeOccupied === true;
+      }
+
       if (filterJobs.customerNames) {
         filter = filter && (job.customer._id === filterJobs.customerNames._id);
         if (filterJobs.contact) {

@@ -88,7 +88,7 @@ function BCJobStatus({status, size= 'normal', data}:Props) {
     icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string | undefined; }>;
   }
   const tasks: Task[] = []
-
+  let tempData: any = data;
   if(data && data.tasks){
     data.tasks.forEach(task=>{
       task.jobTypes.forEach((job:{status:number; jobType:{title:string;}}) => {

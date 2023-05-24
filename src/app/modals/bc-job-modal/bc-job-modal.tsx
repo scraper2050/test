@@ -21,6 +21,8 @@ import {
   TextField,
   Typography,
   withStyles,
+  FormControlLabel,
+  Checkbox
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -37,7 +39,7 @@ import {
   convertMilitaryTime,
   formatDate,
   formatISOToDateStringFixedDate,
-  formatToMilitaryTimeWithOffset, parseISODate,
+  formatToMilitaryTime, parseISODate,
   shortenStringWithElipsis,
 } from 'helpers/format';
 import styled from 'styled-components';
@@ -461,6 +463,8 @@ function BCJobModal({
         ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
+      isHomeOccupied: jobValue?.isHomeOccupied || ticket?.isHomeOccupied || jobValue.ticket?.isHomeOccupied,
+      homeOwnerId: jobValue?.homeOwner || ticket?.homeOwner?._id || jobValue.ticket?.homeOwner?._id || '',
     },
     validateOnMount: false,
     validateOnChange: false,
@@ -468,12 +472,16 @@ function BCJobModal({
     onSubmit: (values: any, { setSubmitting }: any) => {
       const tempData = {...values};
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
-      tempData.customerId = customer?._id;
+      tempData.customerId = customer?._id; 
 
-      if (values.scheduledStartTime)
-        tempData.scheduledStartTime = formatToMilitaryTimeWithOffset(values.scheduledStartTime);
-      if (values.scheduledEndTime)
-        tempData.scheduledEndTime = formatToMilitaryTimeWithOffset(values.scheduledEndTime);
+      if (values.scheduledStartTime){
+        // format local time as UTC without adjusting the time
+        tempData.scheduledStartTime = moment(values.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      }
+      if (values.scheduledEndTime){
+        // format local time as UTC without adjusting the time
+        tempData.scheduledEndTime = moment(values.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      }
 
       if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
 
@@ -1223,6 +1231,63 @@ function BCJobModal({
                 <Grid item style={{width: '32%'}} />
               </Grid>
             )}
+            <Grid container item xs>
+              <FormControlLabel
+                classes={{label: classes.checkboxLabel}}
+                control={
+                  <Checkbox
+                    color={'primary'}
+                    checked={FormikValues.isHomeOccupied}
+                    name="isHomeOccupied"
+                    classes={{root: classes.checkboxInput}}
+                    disabled={true}
+                  />
+                }
+                label={`HOUSE IS OCCUPIED`}
+              />
+            </Grid> 
+            { 
+              FormikValues.isHomeOccupied ? (
+              <Grid container>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    First name
+                  </Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerFirstName'}
+                    value={jobValue?.ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj[0]?.profile?.firstName || 'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    Last name
+                  </Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerLastName'}
+                    value={jobValue?.ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.profile?.lastName || 'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerEmail'}
+                    value={jobValue?.ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj[0]?.info?.email || 'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerPhone'}
+                    value={jobValue?.ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
+                  />
+                </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
 
           <DialogActions>

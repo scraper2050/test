@@ -25,7 +25,7 @@ import {ReactComponent as IconIncomplete} from "../../../assets/img/icons/map/ic
 import {ReactComponent as IconPending} from "../../../assets/img/icons/map/icon-pending.svg";
 import {ReactComponent as IconJobRequest} from "../../../assets/img/icons/map/icon-job-request.svg";
 import {ReactComponent as IconOpenServiceTicket} from "../../../assets/img/icons/map/icon-open-service-ticket.svg";
-
+import { PRIMARY_ORANGE } from "../../../constants";
 interface BCMapWithMarkerListProps {
   reactAppGoogleKeyFromConfig: string;
   list: any;
@@ -64,6 +64,7 @@ const superClusterOptions = {
     includeTicket: !!props.ticket?.ticketId,
     includeRequest: !!props.ticket?.requestId,
     includeJob: !!props.ticket?.jobId,
+    isHomeOccupied: !!props.ticket?.isHomeOccupied,
   }),
   reduce: (acc:any, props:any) => {
     if(!!props.includeTicket) {
@@ -85,14 +86,14 @@ const calculateColor = (cluster:any) => {
   if(cluster.properties?.includeTicket){
     return '#2477FF'
   }
-  return 'rgb(130,130,130)'
+  return cluster.properties?.isHomeOccupied ? '#db4b02' : 'rgb(130,130,130)'
 }
 const calculateBorder = (cluster:any) => {
   if(cluster.properties?.includeJob){
     return '3px solid black'
   }
   if(cluster.properties?.includeTicket){
-    return '3px solid #2477FF'
+    return cluster.properties?.isHomeOccupied ? '3px solid #db4b02' : '3px solid #2477FF';
   }
   if(cluster.properties?.includeRequest){
     return '3px solid #970505'
@@ -125,7 +126,7 @@ function BCMapWithMarkerWithList({
   const [zoom, setZoom] = useState(11);
   const locationCoordinate = useRef<any>({});
   const overlappingCoordinates = useRef<any>([]);
-  const [_, setRefresh] = useState(0)
+  const [_, setRefresh] = useState(0);
 
   let centerLat = coordinates?.lat || DEFAULT_COORD.lat;
   let centerLng = coordinates?.lng || DEFAULT_COORD.lng;
@@ -154,12 +155,12 @@ function BCMapWithMarkerWithList({
       if (selected._id) {
         let lat = centerLat;
         let lng = centerLng;
-        if (selected.jobSite) {
+        if (selected.jobSite && (selected.jobSite?.location?.coordinates[0] && selected.jobSite?.location?.coordinates[1])) {
           lat = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[1] ? selected.jobSite.location.coordinates[1] : lat;
           lng = selected.jobSite.location && selected.jobSite.location.coordinates && selected.jobSite.location.coordinates[0] ? selected.jobSite.location.coordinates[0] : lng;
           lat -= 0.002;
           lng += 0.002;
-        } else if (selected.jobLocation) {
+        } else if (selected.jobLocation && (selected.jobLocation?.location?.coordinates[0] && selected.jobLocation?.location?.coordinates[1])) {
           lat = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[1] ? selected.jobLocation.location.coordinates[1] : lat;
           lng = selected.jobLocation.location && selected.jobLocation.location.coordinates && selected.jobLocation.location.coordinates[0] ? selected.jobLocation.location.coordinates[0] : lng;
           lat -= 0.002;
@@ -182,10 +183,10 @@ function BCMapWithMarkerWithList({
     }
     let lat:any = centerLat;
     let lng:any = centerLng;
-    if (ticket.jobSite) {
+    if (ticket.jobSite && (ticket.jobSite?.location?.coordinates[0] && ticket.jobSite?.location?.coordinates[1])) {
       lat = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[1] ? ticket.jobSite.location.coordinates[1] : centerLat;
       lng = ticket.jobSite.location && ticket.jobSite.location.coordinates && ticket.jobSite.location.coordinates[0] ? ticket.jobSite.location.coordinates[0] : centerLng;
-    } else if (ticket.jobLocation) {
+    } else if (ticket.jobLocation && (ticket.jobLocation?.location?.coordinates[0] && ticket.jobLocation?.location?.coordinates[1])) {
       lat = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[1] ? ticket.jobLocation.location.coordinates[1] : centerLat;
       lng = ticket.jobLocation.location && ticket.jobLocation.location.coordinates && ticket.jobLocation.location.coordinates[0] ? ticket.jobLocation.location.coordinates[0] : centerLng;
     } else if (ticket.customer) {

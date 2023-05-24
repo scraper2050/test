@@ -111,18 +111,18 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
             }
            })
 
-            return {
-            ...tempJob,
-            customer: tempJob.customerObj[0],
-            jobLocation: tempJob.jobLocationObj[0],
-            jobSite : tempJob.jobSiteObj[0],
-            ticket : tempJob.ticketObj[0],
-            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-            tasks: tempTasks
+           return {
+              ...tempJob,
+              customer: tempJob.customerObj[0],
+              jobLocation: tempJob.jobLocationObj[0],
+              jobSite : tempJob.jobSiteObj[0],
+              ticket : tempJob.ticketObj[0],
+              updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+              tasks: tempTasks
             }
           });
           tempJobs.sort(compareByDate);
-          dispatch(setJobs(tempJobs.reverse()));
+          dispatch(setJobs(tempJobs));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
           dispatch(setJobLoading(false));
           dispatch(refreshJobs(false));

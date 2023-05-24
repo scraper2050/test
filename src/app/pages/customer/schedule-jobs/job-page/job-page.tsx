@@ -26,6 +26,7 @@ import BCDateRangePicker
 import moment from "moment";
 import {getVendor} from "../../../../../helpers/job";
 import { CSButton } from "../../../../../helpers/custom";
+import debounce from 'lodash.debounce';
 
 function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   const dispatch = useDispatch();
@@ -394,11 +395,8 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    dispatch(getAllJobsAPI());
-    dispatch(setKeyword(''));
-    dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
-  }, [])
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
+  }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange])
 
   const handleTabChange = (newValue: number) => {
   };
@@ -414,6 +412,10 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     }
   };
 
+  const desbouncedSearchFunction = debounce((keyword: string) => {
+    dispatch(setKeyword(keyword));
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,keyword, selectionRange))
+  }, 500);
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
@@ -459,10 +461,11 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => 
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
                   {
                     dispatch(setCurrentPageIndex(num));
-                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
+                    if(apiCall)
+                      dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
@@ -470,8 +473,9 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                   dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange))
                 }}
                 setKeywordFunction={(query: string) => {
-                  dispatch(setKeyword(query));
-                  dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
+                  // dispatch(setKeyword(query));
+                  // dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,query, selectionRange))
+                  desbouncedSearchFunction(query);
                 }}
               />
             </div>
