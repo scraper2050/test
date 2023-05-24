@@ -26,7 +26,7 @@ export interface IDivisionAddress {
     coordinates?: {
         lat: number;
         lng: number;
-    },
+    };
     street?: string;
     unit?: string;
     city?: string;
