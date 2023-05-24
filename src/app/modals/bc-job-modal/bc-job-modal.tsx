@@ -497,11 +497,11 @@ function BCJobModal({
       tempData.customerId = customer?._id;
 
       if (values.scheduledStartTime){
-        // format local time as UTC without adjusting the time
+        // format local time as UTC without time adjustments (i.e. no timezone conversion)
         tempData.scheduledStartTime = moment(values.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
       }
       if (values.scheduledEndTime){
-        // format local time as UTC without adjusting the time
+        // format local time as UTC without time adjustments (i.e. no timezone conversion)
         tempData.scheduledEndTime = moment(values.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
       }
 

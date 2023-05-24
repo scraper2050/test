@@ -163,6 +163,7 @@ function BCViewJobModal({
   ];
 
   const scheduleDate = job.scheduleDate;
+  // Format time
   const startTime = job.scheduledStartTime ? formatTime(job.scheduledStartTime) : 'N/A';
   const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
