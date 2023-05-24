@@ -246,7 +246,7 @@ function JobReportsPage({ classes, theme }: any) {
               <BCTableContainer
                 columns={columns}
                 // currentPage={currentPage}
-                initialMsg={'There are no Job Report List'}
+                initialMsg={'Nothing Here Yet'}
                 isLoading={loading}
                 onRowClick={handleRowClick}
                 search
