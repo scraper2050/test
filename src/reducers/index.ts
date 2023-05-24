@@ -78,7 +78,7 @@ import { MapTechnicianJobsReducer as mapTechnicianJobsState } from './map-techni
 import { WorkTypeReducer as workTypes } from './work-type.reducer';
 import { DivisionReducer as divisions } from './division.reducer';
 import { FilterDivisionReducer as currentDivision } from "./filter-division.reducer";
-
+import homeOwner from './home-owner.reducer';
 
 export interface ReducerParamsInterface {
   payload: any;
@@ -163,7 +163,8 @@ const appReducer = combineReducers({
   mapTechnicianJobsState,
   workTypes,
   divisions,
-  currentDivision
+  currentDivision,
+  homeOwner
 });
 
 const rootReducer = (state: any, action: any) => {
