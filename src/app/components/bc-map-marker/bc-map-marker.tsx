@@ -290,7 +290,8 @@ function BCMapMarker({
     contractor?: {
       info: {
         companyName: string;
-        companyEmail: string
+        companyEmail: string,
+        displayName: string,
       };
     };
     technician?: {
@@ -303,7 +304,7 @@ function BCMapMarker({
   const techs = ticket.tasks.map((task:Task):string=>{
     let tech = '';
     if(task.employeeType && task.contractor){
-      tech = `${task.contractor.info.companyName}`
+      tech = `${task.contractor.info.displayName ? task.contractor.info.displayName : task.contractor.info.companyName} (${task.contractor.info.companyEmail})`;
     } else if(task.technician){
       tech = `${task.technician.profile.displayName}`
     }

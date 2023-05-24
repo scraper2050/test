@@ -69,7 +69,8 @@ function EmailJobReportModal({ classes, data }: any) {
   const { sent, loading, error } = useSelector(({ email }: any) => email);
   const profileState: CompanyProfileStateType = useSelector(
     (state: any) => state.profile
-  );
+    );
+  const { user } = useSelector((state: any) => state.auth);
   const [customerContacts, setCustomerContacts] = useState<any[]>([]);
   const [loadingCustomerContacts, setLoadingCustomerContacts] = useState<boolean>(false);
   const [invoiceToView, setInvoiceToView] = useState<any>({});
@@ -99,6 +100,7 @@ function EmailJobReportModal({ classes, data }: any) {
       setInvoiceToView({
         id: data?.id,
         ids: data?.ids,
+        from: data?.from || user?.auth?.email,
         customerEmail: data?.customerEmail,
         customer: data?.customer,
         emailDefault: data?.emailDefault,
@@ -109,6 +111,7 @@ function EmailJobReportModal({ classes, data }: any) {
       setInvoiceToView({
         id: data?.multipleInvoices[0]?.id,
         ids: data?.multipleInvoices[0]?.ids,
+        from: data?.multipleInvoices[0]?.from || user?.auth?.email,
         customerEmail: data?.multipleInvoices[0]?.customerEmail,
         customer: data?.multipleInvoices[0]?.customer,
         emailDefault: data?.multipleInvoices[0]?.emailDefault,
@@ -187,7 +190,7 @@ function EmailJobReportModal({ classes, data }: any) {
   const form = useFormik({
     enableReinitialize: true,
     initialValues: {
-      from: profileState.companyEmail,
+      from: invoiceToView?.from || user?.auth?.email,
       to: invoiceToView?.receipients || [{ email: invoiceToView.customerEmail }],
       subject: invoiceToView?.emailDefault?.subject,
       message: invoiceToView?.emailDefault?.message,
@@ -261,8 +264,8 @@ function EmailJobReportModal({ classes, data }: any) {
         emailDefault: tempEmailDefault,
         receipients:tempReceipients,
         customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
+        from: data?.multipleInvoices[invoiceInMultipleView + 1]?.from || user?.auth?.email,
       });
-
     } else {
        setInvoiceToView({
         id: data?.multipleInvoices[invoiceInMultipleView + 1]?.id,
@@ -273,6 +276,7 @@ function EmailJobReportModal({ classes, data }: any) {
         emailDefault:
           data?.multipleInvoices[invoiceInMultipleView + 1]?.emailDefault,
         customerId: data?.multipleInvoices[invoiceInMultipleView + 1]?.customerId,
+        from: data?.multipleInvoices[invoiceInMultipleView + 1]?.from || user?.auth?.email,
       });
     }  
 
@@ -388,6 +392,7 @@ function EmailJobReportModal({ classes, data }: any) {
       emailDefault: tempEmailDefault,
       receipients:tempReceipients,
       customerId: data?.multipleInvoices[invoiceInMultipleView - 1]?.customerId,
+      from: data?.multipleInvoices[invoiceInMultipleView - 1]?.from,
     });
 
     setInvoiceInMultipleView(invoiceInMultipleView - 1);

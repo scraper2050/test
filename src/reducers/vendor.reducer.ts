@@ -8,6 +8,7 @@ const initialVendors: VendorsState = {
   data: [],
   vendorObj: undefined,
   vendorPayments: [],
+  assignedVendors: []
 };
 
 export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => {
@@ -79,6 +80,11 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
       return {
         'loading': false,
         'data': [...action.payload]
+      };
+    case VendorActionType.SET_ASSIGNED_VENDORS:
+      return {
+        ...state,
+        'assignedVendors': [...action.payload]
       };
     case VendorActionType.FAILED:
       return {

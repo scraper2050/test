@@ -126,6 +126,12 @@ export const modalTypes = {
   'ADVANCE_FILTER_INVOICE_MODAL' : 'ADVANCE_FILTER_INVOICE_MODAL',
   'CUSTOMIZE_AR_REPORT_MODAL' : 'CUSTOMIZE_AR_REPORT_MODAL',
   'EMAIL_REPORT_MODAL': 'EMAIL_REPORT_MODAL',
+  'LOCATION_ASSIGN_MODAL': 'location-assign-modal',
+  'LOCATION_ASSIGN_DELETE_MODAL': 'location-assign-delete-modal',
+  'SET_DISPLAY_NAME_MODAL': 'set-display-name-modal',
+  'EDIT_BILLING_ADDRESS': 'edit-billing-address',
+  'DIVISION_CONFIRM_MODAL': 'division-confirm-modal',
+  'DIVISION_WARNING_MODAL': 'division-warning-modal',
 };
 
 export const rejectionReason = [
