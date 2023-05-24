@@ -485,8 +485,8 @@ function BCJobModal({
         ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
-      isHomeOccupied: jobValue?.isHomeOccupied || ticket?.isHomeOccupied,
-      homeOwnerId: jobValue?.homeOwner || ticket?.homeOwner?._id || '',
+      isHomeOccupied: jobValue?.isHomeOccupied || ticket?.isHomeOccupied || jobValue.ticket?.isHomeOccupied,
+      homeOwnerId: jobValue?.homeOwner || ticket?.homeOwner?._id || jobValue.ticket?.homeOwner?._id || '',
     },
     validateOnMount: false,
     validateOnChange: false,
@@ -494,7 +494,7 @@ function BCJobModal({
     onSubmit: (values: any, {setSubmitting}: any) => {
       const tempData = {...values};
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
-      tempData.customerId = customer?._id;
+      tempData.customerId = customer?._id; 
 
       if (values.scheduledStartTime){
         // format local time as UTC without adjusting the time
@@ -1295,7 +1295,7 @@ function BCJobModal({
                 control={
                   <Checkbox
                     color={'primary'}
-                    checked={FormikValues.isHomeOccupied }
+                    checked={FormikValues.isHomeOccupied}
                     name="isHomeOccupied"
                     classes={{root: classes.checkboxInput}}
                     disabled={true}
@@ -1314,7 +1314,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerFirstName'}
-                    value={ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj[0]?.profile?.firstName ||'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj[0]?.profile?.firstName || 'N/A'}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1324,7 +1324,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerLastName'}
-                    value={ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.profile?.lastName ||'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.profile?.lastName || 'N/A'}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1332,7 +1332,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerEmail'}
-                    value={ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj[0]?.info?.email || 'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj[0]?.info?.email || 'N/A'}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1340,7 +1340,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerPhone'}
-                    value={ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
                   />
                 </Grid>
               </Grid>
