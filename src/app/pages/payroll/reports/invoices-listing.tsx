@@ -25,17 +25,13 @@ import moment from "moment";
 import {getPayrollReportAPI} from "../../../../api/payroll.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import classNames from "classnames";
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface Props {
   classes: any;
 }
 function PayrollInvoices({classes}: Props) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const location = useLocation<any>();
@@ -60,7 +56,7 @@ function PayrollInvoices({classes}: Props) {
 
   const getData = async(type?: string, id?: string) => {
     setLoading(true);
-    const response: any = await getPayrollReportAPI(undefined,undefined,divisionParams);
+    const response: any = await getPayrollReportAPI(undefined,undefined,currentDivision.params);
     if (response.status === 1) {
       setInvoices(response.data);
     } else {
@@ -70,14 +66,14 @@ function PayrollInvoices({classes}: Props) {
   }
 
   useEffect(() => {
-    dispatch(getContractors());
+    dispatch(getContractors(currentDivision.params));
     getData();
   }, []);
 
   useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
     if (cont) {
-      dispatch(getContractorPayments({id: cont._id, type: cont.type}));
+      dispatch(getContractorPayments({id: cont._id, type: cont.type},currentDivision.params));
     }
   }, [selectedIDs]);
 

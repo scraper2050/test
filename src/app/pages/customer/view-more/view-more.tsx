@@ -25,7 +25,7 @@ import Pricing from './pricing/pricing';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
 import {CSButton, CSIconButton, useCustomStyles} from "helpers/custom";
 import EditIcon from '@material-ui/icons/Edit';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ function ViewMorePage({ classes }: any) {
   const prevPage = customerObj && customerObj.prevPage ? customerObj.prevPage : null;
   const filteredJobLocations = showLocation === 'all' ? jobLocations.data :
     jobLocations.data.filter((location: any) => showLocation === 'active' ? location.isActive : !location.isActive)
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
@@ -95,7 +95,12 @@ function ViewMorePage({ classes }: any) {
       customerName !== undefined
         ? customerName.replace(/[\/ ]/g, '')
         : 'customername';
-    let url = currentLocation.workTypeId && currentLocation.locationId ? `${customerName}/job-equipment-info/${link}/${currentLocation.locationId}/${currentLocation.workTypeId}` : `${customerName}/job-equipment-info/${link}`;
+    let url = `${customerName}/job-equipment-info/${link}`;
+
+    if (["tickets","jobs","reports"].includes(link)) {
+      url = currentDivision.urlParams ? `${customerName}/job-equipment-info/${link}/${currentDivision.urlParams}` : `${customerName}/job-equipment-info/${link}`;
+    }
+    
     const linkKey: any = localStorage.getItem('nestedRouteKey');
     localStorage.setItem('prevNestedRouteKey', linkKey);
     localStorage.setItem('nestedRouteKey', url);

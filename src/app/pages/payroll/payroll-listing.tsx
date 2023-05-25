@@ -23,7 +23,8 @@ import { HighlightOff } from "@material-ui/icons";
 import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
 import { getPayrollBalance, refreshContractorPayment } from "../../../actions/payroll/payroll.action";
 import { Contractor } from "../../../actions/payroll/payroll.types";
-import { DivisionParams } from 'app/models/division';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { warning } from 'actions/snackbar/snackbar.action';
 
 interface Props {
   classes: any;
@@ -36,11 +37,7 @@ const ITEMS = [
 ]
 
 function Payroll({ classes }: Props) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -58,15 +55,17 @@ function Payroll({ classes }: Props) {
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
   useEffect(() => {
-    if (selectionRange) {
-      dispatch(getPayrollBalance(formatDateYMD(selectionRange.startDate), formatDateYMD(selectionRange.endDate), divisionParams));
-    } else {
-      dispatch(getPayrollBalance(undefined, undefined,divisionParams));
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      if (selectionRange) {
+        dispatch(getPayrollBalance(formatDateYMD(selectionRange.startDate), formatDateYMD(selectionRange.endDate), currentDivision.params));
+      } else {
+        dispatch(getPayrollBalance(undefined, undefined,currentDivision.params));
+      }
+      if (refresh) {
+        dispatch(refreshContractorPayment(false));
+      }
     }
-    if (refresh) {
-      dispatch(refreshContractorPayment(false));
-    }
-  }, [selectionRange, refresh]);
+  }, [selectionRange, refresh, currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
     setTableData(selectedIDs.length > 0 ?
@@ -92,13 +91,18 @@ function Payroll({ classes }: Props) {
     event.stopPropagation();
     switch (id) {
       case 0:
-        recordPayment(row);
+        //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
+        if ((currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != "All") || !currentDivision.isDivisionFeatureActivated) {
+            recordPayment(row);
+        }else{
+            dispatch(warning("Please select a division before recording a payment."))
+        }
         break;
       case 1:
         const contractorName = row.vendor.replace(/[\/ ]/g, '');
         localStorage.setItem('nestedRouteKey', `${contractorName}`);
         history.push({
-          'pathname': `payroll/pastpayment/${contractorName}`,
+          'pathname': `/main/payroll/pastpayment/${contractorName}`,
           'state': {
             contractor: row,
             currentPage

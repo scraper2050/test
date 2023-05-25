@@ -69,7 +69,7 @@ import {ReactComponent as CollectIcon} from 'assets/img/icons/sidebar/reports/co
 import {ReactComponent as AmountIcon} from 'assets/img/icons/sidebar/reports/amount.svg'
 import {ReactComponent as PayrollIcon} from 'assets/img/icons/sidebar/reports/payroll.svg'
 import { useSelector } from "react-redux";
-import { ICurrentLocation } from "actions/filter-location/filter.location.types";
+import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
 interface BCSidebarProps {
   user: any;
@@ -191,9 +191,11 @@ function BCAdminSidebar({
   const location = useLocation();
   const pathName = location.pathname;
   const nestedRouteKey = localStorage.getItem('nestedRouteKey');
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const vendors = useSelector((state: any) => state.vendors);
+
   const getLinkByDivision = (path: string) => {
-    return currentLocation.workTypeId && currentLocation.locationId ? `${path}/${currentLocation.locationId}/${currentLocation.workTypeId}` : path
+    return currentDivision.urlParams ? `${path}/${currentDivision.urlParams}` : path
   }
 
   const LINK_DATA = [
@@ -339,7 +341,8 @@ function BCAdminSidebar({
     {
       'label': 'Vendors',
       'icon': <StorefrontIcon/>,
-      'link': '/main/admin/vendors'
+      'link': '/main/admin/vendors',
+      'flag': currentDivision.isDivisionFeatureActivated && vendors.data?.length > 0 && vendors.data?.length != vendors.assignedVendors?.length
     },
     {
       'label': 'Payroll',
@@ -554,7 +557,7 @@ function BCAdminSidebar({
                   arrow
                   title={item.label}
                   disableHoverListener={open}
-                >
+                  >
                   <StyledListItem
                     button
                     onClick={() => onClickLink(item.link)}
@@ -562,8 +565,13 @@ function BCAdminSidebar({
                       pathName === item.link ||
                       pathName === `${item.link}/${nestedRouteKey}`
                     }>
+                    {item.flag && (
+                        <span className={classes.flagWarning}>!</span>  
+                    )}
+
                     {item.icon && item.icon}
-                    <span className='menuLabel'>{item.label}</span>
+                    <span className='menuLabel'>
+                      {item.label}</span>
                   </StyledListItem>
                 </Tooltip>
               </li>

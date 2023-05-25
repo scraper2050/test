@@ -23,6 +23,8 @@ import {
   TextField,
   Typography,
   withStyles,
+  FormControlLabel,
+  Checkbox
 } from '@material-ui/core';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
@@ -73,7 +75,8 @@ import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { DivisionParams } from 'app/models/division';
 
 const initialTask = {
   employeeType: 0,
@@ -185,7 +188,7 @@ function BCJobModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
-  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const { contacts } = useSelector((state: any) => state.contacts);
   const openServiceTicketFilter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
@@ -351,14 +354,13 @@ function BCJobModal({
         ? job.ticket.customer?._id
         : job.ticket.customer;
     dispatch(getInventory());
-    dispatch(getEmployeesForJobAction({
-        workType: currentLocation?.workTypeId,
-        companyLocation: currentLocation?.locationId
-    }));
-    dispatch(getVendors({
-      workType: currentLocation?.workTypeId,
-      companyLocation: currentLocation?.locationId
-    }));
+    let divisionParams: DivisionParams = {};
+    if (currentDivision.data?.name != "All") {
+      divisionParams = {workType: currentDivision.data?.workTypeId, companyLocation: currentDivision.data?.locationId};
+    }
+    
+    dispatch(getEmployeesForJobAction(divisionParams));
+    dispatch(getVendors(divisionParams));
     dispatch(getAllJobTypesAPI());
     dispatch(getJobLocationsAction({customerId: customerId}));
 
@@ -483,6 +485,8 @@ function BCJobModal({
         ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
+      isHomeOccupied: jobValue?.isHomeOccupied || ticket?.isHomeOccupied,
+      homeOwnerId: jobValue?.homeOwner || ticket?.homeOwner?._id || '',
     },
     validateOnMount: false,
     validateOnChange: false,
@@ -493,11 +497,11 @@ function BCJobModal({
       tempData.customerId = customer?._id;
 
       if (values.scheduledStartTime){
-        // format local time as UTC without adjusting the time
+        // format local time as UTC without time adjustments (i.e. no timezone conversion)
         tempData.scheduledStartTime = moment(values.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
       }
       if (values.scheduledEndTime){
-        // format local time as UTC without adjusting the time
+        // format local time as UTC without time adjustments (i.e. no timezone conversion)
         tempData.scheduledEndTime = moment(values.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
       }
 
@@ -1285,6 +1289,63 @@ function BCJobModal({
                 <Grid item style={{width: '32%'}}/>
               </Grid>
             )}
+            <Grid container item xs>
+              <FormControlLabel
+                classes={{label: classes.checkboxLabel}}
+                control={
+                  <Checkbox
+                    color={'primary'}
+                    checked={FormikValues.isHomeOccupied }
+                    name="isHomeOccupied"
+                    classes={{root: classes.checkboxInput}}
+                    disabled={true}
+                  />
+                }
+                label={`HOUSE IS OCCUPIED`}
+              />
+            </Grid> 
+            { 
+              FormikValues.isHomeOccupied ? (
+              <Grid container>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    First name
+                  </Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerFirstName'}
+                    value={ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj[0]?.profile?.firstName ||'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    Last name
+                  </Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerLastName'}
+                    value={ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.profile?.lastName ||'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Email</Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerEmail'}
+                    value={ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj[0]?.info?.email || 'N/A'}
+                  />
+                </Grid>
+                <Grid justify={'space-between'} xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>Phone</Typography>
+                  <BCInput
+                    disabled={true}
+                    name={'customerPhone'}
+                    value={ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
+                  />
+                </Grid>
+              </Grid>
+              ) : null
+            }
           </Grid>
 
           <DialogActions>

@@ -36,7 +36,7 @@ export const getAllServiceTicketAPI =  (param?: {pageSize: 2020}, division?: Div
   };
 };
 let cancelTokenGetAllServiceTicketsAPI:any;
-export const getAllServiceTicketsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = false, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: DivisionParams) => {
+export const getAllServiceTicketsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = false, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: any) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setServiceTicketLoading(true));

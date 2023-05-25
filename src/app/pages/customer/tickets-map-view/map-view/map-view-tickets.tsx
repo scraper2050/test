@@ -37,19 +37,14 @@ import {
 import { getServiceTicketDetail } from 'api/service-tickets.api';
 import { getJobLocation } from 'api/job-location.api';
 import { getJobSite } from 'api/job-site.api';
-import { DivisionParams } from 'app/models/division';
-import { useParams } from 'react-router-dom';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function MapViewTicketsScreen({
   classes,
   filter: filterTickets,
   selectedDate,
 }: any) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
   const { token } = useSelector(({ auth }: any) => auth);
@@ -107,6 +102,10 @@ function MapViewTicketsScreen({
         }
       }
 
+      if (filterTickets.isHomeOccupied && filterTickets.isHomeOccupied === true) {
+        filter = filter && ticket.isHomeOccupied === true;
+      }
+
       if (selectedDate) {
         // const offset = moment.parseZone().utcOffset();
         const parsedDate = moment.utc(ticket.dueDate).isValid()
@@ -129,7 +128,7 @@ function MapViewTicketsScreen({
   }, []);
 
   useEffect(() => {
-    if (refresh) {
+    if ((refresh && !currentDivision.isDivisionFeatureActivated) || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
       setIsLoading(true);
       setAllTickets([]);
       tempRefTicket.current = [];
@@ -138,7 +137,7 @@ function MapViewTicketsScreen({
       });
 
       socket.on('connect', () => {
-        getOpenServiceTicketsStream(socket.id, divisionParams);
+        getOpenServiceTicketsStream(socket.id, currentDivision.params);
         dispatch(streamServiceTickets(true));
       });
 
@@ -203,7 +202,7 @@ function MapViewTicketsScreen({
         setIsLoading(false);
       };
     }
-  }, [refresh]);
+  }, [refresh, currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
     setFilteredTickets([...filterOpenTickets(allTickets), ...techniciansJobs]);

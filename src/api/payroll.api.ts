@@ -4,9 +4,9 @@ import { error, success } from 'actions/snackbar/snackbar.action';
 import { getContractorPayments, getPayrollBalance } from 'actions/payroll/payroll.action';
 import { DivisionParams } from 'app/models/division';
 
-export const getContractorsAPI = async () => {
+export const getContractorsAPI = async (division?: DivisionParams) => {
   try {
-    const response: any = await request("/getContractors", 'GET', {}, false);
+    const response: any = await request("/getContractors", 'GET', {}, false,undefined,undefined,undefined,division);
     const {status, message, contractors = [], technicians = []} = response.data;
     if (status === 1) {
       const data = [
@@ -277,15 +277,15 @@ export const normalizeData = (item: any, type: string) => {
   }
 }
 
-export const voidPayment: any = (params = {}) => {
+export const voidPayment: any = (params = {},  division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
       request('/voidPayment', 'DELETE', params, false)
         .then((res: any) => {
           if(res.data?.status === 1){
             dispatch(success("Payment voided succesfully"));
-            dispatch(getContractorPayments());
-            dispatch(getPayrollBalance());
+            dispatch(getContractorPayments(undefined,division));
+            dispatch(getPayrollBalance(undefined, undefined,division));
             return resolve(res.data);
           } else {
             dispatch(error("Something went wrong! Cannot void payment"));
@@ -298,15 +298,15 @@ export const voidPayment: any = (params = {}) => {
   }
 };
 
-export const voidAdvancePayment: any = (params = {}) => {
+export const voidAdvancePayment: any = (params = {},  division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
       request('/voidAdvancePaymentContractor', 'DELETE', params, false)
         .then((res: any) => {
           if(res.data?.status === 1){
             dispatch(success("Payment voided succesfully"));
-            dispatch(getContractorPayments());
-            dispatch(getPayrollBalance());
+            dispatch(getContractorPayments(undefined,division));
+            dispatch(getPayrollBalance(undefined, undefined,division));
             return resolve(res.data);
           } else {
             dispatch(error("Something went wrong! Cannot void payment"));

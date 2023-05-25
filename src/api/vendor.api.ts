@@ -6,11 +6,8 @@ export const getCompanyContracts = async (filter?: any) => {
   
   let responseData = null;
   try {
-    let body: any = {};
-    if (filter?.workType && filter?.companyLocation) {
-      body["workType"] = filter.workType;
-      body["companyLocation"] = filter.companyLocation;
-    }
+    let body: any = {...filter};
+
     const response: any = await request('/getCompanyContracts', 'POST', body, false);
     responseData = response.data;
   } catch (err) {
@@ -21,8 +18,8 @@ export const getCompanyContracts = async (filter?: any) => {
       throw new Error(`Something went wrong`);
     }
   }
-  responseData = responseData.status === 0 ? [] : responseData.contracts;
-  return responseData;
+  const vendors = responseData.status === 0 ? [] : responseData.contracts;
+  return {vendor: vendors, assignedVendors: responseData?.assignedVendors ?? []};
 };
 
 export const getContractorDetail = async (data: any, type: string = 'vendor') => {

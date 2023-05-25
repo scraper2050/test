@@ -10,8 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "helpers/format";
 import {CSButtonSmall} from "../../../../../../helpers/custom";
 import {loadJobReportsActions} from "../../../../../../actions/customer/job-report/job-report.action";
-import { DivisionParams } from 'app/models/division';
 import { getAllJobReportsAPI } from 'api/job-report.api';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 interface LocationStateTypes {
   customerName: string;
@@ -19,11 +19,7 @@ interface LocationStateTypes {
 }
 
 function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
-  const params = useParams<DivisionParams>();
-  const divisionParams: DivisionParams = {
-    workType: params.workType,
-    companyLocation: params.companyLocation
-  }
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const dispatch = useDispatch();
 
@@ -134,8 +130,10 @@ function CustomersJobEquipmentInfoReportsPage({ classes }: any) {
   };
 
   useEffect(() => {
-    dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,divisionParams));
-  }, []);
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,currentDivision.params));
+    }
+  }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
 
   useEffect(() => {

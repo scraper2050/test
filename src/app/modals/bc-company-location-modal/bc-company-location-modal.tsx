@@ -21,6 +21,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import {
   closeModalAction,
+  openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,8 +37,7 @@ import * as Yup from "yup";
 import { emailRegExp, phoneRegExp, zipCodeRegExp } from "../../../helpers/format";
 import {
   AddCompanyLocationAction,
-  UpdateCompanyLocationAction,
-  getCompanyLocationsAction
+  UpdateCompanyLocationAction
 } from "../../../actions/user/user.action";
 import { CompanyLocation } from "../../../actions/user/user.types";
 import BCSent from "../../components/bc-sent";
@@ -46,7 +46,6 @@ import AutoComplete from "../../components/bc-autocomplete/bc-autocomplete_2";
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import { getWorkType } from 'actions/work-type/work-type.action';
 import { getContractors } from 'actions/payroll/payroll.action';
-import { getDivision } from 'api/division.api';
 const companyLocationSchema = Yup.object().shape({
   locationName: Yup.string().required('Required'),
   contactEmail: Yup.string().matches(emailRegExp, 'Email address is not valid'),
@@ -70,6 +69,7 @@ interface API_PARAMS {
   billingCity?: string;
   billingState?: string;
   billingZipCode?: string;
+  billingEmailSender?: string;
   phone?: string;
   workTypes?: string[];
   assignedVendors?: {
@@ -121,6 +121,7 @@ function BCCompanyLocationModal({
       billingCity: companyLocation?.billingAddress?.city || '',
       billingState: allStates.find((state) => state.name === companyLocation?.billingAddress?.state),
       billingZipCode: companyLocation?.billingAddress?.zipCode ?? '',
+      emailSender: companyLocation?.billingAddress?.emailSender ?? '',
     },
     onSubmit: (values: any, { setSubmitting }: any) => {
       let workTypes = FormikValues.workTypes.map(res => res._id);
@@ -173,6 +174,7 @@ function BCCompanyLocationModal({
         billingCity: FormikValues.billingCity,
         billingState: FormikValues.billingState?.name || '',
         billingZipCode: FormikValues.billingZipCode,
+        billingEmailSender: FormikValues.emailSender,
         assignedVendors: oldAssignedVendors,
         assignedEmployees: oldAssignedEmployee,
       };
@@ -235,6 +237,15 @@ function BCCompanyLocationModal({
     } else {
       if (FormikValues.workTypes.length && (!companyLocationList.length || (companyLocationList.length && !companyLocationList.filter((res: any) => res.workTypes?.length).length))) {
         setOpenWarning(true);
+        dispatch(setModalDataAction({
+          'data': {
+            action: submitForm
+          },
+          'type': CONSTANTS.modalTypes.DIVISION_WARNING_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
       } else {
         submitForm();
       }
@@ -251,18 +262,17 @@ function BCCompanyLocationModal({
     }, 200);
   };
 
-  const handleWarningCreateLocation = (action: string) => {
-    if (action == "close") {
-      setOpenWarning(false);
-    } else {
-      setOpenWarning(false);
-      submitForm();
-    }
-  }
-
   const stateFilterOptions = createFilterOptions({
     stringify: (option: any) => option.name + option.abbreviation,
   });
+
+  const handleSetBillingAdress = (isChecked:boolean) =>{
+    changeField('isAddressAsBillingAddress', isChecked);
+    changeField('billingStreet', isChecked ? FormikValues.street : "");
+    changeField('billingCity', isChecked ? FormikValues.city : "");
+    changeField('billingState', isChecked ? FormikValues.state : "");
+    changeField('billingZipCode', isChecked ? FormikValues.zipCode : "");
+  }
 
   return (
     <DataContainer className={'new-modal-design'} style={{ marginTop: -20 }}>
@@ -327,14 +337,13 @@ function BCCompanyLocationModal({
                     classes={{ root: classnames(classes.hqButton, { [classes.hqButtonActive]: FormikValues.isMainLocation }) }}
                     onClick={() => changeField('isMainLocation', true)}
                     variant={'outlined'}
-                    startIcon={<BusinessIcon />}
                     endIcon={FormikValues.isMainLocation ? <CancelIcon
                       style={{ color: LIGHT_GREY }}
                       onClick={(e) => {
                         changeField('isMainLocation', false);
                         e.stopPropagation();
                       }} /> : null}
-                  >Set as HQ</Button>
+                  >Set as Main</Button>
                 </Grid>
               </Grid>
             </Grid>
@@ -552,7 +561,7 @@ function BCCompanyLocationModal({
                         control={
                           <Checkbox
                             checked={FormikValues.isAddressAsBillingAddress}
-                            onChange={(e, checked) => changeField('isAddressAsBillingAddress', checked)}
+                            onChange={(e, checked) => handleSetBillingAdress(checked)}
                             color="primary"
                             name="isSetBillingAddress" />
                         }
@@ -562,10 +571,34 @@ function BCCompanyLocationModal({
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
+                <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                      style={{ marginTop: 8 }} xs={3}>
+                      <Typography variant={'button'}>Send invoices from</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'emailSender'}
+                        onChange={formikChange}
+                        type={'email'}
+                        value={FormikValues.emailSender}
+                        variant={'outlined'}
+                        error={!!FormikErrors.emailSender}
+                        helperText={FormikErrors.emailSender}
+                      />
+                      <small style={{textAlign: 'center', color: '#828282'}}>*If no email is set here, invoices will be sent from the logged in user</small>
+                    </Grid>
+                  </Grid>
+              </Grid>
+                <Grid item xs={12}>
                   <Grid container direction={'row'} spacing={1}>
                     <Grid container item justify={'flex-end'}
                       style={{ marginTop: 8 }} xs={3}>
-                      <Typography variant={'button'}>Work Types</Typography>
+                      <Typography variant={'button'}>WORK TYPES</Typography>
                     </Grid>
                     <Grid item xs={9}>
                       <Autocomplete
@@ -726,27 +759,6 @@ function BCCompanyLocationModal({
         </Button>
 
       </DialogActions>
-
-      <Dialog
-        open={openWarning}
-        onClose={() => handleWarningCreateLocation('close')}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Activate Multiple Locations"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Please note that when you add new locations, ensure that all new jobs are assigned to the correct location. Your first location added will automatically be designated as the Main location, and all jobs will now be assigned to the first work type and location. Please be aware that there may be additional charges when activating additional locations.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleWarningCreateLocation('close')}>Cancel</Button>
-          <Button onClick={() => handleWarningCreateLocation('submit')} autoFocus>Active</Button>
-        </DialogActions>
-      </Dialog>
-
     </DataContainer>
   );
 }
