@@ -664,8 +664,6 @@ function BCEditInvoice({
           state : filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.state : filteredLocation?.billingAddress?.state,
           zipCode : filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.zipCode : filteredLocation?.billingAddress?.zipCode,
         })
-        console.log(billingAddress);
-        
       }
     }else{
       setBillingAddress({
@@ -674,7 +672,6 @@ function BCEditInvoice({
         state : invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.state ?? '' : invoiceData?.companyLocation?.billingAddress?.state ?? '') : invoiceData?.company?.address?.state,
         zipCode : invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.zipCode ?? '' : invoiceData?.companyLocation?.billingAddress?.zipCode ?? '') : invoiceData?.company?.address?.zipCode,
       })
-      
     }
   },[currentDivision])
 
