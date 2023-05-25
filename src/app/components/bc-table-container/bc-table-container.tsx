@@ -102,11 +102,11 @@ function BCTableContainer({
   }
 
   const handleSearchChange = (event: any) => {
+    setSearchText(event.target.value);
+    setKeywordFunction(event.target.value);
     if(manualPagination){
-      setSearchText(event.target.value);
       debouncedFetchFunction(event.target.value);
     } else {
-      setSearchText(event.target.value);
       if (setPage !== undefined) {
         setPage({
           ...currentPage,
