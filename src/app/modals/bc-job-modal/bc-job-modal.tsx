@@ -39,7 +39,7 @@ import {
   convertMilitaryTime,
   formatDate,
   formatISOToDateStringFixedDate,
-  formatToMilitaryTimeWithOffset, parseISODate,
+  formatToMilitaryTime, parseISODate,
   shortenStringWithElipsis,
 } from 'helpers/format';
 import styled from 'styled-components';
@@ -73,6 +73,7 @@ import moment from 'moment';
 import BCDragAndDrop from "../../components/bc-drag-drop/bc-drag-drop";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const initialTask = {
   employeeType: 0,
@@ -184,7 +185,8 @@ function BCJobModal({
   const jobLocations = useSelector((state: any) => state.jobLocations.data);
   const isLoading = useSelector((state: any) => state.jobLocations.loading);
   const jobSites = useSelector((state: any) => state.jobSites.data);
-  const {contacts} = useSelector((state: any) => state.contacts);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
+  const { contacts } = useSelector((state: any) => state.contacts);
   const openServiceTicketFilter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
   );
@@ -349,8 +351,14 @@ function BCJobModal({
         ? job.ticket.customer?._id
         : job.ticket.customer;
     dispatch(getInventory());
-    dispatch(getEmployeesForJobAction());
-    dispatch(getVendors());
+    dispatch(getEmployeesForJobAction({
+        workType: currentLocation?.workTypeId,
+        companyLocation: currentLocation?.locationId
+    }));
+    dispatch(getVendors({
+      workType: currentLocation?.workTypeId,
+      companyLocation: currentLocation?.locationId
+    }));
     dispatch(getAllJobTypesAPI());
     dispatch(getJobLocationsAction({customerId: customerId}));
 
@@ -484,10 +492,14 @@ function BCJobModal({
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
       tempData.customerId = customer?._id;
 
-      if (values.scheduledStartTime)
-        tempData.scheduledStartTime = formatToMilitaryTimeWithOffset(values.scheduledStartTime);
-      if (values.scheduledEndTime)
-        tempData.scheduledEndTime = formatToMilitaryTimeWithOffset(values.scheduledEndTime);
+      if (values.scheduledStartTime){
+        // format local time as UTC without adjusting the time
+        tempData.scheduledStartTime = moment(values.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      }
+      if (values.scheduledEndTime){
+        // format local time as UTC without adjusting the time
+        tempData.scheduledEndTime = moment(values.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+      }
 
       if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
 

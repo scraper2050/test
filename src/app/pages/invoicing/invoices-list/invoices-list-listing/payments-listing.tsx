@@ -19,6 +19,8 @@ import BCDateRangePicker
   , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
   import { getAllPaymentsAPI } from 'api/payment.api';
 import { RootState } from 'reducers';
+import { DivisionParams } from 'app/models/division';
+import { useParams } from 'react-router-dom';
 
 const getFilteredList = (state: any) => {
   const sortedPayments = TableFilterService.filterByDateDesc(state?.paymentList.data);
@@ -26,6 +28,12 @@ const getFilteredList = (state: any) => {
 };
 
 function InvoicingPaymentListing({ classes, theme }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const paymentList = useSelector(getFilteredList);
   const customStyles = useCustomStyles()
@@ -125,7 +133,7 @@ function InvoicingPaymentListing({ classes, theme }: any) {
     //   dispatch(setCurrentPageIndex(currentPageIndex));
     //   dispatch(setCurrentPageSize(currentPageSize));
     // }
-    dispatch(getAllPaymentsAPI());
+    dispatch(getAllPaymentsAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,divisionParams));
   }, []);
 
   // useEffect(() => {

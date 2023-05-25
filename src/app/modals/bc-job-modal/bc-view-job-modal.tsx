@@ -114,8 +114,7 @@ function BCViewJobModal({
           (employee: any) => employee._id === row.original.user
         )[0];
         const vendor = vendorsList.find((v: any) => v.contractor.admin?._id === row.original.user);
-        const { displayName } = user || vendor || '';
-        // const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
+        const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
         return <div>{displayName}</div>;
       },
     },
@@ -161,9 +160,9 @@ function BCViewJobModal({
     },
   ];
 
-  const scheduleDate = job.scheduleDate == '-' ? 'N/A' : job.scheduleDate;
-  const startTime = job.scheduleTime != '-' ? job.scheduleTime.split('-')[0] : 'N/A';
-  const endTime = job.scheduleTime != '-' ? job.scheduleTime.split('-')[1] : 'N/A';
+  const scheduleDate = job.scheduleDate;
+  const startTime = job.scheduledStartTime ? formatTime(job.scheduledStartTime) : 'N/A';
+  const endTime = job.scheduledEndTime ? formatTime(job.scheduledEndTime) : 'N/A';
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
   let jobImages = job?.images?.length ? [...job.images] : [];
   jobImages = job?.technicianImages?.length ? [...jobImages, ...job.technicianImages] : jobImages;
@@ -270,11 +269,11 @@ function BCViewJobModal({
             >Edit Job {job.jobId.replace('Job ', '#')}</Button><br/></>
           }
           <Typography variant={'caption'} className={'previewCaption'}>customer</Typography>
-          <Typography variant={'h6'} className={'bigText'}>{job.customer || 'N/A'}</Typography>
+          <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
           <Typography variant={'caption'} className={'previewCaption'}>schedule date</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? scheduleDate : 'N/A'}</Typography>
+          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
         </Grid>
         <Grid item xs className={classNames({[classes.editButtonPadding]: canEdit})}>
           <Typography variant={'caption'} className={'previewCaption'}>open time</Typography>
@@ -307,11 +306,10 @@ function BCViewJobModal({
                 <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1, borderColor: 'black'}}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
               </Grid>
               <Grid item xs>
-                <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{job.technician || 'N/A'}</Typography>
+              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
               </Grid>
               <Grid item xs>
-                <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{job.jobType}</Typography>
-                {/* <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{calculateJobType(task).map((type:string) => <span className={'jobTypeText'}>{type}</span>)}</Typography> */}
+              <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{calculateJobType(task).map((type:string) => <span className={'jobTypeText'}>{type}</span>)}</Typography>
               </Grid>
               <Grid item style={{width: 100}}>
                 <BCJobStatus status={task.status || 0} size={'small'}/>
@@ -323,11 +321,11 @@ function BCViewJobModal({
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>Subdivision</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.subdivision || 'N/A'}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>Job Address</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.jobSite || 'N/A'}</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>equipment</Typography>

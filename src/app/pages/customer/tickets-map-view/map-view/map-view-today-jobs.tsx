@@ -14,6 +14,9 @@ import {RootState} from "reducers";
 import {CompanyProfileStateType} from "actions/user/user.types";
 import {setTicketSelected} from "actions/map/map.actions";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { refreshJobs } from "actions/job/job.action";
+import { DivisionParams } from "app/models/division";
+import { useParams } from "react-router-dom";
 
 interface Props {
   classes: any;
@@ -21,6 +24,12 @@ interface Props {
 }
 
 function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [statusFilter, setStatusFilter] = useState('-1');
@@ -75,7 +84,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   }, [filterJobs])
 
   const getJobsData = () => {
-    dispatch(getTodaysJobsAPI(statusFilter, jobIdFilter));
+    dispatch(getTodaysJobsAPI(statusFilter, jobIdFilter,divisionParams));
   }
   
 

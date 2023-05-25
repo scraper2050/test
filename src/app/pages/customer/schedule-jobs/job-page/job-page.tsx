@@ -16,24 +16,35 @@ import {
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
+import { refreshJobs, setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/job/job.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import BCJobStatus from '../../../../components/bc-job-status';
 import BCDateRangePicker
-  , {Range} from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+, { Range } from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import moment from "moment";
-import {getVendor} from "../../../../../helpers/job";
+import { getVendor } from "../../../../../helpers/job";
 import { CSButton } from "../../../../../helpers/custom";
 import debounce from 'lodash.debounce';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { useParams } from 'react-router-dom';
+import { DivisionParams } from 'app/models/division';
+import { warning } from 'actions/snackbar/snackbar.action';
 
-function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
+function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+  const divisions = useSelector((state: any) => state.divisions);
+
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   // const [showAllJobs, toggleShowAllJobs] = useState(true);
   const { _id } = useSelector(({ auth }: RootState) => auth);
-  const { isLoading = true, jobs, jobsList, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword} = useSelector(
+  const { isLoading = true, jobs, jobsList, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
     ({ jobState }: any) => ({
       isLoading: jobState.isLoading,
       jobs: jobState.data,
@@ -57,7 +68,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     setFilterMenuAnchorEl(event.currentTarget);
   };
 
-  const handleSelectStatusFilter = (statusNumber:string) => {
+  const handleSelectStatusFilter = (statusNumber: string) => {
     setSelectedStatus(statusNumber);
     setFilterMenuAnchorEl(null);
   };
@@ -66,7 +77,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   //   (job: any) => [0, 1, 4, 5, 6].indexOf(job.status) >= 0
   // );
 
-  const filteredJobs = jobs.filter((job: any) =>  {
+  const filteredJobs = jobs.filter((job: any) => {
     let cond = true;
     // if (selectionRange) {
     //   cond = cond &&
@@ -104,36 +115,41 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     return `${startTime} - ${endTime}`;
   }
   const openCreateTicketModal = () => {
-    if (customers.length !== 0) {
-      dispatch(setModalDataAction({
-        'data': {
-          'modalTitle': 'New Service Ticket',
-          'removeFooter': false,
-          'className': 'serviceTicketTitle',
-          'error': {
-            'status': false,
-            'message': ''
-          }
-        },
-        'type': modalTypes.CREATE_TICKET_MODAL
-      }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
+    //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
+    if ((divisions.data?.length && divisionParams.workType && divisionParams.companyLocation) || !divisions.data?.length) {
+      if (customers.length !== 0) {
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'New Service Ticket',
+            'removeFooter': false,
+            'className': 'serviceTicketTitle',
+            'error': {
+              'status': false,
+              'message': ''
+            }
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      } else {
+        dispatch(setModalDataAction({
+          'data': {
+            'removeFooter': false,
+            'error': {
+              'status': true,
+              'message': 'You must add customers to create a service ticket'
+            }
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      }
     } else {
-      dispatch(setModalDataAction({
-        'data': {
-          'removeFooter': false,
-          'error': {
-            'status': true,
-            'message': 'You must add customers to create a service ticket'
-          }
-        },
-        'type': modalTypes.CREATE_TICKET_MODAL
-      }));
-      setTimeout(() => {
-        dispatch(openModalAction());
-      }, 200);
+      dispatch(warning("Please select a division before creating a ticket."))
     }
   };
 
@@ -262,46 +278,46 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
   ];
 
   function Toolbar() {
-    type IconComponentType = React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>;
+    type IconComponentType = React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string | undefined; }>;
     const [IconComponent, setIconComponent] = useState<null | IconComponentType>(null);
 
-/*    const handleCheckBoxChange = () => {
-      toggleShowAllJobs((current) => {
-        if(current === false){
-          setSelectedStatus('-1');
-        } else {
-          setSelectedStatus('-2');
-        }
-        return !current;
-      });
-    };*/
+    /*    const handleCheckBoxChange = () => {
+          toggleShowAllJobs((current) => {
+            if(current === false){
+              setSelectedStatus('-1');
+            } else {
+              setSelectedStatus('-2');
+            }
+            return !current;
+          });
+        };*/
 
     useEffect(() => {
-      if(selectedStatus !== '-1' && selectedStatus !== '-2'){
+      if (selectedStatus !== '-1' && selectedStatus !== '-2') {
         setIconComponent(statusReference[selectedStatus].icon);
         // toggleShowAllJobs(false);
-      } else if(selectedStatus === '-1'){
+      } else if (selectedStatus === '-1') {
         // toggleShowAllJobs(true);
         setIconComponent(null);
       } else {
         setIconComponent(null);
       }
-      if(loadCount.current !== 0){
-        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
+      if (loadCount.current !== 0) {
+        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectedStatus]);
 
     useEffect(() => {
-      if(loadCount.current !== 0){
-        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
+      if (loadCount.current !== 0) {
+        dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
         dispatch(setCurrentPageIndex(0));
       }
     }, [selectionRange]);
 
     return (
       <>
-{/*        <FormControlLabel
+        {/*        <FormControlLabel
           control={
             <Checkbox
               checked={showAllJobs}
@@ -322,10 +338,10 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
           {
             statusReference[selectedStatus] &&
             IconComponent &&
-            <IconComponent className={classes.filterIcon}/>
+            <IconComponent className={classes.filterIcon} />
           }
           <span
-            style={{color: statusReference[selectedStatus] && statusReference[selectedStatus].color || 'inherit'}}
+            style={{ color: statusReference[selectedStatus] && statusReference[selectedStatus].color || 'inherit' }}
           >
             {
               statusReference[selectedStatus]
@@ -335,7 +351,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                   : 'Default'
             }
           </span>
-          <span style={{flex: 1, textAlign: 'right'}}>
+          <span style={{ flex: 1, textAlign: 'right' }}>
             <ArrowDropDownIcon />
           </span>
         </div>
@@ -364,11 +380,11 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                 root: classes.filterMenuItemRoot,
                 selected: classes.filterMenuItemSelected
               }}
-              style={{color: statusObj.color || 'inherit'}}
+              style={{ color: statusObj.color || 'inherit' }}
               selected={statusObj.statusNumber === selectedStatus}
               onClick={() => handleSelectStatusFilter(statusObj.statusNumber)}
             >
-              <statusObj.icon className={classes.filterIcon}/>
+              <statusObj.icon className={classes.filterIcon} />
               {statusObj.text}
             </MenuItem>
           ))}
@@ -383,9 +399,9 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
     );
   }
 
-  useEffect(() => {    
+  useEffect(() => {
     if (refresh) {
-      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange));    
+      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -396,7 +412,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
 
   useEffect(() => {
     console.log('refetch', keyword);
-    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange));
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams));
   }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange])
 
   const handleTabChange = (newValue: number) => {
@@ -415,7 +431,7 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
 
   const desbouncedSearchFunction = debounce((keyword: string) => {
     dispatch(setKeyword(keyword));
-    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus,keyword, selectionRange))
+    dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams))
   }, 500);
   return (
     <div className={classes.pageMainContainer}>
@@ -462,15 +478,15 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) => 
-                  {
-                    dispatch(setCurrentPageIndex(num));
-                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange))
-                  }}
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => {
+                  dispatch(setCurrentPageIndex(num));
+                  if (apiCall)
+                    dispatch(getAllJobsAPI(currentPageSize, num, selectedStatus, keyword, selectionRange, divisionParams))
+                }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange))
+                  dispatch(getAllJobsAPI(num || currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, divisionParams))
                 }}
                 setKeywordFunction={(query: string) => {
                   // dispatch(setKeyword(query));
@@ -482,10 +498,10 @@ function JobsPage({ classes,hidden, currentPage, setCurrentPage }: any) {
             <div
               hidden={true}
               id={'1'}>
-                <Grid
-                  item
-                  xs={12}
-                />
+              <Grid
+                item
+                xs={12}
+              />
             </div>
           </SwipeableViews>
         </div>

@@ -1,7 +1,7 @@
 import AuthRoute from 'auth-route';
 import BCCircularLoader from '../../components/bc-circular-loader/bc-circular-loader';
 import 'scss/elevation.scss';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import BCAdminLayout from "../../components/bc-admin-layout/bc-admin-layout";
@@ -21,6 +21,7 @@ import { logoutAction, resetStore } from 'actions/auth/auth.action';
 import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job-request/job-request.action';
 import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { info } from '../../../actions/snackbar/snackbar.action';
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
 
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
@@ -113,6 +114,7 @@ function Main(): any {
   const { numberOfJobRequest } = useSelector((state: any) => state.jobRequests);
   const { jobRequests } = useSelector((state: any) => state.jobRequests);
   const snackbarState = useSelector((state: any) => state.snackbar);
+  const currentLocation:  ICurrentLocation = useSelector((state: any) => state.currentLocation.data);
 
   const initialHeaderLoad = () => {
     dispatch(loadNotificationsActions.fetch());
@@ -255,6 +257,7 @@ function Main(): any {
                 showNotificationDetails={showNotificationDetails}
                 openModalHandler={openModalHandler}
                 jobRequests={jobRequests}
+                user={user}
               />
               <BCAdminSidebar
                 open={true}
@@ -311,13 +314,13 @@ function Main(): any {
                 <AuthRoute
                   Component={PayrollPage}
                   exact
-                  path={'/main/payroll'}
+                  path={'/main/payroll/:companyLocation?/:workType?'}
                   title={'Tags'}
                 />
                 <AuthRoute
                   Component={PastPaymentPage}
                   exact
-                  path={'/main/payroll/pastpayment'}
+                  path={'/main/payroll/pastpayment/:companyLocation?/:workType?'}
                   title={'Tags'}
                 />
                 <AuthRoute
@@ -329,7 +332,7 @@ function Main(): any {
                 <AuthRoute
                   Component={PayrollReportsPage}
                   exact
-                  path={'/main/payroll/reports'}
+                  path={'/main/payroll/reports/:companyLocation?/:workType?'}
                   title={'Tags'}
                 />
                 <AuthRoute
@@ -388,13 +391,13 @@ function Main(): any {
                 <AuthRoute
                   Component={ScheduleJobsPage}
                   exact
-                  path={'/main/customers/schedule/jobs'}
+                  path={'/main/customers/schedule/jobs/:companyLocation?/:workType?'}
                   title={'Customers'}
                 />
                 <AuthRoute
                   Component={ScheduleServiceTicketsPage}
                   exact
-                  path={'/main/customers/schedule/tickets'}
+                  path={'/main/customers/schedule/tickets/:companyLocation?/:workType?'}
                   title={'Customers'}
                 />
                 <AuthRoute
@@ -406,19 +409,19 @@ function Main(): any {
                 <AuthRoute
                   Component={CalendarPage}
                   exact
-                  path={'/main/customers/calendar'}
+                  path={'/main/customers/calendar/:companyLocation?/:workType?'}
                   title={'Customers'}
                 />
                 <AuthRoute
                   Component={TicketsMapViewPage}
                   exact
-                  path={'/main/customers/ticket-map-view'}
+                  path={'/main/customers/ticket-map-view/:companyLocation?/:workType?'}
                   title={'Map View'}
                 />
                 <AuthRoute
                   Component={JobReportsPage}
                   exact
-                  path={'/main/customers/job-reports'}
+                  path={'/main/customers/job-reports/:companyLocation?/:workType?'}
                   title={'Job Reports'}
                 />
 
@@ -434,22 +437,22 @@ function Main(): any {
                 />
                 <AuthRoute
                   actionData={{
-                    'link': '/main/customers/:customername/job-equipment-info/reports',
+                    'link': '/main/customers/:customername/job-equipment-info/reports/:companyLocation?/:workType?',
                     'title': 'Customers'
                   }}
                   Component={CustomersJobEquipmentInfoReportsPage}
                   exact
-                  path={'/main/customers/:customername/job-equipment-info/reports'}
+                  path={'/main/customers/:customername/job-equipment-info/reports/:companyLocation?/:workType?'}
                   title={'Customers'}
                 />
                 <AuthRoute
                   actionData={{
-                    'link': '/main/customers/:customername/job-equipment-info/jobs',
+                    'link': '/main/customers/:customername/job-equipment-info/jobs/:companyLocation?/:workType?',
                     'title': 'Customers'
                   }}
                   Component={CustomersJobEquipmentInfoJobsPage}
                   exact
-                  path={'/main/customers/:customername/job-equipment-info/jobs'}
+                  path={'/main/customers/:customername/job-equipment-info/jobs/:companyLocation?/:workType?'}
                   title={'Customers'}
                 />
                 <AuthRoute
@@ -464,12 +467,12 @@ function Main(): any {
                 />
                 <AuthRoute
                   actionData={{
-                    'link': '/main/customers/:customername/job-equipment-info/tickets',
+                    'link': '/main/customers/:customername/job-equipment-info/tickets/:companyLocation?/:workType?',
                     'title': 'Customers'
                   }}
                   Component={CustomersJobEquipmentInfoTicketsPage}
                   exact
-                  path={'/main/customers/:customername/job-equipment-info/tickets'}
+                  path={'/main/customers/:customername/job-equipment-info/tickets/:companyLocation?/:workType?'}
                   title={'Customers'}
                 />
                 <AuthRoute
@@ -506,12 +509,6 @@ function Main(): any {
                   title={'Job Reports'}
                 />
 
-                <Redirect
-                  exact
-                  from={`/main/invoicing`}
-                  to={`/main/invoicing/invoices-list`}
-                />
-
                   <AuthRoute
                     Component={ViewInvoicePage}
                     exact
@@ -542,7 +539,7 @@ function Main(): any {
                   <Redirect
                     exact
                     from={`/main/invoicing`}
-                    to={`/main/invoicing/invoices-list`}
+                    to={currentLocation.workTypeId && currentLocation.locationId ? `/main/invoicing/invoices-list/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/invoicing/invoices-list`}
                   />
 
                   {/* <AuthRoute
@@ -553,7 +550,7 @@ function Main(): any {
 
                 <AuthRoute
                   Component={InvoicingListPage}
-                  path={'/main/invoicing/invoices-list'}
+                  path={'/main/invoicing/invoices-list/:companyLocation?/:workType?'}
                   title={'Invoicing'}
                 />
 
@@ -763,18 +760,18 @@ function Main(): any {
                 <Redirect
                   exact
                   from={`/main/reports`}
-                  to={`/main/reports/revenue`}
+                  to={currentLocation.workTypeId && currentLocation.locationId ? `/main/reports/revenue/${currentLocation.locationId}/${currentLocation.workTypeId}` : `/main/reports/revenue`}
                 />
                 <AuthRoute
                   Component={RevenueReportsPage}
                   exact
-                  path={'/main/reports/revenue'}
+                  path={'/main/reports/revenue/:companyLocation?/:workType?'}
                   title={'Reports'}
                 />
                 <AuthRoute
                   Component={ARReportsPage}
                   exact
-                  path={'/main/reports/ar'}
+                  path={'/main/reports/ar/:companyLocation?/:workType?'}
                   title={'Reports'}
                 />
                 <AuthRoute

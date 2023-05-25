@@ -2,10 +2,16 @@ import request from 'utils/http.service';
 import {normalizeData} from "./payroll.api";
 import {ContractorPayment} from "../actions/payroll/payroll.types";
 
-export const getCompanyContracts = async () => {
+export const getCompanyContracts = async (filter?: any) => {
+  
   let responseData = null;
   try {
-    const response: any = await request('/getCompanyContracts', 'POST', {}, false);
+    let body: any = {};
+    if (filter?.workType && filter?.companyLocation) {
+      body["workType"] = filter.workType;
+      body["companyLocation"] = filter.companyLocation;
+    }
+    const response: any = await request('/getCompanyContracts', 'POST', body, false);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;

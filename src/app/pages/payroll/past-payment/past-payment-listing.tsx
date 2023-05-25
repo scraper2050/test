@@ -4,7 +4,7 @@ import {
   withStyles
 } from "@material-ui/core";
 import styles from '../payroll.styles';
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import BCTableContainer from "../../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../components/bc-menu-more";
@@ -32,6 +32,7 @@ import {
 import moment from "moment";
 import { voidPayment, voidAdvancePayment } from 'api/payroll.api'
 import { setPayments } from 'actions/invoicing/payments/payments.action';
+import { DivisionParams } from 'app/models/division';
 
 interface Props {
   classes: any;
@@ -44,6 +45,12 @@ const ITEMS = [
 ]
 
 function PastPayments({ classes }: Props) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const location = useLocation<any>();
   const locationState = location.state;
@@ -62,20 +69,9 @@ function PastPayments({ classes }: Props) {
   const isFiltered = selectedIDs.length > 0 || selectionRange !== null;
 
   useEffect(() => {
-    dispatch(getContractors());
-    const obj: any = location.state;
-    if (obj?.contractor) {
-      setSelectedIDs([obj.contractor._id]);
-    }
-    return () => {
-      dispatch(setContractorPayments([]))
-    }
-  }, []);
-
-  useEffect(() => {
     const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
     if (cont) {
-      dispatch(getContractorPayments({ id: cont._id, type: cont.type }));
+      dispatch(getContractorPayments({ id: cont._id, type: cont.type },divisionParams));
     }
   }, [selectedIDs, contractors]);
 

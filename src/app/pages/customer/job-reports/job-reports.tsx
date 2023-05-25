@@ -7,7 +7,7 @@ import styles from '../customer.styles';
 import { Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
@@ -20,8 +20,16 @@ import {
   setCurrentPageSize,
   setKeyword
 } from 'actions/customer/job-report/job-report.action'
+import { ICurrentLocation } from 'actions/filter-location/filter.location.types';
+import { DivisionParams } from 'app/models/division';
 
 function JobReportsPage({ classes, theme }: any) {
+  const params = useParams<DivisionParams>();
+  const divisionParams: DivisionParams = {
+    workType: params.workType,
+    companyLocation: params.companyLocation
+  }
+
   const dispatch = useDispatch();
   const customStyles = useCustomStyles();
   // const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
@@ -158,7 +166,7 @@ function JobReportsPage({ classes, theme }: any) {
 
   useEffect(() => {
     // dispatch(loadJobReportsActions.fetch());
-    dispatch(getAllJobReportsAPI());
+    dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,divisionParams));
     return () => {
       dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(currentPageIndex));
@@ -167,14 +175,14 @@ function JobReportsPage({ classes, theme }: any) {
   }, []);
 
   useEffect(() => {
-    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange));
+    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange,divisionParams));
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
   useEffect(() => {
     if(location?.state?.option?.search || location?.state?.option?.pageSize){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange));
+      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange, divisionParams));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
@@ -256,19 +264,20 @@ function JobReportsPage({ classes, theme }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) =>
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
                   {
                     dispatch(setCurrentPageIndex(num));
-                    dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange))
+                    if(apiCall)
+                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange, divisionParams))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange))
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange, divisionParams))
                 }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
-                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange))
+                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange, divisionParams))
                 }}
               />
             </div>
