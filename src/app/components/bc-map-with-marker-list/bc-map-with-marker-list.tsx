@@ -65,6 +65,7 @@ const superClusterOptions = {
     includeRequest: !!props.ticket?.requestId,
     includeJob: !!props.ticket?.jobId,
     isHomeOccupied: !!props.ticket?.isHomeOccupied,
+    scheduleTimeAMPM: props.ticket?.scheduleTimeAMPM || 0,
   }),
   reduce: (acc:any, props:any) => {
     if(!!props.includeTicket) {
@@ -90,6 +91,14 @@ const calculateColor = (cluster:any) => {
 }
 const calculateBorder = (cluster:any) => {
   if(cluster.properties?.includeJob){
+    if(cluster.properties?.scheduleTimeAMPM !== 0) {
+      switch(cluster.properties?.scheduleTimeAMPM) {
+        case 1: return '3px solid #f5e642'; 
+        case 2: return '3px solid #f59642';
+        case 3: return '3px solid #f56042';
+        default: return '3px solid black';
+      }
+    }
     return '3px solid black'
   }
   if(cluster.properties?.includeTicket){
