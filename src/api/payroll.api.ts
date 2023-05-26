@@ -2,10 +2,11 @@ import request from '../utils/http.service';
 import {sortByField} from "../helpers/sort";
 import { error, success } from 'actions/snackbar/snackbar.action';
 import { getContractorPayments, getPayrollBalance } from 'actions/payroll/payroll.action';
+import { DivisionParams } from 'app/models/division';
 
-export const getContractorsAPI = async () => {
+export const getContractorsAPI = async (division?: DivisionParams) => {
   try {
-    const response: any = await request("/getContractors", 'GET', {}, false);
+    const response: any = await request("/getContractors", 'GET', {}, false,undefined,undefined,undefined,division);
     const {status, message, contractors = [], technicians = []} = response.data;
     if (status === 1) {
       const data = [
@@ -56,11 +57,11 @@ export const getCommissionHistoryAPI = async (vendorId: string) => {
   }
 }
 
-export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null) => {
+export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null, division?: DivisionParams) => {
   try {
     const offset = new Date().getTimezoneOffset() / 60;
     const url = `/getPayrollBalance${startDate ? `?startDate=${startDate}&endDate=${endDate}&offset=${offset}` : ''}`
-    const response: any = await request(url, 'GET', {}, false);
+    const response: any = await request(url, 'GET', {}, false, undefined, undefined, undefined, division);
     const {status, message, vendors = [], employees = []} = response.data;
     if (status === 1) {
       const data = [
@@ -93,10 +94,10 @@ export const getPayrollBalanceAPI = async (startDate: string|null, endDate: stri
   }
 }
 
-export const getPaymentsByContractorAPI = async (type?: string, id?: string) => {
+export const getPaymentsByContractorAPI = async (type?: string, id?: string, division?: DivisionParams) => {
   try {
     const url = `/getPaymentsByContractor${type ? `?id=${id}&type=${type}`:''}`;
-    const response: any = await request(url, 'GET', {}, false);
+    const response: any = await request(url, 'GET', {}, false, undefined,undefined,undefined,division);
     const {status, message, payments, advancePayments} = response.data;
     if (status === 1) {
       const returnObj:any = {status, message, payments: []}
@@ -207,10 +208,10 @@ export const updatePaymentContractorAPI = async (params: any) => {
   }
 }
 
-export const getPayrollReportAPI = async (type?: string, id?: string) => {
+export const getPayrollReportAPI = async (type?: string, id?: string, division?: DivisionParams) => {
   try {
     const url = `/getPayrollReport${type ? `?id=${id}&type=${type}`:''}`
-    const response: any = await request(url, 'GET', {}, false);
+    const response: any = await request(url, 'GET', {}, false,undefined,undefined,undefined,division);
     const {status, message, vendors = [], employees = []} = response.data;
     if (status === 1) {
       const data = [
@@ -276,15 +277,15 @@ export const normalizeData = (item: any, type: string) => {
   }
 }
 
-export const voidPayment: any = (params = {}) => {
+export const voidPayment: any = (params = {},  division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
       request('/voidPayment', 'DELETE', params, false)
         .then((res: any) => {
           if(res.data?.status === 1){
             dispatch(success("Payment voided succesfully"));
-            dispatch(getContractorPayments());
-            dispatch(getPayrollBalance());
+            dispatch(getContractorPayments(undefined,division));
+            dispatch(getPayrollBalance(undefined, undefined,division));
             return resolve(res.data);
           } else {
             dispatch(error("Something went wrong! Cannot void payment"));
@@ -297,15 +298,15 @@ export const voidPayment: any = (params = {}) => {
   }
 };
 
-export const voidAdvancePayment: any = (params = {}) => {
+export const voidAdvancePayment: any = (params = {},  division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise(async (resolve, reject) => {
       request('/voidAdvancePaymentContractor', 'DELETE', params, false)
         .then((res: any) => {
           if(res.data?.status === 1){
             dispatch(success("Payment voided succesfully"));
-            dispatch(getContractorPayments());
-            dispatch(getPayrollBalance());
+            dispatch(getContractorPayments(undefined,division));
+            dispatch(getPayrollBalance(undefined, undefined,division));
             return resolve(res.data);
           } else {
             dispatch(error("Something went wrong! Cannot void payment"));

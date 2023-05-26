@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import React, {useState, useEffect} from 'react';
 import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { error } from "../../../actions/snackbar/snackbar.action";
@@ -39,6 +39,7 @@ import {updateVendorPayment} from "../../../actions/vendor/vendor.action";
 import BCTabs2 from 'app/components/bc-tab2/bc-tab2';
 import SwipeableViews from 'react-swipeable-views';
 import {refreshContractorPayment} from "../../../actions/payroll/payroll.action";
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function BcPayrollPaymentRecordModal({
   classes,
@@ -51,7 +52,9 @@ function BcPayrollPaymentRecordModal({
   const [sentAdvance, setSentAdvance] = useState(false);
   const [curTab, setCurTab] = useState(advancePayment ? 1 : 0);
   const dispatch = useDispatch();
-  const theme = useTheme()
+  const theme = useTheme();
+
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   const isValidate = () => {
     const amount = FormikValues.amount ?? 0;
@@ -103,6 +106,15 @@ function BcPayrollPaymentRecordModal({
       if (dateRange) {
         params.startDate = formatDateYMD(dateRange.startDate);
         params.endDate = formatDateYMD(dateRange.endDate);
+      }
+
+      //add division and location field
+      if (currentDivision.data?.locationId) {
+        params.companyLocation = currentDivision.data?.locationId;
+      }
+      
+      if (currentDivision.data?.workTypeId) {
+        params.workType = currentDivision.data?.workTypeId;
       }
 
       try {
@@ -391,6 +403,16 @@ function BcPayrollPaymentRecordModal({
 
       if (FormikValuesAdvance.paymentMethod >= 0)
         params.paymentType = PAYMENT_TYPES.filter((type) => type._id == FormikValuesAdvance.paymentMethod)[0].name;
+
+
+      //add division and location field
+      if (currentDivision.data?.locationId) {
+        params.companyLocation = currentDivision.data?.locationId;
+      }
+      
+      if (currentDivision.data?.workTypeId) {
+        params.workType = currentDivision.data?.workTypeId;
+      }
 
       try {
         if (advancePayment) {

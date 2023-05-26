@@ -15,6 +15,9 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {getJobTypesFromJob} from "../../../helpers/utils";
 import classNames from "classnames";
 import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop'
+import { useDispatch, useSelector } from "react-redux";
+import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
+import { warning } from "actions/snackbar/snackbar.action";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -41,7 +44,10 @@ const getJobs = (tasks:any = [], jobTypes:any) => {
 function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler, getInvoiceDetailHandler }: any) {
   const history = useHistory();
   const location = useLocation<any>();
+  const dispatch = useDispatch();
   const [invoiceDetailResult, setInvoiceDetailResult] = useState<boolean>(false);
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const divisions = useSelector((state: any) => state.divisions);
 
   const { job, invoiceCreated, invoice } = jobReportData;
 
@@ -82,7 +88,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
   const handleBackButtonClick = () => {
     if(location?.state?.keyword || location?.state?.currentPageSize){
       history.push({
-        'pathname': '/main/customers/job-reports',
+        'pathname': currentDivision.urlParams ?  `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`,
         'state': {
           'option': {
             search: location?.state?.keyword || '',
@@ -113,7 +119,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       });
     } else if(location?.state?.keyword || location?.state?.currentPageSize){
       history.push({
-        'pathname': '/main/customers/job-reports',
+        'pathname': currentDivision.urlParams ?  `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`,
         'state': {
           'option': {
             search: location?.state?.keyword || '',
@@ -124,34 +130,34 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       });
     } else {
       history.push({
-        'pathname': `/main/customers/job-reports`
+        'pathname': currentDivision.urlParams ?  `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`
       });
     }
   };
 
   const generateInvoice = async () => {
-    const invoiceObj: {
-      jobId: string;
-      customerId: string;
-      customerContactId?: string;
-      customerPO?: string;
-    } = {
-      'jobId': job._id,
-      'customerId': job.customer._id,
-    };
-
-    if(job?.customerContactId?._id) {
-      invoiceObj.customerContactId = job.customerContactId._id;
-    }
-    if(job?.customerPO) {
-      invoiceObj.customerPO = job.customerPO;
-    }
-    generateInvoiceHandler(invoiceObj)
+        const invoiceObj: {
+          jobId: string;
+          customerId: string;
+          customerContactId?: string;
+          customerPO?: string;
+        } = {
+          'jobId': job._id,
+          'customerId': job.customer._id,
+        };
+    
+        if(job?.customerContactId?._id) {
+          invoiceObj.customerContactId = job.customerContactId._id;
+        }
+        if(job?.customerPO) {
+          invoiceObj.customerPO = job.customerPO;
+        }
+        generateInvoiceHandler(invoiceObj)
   };
 
   const showInvoice = () => {
     history.push({
-      'pathname': `view/${invoice._id}`,
+      'pathname': `/main/customers/job-reports/view/${invoice._id}`,
     });
   };
 

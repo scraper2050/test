@@ -30,6 +30,9 @@ import BCEditPaidInvoiceConfirmModal from './bc-edit-paid-invoice-confirm-modal/
 import BCEditPaymentConfirmModal from './bc-edit-payment-confirm-modal/bc-edit-payment-confirm-modal';
 import BCMakeAdminConfirmModal from './bc-make-admin-employee-modal/bc-make-admin-employee-confirm';
 import EmailReportModal from './bc-email-modal/bc-email-report-modal';
+import CompanyLocationAssignModal from './bc-company-location-assign-modal/bc-company-location-assign-modal';
+import CompanyLocationBillingAddressModal from './bc-company-location-billing-address-modal/bc-company-location-billing-address-modal';
+import CompanyLocationAssignDeleteModal from './bc-delete-company-location-assign-modal/bc-delete-company-location-assign-modal';
 import CloseIcon from '@material-ui/icons/Close';
 import {
   closeModalAction,
@@ -75,6 +78,8 @@ import BCAdvanceFilterInvoiceModal from "./bc-advance-filter-invoice-modal/bc-ad
 import BcArReportModal from "./bc-ar-report-modal/bc-ar-report-modal";
 import BCSetDisplayNameModal
   from "./bc-set-display-name-modal/bc-set-display-name-modal";
+import BcDivisionConfirmModal from './bc-division-confirm-modal/bc-division-confirm-modal';
+import BcDivisionWarningModal from './bc-division-warning-modal/bc-division-warning-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -738,7 +743,7 @@ function BCModal() {
         });
         // data.maxHeight='100%';
         setComponent(<BCCompanyLocationModal
-          companyLocation={data.companyLocation}
+          companyLocation={data.companyLocation} companyLocationList={data.companyLocationList}
         />);
         break;
       case modalTypes.WARNING_MODAL:
@@ -800,6 +805,24 @@ function BCModal() {
         });
         setComponent(<EmailReportModal reportData={data.reportData} reportName={data.reportName}/>);
         break;
+      case modalTypes.LOCATION_ASSIGN_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<CompanyLocationAssignModal companyLocation={data.companyLocation} page={data.page} formMode={data.formMode} formData={data.formData} />);
+        break;
+      case modalTypes.LOCATION_ASSIGN_DELETE_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<CompanyLocationAssignDeleteModal companyLocation={data.companyLocation} assignee={data.assignee} page={data.page}/>);
+        break;
       case modalTypes.SET_DISPLAY_NAME_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
@@ -809,7 +832,38 @@ function BCModal() {
         });
         setComponent(<BCSetDisplayNameModal props={data} />);
         break;
-
+      case modalTypes.EDIT_BILLING_ADDRESS:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<CompanyLocationBillingAddressModal companyLocation={data.companyLocation} />);
+        break;
+      case modalTypes.DIVISION_CONFIRM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BcDivisionConfirmModal
+          message={data.message}
+          action={data.action}
+        />);
+        break;
+        case modalTypes.DIVISION_WARNING_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'sm'
+          });
+          setComponent(<BcDivisionWarningModal
+            action={data.action}
+          />);
+          break;
       default:
         setComponent(null);
     }

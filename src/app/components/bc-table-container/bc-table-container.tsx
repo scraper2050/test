@@ -44,6 +44,7 @@ function BCTableContainer({
   setCurrentPageSizeFunction = () => {},
   setKeywordFunction = () => {},
   disableInitialSearch = false,
+  rowTooltip
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -80,7 +81,7 @@ function BCTableContainer({
       setSearchText('');
       setKeywordFunction('');
       fetchFunction(currentPageSize, undefined, undefined, '');
-      setCurrentPageIndexFunction(0);
+      setCurrentPageIndexFunction(0, false);
     } else {
       setSearchText('');
       if (setPage !== undefined) {
@@ -216,6 +217,7 @@ function BCTableContainer({
               setCurrentPageIndexFunction={setCurrentPageIndexFunction}
               currentPageSize={currentPageSize}
               setCurrentPageSizeFunction={setCurrentPageSizeFunction}
+              rowTooltip={rowTooltip}
             />
         }
       </Grid>

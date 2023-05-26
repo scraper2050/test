@@ -7,7 +7,7 @@ import styles from '../customer.styles';
 import { Grid, withStyles } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
 import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
@@ -20,8 +20,11 @@ import {
   setCurrentPageSize,
   setKeyword
 } from 'actions/customer/job-report/job-report.action'
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 function JobReportsPage({ classes, theme }: any) {
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const dispatch = useDispatch();
   const customStyles = useCustomStyles();
   // const { loading, jobReports, error } = useSelector(({ jobReport }: any) =>
@@ -157,24 +160,26 @@ function JobReportsPage({ classes, theme }: any) {
   }) : jobReports;
 
   useEffect(() => {
-    // dispatch(loadJobReportsActions.fetch());
-    dispatch(getAllJobReportsAPI());
-    return () => {
-      dispatch(setKeyword(''));
-      dispatch(setCurrentPageIndex(currentPageIndex));
-      dispatch(setCurrentPageSize(currentPageSize));
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      // dispatch(loadJobReportsActions.fetch());
+      dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,currentDivision.params));
+      return () => {
+        dispatch(setKeyword(''));
+        dispatch(setCurrentPageIndex(currentPageIndex));
+        dispatch(setCurrentPageSize(currentPageSize));
+      }
     }
-  }, []);
+  }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
-    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange));
+    dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, keyword, selectionRange,currentDivision.params));
     dispatch(setCurrentPageIndex(0));
   }, [selectionRange]);
 
   useEffect(() => {
     if(location?.state?.option?.search || location?.state?.option?.pageSize){
       dispatch(setKeyword(location.state.option.search));
-      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange));
+      dispatch(getAllJobReportsAPI(location.state.option.pageSize, currentPageIndex, location.state.option.search , selectionRange, currentDivision.params));
       dispatch(setCurrentPageSize(location.state.option.pageSize));
       dispatch(setCurrentPageIndex(0));
       window.history.replaceState({}, document.title)
@@ -190,7 +195,7 @@ function JobReportsPage({ classes, theme }: any) {
     const jobReportId = row.original._id;
     localStorage.setItem('nestedRouteKey', `${jobReportId}`);
     history.push({
-      'pathname': `job-reports/${jobReportId}`,
+      'pathname': `/main/customers/job-reports/detail/${jobReportId}`,
       'state': {
         keyword,
         currentPageSize,
@@ -256,19 +261,20 @@ function JobReportsPage({ classes, theme }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number) =>
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
                   {
                     dispatch(setCurrentPageIndex(num));
-                    dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange))
+                    if(apiCall)
+                      dispatch(getAllJobReportsAPI(currentPageSize, num, keyword, selectionRange, currentDivision.params))
                   }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange))
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange, currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
-                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange))
+                  dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,query, selectionRange, currentDivision.params))
                 }}
               />
             </div>

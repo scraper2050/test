@@ -14,6 +14,7 @@ import {RootState} from "reducers";
 import {CompanyProfileStateType} from "actions/user/user.types";
 import {setTicketSelected} from "actions/map/map.actions";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
+import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
 interface Props {
   classes: any;
@@ -21,6 +22,8 @@ interface Props {
 }
 
 function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const dispatch = useDispatch();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [statusFilter, setStatusFilter] = useState('-1');
@@ -50,6 +53,10 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
         filter = filter && (job.jobId.indexOf(filterJobs.jobId) >= 0);
       }
 
+      if (filterJobs.isHomeOccupied && filterJobs.isHomeOccupied === true) {
+        filter = filter && job.isHomeOccupied === true;
+      }
+
       if (filterJobs.customerNames) {
         filter = filter && (job.customer._id === filterJobs.customerNames._id);
         if (filterJobs.contact) {
@@ -75,7 +82,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   }, [filterJobs])
 
   const getJobsData = () => {
-    dispatch(getTodaysJobsAPI(statusFilter, jobIdFilter));
+    dispatch(getTodaysJobsAPI(statusFilter, jobIdFilter,currentDivision.params));
   }
   
 
@@ -90,8 +97,10 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
   }, [statusFilter, jobIdFilter]);
 
   useEffect(() => {
-    getJobsData();
-  }, [])
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      getJobsData();
+    }
+  }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
     setJobs(filterScheduledJobs(todaysJobs));
@@ -123,7 +132,7 @@ function MapViewTodayJobsScreen({ classes, filter: filterJobs }: Props) {
             showPins
             streamingTickets={streamingTickets}
             selected={selected}
-            coordinates={coordinates}
+            coordinates={currentDivision.data?.address?.coordinates || coordinates}
             dispatchUnselectTicket={dispatchUnselectTicket}
             openModalHandler={openModalHandler}
           />
