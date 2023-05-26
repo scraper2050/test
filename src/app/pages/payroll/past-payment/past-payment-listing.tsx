@@ -4,7 +4,7 @@ import {
   withStyles
 } from "@material-ui/core";
 import styles from '../payroll.styles';
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import BCTableContainer from "../../../components/bc-table-container/bc-table-container";
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import BCMenuButton from "../../../components/bc-menu-more";
@@ -32,7 +32,7 @@ import {
 import moment from "moment";
 import { voidPayment, voidAdvancePayment } from 'api/payroll.api'
 import { setPayments } from 'actions/invoicing/payments/payments.action';
-
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 interface Props {
   classes: any;
 }
@@ -44,6 +44,8 @@ const ITEMS = [
 ]
 
 function PastPayments({ classes }: Props) {
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const dispatch = useDispatch();
   const location = useLocation<any>();
   const locationState = location.state;
@@ -59,25 +61,21 @@ function PastPayments({ classes }: Props) {
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
+  
   const isFiltered = selectedIDs.length > 0 || selectionRange !== null;
 
   useEffect(() => {
-    dispatch(getContractors());
-    const obj: any = location.state;
-    if (obj?.contractor) {
-      setSelectedIDs([obj.contractor._id]);
-    }
-    return () => {
-      dispatch(setContractorPayments([]))
-    }
+    handleClearFilter();
   }, []);
 
   useEffect(() => {
-    const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
-    if (cont) {
-      dispatch(getContractorPayments({ id: cont._id, type: cont.type }));
+    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      const cont = contractors.find((contractor: any) => contractor._id === selectedIDs[0]);
+      if (cont) {
+        dispatch(getContractorPayments({ id: cont._id, type: cont.type },currentDivision.params));
+      }
     }
-  }, [selectedIDs, contractors]);
+  }, [selectedIDs, contractors,currentDivision.isDivisionFeatureActivated, currentDivision.params]);
 
   useEffect(() => {
     dispatch(setPayments(sortArrByDate(payments, 'createdAt')))
@@ -127,8 +125,8 @@ function PastPayments({ classes }: Props) {
         message: 'Are you sure you want to delete this Payment Record?',
         subMessage: 'This action cannot be undone.',
         action: payment.__t === 'AdvancePaymentVendor'
-          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id })
-          : voidPayment({ type: 'vendor', paymentId: payment._id }),
+          ? voidAdvancePayment({ type: 'vendor', advancePaymentId: payment._id }, currentDivision.params)
+          : voidPayment({ type: 'vendor', paymentId: payment._id }, currentDivision.params),
       },
       'type': modalTypes.WARNING_MODAL
     }));
@@ -263,17 +261,19 @@ function PastPayments({ classes }: Props) {
     )
   }
 
+  const handleClearFilter = () => {
+    setSelectedIDs([])
+    setSelectionRange(null)
+    dispatch(setContractorPayments([]))
+  }
+
   const renderClearFilterButton = () => {
     return (selectedIDs.length > 0 || selectionRange ?
       <div style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', display: 'flex' }}>
         <Button
           variant={'text'}
           className={classes.filterClearButton}
-          onClick={() => {
-            setSelectedIDs([])
-            setSelectionRange(null)
-            dispatch(setContractorPayments([]))
-          }}
+          onClick={() => handleClearFilter()}
           endIcon={<HighlightOff />}
         >Clear Filters</Button></div> : null
     )
@@ -285,7 +285,7 @@ function PastPayments({ classes }: Props) {
       currentPage={currentPage}
       isLoading={loading}
       //onRowClick={handleRowClick}
-      initialMsg={isFiltered ? 'No records found!' : 'Please select a vendor'}
+      initialMsg={isFiltered ? 'Nothing Here Yet' : 'Please select a vendor'}
       search
       searchPlaceholder='Search...'
       setPage={setCurrentPage}

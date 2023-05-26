@@ -22,7 +22,7 @@ function BCTableContainer({
   search,
   searchPlaceholder = 'Search Customers...',
   pagination = true,
-  initialMsg = 'No records found!',
+  initialMsg = 'Nothing Here Yet',
   isPageSaveEnabled,
   setPage,
   currentPage,
@@ -44,6 +44,7 @@ function BCTableContainer({
   setCurrentPageSizeFunction = () => {},
   setKeywordFunction = () => {},
   disableInitialSearch = false,
+  rowTooltip
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -80,7 +81,7 @@ function BCTableContainer({
       setSearchText('');
       setKeywordFunction('');
       fetchFunction(currentPageSize, undefined, undefined, '');
-      setCurrentPageIndexFunction(0);
+      setCurrentPageIndexFunction(0, false);
     } else {
       setSearchText('');
       if (setPage !== undefined) {
@@ -102,11 +103,11 @@ function BCTableContainer({
   }
 
   const handleSearchChange = (event: any) => {
+    setSearchText(event.target.value);
+    setKeywordFunction(event.target.value);
     if(manualPagination){
-      setSearchText(event.target.value);
       debouncedFetchFunction(event.target.value);
     } else {
-      setSearchText(event.target.value);
       if (setPage !== undefined) {
         setPage({
           ...currentPage,
@@ -216,6 +217,7 @@ function BCTableContainer({
               setCurrentPageIndexFunction={setCurrentPageIndexFunction}
               currentPageSize={currentPageSize}
               setCurrentPageSizeFunction={setCurrentPageSizeFunction}
+              rowTooltip={rowTooltip}
             />
         }
       </Grid>

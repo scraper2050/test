@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import {
-  Button, Checkbox,
+  Button, Checkbox,   FormControlLabel,
   Grid, IconButton, InputAdornment, MenuItem, Select,
   withStyles
 } from '@material-ui/core';
@@ -37,6 +37,7 @@ function BCMapFilter({
       customerNames: currentFilter.customerNames,
       contact: currentFilter.contact,
       jobStatus: currentFilter.jobStatus || [-1],
+      isHomeOccupied: currentFilter.isHomeOccupied || false,
     },
     onSubmit
   });
@@ -112,7 +113,7 @@ function BCMapFilter({
             xs={12}
           >
             <div className={classes.actionContainer}>
-              <Button size={"small"} onClick={clearFilter}>Clear Filters</Button>
+              <Button size={"small"} onClick={clearFilter}>Clear Filters 1</Button>
               <IconButton aria-label="close" onClick={closeFilter}>
                 <CloseIcon/>
               </IconButton>
@@ -154,7 +155,7 @@ function BCMapFilter({
                   />
                 )}
               />
-          </FormGroup>
+            </FormGroup>
             <FormGroup>
               <Autocomplete
                 onOpen={() => setMenuOpen('contact')}
@@ -248,6 +249,23 @@ function BCMapFilter({
               </Select>
             </FormGroup>
             }
+            <FormGroup>
+            <FormControlLabel
+                classes={{label: classes.checkboxLabel}}
+                control={
+                  <Checkbox
+                    color={'primary'}
+                    checked={form.values.isHomeOccupied}
+                    name="isHomeOccupied"
+                    classes={{root: classes.checkboxInput}}
+                    onChange={(e) => {
+                      setFieldValue('isHomeOccupied', !form.values.isHomeOccupied);
+                    }}
+                  />
+                }
+                label={`ONLY OCCUPIED HOUSES`}
+              />
+            </FormGroup>
           </Grid>
           <Grid
             item
