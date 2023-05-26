@@ -1,5 +1,5 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
 import { withStyles, Button } from "@material-ui/core";
@@ -14,6 +14,7 @@ import {
   setCurrentDraftPageSize,
   setDraftKeyword,
 } from 'actions/invoicing/invoicing.action';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.draft);
@@ -39,9 +40,10 @@ function InvoicingDraftListing({ classes, theme }: any) {
     })
   );
 
+  const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+
   const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
-
   const columns: any = [
     {
       'Header': 'Invoice ID',
@@ -75,20 +77,19 @@ function InvoicingDraftListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    // dispatch(getInvoicingList());
-    // dispatch(loadingInvoicingList());
-    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined, true));
+    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined, undefined,currentDivision.params));
     return () => {
       dispatch(setDraftKeyword(''));
-      dispatch(setCurrentDraftPageIndex(currentPageIndex));
-      dispatch(setCurrentDraftPageSize(currentPageSize));
+      dispatch(setCurrentDraftPageSize(currentPageIndex));
+      dispatch(setCurrentDraftPageIndex(currentPageSize));
     }
-  }, []);
+  }, [currentDivision.params]);
+
 
   useEffect(() => {
     if(location?.state?.tab === 2 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setDraftKeyword(location.state.option.search));
-      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search));
+      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search,undefined,currentDivision.params));
       dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
       dispatch(setCurrentDraftPageIndex(location?.state?.option?.currentPageIndex || 0));
       window.history.replaceState({}, document.title)
@@ -97,7 +98,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
 
   const showInvoiceDetail = (id:string) => {
     history.push({
-      'pathname': `view/${id}`,
+      'pathname': `/main/invoicing/view/${id}`,
       'state': {
         keyword,
         currentPageSize,
@@ -124,7 +125,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
           setLastPrevCursor(isPrev ? prevCursor : undefined)
           setLastNextCursor(isNext ? nextCursor : undefined)
-          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword))
+          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, undefined,currentDivision.params))
         }}
         total={total}
         currentPageIndex={currentPageIndex}
