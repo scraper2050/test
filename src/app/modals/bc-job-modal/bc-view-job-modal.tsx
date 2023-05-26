@@ -162,8 +162,8 @@ function BCViewJobModal({
   ];
 
   const scheduleDate = job.scheduleDate == '-' ? 'N/A' : job.scheduleDate;
-  const startTime = job.scheduleTime != '-' ? job.scheduleTime.split('-')[0] : 'N/A';
-  const endTime = job.scheduleTime != '-' ? job.scheduleTime.split('-')[1] : 'N/A';
+  const startTime = job.scheduleTime != '-' ? job.scheduleTime?.split('-')[0] : 'N/A';
+  const endTime = job.scheduleTime != '-' ? job.scheduleTime?.split('-')[1] : 'N/A';
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
   let jobImages = job?.images?.length ? [...job.images] : [];
   jobImages = job?.technicianImages?.length ? [...jobImages, ...job.technicianImages] : jobImages;

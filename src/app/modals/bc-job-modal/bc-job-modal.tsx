@@ -1,4 +1,3 @@
-import * as yup from 'yup';
 import BCDateTimePicker from 'app/components/bc-date-time-picker/bc-date-time-picker';
 import BCInput from 'app/components/bc-input/bc-input';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
@@ -196,6 +195,13 @@ function BCJobModal({
   const employeeTypes = [
     {_id: 0, name: 'Employee',},
     {_id: 1, name: 'Contractor'},
+  ];
+
+  const timeRangeOptions = [
+    {name: 'N/A', index: 0}, 
+    {name: 'AM', index: 1}, 
+    {name: 'PM', index: 2}, 
+    {name: 'All Day', index: 3}
   ];
 
   /**
@@ -461,12 +467,14 @@ function BCJobModal({
         ticket?.customerContact?._id || ticket.customerContact || '',
       customerPO: jobValue.customerPO || ticket.customerPO,
       images: jobValue?.images?.length ? jobValue.images : ticket.images || [],
+      scheduleTimeAMPM: timeRangeOptions[jobValue?.scheduleTimeAMPM || 0],
     },
     validateOnMount: false,
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: (values: any, { setSubmitting }: any) => {
       const tempData = {...values};
+      tempData.scheduleTimeAMPM = tempData.scheduleTimeAMPM?.index || 0;
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
       tempData.customerId = customer?._id;
 
@@ -783,7 +791,7 @@ function BCJobModal({
               ? job.customer.profile.displayName
               : displayName}</Typography>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <Typography variant={'caption'} className={'previewCaption'}>due date</Typography>
             <Typography variant={'h6'} className={'previewText'}>{FormikValues.dueDate}</Typography>
           </Grid>
@@ -814,13 +822,14 @@ function BCJobModal({
               minDateMessage={form?.errors?.scheduledStartTime || ''}
               value={FormikValues.scheduledStartTime}
               errorText={FormikErrors.scheduledStartTime}
+              disabled={FormikValues.scheduleTimeAMPM?.index !== 0 ? true : false}
             />
           </Grid>
           <Grid item xs={2}>
             <Typography variant={'caption'} className={'previewCaption'}>close time</Typography>
             <BCDateTimePicker
               dateFormat={'HH:mm:ss'}
-              disablePast={!job._id}
+              disablePast={!job._id }
               handleChange={(e: any) =>
                 dateChangeHandler(e, 'scheduledEndTime')
               }
@@ -830,7 +839,31 @@ function BCJobModal({
               placeholder={'End Time'}
               value={FormikValues.scheduledEndTime}
               errorText={FormikErrors.scheduledEndTime}
+              disabled={FormikValues.scheduleTimeAMPM?.index !== 0 ? true : false}
             />
+          </Grid>
+          <Grid item xs={1}>
+            <Typography variant={'caption'} className={'previewCaption'}>AM/PM</Typography>
+            <Autocomplete
+                disableClearable={true}
+                defaultValue={timeRangeOptions[0]}
+                disabled={FormikValues.scheduledStartTime || FormikValues.scheduledEndTime ? true : false}
+                getOptionLabel={(option) =>
+                  option.name ? option.name : ''
+                }
+                id={'tags-standard'}
+                options={timeRangeOptions}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant={'outlined'}
+                  />
+                )}
+                value={FormikValues.scheduleTimeAMPM} 
+                onChange={(ev: any, newValue: any) =>
+                  setFieldValue('scheduleTimeAMPM', newValue)
+                }
+              />
           </Grid>
 {/*          {headerError &&
           <span style={{position: 'absolute', bottom: 0, right: 50, color: '#F44336', fontSize: 12}}>{headerError}</span>
