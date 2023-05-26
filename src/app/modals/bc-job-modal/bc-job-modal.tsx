@@ -355,9 +355,12 @@ function BCJobModal({
         : job.ticket.customer;
     dispatch(getInventory());
     let divisionParams: DivisionParams = {};
-    if (currentDivision.data?.name != "All") {
-      divisionParams = {workType: currentDivision.data?.workTypeId, companyLocation: currentDivision.data?.locationId};
-    }
+    if (jobValue?.ticket && currentDivision.isDivisionFeatureActivated) {
+      divisionParams = {
+        workType: jobValue?.ticket?.workType, 
+        companyLocation: jobValue?.ticket?.companyLocation
+      };
+    }  
     
     dispatch(getEmployeesForJobAction(divisionParams));
     dispatch(getVendors(divisionParams));
@@ -1314,7 +1317,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerFirstName'}
-                    value={jobValue?.ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj[0]?.profile?.firstName || 'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.profile?.firstName || jobValue?.homeOwnerObj?.[0]?.profile?.firstName || 'N/A'}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1324,7 +1327,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerLastName'}
-                    value={jobValue?.ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj[0]?.profile?.lastName || 'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.profile?.lastName || jobValue?.homeOwnerObj?.[0]?.profile?.lastName || 'N/A'}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1332,7 +1335,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerEmail'}
-                    value={jobValue?.ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj[0]?.info?.email || 'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.info?.email || jobValue?.homeOwnerObj?.[0]?.info?.email || 'N/A'}
                   />
                 </Grid>
                 <Grid justify={'space-between'} xs>
@@ -1340,7 +1343,7 @@ function BCJobModal({
                   <BCInput
                     disabled={true}
                     name={'customerPhone'}
-                    value={jobValue?.ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj[0]?.contact?.phone || 'N/A'}
+                    value={jobValue?.ticket?.homeOwner?.contact?.phone || jobValue?.homeOwnerObj?.[0]?.contact?.phone || 'N/A'}
                   />
                 </Grid>
               </Grid>
