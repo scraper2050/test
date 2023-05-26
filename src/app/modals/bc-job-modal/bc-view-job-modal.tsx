@@ -257,7 +257,7 @@ function BCViewJobModal({
       SetIsSubmitting(false);
     })
   }
-
+  
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>

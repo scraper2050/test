@@ -103,12 +103,12 @@ function BCServiceTicketModal(
   const [formDataPhone, setFormDataPhone] = useState<FormDataModel>({
     'errorMsg': '',
     'validate': true,
-    'value': ticket.homeOwner?.contact.phone || '',
+    'value': ticket.homeOwner?.contact?.phone || '',
   });
   const [formDataEmail, setFormDataEmail] = useState<FormDataModel>({
     'errorMsg': 'Occupied house must have email or phone number',
     'validate': true,
-    'value': ticket.homeOwner?.info.email || '',
+    'value': ticket.homeOwner?.info?.email || '',
   });
   const {loading, data} = useSelector(
     ({employeesForJob}: any) => employeesForJob
@@ -134,6 +134,21 @@ function BCServiceTicketModal(
     await setJobLocationValue([]);
     await setContactValue([]);
     await setJobSiteValue([]);
+
+    // Clean homeowner fields on customer update
+    await setFieldValue('customerFirstName', '');
+    await setFieldValue('customerLastName', '');
+    await setFormDataEmail({
+      ...formDataEmail,
+      value: ''
+    });
+    await setFormDataPhone({
+      ...formDataPhone,
+      value: ''
+    });
+    await setHomeOwnerId(''); 
+    await setHomeOccupied(false);
+    FormikValues.isHomeOccupied = false;
 
     if (customerId !== '') {
       const data: any = {
@@ -288,6 +303,18 @@ function BCServiceTicketModal(
     );
   };
 
+  const checkValidHomeOwner = () => {
+    if(!jobSiteValue || jobSiteValue.length === 0) {
+      dispatch(SnackBarError("Address is required when house is occupied"));
+      return false;
+    }
+    if(!formDataPhone.value && !formDataEmail.value) {
+      dispatch(SnackBarError("Occupied house must have email or phone number"));
+      return false;
+    }
+    return true;
+  }
+
   useEffect(() => {
     if (!ticket.updateFlag) {
       dispatch(clearJobLocationStore());
@@ -388,28 +415,35 @@ function BCServiceTicketModal(
 
           // Create home owner if it has been updated or added
           if (formatedRequest.isHomeOccupied) {
+            if(!checkValidHomeOwner()) return;
             if(!ticket.isHomeOccupied || 
               formatedRequest.customerFirstName !== ticket.homeOwner.profile.firstName ||
               formatedRequest.customerLastName !== ticket.homeOwner.profile.lastName ||
-              formDataEmail.value !== ticket.homeOwner.info.email ||
-              formDataPhone.value !== ticket.homeOwner.contact.phone
+              formDataEmail.value !== ticket.homeOwner.info?.email ||
+              formDataPhone.value !== ticket.homeOwner.contact?.phone
             ){
-              const homeOwnerData = {
+              let homeOwnerData : any = {
                 firstName: formatedRequest.customerFirstName ?? '',
                 lastName: formatedRequest.customerLastName ?? '',
-                email: formDataEmail.value ?? '',
-                phone: formDataPhone.value ?? '',
-                subdivision: formatedRequest.jobLocationId ?? '',
                 address: formatedRequest.jobSiteId ?? '',
+                ...(
+                  (formatedRequest.jobLocationId && formatedRequest.jobLocationId.length > 0) &&
+                  {subdivision: formatedRequest.jobLocationId}
+                ),
+                ...((formDataEmail.value && formDataEmail.value.length > 0) && {email: formDataEmail.value}),
+                ...((formDataPhone.value && formDataPhone.value.length > 0) && {phone: formDataPhone.value}),
+
               };
-              await callCreateHomeOwner(homeOwnerData)
+              const homOwnerResult = await callCreateHomeOwner(homeOwnerData)
                 .then((response: any) => {
                   if(response.status !== 1) {
-                    dispatch(SnackBarError(response.message));
-                    return;
+                    dispatch(SnackBarError("Could not create home owner"));
+                    return false;
                   }
                   formatedRequest.homeOwnerId = response.homeOwner._id;
+                  return true;
                 });
+              if(!homOwnerResult) { return; }
             }
           }
 
@@ -463,6 +497,7 @@ function BCServiceTicketModal(
         );
         // Create home owner if needed
         if (formatedRequest.isHomeOccupied) {
+          if(!checkValidHomeOwner()) return;
           if(homeOwnerId !== '' && 
             formatedRequest.customerFirstName === homeOwners[0].profile.firstName &&
             formatedRequest.customerLastName === homeOwners[0].profile.lastName &&
@@ -472,22 +507,28 @@ function BCServiceTicketModal(
             formatedRequest.homeOwnerId = homeOwnerId;
           }
           else {
-            const homeOwnerData = {
+            let homeOwnerData : any = {
               firstName: formatedRequest.customerFirstName ?? '',
               lastName: formatedRequest.customerLastName ?? '',
-              email: formDataEmail.value ?? '',
-              phone: formDataPhone.value ?? '',
-              subdivision: formatedRequest.jobLocationId ?? '',
               address: formatedRequest.jobSiteId ?? '',
+              ...(
+                (formatedRequest.jobLocationId && formatedRequest.jobLocationId.length > 0) &&
+                {subdivision: formatedRequest.jobLocationId}
+              ),
+              ...((formDataEmail.value && formDataEmail.value.length > 0) && {email: formDataEmail.value}),
+              ...((formDataPhone.value && formDataPhone.value.length > 0) && {phone: formDataPhone.value}),
+
             };
-            await callCreateHomeOwner(homeOwnerData)
+            const homeOwnerResult = await callCreateHomeOwner(homeOwnerData)
               .then((response: any) => {
                 if(response.status !== 1) {
-                  dispatch(SnackBarError(response.message));
-                  return;
+                  dispatch(SnackBarError("Could not create home owner"));
+                  return false;
                 }
                 formatedRequest.homeOwnerId = response.homeOwner._id;
+                return true;
               });
+            if(!homeOwnerResult) { return; }
           }
         }
         callCreateTicketAPI(formatedRequest)
@@ -555,21 +596,19 @@ function BCServiceTicketModal(
       return (item?.address === FormikValues.jobSiteId);
     });
     if (filteredHomeOwners && filteredHomeOwners.length > 0 && FormikValues.jobSiteId !== '') {
-      if(FormikValues.customerFirstName === '') {
-        setFieldValue('customerFirstName', filteredHomeOwners[0].profile.firstName);
-        setFieldValue('customerLastName', filteredHomeOwners[0].profile.lastName);
-        setFormDataEmail({
-          ...formDataEmail,
-          value: filteredHomeOwners[0].info.email
-        });
-        setFormDataPhone({
-          ...formDataPhone,
-          value: filteredHomeOwners[0].contact.phone
-        });
-        setHomeOwnerId(filteredHomeOwners[0]._id); 
-        setHomeOccupied(true);
-        FormikValues.isHomeOccupied = true;
-      }
+      setFieldValue('customerFirstName', filteredHomeOwners[0].profile.firstName);
+      setFieldValue('customerLastName', filteredHomeOwners[0].profile.lastName);
+      setFormDataEmail({
+        ...formDataEmail,
+        value: filteredHomeOwners[0].info?.email
+      });
+      setFormDataPhone({
+        ...formDataPhone,
+        value: filteredHomeOwners[0].contact?.phone
+      });
+      setHomeOwnerId(filteredHomeOwners[0]._id); 
+      setHomeOccupied(true);
+      FormikValues.isHomeOccupied = true;
     }
   }, [homeOwners]);
 
@@ -592,6 +631,7 @@ function BCServiceTicketModal(
   };
 
   const closeModal = () => {
+    dispatch(clearHomeOwnerStore());
     dispatch(closeModalAction());
     setTimeout(() => {
       dispatch(
@@ -1148,6 +1188,7 @@ function BCServiceTicketModal(
                       handleChange={formikChange}
                       name={'customerFirstName'}
                       value={FormikValues?.customerFirstName}
+                      required={true}
                     />
                   </Grid>
                   <Grid item xs>
@@ -1164,7 +1205,7 @@ function BCServiceTicketModal(
                   <Grid item xs>
                     <Typography 
                       variant={'caption'} 
-                      className={`required ${'previewCaption'}`}
+                      className={'previewCaption'}
                     >
                       Email
                     </Typography>
@@ -1176,12 +1217,14 @@ function BCServiceTicketModal(
                       onChange={(newEmail: FormDataModel) => setFormDataEmail(newEmail)}
                       size={'small'}
                       variant={'outlined'}
+                      required={false}
+                      referenceEmail=" "
                     />  
                   </Grid>
                   <Grid item xs>
                     <Typography 
                         variant={'caption'}
-                        className={`required ${'previewCaption'}`}
+                        className={'previewCaption'}
                       >
                         Phone
                     </Typography>

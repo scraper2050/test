@@ -285,7 +285,7 @@ function MapViewTicketsScreen({
           isTicket={true}
           streamingTickets={streamingTickets}
           selected={selected}
-          coordinates={coordinates}
+          coordinates={currentDivision.data?.address?.coordinates || coordinates}
           tickets={tickets}
           dispatchUnselectTicket={dispatchUnselectTicket}
           openModalHandler={openModalHandler}
