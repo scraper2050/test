@@ -22,11 +22,11 @@ export const DivisionReducer: Reducer<any> = (state = initialDivision, action) =
             data: [...action?.payload],
          }
       case DivisionActionType.SET:
-         return {
+         /*return {
             ...state,
             loading: false,
             data: [...action?.payload],
-         }
+         }*/
       case DivisionActionType.REFRESH:
          return {
             ...state,

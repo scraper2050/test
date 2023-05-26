@@ -221,7 +221,6 @@ function BCJobModal({
     {name: 'N/A', index: 0}, 
     {name: 'AM', index: 1}, 
     {name: 'PM', index: 2}, 
-    {name: 'All Day', index: 3}
   ];
 
   /**

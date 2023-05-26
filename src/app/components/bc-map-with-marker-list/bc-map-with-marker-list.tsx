@@ -94,8 +94,7 @@ const calculateBorder = (cluster:any) => {
     if(cluster.properties?.scheduleTimeAMPM !== 0) {
       switch(cluster.properties?.scheduleTimeAMPM) {
         case 1: return '3px solid #f5e642'; 
-        case 2: return '3px solid #f59642';
-        case 3: return '3px solid #f56042';
+        case 2: return '3px solid #f56042';
         default: return '3px solid black';
       }
     }
