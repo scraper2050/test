@@ -44,8 +44,13 @@ import {CSChip} from "../../../helpers/custom";
 import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 import {formatCurrency} from "../../../helpers/format";
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import {modalTypes} from "../../../constants";
+import {
+  openModalAction,
+  setModalDataAction
+} from "../../../actions/bc-modal/bc-modal.action";
 
 interface Props {
   classes?: any;
@@ -513,6 +518,7 @@ function BCEditInvoice({
   const invoiceTableStyle = useInvoiceTableStyles();
 
   const history = useHistory();
+  const dispatch = useDispatch();
   const simplifiedItems = invoiceData.items.map((item: any) => {
     const newItem = {...item.item, ...item};
     delete newItem.item;
@@ -570,6 +576,22 @@ function BCEditInvoice({
 
   const handleVoidInvoice = () => {
     voidInvoiceHandler(invoiceData._id)
+  }
+
+  const handleTicketClick = () => {
+    dispatch(setModalDataAction({
+      data: {
+        removeFooter: false,
+        maxHeight: '100%',
+        modalTitle: 'Job Details',
+        invoiceData,
+        isEditing: true
+      },
+      type: modalTypes.TICKET_DETAILS_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
   }
 
   const handleFormSubmit = (data: any) => {
@@ -677,7 +699,6 @@ function BCEditInvoice({
 
   return (
     <MuiThemeProvider theme={theme}>
-      <BCMiniSidebar data={invoiceData} />
       <Formik
         initialValues={{
           invoice_id: invoiceData?._id,
@@ -747,6 +768,14 @@ function BCEditInvoice({
                   }
                 </div>
                 <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classNames(invoiceStyles.bcButton,invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                    onClick={handleTicketClick}
+                  >
+                    Job Details
+                  </Button>
                   {!invoiceData?.isDraft && (
                     <Button
                       variant="contained"
@@ -1228,6 +1257,14 @@ function BCEditInvoice({
                   }
                 </div>
                 <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classNames(invoiceStyles.bcButton,invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                    onClick={handleTicketClick}
+                  >
+                    Job Details
+                  </Button>
                   {!invoiceData?.isDraft && (
                     <Button
                       variant="contained"
