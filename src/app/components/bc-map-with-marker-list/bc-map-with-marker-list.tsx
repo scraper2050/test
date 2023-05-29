@@ -109,6 +109,25 @@ const calculateBorder = (cluster:any) => {
   return '3px solid rgb(130,130,130)'
 }
 
+const calculateMarkerBorder = (ticket : any, isTicket : boolean, technicianColor : string) : string => {
+  if(!isTicket && ticket.jobId) {
+    if(ticket?.scheduleTimeAMPM !== 0) {
+      switch(ticket?.scheduleTimeAMPM) {
+        case 1: return '3px solid #f5e642'; 
+        case 2: return '3px solid #f2a2c1';
+        default: return '3px solid black';
+      }
+    }
+    return '3px solid black'
+  }
+  else if(isTicket && ticket?.jobId) {
+    return `3px solid ${technicianColor}`;
+  }
+  else {
+    return ticket?.isHomeOccupied ? '3px solid #db4b02' : 'none';
+  }
+}
+
 function BCMapWithMarkerWithList({
   reactAppGoogleKeyFromConfig,
   classes,
@@ -337,7 +356,7 @@ function BCMapWithMarkerWithList({
                   <CustomIcon
                     style={{
                       marginRight: 5,
-                      border: isTicket && datum.ticket?.jobId ? `3px solid ${technicianColor}` : 'none',
+                      border: calculateMarkerBorder(datum, isTicket, technicianColor),
                       borderRadius: '50%',
                       width: 25,
                       height: 25,
