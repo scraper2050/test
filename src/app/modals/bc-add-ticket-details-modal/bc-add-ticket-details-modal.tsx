@@ -1,6 +1,6 @@
 import {
   Button,
-  DialogActions,
+  DialogActions, FormControlLabel,
   Grid,
   Typography,
   withStyles
@@ -23,7 +23,10 @@ import classNames from "classnames";
 import BCTicketMessagesNotes from "./bc-ticket-messages-notes";
 import moment from "moment/moment";
 import {formatDate, formatTime} from "../../../helpers/format";
-import {error as errorSnackBar, success} from "../../../actions/snackbar/snackbar.action";
+import {
+  error as errorSnackBar,
+  success
+} from "../../../actions/snackbar/snackbar.action";
 import {useHistory} from "react-router-dom";
 import BCMiniSidebar from "../../components/bc-mini-sidebar/bc-mini-sidebar";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -61,6 +64,12 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
 
     });
 
+  const startTime = invoiceData?.job?.scheduledStartTime ? formatTime(invoiceData?.job?.scheduledStartTime) : '';
+  const endTime = invoiceData?.job?.scheduledEndTime ? formatTime(invoiceData?.job?.scheduledEndTime) : '';
+
+  const scheduleTimeAMPM = invoiceData?.job?.scheduleTimeAMPM ?
+    invoiceData?.job?.scheduleTimeAMPM === 1 ? 'AM' :
+      invoiceData?.job?.scheduleTimeAMPM === 2 ? 'PM' : '' : '';
 
   const jobData = {
     commentValues: [{
@@ -95,6 +104,9 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
   );
 
   const employeesForJob = useMemo(() => [...data], [data]);
+
+  const customerContact = invoiceData?.job?.customerContactId?.name ||
+    contacts.find((contact: any) => contact._id === invoiceData?.job?.customerContactId)?.name;
 
   if (!isEditing) {
     jobData.commentValues = jobData.commentValues.filter((c: any) => invoiceData.technicianMessages.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
@@ -196,9 +208,9 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
           return <div>{'Technician\'s comment'}</div>
         }
         const user = employeesForJob.filter(
-          (employee: any) => employee._id === row.original.user
+          (employee: any) => employee._id === row.original.user?._id
         )[0];
-        const vendor = vendorsList.find((v: any) => v.contractor.admin?._id === row.original.user);
+        const vendor = vendorsList.find((v: any) => v.contractor.admin?._id === row.original.user?._id);
         const {displayName} = user?.profile || vendor?.contractor.admin.profile || '';
         return <div>{displayName}</div>;
       },
@@ -248,40 +260,45 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
   return <>
     <DataContainer className={'new-modal-design'}>
       <BCMiniSidebar data={invoiceData}/>
-      <Grid container className={`modalPreview ${classes.customModelPreview}`}
-            justify={'space-between'}>
-        <Grid item xs={4}>
+      <Grid container className={'modalPreview'} justify={'space-around'}>
+        <Grid item style={{width: '40%'}}>
           <Typography variant={'caption'}
                       className={'previewCaption'}>customer</Typography>
           <Typography variant={'h6'}
                       className={'bigText'}>{invoiceData.customer?.profile?.displayName || ' '}</Typography>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>DUE
             DATE</Typography>
           <Typography variant={'h6'}
                       className={'previewText'}><span>{invoiceData?.dueDate ? formatDate(invoiceData?.dueDate) : ' '}</span></Typography>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>SCHEDULE
             DATE</Typography>
           <Typography variant={'h6'}
                       className={'previewText'}>{invoiceData?.job?.scheduleDate ? formatDate(invoiceData?.job?.scheduleDate) : ' '}</Typography>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>OPEN
             TIME</Typography>
           <Typography variant={'h6'}
-                      className={'previewText'}>{invoiceData.job?.createdAt ? formatTime(invoiceData?.job?.createdAt) : ' '}</Typography>
+                      className={'previewText'}>{startTime}</Typography>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs>
           <Typography variant={'caption'} className={'previewCaption'}>CLOSE
             TIMe</Typography>
           <Typography variant={'h6'}
-                      className={'previewText'}>{invoiceData?.job?.endTime ? formatTime(invoiceData?.job?.endTime) : ' '}</Typography>
+                      className={'previewText'}>{endTime}</Typography>
+        </Grid>
+
+        <Grid item xs>
+          <Typography variant={'caption'} className={'previewCaption'}>AM/PM</Typography>
+          <Typography variant={'h6'}
+                      className={'previewText'}>{scheduleTimeAMPM}</Typography>
         </Grid>
 
       </Grid>
@@ -337,7 +354,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
             <Typography variant={'caption'} className={'previewCaption'}>CONTACT
               ASSOCIATED</Typography>
             <Typography variant={'h6'}
-                        className={'previewText'}>{invoiceData?.job?.customer?.contactName || ' '}</Typography>
+                        className={'previewText'}>{customerContact || ' '}</Typography>
           </Grid>
 
           <Grid item xs>
@@ -349,57 +366,59 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
           <Grid item style={{width: 100}}>
           </Grid>
         </Grid>
-        <div className={classes.houseOccupied}>
-
-
-          <Checkbox className={classes.customcheck}
-                    checked={invoiceData?.job?.isHomeOccupied}
-                    disabled={true}
-                    color={'primary'}/>
-          <Typography variant={'caption'}
-                      className={`previewCaption ${classes.houseOccupiedText}`}>HOUSE
-            OCCUPIED</Typography>
-
-
-        </div>
-
-        {
-          // Check if home occupied is true then show the following fields
-          invoiceData?.job?.isHomeOccupied &&
-          <Grid container className={classes.customModalContent}
-                justify={'space-around'}>
-            <Grid item xs>
-              <Typography variant={'caption'}
-                          className={'previewCaption'}>FIRST NAME</Typography>
-              <Typography variant={'h6'}
-                          className={'previewText'}>{invoiceData?.job?.homeOwner?.profile?.firstName || ' ' || ' '}</Typography>
-            </Grid>
-            <Grid item xs>
-              <Typography variant={'caption'} className={'previewCaption'}>LAST
-                NAME</Typography>
-              <Typography variant={'h6'}
-                          className={'previewText'}>{invoiceData?.job?.homeOwner?.profile?.lastName || ' ' || ' '}</Typography>
-            </Grid>
-
-            <Grid item xs>
-              <Typography variant={'caption'}
-                          className={'previewCaption'}>EMAIL</Typography>
-              <Typography variant={'h6'}
-                          className={'previewText'}>{invoiceData?.job?.homeOwner?.info?.email || ' '}</Typography>
-            </Grid>
-
-            <Grid item xs>
-              <Typography variant={'caption'}
-                          className={'previewCaption'}>PHONE</Typography>
-              <Typography variant={'h6'}
-                          className={'previewText'}>{invoiceData?.job?.homeOwner?.contact?.phone || ' ' || ' '}</Typography>
-            </Grid>
-            <Grid item style={{width: 100}}>
-            </Grid>
+        <Grid container className={classes.customModalContent}
+              justify={'space-between'}>
+          <Grid container xs={12}>
+            <FormControlLabel
+              classes={{label: classes.checkboxLabel}}
+              control={
+                <Checkbox
+                  color={'primary'}
+                  checked={invoiceData?.job?.isHomeOccupied}
+                  name="isHomeOccupied"
+                  classes={{root: classes.checkboxInput}}
+                  disabled
+                />
+              }
+              label={`HOUSE IS OCCUPIED`}
+            />
           </Grid>
-        }
+          {
+            // Check if home occupied is true then show the following fields
+            invoiceData?.job?.isHomeOccupied &&
+            <Grid container xs={12}>
+              <Grid item xs>
+                <Typography variant={'caption'}
+                            className={'previewCaption'}>FIRST NAME</Typography>
+                <Typography variant={'h6'}
+                            className={'previewText'}>{invoiceData?.job?.homeOwner?.profile?.firstName || ' ' || ' '}</Typography>
+              </Grid>
+              <Grid item xs>
+                <Typography variant={'caption'} className={'previewCaption'}>LAST
+                  NAME</Typography>
+                <Typography variant={'h6'}
+                            className={'previewText'}>{invoiceData?.job?.homeOwner?.profile?.lastName || ' ' || ' '}</Typography>
+              </Grid>
 
-        {/*Show BCTicketMessagesNotes component here 3 times*/}
+              <Grid item xs>
+                <Typography variant={'caption'}
+                            className={'previewCaption'}>EMAIL</Typography>
+                <Typography variant={'h6'}
+                            className={'previewText'}>{invoiceData?.job?.homeOwner?.info?.email || ' '}</Typography>
+              </Grid>
+
+              <Grid item xs>
+                <Typography variant={'caption'}
+                            className={'previewCaption'}>PHONE</Typography>
+                <Typography variant={'h6'}
+                            className={'previewText'}>{invoiceData?.job?.homeOwner?.contact?.phone || ' ' || ' '}</Typography>
+              </Grid>
+              <Grid item style={{width: 100}}>
+              </Grid>
+            </Grid>
+          }
+        </Grid>
+
         {
           jobData && ((jobData.commentValues?.length > 0
               && jobData.commentValues.filter(c => Boolean(c.comment))?.length > 0)
@@ -498,10 +517,6 @@ const DataContainer = styled.div`
 
   .MuiGrid-root.MuiGrid-item > .MuiGrid-root.MuiGrid-container {
     padding: 0;
-  }
-
-  .MuiGrid-grid-xs-true {
-    padding: 10px 16px;
   }
 
   .MuiOutlinedInput-root {
