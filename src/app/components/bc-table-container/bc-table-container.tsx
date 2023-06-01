@@ -36,15 +36,15 @@ function BCTableContainer({
   toolbarPositionLeft = false,
   manualPagination = false,
   lastPageCursorImplemented = false,
-  fetchFunction = () => {},
+  fetchFunction = () => { },
   total,
   currentPageIndex,
-  setCurrentPageIndexFunction = () => {},
+  setCurrentPageIndexFunction = () => { },
   currentPageSize,
-  setCurrentPageSizeFunction = () => {},
-  setKeywordFunction = () => {},
+  setCurrentPageSizeFunction = () => { },
+  setKeywordFunction = () => { },
   disableInitialSearch = false,
-  rowTooltip
+  rowTooltip,
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -77,7 +77,7 @@ function BCTableContainer({
   );
 
   const handleSearchReset = () => {
-    if(manualPagination){
+    if (manualPagination) {
       setSearchText('');
       setKeywordFunction('');
       fetchFunction(currentPageSize, undefined, undefined, '');
@@ -105,13 +105,44 @@ function BCTableContainer({
   const handleSearchChange = (event: any) => {
     setSearchText(event.target.value);
     setKeywordFunction(event.target.value);
-    if(manualPagination){
-      debouncedFetchFunction(event.target.value);
+  };
+
+  /**
+   * Receive the event when the user key down on the searcher
+   * @param event 
+   */
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Enter') {
+      const value = event.target.value;
+      handleSearchTextChanged(value);
+    }
+  }
+
+  /**
+   * Receive the event when the user clicks on the search button
+   */
+  const handleSearchButton = (event: any) => {
+    handleSearchTextChanged(searchText);
+  }
+
+  /**
+   * Start the searching when the search text changing, it is activated
+   * by enter key or by click on search button
+   * @param value the new search text
+   * @returns 
+   */
+  const handleSearchTextChanged = (value: string) => {
+    if (value === undefined || value.trim() === '') {
+      return;
+    }
+    if (manualPagination) {
+      fetchFunction(currentPageSize, undefined, undefined, value);
+      setCurrentPageIndexFunction(0);
     } else {
       if (setPage !== undefined) {
         setPage({
           ...currentPage,
-          'search': event.target.value
+          'search': value
         });
       }
       if (locationState && locationState.prevPage) {
@@ -119,12 +150,12 @@ function BCTableContainer({
           ...history.location,
           'state': {
             ...currentPage,
-            'search': event.target.value
+            'search': value
           }
         });
       }
     }
-  };
+  }
 
   const getFilteredArray = (entities: any, text: any) => {
     const arr = Object.keys(entities).map(id => entities[id]);
@@ -148,7 +179,7 @@ function BCTableContainer({
   useEffect(() => {
     if (tableData && !manualPagination) {
       setFilteredData(getFilteredArray(tableData, searchText));
-    } else if(tableData){
+    } else if (tableData) {
       setFilteredData(tableData);
     }
   }, [tableData, searchText]);
@@ -169,6 +200,8 @@ function BCTableContainer({
             handleSearchReset={handleSearchReset}
             searchPlaceholder={searchPlaceholder}
             searchText={searchText}
+            handleKeyDown={handleKeyDown}
+            handleSearchButton={handleSearchButton}
           />
           : null}
         {toolbar && <BCTableToolBarContainer left={toolbarPositionLeft}>
@@ -225,7 +258,7 @@ function BCTableContainer({
   );
 }
 
-const TableContainer = styled(Grid)<{$noPadding: boolean}>`
+const TableContainer = styled(Grid) <{ $noPadding: boolean }>`
 padding: ${props => props.$noPadding ? '0' : '5px'};
 .actions-container {
   display:flex;

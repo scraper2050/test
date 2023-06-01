@@ -11,6 +11,8 @@ interface BCTableSearchInputProps {
   handleSearchChange: any
   handleSearchReset: any
   searchPlaceholder: string
+  handleKeyDown: (event: any) => void,
+  handleSearchButton: (event: any) => void
 }
 
 function BCTableSearchContainer({
@@ -18,7 +20,9 @@ function BCTableSearchContainer({
   searchText,
   handleSearchChange,
   handleSearchReset,
-  searchPlaceholder
+  searchPlaceholder,
+  handleKeyDown,
+  handleSearchButton
 }: BCTableSearchInputProps): JSX.Element {
   return (
     <Paper classes={{ 'root': classes.searchContainer }}>
@@ -31,7 +35,8 @@ function BCTableSearchContainer({
         }}
         placeholder={searchPlaceholder}
         value={searchText}
-        // defaultValue={searchText}
+        onKeyDown={handleKeyDown}
+      // defaultValue={searchText}
       />
       {searchText && (
         <>
@@ -48,7 +53,9 @@ function BCTableSearchContainer({
       <IconButton
         aria-label={'search'}
         className={classes.iconButton}
-        type={'submit'}>
+        type={'submit'}
+        onClick={handleSearchButton}
+        >
         <SearchIcon />
       </IconButton>
     </Paper>

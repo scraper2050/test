@@ -103,7 +103,7 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor =
 
 let cancelTokenGetAllInvoicesAPI: any;
 export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, advanceFilterInvoiceData?: any, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
-  return (dispatch: any) => {
+  return (dispatch: any): Promise<any> => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesLoading(true));
       const optionObj: any = {
