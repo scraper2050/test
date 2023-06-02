@@ -5,12 +5,13 @@ import TableSearchUtils from 'utils/table-search';
 import Typography from '@material-ui/core/Typography';
 import styles from './bc-table.styles';
 import { Grid, Paper, withStyles } from '@material-ui/core';
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import '../../../scss/index.scss';
 import styled from 'styled-components';
 import debounce from 'lodash.debounce';
+
 
 function BCTableContainer({
   tableData,
@@ -67,39 +68,15 @@ function BCTableContainer({
 
   const [filteredData, setFilteredData] = useState([]);
 
-  const debouncedFetchFunction = useCallback(
-    debounce(value => {
-      setKeywordFunction(value);
-      fetchFunction(currentPageSize, undefined, undefined, value);
-      setCurrentPageIndexFunction(0);
-    }, 500),
-    [fetchFunction]
-  );
+  // Indicate if the search input shoul be autofocused
+  const [autoFocusSearch, setFocusSearch] = useState(false);
 
   const handleSearchReset = () => {
-    if (manualPagination) {
-      setSearchText('');
-      setKeywordFunction('');
-      fetchFunction(currentPageSize, undefined, undefined, '');
-      setCurrentPageIndexFunction(0, false);
-    } else {
-      setSearchText('');
-      if (setPage !== undefined) {
-        setPage({
-          ...currentPage,
-          'search': ''
-        });
-      }
-      if (locationState && locationState.prevPage) {
-        history.replace({
-          ...history.location,
-          'state': {
-            ...currentPage,
-            'search': ''
-          }
-        });
-      }
-    }
+    setSearchText('');
+    setKeywordFunction('');
+    handleSearchTextChanged('');
+    setFocusSearch(false);
+    setFocusSearch(true);
   }
 
   const handleSearchChange = (event: any) => {
@@ -123,6 +100,8 @@ function BCTableContainer({
    */
   const handleSearchButton = (event: any) => {
     handleSearchTextChanged(searchText);
+    setFocusSearch(false);
+    setFocusSearch(true);
   }
 
   /**
@@ -132,9 +111,6 @@ function BCTableContainer({
    * @returns 
    */
   const handleSearchTextChanged = (value: string) => {
-    if (value === undefined || value.trim() === '') {
-      return;
-    }
     if (manualPagination) {
       fetchFunction(currentPageSize, undefined, undefined, value);
       setCurrentPageIndexFunction(0);
@@ -202,6 +178,7 @@ function BCTableContainer({
             searchText={searchText}
             handleKeyDown={handleKeyDown}
             handleSearchButton={handleSearchButton}
+            autoFocus={autoFocusSearch}
           />
           : null}
         {toolbar && <BCTableToolBarContainer left={toolbarPositionLeft}>
