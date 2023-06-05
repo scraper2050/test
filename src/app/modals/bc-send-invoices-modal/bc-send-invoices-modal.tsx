@@ -392,8 +392,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
     {
       Cell({ row }: any) {
-        return row.original.contactsObj.length > 0
-          ? row.original.contactsObj[0]?.name
+        return row.original?.contactsObj?.length > 0
+          ? row.original?.contactsObj[0]?.name
           : 'N/A';
       },
       'Header': 'Contact',
@@ -404,8 +404,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
     {
       Cell({ row }: any) {
-        return row.original.contactsObj.length > 0
-          ? row.original.contactsObj[0]?.email
+        return row.original?.contactsObj?.length > 0
+          ? row.original?.contactsObj[0]?.email
           : 'N/A';
       },
       'Header': 'Email',
