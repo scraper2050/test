@@ -159,7 +159,6 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
   const [serviceItems, setServiceItems] = useState<any>([]);
   const { user } = useSelector(({ auth }: any) => auth);
   const profile = useSelector(({ profile }: any) => profile);
-  console.log(user._id);
   
   const invoiceTableStyle = useInvoiceTableStyles();
   const { state } = useLocation<any>();
