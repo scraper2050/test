@@ -146,7 +146,7 @@ function BCServiceTicketModal(
     });
     await setHomeOwnerId(''); 
     await setHomeOccupied(false);
-    FormikValues.isHomeOccupied = false;
+    await setFieldValue('isHomeOccupied', false);
 
     if (customerId !== '') {
       const data: any = {
@@ -597,7 +597,7 @@ function BCServiceTicketModal(
       });
       setHomeOwnerId(filteredHomeOwners[0]._id); 
       setHomeOccupied(true);
-      FormikValues.isHomeOccupied = true;
+      setFieldValue('isHomeOccupied', true);
     }
   }, [homeOwners]);
 
