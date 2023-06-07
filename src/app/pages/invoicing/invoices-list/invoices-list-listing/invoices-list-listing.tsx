@@ -88,7 +88,7 @@ function InvoicingListListing({ classes, theme }: any) {
     {
       'Header': 'Job ID',
       Cell({ row }: any) {
-        return <span>{row.original.job?.jobId?.substring(5)}</span>
+        return <span>{row.original.job?.jobId?.substring(4)}</span>
       },
       'className': 'font-bold',
       'sortable': true
@@ -460,6 +460,8 @@ function InvoicingListListing({ classes, theme }: any) {
         toolbar={Toolbar()}
         manualPagination
         fetchFunction={(num: number, isPrev: boolean, isNext: boolean, query: string) => {
+          console.log(nextCursor);
+          
           setLastPrevCursor(isPrev ? prevCursor : undefined)
           setLastNextCursor(isNext ? nextCursor : undefined)
           dispatch(getAllInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, advanceFilterInvoiceData, undefined, undefined, undefined, currentDivision.params))
