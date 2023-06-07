@@ -44,14 +44,13 @@ export const getTodos = async (params = {}) => {
 };
 
 let cancelTokenGetAllInvoicesForBulkPaymentsAPI: any;
-export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
+export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesForBulkPaymentsLoading(true));
       const optionObj: any = {
         pageSize,
-        previousCursor,
-        nextCursor,
+        currentPage: currentPageIndex,
         'isDraft': false
       };
       if (keyword) {
@@ -102,14 +101,13 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, previousCursor =
 };
 
 let cancelTokenGetAllInvoicesAPI: any;
-export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, advanceFilterInvoiceData?: any, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
+export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
   return (dispatch: any): Promise<any> => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesLoading(true));
       const optionObj: any = {
         pageSize,
-        previousCursor,
-        nextCursor,
+        currentPage: currentPageIndex,
         'isDraft': false
       };
       if (keyword) {
@@ -214,14 +212,13 @@ export const getAllInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor
 };
 
 let cancelTokenGetAllDraftInvoicesAPI: any;
-export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, recentOnly = false, division?: DivisionParams) => {
+export const getAllDraftInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setDraftInvoicesLoading(true));
       const optionObj: any = {
         pageSize,
-        previousCursor,
-        nextCursor,
+        currentPage: currentPageIndex,
         'isDraft': true
       };
       if (keyword) {
@@ -261,14 +258,13 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, previousCursor = '', nextC
 };
 
 let cancelTokenGetUnpaidInvoicesAPI: any;
-export const getUnpaidInvoicesAPI = (pageSize = 10, previousCursor = '', nextCursor = '', keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, recentOnly = false, division?: DivisionParams) => {
+export const getUnpaidInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setUnpaidInvoicesLoading(true));
       const optionObj: any = {
         pageSize,
-        previousCursor,
-        nextCursor,
+        currentPage: currentPageIndex,
         'status': JSON.stringify(['UNPAID']),
         'isDraft': false
       };
