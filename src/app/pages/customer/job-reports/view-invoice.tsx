@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {Button, createStyles, withStyles, Grid, Paper} from "@material-ui/core";
+import {Button, createStyles, withStyles, Grid, Paper, Badge} from "@material-ui/core";
 import styles from "../customer.styles";
 import BCInvoice from "../../../components/bc-invoice/bc-invoice";
 import IconButton from '@material-ui/core/IconButton';
@@ -232,6 +232,28 @@ function ViewInvoice({classes, theme}: any) {
     }).catch(e => dispatch(error(e.message)))
   }
 
+
+
+  const comments = (invoiceDetail.job?.tasks || [])
+    .filter((task: any) => task.comment)
+    .map((task: any) => {
+      return {
+        comment: task.comment,
+        id: task._id,
+      };
+    });
+  const technicianImages =
+    invoiceDetail.job?.technicianImages?.map((image: any) => ({
+      date: image.createdAt,
+      imageUrl: image.imageUrl,
+      uploader: image.uploadedBy?.profile?.displayName,
+    })) || [];
+  const technicianData = {
+    commentValues: comments,
+    images: technicianImages,
+  };
+
+
   const handleTicketClick = () => {
     dispatch(setModalDataAction({
       data: {
@@ -279,16 +301,36 @@ function ViewInvoice({classes, theme}: any) {
             )}
           </div>
           <div>
-            {
-              invoiceDetail && <Button
-                variant="contained"
-                color="primary"
-                className={classNames(invoiceStyles.margin, invoiceStyles.white)}
-                onClick={handleTicketClick}
-              >
-                Job Details
-              </Button>
-            }
+            {invoiceDetail && (
+              <>
+                {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
+                  <Badge
+                    badgeContent={1}
+                    color="secondary"
+                    overlap="rectangle"
+                    anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classNames(invoiceStyles.white)}
+                      onClick={handleTicketClick}
+                    >
+                      Job Details
+                    </Button>
+                  </Badge>
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classNames(invoiceStyles.margin, invoiceStyles.white)}
+                    onClick={handleTicketClick}
+                  >
+                    Job Details
+                  </Button>
+                )}
+              </>
+            )}
             {invoiceDetail && <EmailInvoiceButton
               showLoader={false}
               Component={<Button

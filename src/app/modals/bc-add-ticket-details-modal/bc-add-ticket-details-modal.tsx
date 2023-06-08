@@ -28,7 +28,6 @@ import {
   success
 } from "../../../actions/snackbar/snackbar.action";
 import {useHistory} from "react-router-dom";
-import BCMiniSidebar from "../../components/bc-mini-sidebar/bc-mini-sidebar";
 import Checkbox from "@material-ui/core/Checkbox";
 import {getContacts} from "../../../api/contacts.api";
 import {updateInvoiceMessages} from '../../../api/invoicing.api';
@@ -38,7 +37,7 @@ import {
 
 
 function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
-  const {invoiceData, isEditing} = props;
+  const {invoiceData, isEditing, hasTechnicianMessage} = props;
 
   const history = useHistory();
 
@@ -108,13 +107,13 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
   const customerContact = invoiceData?.job?.customerContactId?.name ||
     contacts.find((contact: any) => contact._id === invoiceData?.job?.customerContactId)?.name;
 
-  if (!isEditing) {
-    jobData.commentValues = jobData.commentValues.filter((c: any) => invoiceData.technicianMessages.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
-    jobData.images = jobData.images.filter((i: any) => invoiceData.technicianMessages.images.filter((image: any) => image === i.imageUrl)?.length > 0);
-
-    technicianData.commentValues = technicianData.commentValues.filter((c: any) => invoiceData.technicianMessages.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
-    technicianData.images = technicianData.images.filter((i: any) => invoiceData.technicianMessages.images.filter((image: any) => image === i.imageUrl)?.length > 0);
-  }
+  // if (!isEditing) {
+  //   jobData.commentValues = jobData.commentValues.filter((c: any) => invoiceData.technicianMessages.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
+  //   jobData.images = jobData.images.filter((i: any) => invoiceData.technicianMessages.images.filter((image: any) => image === i.imageUrl)?.length > 0);
+  //
+  //   technicianData.commentValues = technicianData.commentValues.filter((c: any) => invoiceData.technicianMessages.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
+  //   technicianData.images = technicianData.images.filter((i: any) => invoiceData.technicianMessages.images.filter((image: any) => image === i.imageUrl)?.length > 0);
+  // }
 
   useEffect(() => {
 
@@ -256,10 +255,12 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
       },
     },
   ];
+  const address = `${invoiceData?.job?.customer?.address?.street ?? ''} ${invoiceData?.job?.customer?.address?.city ?? ''} ${invoiceData?.job?.customer?.address?.state ?? ''} ${invoiceData?.job?.customer?.address?.zipCode ?? ''}`
+  console.log('invoiceData', invoiceData);
 
   return <>
     <DataContainer className={'new-modal-design'}>
-      <BCMiniSidebar data={invoiceData}/>
+      {/*<BCMiniSidebar data={invoiceData}/>*/}
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid item style={{width: '40%'}}>
           <Typography variant={'caption'}
@@ -326,7 +327,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
           </Grid>
           <Grid item xs>
             <Typography variant={'caption'}
-                        className={'previewCaption'}>EQUIPMENTS</Typography>
+                        className={'previewCaption'}>EQUIPMENT</Typography>
             <Typography variant={'h6'}
                         className={'previewText'}> </Typography>
           </Grid>
@@ -347,21 +348,21 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
             <Typography variant={'caption'} className={'previewCaption'}>JOB
               ADDRESS</Typography>
             <Typography variant={'h6'}
-                        className={'previewText'}>{invoiceData?.job?.customer?.address?.city || ' '}</Typography>
+                        className={'previewText'}>{invoiceData?.job?.customer?.address?.city || ''}</Typography>
           </Grid>
 
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>CONTACT
               ASSOCIATED</Typography>
             <Typography variant={'h6'}
-                        className={'previewText'}>{customerContact || ' '}</Typography>
+                        className={'previewText'}>{invoiceData?.job.customerContactId?.name ||''}</Typography>
           </Grid>
 
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>CUSTOMER
               PO</Typography>
             <Typography variant={'h6'}
-                        className={'previewText'}>{invoiceData?.job?.customer?.address?.zipCode || ' '}</Typography>
+                        className={'previewText'}>{invoiceData?.job.customerPO || ''}</Typography>
           </Grid>
           <Grid item style={{width: 100}}>
           </Grid>
