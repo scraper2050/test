@@ -83,8 +83,6 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, currentPageIndex
         .then((res: any) => {
           const tempInvoices = res.data.invoices;
           dispatch(setInvoicesForBulkPayments(tempInvoices.reverse()));
-          dispatch(setPreviousInvoicesForBulkPaymentsCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
-          dispatch(setNextInvoicesForBulkPaymentsCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
           dispatch(setInvoicesForBulkPaymentsTotal(res.data?.total ? res.data?.total : 0));
           dispatch(setInvoicesForBulkPaymentsLoading(false));
           return resolve(res.data);
@@ -193,8 +191,6 @@ export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?:
         .then((res: any) => {
           const tempInvoices = res.data.invoices || [];
           dispatch(setInvoices(tempInvoices.reverse()));
-          dispatch(setPreviousInvoicesCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
-          dispatch(setNextInvoicesCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
           dispatch(setInvoicesTotal(res.data?.total ? res.data?.total : 0));
           dispatch(setUnsyncedInvoicesCount(res.data?.unsyncedInvoices));
           dispatch(setInvoicesLoading(false));
@@ -240,8 +236,6 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyw
         .then((res: any) => {
           const tempDraftInvoices = res.data.invoices;
           dispatch(setDraftInvoices(tempDraftInvoices.reverse()));
-          dispatch(setPreviousDraftInvoicesCursor(res.data?.pagination?.previousCursor ? res.data?.pagination?.previousCursor : ''));
-          dispatch(setNextDraftInvoicesCursor(res.data?.pagination?.nextCursor ? res.data?.pagination?.nextCursor : ''));
           dispatch(setDraftInvoicesTotal(res.data?.total ? res.data?.total : 0));
           dispatch(setDraftInvoicesLoading(false));
           return resolve(res.data);

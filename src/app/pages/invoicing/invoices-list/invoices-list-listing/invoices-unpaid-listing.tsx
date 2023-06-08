@@ -110,6 +110,14 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'sortable': true,
     },
     {
+      'Header': 'Job ID',
+      Cell({ row }: any) {
+        return <span>{row.original.job?.jobId?.substring(4)}</span>
+      },
+      'className': 'font-bold',
+      'sortable': true
+    },
+    {
       'accessor': (originalRow: any) => formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
