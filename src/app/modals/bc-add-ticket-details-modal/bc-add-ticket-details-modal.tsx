@@ -94,7 +94,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
     }
   }) : [];
 
-  const {contacts} = useSelector((state: any) => state.contacts);
+
   const {loading, data} = useSelector(
     ({employeesForJob}: any) => employeesForJob
   );
@@ -104,6 +104,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
 
   const employeesForJob = useMemo(() => [...data], [data]);
 
+  const {contacts} = useSelector((state: any) => state.contacts);
   const customerContact = invoiceData?.job?.customerContactId?.name ||
     contacts.find((contact: any) => contact._id === invoiceData?.job?.customerContactId)?.name;
 
@@ -355,14 +356,14 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
             <Typography variant={'caption'} className={'previewCaption'}>CONTACT
               ASSOCIATED</Typography>
             <Typography variant={'h6'}
-                        className={'previewText'}>{invoiceData?.job.customerContactId?.name ||''}</Typography>
+                        className={'previewText'}>{invoiceData?.customerContactId?.name ||''}</Typography>
           </Grid>
 
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>CUSTOMER
               PO</Typography>
             <Typography variant={'h6'}
-                        className={'previewText'}>{invoiceData?.job.customerPO || ''}</Typography>
+                        className={'previewText'}>{invoiceData?.job?.customerPO || ''}</Typography>
           </Grid>
           <Grid item style={{width: 100}}>
           </Grid>
