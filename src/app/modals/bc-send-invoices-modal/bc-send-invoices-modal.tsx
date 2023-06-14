@@ -33,6 +33,7 @@ import {
   formatDatTimelll,
   formatShortDateNoDay
 } from 'helpers/format';
+import { useCustomStyles } from "helpers/custom";
 import {
   getAllInvoicesAPI,
   getAllInvoicesForBulkPaymentsAPI
@@ -55,6 +56,8 @@ import { resetEmailState } from "../../../actions/email/email.action";
 import { setTimeout } from 'timers';
 import { PaymentStatus } from 'app/pages/invoicing/invoices-list/invoices-list-listing/invoices-unpaid-listing';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import EmailInvoiceButton from 'app/pages/invoicing/invoices-list/email.invoice';
+import { MailOutlineOutlined } from '@material-ui/icons';
 
 const SHOW_OPTIONS = [
   {
@@ -130,6 +133,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     })
   );
 
+  const customStyles = useCustomStyles();
   const handleRowClick = (event: any, row: any) => {
 
     // if (selectedInvoices.length === 0 && !customerValue) setCustomerValue(row.original.customer);
@@ -380,6 +384,23 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     },
     {
       Cell({ row }: any) {
+        return <div style={{ maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip
+            placement='bottom-start'
+            title={
+              row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'
+            }
+          >
+            <span>
+              {row.original.customerPO || row.original.job?.customerPO || row.original.job?.ticket?.customerPO || '-'}
+            </span>
+          </HtmlTooltip>
+        </div>
+      },
+      'Header': 'Customer PO',
+    },
+    {
+      Cell({ row }: any) {
         return <div>
           <span>
             {formatCurrency(row.original.balanceDue ?? row.original.total)}
@@ -409,6 +430,33 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       'className': 'font-bold',
       'sortable': true
     },
+    {
+      Cell({ row }: any) {
+        // return <div className={customStyles.centerContainer}>
+        return <EmailInvoiceButton
+          Component={
+          <Button
+            variant="contained"
+            classes={{
+              'root': classes.emailButton
+            }}
+            color="primary"
+            size="small"
+            >
+              <MailOutlineOutlined
+              className={customStyles.iconBtn}
+              />
+          </Button>}
+          invoice={row.original}
+        />;
+        // </div>;
+      },
+      'Header': 'Actions',
+      'id': 'action-send-email',
+      'sortable': false,
+      'width': 60
+    }
+
   ];
 
   useEffect(() => {
