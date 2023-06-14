@@ -56,6 +56,13 @@ import {
   openModalAction,
   setModalDataAction
 } from "../../../actions/bc-modal/bc-modal.action";
+import BCTicketMessagesNotes
+  from "../../modals/bc-add-ticket-details-modal/bc-ticket-messages-notes";
+import {getContacts} from "../../../api/contacts.api";
+import {
+  getEmployeesForJobAction
+} from "../../../actions/employees-for-job/employees-for-job.action";
+import {getVendors} from "../../../actions/vendor/vendor.action";
 
 interface Props {
   classes?: any;
@@ -553,6 +560,9 @@ function BCEditInvoice({
 
   const [options, setOptions] = React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
 
+  const [selectedComments, setSelectedComments] = useState<any[]>([]);
+  const [selectedImages, setSelectedImages] = useState<any[]>([]);
+
   let serviceAddressLocation: any = invoiceData?.job?.jobLocation ? ({
     name: invoiceData?.job?.jobLocation?.name || '',
     street: invoiceData?.job?.jobLocation?.address?.street || '',
@@ -705,6 +715,34 @@ function BCEditInvoice({
     images: technicianImages,
   };
 
+  const jobData = {
+    commentValues: [{
+      comment: invoiceData?.job?.ticket?.note,
+      id: invoiceData?.job?.ticket?._id
+    }] || [],
+    images: invoiceData?.job?.ticket?.images || []
+  };
+  var isEditing = false;
+
+  const allComments = [...jobData.commentValues, ...technicianData.commentValues];
+  const allImages = [...jobData.images, ...technicianData.images];
+
+  jobData.commentValues = jobData.commentValues.filter((c: any) =>  invoiceData?.technicianMessages?.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
+  jobData.images = jobData.images.filter((i: any) => invoiceData?.technicianMessages?.images.filter((image: any) => image === i.imageUrl)?.length > 0);
+
+  technicianData.commentValues = technicianData.commentValues.filter((c: any) => invoiceData?.technicianMessages?.notes.filter((comment: any) => comment.id === c.id)?.length > 0);
+  technicianData.images = technicianData.images.filter((i: any) => invoiceData?.technicianMessages?.images?.filter((image: any) => image === i.imageUrl)?.length > 0);
+
+
+  useEffect(() => {
+
+    // Set selected comments all if isEditing is true otherwise set selected comments to invoiceData.technicianMessages.notes
+    if (isEditing) {
+      setSelectedComments(allComments.filter((comment: any) => invoiceData.technicianMessages.notes.filter((c: any) => c.id === comment.id)?.length > 0));
+      setSelectedImages(allImages.filter((image: any) => invoiceData.technicianMessages.images.filter((i: any) => i === image.imageUrl)?.length > 0));
+    }
+  }, [])
+
   useEffect(() => {
     if (invoiceData.locations?.length && currentDivision.data?.locationId) {
       let filteredLocation = invoiceData.locations.find((res: any) => res._id === currentDivision.data?.locationId);
@@ -809,7 +847,7 @@ function BCEditInvoice({
                       badgeContent={1}
                       color="secondary"
                       overlap="rectangle"
-                      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
                     >
                       <Button
                         variant="contained"
@@ -1285,6 +1323,66 @@ function BCEditInvoice({
                     </AccordionDetails>
                   </Accordion>
                 </Card>
+                {
+                  jobData && (jobData.commentValues?.length > 0 || jobData.images?.length > 0) &&
+                  <>
+                    <Card elevation={2}>
+                      <Accordion defaultExpanded>
+                        <AccordionSummary
+                          className={invoiceStyles.bgGray25}
+                          expandIcon={<ArrowDropDownIcon/>}
+                          aria-controls="technican-notes-to-customer"
+                        >
+                          JOB/TICKET DETAILS
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <BCTicketMessagesNotes invoiceData={jobData}
+                                                 selectedComments={selectedComments}
+                                                 setSelectedComments={setSelectedComments}
+                                                 selectedImages={selectedImages}
+                                                 setSelectedImages={setSelectedImages}
+                                                 isEditing={isEditing}
+                                                 isJob={true}
+                                                 isInvoiceMainView={true}
+                                                 isPadding={true}
+                                                 classes={classes.width100}
+                          />
+                        </AccordionDetails>
+                      </Accordion>
+                    </Card>
+                  </>
+                }
+
+                {
+                  technicianData && (technicianData.commentValues?.length > 0 || technicianData.images?.length > 0) &&
+                  <>
+                    <Card elevation={2}>
+                      <Accordion defaultExpanded>
+                        <AccordionSummary
+                          className={invoiceStyles.bgGray25}
+                          expandIcon={<ArrowDropDownIcon/>}
+                          aria-controls="technican-notes-to-customer"
+                        >
+                          TECHNICIAN NOTES/PICTURES
+                        </AccordionSummary>
+                        <AccordionDetails>
+
+                          <BCTicketMessagesNotes invoiceData={technicianData}
+                                                 selectedComments={selectedComments}
+                                                 setSelectedComments={setSelectedComments}
+                                                 selectedImages={selectedImages}
+                                                 setSelectedImages={setSelectedImages}
+                                                 isEditing={isEditing}
+                                                 isJob={false}
+                                                 isInvoiceMainView={true}
+                                                 isPadding={true}
+                                                 classes={classes.width100}
+                          />
+                        </AccordionDetails>
+                      </Accordion>
+                    </Card>
+                  </>
+                }
 
                 {/*                <Card elevation={2}>
                   <Accordion defaultExpanded>
@@ -1336,14 +1434,32 @@ function BCEditInvoice({
                   }
                 </div>
                 <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                    onClick={handleTicketClick}
-                  >
-                    Job Details
-                  </Button>
+                  {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
+                    <Badge
+                      badgeContent={1}
+                      color="secondary"
+                      overlap="rectangle"
+                      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                    >
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                        onClick={handleTicketClick}
+                      >
+                        Job Details
+                      </Button>
+                    </Badge>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleTicketClick}
+                    >
+                      Job Details
+                    </Button>
+                  )}
                   {!invoiceData?.isDraft && (
                     <Button
                       variant="contained"

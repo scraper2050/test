@@ -74,9 +74,13 @@ export default (theme: Theme): any => ({
     width: '100%',
   },
   messageContent: {
-    padding: '0 2rem',
+    // padding: '0 2rem',
     display: 'flex',
     justifyContent: 'start',
+    width: '100%',
+  },
+  messageContentPadding: {
+    padding: '0 1rem',
   },
   main: {
     display: 'flex',
@@ -150,8 +154,11 @@ export default (theme: Theme): any => ({
   horizontalLine: {
     borderColor: '#d0d3dc54',
   },
+  width100: {
+    width: '100%',
+  },
   padding: {
-    padding: '32px',
+    padding: '14px',
   },
   paddingLeft: {
     paddingLeft: '32px',

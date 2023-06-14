@@ -37,7 +37,7 @@ import {
 
 
 function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
-  const {invoiceData, isEditing, hasTechnicianMessage} = props;
+  const {invoiceData, isEditing} = props;
 
   const history = useHistory();
 
@@ -437,6 +437,8 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
                                    selectedImages={selectedImages}
                                    setSelectedImages={setSelectedImages}
                                    isEditing={isEditing}
+                                   isInvoiceMainView = {false}
+                                   isPadding={true}
                                    isJob={true}
             />
           </>
@@ -450,14 +452,16 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
                                    selectedImages={selectedImages}
                                    setSelectedImages={setSelectedImages}
                                    isEditing={isEditing}
+                                   isInvoiceMainView = {false}
+                                   isPadding={true}
                                    isJob={false}
             />
           </>
         }
 
 
-        <Grid justify={'space-between'}>
-          <Grid item xs>
+
+
             <Typography variant={'caption'}
                         className={`previewCaption ${classes.paddingLeft}`}>&nbsp;&nbsp;job
               history</Typography>
@@ -477,8 +481,8 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
                 tableData={[...invoiceData.job.track, ...technicianNotes]}
               />
             </div>
-          </Grid>
-        </Grid>
+
+
 
         <DialogActions>
           <div className={classes.actionsContainer}>
@@ -512,7 +516,7 @@ const DataContainer = styled.div`
     width: 100%;
     padding: 0px 40px;
   }
-
+  width: 100%;
   .MuiGrid-spacing-xs-4 > .MuiGrid-spacing-xs-4 {
     margin: 0;
   }

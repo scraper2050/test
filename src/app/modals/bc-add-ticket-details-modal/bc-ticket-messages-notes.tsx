@@ -19,6 +19,8 @@ interface Props {
   selectedImages: any[];
   setSelectedImages: any
   isEditing: boolean
+  isInvoiceMainView: boolean
+  isPadding: boolean,
   isJob: boolean
 }
 
@@ -35,7 +37,9 @@ function BCTicketMessagesNotes({
                                  selectedImages,
                                  setSelectedImages,
                                  isEditing,
-                                 isJob
+                                 isInvoiceMainView,
+                                 isJob,
+                                 isPadding
                                }: Props): JSX.Element {
 
   const [imageSlide, setImageSlide] = useState<any>(null);
@@ -114,26 +118,26 @@ function BCTicketMessagesNotes({
     </Modal>
 
 
-    <div className={classes.messageContent}>
+    <div className={ isPadding ? `${classes.messageContent} ${classes.messageContentPadding}` : classes.messageContent }>
       <div className={classes.innerMessageContent}>
         {/*<p>Check each box if you would like to add this to the invoice</p>*/}
         <div className={classes.main}>
 
 
           <div className={classes.invoiceMessageText}>
-            <div>
-              {
-                isJob ?
-                  <Typography variant={'caption'}
-                              className={'previewCaption'}>TICKET/JOB
-                    Details</Typography>
-                  :
-                  <Typography variant={'caption'}
-                              className={'previewCaption'}>TECHNICIAN
-                    COMMENTS</Typography>
-              }
-            </div>
-
+            {!isInvoiceMainView &&
+              <div>
+                {
+                  isJob ?
+                    <Typography variant={'caption'}
+                                className={'previewCaption'}>TICKET/JOB DETAILS</Typography>
+                    :
+                    <Typography variant={'caption'}
+                                className={'previewCaption'}>TECHNICIAN
+                      COMMENTS</Typography>
+                }
+              </div>
+            }
             {
               notes && notes?.length > 0 &&
               notes.map((item: any, index: number) => {
@@ -161,7 +165,7 @@ function BCTicketMessagesNotes({
                   </div>
 
                   <div>
-                    <Typography variant={'h6'}
+                    <Typography variant={'caption'}
                                 className={`previewText ${classes.note}`}>{item.comment}</Typography>
                   </div>
 
@@ -173,8 +177,10 @@ function BCTicketMessagesNotes({
           </div>
 
           <div className={classes.invoiceMessageImage}>
-            <Typography variant={'caption'}
-                        className={'previewCaption'}>PHOTO(S)</Typography>
+            {!isInvoiceMainView &&
+              <Typography variant={'caption'}
+                          className={'previewCaption'}>PHOTO(S)</Typography>
+            }
             <div className={classes.photos}>
 
               {
