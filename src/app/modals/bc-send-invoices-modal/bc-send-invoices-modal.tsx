@@ -110,6 +110,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const [invoicesToDispatch, setInvoicesToDispatch] = useState<any[]>([]);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
   const [customerValue, setCustomerValue] = useState<any>(null);
+  const [checkMissingPo, setMissingPO] = useState<any>(null);
   const [customerContactValue, setCustomerContactValue] = useState<any>(null);
   const [showValue, setShowValue] = useState<string>('unpaid');
   const [localInvoiceList, setLocalInvoiceList] = useState<any[]>([]);
@@ -178,6 +179,11 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
   const handleCustomerContactChange = (event: any, newValue: any) => {
     setCustomerContactValue(newValue);
+    if (!newValue) setSelectedInvoices([]);
+  };
+
+  const handleMissingPO = (event: any, newValue: any) => {
+    setMissingPO(newValue);
     if (!newValue) setSelectedInvoices([]);
   };
 
@@ -290,13 +296,13 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
 
     dispatch(resetEmailState());
     dispatch(setCurrentPageIndex(0));
-    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
+    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
   };
 
   const closeModal = () => {
 
     dispatch(setCurrentPageIndex(0));
-    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
+    dispatch(getAllInvoicesAPI(undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,currentDivision.params));
     dispatch(closeModalAction());
     setTimeout(() => {
       dispatch(setModalDataAction({
@@ -320,6 +326,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
       { invoiceDateRange: selectionRange },
       customerValue?._id,
       customerContactValue?.value,
+      checkMissingPo,
+      true,
       isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
       showValue === 'all',
       currentDivision.params
@@ -331,7 +339,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
     };
 
     getContactsData(data);
-  }, [customerValue, customerContactValue, selectionRange, showValue]);
+  }, [customerValue, customerContactValue, selectionRange, showValue, checkMissingPo]);
 
 
   const HtmlTooltip = withStyles((theme) => ({
@@ -575,6 +583,15 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                   onSelect={(e, item) => setShowValue(item.value)}
                 />
               </Grid>
+              <Grid item xs={4}>
+                <Checkbox
+                  color="primary"
+                  className={classes.checkbox}
+                  checked={checkMissingPo}
+                  onChange={(ev: any, newValue: any) => handleMissingPO(ev, newValue)}
+                />
+                MISSING P.O.
+              </Grid>
               <Grid item xs={1} />
             </Grid>
             <DialogContent classes={{ root: classes.dialogContent }}>
@@ -593,6 +610,8 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                     { invoiceDateRange: selectionRange },
                     customerValue?._id,
                     customerContactValue?.value,
+                    checkMissingPo,
+                    true,
                     isNaN(parseInt(showValue)) ? null : moment().add(parseInt(showValue), 'day').toDate(),
                     showValue === 'all',
                     currentDivision.params
