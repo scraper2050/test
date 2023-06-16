@@ -205,7 +205,7 @@ function AdminVendorsPage({ classes }: any) {
             commissionValue = 'Tier ' + t.tier.name;
           }
         });
-    } else {
+    } else if(vendor.commission) {
       commissionValue = vendor.commission + '%';
     }
     return <span>{commissionValue}</span>;
