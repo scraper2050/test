@@ -108,7 +108,8 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
       typeof costing[tier_id].charge !== 'undefined'
         ? `${costing[tier_id].charge}`
         : '',
-  })).filter((tier) => tier.isActive);
+  }))
+    .filter((tier) => tier.isActive);
 
   const formik = useFormik({
     'initialValues': {
@@ -238,7 +239,6 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
               <Grid
                 item
                 xs={12}
-                alignItems="center"
                 style={{ display: 'flex' }}
               >
                 <div
@@ -269,7 +269,6 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
               <Grid
                 item
                 xs={12}
-                alignItems="center"
                 style={{ display: 'flex' }}
               >
                 <div
@@ -309,7 +308,6 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                 <Grid
                   item
                   xs={12}
-                  alignItems="center"
                   style={{
                     display: 'flex',
                   }}
@@ -342,7 +340,6 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                 <Grid
                   item
                   xs={12}
-                  alignItems="center"
                   style={{
                     display: 'flex',
                   }}
@@ -373,7 +370,6 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                 <Grid
                   item
                   xs={12}
-                  alignItems="center"
                   style={{ padding: '0 7px' }}
                 >
                   <FormControlLabel
@@ -459,7 +455,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                 ))}
               </Grid>
             </Grid>
-            {formik.values.isFixed !== '%' && (
+            {formik.values.isFixed !== '%' && !!activeJobCosts?.length && (
               <Grid container className="pricing">
                 <Grid container justify="center">
                   <Typography variant={'h6'}>
@@ -595,6 +591,10 @@ const DataContainer = styled.div`
     color: #383838;
     font-size: 16px;
     padding: 12px 14px;
+  }
+  .MuiTypography-h6 {
+    color: #00aaff;
+    margin: 10px 0px;
   }
   .MuiInputAdornment-positionStart {
     margin-right: 0;

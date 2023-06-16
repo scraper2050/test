@@ -3,10 +3,9 @@ import { useLocation, useHistory } from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import { useTheme, withStyles } from '@material-ui/core';
 import BCTabs from '../../../../components/bc-tab/bc-tab';
-import BCBackButton from 'app/components/bc-back-button/bc-back-button';
 import Setup from '../setup/setup';
 import JobCosting from '../job-costing/job-costing';
-import styles from '../services-and-products/services-and-products-list.styles';
+import styles from '../services-and-products-list.styles';
 import '../../../../../scss/popup.scss';
 function AdminServicesAndProductsSetupPage({ classes }: any) {
   const theme = useTheme();

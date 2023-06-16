@@ -102,7 +102,7 @@ function AdminSetupPage({ classes }: Props) {
         return (
           <>
             <div style={{ fontSize: 14, lineHeight: '16px', marginBottom: 7 }}>
-              JOB COST {row.original?.tier?.name}
+              TIER {row.original?.tier?.name}
             </div>
           </>
         );

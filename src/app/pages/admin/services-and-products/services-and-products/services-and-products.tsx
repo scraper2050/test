@@ -43,6 +43,21 @@ const normalizeTiers = (tiers: any) => {
   return obj;
 };
 
+const normalizeJobCosting = (tiers: any, activeJobCostsIDs: string[]) => {
+  const obj: any = {};
+
+  tiers.forEach((tier: any) => {
+    if (!activeJobCostsIDs?.includes(tier.tier._id)) return
+    obj[tier.tier._id] = tier;
+
+    if (tier.charge % 1 !== 0 && tier.charge !== undefined) {
+      obj[tier.tier._id].charge = Number(tier.charge).toFixed(2);
+    }
+  });
+
+  return obj;
+};
+
 function AdminServiceAndProductsPage({ classes }: Props) {
   const dispatch = useDispatch();
   const { loading, error, items } = useSelector(
@@ -95,6 +110,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       return {
         itemId: item._id,
         tiers: activeTiers,
+        costing: activeJobCosts,
       };
     });
 
@@ -170,13 +186,17 @@ function AdminServiceAndProductsPage({ classes }: Props) {
 
   useEffect(() => {
     if (items.length > 0) {
-      const newItems = items.map((item: any) => ({
+      const activeJobCostsIDs = activeJobCosts.map((item: any) => item.tier._id)
+      const newItems = items.map((item: any) => {
+        return {
         ...item,
         tiers: normalizeTiers(item.tiers),
-      }));
+        costing: normalizeJobCosting(item.costing, activeJobCostsIDs),
+      }
+      });
       setLocalItems([...newItems]);
     }
-  }, [items]);
+  }, [items, activeJobCosts?.length]);
 
   const renderEdit = (item: Item) => {
     dispatch(
