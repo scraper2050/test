@@ -235,17 +235,17 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
       <form onSubmit={formik.handleSubmit}>
         <DialogContent classes={{ root: classes.dialogContent }}>
           <Grid container alignItems={'center'}>
-            <Grid item xs={12} sm={9}>
+            <Grid item xs={12} sm={7} classes={{ root: classes.grid }}>
               <Grid
                 item
                 xs={12}
-                style={{ display: 'flex' }}
+                classes={{ root: classes.label }}
               >
-                <div
-                  style={{ color: '#4F4F4F', fontWeight: 500, minWidth: '15%' }}
+                <Grid
+                  classes={{ root: classes.labelText }}
                 >
                   ITEM NAME
-                </div>
+                </Grid>
                 <BCInput
                   error={formik.touched.name && Boolean(formik.errors.name)}
                   handleChange={formik.handleChange}
@@ -271,11 +271,11 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                 xs={12}
                 style={{ display: 'flex' }}
               >
-                <div
-                  style={{ color: '#4F4F4F', fontWeight: 500, minWidth: '15%' }}
+                <Grid
+                  classes={{ root: classes.labelText }}
                 >
                   DESCRIPTION
-                </div>
+                </Grid>
                 <BCInput
                   error={
                     formik.touched.description &&
@@ -303,22 +303,22 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                 />
               </Grid>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={5} classes={{ root: classes.grid }}>
               <Grid container>
                 <Grid
                   item
                   xs={12}
                   style={{
                     display: 'flex',
+                    alignItems: 'center'
                   }}
                 >
                   <div
                     style={{
                       color: '#4F4F4F',
                       fontWeight: 500,
-                      whiteSpace: 'nowrap',
-                      padding: '0 7px',
-                      minWidth: '15%',
+                      paddingRight: '7px',
+                      minWidth: '37%'
                     }}
                   >
                     CHARGE TYPE
@@ -342,13 +342,14 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                   xs={12}
                   style={{
                     display: 'flex',
+                    alignItems: 'center'
                   }}
                 >
                   <div
                     style={{
                       color: '#4F4F4F',
                       fontWeight: 500,
-                      padding: '0 7px',
+                      paddingRight: '7px',
                       minWidth: '37%',
                     }}
                   >
@@ -394,7 +395,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                   <strong>Tier Prices</strong>
                 </Typography>
               </Grid>
-              <Grid container>
+              <Grid container classes={{ root: classes.tiers }}>
                 {activeTiers.map((tier) => (
                   <Grid
                     item
@@ -462,7 +463,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
                     <strong>Job costing</strong>
                   </Typography>
                 </Grid>
-                <Grid container>
+                <Grid container classes={{ root: classes.tiers }}>
                   {activeJobCosts.map((jobCost) => (
                     <Grid
                       item

@@ -249,7 +249,7 @@ export const normalizeData = (item: any, type: string) => {
   switch (type) {
     case 'vendor':
     case 'contractor':
-      return ({
+      return {
         vendor: item?.info?.displayName ?? item?.info?.companyName,
         email: item.info.companyEmail,
         phone: item.contact?.phone || '',
@@ -257,13 +257,16 @@ export const normalizeData = (item: any, type: string) => {
         contact: {
           displayName: item.admin?.profile?.displayName,
           _id: item.admin?._id,
-          email:  item.admin?.auth?.email,
-          phone:  item.admin?.contact?.phone,
+          email: item.admin?.auth?.email,
+          phone: item.admin?.contact?.phone,
         },
         commission: item.commission,
+        commissionType: item.commissionType,
+        commissionTier: item.commissionTier,
         balance: item.balance,
         _id: item._id,
-        type: 'vendor'});
+        type: 'vendor',
+      };
     case 'employee':
     case 'technician':
       return ({
