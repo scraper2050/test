@@ -6,6 +6,7 @@ export interface Item {
     _id: string,
     name: string,
     tiers: any[],
+    costingList: any[];
 }
 
 export interface InvoiceItemsState {

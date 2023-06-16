@@ -3,8 +3,7 @@ import * as CONSTANTS from "../../../constants";
 
 export default (theme: Theme): any => ({
   dialogActions: {
-    padding: '35px 60px !important',
-    backgroundColor: 'auto'
+    padding: '5px 10px !important',
   },
   dialogContent: {
     padding: '20px 80px !important',
