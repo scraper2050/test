@@ -257,7 +257,6 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
     },
   ];
   const address = `${invoiceData?.job?.customer?.address?.street ?? ''} ${invoiceData?.job?.customer?.address?.city ?? ''} ${invoiceData?.job?.customer?.address?.state ?? ''} ${invoiceData?.job?.customer?.address?.zipCode ?? ''}`
-  console.log('invoiceData', invoiceData);
 
   return <>
     <DataContainer className={'new-modal-design'}>
