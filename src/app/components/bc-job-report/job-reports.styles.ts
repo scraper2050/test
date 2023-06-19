@@ -195,6 +195,21 @@ export default (theme: Theme): any => ({
     'textUnderlineOffset': '5px',
     'letterSpacing': '1px',
   },
+  'footerContainer': {
+    'padding': '45px 0px 0px 45px',
+  },
+  'footerText': {
+    'color': CONSTANTS.GRAY3,
+    'fontSize': '12px !important',
+    'textTransform': 'uppercase',
+    'letterSpacing': '1px',
+  },
+  'footerLogo': {
+    'width': 'auto',
+    'max-width': '40px',
+    'height': 'auto',
+    'max-height': '40px',
+  }
 });
 
 export const MainContainer = styled.div`
