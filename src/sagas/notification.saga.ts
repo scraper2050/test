@@ -15,7 +15,7 @@ export function *handleGetNotifications(action: { payload: any }) {
   yield put(loadNotificationsActions.fetching());
   try {
     const result = yield call(getNotifications);
-    yield put(loadNotificationsActions.success(result.notifications));
+    yield put(loadNotificationsActions.success(result));
   } catch (error) {
     yield put(loadNotificationsActions.fault(error.toString()));
   } finally {

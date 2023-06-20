@@ -122,6 +122,8 @@ export interface NotificationState {
     response: string;
   }
   notificationOpen: boolean;
+  total: number;
+  totalUnread: number;
 }
 
 
