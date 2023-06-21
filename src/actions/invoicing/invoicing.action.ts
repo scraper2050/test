@@ -110,7 +110,7 @@ export const setInvoicesLoading = (isLoading: any) => {
     'payload': isLoading,
     'type': InvoicingListActionType.SET_INVOICES_LOADING
   };
-}
+};
 
 export const setInvoices = (invoices: any) => {
   return {

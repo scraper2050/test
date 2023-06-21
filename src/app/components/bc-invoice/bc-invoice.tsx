@@ -1,15 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {
-  Accordion, AccordionDetails, AccordionSummary,
-  Card, CardContent, CardHeader,
-  Chip,
-  createStyles,
-  Divider,
-  Grid,
-  withStyles
-} from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, CardHeader, Chip, createStyles, Divider, Grid, withStyles } from "@material-ui/core";
 import styles from "./bc-invoice.styles";
-import {makeStyles, Theme} from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../constants";
 import styled from "styled-components";
 import moment from "moment";
@@ -275,7 +267,7 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function BCInvoice({classes, invoiceDetail}: Props) {
+function BCInvoice({ classes, invoiceDetail }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = invoiceTableStyles();
   /*  const dispatch = useDispatch();
@@ -336,20 +328,20 @@ function BCInvoice({classes, invoiceDetail}: Props) {
 
   const composeAddress = () => {
     let address = '';
-    if (invoiceDetail?.customer?.contact?.phone) address += invoiceDetail?.customer?.contact?.phone + '\n';
-    if (invoiceDetail?.customer?.info?.email) address += invoiceDetail?.customer?.info?.email + '\n';
-    if (invoiceDetail?.customer?.address?.street) address += invoiceDetail?.customer?.address?.street + '\n';
-    if (invoiceDetail?.customer?.address?.city) address += invoiceDetail?.customer?.address?.city + ', ';
-    if (invoiceDetail?.customer?.address?.state) address += invoiceDetail?.customer?.address?.state + ' ';
-    if (invoiceDetail?.customer?.address?.zipCode) address += invoiceDetail?.customer?.address?.zipCode + ' ';
+    if (invoiceDetail?.customer?.contact?.phone)  address+= invoiceDetail?.customer?.contact?.phone + '\n';
+    if (invoiceDetail?.customer?.info?.email)  address+= invoiceDetail?.customer?.info?.email + '\n';
+    if (invoiceDetail?.customer?.address?.street)  address+= invoiceDetail?.customer?.address?.street + '\n';
+    if (invoiceDetail?.customer?.address?.city)  address+= invoiceDetail?.customer?.address?.city + ', ';
+    if (invoiceDetail?.customer?.address?.state)  address+= invoiceDetail?.customer?.address?.state + ' ';
+    if (invoiceDetail?.customer?.address?.zipCode)  address+= invoiceDetail?.customer?.address?.zipCode + ' ' ;
     return address;
   }
 
   const composeContactDetail = () => {
     let contactDetail = '';
-    if (invoiceDetail?.customerContactId?.name) contactDetail += invoiceDetail?.customerContactId?.name + '\n';
-    if (invoiceDetail?.customerContactId?.phone) contactDetail += invoiceDetail?.customerContactId?.phone + '\n';
-    if (invoiceDetail?.customerContactId?.email) contactDetail += invoiceDetail?.customerContactId?.email + '\n';
+    if (invoiceDetail?.customerContactId?.name)  contactDetail+= invoiceDetail?.customerContactId?.name + '\n';
+    if (invoiceDetail?.customerContactId?.phone)  contactDetail+= invoiceDetail?.customerContactId?.phone + '\n';
+    if (invoiceDetail?.customerContactId?.email)  contactDetail+= invoiceDetail?.customerContactId?.email + '\n';
     return contactDetail;
   }
 
@@ -359,7 +351,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
     state: invoiceDetail?.customer?.address?.state || '',
     zipCode: invoiceDetail?.customer?.address?.zipCode || '',
   }) : null;
-  customerAddress = customerAddress ? Object.values(customerAddress).filter(key => !!key) : '';
+  customerAddress = customerAddress ? Object.values(customerAddress).filter(key=>!!key) : '';
 
   let serviceAddressLocation: any = invoiceDetail?.job?.jobLocation ? ({
     name: invoiceDetail?.job?.jobLocation?.name || '',
@@ -368,7 +360,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
     state: invoiceDetail?.job?.jobLocation?.address?.state || '',
     zipcode: invoiceDetail?.job?.jobLocation?.address?.zipcode || '',
   }) : null;
-  serviceAddressLocation = serviceAddressLocation ? Object.values(serviceAddressLocation).filter(key => !!key) : '';
+  serviceAddressLocation = serviceAddressLocation ? Object.values(serviceAddressLocation).filter(key=>!!key) : '';
 
   let serviceAddressSite: any = invoiceDetail?.job?.jobSite ? ({
     name: invoiceDetail?.job?.jobSite?.name || '',
@@ -377,7 +369,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
     state: invoiceDetail?.job?.jobSite?.address?.state || '',
     zipcode: invoiceDetail?.job?.jobSite?.address?.zipcode || '',
   }) : null;
-  serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key => !!key) : '';
+  serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
 
   let billingAddress = {
     street: invoiceDetail?.companyLocation ? (invoiceDetail?.companyLocation?.isAddressAsBillingAddress ? invoiceDetail?.companyLocation?.address?.street ?? '' : invoiceDetail?.companyLocation?.billingAddress?.street ?? '') : invoiceDetail?.company?.address?.street,
@@ -393,8 +385,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
           <Grid item xs={12} sm={6}>
             <Grid container spacing={4}>
               <Grid item xs={12}>
-                <div className={invoiceStyles.companyDetails}
-                     style={{alignItems: 'center'}}>
+                <div className={invoiceStyles.companyDetails} style={{alignItems: 'center'}}>
                   <div className={invoiceStyles.companyInfo}>
                     <div className={invoiceStyles.companyLogo}>
                       <img src={invoiceDetail?.company?.info?.logoUrl}/>
@@ -419,7 +410,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
                     <span>{composeAddress()}</span>
                   </div>
                   <div className={invoiceStyles.companyInfo}>
-                    {!serviceAddressLocation && !serviceAddressSite ? (
+                    {!serviceAddressLocation &&!serviceAddressSite ? (
                       <>
                         <small>JOB ADDRESS</small>
                         <span>{customerAddress.length && Array.isArray(customerAddress) ? customerAddress.join(', ') : ''}</span>
@@ -427,19 +418,16 @@ function BCInvoice({classes, invoiceDetail}: Props) {
                     ) : serviceAddressSite && serviceAddressLocation ? (
                       <>
                         <small>SUBDIVISION</small>
-                        <h4
-                          style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
+                        <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                         <small style={{marginTop: 20}}>JOB ADDRESS</small>
-                        <h4
-                          style={{marginBottom: 0}}>{serviceAddressSite[0]}</h4>
+                        <h4 style={{marginBottom: 0}}>{serviceAddressSite[0]}</h4>
                         <span>{serviceAddressSite.slice(1).join(', ')}</span>
                       </>
                     ) : serviceAddressLocation && (
                       <>
                         <small>JOB ADDRESS</small>
-                        <h4
-                          style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
+                        <h4 style={{marginBottom: 0}}>{serviceAddressLocation[0]}</h4>
                         <span>{serviceAddressLocation.slice(1).join(', ')}</span>
                       </>
                     )}
@@ -451,8 +439,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
                   <div className={invoiceStyles.companyInfo}>
                     <small>CONTACT DETAILS</small>
                     {invoiceDetail?.customerContactId && composeContactDetail().split('\n').map((detail, index) => (
-                      <span key={index}
-                            style={{color: '#000000'}}>{detail}</span>
+                      <span key={index} style={{color: '#000000'}}>{detail}</span>
                     ))}
                   </div>
                 </div>
@@ -461,8 +448,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
                 <div className={invoiceStyles.companyDetails}>
                   <div className={invoiceStyles.companyInfo}>
                     <small>NOTES/SPECIAL INSTRUCTIONS</small>
-                    {invoiceDetail?.job?.ticket?.note && <span
-                      style={{color: '#000000'}}>{invoiceDetail.job.ticket.note}</span>}
+                    {invoiceDetail?.job?.ticket?.note && <span style={{color: '#000000'}}>{invoiceDetail.job.ticket.note}</span>}
                   </div>
                 </div>
               </Grid>
@@ -470,52 +456,44 @@ function BCInvoice({classes, invoiceDetail}: Props) {
           </Grid>
           <Grid item xs={12} sm={6}>
             <div className={invoiceStyles.invoiceDetails}>
-              <div className={invoiceStyles.companyDetails}
-                   style={{flex: 2, alignItems: 'center'}}>
+              <div className={invoiceStyles.companyDetails} style={{flex: 2, alignItems: 'center'}}>
                 <div className={invoiceStyles.companyInfo}>
                   <small>VENDOR NUMBER</small>
                   <h4>{invoiceDetail.vendorId}</h4>
                 </div>
                 {!invoiceDetail.isDraft &&
-                  <div className={invoiceStyles.companyInfo}
-                       style={{textAlign: 'right'}}>
-                    {invoiceDetail.paid && invoiceDetail.status === 'PAID'
-                      ? <Chip
-                        label={'Paid'}
-                        style={{
-                          'backgroundColor': CONSTANTS.PRIMARY_GREEN,
-                          'color': '#fff'
-                        }}
-                      />
-                      : <Chip
-                        style={{
-                          textTransform: 'capitalize',
-                          backgroundColor: invoiceDetail?.status === 'UNPAID' ? '#F50057' : '#FA8029',
-                          color: '#fff'
-                        }}
-                        label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
-                      />}
-                  </div>
+                <div className={invoiceStyles.companyInfo} style={{textAlign: 'right'}}>
+                  {invoiceDetail.paid && invoiceDetail.status === 'PAID'
+                    ? <Chip
+                      label={'Paid'}
+                      style={{
+                        'backgroundColor': CONSTANTS.PRIMARY_GREEN,
+                        'color': '#fff'
+                      }}
+                    />
+                    : <Chip
+                      style={{
+                        textTransform: 'capitalize',
+                        backgroundColor: invoiceDetail?.status === 'UNPAID' ? '#F50057' : '#FA8029',
+                        color: '#fff'
+                      }}
+                      label={invoiceDetail?.status?.split('_').join(' ').toLowerCase()}
+                    />}
+                </div>
                 }
               </div>
               <div className={invoiceStyles.invoiceInfoContainer}>
                 <h2>INVOICE</h2>
                 <div className={invoiceStyles.dateContainer}>
                   <div>
-                    <VerticalCenterLabel>INVOICE
-                      #: <FixedWidthSpan>{invoiceDetail.invoiceId}</FixedWidthSpan></VerticalCenterLabel>
-                    <VerticalCenterLabel>CUSTOMER P.O.
-                      : <FixedWidthSpan>{invoiceDetail.customerPO}</FixedWidthSpan></VerticalCenterLabel>
-                    <VerticalCenterLabel>Payment Terms
-                      : <FixedWidthSpan>{invoiceDetail?.paymentTerm?.name}</FixedWidthSpan></VerticalCenterLabel>
+                    <VerticalCenterLabel>INVOICE #: <FixedWidthSpan>{invoiceDetail.invoiceId}</FixedWidthSpan></VerticalCenterLabel>
+                    <VerticalCenterLabel>CUSTOMER P.O. : <FixedWidthSpan>{invoiceDetail.customerPO}</FixedWidthSpan></VerticalCenterLabel>
+                    <VerticalCenterLabel>Payment Terms : <FixedWidthSpan>{invoiceDetail?.paymentTerm?.name}</FixedWidthSpan></VerticalCenterLabel>
                   </div>
-                  <Divider className={invoiceStyles.divider}
-                           orientation="vertical" flexItem/>
+                  <Divider className={invoiceStyles.divider} orientation="vertical" flexItem/>
                   <div>
-                    <label>INVOICE DATE
-                      #: <span>{moment(invoiceDetail.issuedDate?.split('T')[0] || invoiceDetail.createdAt?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
-                    <label>DUE DATE
-                      #: <span>{moment(invoiceDetail.dueDate?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
+                    <label>INVOICE DATE #: <span>{moment(invoiceDetail.issuedDate?.split('T')[0] || invoiceDetail.createdAt?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
+                    <label>DUE DATE #: <span>{moment(invoiceDetail.dueDate?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
                   </div>
                 </div>
               </div>
@@ -540,28 +518,22 @@ function BCInvoice({classes, invoiceDetail}: Props) {
               <span className={invoiceTableStyle.itemsTableHeaderText}>SERVICE / PRODUCT</span>
             </Grid>
             <Grid item xs={12} lg={1}>
-              <span
-                className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>QUANTITY</span>
+              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>QUANTITY</span>
             </Grid>
             <Grid item xs={12} lg={1}>
-              <span
-                className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>PRICE</span>
+              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>PRICE</span>
             </Grid>
             <Grid item xs={12} lg={1}>
-              <span
-                className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>UNIT</span>
+              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>UNIT</span>
             </Grid>
             <Grid item xs={12} lg={1}>
-              <span
-                className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX</span>
+              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX</span>
             </Grid>
             <Grid item xs={12} lg={1}>
-              <span
-                className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX AMOUNT</span>
+              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>TAX AMOUNT</span>
             </Grid>
             <Grid item xs={12} lg={1}>
-              <span
-                className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextRight)}>AMOUNT</span>
+              <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextRight)}>AMOUNT</span>
             </Grid>
           </Grid>
         </div>
@@ -571,8 +543,7 @@ function BCInvoice({classes, invoiceDetail}: Props) {
               <Grid item container
                     className={row?.description ? invoiceTableStyle.itemsTableFirstRow : invoiceTableStyle.itemsTableOneRow}>
                 <Grid item xs={12} lg={6}>
-                  <span
-                    className={invoiceTableStyle.itemsTableBodyText}>{row?.item?.name}</span>
+                  <span className={invoiceTableStyle.itemsTableBodyText}>{row?.item?.name}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(

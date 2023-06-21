@@ -15,12 +15,7 @@ import {
   withStyles
 } from '@material-ui/core';
 import styles from './bc-invoice.styles';
-import {
-  createMuiTheme,
-  makeStyles,
-  MuiThemeProvider,
-  Theme
-} from '@material-ui/core/styles';
+import {createMuiTheme,makeStyles,MuiThemeProvider,Theme} from '@material-ui/core/styles';
 import * as CONSTANTS from '../../../constants';
 import styled from 'styled-components';
 import InputBase from '@material-ui/core/InputBase';
@@ -50,7 +45,7 @@ import BCButtonGroup from "../bc-button-group";
 import BCMiniSidebar from "app/components/bc-mini-sidebar/bc-mini-sidebar";
 import {formatCurrency} from "../../../helpers/format";
 import {useDispatch, useSelector} from 'react-redux';
-import {ISelectedDivision} from 'actions/filter-division/fiter-division.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import {modalTypes} from "../../../constants";
 import {
   openModalAction,
@@ -513,19 +508,19 @@ const InvoiceValidationSchema = Yup.object().shape({
 });
 
 function BCEditInvoice({
-                         classes,
-                         invoiceData,
-                         isOld,
-                         paymentTerms,
-                         customer,
-                         customersData: customers,
-                         taxes,
-                         showSendInvoiceModalHandler,
-                         updateInvoiceHandler,
-                         createInvoiceHandler,
-                         voidInvoiceHandler,
-                         getItems,
-                       }: Props) {
+  classes,
+  invoiceData,
+  isOld,
+  paymentTerms,
+  customer,
+  customersData: customers,
+  taxes,
+  showSendInvoiceModalHandler,
+  updateInvoiceHandler,
+  createInvoiceHandler,
+  voidInvoiceHandler,
+  getItems,
+  }: Props) {
   const invoiceStyles = invoicePageStyles();
   const invoiceTableStyle = useInvoiceTableStyles();
 
@@ -558,7 +553,7 @@ function BCEditInvoice({
     zipCode: invoiceData?.company?.address?.zipCode,
   });
 
-  const [options, setOptions] = React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
+  const [options, setOptions] =  React.useState(['Save and Continue', 'Save and Send', 'Save as Draft']);
 
   const [selectedComments, setSelectedComments] = useState<any[]>([]);
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
@@ -570,7 +565,7 @@ function BCEditInvoice({
     state: invoiceData?.job?.jobLocation?.address?.state || '',
     zipcode: invoiceData?.job?.jobLocation?.address?.zipcode || '',
   }) : null;
-  serviceAddressLocation = serviceAddressLocation ? Object.values(serviceAddressLocation).filter(key => !!key) : '';
+  serviceAddressLocation = serviceAddressLocation ? Object.values(serviceAddressLocation).filter(key=>!!key) : '';
 
   let serviceAddressSite: any = invoiceData?.job?.jobSite ? ({
     name: invoiceData?.job?.jobSite?.name || '',
@@ -579,9 +574,9 @@ function BCEditInvoice({
     state: invoiceData?.job?.jobSite?.address?.state || '',
     zipcode: invoiceData?.job?.jobSite?.address?.zipcode || '',
   }) : null;
-  serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key => !!key) : '';
+  serviceAddressSite = serviceAddressSite ? Object.values(serviceAddressSite).filter(key=>!!key) : '';
 
-  const showSendInvoiceModal = async (invoiceId: string, customerId: string) => {
+  const showSendInvoiceModal = async(invoiceId: string, customerId: string) => {
     showSendInvoiceModalHandler(invoiceId || invoiceData._id, customerId);
   }
 
@@ -620,15 +615,15 @@ function BCEditInvoice({
       return createInvoice(data);
   };
 
-  const calculateTotal = (itemsArray: any) => {
+  const calculateTotal = (itemsArray:any) => {
     if (isCustomPrice && invoiceData) {
       setTotalAmount(invoiceData.total);
     } else {
-      const subtotalAmount = itemsArray.map((item: any) => item.price * item.quantity).reduce((a: any, b: any) => {
+      const subtotalAmount = itemsArray.map((item:any) => item.price * item.quantity).reduce((a: any, b: any) => {
         return a + b;
       }, 0);
 
-      const totalTax = itemsArray.map((item: any) => item.taxAmount).reduce((a: any, b: any) => {
+      const totalTax = itemsArray.map((item:any) => item.taxAmount).reduce((a: any, b: any) => {
         return a + b;
       }, 0);
       const amount = subtotalAmount + totalTax;
@@ -660,7 +655,7 @@ function BCEditInvoice({
 
   const calculateDueDate = (setFieldValue: any, values: any, newTerm: any) => {
     if (newTerm !== '') {
-      const paymentTerm = paymentTerms.find((term: any) => term._id === newTerm);
+      const paymentTerm = paymentTerms.find((term:any) => term._id === newTerm);
       setFieldValue('due_date', moment(values.invoice_date).add(paymentTerm.dueDays, 'day').format('MMM. DD, YYYY'));
     }
     setFieldValue('paymentTerm', newTerm);
@@ -671,7 +666,7 @@ function BCEditInvoice({
       if (newInvoiceDate > new Date(values.due_date))
         setFieldValue('due_date', moment(newInvoiceDate).format('MMM. DD, YYYY'));
     } else {
-      const paymentTerm = paymentTerms.find((term: any) => term._id === values.paymentTerm);
+      const paymentTerm = paymentTerms.find((term:any) => term._id === values.paymentTerm);
       setFieldValue('due_date', moment(newInvoiceDate).add(paymentTerm.dueDays, 'day'));
     }
   }
@@ -686,7 +681,7 @@ function BCEditInvoice({
 
   const currentPaymentTerm = invoiceData?.paymentTerm ? invoiceData?.paymentTerm?._id
     : invoiceData?.paymentTerm === null ? ''
-      : customerPaymentTerm?._id ? customerPaymentTerm._id : invoiceData?.company?.paymentTerm?._id;
+      :customerPaymentTerm?._id ? customerPaymentTerm._id : invoiceData?.company?.paymentTerm?._id;
 
   const calculateInitialDueDate = () => {
     if (invoiceData?.company?.paymentTerm) {
@@ -748,21 +743,21 @@ function BCEditInvoice({
       let filteredLocation = invoiceData.locations.find((res: any) => res._id === currentDivision.data?.locationId);
       if (filteredLocation) {
         setBillingAddress({
-          street: filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.street : filteredLocation?.billingAddress?.street,
-          city: filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.city : filteredLocation?.billingAddress?.city,
-          state: filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.state : filteredLocation?.billingAddress?.state,
-          zipCode: filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.zipCode : filteredLocation?.billingAddress?.zipCode,
+          street :  filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.street : filteredLocation?.billingAddress?.street,
+          city : filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.city : filteredLocation?.billingAddress?.city,
+          state : filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.state : filteredLocation?.billingAddress?.state,
+          zipCode : filteredLocation?.isAddressAsBillingAddress ? filteredLocation?.address?.zipCode : filteredLocation?.billingAddress?.zipCode,
         })
       }
-    } else {
+    }else{
       setBillingAddress({
-        street: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.street ?? '' : invoiceData?.companyLocation?.billingAddress?.street ?? '') : invoiceData?.company?.address?.street,
-        city: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.city ?? '' : invoiceData?.companyLocation?.billingAddress?.city ?? '') : invoiceData?.company?.address?.city,
-        state: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.state ?? '' : invoiceData?.companyLocation?.billingAddress?.state ?? '') : invoiceData?.company?.address?.state,
-        zipCode: invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.zipCode ?? '' : invoiceData?.companyLocation?.billingAddress?.zipCode ?? '') : invoiceData?.company?.address?.zipCode,
+        street :  invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.street ?? '' : invoiceData?.companyLocation?.billingAddress?.street ?? '') : invoiceData?.company?.address?.street,
+        city : invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.city ?? '' : invoiceData?.companyLocation?.billingAddress?.city ?? '') : invoiceData?.company?.address?.city,
+        state : invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.state ?? '' : invoiceData?.companyLocation?.billingAddress?.state ?? '') : invoiceData?.company?.address?.state,
+        zipCode : invoiceData?.companyLocation ? (invoiceData?.companyLocation?.isAddressAsBillingAddress ? invoiceData?.companyLocation?.address?.zipCode ?? '' : invoiceData?.companyLocation?.billingAddress?.zipCode ?? '') : invoiceData?.company?.address?.zipCode,
       })
     }
-  }, [currentDivision])
+  },[currentDivision])
 
   return (
     <MuiThemeProvider theme={theme}>
@@ -784,12 +779,12 @@ function BCEditInvoice({
           selectedSubmitAction: -1,
         }}
         validationSchema={InvoiceValidationSchema}
-        validate={(values: any) => {
+        validate ={(values: any) => {
           const errors: any = {};
-          const indices = values.items.reduce((acc: any[], item: any, index: number) => {
+          const indices = values.items.reduce((acc: any[], item:any, index:number) => {
             if (item.name === '') acc.push(index)
             return acc;
-          }, []);
+          },[]);
           if (indices.length > 0) errors.itemsNames = indices;
           return errors;
         }
@@ -801,7 +796,7 @@ function BCEditInvoice({
               handleFormSubmit(values);
               break;
             case 1:
-              handleFormSubmit(values).then((response: any) => {
+              handleFormSubmit(values).then((response:any) => {
                 actions.setSubmitting(false);
                 showSendInvoiceModal(response?.invoice?._id, response?.invoice?.customer?._id);
               });
@@ -811,14 +806,7 @@ function BCEditInvoice({
           }
         }}
       >
-        {({
-            submitForm,
-            handleChange,
-            setFieldValue,
-            values,
-            isSubmitting,
-            errors
-          }) => {
+        {({submitForm, handleChange, setFieldValue, values, isSubmitting, errors}) => {
 
           return (
             <Form>
@@ -902,8 +890,7 @@ function BCEditInvoice({
               </PageHeader>
               <DataContainer>
                 <Card elevation={2}>
-                  <CardHeader
-                    title={invoiceData?.company?.info?.companyName + ' INVOICE DETAILS'}/>
+                  <CardHeader title={invoiceData?.company?.info?.companyName + ' INVOICE DETAILS'}/>
                   <CardContent>
                     <Grid container spacing={5}>
                       <Grid item xs={2}>
@@ -925,8 +912,7 @@ function BCEditInvoice({
                             <span>{billingAddress.street}, {billingAddress.city}, {billingAddress.state} {billingAddress.zipCode}</span>
                           </div>
                           <h5>VENDOR NUMBER</h5>
-                          <div
-                            className={invoiceStyles.paddingContent}>{values.customer?.vendorId}</div>
+                          <div className={invoiceStyles.paddingContent}>{values.customer?.vendorId}</div>
                         </div>
                       </Grid>
                       <Grid item xs>
@@ -1043,8 +1029,7 @@ function BCEditInvoice({
                         </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
-                          <InputLabel disableAnimation htmlFor="due-date"
-                                      className={invoiceStyles.bootstrapFormLabel}>
+                          <InputLabel disableAnimation htmlFor="due-date" className={invoiceStyles.bootstrapFormLabel}>
                             DUE DATE
                           </InputLabel>
                           <KeyboardDatePicker
@@ -1060,8 +1045,8 @@ function BCEditInvoice({
                             autoOk
                             onChange={(selectedInvoiceDate) => {
                               setDueDatePickerOpen(false);
-                              setFieldValue('due_date', selectedInvoiceDate);
-                              setFieldValue('paymentTerm', '');
+                              setFieldValue('due_date',selectedInvoiceDate);
+                              setFieldValue('paymentTerm','');
                             }}
                             onClick={() => setDueDatePickerOpen(true)}
                             onClose={() => setDueDatePickerOpen(false)}
@@ -1075,7 +1060,7 @@ function BCEditInvoice({
                                   error={!!errors.due_date}
                                   onClick={(e) => {
                                     // if (values.paymentTerm === '')
-                                    setDueDatePickerOpen(true);
+                                      setDueDatePickerOpen(true);
                                   }}
                                   value={props.value}
 
@@ -1100,8 +1085,7 @@ function BCEditInvoice({
                         </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
-                          <InputLabel disableAnimation htmlFor="terms"
-                                      className={invoiceStyles.bootstrapFormLabel}>
+                          <InputLabel disableAnimation htmlFor="terms" className={invoiceStyles.bootstrapFormLabel}>
                             TERMS
                           </InputLabel>
                           <Select
@@ -1123,8 +1107,7 @@ function BCEditInvoice({
                             {
                               paymentTerms.map((pitem: any, pindex: number) => {
                                 return (
-                                  <MenuItem key={pitem._id}
-                                            value={pitem._id}>{pitem.name}</MenuItem>
+                                  <MenuItem key={pitem._id} value={pitem._id}>{pitem.name}</MenuItem>
                                 )
                               })
 
@@ -1167,16 +1150,13 @@ function BCEditInvoice({
                               input={<InputBase
                                 classes={{
                                   root: classNames(invoiceStyles.bootstrapRoot, {
-                                    [invoiceStyles.bootstrapRootError]: errors?.customer
-                                  }),
+                                  [invoiceStyles.bootstrapRootError]: errors?.customer
+                                }),
                                   input: classNames(invoiceStyles.bootstrapInput, invoiceStyles.textBold),
                                 }}
                                 error={!!errors.company}/>}
                             >
-                              {customers.map((customer: {
-                                _id: string | number;
-                                profile: { displayName: string }
-                              }, index: number) => (
+                              {customers.map((customer: {_id: string | number; profile:{displayName:string}}, index:number) => (
                                 <MenuItem key={index} value={customer._id}>
                                   <em>{customer.profile.displayName}</em>
                                 </MenuItem>
@@ -1184,28 +1164,21 @@ function BCEditInvoice({
                             </Select>
                           }
                         </FormControl>
-                        <Grid container spacing={1}
-                              className={invoiceStyles.customerBox}>
+                        <Grid container spacing={1} className={invoiceStyles.customerBox}>
                           <Grid item xs={3} justify="flex-end" container>
                             <div>
-                              <div><span><PhoneIcon
-                                className={invoiceStyles.storeIcons}/></span>
+                              <div><span><PhoneIcon className={invoiceStyles.storeIcons}/></span>
                               </div>
-                              <div><span><MailOutlineIcon
-                                className={invoiceStyles.storeIcons}/></span>
+                              <div><span><MailOutlineIcon className={invoiceStyles.storeIcons}/></span>
                               </div>
-                              <div><span><StorefrontIcon
-                                className={invoiceStyles.storeIcons}/></span>
+                              <div><span><StorefrontIcon className={invoiceStyles.storeIcons}/></span>
                               </div>
                             </div>
                           </Grid>
                           <Grid item xs={4}>
                             <div>
-                              <div>
-                                <span>{values.customer?.contact?.phone}</span>
-                              </div>
-                              <div><span>{values.customer?.info?.email}</span>
-                              </div>
+                              <div><span>{values.customer?.contact?.phone}</span></div>
+                              <div><span>{values.customer?.info?.email}</span></div>
                               <div>
                                 <span>{values.customer?.address?.street}, {values.customer?.address?.city}, {values.customer?.address?.state} {values.customer?.address?.zipCode}</span>
                               </div>
@@ -1214,19 +1187,13 @@ function BCEditInvoice({
 
                           </Grid>
                           <Grid item xs={5}>
-                            {(serviceAddressSite || serviceAddressLocation) && (
-                              <div>
-                                <div className={invoiceStyles.serviceAdd}>job
-                                  address
-                                </div>
-                                <div>
-                                  <span>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</span>
-                                </div>
-                                <div>
-                                  <span>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span>
-                                </div>
-                              </div>
-                            )}
+                          {(serviceAddressSite || serviceAddressLocation) && (
+                            <div>
+                              <div className={invoiceStyles.serviceAdd}>job address</div>
+                              <div><span>{serviceAddressSite ? serviceAddressSite[0].toUpperCase() : serviceAddressLocation[0].toUpperCase()}</span></div>
+                              <div><span>{serviceAddressSite ? serviceAddressSite.slice(1).join(', ') : serviceAddressLocation.slice(1).join(', ')}</span></div>
+                            </div>
+                          )}
                           </Grid>
                         </Grid>
                       </CardContent>
@@ -1270,8 +1237,7 @@ function BCEditInvoice({
                   <div className={invoiceTableStyle.itemsTableActions}>
                     <Grid container spacing={1} alignItems="center">
                       <Grid item xs={7}>
-                        <Button color={!errors.items ? 'primary' : 'secondary'}
-                                onClick={addItem}>
+                        <Button color={!errors.items ? 'primary' : 'secondary'} onClick={addItem}>
                           <AddIcon color="inherit"/> Add item or service
                         </Button>
                       </Grid>
@@ -1427,10 +1393,10 @@ function BCEditInvoice({
                     <ArrowBackIcon/>
                   </IconButton>
                   {invoiceData?.isDraft &&
-                    <CSChip
-                      label={'Draft'}
-                      className={invoiceStyles.draftChip}
-                    />
+                  <CSChip
+                    label={'Draft'}
+                    className={invoiceStyles.draftChip}
+                  />
                   }
                 </div>
                 <div>

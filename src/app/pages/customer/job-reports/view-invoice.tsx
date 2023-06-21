@@ -1,36 +1,27 @@
-import React, {useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {Button, createStyles, withStyles, Grid, Paper, Badge} from "@material-ui/core";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, createStyles, withStyles, Grid, Paper, Badge} from "@material-ui/core";
 import styles from "../customer.styles";
 import BCInvoice from "../../../components/bc-invoice/bc-invoice";
 import IconButton from '@material-ui/core/IconButton';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
-import {makeStyles, Theme} from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PrintIcon from '@material-ui/icons/GetApp';
 import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
 import {useHistory, useLocation, useParams} from "react-router-dom";
-import {
-  loadInvoiceDetail
-} from "../../../../actions/invoicing/invoicing.action";
-import {getCompanyProfileAction} from "../../../../actions/user/user.action";
-import BCCircularLoader
-  from "../../../components/bc-circular-loader/bc-circular-loader";
+import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
+import { getCompanyProfileAction } from "../../../../actions/user/user.action";
+import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import {CSChip} from "../../../../helpers/custom";
-import {
-  generateInvoicePdfAPI,
-  updateInvoice
-} from "../../../../api/invoicing.api";
+import { generateInvoicePdfAPI, updateInvoice } from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
-import {modalTypes} from "../../../../constants";
-import {
-  setModalDataAction,
-  openModalAction
-} from "actions/bc-modal/bc-modal.action";
-import {ISelectedDivision} from "actions/filter-division/fiter-division.types";
+import { modalTypes } from "../../../../constants";
+import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
+import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,18 +53,14 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function ViewInvoice({classes, theme}: any) {
+function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceStyles = invoicePageStyles();
   let history = useHistory();
   const location = useLocation<any>();
-  let {invoice} = useParams<any>();
-  const {user} = useSelector(({auth}: any) => auth);
-  const {
-    'data': invoiceDetail,
-    'loading': loadingInvoiceDetail,
-    'error': invoiceDetailError
-  } = useSelector(({invoiceDetail}: any) => invoiceDetail);
+  let { invoice } = useParams<any>();
+  const { user } = useSelector(({ auth }: any) => auth);
+  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
   useEffect(() => {
@@ -88,11 +75,11 @@ function ViewInvoice({classes, theme}: any) {
   }, []);
 
   if (loadingInvoiceDetail) {
-    return <BCCircularLoader heightValue={'200px'}/>;
+    return <BCCircularLoader heightValue={'200px'} />;
   }
 
   const goToEdit = () => {
-    if (invoiceDetail?.paid && invoiceDetail?.status === 'PAID') {
+    if(invoiceDetail?.paid && invoiceDetail?.status === 'PAID') {
       dispatch(
         setModalDataAction({
           'data': {
@@ -147,7 +134,7 @@ function ViewInvoice({classes, theme}: any) {
       dispatch(openModalAction());
     }, 200);
 
-    const params = {
+    const params ={
       invoiceId: invoiceDetail._id,
       isDraft: false,
       charges: 0,
@@ -186,7 +173,7 @@ function ViewInvoice({classes, theme}: any) {
   // });
 
   const handleBackButtonClick = () => {
-    if (location?.state?.keyword || location?.state?.currentPageSize || location?.state?.currentPageIndex
+    if (location?.state?.keyword || location?.state?.currentPageSize  || location?.state?.currentPageIndex
       || location?.state?.lastNextCursor || location?.state?.lastPrevCursor || location?.state?.selectionRange
     ) {
       history.replace({
@@ -221,7 +208,7 @@ function ViewInvoice({classes, theme}: any) {
       });
     }*/
 
-  const generatePDF = async () => {
+  const generatePDF = async() => {
     generateInvoicePdfAPI(invoiceDetail.customer?._id, invoice).then((response: any) => {
       const {status, message, invoiceUrl} = response;
       if (status === 1) {
@@ -347,11 +334,11 @@ function ViewInvoice({classes, theme}: any) {
             }
             {
               invoiceDetail && <Button
-                variant="outlined"
-                color="default"
-                className={invoiceStyles.margin}
-                onClick={generatePDF}
-                startIcon={<PrintIcon/>}
+              variant="outlined"
+              color="default"
+              className={invoiceStyles.margin}
+              onClick={generatePDF}
+              startIcon={<PrintIcon/>}
               >Export
               </Button>
             }
@@ -367,19 +354,19 @@ function ViewInvoice({classes, theme}: any) {
               </Button>
             }
             {invoiceDetail?.isDraft &&
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={invoiceDetail.paid}
-                className={classNames(invoiceStyles.margin, invoiceStyles.white)}
-                onClick={saveInvoice}
-              >
-                Save as Invoice
-              </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={invoiceDetail.paid}
+              className={classNames(invoiceStyles.margin, invoiceStyles.white)}
+              onClick={saveInvoice}
+            >
+              Save as Invoice
+            </Button>
             }
           </div>
         </PageHeader>
-        {invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail}/>}
+        { invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail}/> }
       </PageContainer>
     </MainContainer>
   )
@@ -419,4 +406,4 @@ export const PageHeader = styled.div`
   align-items: center;
 `;
 
-export default withStyles(styles, {'withTheme': true})(ViewInvoice);
+export default withStyles(styles, { 'withTheme': true })(ViewInvoice);
