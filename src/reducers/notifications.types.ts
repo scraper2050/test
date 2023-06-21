@@ -124,6 +124,9 @@ export interface NotificationState {
   notificationOpen: boolean;
   total: number;
   totalUnread: number;
+  currentPage: number;
+  pageSize: number;
+  search?: string;
 }
 
 

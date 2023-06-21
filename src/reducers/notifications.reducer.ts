@@ -22,7 +22,9 @@ const initialNotificationState: NotificationState = {
   'notifications': [],
   'notificationOpen': false,
   total: 0,
-  totalUnread: 0
+  totalUnread: 0,
+  currentPage: 0,
+  pageSize: 10
 };
 
 export const NotificationsReducer: Reducer<any> = (
