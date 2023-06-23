@@ -301,7 +301,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
 
   const jobData = {
     commentValues: [{
-      comment: invoiceDetail?.job?.ticket?.note,
+      comment:  invoiceDetail?.job?.description|| invoiceDetail?.job?.ticket?.note || '',
       id: invoiceDetail?.job?.ticket?._id
     }] || [],
     images: invoiceDetail?.job?.ticket?.images || []
@@ -623,15 +623,15 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           jobData && (jobData.commentValues?.length > 0 || jobData.images?.length > 0) &&
           <>
             <BCTicketMessagesNotes invoiceData={jobData}
-                                   selectedComments={selectedComments}
-                                   setSelectedComments={setSelectedComments}
-                                   selectedImages={selectedImages}
-                                   setSelectedImages={setSelectedImages}
-                                   isEditing={isEditing}
-                                   isJob={true}
-                                   isInvoiceMainView={false}
-                                   isPadding={false}
-                                   classes={classes.width100}
+               selectedComments={selectedComments}
+               setSelectedComments={setSelectedComments}
+               selectedImages={selectedImages}
+               setSelectedImages={setSelectedImages}
+               isEditing={isEditing}
+               isJob={true}
+               isInvoiceMainView={false}
+               isPadding={false}
+               classes={classes.width100}
             />
           </>
         }
@@ -640,15 +640,15 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           technicianData && (technicianData.commentValues?.length > 0 || technicianData.images?.length > 0) &&
           <>
             <BCTicketMessagesNotes invoiceData={technicianData}
-                                   selectedComments={selectedComments}
-                                   setSelectedComments={setSelectedComments}
-                                   selectedImages={selectedImages}
-                                   setSelectedImages={setSelectedImages}
-                                   isEditing={isEditing}
-                                   isJob={false}
-                                   isInvoiceMainView={false}
-                                   isPadding={false}
-                                   classes={classes.width100}
+               selectedComments={selectedComments}
+               setSelectedComments={setSelectedComments}
+               selectedImages={selectedImages}
+               setSelectedImages={setSelectedImages}
+               isEditing={isEditing}
+               isJob={false}
+               isInvoiceMainView={false}
+               isPadding={false}
+               classes={classes.width100}
             />
           </>
         }

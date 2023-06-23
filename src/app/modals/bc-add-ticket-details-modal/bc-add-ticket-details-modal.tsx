@@ -72,7 +72,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
 
   const jobData = {
     commentValues: [{
-      comment: invoiceData?.job?.ticket?.note,
+      comment: invoiceData?.job?.description|| invoiceData?.job?.ticket?.note || '',
       id: invoiceData?.job?.ticket?._id
     }] || [],
     images: invoiceData?.job?.ticket?.images || []
@@ -431,14 +431,14 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
                 each box if you would like to add this to the invoice</Typography>
             }
             <BCTicketMessagesNotes invoiceData={jobData}
-                                   selectedComments={selectedComments}
-                                   setSelectedComments={setSelectedComments}
-                                   selectedImages={selectedImages}
-                                   setSelectedImages={setSelectedImages}
-                                   isEditing={isEditing}
-                                   isInvoiceMainView = {false}
-                                   isPadding={true}
-                                   isJob={true}
+               selectedComments={selectedComments}
+               setSelectedComments={setSelectedComments}
+               selectedImages={selectedImages}
+               setSelectedImages={setSelectedImages}
+               isEditing={isEditing}
+               isInvoiceMainView = {false}
+               isPadding={true}
+               isJob={true}
             />
           </>
         }
@@ -446,14 +446,14 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
           technicianData && (technicianData.commentValues?.length > 0 || technicianData.images?.length > 0) && <>
             <hr className={classes.horizontalLine}/>
             <BCTicketMessagesNotes invoiceData={technicianData}
-                                   selectedComments={selectedComments}
-                                   setSelectedComments={setSelectedComments}
-                                   selectedImages={selectedImages}
-                                   setSelectedImages={setSelectedImages}
-                                   isEditing={isEditing}
-                                   isInvoiceMainView = {false}
-                                   isPadding={true}
-                                   isJob={false}
+               selectedComments={selectedComments}
+               setSelectedComments={setSelectedComments}
+               selectedImages={selectedImages}
+               setSelectedImages={setSelectedImages}
+               isEditing={isEditing}
+               isInvoiceMainView = {false}
+               isPadding={true}
+               isJob={false}
             />
           </>
         }

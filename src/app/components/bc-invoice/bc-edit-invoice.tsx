@@ -712,7 +712,7 @@ function BCEditInvoice({
 
   const jobData = {
     commentValues: [{
-      comment: invoiceData?.job?.ticket?.note,
+      comment: invoiceData?.job?.description|| invoiceData?.job?.ticket?.note ||  '',
       id: invoiceData?.job?.ticket?._id
     }] || [],
     images: invoiceData?.job?.ticket?.images || []
@@ -1289,7 +1289,9 @@ function BCEditInvoice({
                     </AccordionDetails>
                   </Accordion>
                 </Card>
+
                 {
+
                   jobData && (jobData.commentValues?.length > 0 || jobData.images?.length > 0) &&
                   <>
                     <Card elevation={2}>
@@ -1303,15 +1305,15 @@ function BCEditInvoice({
                         </AccordionSummary>
                         <AccordionDetails>
                           <BCTicketMessagesNotes invoiceData={jobData}
-                                                 selectedComments={selectedComments}
-                                                 setSelectedComments={setSelectedComments}
-                                                 selectedImages={selectedImages}
-                                                 setSelectedImages={setSelectedImages}
-                                                 isEditing={isEditing}
-                                                 isJob={true}
-                                                 isInvoiceMainView={true}
-                                                 isPadding={true}
-                                                 classes={classes.width100}
+                           selectedComments={selectedComments}
+                           setSelectedComments={setSelectedComments}
+                           selectedImages={selectedImages}
+                           setSelectedImages={setSelectedImages}
+                           isEditing={isEditing}
+                           isJob={true}
+                           isInvoiceMainView={true}
+                           isPadding={true}
+                           classes={classes.width100}
                           />
                         </AccordionDetails>
                       </Accordion>
@@ -1332,17 +1334,16 @@ function BCEditInvoice({
                           TECHNICIAN NOTES/PICTURES
                         </AccordionSummary>
                         <AccordionDetails>
-
                           <BCTicketMessagesNotes invoiceData={technicianData}
-                                                 selectedComments={selectedComments}
-                                                 setSelectedComments={setSelectedComments}
-                                                 selectedImages={selectedImages}
-                                                 setSelectedImages={setSelectedImages}
-                                                 isEditing={isEditing}
-                                                 isJob={false}
-                                                 isInvoiceMainView={true}
-                                                 isPadding={true}
-                                                 classes={classes.width100}
+                           selectedComments={selectedComments}
+                           setSelectedComments={setSelectedComments}
+                           selectedImages={selectedImages}
+                           setSelectedImages={setSelectedImages}
+                           isEditing={isEditing}
+                           isJob={false}
+                           isInvoiceMainView={true}
+                           isPadding={true}
+                           classes={classes.width100}
                           />
                         </AccordionDetails>
                       </Accordion>
