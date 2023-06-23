@@ -231,7 +231,7 @@ function ViewInvoice({ classes, theme }: any) {
     dispatch(
       setModalDataAction({
         data: {
-          job: { ...invoiceDetail.job, charge: invoiceDetail.total },
+          job: { ...invoiceDetail.job, charge: invoiceDetail.total, isInvoice: true },
           removeFooter: false,
           maxHeight: '100%',
           modalTitle: 'Job Costing'
@@ -266,14 +266,6 @@ function ViewInvoice({ classes, theme }: any) {
               >Job Costing
               </Button>
             </div>
-            {/* <Button
-              color='primary'
-              variant="outlined"
-              className='whiteButtonBg'
-              onClick={openEditJobCostingModal}
-            >
-              Job Costing
-            </Button> */}
             {invoiceDetail?.isDraft ? (
               <CSChip
                 label={'Draft'}
