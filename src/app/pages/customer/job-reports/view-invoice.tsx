@@ -52,6 +52,12 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       fontWeight: 700,
       fontSize: 14,
       marginLeft: 20,
+    },
+    costingButton: {
+      marginLeft: 10
+    },
+    buttonLabel: {
+      textWrap: 'nowrap'
     }
   }),
 );
@@ -221,12 +227,28 @@ function ViewInvoice({ classes, theme }: any) {
       }
     }).catch(e => dispatch(error(e.message)))
   }
+  const openEditJobCostingModal = () => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          job: { ...invoiceDetail.job, charge: invoiceDetail.total },
+          removeFooter: false,
+          maxHeight: '100%',
+          modalTitle: 'Job Costing'
+        },
+        type: modalTypes.EDIT_JOB_COSTING_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
 
   return (
     <MainContainer>
       <PageContainer>
         <PageHeader>
-          <div style={{display: 'flex'}}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <IconButton
               color="default"
               size="small"
@@ -235,6 +257,23 @@ function ViewInvoice({ classes, theme }: any) {
             >
               <ArrowBackIcon/>
             </IconButton>
+            <div>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={openEditJobCostingModal}
+                classes={{ root: invoiceStyles.costingButton, label: invoiceStyles.buttonLabel }}
+              >Job Costing
+              </Button>
+            </div>
+            {/* <Button
+              color='primary'
+              variant="outlined"
+              className='whiteButtonBg'
+              onClick={openEditJobCostingModal}
+            >
+              Job Costing
+            </Button> */}
             {invoiceDetail?.isDraft ? (
               <CSChip
                 label={'Draft'}
