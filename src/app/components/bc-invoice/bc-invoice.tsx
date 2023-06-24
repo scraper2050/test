@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, CardHeader, Chip, createStyles, Divider, Grid, withStyles } from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, CardHeader, Chip, createStyles, Divider, Grid, withStyles, Typography } from "@material-ui/core";
 import styles from "./bc-invoice.styles";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../constants";
@@ -381,6 +381,9 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
+        {invoiceDetail?.job?._id &&
+          <Typography variant={'caption'} className={'jobIdText'}>{invoiceDetail?.job?.jobId}</Typography>
+        }
         <Grid container>
           <Grid item xs={12} sm={6}>
             <Grid container spacing={4}>

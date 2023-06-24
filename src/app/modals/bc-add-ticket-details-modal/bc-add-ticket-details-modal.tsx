@@ -260,6 +260,9 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
 
   return <>
     <DataContainer className={'new-modal-design'}>
+      {invoiceData?.job._id &&
+        <Typography variant={'caption'} className={'jobIdText'}>{invoiceData?.job.jobId}</Typography>
+      }
       {/*<BCMiniSidebar data={invoiceData}/>*/}
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid item style={{width: '40%'}}>

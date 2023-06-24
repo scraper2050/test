@@ -11,7 +11,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Select,
+  Select, Typography,
   withStyles
 } from '@material-ui/core';
 import styles from './bc-invoice.styles';
@@ -367,6 +367,12 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       fontWeight: 700,
       fontSize: 14,
       marginLeft: 20,
+    },
+    jobIdText :{
+      position: 'absolute',
+      top: '35px',
+      left: '60px',
+      color: '#828282'
     }
   }),
 );
@@ -892,6 +898,9 @@ function BCEditInvoice({
                 <Card elevation={2}>
                   <CardHeader title={invoiceData?.company?.info?.companyName + ' INVOICE DETAILS'}/>
                   <CardContent>
+                    {invoiceData?.job._id &&
+                      <Typography variant={'caption'} className={'jobIdText'}>{invoiceData?.job.jobId}</Typography>
+                    }
                     <Grid container spacing={5}>
                       <Grid item xs={2}>
                         <div className={invoiceStyles.companyLogo}>
