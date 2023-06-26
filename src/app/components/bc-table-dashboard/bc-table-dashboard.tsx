@@ -1,8 +1,8 @@
-import React from "react";
-import styles from "./bc-table-dashboard.style";
-import { Button, Grid, withStyles } from "@material-ui/core";
-import BCTableContainer from "app/components/bc-table-container/bc-table-container";
-import { CSButton } from "../../../helpers/custom";
+import React from 'react';
+import styles from './bc-table-dashboard.style';
+import { Button, Grid, withStyles } from '@material-ui/core';
+import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
+import { CSButton } from '../../../helpers/custom';
 import AddCircleSharpIcon from '@material-ui/icons/AddCircleSharp';
 
 interface Props {
@@ -14,6 +14,7 @@ interface Props {
   isLoading: boolean;
   tableData: any;
   onRowClick?: any;
+  showButton: boolean;
 }
 function BCTableDashboard(props: Props) {
   const {
@@ -25,25 +26,27 @@ function BCTableDashboard(props: Props) {
     isLoading,
     tableData,
     onRowClick,
+    showButton
   } = props;
 
   return (
     <Grid
       container
-      direction="column"
-      className={`${classes.tableContainer} elevation-1`}
-    >
+      direction={'column'}
+      className={`${classes.tableContainer} elevation-1`}>
 
       <Grid item xs={12}>
         <div className={classes.header}>
           <div>
             <h3 className={classes.headerText}>{text}</h3>
           </div>
+          {showButton &&
           <div>
             <CSButton onClick={click}>
-              <AddCircleSharpIcon style={{color: '#fff'}}/> {textButton}
+              <AddCircleSharpIcon style={{ 'color': '#fff' }}/> {textButton}
             </CSButton>
           </div>
+          }
         </div>
       </Grid>
 
@@ -58,7 +61,7 @@ function BCTableDashboard(props: Props) {
           pagination={false}
           pageSize={tableData.length}
           isDefault={true}
-          initialMsg="No Vendors yet"
+          initialMsg={'No Vendors yet'}
           stickyHeader={true}
           onRowClick={(ev: any, row: any) => onRowClick(row)}
         />
@@ -67,4 +70,4 @@ function BCTableDashboard(props: Props) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(BCTableDashboard);
+export default withStyles(styles, { 'withTheme': true })(BCTableDashboard);

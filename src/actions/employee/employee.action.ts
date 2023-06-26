@@ -1,7 +1,6 @@
 
-import { Permission } from 'app/components/bc-roles-permissions/rolesAndPermissions';
 import { createApiAction } from '../action.utils';
-import { UserProfile, UsersActionType, types, updateEmployeeLocPermParam } from './employee.types';
+import { RolesAndPermissions, UserProfile, UsersActionType, types, updateEmployeeLocPermParam } from './employee.types';
 import { addAdministrator, addManager, addOfficeAdmin, addTechnician, getEmployees as fetchEmployees, getEmployeeDetail, getEmployeePermissions, updateAdminRole, updateLocPermission } from 'api/employee.api';
 
 export const loadAllEmployeesActions = createApiAction(types.EMPLOYEE_LOAD);
@@ -74,10 +73,19 @@ export const loadingSingleEmployee = () => {
 export const getEmployeeDetailAction = (data: any) => {
   return async (dispatch: any) => {
     const employee: any = await getEmployeeDetail(data);
-    const rolesAndPermissions: Permission = await getEmployeePermissions(data);
+    const response: RolesAndPermissions = await getEmployeePermissions(data);
 
-    employee.rolesAndPermissions = rolesAndPermissions;
+    const rolesAndPermissions: RolesAndPermissions = {};
 
+    if (response) {
+      Object.keys(response).forEach(key => {
+        if (['admin', 'accounting', 'dispatch', 'superAdmin'].includes(key)) {
+          rolesAndPermissions[key] = response[key];
+        }
+      });
+    }
+
+    employee.employee.rolesAndPermissions = rolesAndPermissions;
     dispatch({ 'type': UsersActionType.SET_SINGLE_EMPLOYEE,
       'payload': employee });
   };

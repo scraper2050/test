@@ -2,7 +2,7 @@ import BCTableContainer from 'app/components/bc-table-container/bc-table-contain
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './services-and-products.styles';
-import { Button, Fab, Grid, withStyles, Tooltip } from '@material-ui/core';
+import { Button, Fab, Grid, Tooltip, withStyles } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
@@ -15,9 +15,9 @@ import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
 import { addTierApi, updateItems } from 'api/items.api';
 import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
-import BCQbSyncStatus from "../../../../components/bc-qb-sync-status/bc-qb-sync-status";
-import {CSButton, CSButtonSmall} from "../../../../../helpers/custom";
-import {stringSortCaseInsensitive} from "../../../../../helpers/sort";
+import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-status';
+import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
+import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 
 
 interface Props {
@@ -30,9 +30,9 @@ const normalizeTiers = (tiers:any) => {
   tiers.forEach((tier:any) => {
     obj[tier.tier._id] = tier;
 
-    if (((tier.charge % 1) !== 0)
-    && tier.charge !== undefined) {
-    obj[tier.tier._id].charge = Number(tier.charge).toFixed(2)
+    if (tier.charge % 1 !== 0 &&
+    tier.charge !== undefined) {
+      obj[tier.tier._id].charge = Number(tier.charge).toFixed(2);
     }
   });
 
@@ -47,7 +47,8 @@ function AdminServiceAndProductsPage({ classes }:Props) {
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
-
+  const auth = useSelector((state: any) => state.auth);
+  const canManageItems = auth?.user?.rolesAndPermissions?.admin?.manageItems;
 
   const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
   const activeTiers = tiers.filter(({ tier }:any) => tier.isActive);
@@ -154,49 +155,54 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         </CSButton>
       </>
       : <>
-        <CSButton
-          disabled={updating}
-          disableElevation
-          onClick={editTiers}
-          size={'small'}
-          style={{
-            'color': 'white',
-            'backgroundColor': PRIMARY_ORANGE }}
-          variant={'contained'}>
-          {'Edit Tiers'}
-        </CSButton>
-        <CSButton
-          color={'primary'}
-          disabled={updating}
-          disableElevation
-          onClick={addTier}
-          size={'small'}
-          style={{
-            'color': 'white' }}
-          variant={'contained'}>
-          {'Add Tier'}
-        </CSButton>
-        {/* <CSButton
-          disabled={updating}
-          disableElevation
-          onClick={() => setEditMode(true)}
-          size={'small'}
-          style={{ 'backgroundColor': PRIMARY_GREEN,
-            'color': 'white' }}
-          variant={'contained'}>
-          {'Edit Prices'}
-        </CSButton> */}
-        <CSButton
-          color={'primary'}
-          disabled={updating}
-          disableElevation
-          onClick={renderAdd}
-          size={'small'}
-          style={{
-            'color': 'white' }}
-          variant={'contained'}>
-          {'New Item'}
-        </CSButton>
+        {canManageItems
+          ? <>
+            <CSButton
+              disabled={updating}
+              disableElevation
+              onClick={editTiers}
+              size={'small'}
+              style={{
+                'color': 'white',
+                'backgroundColor': PRIMARY_ORANGE }}
+              variant={'contained'}>
+              {'Edit Tiers'}
+            </CSButton>
+            <CSButton
+              color={'primary'}
+              disabled={updating}
+              disableElevation
+              onClick={addTier}
+              size={'small'}
+              style={{
+                'color': 'white' }}
+              variant={'contained'}>
+              {'Add Tier'}
+            </CSButton>
+            {/* <CSButton
+              disabled={updating}
+              disableElevation
+              onClick={() => setEditMode(true)}
+              size={'small'}
+              style={{ 'backgroundColor': PRIMARY_GREEN,
+                'color': 'white' }}
+              variant={'contained'}>
+              {'Edit Prices'}
+            </CSButton> */}
+            <CSButton
+              color={'primary'}
+              disabled={updating}
+              disableElevation
+              onClick={renderAdd}
+              size={'small'}
+              style={{
+                'color': 'white' }}
+              variant={'contained'}>
+              {'New Item'}
+            </CSButton>
+          </>
+          : ''
+        }
       </>;
   }
 
@@ -227,16 +233,16 @@ function AdminServiceAndProductsPage({ classes }:Props) {
   const renderAdd = () => {
     dispatch(setModalDataAction({
       'data': {
-        item: {
-          name: '',
-          description: '',
-          isFixed: true,
-          isJobType: true,
-          tax: 0,
-          tiers: activeTiers.reduce((total:any, currentValue:any) => ({
+        'item': {
+          'name': '',
+          'description': '',
+          'isFixed': true,
+          'isJobType': true,
+          'tax': 0,
+          'tiers': activeTiers.reduce((total:any, currentValue:any) => ({
             ...total,
-            [currentValue.tier._id]: currentValue,
-          }), {}),
+            [currentValue.tier._id]: currentValue
+          }), {})
         },
         'modalTitle': 'New Item'
       },
@@ -263,7 +269,7 @@ function AdminServiceAndProductsPage({ classes }:Props) {
                   style={{
                     'marginRight': 10,
                     'minWidth': 35,
-                    'padding': '5px 10px',
+                    'padding': '5px 10px'
                   }}>
                   <EditIcon />
                 </CSButtonSmall>
@@ -298,14 +304,13 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         },
         {
           Cell({ row }: any) {
-            const {description} = row.original
+            const { description } = row.original;
             return (
               <Tooltip
                 arrow
-                title={description}
-              >
-                <div className="flex items-center">
-                    {description?.length > 30 ? `${description?.substr(0, 30)}...` : description}
+                title={description}>
+                <div className={'flex items-center'}>
+                  {description?.length > 30 ? `${description?.substr(0, 30)}...` : description}
                 </div>
               </Tooltip>
             );
@@ -387,8 +392,8 @@ function AdminServiceAndProductsPage({ classes }:Props) {
       let constructedColumns:any = [
         ...columns,
         ...chargeColumn,
-        ...actions,
-        ...dbSync,
+        ...canManageItems ? actions : [],
+        ...dbSync
       ];
 
 
@@ -396,8 +401,8 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         constructedColumns = [
           ...columns,
           ...tierColumns,
-          ...actions,
-          ...dbSync,
+          ...canManageItems ? actions : [],
+          ...dbSync
         ];
       }
       setColumns(constructedColumns);

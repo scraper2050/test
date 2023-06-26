@@ -1,8 +1,4 @@
-export type Permission = {
-  [key: string]: {
-    [key: string]: boolean
-  }
-}
+import { RolesAndPermissions } from 'actions/employee/employee.types';
 
 export type Roles = 'admin'| 'dispatch' | 'accounting' | 'superAdmin';
 
@@ -27,7 +23,7 @@ export const permissionDescriptions: { [key :string]: string } = {
 };
 
 
-const initialRolesAndPermissions: Permission = {
+const initialRolesAndPermissions: RolesAndPermissions = {
   'admin': {
     'addVendors': false,
     'manageItems': false,

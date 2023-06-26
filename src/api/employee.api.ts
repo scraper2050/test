@@ -77,7 +77,7 @@ export const getEmployeePermissions = async (data: any) => {
   let responseData;
 
   try {
-    const response: any = await axios(`http://localhost:4000/dev/api/permissions/${data}`);
+    const response: any = await axios.get(`http://localhost:4000/dev/api/permissions/${data}`);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;

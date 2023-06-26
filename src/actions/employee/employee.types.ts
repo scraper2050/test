@@ -47,7 +47,7 @@ export interface User {
     industry?: string
   },
   company?: string
-  allLocation?: boolean
+  allLocation?: boolean,
 }
 
 export interface UserDetails {
@@ -59,7 +59,8 @@ export interface UserDetails {
     'preferences': string,
     'time': string,
     'timezone': string
-  }
+  },
+  'rolesAndPermissions': RolesAndPermissions
 }
 
 export interface UsersState {
@@ -79,4 +80,10 @@ export enum UsersActionType {
   ADDED = 'addedUser',
   GET_SINGLE_EMPLOYEE = 'getSingleEmployee',
   SET_SINGLE_EMPLOYEE = 'setSingleEmployee',
+}
+
+export type RolesAndPermissions = {
+  [key: string]: {
+    [key: string]: boolean
+  }
 }

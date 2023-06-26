@@ -22,6 +22,7 @@ import {
 import { modalTypes } from '../../../constants';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { DivisionParams } from 'app/models/division';
+import { canAddVendor } from 'utils/permissionsCheck';
 
 interface RowStatusTypes {
   row: {
@@ -39,6 +40,8 @@ function DashboardPage({ classes }: any): JSX.Element {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const auth = useSelector((state: any) => state.auth);
+  const showButton = canAddVendor(auth.user);
 
   const history = useHistory();
 
@@ -138,16 +141,17 @@ function DashboardPage({ classes }: any): JSX.Element {
   ];
 
   useEffect(() => {
-    if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+    if (!currentDivision.isDivisionFeatureActivated || currentDivision.isDivisionFeatureActivated && (currentDivision.params?.workType || currentDivision.params?.companyLocation || currentDivision.data?.name == 'All')) {
       dispatch(loadingVendors());
       let divisionParams: any = {};
-      if (currentDivision.data?.name != "All") {
-        divisionParams = {workType: currentDivision.data?.workTypeId, companyLocation: currentDivision.data?.locationId};
+      if (currentDivision.data?.name != 'All') {
+        divisionParams = { 'workType': currentDivision.data?.workTypeId,
+          'companyLocation': currentDivision.data?.locationId };
       }
       dispatch(getVendors(divisionParams));
     }
   }, [currentDivision.isDivisionFeatureActivated, currentDivision.data]);
-  
+
   const openVendorModal = () => {
     dispatch(setModalDataAction({
       'data': {
@@ -222,6 +226,7 @@ function DashboardPage({ classes }: any): JSX.Element {
                     tableData={vendors.data.filter((vendor: any) => vendor.status <= 1)}
                     text={'Vendors'}
                     textButton={'Invite Vendor'}
+                    showButton={showButton}
                   />
                 </Grid>
 

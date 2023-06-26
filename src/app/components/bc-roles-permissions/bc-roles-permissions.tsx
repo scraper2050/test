@@ -1,5 +1,9 @@
 import { ArrowDropDown } from '@material-ui/icons';
+import { CSButton } from 'helpers/custom';
+import { RolesAndPermissions } from 'actions/employee/employee.types';
+import axios from 'axios';
 import styles from './bc-roles-permissions.style';
+import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   Accordion,
@@ -13,31 +17,47 @@ import {
   WithStyles,
   withStyles
 } from '@material-ui/core';
-import React, { FC, useState } from 'react';
-import initialRolesAndPermissions, { Permission, permissionDescriptions } from './rolesAndPermissions';
-import { CSButton } from 'helpers/custom';
+import React, { FC, useEffect, useState } from 'react';
+import initialRolesAndPermissions, { permissionDescriptions } from './rolesAndPermissions';
+
 
 interface BcRolesPermissionsProps extends WithStyles<typeof styles> {}
 
 const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
   const { employeeDetails } = useSelector((state: any) => state.employees);
-  let { rolesAndpermissions } : { rolesAndpermissions: Permission } = employeeDetails;
-
-  if (!rolesAndpermissions) {
-    rolesAndpermissions = initialRolesAndPermissions;
+  const location = useLocation<any>();
+  const obj: any = location.state;
+  const { employeeId } = obj;
+  let { rolesAndPermissions } : { rolesAndPermissions: RolesAndPermissions } = employeeDetails;
+  console.log('employeeDetails', employeeDetails);
+  if (!Object.keys(rolesAndPermissions).length) {
+    rolesAndPermissions = initialRolesAndPermissions;
   }
 
-  const [roles, setRoles] = useState(rolesAndpermissions);
+  const [roles, setRoles] = useState<RolesAndPermissions>(rolesAndPermissions);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({ });
   const [isEditing, setIsEditing] = useState(false);
 
+  useEffect(() => {
+    setRoles(rolesAndPermissions);
+  }, [rolesAndPermissions]);
+
   const handleUpdateRoles = (key: string) => {
     const permissions = roles[key];
+    let value = false;
+
+    if (Object.values(permissions).some(p => p)) {
+      // Turn off everything if one sub permission is on
+      value = false;
+    } else {
+      value = true;
+    }
+
     Object.keys(permissions).forEach(p => {
-      permissions[p] = !permissions[p];
+      permissions[p] = value;
     });
 
-    setRoles(state => ({ ...state,
+    setRoles((state: RolesAndPermissions) => ({ ...state,
       [key]: permissions }));
   };
 
@@ -45,7 +65,7 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
     const permissions = roles[roleKey];
     permissions[permissionKey] = !permissions[permissionKey];
 
-    setRoles(state => ({ ...state,
+    setRoles((state: RolesAndPermissions) => ({ ...state,
       [roleKey]: permissions }));
   };
 
@@ -60,6 +80,12 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
       return { ...state,
         [key]: !state[key] };
     });
+  };
+
+  const handleSavePermission = async () => {
+    await axios.post(`http://localhost:4000/dev/api/permissions/${employeeId}`, { 'permission': roles });
+
+    setIsEditing(false);
   };
 
   return (
@@ -81,8 +107,8 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
         }
       </div>
       <div className={classes.contentContainer}>
-        {Object.keys(rolesAndpermissions).map(roleKey => {
-          const permissions = rolesAndpermissions[roleKey];
+        {Object.keys(roles).map(roleKey => {
+          const permissions = rolesAndPermissions[roleKey];
           const roleText = permissionDescriptions[roleKey];
           let permissionKeys: string[] = [];
 
@@ -151,7 +177,7 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
         {isEditing &&
           <div className={classes.actionsContainer}>
             <Button onClick={() => setIsEditing(false)} variant={'outlined'} className={classes.cancelBtn}>{'Cancel'}</Button>
-            <CSButton>{'Save Changes'}</CSButton>
+            <CSButton onClick={handleSavePermission}>{'Save Changes'}</CSButton>
           </div>
         }
       </div>
