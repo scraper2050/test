@@ -514,7 +514,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
   const desbouncedSearchFunction = debounce((keyword: string) => {
     dispatch(setKeyword(keyword));
     dispatch(setCurrentPageIndex(0));
-    dispatch(getAllInvoicesAPI(currentPageSize, 0, keyword, { invoiceDateRange: selectionRange }, undefined, undefined, undefined, currentDivision.params))
+    dispatch(getAllInvoicesAPI(currentPageSize, 0, keyword, { invoiceDateRange: selectionRange }, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
   }, 500);
 
   return (
@@ -626,12 +626,12 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => {
                   dispatch(setCurrentPageIndex(num));
                   if (apiCall)
-                    dispatch(getAllInvoicesAPI(currentPageSize, num, keyword, { invoiceDateRange: selectionRange }, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
+                    dispatch(getAllInvoicesAPI(currentPageSize, num, keyword, { invoiceDateRange: selectionRange }, customerValue?._id, customerContactValue?.value, checkMissingPo, true, undefined, showValue === 'all', currentDivision.params))
                 }}
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, { invoiceDateRange: selectionRange }, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
+                  dispatch(getAllInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, { invoiceDateRange: selectionRange }, customerValue?._id, customerContactValue?.value, checkMissingPo, true, undefined, showValue === 'all', currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   desbouncedSearchFunction(query);
