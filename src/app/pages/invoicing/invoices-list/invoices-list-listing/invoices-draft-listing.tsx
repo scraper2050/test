@@ -15,6 +15,7 @@ import {
   setDraftKeyword,
 } from 'actions/invoicing/invoicing.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import debounce from 'lodash.debounce';
 
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.draft);
@@ -77,7 +78,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined, undefined,currentDivision.params));
+    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined,currentDivision.params));
     return () => {
       dispatch(setDraftKeyword(''));
       dispatch(setCurrentDraftPageSize(currentPageSize));
@@ -89,7 +90,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
   useEffect(() => {
     if(location?.state?.tab === 2 && (location?.state?.option?.search || location?.state?.option?.pageSize)){
       dispatch(setDraftKeyword(location.state.option.search));
-      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, location?.state?.option?.lastPrevCursor, location?.state?.option?.lastNextCursor, location.state.option.search,undefined,currentDivision.params));
+      dispatch(getAllDraftInvoicesAPI(location.state.option.pageSize, location?.state?.option?.pageSizeIndex, location.state.option.search,undefined,currentDivision.params));
       dispatch(setCurrentDraftPageSize(location.state.option.pageSize));
       dispatch(setCurrentDraftPageIndex(location?.state?.option?.currentPageIndex || 0));
       window.history.replaceState({}, document.title)
@@ -121,6 +122,13 @@ function InvoicingDraftListing({ classes, theme }: any) {
     }
   }
 
+
+  const desbouncedSearchFunction = debounce((keyword: string) => {
+    dispatch(setDraftKeyword(keyword));
+    dispatch(setCurrentDraftPageIndex(0));
+    dispatch(getAllDraftInvoicesAPI(currentPageSize, 0, keyword, undefined,currentDivision.params))
+  }, 500);
+
   return (
     <DataContainer id={'0'}>
       <BCTableContainer
@@ -131,17 +139,26 @@ function InvoicingDraftListing({ classes, theme }: any) {
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
         manualPagination
-        fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
-          setLastPrevCursor(isPrev ? prevCursor : undefined)
-          setLastNextCursor(isNext ? nextCursor : undefined)
-          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, undefined,currentDivision.params))
-        }}
+        // fetchFunction={(num: number, isPrev:boolean, isNext:boolean, query :string) =>{
+        //   setLastPrevCursor(isPrev ? prevCursor : undefined)
+        //   setLastNextCursor(isNext ? nextCursor : undefined)
+        //   dispatch(getAllDraftInvoicesAPI(num || currentPageSize, isPrev ? prevCursor : undefined, isNext ? nextCursor : undefined, query === '' ? '' : query || keyword, undefined,currentDivision.params))
+        // }}
         total={total}
         currentPageIndex={currentPageIndex}
-        setCurrentPageIndexFunction={(num: number) => dispatch(setCurrentDraftPageIndex(num))}
+        setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => {
+          dispatch(setCurrentDraftPageIndex(num));
+          if (apiCall)
+            dispatch(getAllDraftInvoicesAPI(currentPageSize, num, keyword, undefined,currentDivision.params))
+        }}
         currentPageSize={currentPageSize}
-        setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentDraftPageSize(num))}
-        setKeywordFunction={(query: string) => dispatch(setDraftKeyword(query))}
+        setCurrentPageSizeFunction={(num: number) => {
+          dispatch(setCurrentDraftPageSize(num))
+          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, undefined,currentDivision.params))
+        }}
+        setKeywordFunction={(query: string) => {
+          desbouncedSearchFunction(query);
+        }}
         disableInitialSearch={location?.state?.tab !== 2}
         rowTooltip={rowTooltip}
       />
