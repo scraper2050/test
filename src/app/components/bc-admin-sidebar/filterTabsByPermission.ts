@@ -18,6 +18,15 @@ const filterTabsByPermission = (user: any, links: any) => {
     linksToRemove.push('/main/admin/company-profile');
   }
 
+  if (!user?.rolesAndPermission?.dispatch.serviceTickets && !isAdmin) {
+    linksToRemove.push('/main/customers/schedule/tickets');
+  }
+
+  if (!user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
+    linksToRemove.push('/main/customers/schedule/jobs');
+  }
+
+  console.log(links);
   return links.filter((link: any) => !linksToRemove.includes(link.link));
 };
 

@@ -28,6 +28,8 @@ function ScheduleJobsPage({ classes }: any) {
   const { numberOfJobRequest } = useSelector(({ jobRequests }: any) => ({
     numberOfJobRequest: jobRequests.numberOfJobRequest
   }));
+  const auth = useSelector((state: any) => state.auth);
+  const canManageTickets = auth.user?.rolesAndPermission?.dispatch.serviceTickets || auth.user?.permissions?.role === 3;
 
   useEffect(() => {
     if(localStorage.getItem('prevPage') === 'ticket-map-view'){
@@ -131,7 +133,7 @@ function ScheduleJobsPage({ classes }: any) {
               },
             ]}
           />
-          {curTab !== 2 && (
+          {curTab !== 2 && canManageTickets && (
             <div className={classes.addButtonArea}>
               <CSButton
                 aria-label={'new-ticket'}

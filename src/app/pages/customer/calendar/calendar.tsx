@@ -3,18 +3,18 @@ import SwipeableViews from 'react-swipeable-views';
 import { modalTypes } from '../../../../constants';
 import styles from './calendar.styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTheme, withStyles } from "@material-ui/core";
+import { useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { getCustomers } from 'actions/customer/customer.action';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { getAllJobTypesAPI } from 'api/job.api';
-import "../../../../scss/popup.scss";
-import { useLocation, useHistory } from 'react-router-dom';
-import { CSButton } from "../../../../helpers/custom";
+import '../../../../scss/popup.scss';
+import { useHistory, useLocation } from 'react-router-dom';
+import { CSButton } from '../../../../helpers/custom';
 import { refreshServiceTickets } from 'actions/service-ticket/service-ticket.action';
-import JobPage from "./job-page";
-import TicketPage from "./ticket-page";
+import JobPage from './job-page';
+import TicketPage from './ticket-page';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { warning } from 'actions/snackbar/snackbar.action';
 
@@ -27,29 +27,32 @@ function ScheduleJobsPage({ classes }: any) {
   const locationState = location.state;
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const auth = useSelector((state: any) => state.auth);
+  const canManageTickets = auth.user?.rolesAndPermission?.dispatch.serviceTickets || auth.user?.permissions?.role === 3;
+  const canManageJobs = auth.user?.rolesAndPermission?.dispatch.jobs || auth.user?.permissions?.role === 3;
 
   useEffect(() => {
-    if(localStorage.getItem('prevPage') === 'ticket-map-view'){
+    if (localStorage.getItem('prevPage') === 'ticket-map-view') {
       dispatch(refreshServiceTickets(true));
-      localStorage.setItem('prevPage', 'schedule')
+      localStorage.setItem('prevPage', 'schedule');
     }
     dispatch(getCustomers());
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllJobTypesAPI());
     return () => {
       dispatch(refreshServiceTickets(false));
-    }
+    };
   }, []);
 
   const handleTabChange = (newValue: number) => {
-    let tempLocationState = { ...locationState };
-    delete tempLocationState["onUpdatePage"];
+    const tempLocationState = { ...locationState };
+    delete tempLocationState.onUpdatePage;
 
     history.replace({
       ...history.location,
-      state: {
+      'state': {
         ...tempLocationState,
-        curTab: newValue
+        'curTab': newValue
       }
     });
 
@@ -59,8 +62,8 @@ function ScheduleJobsPage({ classes }: any) {
   const customers = useSelector(({ customers }: any) => customers.data);
 
   const openCreateTicketModal = () => {
-    //To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
-    if ((currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != "All") || !currentDivision.isDivisionFeatureActivated) {
+    // To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
+    if (currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != 'All' || !currentDivision.isDivisionFeatureActivated) {
       if (customers.length !== 0) {
         dispatch(setModalDataAction({
           'data': {
@@ -92,8 +95,8 @@ function ScheduleJobsPage({ classes }: any) {
           dispatch(openModalAction());
         }, 200);
       }
-    }else{
-      dispatch(warning("Please select a division before creating a ticket."))
+    } else {
+      dispatch(warning('Please select a division before creating a ticket.'));
     }
   };
 
@@ -110,44 +113,54 @@ function ScheduleJobsPage({ classes }: any) {
     }, 200);
   };
 
+  const tabs = [];
+
+  if (canManageJobs) {
+    tabs.push({
+      'label': 'Jobs',
+      'value': 0
+    });
+  }
+
+  if (canManageTickets) {
+    tabs.push({
+      'label': 'Service Tickets',
+      'value': 1
+    });
+  }
+
   return (
     <div className={classes.pageContent}>
       <BCTabs
         curTab={curTab}
         indicatorColor={'primary'}
         onChangeTab={handleTabChange}
-        tabsData={[
-          {
-            'label': 'Jobs',
-            'value': 0
-          },
-          {
-            'label': 'Service Tickets',
-            'value': 1
-          }
-        ]}
+        tabsData={tabs}
       />
       <div className={classes.addButtonArea}>
-        <CSButton
+        {canManageTickets && <CSButton
           aria-label={'new-ticket'}
-          variant="contained"
-          color="primary"
-          size="small"
+          variant={'contained'}
+          color={'primary'}
+          size={'small'}
           onClick={() => openCreateTicketModal()}>
           {'New Ticket'}
-        </CSButton>
+        </CSButton>}
       </div>
       <SwipeableViews
-        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={curTab}
-        disabled
-      >
-        <div className={classes.dataContainer} id={"0"}>
-          <JobPage />
-        </div>
-        <div className={classes.dataContainer} id={"1"}>
-          <TicketPage />
-        </div>
+        disabled>
+        {canManageJobs
+          ? <div className={classes.dataContainer} id={'0'}>
+            <JobPage />
+          </div>
+          : null}
+        {canManageTickets
+          ? <div className={classes.dataContainer} id={'1'}>
+            <TicketPage />
+          </div>
+          : null}
       </SwipeableViews>
     </div>
   );
