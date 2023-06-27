@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import {
   ListItem,
   Menu,
@@ -6,13 +6,13 @@ import {
   makeStyles,
   useMediaQuery,
   useTheme
-} from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import styles from "./bc-admin-sidebar.style";
-import { useHistory, useLocation } from "react-router-dom";
-import classnames from "classnames";
-import Drawer from "@material-ui/core/Drawer";
-import AvatarImg from "../../../assets/img/user_avatar.png";
+} from '@material-ui/core';
+import { Theme, createStyles, withStyles } from '@material-ui/core/styles';
+import styles from './bc-admin-sidebar.style';
+import { useHistory, useLocation } from 'react-router-dom';
+import classnames from 'classnames';
+import Drawer from '@material-ui/core/Drawer';
+import AvatarImg from '../../../assets/img/user_avatar.png';
 import Avatar from '@material-ui/core/Avatar';
 import Tooltip from '@material-ui/core/Tooltip';
 import styled from 'styled-components';
@@ -21,7 +21,7 @@ import ListIcon from '@material-ui/icons/List';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import MapIcon from '@material-ui/icons/Map';
 import DescriptionIcon from '@material-ui/icons/Description';
-import { removeUserFromLocalStorage } from "../../../utils/local-storage.service";
+import { removeUserFromLocalStorage } from '../../../utils/local-storage.service';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Badge from '@material-ui/core/Badge';
@@ -63,13 +63,13 @@ import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 import BackupIcon from '@material-ui/icons/Backup';
 import HistoryIcon from '@material-ui/icons/History';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
-import { CompanyProfileStateType } from "../../../actions/user/user.types";
-import NoCompanyLogo from "../../../assets/img/avatars/NoCompanyLogo.png";
-import { ReactComponent as CollectIcon } from 'assets/img/icons/sidebar/reports/collect.svg'
-import { ReactComponent as AmountIcon } from 'assets/img/icons/sidebar/reports/amount.svg'
-import { ReactComponent as PayrollIcon } from 'assets/img/icons/sidebar/reports/payroll.svg'
-import { useSelector } from "react-redux";
-import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
+import { CompanyProfileStateType } from '../../../actions/user/user.types';
+import NoCompanyLogo from '../../../assets/img/avatars/NoCompanyLogo.png';
+import { ReactComponent as CollectIcon } from 'assets/img/icons/sidebar/reports/collect.svg';
+import { ReactComponent as AmountIcon } from 'assets/img/icons/sidebar/reports/amount.svg';
+import { ReactComponent as PayrollIcon } from 'assets/img/icons/sidebar/reports/payroll.svg';
+import { useSelector } from 'react-redux';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import filterTabsByPermission from './filterTabsByPermission';
 
 interface BCSidebarProps {
@@ -184,7 +184,7 @@ function BCAdminSidebar({
   numberOfJobRequest,
   showNotificationDetails,
   getCompanyProfile,
-  logoutAndReset,
+  logoutAndReset
 }: BCSidebarProps) {
   const history = useHistory();
   const location = useLocation();
@@ -217,50 +217,50 @@ function BCAdminSidebar({
     {
       'label': 'Jobs',
       'icon': <WorkIcon />,
-      'link': getLinkByDivision("/main/customers/schedule/jobs"),
-      'group': 'Schedule',
+      'link': getLinkByDivision('/main/customers/schedule/jobs'),
+      'group': 'Schedule'
     },
     {
       'label': 'Tickets',
       'icon': <TicketIcon />,
-      'link': getLinkByDivision("/main/customers/schedule/tickets"),
-      'group': 'Schedule',
+      'link': getLinkByDivision('/main/customers/schedule/tickets'),
+      'group': 'Schedule'
     },
     {
       'label': 'Job Requests',
-      'icon': <Badge badgeContent={numberOfJobRequest} color="secondary"><RequestIcon /></Badge>,
+      'icon': <Badge badgeContent={numberOfJobRequest} color={'secondary'}><RequestIcon /></Badge>,
       'link': '/main/customers/schedule/job-requests',
       'group': 'Schedule'
     },
     {
       'label': 'Calendar',
       'icon': <CalendarIcon />,
-      'link': getLinkByDivision("/main/customers/calendar")
+      'link': getLinkByDivision('/main/customers/calendar')
     },
     {
       'label': 'Map View',
       'icon': <MapIcon />,
-      'link': getLinkByDivision("/main/customers/ticket-map-view")
+      'link': getLinkByDivision('/main/customers/ticket-map-view')
     },
     {
       'label': 'Job Reports',
       'icon': <DescriptionIcon />,
-      'link': getLinkByDivision("/main/customers/job-reports")
+      'link': getLinkByDivision('/main/customers/job-reports')
     },
     {
       'label': 'Payroll List',
       'icon': <PaymentIcon />,
-      'link': getLinkByDivision("/main/payroll")
+      'link': getLinkByDivision('/main/payroll')
     },
     {
       'label': 'Past Payments',
       'icon': <HistoryIcon />,
-      'link': getLinkByDivision("/main/payroll/pastpayment")
+      'link': getLinkByDivision('/main/payroll/pastpayment')
     },
     {
       'label': 'Reports',
       'icon': <DescriptionIcon />,
-      'link': getLinkByDivision("/main/payroll/reports")
+      'link': getLinkByDivision('/main/payroll/reports')
     },
     /*
      * {
@@ -271,7 +271,7 @@ function BCAdminSidebar({
     {
       'label': 'Invoices',
       'icon': <AccountBalanceWalletIcon />,
-      'link': getLinkByDivision("/main/invoicing/invoices-list")
+      'link': getLinkByDivision('/main/invoicing/invoices-list')
     },
     {
       'label': 'Purchase Order',
@@ -359,7 +359,7 @@ function BCAdminSidebar({
     {
       'label': 'Data',
       'icon': <DescriptionIcon />,
-      'link': '/main/admin/data',
+      'link': '/main/admin/data'
     },
     {
       'label': 'Groups',
@@ -437,7 +437,7 @@ function BCAdminSidebar({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const filteredLinkData = filterTabsByPermission(auth.user, LINK_DATA);
+  const filteredLinkData = filterTabsByPermission(auth.user, LINK_DATA, getLinkByDivision);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
   const subGroupBar = (item : any) => {
@@ -547,7 +547,8 @@ function BCAdminSidebar({
           [avatarStyles.companyLogo]: !open
         })}>
           <img
-            src={profileState?.logoUrl === '' ? NoCompanyLogo : profileState.logoUrl} />
+            src={profileState?.logoUrl === '' ? NoCompanyLogo : profileState.logoUrl}
+          />
         </div>
 
         <ul>
@@ -564,8 +565,7 @@ function BCAdminSidebar({
                 <Tooltip
                   arrow
                   title={item.label}
-                  disableHoverListener={open}
-                >
+                  disableHoverListener={open}>
                   <StyledListItem
                     button
                     onClick={() => onClickLink(item.link)}
@@ -573,9 +573,9 @@ function BCAdminSidebar({
                       pathName === item.link ||
                       pathName === `${item.link}/${nestedRouteKey}`
                     }>
-                    {item.flag && (
-                      <span className={classes.flagWarning}>!</span>
-                    )}
+                    {item.flag &&
+                      <span className={classes.flagWarning}>{'!'}</span>
+                    }
 
                     {item.icon && item.icon}
                     <span className={'menuLabel'}>
@@ -622,7 +622,7 @@ function BCAdminSidebar({
                               }>
                               {item.icon && item.icon}
                               {open &&
-                                <span className='menuLabel'>{item.label}</span>}
+                                <span className={'menuLabel'}>{item.label}</span>}
                             </StyledListItem>
                           </Tooltip>
                         </li>
@@ -646,8 +646,8 @@ function BCAdminSidebar({
                 src={imageUrl}
               />
               <strong
-                className='menuLabel'>{user && user.profile && user.profile.displayName}</strong>
-              <ArrowDropUpIcon style={{ color: CONSTANTS.PRIMARY_GRAY }} />
+                className={'menuLabel'}>{user && user.profile && user.profile.displayName}</strong>
+              <ArrowDropUpIcon style={{ 'color': CONSTANTS.PRIMARY_GRAY }} />
             </StyledFooterItem>
             <Menu
               PaperProps={{
@@ -657,20 +657,22 @@ function BCAdminSidebar({
               }}
               id={'sidebar-profile-menu'}
               anchorEl={anchorEl}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+              anchorOrigin={{ 'vertical': 'top',
+                'horizontal': 'center' }}
+              transformOrigin={{ 'vertical': 'bottom',
+                'horizontal': 'center' }}
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleCloseProfileMenu}>
               <MenuItem onClick={handleViewProfile}>
                 <ListItemIcon>
-                  <AccountCircleIcon fontSize="small" />
+                  <AccountCircleIcon fontSize={'small'} />
                 </ListItemIcon>
                 {'View Profile\r'}
               </MenuItem>
               <MenuItem onClick={handleClickLogout}>
                 <ListItemIcon>
-                  <ExitToAppIcon fontSize="small" />
+                  <ExitToAppIcon fontSize={'small'} />
                 </ListItemIcon>
                 {'Logout\r'}
               </MenuItem>

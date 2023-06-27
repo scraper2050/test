@@ -1,4 +1,4 @@
-const filterTabsByPermission = (user: any, links: any) => {
+const filterTabsByPermission = (user: any, links: any, getLinkByDivision: Function) => {
   const linksToRemove: string[] = [];
   console.log(user);
 
@@ -19,14 +19,21 @@ const filterTabsByPermission = (user: any, links: any) => {
   }
 
   if (!user?.rolesAndPermission?.dispatch.serviceTickets && !isAdmin) {
-    linksToRemove.push('/main/customers/schedule/tickets');
+    const path = '/main/customers/schedule/tickets';
+    linksToRemove.push(getLinkByDivision(path));
   }
 
   if (!user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
-    linksToRemove.push('/main/customers/schedule/jobs');
+    linksToRemove.push(getLinkByDivision('/main/customers/schedule/jobs'));
+    linksToRemove.push('/main/customers/schedule/job-requests');
+    linksToRemove.push(getLinkByDivision('/main/customers/job-reports'));
   }
 
-  console.log(links);
+  if (!user?.rolesAndPermission?.dispatch.serviceTickets && !user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
+    linksToRemove.push(getLinkByDivision('/main/customers/calendar'));
+    linksToRemove.push(getLinkByDivision('/main/customers/ticket-map-view'));
+  }
+
   return links.filter((link: any) => !linksToRemove.includes(link.link));
 };
 
