@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Button, Grid, withStyles } from '@material-ui/core';
-import { formatDatTimell, formatDatTimelll, formatTime } from 'helpers/format';
+import { formatDatTimell, formatDatTimelll } from 'helpers/format';
 import styles, {
   DataContainer,
   MainContainer,
@@ -18,7 +18,11 @@ import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop'
 import { useDispatch, useSelector } from "react-redux";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 import LogoSvg from "../../../assets/img/header-logo.svg";
-import { jsPDF } from "jspdf";
+import { callGetJobReportPDF } from 'api/job.api';
+import {
+  error as SnackBarError,
+  success,
+} from 'actions/snackbar/snackbar.action';
 
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
@@ -153,6 +157,20 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     });
   };
 
+  const downloadReport = async () => {
+    const response : any = await callGetJobReportPDF(jobReportData._id);
+    if(response.status === 200) {
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `Report_${job.jobId}.pdf`;
+      link.click();
+      dispatch(success("PDF generated. Check your downloads"));
+    }
+    else {
+      dispatch(SnackBarError("Something went wrong during PDF generation"));
+    }
+  }
 
   return (
     <MainContainer>
@@ -204,7 +222,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           }
           <CSButton
             variant="contained"
-            onClick={() => { console.log("download pdf"); }}
+            onClick={downloadReport}
             color="primary">
             {'Download PDF'}
           </CSButton>
@@ -687,6 +705,12 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                 {'Generate Invoice'}
               </CSButton>
           }
+          <CSButton
+            variant="contained"
+            onClick={downloadReport}
+            color="primary">
+            {'Download PDF'}
+          </CSButton>
 
         </Grid>
         <EmailHistory emailHistory={jobReportData.emailHistory} />
