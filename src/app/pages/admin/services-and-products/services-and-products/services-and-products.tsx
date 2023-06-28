@@ -48,7 +48,7 @@ function AdminServiceAndProductsPage({ classes }:Props) {
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
   const auth = useSelector((state: any) => state.auth);
-  const canManageItems = auth?.user?.rolesAndPermissions?.admin?.manageItems;
+  const canManageCompanySettings = auth?.user?.rolesAndPermissions?.admin?.manageCompanySettings;
 
   const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
   const activeTiers = tiers.filter(({ tier }:any) => tier.isActive);
@@ -155,7 +155,7 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         </CSButton>
       </>
       : <>
-        {canManageItems
+        {canManageCompanySettings
           ? <>
             <CSButton
               disabled={updating}
@@ -392,7 +392,7 @@ function AdminServiceAndProductsPage({ classes }:Props) {
       let constructedColumns:any = [
         ...columns,
         ...chargeColumn,
-        ...canManageItems ? actions : [],
+        ...canManageCompanySettings ? actions : [],
         ...dbSync
       ];
 
@@ -401,7 +401,7 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         constructedColumns = [
           ...columns,
           ...tierColumns,
-          ...canManageItems ? actions : [],
+          ...canManageCompanySettings ? actions : [],
           ...dbSync
         ];
       }

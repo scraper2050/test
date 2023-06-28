@@ -33,6 +33,7 @@ import { modalTypes } from '../../../constants';
 import { getDivision, refreshDivision } from "actions/division/division.action";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
 import { setFlagUnsignedVendors } from "actions/vendor/vendor.action";
+import filterByPermissions from "./filterByPermissions";
 
 interface Props {
   classes: any;
@@ -174,7 +175,7 @@ function BCAdminHeader({
   const divisions = useSelector((state: any) => state.divisions);
   const divisionList = divisions.data as IDivision[];
   const vendors = useSelector((state: any) => state.vendors);
-
+  const auth = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     initialLoad()
@@ -326,6 +327,8 @@ function BCAdminHeader({
     }
   ];
 
+  const filteredNavData = filterByPermissions(auth.user, NAV_DATA);
+
   const handleLocationChange = (params: any) => {
     const selectedDivision = divisionList[params.target.value];
 
@@ -385,7 +388,7 @@ function BCAdminHeader({
 
           <Toolbar className={classes.bcHeaderToolBar}>
             <ul className={classes.bcAdminHeaderNav}>
-              {NAV_DATA.map((item, idx) => {
+              {filteredNavData.map((item, idx) => {
                 return (
                   <li
                     className={classNames({
@@ -422,7 +425,7 @@ function BCAdminHeader({
               open={isMenuOpen}
               onClose={closeMenu}
             >
-              {NAV_DATA.map((item, idx) => {
+              {filteredNavData.map((item, idx) => {
                 return (
                   <MenuItem key={idx} onClick={closeMenu} className={classNames({
                     [classes.bcAdminHeaderNavItem]: true,

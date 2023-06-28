@@ -13,7 +13,7 @@ export const permissionDescriptions: { [key :string]: string } = {
   'editCompanyLogo': 'Edit company logo',
   'invoicing': 'Invoicing',
   'jobs': 'Jobs',
-  'manageCompanyLocationsAndWorkTypes': 'Create and edit company locations and work types',
+  'manageCompanySettings': 'Can edit company settings',
   'manageEmployeeInfoAndPermissions': 'Add and edit employee information and edit employee permissions',
   'manageItems': 'Create and edit items',
   'reporting': 'Reporting',
@@ -27,7 +27,7 @@ const initialRolesAndPermissions: RolesAndPermissions = {
   'admin': {
     'addVendors': false,
     'manageItems': false,
-    'manageCompanyLocationsAndWorkTypes': false,
+    'manageCompanySettings': false,
     'manageEmployeeInfoAndPermissions': false
   },
   'dispatch': {

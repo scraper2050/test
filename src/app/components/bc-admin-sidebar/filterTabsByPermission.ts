@@ -14,7 +14,7 @@ const filterTabsByPermission = (user: any, links: any, getLinkByDivision: Functi
     linksToRemove.push('/main/admin/employees');
   }
 
-  if (!user?.rolesAndPermission?.admin.manageCompanyLocationsAndWorkTypes && !isAdmin) {
+  if (!user?.rolesAndPermission?.admin.manageCompanySettings && !isAdmin) {
     linksToRemove.push('/main/admin/company-profile');
   }
 
@@ -26,12 +26,15 @@ const filterTabsByPermission = (user: any, links: any, getLinkByDivision: Functi
   if (!user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
     linksToRemove.push(getLinkByDivision('/main/customers/schedule/jobs'));
     linksToRemove.push('/main/customers/schedule/job-requests');
-    linksToRemove.push(getLinkByDivision('/main/customers/job-reports'));
   }
 
   if (!user?.rolesAndPermission?.dispatch.serviceTickets && !user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
     linksToRemove.push(getLinkByDivision('/main/customers/calendar'));
     linksToRemove.push(getLinkByDivision('/main/customers/ticket-map-view'));
+  }
+
+  if (!user?.rolesAndPermission?.superAdmin.editBillingInformation && !user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
+    linksToRemove.push('/main/admin/billing');
   }
 
   return links.filter((link: any) => !linksToRemove.includes(link.link));
