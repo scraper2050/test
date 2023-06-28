@@ -93,7 +93,6 @@ function PayrollInvoices({classes}: Props) {
     }).map((item: any) => {
       let technicianCount = 0;
       let technicianIds: string[] = [];
-      console.log(item);
 
       let job = item.invoice?.job || item.job;
       job.tasks.forEach((task: any) => {
