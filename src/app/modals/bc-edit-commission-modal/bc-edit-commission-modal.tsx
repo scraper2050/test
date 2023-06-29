@@ -63,6 +63,7 @@ function BcEditCommissionModal({
   const { costingList } = useSelector(
     ({ InvoiceJobCosting }: any) => InvoiceJobCosting
   );
+  const [disablePast, setDisablePast] = useState(false);
 
   const closeModal = (forceClose?: boolean) => {
     if ((error || warning) && !forceClose) {
@@ -210,7 +211,14 @@ function BcEditCommissionModal({
                   <Select
                     input={<StyledInput />}
                     name={'isFixed'}
-                    onChange={(e: any) => setCommissionType(e.target.value)}
+                    onChange={(e: any) => {
+                      if (commissionType == "fixed" && e.target.value == "%") {
+                        setDisablePast(true);
+                      } else { 
+                        setDisablePast(false);
+                      }
+                      setCommissionType(e.target.value)
+                    }}
                     value={commissionType}
                   >
                     <MenuItem value={'fixed'}>{'Fixed'}</MenuItem>
@@ -323,6 +331,7 @@ function BcEditCommissionModal({
                       variant={'inline'}
                       inputVariant={'outlined'}
                       value={effectiveDate}
+                          disablePast={disablePast}
                       fullWidth
                       InputProps={{
                         className: classes.datePicker,
