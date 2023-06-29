@@ -212,11 +212,12 @@ function BcEditCommissionModal({
                     input={<StyledInput />}
                     name={'isFixed'}
                     onChange={(e: any) => {
-                      if (commissionType == "fixed" && e.target.value == "%") {
+                      if (vendorCommission.commissionType != e.target.value) {
                         setDisablePast(true);
                       } else { 
                         setDisablePast(false);
                       }
+                      
                       setCommissionType(e.target.value)
                     }}
                     value={commissionType}
