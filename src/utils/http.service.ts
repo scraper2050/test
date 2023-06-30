@@ -141,6 +141,52 @@ export const pdfRequest = (url: string, type: Method, data?: any, noHeaders?: bo
     'url': isCustomerAPI
       ? customerApi + url
       : api + url
+    };
+
+    if (type !== 'get') {
+      if (type === 'OPTIONS') {
+        request.params = data;
+      } else {
+        request.data = data;
+      }
+    }
+  
+    if (!noHeaders) {
+      request.headers = {
+        ...request.headers,
+        'Authorization': token
+      };
+    }
+  
+    if (cancelTokenSource) {
+      request.cancelToken = cancelTokenSource.token;
+    }
+  
+    //add current division params
+    if (queryParams) {
+      try {
+        request.params = { ...request.params, ...queryParams };
+      } catch (error) { }
+    }
+    return makeRequest(request);
+  };
+
+/**
+ * Download file from specific uri
+ * @param uri uri where is located the file
+ * @param type type of HTTP method used to download the file
+ * @param data extra data to be sent on the request
+ * @returns Promise<AxiosResponse<any>>
+ */
+export const downloadFile = (uri: string, type: Method, data?: any): Promise<AxiosResponse<any>> => {
+  const token = fetchToken(false);
+  const request: AxiosRequestConfig = {
+    'headers': { 'Authorization': token },
+    'method': type === 'OPTIONS'
+      ? 'get'
+      : type,
+    'url': `${api}${uri}`,
+    responseType: 'blob',
   };
 
   if (type !== 'get') {
@@ -151,22 +197,5 @@ export const pdfRequest = (url: string, type: Method, data?: any, noHeaders?: bo
     }
   }
 
-  if (!noHeaders) {
-    request.headers = {
-      ...request.headers,
-      'Authorization': token
-    };
-  }
-
-  if (cancelTokenSource) {
-    request.cancelToken = cancelTokenSource.token;
-  }
-
-  //add current division params
-  if (queryParams) {
-    try {
-      request.params = { ...request.params, ...queryParams };
-    } catch (error) { }
-  }
   return makeRequest(request);
 };
