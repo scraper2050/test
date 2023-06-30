@@ -1,6 +1,7 @@
 import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
+import BCEditJobCostingModal from './bc-job-modal/bc-edit-job-costing-modal';
 import BCViewJobRequestModal from './bc-job-request-modal/bc-view-job-request-modal';
 import BCCancelJobRequestModal from './bc-job-request-modal/bc-cancel-job-request-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
@@ -82,6 +83,8 @@ import BcDivisionConfirmModal from './bc-division-confirm-modal/bc-division-conf
 import BcDivisionWarningModal from './bc-division-warning-modal/bc-division-warning-modal';
 import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billing-address-warning';
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
+import BcAddTicketDetailsModal
+  from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -215,6 +218,18 @@ function BCModal() {
         setComponent(<BCViewJobModal
           job={data.job}
           isTicket={data.isTicket}
+        />);
+        break;
+      case modalTypes.EDIT_JOB_COSTING_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BCEditJobCostingModal
+          job={data.job}
         />);
         break;
       case modalTypes.VIEW_JOB_REQUEST_MODAL:
@@ -533,7 +548,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'sm'
+          'maxWidth': 'md'
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
@@ -544,7 +559,7 @@ function BCModal() {
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
           'fullWidth': true,
-          'maxWidth': 'sm'
+          'maxWidth': 'md'
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
@@ -892,6 +907,16 @@ function BCModal() {
             user={data.user}
           />);
           break;
+      case modalTypes.TICKET_DETAILS_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'lg'
+        });
+        setComponent(<BcAddTicketDetailsModal props={data}/>);
+        break;
       default:
         setComponent(null);
     }
