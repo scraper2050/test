@@ -29,6 +29,7 @@ import { CSButton } from '../../../../../helpers/custom';
 import debounce from 'lodash.debounce';
 import { warning } from 'actions/snackbar/snackbar.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { ability } from 'app/config/Can';
 
 function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
@@ -49,8 +50,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     'currentPageSize': jobState.currentPageSize,
     'keyword': jobState.keyword
   }));
-  const auth = useSelector((state: any) => state.auth);
-  const canManageTickets = auth.user?.rolesAndPermission?.dispatch.serviceTickets || auth.user?.permissions?.role === 3;
+  const canManageTickets = ability.can('manage', 'Tickets');
 
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('-1');

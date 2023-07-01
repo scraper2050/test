@@ -30,6 +30,7 @@ import BCDateRangePicker, { Range }
   from '../../../../components/bc-date-range-picker/bc-date-range-picker';
 import { CSButton } from '../../../../../helpers/custom';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { ability } from 'app/config/Can';
 
 function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
@@ -57,9 +58,8 @@ function ServiceTicket({ classes, hidden }: any) {
     // If (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     return cond;
   });
-  const auth = useSelector((state: any) => state.auth);
-  const canManageTickets = auth.user?.rolesAndPermission?.dispatch.serviceTickets || auth.user?.permissions?.role === 3;
-  const canManageJobs = auth.user?.rolesAndPermission?.dispatch.jobs || auth.user?.permissions?.role === 3;
+  const canManageTickets = ability.can('manage', 'Tickets');
+  const canManageJobs = ability.can('manage', 'Jobs');
 
   const openCreateTicketModal = () => {
     // To ensure that all tickets are detected by the division, and check if the user has activated the division feature.

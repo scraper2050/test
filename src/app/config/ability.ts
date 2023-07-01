@@ -45,7 +45,6 @@ export default function defineRulesFor(user: User) {
   if (rolesAndPermissions?.admin?.manageEmployeeInfoAndPermissions || isAdmin) {
     can('manage', 'Employee');
   }
-  console.log(rolesAndPermissions?.dispatch.jobs, isAdmin);
   // Dispatch
   if (rolesAndPermissions?.dispatch.jobs || isAdmin) {
     can('manage', 'Jobs');
