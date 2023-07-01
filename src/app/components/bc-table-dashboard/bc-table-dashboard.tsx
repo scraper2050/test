@@ -4,6 +4,7 @@ import { Button, Grid, withStyles } from '@material-ui/core';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import { CSButton } from '../../../helpers/custom';
 import AddCircleSharpIcon from '@material-ui/icons/AddCircleSharp';
+import { Can } from 'app/config/Can';
 
 interface Props {
   classes: any;
@@ -14,7 +15,6 @@ interface Props {
   isLoading: boolean;
   tableData: any;
   onRowClick?: any;
-  showButton: boolean;
 }
 function BCTableDashboard(props: Props) {
   const {
@@ -25,8 +25,7 @@ function BCTableDashboard(props: Props) {
     columns,
     isLoading,
     tableData,
-    onRowClick,
-    showButton
+    onRowClick
   } = props;
 
   return (
@@ -40,13 +39,13 @@ function BCTableDashboard(props: Props) {
           <div>
             <h3 className={classes.headerText}>{text}</h3>
           </div>
-          {showButton &&
-          <div>
-            <CSButton onClick={click}>
-              <AddCircleSharpIcon style={{ 'color': '#fff' }}/> {textButton}
-            </CSButton>
-          </div>
-          }
+          <Can I={'add'} a={'Vendor'}>
+            <div>
+              <CSButton onClick={click}>
+                <AddCircleSharpIcon style={{ 'color': '#fff' }}/> {textButton}
+              </CSButton>
+            </div>
+          </Can>
         </div>
       </Grid>
 

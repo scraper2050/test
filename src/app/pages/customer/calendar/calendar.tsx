@@ -17,6 +17,7 @@ import JobPage from './job-page';
 import TicketPage from './ticket-page';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { warning } from 'actions/snackbar/snackbar.action';
+import { Can, ability } from 'app/config/Can';
 
 function ScheduleJobsPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -27,9 +28,6 @@ function ScheduleJobsPage({ classes }: any) {
   const locationState = location.state;
   const [curTab, setCurTab] = useState(locationState?.curTab ? locationState.curTab : 0);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
-  const auth = useSelector((state: any) => state.auth);
-  const canManageTickets = auth.user?.rolesAndPermission?.dispatch.serviceTickets || auth.user?.permissions?.role === 3;
-  const canManageJobs = auth.user?.rolesAndPermission?.dispatch.jobs || auth.user?.permissions?.role === 3;
 
   useEffect(() => {
     if (localStorage.getItem('prevPage') === 'ticket-map-view') {
@@ -115,14 +113,14 @@ function ScheduleJobsPage({ classes }: any) {
 
   const tabs = [];
 
-  if (canManageJobs) {
+  if (ability.can('manage', 'Jobs')) {
     tabs.push({
       'label': 'Jobs',
       'value': 0
     });
   }
 
-  if (canManageTickets) {
+  if (ability.can('manage', 'Tickets')) {
     tabs.push({
       'label': 'Service Tickets',
       'value': 1
@@ -138,29 +136,31 @@ function ScheduleJobsPage({ classes }: any) {
         tabsData={tabs}
       />
       <div className={classes.addButtonArea}>
-        {canManageTickets && <CSButton
-          aria-label={'new-ticket'}
-          variant={'contained'}
-          color={'primary'}
-          size={'small'}
-          onClick={() => openCreateTicketModal()}>
-          {'New Ticket'}
-        </CSButton>}
+        <Can I={'manage'} a={'Tickets'}>
+          <CSButton
+            aria-label={'new-ticket'}
+            variant={'contained'}
+            color={'primary'}
+            size={'small'}
+            onClick={() => openCreateTicketModal()}>
+            {'New Ticket'}
+          </CSButton>
+        </Can>
       </div>
       <SwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={curTab}
         disabled>
-        {canManageJobs
-          ? <div className={classes.dataContainer} id={'0'}>
+        <Can I={'manage'} a={'Jobs'}>
+          <div className={classes.dataContainer} id={'0'}>
             <JobPage />
           </div>
-          : null}
-        {canManageTickets
-          ? <div className={classes.dataContainer} id={'1'}>
+        </Can>
+        <Can I={'manage'} a={'Tickets'}>
+          <div className={classes.dataContainer} id={'1'}>
             <TicketPage />
           </div>
-          : null}
+        </Can>
       </SwipeableViews>
     </div>
   );

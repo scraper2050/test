@@ -5,6 +5,21 @@ export const types = {
   'SET_EMPLOYEES': 'setEmployee'
 };
 
+export const enum Role {
+  OFFICE_ADMIN,
+  TECHNICIAN,
+  MANAGER,
+  COMPANY_ADMIN,
+  ADMIN_EMPLOYEE,
+  GLOBAL_ADMIN,
+  CUSTOMER,
+  CUSTOMER_CONTACT,
+  CONTRACTOR,
+  SUPPLIER_ADMIN,
+  ACCOUNT_MANAGER,
+  ACCOUNTS_PAYABLE
+}
+
 export interface updateEmployeeLocPermParam {
   employeeId: string;
   canAccessAllLocations: boolean;
@@ -39,7 +54,7 @@ export interface User {
     phone?: string
   },
   permissions?: {
-    role?: 0
+    role?: Role
   },
   info?: {
     companyName?: string,
@@ -48,6 +63,7 @@ export interface User {
   },
   company?: string
   allLocation?: boolean,
+  rolesAndPermissions?: RolesAndPermissions
 }
 
 export interface UserDetails {

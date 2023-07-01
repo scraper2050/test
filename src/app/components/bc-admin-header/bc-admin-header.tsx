@@ -33,7 +33,8 @@ import { modalTypes } from '../../../constants';
 import { getDivision, refreshDivision } from "actions/division/division.action";
 import { openModalAction, setModalDataAction } from "actions/bc-modal/bc-modal.action";
 import { setFlagUnsignedVendors } from "actions/vendor/vendor.action";
-import filterByPermissions from "./filterByPermissions";
+import filterByPermissions from './filterByPermissions';
+import { Can } from 'app/config/Can';
 
 interface Props {
   classes: any;
@@ -287,14 +288,17 @@ function BCAdminHeader({
 
   const NAV_DATA = [
     {
+      'key': 'dashboard',
       'label': 'Dashboard',
       'link': '/main/dashboard'
     },
     {
+      'key': 'customers',
       'label': 'Customers',
       'link': '/main/customers'
     },
     {
+      'key': 'invoicing',
       'label': 'Invoicing',
       'link': '/main/invoicing'
     },
@@ -317,10 +321,12 @@ function BCAdminHeader({
      * },
      */
     {
+      'key': 'reports',
       'label': 'Reports',
       'link': '/main/reports'
     },
     {
+      'key': 'admin',
       'label': ' Admin',
       'link': '/main/admin',
       'flag':  currentDivision.isDivisionFeatureActivated && vendors.unsignedVendorsFlag 

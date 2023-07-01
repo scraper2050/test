@@ -1,43 +1,36 @@
-const filterTabsByPermission = (user: any, links: any, getLinkByDivision: Function) => {
+import { ability } from 'app/config/Can';
+
+const filterTabsByPermission = (user: any, links: any) => {
   const linksToRemove: string[] = [];
-  console.log(user);
 
   const isAdmin = user?.permissions?.role === 3;
 
-  /*
-   * If (!user?.rolesAndPermission?.admin.manageItems && !isAdmin) {
-   *   linksToRemove.push('/main/admin/services-and-products');
-   * }
-   */
-
-  if (!user?.rolesAndPermission?.admin.manageEmployeeInfoAndPermissions && !isAdmin) {
-    linksToRemove.push('/main/admin/employees');
+  if (!ability.can('manage', 'Employee') && !isAdmin) {
+    linksToRemove.push('employees');
   }
 
-  if (!user?.rolesAndPermission?.admin.manageCompanySettings && !isAdmin) {
-    linksToRemove.push('/main/admin/company-profile');
+  if (!ability.can('manage', 'Company') && !isAdmin) {
+    linksToRemove.push('company');
   }
 
-  if (!user?.rolesAndPermission?.dispatch.serviceTickets && !isAdmin) {
-    const path = '/main/customers/schedule/tickets';
-    linksToRemove.push(getLinkByDivision(path));
+  if (!ability.can('manage', 'Tickets') && !isAdmin) {
+    linksToRemove.push('tickets');
   }
 
-  if (!user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
-    linksToRemove.push(getLinkByDivision('/main/customers/schedule/jobs'));
-    linksToRemove.push('/main/customers/schedule/job-requests');
+  if (!ability.can('manage', 'Jobs') && !isAdmin) {
+    linksToRemove.push('jobs');
   }
 
-  if (!user?.rolesAndPermission?.dispatch.serviceTickets && !user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
-    linksToRemove.push(getLinkByDivision('/main/customers/calendar'));
-    linksToRemove.push(getLinkByDivision('/main/customers/ticket-map-view'));
+  if (!ability.can('manage', 'Tickets') && !ability.can('manage', 'Jobs') && !isAdmin) {
+    linksToRemove.push('calendar');
+    linksToRemove.push('map');
   }
 
   if (!user?.rolesAndPermission?.superAdmin.editBillingInformation && !user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
-    linksToRemove.push('/main/admin/billing');
+    linksToRemove.push('billing');
   }
 
-  return links.filter((link: any) => !linksToRemove.includes(link.link));
+  return links.filter((link: any) => !linksToRemove.includes(link.key));
 };
 
 export default filterTabsByPermission;

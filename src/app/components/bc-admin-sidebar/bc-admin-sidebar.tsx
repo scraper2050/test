@@ -215,29 +215,34 @@ function BCAdminSidebar({
       'link': '/main/customers/schedule'
     },
     {
+      'key': 'jobs',
       'label': 'Jobs',
       'icon': <WorkIcon />,
       'link': getLinkByDivision('/main/customers/schedule/jobs'),
       'group': 'Schedule'
     },
     {
+      'key': 'tickets',
       'label': 'Tickets',
       'icon': <TicketIcon />,
       'link': getLinkByDivision('/main/customers/schedule/tickets'),
       'group': 'Schedule'
     },
     {
+      'key': 'jobs-requests',
       'label': 'Job Requests',
       'icon': <Badge badgeContent={numberOfJobRequest} color={'secondary'}><RequestIcon /></Badge>,
       'link': '/main/customers/schedule/job-requests',
       'group': 'Schedule'
     },
     {
+      'key': 'calendar',
       'label': 'Calendar',
       'icon': <CalendarIcon />,
       'link': getLinkByDivision('/main/customers/calendar')
     },
     {
+      'key': 'map',
       'label': 'Map View',
       'icon': <MapIcon />,
       'link': getLinkByDivision('/main/customers/ticket-map-view')
@@ -284,6 +289,7 @@ function BCAdminSidebar({
       'link': '/main/invoicing/estimates'
     },
     {
+      'key': 'billing',
       'label': 'Billing',
       'icon': <MonetizationOnIcon />,
       'link': '/main/admin/billing'
@@ -294,11 +300,13 @@ function BCAdminSidebar({
       'link': '/main/admin/brands'
     },
     {
+      'key': 'company',
       'label': 'Company Profile',
       'icon': <BusinessIcon />,
       'link': '/main/admin/company-profile'
     },
     {
+      'key': 'employees',
       'label': 'Employees',
       'icon': <SubtitlesIcon />,
       'link': '/main/admin/employees'
@@ -437,7 +445,7 @@ function BCAdminSidebar({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const filteredLinkData = filterTabsByPermission(auth.user, LINK_DATA, getLinkByDivision);
+  const filteredLinkData = filterTabsByPermission(auth.user, LINK_DATA);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
   const subGroupBar = (item : any) => {

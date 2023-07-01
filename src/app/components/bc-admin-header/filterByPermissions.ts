@@ -1,14 +1,21 @@
-export default function (user: any, links: any) {
+import { User } from 'actions/employee/employee.types';
+import { ability } from 'app/config/Can';
+
+export default function (user: User, links: any) {
   const linksToRemove: string[] = [];
 
   const isAdmin = user?.permissions?.role === 3;
 
-  if (!user?.rolesAndPermission?.accounting?.invoicing && !isAdmin) {
-    linksToRemove.push('/main/invoicing');
-  }
-  if (!user?.rolesAndPermission?.accounting?.reporting && !isAdmin) {
-    linksToRemove.push('/main/reports');
+  if (!ability.can('manage', 'Invoicing') && !ability.can('manage', 'CustomerPayments') && !isAdmin) {
+    linksToRemove.push('invoicing');
   }
 
-  return links.filter((link: any) => !linksToRemove.includes(link.link));
+  if (!ability.can('manage', 'VendorPayments') && !isAdmin) {
+    linksToRemove.push('payroll');
+  }
+  if (!ability.can('manage', 'Reporting') && !isAdmin) {
+    linksToRemove.push('reports');
+  }
+
+  return links.filter((link: any) => !linksToRemove.includes(link.key));
 }

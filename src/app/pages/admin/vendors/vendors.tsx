@@ -18,7 +18,7 @@ import {remindVendorApi} from "../../../../api/vendor.api";
 import {error, info} from "../../../../actions/snackbar/snackbar.action";
 import BCItemsFilter from "../../../components/bc-items-filter/bc-items-filter";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
-import { canAddVendor } from 'utils/permissionsCheck';
+import { Can } from 'app/config/Can';
 
 interface StatusTypes {
   status: number;
@@ -48,7 +48,6 @@ const status = [
 function AdminVendorsPage({ classes }: any) {
   const dispatch = useDispatch();
   const vendors = useSelector((state: any) => state.vendors);
-  const auth = useSelector((state: any) => state.auth);
   const [curTab, setCurTab] = useState(0);
   const [tableData, setTableData] = useState([]);
   const [vendorStatus, setVendorStatus] = useState(true);
@@ -58,7 +57,6 @@ function AdminVendorsPage({ classes }: any) {
 
   const activeVendors = useMemo(() => vendors.data.filter((vendor:any) => [0, 1, 5].includes(vendor.status)), [vendors]);
   const nonActiveVendors = useMemo(() => vendors.data.filter((vendor:any) => ![0, 1, 5].includes(vendor.status)), [vendors]);
-  const addVendorEnabled = canAddVendor(auth.user);
 
   function RenderStatus({ status }: StatusTypes) {
     const statusValues = ['Active', 'Active', 'Cancelled', 'Rejected', 'Inactive'];
@@ -293,14 +291,16 @@ function AdminVendorsPage({ classes }: any) {
           />
           <div className={classes.addButtonArea}>
             {
-              addVendorEnabled && curTab === 0
-                ? <CSButton
-                  aria-label={'new-job'}
-                  color={'primary'}
-                  onClick={() => openVendorModal()}
-                  variant={'contained'}>
-                  {'Invite Vendor'}
-                </CSButton>
+              curTab === 0
+                ? <Can I={'add'} a={'Vendor'}>
+                  <CSButton
+                    aria-label={'new-job'}
+                    color={'primary'}
+                    onClick={() => openVendorModal()}
+                    variant={'contained'}>
+                    {'Invite Vendor'}
+                  </CSButton>
+                </Can>
                 : null
             }
           </div>

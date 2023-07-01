@@ -18,6 +18,7 @@ import { error as SnackBarError, success } from 'actions/snackbar/snackbar.actio
 import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-status';
 import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
+import { Can, ability } from 'app/config/Can';
 
 
 interface Props {
@@ -47,8 +48,6 @@ function AdminServiceAndProductsPage({ classes }:Props) {
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const auth = useSelector((state: any) => state.auth);
-  const canManageCompanySettings = auth?.user?.rolesAndPermissions?.admin?.manageCompanySettings;
 
   const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
   const activeTiers = tiers.filter(({ tier }:any) => tier.isActive);
@@ -155,31 +154,30 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         </CSButton>
       </>
       : <>
-        {canManageCompanySettings
-          ? <>
-            <CSButton
-              disabled={updating}
-              disableElevation
-              onClick={editTiers}
-              size={'small'}
-              style={{
-                'color': 'white',
-                'backgroundColor': PRIMARY_ORANGE }}
-              variant={'contained'}>
-              {'Edit Tiers'}
-            </CSButton>
-            <CSButton
-              color={'primary'}
-              disabled={updating}
-              disableElevation
-              onClick={addTier}
-              size={'small'}
-              style={{
-                'color': 'white' }}
-              variant={'contained'}>
-              {'Add Tier'}
-            </CSButton>
-            {/* <CSButton
+        <Can I={'manage'} a={'Company'}>
+          <CSButton
+            disabled={updating}
+            disableElevation
+            onClick={editTiers}
+            size={'small'}
+            style={{
+              'color': 'white',
+              'backgroundColor': PRIMARY_ORANGE }}
+            variant={'contained'}>
+            {'Edit Tiers'}
+          </CSButton>
+          <CSButton
+            color={'primary'}
+            disabled={updating}
+            disableElevation
+            onClick={addTier}
+            size={'small'}
+            style={{
+              'color': 'white' }}
+            variant={'contained'}>
+            {'Add Tier'}
+          </CSButton>
+          {/* <CSButton
               disabled={updating}
               disableElevation
               onClick={() => setEditMode(true)}
@@ -189,20 +187,18 @@ function AdminServiceAndProductsPage({ classes }:Props) {
               variant={'contained'}>
               {'Edit Prices'}
             </CSButton> */}
-            <CSButton
-              color={'primary'}
-              disabled={updating}
-              disableElevation
-              onClick={renderAdd}
-              size={'small'}
-              style={{
-                'color': 'white' }}
-              variant={'contained'}>
-              {'New Item'}
-            </CSButton>
-          </>
-          : ''
-        }
+          <CSButton
+            color={'primary'}
+            disabled={updating}
+            disableElevation
+            onClick={renderAdd}
+            size={'small'}
+            style={{
+              'color': 'white' }}
+            variant={'contained'}>
+            {'New Item'}
+          </CSButton>
+        </Can>
       </>;
   }
 
@@ -392,7 +388,9 @@ function AdminServiceAndProductsPage({ classes }:Props) {
       let constructedColumns:any = [
         ...columns,
         ...chargeColumn,
-        ...canManageCompanySettings ? actions : [],
+        ...ability.can('manage', 'Company')
+          ? actions
+          : [],
         ...dbSync
       ];
 
@@ -401,7 +399,9 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         constructedColumns = [
           ...columns,
           ...tierColumns,
-          ...canManageCompanySettings ? actions : [],
+          ...ability.can('manage', 'Company')
+            ? actions
+            : [],
           ...dbSync
         ];
       }
