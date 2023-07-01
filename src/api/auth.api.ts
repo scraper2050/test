@@ -13,8 +13,8 @@ const login = async (param: Auth) => {
     const response: any = await request('/login', 'POST', param, false);
     loginData = response.data;
     if (loginData?.user) {
-      const rolesAndPermission: any = await axios.get(`http://localhost:4000/dev/api/permissions/${loginData.user._id}`);
-      loginData.user.rolesAndPermission = rolesAndPermission.data;
+      const rolesAndPermissions: any = await axios.get(`http://localhost:4000/dev/api/permissions/${loginData.user._id}`);
+      loginData.user.rolesAndPermissions = rolesAndPermissions.data;
     }
 
     /*
