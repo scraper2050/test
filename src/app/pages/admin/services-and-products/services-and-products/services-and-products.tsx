@@ -8,31 +8,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { PRIMARY_GREEN, PRIMARY_ORANGE, PRIMARY_RED, modalTypes } from '../../../../../constants';
+import {
+  openModalAction,
+  setModalDataAction,
+} from 'actions/bc-modal/bc-modal.action';
+import { PRIMARY_RED, modalTypes } from '../../../../../constants';
 import { Item } from 'actions/invoicing/items/items.types';
 import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
-import { addTierApi, updateItems } from 'api/items.api';
-import { error as SnackBarError, success } from 'actions/snackbar/snackbar.action';
+import { updateItems } from 'api/items.api';
+import {
+  error as SnackBarError,
+  success,
+} from 'actions/snackbar/snackbar.action';
 import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-status';
 import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 import { Can, ability } from 'app/config/Can';
 
-
 interface Props {
   classes: any;
 }
 
-const normalizeTiers = (tiers:any) => {
-  const obj:any = {};
+const normalizeTiers = (tiers: any) => {
+  const obj: any = {};
 
-  tiers.forEach((tier:any) => {
+  tiers.forEach((tier: any) => {
     obj[tier.tier._id] = tier;
 
-    if (tier.charge % 1 !== 0 &&
-    tier.charge !== undefined) {
+    if (tier.charge % 1 !== 0 && tier.charge !== undefined) {
       obj[tier.tier._id].charge = Number(tier.charge).toFixed(2);
     }
   });
@@ -40,22 +44,46 @@ const normalizeTiers = (tiers:any) => {
   return obj;
 };
 
+const normalizeJobCosting = (tiers: any, activeJobCostsIDs: string[]) => {
+  const obj: any = {};
 
-function AdminServiceAndProductsPage({ classes }:Props) {
+  tiers.forEach((tier: any) => {
+    if (!activeJobCostsIDs?.includes(tier.tier._id)) return
+    obj[tier.tier._id] = tier;
+
+    if (tier.charge % 1 !== 0 && tier.charge !== undefined) {
+      obj[tier.tier._id].charge = Number(tier.charge).toFixed(2);
+    }
+  });
+
+  return obj;
+};
+
+function AdminServiceAndProductsPage({ classes }: Props) {
   const dispatch = useDispatch();
-  const { loading, error, items } = useSelector(({ invoiceItems }:RootState) => invoiceItems);
-  const [localItems, setLocalItems] = useState(stringSortCaseInsensitive(items, 'name'));
+  const { loading, error, items } = useSelector(
+    ({ invoiceItems }: RootState) => invoiceItems
+  );
+  const [localItems, setLocalItems] = useState(
+    stringSortCaseInsensitive(items, 'name')
+  );
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
 
-  const { 'loading': tiersLoading, 'error': tiersError, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
-  const activeTiers = tiers.filter(({ tier }:any) => tier.isActive);
+  const { loading: tiersLoading, error: tiersError, tiers } = useSelector(
+    ({ invoiceItemsTiers }: any) => invoiceItemsTiers
+  );
+  const activeTiers = tiers.filter(({ tier }: any) => tier.isActive);
+  const costingList = useSelector(
+    ({ InvoiceJobCosting }: any) => InvoiceJobCosting.costingList
+  );
+  const activeJobCosts = costingList.filter(({ tier }: any) => tier.isActive);
 
   const handleTierChange = (id: number, value: string, tierId: string) => {
-    const newItems:any = [...localItems];
-    const index = newItems.findIndex((item:any) => item._id === id);
-    const currentTier:any = newItems[index].tiers[tierId];
+    const newItems: any = [...localItems];
+    const index = newItems.findIndex((item: any) => item._id === id);
+    const currentTier: any = newItems[index].tiers[tierId];
     currentTier.charge = value;
     newItems[index].tiers[tierId] = currentTier;
     setLocalItems(newItems);
@@ -63,9 +91,9 @@ function AdminServiceAndProductsPage({ classes }:Props) {
 
   const handleUpdateAllTiers = async () => {
     setUpdating(true);
-    let hasError:any = '';
-    const payload = localItems.map((item:any) => {
-      const tiers = Object.keys(item.tiers).map((tierId:any) => {
+    let hasError: any = '';
+    const payload = localItems.map((item: any) => {
+      const tiers = Object.keys(item.tiers).map((tierId: any) => {
         if (item.tiers[tierId].tier.isActive && !item.tiers[tierId].charge) {
           if (!hasError) {
             hasError = tierId + item.tiers[tierId].tier.name;
@@ -73,16 +101,17 @@ function AdminServiceAndProductsPage({ classes }:Props) {
         }
         return {
           tierId,
-          'charge': item.tiers[tierId].tier.isActive
+          charge: item.tiers[tierId].tier.isActive
             ? item.tiers[tierId].charge
-            : undefined
+            : undefined,
         };
       });
 
       const activeTiers = tiers.filter(({ charge }) => charge);
       return {
-        'itemId': item._id,
-        'tiers': activeTiers
+        itemId: item._id,
+        tiers: activeTiers,
+        costing: activeJobCosts,
       };
     });
 
@@ -92,7 +121,7 @@ function AdminServiceAndProductsPage({ classes }:Props) {
     }
 
     if (payload && !hasError) {
-      const response = await updateItems(payload).catch(err => {
+      const response = await updateItems(payload).catch((err) => {
         dispatch(SnackBarError(err.message));
         setEditMode(false);
       });
@@ -104,42 +133,16 @@ function AdminServiceAndProductsPage({ classes }:Props) {
     }
   };
 
-  const addTier = async () => {
-    setUpdating(true);
-    const response = await addTierApi()
-      .catch(err => {
-        dispatch(SnackBarError(err.message));
-        setUpdating(false);
-      });
-    if (response) {
-      dispatch(success(response.message));
-      setUpdating(false);
-      dispatch(loadInvoiceItems.fetch());
-    }
-  };
-
-  const editTiers = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Update Tiers'
-      },
-      'type': modalTypes.EDIT_TIERS_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
-
-
   function Toolbar() {
-    return editMode
-      ? <>
+    return editMode ? (
+      <>
         <CSButton
           disabled={updating}
           disableElevation
           onClick={() => setEditMode(false)}
           size={'small'}
-          variant={'contained'}>
+          variant={'contained'}
+        >
           {'Cancel'}
         </CSButton>
         <CSButton
@@ -147,46 +150,25 @@ function AdminServiceAndProductsPage({ classes }:Props) {
           disableElevation
           onClick={handleUpdateAllTiers}
           size={'small'}
-          style={{ 'backgroundColor': PRIMARY_RED,
-            'color': 'white' }}
-          variant={'contained'}>
+          style={{ backgroundColor: PRIMARY_RED, color: 'white' }}
+          variant={'contained'}
+        >
           {'Submit'}
         </CSButton>
       </>
-      : <>
+    ) : (
+      <>
         <Can I={'manage'} a={'Company'}>
-          <CSButton
+          {/* <CSButton
             disabled={updating}
             disableElevation
-            onClick={editTiers}
+            onClick={() => setEditMode(true)}
             size={'small'}
-            style={{
-              'color': 'white',
-              'backgroundColor': PRIMARY_ORANGE }}
-            variant={'contained'}>
-            {'Edit Tiers'}
-          </CSButton>
-          <CSButton
-            color={'primary'}
-            disabled={updating}
-            disableElevation
-            onClick={addTier}
-            size={'small'}
-            style={{
+            style={{ 'backgroundColor': PRIMARY_GREEN,
               'color': 'white' }}
             variant={'contained'}>
-            {'Add Tier'}
-          </CSButton>
-          {/* <CSButton
-              disabled={updating}
-              disableElevation
-              onClick={() => setEditMode(true)}
-              size={'small'}
-              style={{ 'backgroundColor': PRIMARY_GREEN,
-                'color': 'white' }}
-              variant={'contained'}>
-              {'Edit Prices'}
-            </CSButton> */}
+            {'Edit Prices'}
+          </CSButton> */}
           <CSButton
             color={'primary'}
             disabled={updating}
@@ -194,61 +176,80 @@ function AdminServiceAndProductsPage({ classes }:Props) {
             onClick={renderAdd}
             size={'small'}
             style={{
-              'color': 'white' }}
-            variant={'contained'}>
+              color: 'white',
+            }}
+            variant={'contained'}
+          >
             {'New Item'}
           </CSButton>
         </Can>
-      </>;
+      </>
+    );
   }
-
 
   useEffect(() => {
     if (items.length > 0) {
-      const newItems = items.map((item:any) => ({
+      const activeJobCostsIDs = activeJobCosts.map((item: any) => item.tier._id)
+      const newItems = items.map((item: any) => {
+        return {
         ...item,
-        'tiers': normalizeTiers(item.tiers)
-      }));
+        tiers: normalizeTiers(item.tiers),
+        costing: normalizeJobCosting(item.costing, activeJobCostsIDs),
+      }
+      });
       setLocalItems([...newItems]);
     }
-  }, [items]);
+  }, [items, activeJobCosts?.length]);
 
   const renderEdit = (item: Item) => {
-    dispatch(setModalDataAction({
-      'data': {
-        item,
-        'modalTitle': 'Edit Item'
-      },
-      'type': modalTypes.EDIT_ITEM_MODAL
-    }));
+    dispatch(
+      setModalDataAction({
+        data: {
+          item,
+          modalTitle: 'Edit Item',
+        },
+        type: modalTypes.EDIT_ITEM_MODAL,
+      })
+    );
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
   };
 
   const renderAdd = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'item': {
-          'name': '',
-          'description': '',
-          'isFixed': true,
-          'isJobType': true,
-          'tax': 0,
-          'tiers': activeTiers.reduce((total:any, currentValue:any) => ({
-            ...total,
-            [currentValue.tier._id]: currentValue
-          }), {})
+    dispatch(
+      setModalDataAction({
+        data: {
+          item: {
+            name: '',
+            description: '',
+            isFixed: true,
+            isJobType: true,
+            tax: 0,
+            tiers: activeTiers.reduce(
+              (total: any, currentValue: any) => ({
+                ...total,
+                [currentValue.tier._id]: currentValue,
+              }),
+              {}
+            ),
+            costing: activeJobCosts.reduce(
+              (total: any, currentValue: any) => ({
+                ...total,
+                [currentValue.tier._id]: currentValue,
+              }),
+              {}
+            ),
+          },
+          modalTitle: 'New Item',
         },
-        'modalTitle': 'New Item'
-      },
-      'type': modalTypes.ADD_ITEM_MODAL
-    }));
+        type: modalTypes.ADD_ITEM_MODAL,
+      })
+    );
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
   };
-
 
   useEffect(() => {
     if (tiers.length || items) {
@@ -263,88 +264,82 @@ function AdminServiceAndProductsPage({ classes }:Props) {
                   onClick={() => renderEdit(row.original)}
                   size={'small'}
                   style={{
-                    'marginRight': 10,
-                    'minWidth': 35,
-                    'padding': '5px 10px'
-                  }}>
+                    marginRight: 10,
+                    minWidth: 35,
+                    padding: '5px 10px',
+                  }}
+                >
                   <EditIcon />
                 </CSButtonSmall>
               </div>
             );
           },
-          'id': 'action',
-          'sortable': false,
-          'width': 60
-        }
+          id: 'action',
+          sortable: false,
+          width: 60,
+        },
       ];
       const dbSync = [
         {
           Cell({ row }: any) {
-            return (
-              <BCQbSyncStatus data={row.original} />
-            );
+            return <BCQbSyncStatus data={row.original} />;
           },
-          'id': 'qbSync',
-          'sortable': false,
-          'width': 30
-        }
+          id: 'qbSync',
+          sortable: false,
+          width: 30,
+        },
       ];
-
 
       const columns: any = [
         {
-          'Header': 'Name',
-          'accessor': 'name',
-          'sortable': true,
-          'width': 60
+          Header: 'Name',
+          accessor: 'name',
+          sortable: true,
+          width: 60,
         },
         {
           Cell({ row }: any) {
             const { description } = row.original;
             return (
-              <Tooltip
-                arrow
-                title={description}>
-                <div className={'flex items-center'}>
-                  {description?.length > 30 ? `${description?.substr(0, 30)}...` : description}
+              <Tooltip arrow title={description}>
+                <div className="flex items-center">
+                  {description?.length > 30
+                    ? `${description?.substr(0, 30)}...`
+                    : description}
                 </div>
               </Tooltip>
             );
           },
-          'Header': 'Description',
-          'accessor': 'description',
-          'sortable': false,
-          'width': 100
+          Header: 'Description',
+          accessor: 'description',
+          sortable: false,
+          width: 100,
         },
         {
           Cell({ row }: any) {
             return (
               <div className={'flex items-center'}>
-                {row.original.isFixed
-                  ? 'Fixed'
-                  : 'Hourly'}
+                {row.original.isFixed ? 'Fixed' : 'Hourly'}
               </div>
             );
           },
-          'Header': 'Charge Type',
-          'accessor': 'isFixed',
-          'sortable': true
+          Header: 'Charge Type',
+          accessor: 'isFixed',
+          sortable: true,
         },
 
         {
           Cell({ row }: any) {
             return (
               <div className={'flex items-center'}>
-                {row.original.tax
-                  ? 'Yes'
-                  : 'No'}
+                {row.original.tax ? 'Yes' : 'No'}
               </div>
             );
           },
-          'Header': 'Taxable',
-          'accessor': 'tax',
-          'sortable': true
-        }
+          Header: 'Taxable',
+          accessor: 'tax',
+          sortable: true,
+        },
       ];
 
       const chargeColumn = [
@@ -357,35 +352,43 @@ function AdminServiceAndProductsPage({ classes }:Props) {
               </p>
             );
           },
-          'Header': 'Charge',
-          'accessor': 'charges',
-          'sortable': true
-        }
+          Header: 'Charge',
+          accessor: 'charges',
+          sortable: true,
+        },
       ];
-      const tierColumns = activeTiers.map(({ tier }:any) => {
-        return {
-          Cell({ row }: any) {
-            const currentTier = row.original.tiers[tier._id];
-            return (
-              <>
-                {!editMode
-                  ? currentTier?.charge
-                  : <BCDebouncedInput
-                    error={!currentTier?.charge}
-                    id={tier._id + tier.name}
-                    setValue={(val:string) => handleTierChange(row.original._id, val, currentTier?.tier._id)}
-                    value={currentTier?.charge}
-                  />}
+      const tierColumns =
+        activeTiers.map(({ tier }: any) => {
+          return {
+            Cell({ row }: any) {
+              const currentTier = row.original.tiers[tier._id];
+              return (
+                <>
+                  {!editMode ? (
+                    currentTier?.charge
+                  ) : (
+                    <BCDebouncedInput
+                      error={!currentTier?.charge}
+                      id={tier._id + tier.name}
+                      setValue={(val: string) =>
+                        handleTierChange(
+                          row.original._id,
+                          val,
+                          currentTier?.tier._id
+                        )
+                      }
+                      value={currentTier?.charge}
+                    />
+                  )}
+                </>
+              );
+            },
+            Header: `Tier ${tier.name} Price`,
+            accessor: tier.name,
+          };
+        }) || [];
 
-              </>
-            );
-          },
-          'Header': `Tier ${tier.name} Price`,
-          'accessor': tier.name
-        };
-      }) || [];
-
-      let constructedColumns:any = [
+      let constructedColumns: any = [
         ...columns,
         ...chargeColumn,
         ...ability.can('manage', 'Company')
@@ -393,7 +396,6 @@ function AdminServiceAndProductsPage({ classes }:Props) {
           : [],
         ...dbSync
       ];
-
 
       if (tiers.length > 0) {
         constructedColumns = [
@@ -408,7 +410,6 @@ function AdminServiceAndProductsPage({ classes }:Props) {
       setColumns(constructedColumns);
     }
   }, [tiers, editMode]);
-
 
   useEffect(() => {
     dispatch(loadInvoiceItems.fetch());
@@ -449,5 +450,6 @@ const PageContainer = styled.div`
   width: 100%;
 `;
 
-
-export default withStyles(styles, { 'withTheme': true })(AdminServiceAndProductsPage);
+export default withStyles(styles, { withTheme: true })(
+  AdminServiceAndProductsPage
+);
