@@ -1,9 +1,15 @@
+import { User } from 'actions/employee/employee.types';
 import { ability } from 'app/config/Can';
 
-const filterTabsByPermission = (user: any, links: any) => {
+const filterSidebarLinksByPermission = (user:User, links: any) => {
   const linksToRemove: string[] = [];
 
-  const isAdmin = user?.permissions?.role === 3;
+  if (!user) {
+    return links;
+  }
+
+  const { permissions } = user;
+  const isAdmin = permissions?.role === 3;
 
   if (!ability.can('manage', 'Employee') && !isAdmin) {
     linksToRemove.push('employees');
@@ -26,11 +32,11 @@ const filterTabsByPermission = (user: any, links: any) => {
     linksToRemove.push('map');
   }
 
-  if (!user?.rolesAndPermission?.superAdmin.editBillingInformation && !user?.rolesAndPermission?.dispatch.jobs && !isAdmin) {
+  if (!ability.can('edit', 'BillingInformation') && !ability.can('manage', 'Jobs') && !isAdmin) {
     linksToRemove.push('billing');
   }
 
   return links.filter((link: any) => !linksToRemove.includes(link.key));
 };
 
-export default filterTabsByPermission;
+export default filterSidebarLinksByPermission;

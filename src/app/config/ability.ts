@@ -3,6 +3,7 @@ import { AbilityBuilder, AbilityClass, PureAbility } from '@casl/ability';
 
 export type Actions =
   | 'add'
+  | 'edit'
   | 'view'
   | 'manage'
   | 'create'
@@ -19,7 +20,8 @@ export type Subjects =
   | 'Invoicing'
   | 'CustomerPayments'
   | 'VendorPayments'
-  | 'Reporting';
+  | 'Reporting'
+  | 'BillingInformation';
 
 export type AppAbility = PureAbility<[Actions, Subjects]>;
 export const appAbility = PureAbility as AbilityClass<AppAbility>;
@@ -46,25 +48,29 @@ export default function defineRulesFor(user: User) {
     can('manage', 'Employee');
   }
   // Dispatch
-  if (rolesAndPermissions?.dispatch.jobs || isAdmin) {
+  if (rolesAndPermissions?.dispatch?.jobs || isAdmin) {
     can('manage', 'Jobs');
   }
-  if (rolesAndPermissions?.dispatch.serviceTickets || isAdmin) {
+  if (rolesAndPermissions?.dispatch?.serviceTickets || isAdmin) {
     can('manage', 'Tickets');
   }
 
   // Accounting
-  if (rolesAndPermissions?.accounting.invoicing || isAdmin) {
+  if (rolesAndPermissions?.accounting?.invoicing || isAdmin) {
     can('manage', 'Invoicing');
   }
-  if (rolesAndPermissions?.accounting.customerPayments || isAdmin) {
+  if (rolesAndPermissions?.accounting?.customerPayments || isAdmin) {
     can('manage', 'CustomerPayments');
   }
-  if (rolesAndPermissions?.accounting.vendorPayments) {
+  if (rolesAndPermissions?.accounting?.vendorPayments || isAdmin) {
     can('manage', 'VendorPayments');
   }
-  if (rolesAndPermissions?.accounting.reporting || isAdmin) {
+  if (rolesAndPermissions?.accounting?.reporting || isAdmin) {
     can('manage', 'Reporting');
+  }
+
+  if (rolesAndPermissions?.superAdmin?.editBillingInformation || isAdmin) {
+    can('edit', 'BillingInformation');
   }
   return rules;
 }

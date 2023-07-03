@@ -70,7 +70,7 @@ import { ReactComponent as AmountIcon } from 'assets/img/icons/sidebar/reports/a
 import { ReactComponent as PayrollIcon } from 'assets/img/icons/sidebar/reports/payroll.svg';
 import { useSelector } from 'react-redux';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
-import filterTabsByPermission from './filterTabsByPermission';
+import filterSidebarLinksByPermission from './filterSidebarLinksByPermission';
 
 interface BCSidebarProps {
   user: any;
@@ -445,7 +445,7 @@ function BCAdminSidebar({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const filteredLinkData = filterTabsByPermission(auth.user, LINK_DATA);
+  const filteredLinkData = filterSidebarLinksByPermission(auth.user, LINK_DATA);
 
   const withSidebar = !['/main/dashboard', '/main/notifications'].includes(pathName);
   const subGroupBar = (item : any) => {

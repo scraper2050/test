@@ -12,10 +12,7 @@ const login = async (param: Auth) => {
   try {
     const response: any = await request('/login', 'POST', param, false);
     loginData = response.data;
-    if (loginData?.user) {
-      const rolesAndPermissions: any = await axios.get(`http://localhost:4000/dev/api/permissions/${loginData.user._id}`);
-      loginData.user.rolesAndPermissions = rolesAndPermissions.data;
-    }
+
 
     /*
      * Const responseCustomerAPI: any = await request('/login', 'POST', param, false, undefined, undefined, true);
@@ -33,6 +30,14 @@ const login = async (param: Auth) => {
     }
   }
 
+  try {
+    if (loginData?.user) {
+      const rolesAndPermissions: any = await axios.get(`http://localhost:4000/dev/api/permissions/${loginData.user._id}`);
+      loginData.user.rolesAndPermissions = rolesAndPermissions.data;
+    }
+  } catch (err) {
+    console.error('Something went wrong');
+  }
   return loginData;
 };
 
