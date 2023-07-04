@@ -5,7 +5,7 @@ export const types = {
   'SET_EMPLOYEES': 'setEmployee'
 };
 
-export const enum Role {
+export enum Role {
   OFFICE_ADMIN,
   TECHNICIAN,
   MANAGER,
