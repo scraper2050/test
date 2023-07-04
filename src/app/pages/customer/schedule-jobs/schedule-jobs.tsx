@@ -132,7 +132,7 @@ function ScheduleJobsPage({ classes }: any) {
               },
             ]}
           />
-          {curTab !== 2 && ability.can('manage', 'Tickets') &&
+          {curTab !== 2 && ability.can('manage', 'Tickets') && (
             <div className={classes.addButtonArea}>
               <CSButton
                 aria-label={'new-ticket'}
