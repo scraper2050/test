@@ -143,7 +143,7 @@ function ScheduleJobsPage({ classes }: any) {
                 {'New Ticket'}
               </CSButton>
             </div>
-          )}
+          }
           <SwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={curTab}

@@ -83,7 +83,7 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
   };
 
   const handleSavePermission = async () => {
-    await axios.post(`http://localhost:4000/dev/api/permissions/${employeeId}`, { 'permission': roles });
+    await axios.post(`${process.env.REACT_APP_LAMBDA_URL}/permissions/${employeeId}`, { 'permission': roles });
 
     setIsEditing(false);
   };

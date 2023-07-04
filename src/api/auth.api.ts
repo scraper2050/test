@@ -32,7 +32,7 @@ const login = async (param: Auth) => {
 
   try {
     if (loginData?.user) {
-      const rolesAndPermissions: any = await axios.get(`http://localhost:4000/dev/api/permissions/${loginData.user._id}`);
+      const rolesAndPermissions: any = await axios.get(`${process.env.REACT_APP_LAMBDA_URL}/permissions/${loginData.user._id}`);
       loginData.user.rolesAndPermissions = rolesAndPermissions.data;
     }
   } catch (err) {

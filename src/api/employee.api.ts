@@ -74,10 +74,10 @@ export const getEmployeeDetail = async (data: any) => {
 }
 
 export const getEmployeePermissions = async (data: any) => {
-  let responseData;
+  let responseData: any = {};
 
   try {
-    const response: any = await axios.get(`http://localhost:4000/dev/api/permissions/${data}`);
+    const response: any = await axios.get(`${process.env.REACT_APP_LAMBDA_URL}/permissions/${data}`);
     responseData = response.data;
   } catch (err) {
     responseData = err.data;
