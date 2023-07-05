@@ -14,10 +14,10 @@ export interface UserModel {
 }
 
 export interface Auth {
-  _id: string;
+  _id?: string;
   email: string;
   password: string;
-  rolesAndPermissions: RolesAndPermissions;
+  rolesAndPermissions?: RolesAndPermissions;
 }
 
 export interface AuthInfo {

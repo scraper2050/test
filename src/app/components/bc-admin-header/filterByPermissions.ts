@@ -1,7 +1,8 @@
 import { User } from 'actions/employee/employee.types';
 import { ability } from 'app/config/Can';
+import { NAVDATA } from './bc-admin-header';
 
-export default function (user: User, links: any) {
+export default function (user: User, links: NAVDATA[]) {
   const linksToRemove: string[] = [];
 
   if (!user) {

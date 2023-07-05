@@ -141,6 +141,13 @@ const useSearchStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+export type NAVDATA = { 
+  key?: string; 
+  label: string;
+  link: string;
+  flag?: string;
+}
+
 function BCAdminHeader({
   classes,
   drawerToggle,
@@ -286,7 +293,7 @@ function BCAdminHeader({
     setMenuAnchorEl(null);
   };
 
-  const NAV_DATA = [
+  const NAV_DATA: NAVDATA[] = [
     {
       'key': 'dashboard',
       'label': 'Dashboard',
