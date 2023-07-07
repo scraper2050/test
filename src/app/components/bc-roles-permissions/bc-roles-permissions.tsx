@@ -87,7 +87,7 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
 
     setIsEditing(false);
   };
-  console.log(Object.keys(roles).filter(roleKey => permissionDescriptions[roleKey]));
+
   return (
     <Grid container direction={'column'} className={classes.container}>
       <div className={classes.headerContainer}>

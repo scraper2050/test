@@ -78,7 +78,7 @@ export const getEmployeePermissions = async (data: any) => {
 
   try {
     const response: any = await axios.get(`${process.env.REACT_APP_LAMBDA_URL}/permissions/${data}`);
-    responseData = response.data;
+    responseData = response?.data?.body?.permissions;
   } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
