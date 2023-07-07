@@ -16,7 +16,7 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
     backgroundColor: '#fff',
     border: '1px solid #ccc',
     padding: '26px',
-    borderRadius: '12px',
+    borderRadius: '10px',
     boxShadow: '0px 0px 10px 0px #0000004D',
     zIndex: 999,
     fontFamily: 'Roboto',
@@ -24,39 +24,45 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
 
   const contentStyles: React.CSSProperties = {
     display: 'flex',
-    alignItems: 'center',
-    marginBottom: '10px',
+    alignItems: 'start',
   };
 
-  const iconStyles: React.CSSProperties = {
-    marginRight: '10px',
-    color: '#fe0000',
+  const iconContainerStyles: React.CSSProperties = {
+    marginRight: '6px',
+    color: '#ff0000',
     display: 'flex',
     justifyContent: 'center',
   };
-
-  const textStyles: React.CSSProperties = {
-    fontFamily: 'Roboto',
+  const iconStyles = {
+    fontSize: '30px',
+  };
+  const headStyles: React.CSSProperties = {
     fontSize: '18px',
-    fontWeight: '700',
+    fontWeight: 'bold',
+    color: '#ff0000',
+  };
+  const paraStyles: React.CSSProperties = {
+    textWrap: 'wrap',
+    color: '#9d9d9d',
+    fontSize: '14px',
     lineHeight: '21px',
-    letterSpacing: '0px',
-    color: '#fe0000',
+    margin: '0px 0 16px 0',
   };
 
   const buttonStyles: React.CSSProperties = {
     border: '2px solid #fe0000',
     borderRadius: '6px',
-    color: '#fe0000',
+    color: '#ff0000',
     fontWeight: '400',
     fontSize: '12px',
-    padding: '8px',
-    marginTop: '36px',
+    padding: '8px 12px',
+    marginTop: '0px',
   };
   const brStyles = {
-    background: '#c3c3c3',
-    height: '3px',
+    background: '#e9eaef',
+    height: '2px',
     bordeRadius: '30px',
+    margin: '12px 0 12px 0',
   };
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -70,14 +76,14 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
       onMouseLeave={mouseLeave}
     >
       <div style={contentStyles}>
-        <div style={iconStyles}>
+        <div style={iconContainerStyles}>
           <WarningIcon style={iconStyles} />
         </div>
-        <div style={textStyles}>Invoice Not Sent</div>
+        <div style={headStyles}>Invoice Not Sent</div>
       </div>
       <div style={brStyles}></div>
       <div>
-        <p style={{ marginBottom: '10px', textWrap: 'wrap', color: 'grey' }}>
+        <p style={paraStyles}>
           There was an issue delivering this invoice. Please check the email.
         </p>
       </div>
