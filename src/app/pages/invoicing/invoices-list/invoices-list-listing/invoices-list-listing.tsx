@@ -29,6 +29,8 @@ import {
 import { resetAdvanceFilterInvoice } from 'actions/advance-filter/advance-filter.action'
 import { initialAdvanceFilterInvoiceState } from 'reducers/advance-filter.reducer';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import PopupMark from '../../../../components/bc-popup-mark/bc-popup-mark';
+
 const getFilteredList = (state: any) => {
   const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
   return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
@@ -160,9 +162,18 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     {
       'Header': 'Invoice Date',
-      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
+      'accessor': (originalRow: any) =>
+        formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      Cell: ({ row }: any) => (
+        <div>
+          {formatDateMMMDDYYYY(
+            row.original.issuedDate || row.original.createdAt
+          )}
+          <PopupMark />
+        </div>
+      ),
     },
     {
       Cell({ row }: any) {
