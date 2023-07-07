@@ -53,7 +53,7 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
     border: '2px solid #fe0000',
     borderRadius: '6px',
     color: '#ff0000',
-    fontWeight: '400',
+    fontWeight: 400,
     fontSize: '12px',
     padding: '8px 12px',
     marginTop: '0px',

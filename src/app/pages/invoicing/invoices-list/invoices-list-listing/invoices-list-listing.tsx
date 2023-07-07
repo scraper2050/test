@@ -168,10 +168,13 @@ function InvoicingListListing({ classes, theme }: any) {
       'sortable': true,
       'Cell': ({ row }: any) => (
         <div>
-          {formatDateMMMDDYYYY(
+          {
+          formatDateMMMDDYYYY(
             row.original.issuedDate || row.original.createdAt
-          )}
-          <PopupMark />
+          )
+          } { 
+            row.original.bouncedEmailFlag ? <PopupMark /> : ''
+          }
         </div>
       ),
     },
