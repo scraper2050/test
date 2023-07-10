@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ExclamationMark from './bc-ExclamationMark';
 import Popup from './bc-popup';
-
-const PopupMark: React.FC = () => {
+interface PopupMarkProps {
+  data: () => any;
+}
+const PopupMark: React.FC<PopupMarkProps>= ({data}) => {
   const [isPopupVisible, setPopupVisible] = useState<boolean>(false);
+  const [emails, setEmails]= useState<any>([])
 
+  const bounceEmails: Array<string>= [];
+
+  useEffect(()=>{
+    setEmails(data.original.emailHistory)
+  })
+  
+  for (const email of emails){
+    if (email.deliveryStatus===false){
+      bounceEmails.push(email.sentTo)
+    }
+  }
+
+  //styles
   const styles: React.CSSProperties = {
     position: 'relative',
     display: 'inline-block',
@@ -26,7 +42,7 @@ const PopupMark: React.FC = () => {
         mouseLeave={handleMouseLeave}
       />
       {isPopupVisible && (
-        <Popup mouseEnter={handleMouseHover} mouseLeave={handleMouseLeave} />
+        <Popup bounceEmails={bounceEmails} mouseEnter={handleMouseHover} mouseLeave={handleMouseLeave} />
       )}
     </div>
   );

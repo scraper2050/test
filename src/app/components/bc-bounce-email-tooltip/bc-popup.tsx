@@ -7,7 +7,10 @@ interface PopupProps {
   mouseEnter: () => void;
 }
 
-const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
+const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) => {
+
+  const arr = ['test123@.com', '345@gmail.com', 'test123@.com', '345@gmail.com', 'test123@.com', '345@gmail.com',]
+
   const popupStyles: React.CSSProperties = {
     position: 'absolute',
     top: '30px',
@@ -33,18 +36,22 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
     display: 'flex',
     justifyContent: 'center',
   };
+
   const iconStyles = {
     fontSize: '30px',
   };
+
   const headStyles: React.CSSProperties = {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#ff0000',
   };
+
   const paraStyles: React.CSSProperties = {
+    textWrap:'wrap',
     color: '#9d9d9d',
     fontSize: '14px',
-    lineHeight: '21px',
+    lineHeight: '28px',
     margin: '0px 0 16px 0',
   };
 
@@ -57,16 +64,22 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
     padding: '8px 12px',
     marginTop: '0px',
   };
+
   const brStyles = {
     background: '#e9eaef',
     height: '2px',
     bordeRadius: '30px',
     margin: '12px 0 12px 0',
   };
+
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     mouseLeave();
   };
+
+  const emailStyles={
+    color: 'rgba(0, 0, 0, 0.87)'
+  }
 
   return (
     <div
@@ -83,7 +96,11 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave }) => {
       <div style={brStyles}></div>
       <div>
         <p style={paraStyles}>
-          There was an issue delivering<br />this invoice. Please check<br />the email.
+          There was an issue delivering<br />this invoice. Please check<br />the email: 
+          {
+            bounceEmails.map((element:string)=> <span style={emailStyles} >  {element},</span>
+          )
+          }
         </p>
       </div>
       <div>

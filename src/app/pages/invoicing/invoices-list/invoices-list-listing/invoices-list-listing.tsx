@@ -174,7 +174,7 @@ function InvoicingListListing({ classes, theme }: any) {
             row.original.issuedDate || row.original.createdAt
           )
           } { 
-            row.original.bouncedEmailFlag ? <PopupMark /> : ''
+            row.original.bouncedEmailFlag ? <PopupMark data={row} /> : ''
           }
         </div>
       ),
