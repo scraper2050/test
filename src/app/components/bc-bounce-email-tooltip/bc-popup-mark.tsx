@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ExclamationMark from './bc-ExclamationMark';
 import Popup from './bc-popup';
+
 interface PopupMarkProps {
-  data: () => any;
+  data: any;
 }
+
 const PopupMark: React.FC<PopupMarkProps>= ({data}) => {
   const [isPopupVisible, setPopupVisible] = useState<boolean>(false);
   const [emails, setEmails]= useState<any>([])
@@ -14,8 +16,8 @@ const PopupMark: React.FC<PopupMarkProps>= ({data}) => {
     setEmails(data.original.emailHistory)
   })
   
-  for (const email of emails){
-    if (email.deliveryStatus===false){
+  for (const email of emails) {
+    if (email.deliveryStatus === false){
       bounceEmails.push(email.sentTo)
     }
   }
@@ -49,4 +51,3 @@ const PopupMark: React.FC<PopupMarkProps>= ({data}) => {
 };
 
 export default PopupMark;
-

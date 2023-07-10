@@ -5,6 +5,7 @@ import { Button } from '@material-ui/core';
 interface PopupProps {
   mouseLeave: () => void;
   mouseEnter: () => void;
+  bounceEmails: string[];
 }
 
 const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) => {
@@ -48,7 +49,6 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) =>
   };
 
   const paraStyles: React.CSSProperties = {
-    textWrap:'wrap',
     color: '#9d9d9d',
     fontSize: '14px',
     lineHeight: '28px',
