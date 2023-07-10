@@ -6,6 +6,9 @@ export default (): any => ({
     'justify-content': 'end',
     'width': '85%'
   },
+  'accordionSummary': {
+    'height': '64px'
+  },
   'card': {
     'border': `1px solid ${CONSTANTS.LIGHT_GREY}`,
     'border-radius': '10px',
@@ -14,7 +17,7 @@ export default (): any => ({
     'width': '85%'
   },
   'container': {
-    'padding': '3rem'
+    'padding': '0 3rem'
   },
   'headerContainer': {
     'display': 'flex',
