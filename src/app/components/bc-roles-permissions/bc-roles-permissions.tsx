@@ -92,7 +92,7 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
     <Grid container direction={'column'} className={classes.container}>
       <div className={classes.headerContainer}>
         <Typography align={'left'} variant={'h4'} color={'primary'}>
-          <strong>{'Roles / Permissions'}</strong>
+          <strong>{'Permissions'}</strong>
         </Typography>
         {!isEditing &&
           <CSButton
@@ -102,7 +102,7 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
               setIsEditing(true);
             }}
             variant={'contained'}>
-            {'Edit Role/Permissions\r'}
+            {'Edit Permissions'}
           </CSButton>
         }
       </div>

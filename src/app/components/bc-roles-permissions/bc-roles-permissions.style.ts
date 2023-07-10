@@ -7,14 +7,17 @@ export default (): any => ({
     'width': '85%'
   },
   'accordionSummary': {
-    'height': '64px'
+    'height': '64px',
   },
   'card': {
     'border': `1px solid ${CONSTANTS.LIGHT_GREY}`,
     'border-radius': '10px',
     // Overwrite mui styles
     'box-shadow': 'none',
-    'width': '85%'
+    'width': '85%',
+    "&$expanded": {
+      'margin': '0',
+    }
   },
   'container': {
     'padding': '0 3rem'

@@ -24,8 +24,6 @@ interface Props {
 }
 
 function AdminAddNewEmployeePage({ classes, children }: Props) {
-  const [step, setStep] = useState(1);
-
   const dispatch = useDispatch();
 
   const location = useLocation<any>();
@@ -56,51 +54,12 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
     };
 
     let response: any;
-
-    switch (role) {
-      case RoleEnums.Technician:
-        response = await dispatch(createTechnician(data));
-        if (response.message === "Maximum No. of technicians already added please buy more subscription to add more.") {
-          dispatch(info(response.message));
-        } else if (response.message === "Email address already registered. Please try with some other email address") {
-          dispatch(info(response.message))
-        } else if (response.status) {
-          await renderGoBack(location.state)
-          dispatch(success("Employee created successfully."));
-        }
-        break;
-      case RoleEnums.Administrator:
-        try {
-          response = await dispatch(createAdministrator(data));
-          if (response.message !== "Employee created successfully.") {
-            dispatch(info(response.message));
-          } else if (response.status) {
-            await renderGoBack(location.state)
-            dispatch(success("Employee created successfully."));
-          }
-        } catch (err) {
-          dispatch(error('Something went wrong, please try other role'));
-        }
-        break;
-      case RoleEnums.Manager:
-        response = await dispatch(createManager(data));
-        if (response.status) {
-          await renderGoBack(location.state)
-          dispatch(success("Employee created successfully."));
-        } else if (response.message === "Email address already registered. Please try with some other email address") {
-          dispatch(info(response.message))
-        }
-        break;
-      case RoleEnums.OfficeAdmin:
-        response = await dispatch(createOfficeAdmin(data));
-        if (response.status) {
-          await renderGoBack(location.state)
-          dispatch(success("Employee created successfully."));
-        } else if (response.message === "Email address already registered. Please try with some other email address") {
-          dispatch(info(response.message))
-        }
-        break;
-      default:
+    response = await dispatch(createOfficeAdmin(data));
+    if (response.status) {
+      await renderGoBack(location.state)
+      dispatch(success("Employee created successfully."));
+    } else if (response.message === "Email address already registered. Please try with some other email address") {
+      dispatch(info(response.message))
     }
   }
 
@@ -140,15 +99,11 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
     else setPhoneNumberValid(true);
   }
 
-  const [role, setRole] = useState('');
-
   const next = () => {
     if (!firstNameValid || !lastNameValid || !emailValid || !phoneNumberValid) return;
     if (!firstName || !lastName || !email || !phoneNumber) return;
-    if (step === 1) setStep(2);
     else {
-      if (role === '') return;
-      submit(firstName, lastName, email, phoneNumber, role, showAllLocation);
+      submit(firstName, lastName, email, phoneNumber, Roles.OfficeAdmin, showAllLocation);
     }
   }
 
@@ -158,24 +113,7 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
   }
 
   const prev = () => {
-    if (step === 2) setStep(1);
-    else renderGoBack(location.state);
-  }
-
-  const technicianSelected = () => {
-    setRole(Roles.Technician);
-  }
-
-  const administratorSelected = () => {
-    setRole(Roles.Administrator);
-  }
-
-  const managerSelected = () => {
-    setRole(Roles.Manager);
-  }
-
-  const officeSelected = () => {
-    setRole(Roles.OfficeAdmin);
+    renderGoBack(location.state);
   }
 
   return (
@@ -192,7 +130,7 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
                 <ArrowBackIcon fontSize={'small'} />
               </IconButton>
               <div className={classes.mainPane}>
-                {step === 1 && <div className={classes.infoPane}>
+                <div className={classes.infoPane}>
                   <h2>Add New Employee</h2>
                   <h4 className={classes.required}><span className={classes.asterisk}>*</span>All fields are required</h4>
                   <TextField
@@ -264,35 +202,7 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
                         label={"Access All Locations"}
                       />
                   </Grid>
-                </div>}
-                {step === 2 && <div className={classes.infoPane}>
-                  <h2>Roles</h2>
-                  <h4 className={classes.required}>Choose level of role for new user to view schedule and mark work complete</h4>
-                  <div className={classes.rolesRow}>
-                    <Card className={classes.card} style={{ backgroundColor: role !== Roles.Technician ? 'white' : '#00aaff' }}>
-                      <CardActionArea className={classes.cardActionArea} onClick={() => technicianSelected()}>
-                        Technician
-                </CardActionArea>
-                    </Card>
-                    <Card className={classes.card} style={{ backgroundColor: role !== Roles.Administrator ? 'white' : '#00aaff' }}>
-                      <CardActionArea className={classes.cardActionArea} onClick={() => administratorSelected()}>
-                        Administrator
-                </CardActionArea>
-                    </Card>
-                  </div>
-                  <div className={classes.rolesRow}>
-                    <Card className={classes.card} style={{ backgroundColor: role !== Roles.Manager ? 'white' : '#00aaff' }}>
-                      <CardActionArea className={classes.cardActionArea} onClick={() => managerSelected()}>
-                        Manager
-                </CardActionArea>
-                    </Card>
-                    <Card className={classes.card} style={{ backgroundColor: role !== Roles.OfficeAdmin ? 'white' : '#00aaff' }}>
-                      <CardActionArea className={classes.cardActionArea} onClick={() => officeSelected()}>
-                        Office/Dispatch
-                </CardActionArea>
-                    </Card>
-                  </div>
-                </div>}
+                </div>
                 <div className={classes.buttonPane}>
                   <Fab
                     aria-label={'new-ticket'}
