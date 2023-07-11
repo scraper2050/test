@@ -345,7 +345,6 @@ function InvoicingListListing({ classes, theme }: any) {
     } else {
       dispatch(closeModalAction());
     }
-
   }
 
   // Data used by modal filter
