@@ -3,21 +3,28 @@ import ExclamationMark from './bc-ExclamationMark';
 import Popup from './bc-popup';
 
 interface PopupMarkProps {
-  data: any;
+  data: () => any;
+  invoiceId: string;
 }
 
-const PopupMark: React.FC<PopupMarkProps>= ({data}) => {
-  const [isPopupVisible, setPopupVisible] = useState<boolean>(false);
-  const [emails, setEmails]= useState<any>([])
+interface IEmailsData {
+  sentTo: string;
+  sentAt: string;
+  sentBy: string;
+  deliveryStatus?: boolean;
+}
 
+const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId }) => {
+  const [ isPopupVisible, setPopupVisible ] = useState<boolean>(false);
+  const [emails, setEmails] = useState<IEmailsData[]>([]);
   const bounceEmails: Array<string>= [];
-
-  useEffect(()=>{
-    setEmails(data.original.emailHistory)
+  
+  useEffect( () => {
+    setEmails(data);
   })
   
   for (const email of emails) {
-    if (email.deliveryStatus === false){
+    if (email.deliveryStatus === false) {
       bounceEmails.push(email.sentTo)
     }
   }
@@ -44,7 +51,7 @@ const PopupMark: React.FC<PopupMarkProps>= ({data}) => {
         mouseLeave={handleMouseLeave}
       />
       {isPopupVisible && (
-        <Popup bounceEmails={bounceEmails} mouseEnter={handleMouseHover} mouseLeave={handleMouseLeave} />
+        <Popup bounceEmails={bounceEmails} mouseEnter={handleMouseHover} mouseLeave={handleMouseLeave} invoiceId={invoiceId} />
       )}
     </div>
   );

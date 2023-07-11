@@ -1,16 +1,19 @@
 import React from 'react';
 import WarningIcon from '@material-ui/icons/Warning';
 import { Button } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { markAsRead } from 'api/invoicing.api';
 
 interface PopupProps {
   mouseLeave: () => void;
   mouseEnter: () => void;
   bounceEmails: string[];
+  invoiceId: string;
 }
 
-const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) => {
+const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, invoiceId}) => {
 
-  const arr = ['test123@.com', '345@gmail.com', 'test123@.com', '345@gmail.com', 'test123@.com', '345@gmail.com',]
+  const dispatch = useDispatch()
 
   const popupStyles: React.CSSProperties = {
     position: 'absolute',
@@ -49,6 +52,7 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) =>
   };
 
   const paraStyles: React.CSSProperties = {
+    whiteSpace: 'pre-wrap',
     color: '#9d9d9d',
     fontSize: '14px',
     lineHeight: '28px',
@@ -75,6 +79,7 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) =>
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     mouseLeave();
+    dispatch(markAsRead(invoiceId))
   };
 
   const emailStyles={
@@ -98,8 +103,9 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails}) =>
         <p style={paraStyles}>
           There was an issue delivering<br />this invoice. Please check<br />the email: 
           {
-            bounceEmails.map((element:string)=> <span style={emailStyles} >  {element},</span>
-          )
+           (bounceEmails.length===1)? 
+           (bounceEmails.map((element:string,index: number)=> <span key={index} style={emailStyles} >  {element}</span>) ): 
+           (bounceEmails.map((element: string,index: number) => <span key={index} style={emailStyles} >  {element},</span>))
           }
         </p>
       </div>

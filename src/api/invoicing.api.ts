@@ -213,6 +213,22 @@ export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?:
   };
 };
 
+export const markAsRead = (invoiceId?: string) => {
+  return (dispatch: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      requestApiV2(`/mark-as-read`, 'post', { invoiceId })
+        .then((res: any) => {
+          dispatch(getAllInvoicesAPI(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined))
+        })
+        .catch(err => {
+          if (err.message !== 'axios canceled') {
+            return reject(err);
+          }
+        });
+    });
+  };
+};
+
 let cancelTokenGetAllDraftInvoicesAPI: any;
 export const getAllDraftInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
