@@ -33,7 +33,7 @@ import debounce from 'lodash.debounce';
 import PopupMark from '../../../../components/bc-bounce-email-tooltip/bc-popup-mark';
 
 const getFilteredList = (state: any) => {
-  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList?.data);
   return sortedInvoices && sortedInvoices.filter((invoice: any) => !invoice.isDraft);
 };
 
