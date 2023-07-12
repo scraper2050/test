@@ -63,7 +63,7 @@ function InvoicingListListing({ classes, theme }: any) {
   const [lastNextCursor, setLastNextCursor] = useState<string | undefined>(location?.state?.option?.lastNextCursor)
   const [lastPrevCursor, setLastPrevCursor] = useState<string | undefined>(location?.state?.option?.lastPrevCursor)
 
-  let advanceFilterInvoiceData: any = useSelector(({ advanceFilterInvoiceState }: any) => advanceFilterInvoiceState);
+  const advanceFilterInvoiceData: any = useSelector(({ advanceFilterInvoiceState }: any) => advanceFilterInvoiceState);
 
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 

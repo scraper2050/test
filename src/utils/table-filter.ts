@@ -14,7 +14,7 @@ class TableFilterService {
                 }
             })
         }
-      return data?.data;
+      return data.data;
     }
 }
 
