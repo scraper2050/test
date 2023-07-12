@@ -85,6 +85,7 @@ import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billi
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
 import BcAddTicketDetailsModal
   from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
+import BcNoAssignedLocationModal from './bc-no-assigned-location-modal/bc-no-assigned-location-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -917,6 +918,16 @@ function BCModal() {
         });
         setComponent(<BcAddTicketDetailsModal props={data}/>);
         break;
+      case modalTypes.NOT_ASSIGNED_TO_ANY_LOCATION_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'showCloseIcon': false,
+          'maxWidth': 'sm',
+        });
+        setComponent(<BcNoAssignedLocationModal />);
+        break;  
       default:
         setComponent(null);
     }
@@ -933,7 +944,6 @@ function BCModal() {
   };
 
   const showCloseIcon = type !== modalTypes.RECORD_SYNC_STATUS_MODAL;
-
   return (
     <div className={'modal-wrapper'}>
       <Dialog
