@@ -171,8 +171,7 @@ function InvoiceList({ classes }: any) {
               },
               {
                 'label': 'Invoices',
-                'value':1,
-                'alert': true,
+                'value':1
               },
               {
                 'label': 'Drafts',
