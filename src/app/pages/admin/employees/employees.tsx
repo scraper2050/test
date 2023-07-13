@@ -104,7 +104,7 @@ function AdminEmployeesPage({ classes, children }: Props) {
   };
 
   const handleRowClick = (event: any, row: any) => renderViewMore(row);
-  console.log(employees)
+
   return (
     <MainContainer>
       <PageContainer>
