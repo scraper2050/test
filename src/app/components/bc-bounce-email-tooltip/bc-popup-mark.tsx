@@ -22,10 +22,11 @@ const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId }) => {
   useEffect( () => {
     setEmails(data);
   })
-  
-  for (const email of emails) {
-    if (email.deliveryStatus === false) {
-      bounceEmails.push(email.sentTo)
+  if(emails){
+    for (const email of emails) {
+      if (email.deliveryStatus === false) {
+        bounceEmails.push(email.sentTo)
+      }
     }
   }
 
