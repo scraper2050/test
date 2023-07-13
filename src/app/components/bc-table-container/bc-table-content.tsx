@@ -325,7 +325,10 @@ function BCTableContent({
       className={`min-h-full rounded ${invoiceTable
         ? `invoice-paper`
         : ''} ${className} `}
-      component={StyledPaperContainer}>
+      component={StyledPaperContainer}
+      style={{height:'738px'}}
+      >
+        
       <MaUTable
         size="small"
         stickyHeader={stickyHeader}
