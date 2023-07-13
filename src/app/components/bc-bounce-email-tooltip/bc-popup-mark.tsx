@@ -45,8 +45,12 @@ const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId }) => {
     setPopupVisible(false);
   };
 
+  const handlePopMarkClick=(e:any)=>{
+    e.stopPropagation();
+  }
+
   return (
-    <div style={styles}>
+    <div style={styles} onClick={(e)=>handlePopMarkClick(e)} >
       <ExclamationMark
         mouseEnter={handleMouseHover}
         mouseLeave={handleMouseLeave}
@@ -59,3 +63,4 @@ const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId }) => {
 };
 
 export default PopupMark;
+
