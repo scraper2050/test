@@ -340,7 +340,7 @@ let isFixedDisabled=false;
                 classes={{ label: classes.checkboxLabel }}
                 control={
                   <Checkbox
-                    disabled={formik.values.itemType == 'Product'}
+                    // disabled={formik.values.itemType == 'Product'}
 
                     color={'primary'}
                     checked={formik.values.isJobType}
