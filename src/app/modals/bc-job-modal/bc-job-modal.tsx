@@ -81,6 +81,7 @@ import BCEmailValidateInput from '../../components/bc-email-validate-input/bc-em
 import { FormDataModel } from '../../models/form-data';
 import BCPhoneNumberInput from '../../components/bc-phone-number-input/bc-phone-number-input';
 import { callCreateHomeOwner } from 'api/home-owner.api';
+import { getHomeOwnerAction, clearHomeOwnerStore } from 'actions/home-owner/home-owner.action';
 
 const initialTask = {
   employeeType: 1,
@@ -197,6 +198,7 @@ function BCJobModal({
   const openServiceTicketFilter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
   );
+  const homeOwners = useSelector((state: any) => state.homeOwner.data);
 
   const employeesForJob = useMemo(() => [...data], [data]);
 
@@ -204,6 +206,8 @@ function BCJobModal({
   const [jobLocationValue, setJobLocationValue] = useState<any>([]);
   const [jobSiteValue, setJobSiteValue] = useState<any>([]);
   const [contactValue, setContactValue] = useState<any>([]);
+  const [isHomeOwnerAutocompleted, setIsHomeOwnerAutocompleted] = useState<any>(false);
+  const [homeOwnerAutocompleted, sethomeOwnerAutocompleted] = useState<any>({});
 
   let {ticket = {}} = job;
 
@@ -306,6 +310,10 @@ function BCJobModal({
     const jobSiteId = newValue ? newValue._id : '';
     setFieldValue(fieldName, jobSiteId);
     setJobSiteValue(newValue);
+    clearHomeOwnerFields();
+    if (jobSiteId != '') {
+      dispatch(getHomeOwnerAction(jobSiteId, FormikValues.jobLocationId));
+    }
   };
 
   /**
@@ -329,6 +337,7 @@ function BCJobModal({
       await dispatch(clearJobSiteStore());
     }
     await setFieldValue(fieldName, locationId);
+    await clearHomeOwnerFields();
   };
 
   /**
@@ -382,6 +391,29 @@ function BCJobModal({
     };
     dispatch(getContacts(data));
   }, []);
+
+  // Implements autocomplete for homeowner
+  useEffect(() => {
+    const filteredHomeOwners = homeOwners.filter((item: any) => {
+      return (item?.address === FormikValues.jobSiteId);
+    });
+    if (filteredHomeOwners && filteredHomeOwners.length > 0 && FormikValues.jobSiteId !== '' && FormikValues.homeOwnerId === '') {
+      setFieldValue('homeOwnerFirstName', filteredHomeOwners[0].profile.firstName);
+      setFieldValue('homeOwnerLastName', filteredHomeOwners[0].profile.lastName);
+      setFormDataEmail({
+        ...formDataEmail,
+        value: filteredHomeOwners[0].info?.email || ''
+      });
+      setFormDataPhone({
+        ...formDataPhone,
+        value: filteredHomeOwners[0].contact?.phone || ''
+      });
+      setFieldValue('homeOwnerId', filteredHomeOwners[0]._id);
+      setFieldValue('isHomeOccupied', true);
+      setIsHomeOwnerAutocompleted(true);
+      sethomeOwnerAutocompleted(filteredHomeOwners[0])
+    }
+  }, [homeOwners]);
 
   useEffect(() => {
     const tasks = getJobTasks(job, items);
@@ -471,11 +503,28 @@ function BCJobModal({
   });
 
   const isNewHomeOwner = () => {
+    if (isHomeOwnerAutocompleted === true) {
+      return (
+        FormikValues.homeOwnerFirstName !== homeOwnerAutocompleted?.profile?.firstName ||
+        (homeOwnerAutocompleted?.profile?.lastName ? 
+          FormikValues.homeOwnerLastName !== homeOwnerAutocompleted?.profile?.lastName :
+          FormikValues.homeOwnerLastName !== ''
+        ) ||
+        (homeOwnerAutocompleted?.info?.email ?
+          formDataEmail.value !== homeOwnerAutocompleted?.info?.email :
+          formDataEmail.value !== ''
+        ) ||
+        (homeOwnerAutocompleted?.contact?.phone ?
+          formDataPhone.value !== homeOwnerAutocompleted?.contact?.phone :
+          formDataPhone.value !== ''
+        )
+      )
+    }
     if (job._id) { // Job update
       // Home occupied status has changed from the ticket to the job
-      if (jobValue?.ticket?.isHomeOccupied !== FormikValues.isHomeOccupied) return true;
+      if (jobValue?.isHomeOccupied !== FormikValues.isHomeOccupied) return true;
       // Home occupied status is the same but homeOwner data may have changed
-      if (jobValue?.ticket?.isHomeOccupied) {
+      if (jobValue?.isHomeOccupied) {
         return (
           FormikValues.homeOwnerFirstName !== jobValue?.homeOwnerObj?.[0]?.profile?.firstName ||
           FormikValues.homeOwnerLastName !== jobValue?.homeOwnerObj?.[0]?.profile?.lastName ||
@@ -511,6 +560,23 @@ function BCJobModal({
       return false;
     }
     return true;
+  }
+
+  const clearHomeOwnerFields = async () => {
+    // Clean homeowner fields on customer update
+    await setFieldValue('homeOwnerFirstName', '');
+    await setFieldValue('homeOwnerLastName', '');
+    await setFieldValue('isHomeOccupied', false);
+    await setFieldValue('homeOwnerId', '');
+    await setFormDataEmail({
+      ...formDataEmail,
+      value: ''
+    });
+    await setFormDataPhone({
+      ...formDataPhone,
+      value: ''
+    });
+    await setIsHomeOwnerAutocompleted(false);
   }
 
   /**
@@ -747,6 +813,7 @@ function BCJobModal({
   } = form;
 
   const closeModal = () => {
+    dispatch(clearHomeOwnerStore());
     dispatch(closeModalAction());
     setTimeout(() => {
       dispatch(
