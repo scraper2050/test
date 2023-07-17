@@ -30,10 +30,12 @@ import BCDateRangePicker, { Range }
   from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import { CSButton } from "../../../../../helpers/custom";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import PORequest from "./po-request";
 
 function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const [curTab, setCurTab] = useState(0);
 
   const customers = useSelector(({ customers }: any) => customers.data);
   const [showAllTickets, toggleShowAllTickets] = useState(false);
@@ -334,19 +336,24 @@ function ServiceTicket({ classes, hidden }: any) {
   const handleRowClick = (event: any, row: any) => {
   };
   const handleTabChange = (newValue: number) => {
+    setCurTab(newValue)
   };
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
           <BCTabs
-            curTab={0}
+            curTab={curTab}
             indicatorColor={'primary'}
             onChangeTab={handleTabChange}
             tabsData={[
               {
                 'label': 'Tickets',
                 'value': 0
+              },
+              {
+                'label': 'PO Requests',
+                'value': 1
               }
             ]}
           />
@@ -360,7 +367,7 @@ function ServiceTicket({ classes, hidden }: any) {
               {'New Ticket'}
             </CSButton>
           </div>
-          <SwipeableViews index={0}>
+          <SwipeableViews index={curTab}>
             <div
               className={classes.dataContainer}
               hidden={false}
@@ -393,12 +400,10 @@ function ServiceTicket({ classes, hidden }: any) {
               />
             </div>
             <div
-              hidden={true}
+              className={classes.dataContainer}
+              hidden={false}
               id={'1'}>
-              <Grid
-                item
-                xs={12}
-              />
+                <PORequest></PORequest>
             </div>
           </SwipeableViews>
         </div>

@@ -143,6 +143,7 @@ export const modalTypes = {
   'BILLING_ADDRESS_WARNING_MODAL': 'billing-address-warning-modal',
   'TICKET_DETAILS_MODAL': 'ticket-details-modal',
   'EDIT_JOB_COSTING_MODAL': 'edit-job-costing-modal',
+  'EMAIL_PO_REQUEST_MODAL': 'email-po-request-modal',
 };
 
 export const rejectionReason = [

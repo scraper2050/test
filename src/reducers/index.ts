@@ -18,6 +18,7 @@ import jobTypes from './job-type.reducer';
 import modal from './bc-modal.reducer';
 import routeReducer from './route.reducer';
 import serviceTicket from './service-ticket.reducer';
+import PORequest from './po-request.reducer';
 import { SnackbarReducer as snackbar } from './snackbar.reducer';
 import tax from './tax.reduxer';
 import paymentTerms from './payment-terms.reduer';
@@ -92,7 +93,8 @@ export interface RootState {
   customersState: CustomersState;
   notifications: NotificationState;
   vendors: VendorsState;
-  serviceTicket: any
+  serviceTicket: any;
+  PORequest: any;
   invoiceItems: InvoiceItemsState;
   email: EmailState;
   quickbooks: QuickbooksState;
@@ -146,6 +148,7 @@ const appReducer = combineReducers({
   searchTerm,
   quickbooks,
   serviceTicket,
+  PORequest,
   snackbar,
   subscriptions,
   tableState,

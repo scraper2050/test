@@ -78,11 +78,17 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { DivisionParams } from 'app/models/division';
 
+var initialJobType = {
+  jobTypeId: null,
+  price: null,
+  quantity: 1
+};
+
 const initialTask = {
   employeeType: 1,
   contractor: null,
   employee: null,
-  jobTypes: [],
+  jobTypes: [{...initialJobType}],
 }
 
 const initialJobState = {
@@ -124,17 +130,38 @@ const initialJobState = {
 /**
  * Helper function to get job data from jobTypes
  */
-const getJobData = (ids: any, items: any) => {
-  if (!ids) {
+const getJobData = (jobTypes: any, items: any, customers: any[], customerId: string) => {
+  if (!jobTypes) {
     return;
   }
-  return ids.map((id: string) => {
-    const currentItem = items.filter((item: { jobType: string }) => item.jobType === id)[0];
-    return {
-      _id: currentItem?.jobType,
-      title: currentItem?.name,
-      description: currentItem?.description
+  return jobTypes.map((task: any) => {    
+    const currentItem = items.find((item: { jobType: string }) => item.jobType === (task.jobType._id || task.jobType));
+
+    let jobType = {
+      jobTypeId: {
+        _id: currentItem?.jobType,
+        title: currentItem?.name,
+        description: currentItem?.description
+      },
+      quantity: task.quantity || 1,
+      default_price: 0,
+      price: 0
     }
+    const item = items.find((res: any) => res.jobType == (task.jobType._id || task.jobType));
+    const customer = customers.find((res: any) => res._id == customerId);
+    
+    if (item) {
+      let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+      if (customer && price) {
+        jobType.default_price = price?.charge;
+        jobType.price = price?.charge * jobType.quantity;
+      } else {
+        price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+        jobType.default_price = price?.charge;
+        jobType.price = price?.charge * jobType.quantity;
+      }
+    }
+    return jobType;
   })
   // return ids.map((id: string)=> jobTypes.filter((job: {_id:string}) => job._id === id)[0]).filter((jobType:string)=>jobType);
 };
@@ -142,13 +169,13 @@ const getJobData = (ids: any, items: any) => {
 /**
  * Helper function to get job tasks
  */
-const getJobTasks = (job: any, items: any) => {
+const getJobTasks = (job: any, items: any, customers: any[], customerId: string) => {
   if (job._id) {
     const tasks = job.tasks.map((task: any) => ({
       employeeType: task.employeeType ? 1 : 0,
       employee: !task.employeeType && task.technician ? task.technician : null,
       contractor: task.employeeType && task.contractor ? task.contractor : null,
-      jobTypes: getJobData(task.jobTypes.map((task: any) => task.jobType?._id), items)
+      jobTypes: getJobData(task.jobTypes, items, customers, customerId)
     }));
     return tasks;
   } else {
@@ -156,7 +183,7 @@ const getJobTasks = (job: any, items: any) => {
       employeeType: 1,
       contractor: null,
       employee: null,
-      jobTypes: getJobData(job.ticket.tasks.map((task: any) => task.jobType?._id || task.jobType || task._id), items),
+      jobTypes: getJobData(job.ticket.tasks, items, customers, customerId),
     }]
   }
 };
@@ -171,6 +198,7 @@ function BCJobModal({
   // Selected variable with useSelector from the store
   const equipments = useSelector(({inventory}: any) => inventory.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
+  const customers = useSelector(({ customers }: any) => customers.data);
   const {loading, data} = useSelector(
     ({employeesForJob}: any) => employeesForJob
   );
@@ -193,6 +221,7 @@ function BCJobModal({
   const openServiceTicketFilter = useSelector(
     (state: any) => state.serviceTicket.filterTicketState
   );
+  const jobTypesInput = useRef<HTMLInputElement>(null);
 
   const employeesForJob = useMemo(() => [...data], [data]);
 
@@ -241,8 +270,6 @@ function BCJobModal({
       case 'technicianId':
         tasks[index].employee = data;
         break;
-      case 'jobTypes':
-        tasks[index].jobTypes = data;
     }
     setFieldValue('tasks', tasks);
   };
@@ -381,7 +408,7 @@ function BCJobModal({
   }, []);
 
   useEffect(() => {
-    const tasks = getJobTasks(job, items);
+    const tasks = getJobTasks(job, items,customers,FormikValues.customerId);
     setFieldValue('tasks', tasks);
   }, [items]);
 
@@ -530,7 +557,7 @@ function BCJobModal({
         employeeType: task.employeeType.toString(),
         contractorId: task.contractor ? task.contractor._id : '',
         technicianId: task.employee ? task.employee._id : '',
-        jobTypes: task.jobTypes.map((type: any) => ({jobTypeId: type._id}))
+        jobTypes: task.jobTypes.map((type: any) => ({jobTypeId: type.jobTypeId?._id, quantity: type.quantity}))
       }))
 
       tempData.tasks = tasks;
@@ -811,6 +838,74 @@ function BCJobModal({
   const filteredJobRescheduleHistory: any[] = job.track
     ? job.track.filter((history: { action: string; }) => history.action.includes('rescheduling'))
     : []
+  
+  const handleJobTypeChange = (fieldName: string, value: any, index: number, taskIndex: number) => {
+    const jobTypes: any[] = [...FormikValues.tasks[taskIndex]?.jobTypes];
+    switch (fieldName) {
+      case "jobType":
+        jobTypes[index].jobTypeId = {
+          _id: value?.jobType,
+          title: value?.name,
+          description: value?.description
+        };
+        _setJobTypePrice(jobTypes[index]);
+        break;
+      case "quantity":
+        jobTypes[index].quantity = value;
+        if (jobTypes[index].default_price) {
+          jobTypes[index].price = value * jobTypes[index].default_price;
+        }
+        break;
+      default:
+        break;
+    }
+
+    let newTasks = [...FormikValues.tasks];
+    newTasks[taskIndex].jobTypes = jobTypes;
+    setFieldValue('tasks', newTasks);
+  };
+  
+  /**
+   * 
+   * @param jobType 
+   * Assign a price to each job item
+   */
+  const _setJobTypePrice = (jobType: any) => {
+    if (jobType.jobTypeId) {
+      const item = items.find((res: any) => res.jobType == jobType.jobTypeId._id);
+      const customer = customers.find((res: any) => res._id == FormikValues.customerId);
+
+      if (item) {
+        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+        if (customer && price) {
+          jobType.default_price = price?.charge;
+          jobType.price = price?.charge * jobType.quantity;
+        } else {
+          price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+          jobType.default_price = price?.charge;
+          jobType.price = price?.charge * jobType.quantity;
+        }
+      }
+    }
+  }
+
+  const removeJobType = (index: number,taskIndex: number) => {
+    const jobTypes = [...FormikValues.tasks[taskIndex].jobTypes];
+    jobTypes.splice(index, 1);
+
+    let newTasks = [...FormikValues.tasks];
+    newTasks[taskIndex].jobTypes = jobTypes;
+    setFieldValue('tasks', newTasks);
+  }
+
+  const addEmptyJobType = (taskIndex: number) => {
+    const jobTypes:any[] = [...FormikValues.tasks[taskIndex].jobTypes];
+    jobTypes.push({ ...initialJobType });
+
+    let newTasks = [...FormikValues.tasks];
+    newTasks[taskIndex].jobTypes = jobTypes;
+    setFieldValue('tasks', newTasks);
+  }
 
   return (
     <DataContainer className={'new-modal-design'}>
@@ -915,6 +1010,7 @@ function BCJobModal({
         </Grid>
         <div className={'modalDataContainer'}>
           {FormikValues.tasks.map((task: any, index) =>
+            <>
             <Grid container key={`Grid_${index}`}
                   className={`modalContent ${classes.relative}`}
                   justify={'space-between'} spacing={4}>
@@ -1005,61 +1101,6 @@ function BCJobModal({
                   />
                 }
               </Grid>
-              <Grid item xs>
-                <Typography variant={'caption'}
-                            className={' required previewCaption'}>job
-                  type</Typography>
-                <Autocomplete
-                  // getOptionDisabled={option => job._id ? disabledChips.includes(option._id) : null}
-                  getOptionDisabled={(option) => !option.isJobType}
-                  getOptionLabel={option => {
-                    const {title} = option;
-                    return `${title || '...'}`
-                  }}
-                  id={'tags-standard'}
-                  multiple
-                  onChange={(ev: any, newValue: any) => handleTaskChange('jobTypes', newValue, index)}
-                  options={
-                    items && items.length !== 0
-                      ? stringSortCaseInsensitive(items.map((item: { name: string; jobType: string }) => ({
-                        ...item,
-                        title: item.name,
-                        _id: item.jobType
-                      })), 'title')
-                        .sort((a: { isJobType: boolean }, b: { isJobType: boolean }) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
-                      : []
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant={'outlined'}
-                      required={!task.jobTypes.length}
-                    />
-                  )}
-                  classes={{popper: classes.popper}}
-                  renderOption={(option: { title: string; isJobType: boolean }) => {
-                    const {title, isJobType} = option;
-                    if (!isJobType) {
-                      return ''
-                    } else {
-                      return `${title || '...'}`
-                    }
-                  }}
-                  renderTags={(tagValue, getTagProps) =>
-                    tagValue.map((option, index) => {
-                      return (
-                        <Chip
-                          label={`${option.title || '...'}`}
-                          {...getTagProps({index})}
-                          // disabled={disabledChips.includes(option._id) || !job._id}
-                        />
-                      );
-                    })
-                  }
-                  value={task.jobTypes}
-                  getOptionSelected={() => false}
-                />
-              </Grid>
               {index > 0 && !jobTypesLoading &&
                 <IconButton className={classes.removeJobTypeButton}
                             component="span"
@@ -1069,7 +1110,124 @@ function BCJobModal({
                 </IconButton>
               }
             </Grid>
+              {task.jobTypes.map((jobType: any, jobTypeIdx: number) =>
+                <Grid container key={`Grid_${index}`}
+                  className={`modalContent ${classes.relative}`}
+                  justify={'space-between'} spacing={4}>
+                  <Grid item xs={6}>
+                    <Typography
+                      variant={'caption'}
+                      className={`required ${'previewCaption'}`}
+                    >
+                      job type
+                    </Typography>
+                    <Autocomplete
+                      getOptionDisabled={(option) => !option.isJobType}
+                      getOptionLabel={option => {
+                        const { title } = option;
+                        return `${title || '...'}`
+                      }}
+                      id={'tags-standard'}
+                      onChange={(ev: any, newValue: any) => handleJobTypeChange("jobType", newValue, jobTypeIdx, index)}
+                      options={
+                        items && items.length !== 0
+                          ? stringSortCaseInsensitive(items.map((item: { name: string; jobType: string }) => ({
+                            ...item,
+                            title: item.name,
+                            _id: item.jobType
+                          })), 'title')
+                            .sort((a: { isJobType: boolean }, b: { isJobType: boolean }) => a.isJobType.toString() > b.isJobType.toString() ? -1 : 1)
+                          : []
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant={'outlined'}
+                          inputRef={jobTypesInput}
+                          required={!task.jobTypes.length}
+                        />
+                      )}
+                      classes={{ popper: classes.popper }}
+                      renderOption={(option: {
+                        title: string;
+                        description: string;
+                        isJobType: string;
+                      }) => {
+                        const { title, description, isJobType } = option;
+                        if (!isJobType) {
+                          return '';
+                        } else {
+                          return `${title || '...'}${description ? ' - ' + description : ''
+                            }`;
+                        }
+                      }}
+                      value={jobType.jobTypeId}
+                      getOptionSelected={() => false}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography
+                      variant={'caption'}
+                      className={`${'previewCaption'}`}
+                    >
+                      quantity
+                    </Typography>
+                    <BCInput
+                      type="number"
+                      className={'serviceTicketLabel'}
+                      handleChange={(ev: any, newValue: any) =>
+                        handleJobTypeChange("quantity", ev.target?.value, jobTypeIdx, index)
+                      }
+                      name={'quantity'}
+                      value={jobType.quantity}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Typography
+                      variant={'caption'}
+                      className={`${'previewCaption'}`}
+                    >
+                      Price
+                    </Typography>
+                    <BCInput
+                      type="text"
+                      className={'serviceTicketLabel'}
+                      disabled={true}
+                      handleChange={(ev: any, newValue: any) =>
+                        handleJobTypeChange("quantity", ev.target?.value, jobTypeIdx, index)
+                      }
+                      name={'price'}
+                      value={jobType.price}
+                    />
+                  </Grid>
+                  <Grid
+                    container xs={1}
+                    justify={"flex-start"}
+                    alignItems="center"
+                  >
+                    <IconButton
+                      component="span"
+                      color={'primary'}
+                      size="small"
+                      onClick={() => addEmptyJobType(index)}
+                    >
+                      <AddCircleIcon />
+                    </IconButton>
+                    {jobTypeIdx > 0 &&
+                      <IconButton
+                        component="span"
+                        size="small"
+                        onClick={() => removeJobType(jobTypeIdx, index)}
+                      >
+                        <RemoveCircleIcon />
+                      </IconButton>
+                    }
+                  </Grid>
+                </Grid>
+              )}
+              </>
           )}
+
           <Grid container className={'modalContent'} justify={'space-between'}
                 spacing={4}>
             <Grid item xs>

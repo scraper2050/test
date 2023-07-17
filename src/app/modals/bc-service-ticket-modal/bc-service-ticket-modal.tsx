@@ -15,6 +15,7 @@ import {
   DialogActions,
   FormControlLabel,
   Grid,
+  IconButton,
   TextField,
   Typography,
   withStyles,
@@ -26,6 +27,7 @@ import {
 } from 'api/service-tickets.api';
 import {
   closeModalAction,
+  openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 import {useDispatch, useSelector} from 'react-redux';
@@ -61,6 +63,17 @@ import {useHistory} from 'react-router-dom';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { callCreateHomeOwner } from 'api/home-owner.api';
 import { getHomeOwnerAction, clearHomeOwnerStore } from 'actions/home-owner/home-owner.action';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { refreshPORequests } from 'actions/po-request/po-request.action';
+import { getAllDiscountItemsAPI } from 'api/discount.api';
+
+var initialJobType = {
+  jobTypeId: undefined,
+  price: null,
+  quantity: 1
+};
 
 function BCServiceTicketModal(
   {
@@ -72,7 +85,7 @@ function BCServiceTicketModal(
       source: 'blueclerk',
       jobSite: '',
       jobLocation: '',
-      jobType: '',
+      jobTypes: [initialJobType],
       note: '',
       updateFlag: '',
       dueDate: new Date(),
@@ -117,6 +130,10 @@ function BCServiceTicketModal(
   const jobTypesInput = useRef<HTMLInputElement>(null);
   const history = useHistory();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const [isPORequired, setIsPORequired] = useState(false);
+  const [itemTier, setItemTier] = useState("");
+  const [chargeTotal, setChargeTotal] = useState(0);
+  const {discountItems} = useSelector(({ discountItems }: any) => discountItems);
 
   const filter = createFilterOptions();
 
@@ -126,6 +143,9 @@ function BCServiceTicketModal(
     setFieldValue: any,
     newValue: any
   ) => {
+    setIsPORequired(newValue?.isPORequired || false);
+    setItemTier(newValue?.itemTierObj?.[0]?.name || "");
+
     const customerId = newValue ? newValue._id : '';
     await setFieldValue(fieldName, '');
     await setFieldValue('jobLocationId', '');
@@ -161,6 +181,7 @@ function BCServiceTicketModal(
     }
 
     await setFieldValue(fieldName, customerId);
+    changeJobTypesPrice();
   };
 
   const handleContactChange = (
@@ -219,7 +240,7 @@ function BCServiceTicketModal(
         customerContactId: FormikValues.customerContactId,
         customerPO: FormikValues.customerPO,
         images: FormikValues.images,
-        tasks: FormikValues.jobTypes.map((jobType: any) => ({jobType: jobType.jobTypeId || jobType._id})),
+        tasks: FormikValues.jobTypes,
         customer: customers.find((customer: any) => customer?._id === FormikValues.customerId),
       }
       history.push({
@@ -244,19 +265,110 @@ function BCServiceTicketModal(
     }
   };
 
-  const handleJobTypeChange = (
-    event: any,
-    setFieldValue: any,
-    newValue: any
-  ) => {
-    let jobType = '';
-    jobType = newValue.map((val: any) => ({
-      _id: val._id || val.jobTypeId,
-      title: val.title,
-      description: val.description,
-    }));
-    setFieldValue('jobTypes', jobType);
+  const handleJobTypeChange = (fieldName: string, value: any, index: number) => {
+    const jobTypes = [...FormikValues.jobTypes];
+    switch (fieldName) {
+      case "jobType":
+        jobTypes[index].jobTypeId = value;
+        _setJobTypePrice(jobTypes[index]);
+        break;
+      case "quantity":
+        jobTypes[index].quantity = value;
+        if (jobTypes[index].default_price){
+          jobTypes[index].price = value * jobTypes[index].default_price;
+        }
+        break;
+      default:
+        break;
+    }
+    
+    setFieldValue('jobTypes', jobTypes);
+    _setJobTotal();
   };
+
+  const changeJobTypesPrice = () => {
+    const jobTypes = [...FormikValues.jobTypes];
+    jobTypes?.forEach((jobType, index: number) => {
+      _setJobTypePrice(jobType);
+    })
+    setFieldValue('jobTypes', jobTypes);
+    _setJobTotal();
+  }
+
+  /**
+   * 
+   * @returns Quantity
+   * Retrieve the quantity for each Job Type
+   */
+  const _getAllQuantity = () => {
+    const jobTypes = [...FormikValues.jobTypes];
+    let qty = 0;
+    jobTypes?.forEach((jobType: any, index: number) => {
+      qty += Number(jobType.quantity);
+    })
+    
+    return qty
+  }
+  /**
+   * 
+   * @param jobType 
+   * Assign a price to each job item
+   */
+  const _setJobTypePrice = (jobType: any) => {
+    if (jobType.jobTypeId) {
+      const item = items.find((res: any) => res.jobType == jobType.jobTypeId._id);
+      const customer = customers.find((res: any) => res._id == FormikValues.customerId);
+      
+      if (item) {
+        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+        if (customer && price) {
+          jobType.default_price = price?.charge;
+          jobType.price = price?.charge * jobType.quantity;
+        } else {
+          price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+          jobType.default_price = price?.charge;
+          jobType.price = price?.charge * jobType.quantity;
+        }
+      }
+    }
+  }
+
+  /**
+   * Calculate the total charge for each job type
+   */
+  const _setJobTotal = () =>{
+    const jobTypes = [...FormikValues.jobTypes];
+    let total = 0;
+    jobTypes?.forEach((jobType: any, index: number) => {
+      total += jobType.price;
+    })
+
+    const customer = customers.find((res: any) => res._id == FormikValues.customerId);
+    //Set price with discount item
+    if (customer && customer?.discountPrices?.length > 0) {
+      // Sort the customer discount prices and filter any null prices
+      let discountPrices = customer.discountPrices?.sort((a: any, b: any) => {
+        return a.quantity - b.quantity
+      });
+      discountPrices = discountPrices.filter((disc: any) => disc.discountItem)
+
+      // Get the max quantity that should be discounted
+      const allQty = _getAllQuantity();
+      const maxDiscountQty = discountPrices[discountPrices.length - 1]?.quantity;
+      const totalItemDiscounted = allQty > maxDiscountQty ? maxDiscountQty : allQty;
+
+      // Find the discount item based on how many item that gonna be discounted
+      const customerDiscount = customer.discountPrices?.find((disc: any) => disc.quantity === totalItemDiscounted);
+      const discountItem = discountItems.find((res: any) => res._id == customerDiscount?.discountItem);
+      if (discountItem) {
+        const discountAmount = discountItem.charges ?? 0;
+        
+        total += discountAmount;
+      }
+    }
+
+    setChargeTotal(total);
+  }
 
   const isValidate = (requestObj: any) => {
     let validateFlag = true;
@@ -321,12 +433,14 @@ function BCServiceTicketModal(
       dispatch(clearJobSiteStore());
       dispatch(clearHomeOwnerStore());
     }
+    dispatch(loadInvoiceItems.fetch());
+    dispatch(getAllDiscountItemsAPI());
   }, []);
 
   const mapTask = (tasks: any) => {
     if (tasks)
       return tasks.map((t: any) => {
-        return {jobTypeId: t.jobType};
+        return {jobTypeId: t.jobType, quantity: t?.quantity || 1};
       });
     else return [];
   };
@@ -347,7 +461,7 @@ function BCServiceTicketModal(
       jobLocationId: ticket.jobLocation
         ? ticket?.jobLocation?._id || ticket.jobLocation
         : '',
-      jobTypes: ticket.tasks ? mapTask(ticket.tasks) : [],
+      jobTypes: ticket.tasks ? mapTask(ticket.tasks) : [{...initialJobType}],  
       note: ticket.note,
       dueDate: parseISODate(ticket.dueDate),
       updateFlag: ticket.updateFlag,
@@ -380,6 +494,14 @@ function BCServiceTicketModal(
         tempData.workType = currentDivision.data?.workTypeId;
       }
 
+      if (!ticket.type) {
+        if (isPORequired) {
+          tempData.type = "PO Request";
+        } else {
+          tempData.type = "Ticket";
+        }
+      }
+
       const editTicketObj = {...values, ticketId: ''};
       const updateHomeOccupationStatus = () => {
         if (jobSiteValue.isHomeOccupied === isHomeOccupied) return;
@@ -407,8 +529,9 @@ function BCServiceTicketModal(
           }
           formatedRequest.jobTypes = JSON.stringify(
             formatedRequest.jobTypes.map(
-              (jt: { jobTypeId?: string; _id: string }) => ({
-                jobTypeId: jt.jobTypeId || jt._id,
+              (jt: { jobTypeId?: any; price: string, quantity: number }) => ({
+                jobTypeId: jt.jobTypeId?._id || jt.jobTypeId,
+                quantity: Number(jt.quantity),
               })
             )
           );
@@ -455,6 +578,7 @@ function BCServiceTicketModal(
                 return;
               }
               if (refreshTicketAfterEditing) {
+                dispatch(refreshPORequests(true))
                 dispatch(refreshServiceTickets(true));
               }
               dispatch(refreshJobs(true));
@@ -492,7 +616,8 @@ function BCServiceTicketModal(
         const formatedRequest = {...formatRequestObj(tempData)};
         formatedRequest.jobTypes = JSON.stringify(
           JSON.parse(formatedRequest.jobTypes).map((jt: any) => ({
-            jobTypeId: jt._id,
+            jobTypeId: jt.jobTypeId?._id || jt.jobTypeId,
+            quantity: Number(jt.quantity),
           }))
         );
         // Create home owner if needed
@@ -538,6 +663,7 @@ function BCServiceTicketModal(
               setSubmitting(false);
               return;
             }
+            dispatch(refreshPORequests(true))
             dispatch(refreshServiceTickets(true));
             dispatch(closeModalAction());
             setTimeout(() => {
@@ -551,7 +677,7 @@ function BCServiceTicketModal(
             setSubmitting(false);
             updateHomeOccupationStatus();
 
-            if (response.message === 'Service ticket created successfully.') {
+            if (response.message === 'Service Ticket created successfully.' || response.message === 'Purchase Order Request created successfully.') {
               dispatch(success(response.message));
             }
           })
@@ -654,6 +780,9 @@ function BCServiceTicketModal(
         referenceNumber: ticket.customer?._id,
       };
       dispatch(getContacts(data));
+
+      setIsPORequired(ticket.customer?.isPORequired || false);
+      setItemTier(ticket?.customer?.itemTierObj?.[0]?.name || "");
     }
   }, []);
 
@@ -760,26 +889,38 @@ function BCServiceTicketModal(
   const getJobType = () => {
     if (jobTypes?.length && items?.length) {
       if (ticket?.tasks?.length) {
-        const ids = ticket.tasks.map((ticket: any) => ticket.jobType);
-        const result = ids.map((id: any) => {
+        const ids = ticket.tasks.map((ticket: any) => {return {jobType: ticket.jobType, quantity: ticket.quantity}});
+        const result = ids.map((task: any) => {
           const currentItem = items.filter(
             (item: { jobType: string }) =>
-              item.jobType && (item.jobType === id || item.jobType === id._id)
-          )[0];
-          return {
-            _id: currentItem?.jobType,
-            title: currentItem?.name,
-            description: currentItem?.description,
-          };
+              item.jobType && (item.jobType === task.jobType || item.jobType === task.jobType?._id)
+            )[0];
+            
+            let jobType = {
+              jobTypeId: {
+                _id: currentItem?.jobType,
+                title: currentItem?.name,
+                description: currentItem?.description,
+              },
+              quantity: task.quantity || 1,
+              price: 0
+            }
+            
+            const item = items.find((res: any) => res.jobType == task.jobType);
+            const customer = customers.find((res: any) => res._id == FormikValues.customerId);
+            if (item) {
+              let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+              if (customer && price) {
+                jobType.price = price?.charge * jobType.quantity;
+              } else {
+                price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+                jobType.price = price?.charge * jobType.quantity;
+              }
+            }
+          return jobType;
         });
-        const newValue = result.map(
-          (val: { _id: string; title: string; description: string }) => ({
-            jobTypeId: val._id,
-            title: val.title,
-            description: val.description,
-          })
-        );
-        setFieldValue('jobTypes', newValue);
+        setFieldValue('jobTypes', result);
+        _setJobTotal();
       }
       if (ticket?.jobType) {
         return [jobTypes.filter((job: any) => job._id === ticket.jobType)[0]];
@@ -790,7 +931,39 @@ function BCServiceTicketModal(
 
   useEffect(() => {
     getJobType();
+    if (ticket.customer?._id) {
+      let customer = customers.find(
+        (customer: any) => customer?._id === ticket.customer?._id
+      );
+      setItemTier(customer?.itemTierObj?.[0]?.name || "");
+    }
   }, [items]);
+  
+  const sendPORequestEmail = () => {
+    dispatch(setModalDataAction({
+      'data': {
+        'po_request': ticket,
+        'modalTitle': `Send this ${ticket.ticketId}`,
+        'removeFooter': false,
+      },
+      'type': modalTypes.EMAIL_PO_REQUEST_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
+
+  const removeJobType = (index: number) => {
+    const jobTypes = [...FormikValues.jobTypes];
+    jobTypes.splice(index, 1);
+    setFieldValue('jobTypes', jobTypes);
+  }
+
+  const addEmptyJobType = () => {
+    const jobTypes = [...FormikValues.jobTypes];
+    jobTypes.push({ ...initialJobType });
+    setFieldValue('jobTypes', jobTypes);
+  }
 
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
@@ -804,6 +977,18 @@ function BCServiceTicketModal(
           justify={'space-between'}
           spacing={4}
         >
+          {ticket.type == "PO Request" && (
+            <Grid item xs={12}>
+              <Button
+                color='primary'
+                variant="outlined"
+                className={'whiteButton'}
+                onClick={sendPORequestEmail}
+              >
+                Send PO Request
+              </Button>
+            </Grid>
+          )}
           <Grid item xs={5}>
             <Typography variant={'caption'} className={'previewCaption'}>
               customer
@@ -865,7 +1050,18 @@ function BCServiceTicketModal(
               errorText={!isFieldsDisabled && FormikErrors.dueDate}
             />
           </Grid>
-
+          <Grid container xs={6}>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>
+                Tier : {itemTier || "N/A"}
+              </Typography>
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>
+                Total : {chargeTotal || 0}
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
         <div className={'modalDataContainer'}>
           <Grid
@@ -970,79 +1166,138 @@ function BCServiceTicketModal(
                 value={jobSiteValue}
               />
             </Grid>
-            <Grid item xs>
-              <Typography
-                variant={'caption'}
-                className={`required ${'previewCaption'}`}
-              >
-                job type
-              </Typography>
-              <Autocomplete
-                className={detail ? 'detail-only' : ''}
-                value={FormikValues.jobTypes}
-                getOptionDisabled={(option) => !option.isJobType}
-                disabled={detail || !!ticket.jobCreated}
-                getOptionLabel={(option) => {
-                  const {title, description} = option;
-                  return `${title || '...'}${
-                    description ? ' - ' + description : ''
-                  }`;
-                }}
-                id={'tags-standard'}
-                multiple
-                onChange={(ev: any, newValue: any) =>
-                  handleJobTypeChange(ev, setFieldValue, newValue)
-                }
-                options={
-                  items && items.length !== 0
-                    ? stringSortCaseInsensitive(
-                    items.map(
-                      (item: { name: string; jobType: string }) => ({
-                        ...item,
-                        title: item.name,
-                        _id: item.jobType,
-                      })
-                    ),
-                    'title'
-                    ).sort(
-                    (
-                      a: { isJobType: boolean },
-                      b: { isJobType: boolean }
-                    ) =>
-                      a.isJobType.toString() > b.isJobType.toString()
-                        ? -1
-                        : 1
-                    )
-                    : []
-                }
-                classes={{popper: classes.popper}}
-                renderOption={(option: {
-                  title: string;
-                  description: string;
-                  isJobType: string;
-                }) => {
-                  const {title, description, isJobType} = option;
-                  if (!isJobType) {
-                    return '';
-                  } else {
-                    return `${title || '...'}${
-                      description ? ' - ' + description : ''
-                    }`;
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    inputRef={jobTypesInput}
-                    variant={'outlined'}
-                  />
-                )}
-                getOptionSelected={() => false}
-              />
-            </Grid>
-
           </Grid>
-
+          {FormikValues.jobTypes.map((jobType: any, index: number) =>
+            <Grid container key={`Grid_${index}`}
+              className={`modalContent ${classes.relative}`}
+              justify={'space-between'} spacing={3}>
+              <Grid item xs={6}>
+                <Typography
+                  variant={'caption'}
+                  className={`required ${'previewCaption'}`}
+                >
+                  job type
+                </Typography>
+                <Autocomplete
+                  className={detail ? 'detail-only' : ''}
+                  value={jobType.jobTypeId}
+                  getOptionDisabled={(option) => !option.isJobType}
+                  disabled={detail || !!ticket.jobCreated}
+                  getOptionLabel={(option) => {
+                    const { title, description } = option;
+                    return `${title || '...'}${description ? ' - ' + description : ''
+                      }`;
+                  }}
+                  id={'tags-standard'}
+                  onChange={(ev: any, newValue: any) =>
+                    handleJobTypeChange("jobType", newValue, index)
+                  }
+                  options={
+                    items && items.length !== 0
+                      ? stringSortCaseInsensitive(
+                        items.map(
+                          (item: { name: string; jobType: string }) => ({
+                            ...item,
+                            title: item.name,
+                            _id: item.jobType,
+                          })
+                        ),
+                        'title'
+                      ).sort(
+                        (
+                          a: { isJobType: boolean },
+                          b: { isJobType: boolean }
+                        ) =>
+                          a.isJobType.toString() > b.isJobType.toString()
+                            ? -1
+                            : 1
+                      )
+                      : []
+                  }
+                  classes={{ popper: classes.popper }}
+                  renderOption={(option: {
+                    title: string;
+                    description: string;
+                    isJobType: string;
+                  }) => {
+                    const { title, description, isJobType } = option;
+                    if (!isJobType) {
+                      return '';
+                    } else {
+                      return `${title || '...'}${description ? ' - ' + description : ''
+                        }`;
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      inputRef={jobTypesInput}
+                      variant={'outlined'}
+                    />
+                  )}
+                  getOptionSelected={() => false}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Typography
+                  variant={'caption'}
+                  className={`${'previewCaption'}`}
+                >
+                  quantity
+                </Typography>
+                <BCInput
+                  type="number"
+                  className={'serviceTicketLabel'}
+                  handleChange={(ev: any, newValue: any) =>
+                    handleJobTypeChange("quantity", ev.target?.value, index)
+                  }
+                  name={'quantity'}
+                  value={jobType.quantity}
+                />
+              </Grid>
+              <Grid item xs={3}>
+                <Typography
+                  variant={'caption'}
+                  className={`${'previewCaption'}`}
+                >
+                  Price
+                </Typography>
+                <BCInput
+                  type="text"
+                  className={'serviceTicketLabel'}
+                  disabled={true}
+                  handleChange={(ev: any, newValue: any) =>
+                    handleJobTypeChange("quantity", ev.target?.value, index)
+                  }
+                  name={'price'}
+                  value={jobType.price}
+                />
+              </Grid>
+              <Grid 
+                container xs={1}
+                justify={"flex-start"}
+                alignItems="center"
+              >
+                <IconButton
+                  component="span"
+                  color={'primary'}
+                  size="small"
+                  onClick={() => addEmptyJobType()}
+                >
+                  <AddCircleIcon />
+                </IconButton>
+                {index > 0 &&
+                  <IconButton 
+                    component="span"
+                    size="small"
+                    onClick={() => removeJobType(index)}
+                  >
+                    <RemoveCircleIcon />
+                  </IconButton>
+                }
+              </Grid>
+            </Grid>
+          )}
           <Grid
             container
             className={'modalContent'}
@@ -1319,6 +1574,11 @@ const DataContainer = styled.div`
     padding: 9.5px 4px;
   }
 
+  .whiteButton {
+    background-color: #ffffff;
+    border-radius: 6px;
+  }
+  
   span.required:after {
     margin-left: 3px;
     content: '*';

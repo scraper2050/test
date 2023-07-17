@@ -29,6 +29,7 @@ import { CSButton } from "../../../../../helpers/custom";
 import debounce from 'lodash.debounce';
 import { warning } from 'actions/snackbar/snackbar.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 
 function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
@@ -90,7 +91,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     let startTime = 'N/A';
     let endTime = 'N/A';
     // Case for specific time
-    if(originalRow.scheduledStartTime !== undefined || originalRow.scheduledEndTime !== undefined) {
+    if (originalRow.scheduledStartTime !== undefined || originalRow.scheduledEndTime !== undefined) {
       if (originalRow.scheduledStartTime !== undefined) {
         const formatScheduledObj = formatSchedulingTime(
           originalRow.scheduledStartTime
@@ -111,7 +112,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     }
     // Case for AAM/PM range time
     else {
-      switch(originalRow.scheduleTimeAMPM) {
+      switch (originalRow.scheduleTimeAMPM) {
         case 1: return 'AM';
         case 2: return 'PM';
         default: return 'N/A - N/A';
@@ -403,21 +404,26 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     );
   }
 
-  useEffect(() => {    
-      if ((refresh && !currentDivision.isDivisionFeatureActivated) || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
-        dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
-        dispatch(setCurrentPageIndex(0));
-        dispatch(setCurrentPageSize(10));
-      }
-      setTimeout(() => {
-        loadCount.current++;
-      }, 1000);
+  useEffect(() => {
+    if ((refresh && !currentDivision.isDivisionFeatureActivated) || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
+      dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
+    }
+    setTimeout(() => {
+      loadCount.current++;
+    }, 1000);
   }, [refresh, currentDivision.params]);
 
   useEffect(() => {
     console.log('refetch', keyword);
     dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
   }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange])
+
+  useEffect(() => {
+    dispatch(loadInvoiceItems.fetch());
+    dispatch(getCustomers());
+  }, []);
 
   const handleTabChange = (newValue: number) => {
   };
