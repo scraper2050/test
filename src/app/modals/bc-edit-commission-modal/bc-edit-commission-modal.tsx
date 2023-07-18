@@ -239,7 +239,7 @@ function BcEditCommissionModal({
                     alignItems={'center'}
                     xs={3}
                   >
-                        <Typography variant={'button'}>COMMISSIONS</Typography>
+                        <Typography variant={'button'}>PAY</Typography>
                   </Grid>
                   <Grid
                     item
