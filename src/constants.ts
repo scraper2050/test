@@ -144,6 +144,7 @@ export const modalTypes = {
   'TICKET_DETAILS_MODAL': 'ticket-details-modal',
   'EDIT_JOB_COSTING_MODAL': 'edit-job-costing-modal',
   'EMAIL_PO_REQUEST_MODAL': 'email-po-request-modal',
+  'PO_REQUEST_WARNING_MODAL': 'po-request-warning-modal',
 };
 
 export const rejectionReason = [
