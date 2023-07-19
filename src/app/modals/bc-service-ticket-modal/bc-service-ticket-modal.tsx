@@ -12,7 +12,9 @@ import {
   Button,
   Checkbox,
   Chip,
+  Dialog,
   DialogActions,
+  DialogTitle,
   FormControlLabel,
   Grid,
   IconButton,
@@ -70,6 +72,9 @@ import { refreshPORequests } from 'actions/po-request/po-request.action';
 import { getAllDiscountItemsAPI } from 'api/discount.api';
 import InfoIcon from '@material-ui/icons/Info';
 import { grey, red } from '@material-ui/core/colors';
+import EmailModalPORequest from '../bc-email-modal/bc-email-po-request-modal';
+import bcModalTransition from '../bc-modal-transition';
+import CloseIcon from '@material-ui/icons/Close';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -134,9 +139,12 @@ function BCServiceTicketModal(
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const [isPORequired, setIsPORequired] = useState(false);
   const [itemTier, setItemTier] = useState("");
-  const [chargeTotal, setChargeTotal] = useState(0);
+  const [totalCharge, settotalCharge] = useState(0);
   const [discountApplied, setDiscountApplied] = useState(0);
   const {discountItems} = useSelector(({ discountItems }: any) => discountItems);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailPORequestId, setEmailPORequestId] = useState("");
+  const [openSendEmailPO, setOpenSendEmailPO] = useState(false);
 
   const filter = createFilterOptions();
 
@@ -375,7 +383,7 @@ function BCServiceTicketModal(
     }
 
     setDiscountApplied(discountTotal);
-    setChargeTotal(total);
+    settotalCharge(total);
   }
 
   const isValidate = (requestObj: any) => {
@@ -459,8 +467,7 @@ function BCServiceTicketModal(
     handleSubmit: FormikSubmit,
     errors: FormikErrors,
     setFieldValue,
-    getFieldMeta,
-    isSubmitting,
+    getFieldMeta
   } = useFormik({
     initialValues: {
       customerId: ticket?.customer?._id,
@@ -483,7 +490,9 @@ function BCServiceTicketModal(
       customerFirstName: ticket.homeOwner?.profile.firstName || '',
       customerLastName: ticket.homeOwner?.profile.lastName || '',
     },
-    onSubmit: async (values, {setSubmitting}) => {
+    onSubmit: async (values) => {
+      setIsSubmitting(true);
+      
       const tempData = {
         ...ticket,
         ...values,
@@ -582,7 +591,7 @@ function BCServiceTicketModal(
             .then((response: any) => {
               if (response.status === 0) {
                 dispatch(SnackBarError(response.message));
-                setSubmitting(false);
+                setIsSubmitting(false);
                 return;
               }
               if (refreshTicketAfterEditing) {
@@ -599,7 +608,7 @@ function BCServiceTicketModal(
                   })
                 );
               }, 200);
-              setSubmitting(false);
+              setIsSubmitting(false);
               updateHomeOccupationStatus();
 
               if (response.message === 'Ticket updated successfully.') {
@@ -613,11 +622,11 @@ function BCServiceTicketModal(
               }
             })
             .catch((err: any) => {
-              setSubmitting(false);
+              setIsSubmitting(false);
               throw err;
             });
         } else {
-          setSubmitting(false);
+          setIsSubmitting(false);
         }
       } else {
         delete tempData.customer;
@@ -669,27 +678,29 @@ function BCServiceTicketModal(
             .then((response: any) => {
               if (response.status === 0) {
                 dispatch(SnackBarError(response.message));
-                setSubmitting(false);
+                setIsSubmitting(false);
                 return;
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
-              dispatch(closeModalAction());
-              setTimeout(() => {
-                dispatch(
-                  setModalDataAction({
-                    data: {},
-                    type: '',
-                  })
-                );
-              }, 200);
-              setSubmitting(false);
+              // dispatch(closeModalAction());
+              // setTimeout(() => {
+              //   dispatch(
+              //     setModalDataAction({
+              //       data: {},
+              //       type: '',
+              //     })
+              //   );
+              // }, 200);
+              setIsSubmitting(false);
               updateHomeOccupationStatus();
   
               if (response.message === 'Service Ticket created successfully.' || response.message === 'Purchase Order Request created successfully.') {
                 if (tempData.type == "PO Request") {
                   setTimeout(() => {
-                    createPORequest(response.createdID)
+                    // sendPORequestEmail(response.createdID)
+                    setEmailPORequestId(response.createdID);
+                    setOpenSendEmailPO(true);
                   },300)
                 }else{
                   dispatch(success(response.message));
@@ -697,7 +708,7 @@ function BCServiceTicketModal(
               }
             })
             .catch((err: any) => {
-              setSubmitting(false);
+              setIsSubmitting(false);
               throw err;
             });
       }
@@ -708,7 +719,7 @@ function BCServiceTicketModal(
       if (moment().isAfter(values.dueDate, 'day')) {
         errors.dueDate = 'Cannot select a date that has already passed';
       }
-      if (values.jobTypes.length === 0) {
+      if (!values.jobTypes[0]?.jobTypeId) {
         errors.jobTypes = 'Select at least one (1) job';
         if (jobTypesInput.current !== null) {
           jobTypesInput.current.setCustomValidity(
@@ -994,10 +1005,15 @@ function BCServiceTicketModal(
     setFieldValue('jobTypes', jobTypes);
   }
 
+  const handleClosePORequestEmail = () => {
+    setOpenSendEmailPO(false);
+  };
+
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
   return (
+    <>
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         <Grid
@@ -1007,7 +1023,7 @@ function BCServiceTicketModal(
           spacing={4}
         >
           {ticket._id && ticket.type == "PO Request" && (
-            <Grid item xs={12} className={'noPaddingTopAndButton'}>
+            <Grid item xs={12}>
               <Button
                 color='primary'
                 variant="outlined"
@@ -1089,17 +1105,17 @@ function BCServiceTicketModal(
           <Grid container xs={6}>
             <Grid item className={'noPaddingTopAndButton'} xs={3}>
               <Typography variant={'subtitle1'} className={'totalDetailText'} >
-                Tier : {itemTier || "N/A"}
+                Tier : {itemTier}
               </Typography>
             </Grid>
             <Grid item className={'noPaddingTopAndButton'} xs={3}>
               <Typography variant={'subtitle1'} className={'totalDetailText'}>
-                Total : ${chargeTotal || 0}
+                Total : {totalCharge ? "$"+totalCharge : ""}
               </Typography>
             </Grid>
             <Grid item className={'noPaddingTopAndButton'} xs={6}>
               <Typography variant={'subtitle1'} className={'totalDetailText'}>
-                Discount Applied: ${Math.abs(discountApplied) || 0}
+                Discount Applied: {Math.abs(discountApplied) ? "$"+Math.abs(discountApplied) : ""}
               </Typography>
             </Grid>
           </Grid>
@@ -1592,6 +1608,47 @@ function BCServiceTicketModal(
         </div>
       </form>
     </DataContainer>
+
+    {/* Send Email PO Request Modal will only be called when a PO Request is created. */}
+    <Dialog
+      aria-labelledby={'responsive-dialog-title'}
+      disableEscapeKeyDown={true}
+      fullWidth={true}
+      maxWidth={"sm"}
+      onClose={handleClosePORequestEmail}
+      open={openSendEmailPO}
+      PaperProps={{
+        'style': {
+          'maxHeight': `${data && data.maxHeight ? data.maxHeight : ''}`,
+          'height': `${data && data.height ? data.height : ''}`
+        }
+      }}
+      scroll={'paper'}
+      TransitionComponent={bcModalTransition}>
+        <DialogTitle>
+          <Typography
+            key={"sendPORequest"}
+            variant={'h6'}>
+            <strong>
+              Send PO Request
+            </strong>
+          </Typography>
+          <IconButton
+              aria-label={'close'}
+              onClick={handleClosePORequestEmail}
+              style={{
+                'position': 'absolute',
+                'right': 1,
+                'top': 1
+              }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <EmailModalPORequest 
+          po_request_id={emailPORequestId}
+        />
+      </Dialog>
+    </>
   );
 }
 
