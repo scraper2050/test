@@ -683,15 +683,17 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
-              // dispatch(closeModalAction());
-              // setTimeout(() => {
-              //   dispatch(
-              //     setModalDataAction({
-              //       data: {},
-              //       type: '',
-              //     })
-              //   );
-              // }, 200);
+              if (tempData.type != "PO Request"){
+                dispatch(closeModalAction());
+                setTimeout(() => {
+                  dispatch(
+                    setModalDataAction({
+                      data: {},
+                      type: '',
+                    })
+                  );
+                }, 200);
+              }
               setIsSubmitting(false);
               updateHomeOccupationStatus();
   
