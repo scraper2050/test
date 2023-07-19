@@ -2,7 +2,7 @@ import BCTableContainer from '../../../../components/bc-table-container/bc-table
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled from 'styled-components';
 import styles from './../invoices-list.styles';
-import { withStyles, Button, Tooltip, Badge, Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core";
+import { withStyles, Button, Checkbox, Tooltip, Badge, Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core";
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TableFilterService from 'utils/table-filter';
@@ -30,10 +30,11 @@ import { resetAdvanceFilterInvoice } from 'actions/advance-filter/advance-filter
 import { initialAdvanceFilterInvoiceState } from 'reducers/advance-filter.reducer';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import debounce from 'lodash.debounce';
+import PopupMark from '../../../../components/bc-bounce-email-tooltip/bc-popup-mark';
 
 const getFilteredList = (state: any) => {
-  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList.data);
-  return sortedInvoices.filter((invoice: any) => !invoice.isDraft);
+  const sortedInvoices = TableFilterService.filterByDateDesc(state?.invoiceList?.data);
+  return sortedInvoices && sortedInvoices.filter((invoice: any) => !invoice.isDraft);
 };
 
 function InvoicingListListing({ classes, theme }: any) {
@@ -162,9 +163,21 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     {
       'Header': 'Invoice Date',
-      'accessor': (originalRow: any) => formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
+      'accessor': (originalRow: any) =>
+        formatDateMMMDDYYYY(originalRow.issuedDate || originalRow.createdAt),
       'className': 'font-bold',
-      'sortable': true
+      'sortable': true,
+      'Cell': ({ row }: any) => (
+        <div>
+          {
+          formatDateMMMDDYYYY(
+            row.original.issuedDate || row.original.createdAt
+          )
+          } { 
+            row.original.bouncedEmailFlag ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} /> : ''
+          }
+        </div>
+      ),
     },
     {
       Cell({ row }: any) {
@@ -202,6 +215,10 @@ function InvoicingListListing({ classes, theme }: any) {
       'width': 60
     },
   ];
+
+  useEffect(() => {
+    advanceFilterInvoiceData.checkBouncedEmails = false
+  }, [])
 
   useEffect(() => {
     // dispatch(getInvoicingList());
@@ -332,7 +349,6 @@ function InvoicingListListing({ classes, theme }: any) {
     } else {
       dispatch(closeModalAction());
     }
-
   }
 
   // Data used by modal filter
@@ -352,6 +368,12 @@ function InvoicingListListing({ classes, theme }: any) {
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200);
+  }
+
+  const handleBouncedEmail = () => {
+    advanceFilterInvoiceData.checkBouncedEmails = !advanceFilterInvoiceData.checkBouncedEmails
+    
+    dispatch(getAllInvoicesAPI(currentPageSize, 0, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
   }
 
   const handleClear = () => {
@@ -414,6 +436,20 @@ function InvoicingListListing({ classes, theme }: any) {
     )
   }
 
+  const BouncedCheckbox = (props: any) => {
+    const content = JSON.stringify(initialAdvanceFilterInvoiceState) !== JSON.stringify(advanceFilterInvoiceData)
+    return (
+      <div>
+        <Checkbox 
+          color="primary"
+          className={classes.checkbox}
+          checked={advanceFilterInvoiceData.checkBouncedEmails}
+          onChange={props.onChange}
+        />
+        BOUNCED EMAILS
+      </div>
+    );
+  }
   // Dialog to be showed whent the filter modal doesn't return data
   const DialogNotData = ({ open, handleClose }: { open: boolean, handleClose: () => void }) => {
     return (
@@ -448,7 +484,12 @@ function InvoicingListListing({ classes, theme }: any) {
         title={'Filter by Invoice Date...'}
         classes={{button: classes.noLeftMargin}}
       /> */}
-      <ButtonFilter onClick={handleOpenFilter} onClear={handleClear}>Filter</ButtonFilter>
+      {
+        <ButtonFilter onClick={handleOpenFilter} onClear={handleClear}>Filter</ButtonFilter>
+      }
+      {
+        <BouncedCheckbox onChange={handleBouncedEmail}></BouncedCheckbox>
+      }
     </>
   }
 
