@@ -75,7 +75,7 @@ function BCServiceTicketModal(
       jobType: '',
       note: '',
       updateFlag: '',
-      dueDate: new Date(),
+      dueDate: null,
       customerContactId: '',
       customerPO: '',
       images: [],
