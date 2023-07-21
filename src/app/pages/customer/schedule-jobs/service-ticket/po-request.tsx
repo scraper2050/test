@@ -4,7 +4,7 @@ import {
     getServiceTicketDetail
 } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
-import { formatDate } from 'helpers/format';
+import { formatDate, formatDateMMMDDYYYY } from 'helpers/format';
 import styles from '../../customer.styles';
 import { Checkbox, FormControlLabel, withStyles, Grid } from "@material-ui/core";
 import React, { useEffect, useState, useRef } from 'react';
@@ -32,7 +32,7 @@ function PORequired({ classes, hidden }: any) {
     const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
     const customers = useSelector(({ customers }: any) => customers.data);
-    const [showAllTickets, toggleShowAllTickets] = useState(false);
+    const [showAllPORequests, toggleShowAllPORequests] = useState(false);
     const [selectionRange, setSelectionRange] = useState<Range | null>(null);
     const loadCount = useRef<number>(0);
     const customStyles = useCustomStyles();
@@ -83,14 +83,14 @@ function PORequired({ classes, hidden }: any) {
     function Toolbar() {
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
                 dispatch(setCurrentPageIndex(0));
             }
-        }, [showAllTickets]);
+        }, [showAllPORequests]);
 
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
                 dispatch(setCurrentPageIndex(0));
             }
         }, [selectionRange]);
@@ -99,16 +99,16 @@ function PORequired({ classes, hidden }: any) {
                 classes={{ root: classes.noMarginRight }}
                 control={
                     <Checkbox
-                        checked={showAllTickets}
+                        checked={showAllPORequests}
                         onChange={() => {
                             dispatch(setCurrentPageIndex(0))
-                            toggleShowAllTickets(!showAllTickets)
+                            toggleShowAllPORequests(!showAllPORequests)
                         }}
                         name="checkedB"
                         color="primary"
                     />
                 }
-                label="Display All Tickets"
+                label="Display All PO Requests"
             />
             <BCDateRangePicker
                 range={selectionRange}
@@ -170,6 +170,17 @@ function PORequired({ classes, hidden }: any) {
             'sortable': true
         },
         {
+            Cell({ row }: any) {
+                return row.original.lastEmailSent
+                    ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
+                    : 'N/A';
+            },
+            'Header': 'Email Send Date ',
+            'accessor': 'lastEmailSent',
+            'className': 'font-bold',
+            'sortable': true
+        },
+        {
             'Cell'({ row }: any) {
                 return <div className={'flex items-center'}>
                     <CSIconButton
@@ -196,7 +207,7 @@ function PORequired({ classes, hidden }: any) {
                         : null
                     }
                     {
-                        !row.original.jobCreated && row.original.status !== 2 && row.original.customer?._id
+                        !row.original.customerPO
                             ? <CSButtonSmall
                                 variant="outlined"
                                 color="primary"
@@ -219,7 +230,7 @@ function PORequired({ classes, hidden }: any) {
 
     useEffect(() => {
         if (refresh) {
-            dispatch(getAllPORequestsAPI(undefined, undefined, showAllTickets, keyword, selectionRange, currentDivision.params));
+            dispatch(getAllPORequestsAPI(undefined, undefined, showAllPORequests, keyword, selectionRange, currentDivision.params));
             dispatch(setCurrentPageIndex(0));
             dispatch(setCurrentPageSize(10));
         }
@@ -245,7 +256,8 @@ function PORequired({ classes, hidden }: any) {
     const sendPORequestEmail = (ticket: any) => {
         dispatch(setModalDataAction({
             'data': {
-                'po_request_id': ticket._id,
+                'id': ticket._id,
+                'type': "PO Request",
                 'modalTitle': `Send this ${ticket.ticketId}`,
                 'removeFooter': false,
             },
@@ -272,7 +284,7 @@ function PORequired({ classes, hidden }: any) {
             setCurrentPageIndexFunction={(num: number, apiCall: boolean) => {
                 dispatch(setCurrentPageIndex(num))
                 if (apiCall) {
-                    dispatch(getAllPORequestsAPI(currentPageSize, num, showAllTickets, keyword, selectionRange, currentDivision.params))
+                    dispatch(getAllPORequestsAPI(currentPageSize, num, showAllPORequests, keyword, selectionRange, currentDivision.params))
                 }
             }}
             currentPageSize={currentPageSize}
@@ -280,7 +292,7 @@ function PORequired({ classes, hidden }: any) {
             setKeywordFunction={(query: string) => {
                 dispatch(setKeyword(query));
                 dispatch(setCurrentPageIndex(0))
-                dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllTickets, query, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params));
             }}
         />
     );

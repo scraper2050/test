@@ -83,19 +83,21 @@ function BCViewJobModal({
         let jobType = {
           title: type.jobType?.title,
           quantity: type.quantity || 1,
-          price: 0
+          price: type.price || 0
         };
         
-        const item = items.find((res: any) => res.jobType == type.jobType?._id);
-        const customer = customers.find((res: any) => res._id == job?.customer?._id);
-        
-        if (item) {
-          let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
-          if (customer && price) {
-            jobType.price = price?.charge * jobType.quantity;
-          } else {
-            price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-            jobType.price = price?.charge * jobType.quantity;
+        if (!("price" in type)) {
+          const item = items.find((res: any) => res.jobType == type.jobType?._id);
+          const customer = customers.find((res: any) => res._id == job?.customer?._id);
+          
+          if (item) {
+            let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+            if (customer && price) {
+              jobType.price = price?.charge * jobType.quantity;
+            } else {
+              price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+              jobType.price = price?.charge * jobType.quantity;
+            }
           }
         }
         title.push(jobType);

@@ -31,7 +31,7 @@ const validationSchema = yup.object().shape({
     cc: yup.string().email('Please insert a valid email').nullable(),
 });
 
-function EmailPORequestModal({ classes, po_request_id }: any) {
+function EmailPORequestModal({ classes, id, type }: any) {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
     const [sent, setSent] = useState(false);
@@ -52,7 +52,7 @@ function EmailPORequestModal({ classes, po_request_id }: any) {
     
     const getData = async () => {
         const params: any = {
-            ticketId: po_request_id
+            ticketId: id
         };
         try {
             const { status, message, emailTemplate: data } = await generatePORequestEmailTemplate(params);
@@ -88,7 +88,7 @@ function EmailPORequestModal({ classes, po_request_id }: any) {
         validationSchema,
         onSubmit: async (values: any, { setSubmitting }: any) => {
             const params = {
-                ticketId: po_request_id,
+                ticketId: id,
                 recipients: JSON.stringify([values.to]),
                 subject: values.subject,
                 message: values.message,
@@ -132,7 +132,7 @@ function EmailPORequestModal({ classes, po_request_id }: any) {
                     {loading ? (
                         <BCCircularLoader heightValue={'20vh'} />
                     ) : sent ? (
-                        <BCSent title={'PO Request was sent successfully'} showLine={false} />
+                        <BCSent title={`${type} was sent successfully`} showLine={false} />
                     ) : (
                         <Grid container direction={'column'} spacing={1}>
                             <Grid item xs={12}>

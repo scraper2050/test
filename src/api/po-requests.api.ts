@@ -15,20 +15,15 @@ const compareByDate = (a: any, b: any) => {
 
 
 let cancelTokenGetAllPORequestsAPI: any;
-export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, status = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any) => {
+export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setPORequestLoading(true));
       const optionObj: any = {
         pageSize,
         currentPage: currentPageIndex,
-        type: "PO Request"
+        showAll: showAllPORequests
       };
-
-      if (status)
-        optionObj.status = 1;
-      else
-        optionObj.status = 0;
 
       if (keyword) {
         optionObj.keyword = keyword

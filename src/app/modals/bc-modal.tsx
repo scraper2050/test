@@ -926,7 +926,8 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<EmailModalPORequest
-          po_request_id={data.po_request_id}
+          id={data.id}
+          type={data.type}
         />);
         break;
       case modalTypes.PO_REQUEST_WARNING_MODAL:

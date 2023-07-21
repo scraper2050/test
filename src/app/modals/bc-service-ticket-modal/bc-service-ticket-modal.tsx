@@ -10,6 +10,7 @@ import BCPhoneNumberInput from '../../components/bc-phone-number-input/bc-phone-
 import {useFormik} from 'formik';
 import {
   Button,
+  ButtonGroup,
   Checkbox,
   Chip,
   Dialog,
@@ -17,8 +18,14 @@ import {
   DialogTitle,
   FormControlLabel,
   Grid,
+  Grow,
   IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
   TextField,
+  Tooltip,
   Typography,
   withStyles,
 } from '@material-ui/core';
@@ -47,11 +54,6 @@ import styled from 'styled-components';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {getContacts} from 'api/contacts.api';
 import {
-  convertMilitaryTime,
-  formatDate,
-  formatToMilitaryTime,
-} from 'helpers/format';
-import {
   error as SnackBarError,
   success,
 } from 'actions/snackbar/snackbar.action';
@@ -75,11 +77,15 @@ import { grey, red } from '@material-ui/core/colors';
 import EmailModalPORequest from '../bc-email-modal/bc-email-po-request-modal';
 import bcModalTransition from '../bc-modal-transition';
 import CloseIcon from '@material-ui/icons/Close';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import EditIcon from '@material-ui/icons/Edit';
 
 var initialJobType = {
   jobTypeId: undefined,
+  quantity: 1,
   price: null,
-  quantity: 1
+  isPriceEditable: false
 };
 
 function BCServiceTicketModal(
@@ -143,8 +149,13 @@ function BCServiceTicketModal(
   const [discountApplied, setDiscountApplied] = useState(0);
   const {discountItems} = useSelector(({ discountItems }: any) => discountItems);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [emailPORequestId, setEmailPORequestId] = useState("");
-  const [openSendEmailPO, setOpenSendEmailPO] = useState(false);
+  const [emailTicketData, setEmailTicketData] = useState<{type?: string, id?: string}>({});
+  const [openSendEmailTicket, setOpenSendEmailTicket] = useState(false);
+  // Submit Button
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
+  const [submitSelectedIndex, setSubmitSelectedIndex] = useState(0);
+  const submitOptions = ["Submit", "Submit and Send"]
 
   const filter = createFilterOptions();
 
@@ -289,6 +300,12 @@ function BCServiceTicketModal(
           jobTypes[index].price = value * jobTypes[index].default_price;
         }
         break;
+      case "price":
+        jobTypes[index].price = Number(value);
+        break;
+      case "isPriceEditable":
+        jobTypes[index].isPriceEditable = value;
+        break;
       default:
         break;
     }
@@ -320,6 +337,7 @@ function BCServiceTicketModal(
     
     return qty
   }
+
   /**
    * 
    * @param jobType 
@@ -358,7 +376,7 @@ function BCServiceTicketModal(
 
     const customer = customers.find((res: any) => res._id == FormikValues.customerId);
     //Set price with discount item
-    if (customer && customer?.discountPrices?.length > 0) {
+    if (customer && customer?.discountPrices?.length > 0 && total > 0) {
       // Sort the customer discount prices and filter any null prices
       let discountPrices = customer.discountPrices?.sort((a: any, b: any) => {
         return a.quantity - b.quantity
@@ -383,7 +401,7 @@ function BCServiceTicketModal(
     }
 
     setDiscountApplied(discountTotal);
-    settotalCharge(total);
+    settotalCharge(total < 0 ? 0 : total);
   }
 
   const isValidate = (requestObj: any) => {
@@ -467,7 +485,8 @@ function BCServiceTicketModal(
     handleSubmit: FormikSubmit,
     errors: FormikErrors,
     setFieldValue,
-    getFieldMeta
+    getFieldMeta,
+    submitForm
   } = useFormik({
     initialValues: {
       customerId: ticket?.customer?._id,
@@ -477,7 +496,7 @@ function BCServiceTicketModal(
         ? ticket?.jobLocation?._id || ticket.jobLocation
         : '',
       jobTypes: ticket.tasks ? mapTask(ticket.tasks) : [{...initialJobType}],  
-      note: ticket.note,
+      note: ticket.note || "",
       dueDate: parseISODate(ticket.dueDate),
       updateFlag: ticket.updateFlag,
       customerContactId:
@@ -512,7 +531,7 @@ function BCServiceTicketModal(
       }
 
       if (!ticket.type) {
-        if (isPORequired) {
+        if (isPORequired && !tempData.customerPO) {
           tempData.type = "PO Request";
         } else {
           tempData.type = "Ticket";
@@ -549,6 +568,7 @@ function BCServiceTicketModal(
               (jt: { jobTypeId?: any; price: string, quantity: number }) => ({
                 jobTypeId: jt.jobTypeId?._id || jt.jobTypeId,
                 quantity: Number(jt.quantity),
+                price: Number(jt.price),
               })
             )
           );
@@ -599,20 +619,30 @@ function BCServiceTicketModal(
                 dispatch(refreshServiceTickets(true));
               }
               dispatch(refreshJobs(true));
-              dispatch(closeModalAction());
-              setTimeout(() => {
-                dispatch(
-                  setModalDataAction({
-                    data: {},
-                    type: '',
-                  })
-                );
-              }, 200);
+              if (submitSelectedIndex === 0) {
+                dispatch(closeModalAction());
+                setTimeout(() => {
+                  dispatch(
+                    setModalDataAction({
+                      data: {},
+                      type: '',
+                    })
+                  );
+                }, 200);
+              }
               setIsSubmitting(false);
               updateHomeOccupationStatus();
 
               if (response.message === 'Ticket updated successfully.') {
-                dispatch(success(response.message));
+                if (submitSelectedIndex === 1) {
+                  setEmailTicketData({
+                    id: ticket._id,
+                    type: tempData.type
+                  });
+                  setOpenSendEmailTicket(true);
+                } else {
+                  dispatch(success(response.message));
+                }
 
                 if (typeof onSubmit == 'function') {
                   setTimeout(() => {
@@ -635,6 +665,7 @@ function BCServiceTicketModal(
           JSON.parse(formatedRequest.jobTypes).map((jt: any) => ({
             jobTypeId: jt.jobTypeId?._id || jt.jobTypeId,
             quantity: Number(jt.quantity),
+            price: Number(jt.price),
           }))
         );
         // Create home owner if needed
@@ -683,7 +714,7 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
-              if (tempData.type != "PO Request"){
+              if (submitSelectedIndex === 0){
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
@@ -698,12 +729,12 @@ function BCServiceTicketModal(
               updateHomeOccupationStatus();
   
               if (response.message === 'Service Ticket created successfully.' || response.message === 'Purchase Order Request created successfully.') {
-                if (tempData.type == "PO Request") {
-                  setTimeout(() => {
-                    // sendPORequestEmail(response.createdID)
-                    setEmailPORequestId(response.createdID);
-                    setOpenSendEmailPO(true);
-                  },300)
+                if (submitSelectedIndex === 1) {
+                  setEmailTicketData({
+                    id: response.createdID,
+                    type: tempData.type
+                  });
+                  setOpenSendEmailTicket(true);
                 }else{
                   dispatch(success(response.message));
                 }
@@ -917,8 +948,7 @@ function BCServiceTicketModal(
   const getJobType = () => {
     if (jobTypes?.length && items?.length) {
       if (ticket?.tasks?.length) {
-        const ids = ticket.tasks.map((ticket: any) => {return {jobType: ticket.jobType, quantity: ticket.quantity}});
-        const result = ids.map((task: any) => {
+        const result = ticket.tasks.map((task: any) => {
           const currentItem = items.filter(
             (item: { jobType: string }) =>
               item.jobType && (item.jobType === task.jobType || item.jobType === task.jobType?._id)
@@ -931,7 +961,8 @@ function BCServiceTicketModal(
                 description: currentItem?.description,
               },
               quantity: task.quantity || 1,
-              price: 0
+              default_price: 0,
+              price: task.price || 0,
             }
             
             const item = items.find((res: any) => res.jobType == task.jobType);
@@ -939,12 +970,15 @@ function BCServiceTicketModal(
             if (item) {
               let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
               if (customer && price) {
-                jobType.price = price?.charge * jobType.quantity;
+                jobType.default_price = price?.charge;
+                if (!("price" in task)) jobType.price = price?.charge * jobType.quantity;
               } else {
                 price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-                jobType.price = price?.charge * jobType.quantity;
+                jobType.default_price = price?.charge;
+                if (!("price" in task)) jobType.price = price?.charge * jobType.quantity;
               }
             }
+            
           return jobType;
         });
         setFieldValue('jobTypes', result);
@@ -966,20 +1000,6 @@ function BCServiceTicketModal(
       setItemTier(customer?.itemTierObj?.[0]?.name || "");
     }
   }, [items, discountItems]);
-  
-  const createPORequest = (po_request_id: string) => {
-    dispatch(setModalDataAction({
-      'data': {
-        'po_request_id': po_request_id,
-        'modalTitle': "",
-        'removeFooter': false,
-      },
-      'type': modalTypes.PO_REQUEST_WARNING_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  }
   
   const sendPORequestEmail = (po_request_id?: string) => {
     dispatch(setModalDataAction({
@@ -1008,7 +1028,31 @@ function BCServiceTicketModal(
   }
 
   const handleClosePORequestEmail = () => {
-    setOpenSendEmailPO(false);
+    setOpenSendEmailTicket(false);
+  };
+
+  const handleSubmit = () => {
+    submitForm();
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    index: number,
+  ) => {
+    setSubmitSelectedIndex(index);
+    setOpenSubmitBtn(false);
+  };
+
+  const handleSubmitToggle = () => {
+    setOpenSubmitBtn((prevOpen) => !prevOpen);
+  };
+
+  const handleCloseSubmitList = (event: React.MouseEvent<Document, MouseEvent>) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+      return;
+    }
+
+    setOpenSubmitBtn(false);
   };
 
   if (error.status) {
@@ -1134,250 +1178,108 @@ function BCServiceTicketModal(
             container
             className={'modalContent'}
             justify={'space-between'}
+            alignItems="flex-start"
+            style={{ paddingTop: 20 }}
             spacing={4}
           >
-            <Grid item xs>
-              <Typography variant={'caption'} className={'previewCaption'}>
-                Subdivision
-              </Typography>
-              <Autocomplete
-                defaultValue={
-                  ticket.jobLocation !== '' &&
-                  jobLocations.length !== 0 &&
-                  jobLocations.filter(
-                    (jobLocation: any) => jobLocation._id === ticket.jobLocation
-                  )[0]
-                }
-                disabled={
-                  FormikValues.customerId === '' ||
-                  isLoadingDatas ||
-                  detail ||
-                  !!ticket.jobCreated
-                }
-                getOptionLabel={(option) => (option.name ? option.name : '')}
-                getOptionDisabled={(option) => !option.isActive}
-                id={'tags-standard'}
-                onChange={(ev: any, newValue: any) =>
-                  handleLocationChange(
-                    ev,
-                    'jobLocationId',
-                    setFieldValue,
-                    getFieldMeta,
-                    newValue
-                  )
-                }
-                options={
-                  jobLocations && jobLocations.length !== 0
-                    ? jobLocations.sort((a: any, b: any) =>
-                      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                    )
-                    : []
-                }
-                renderInput={(params) => (
-                  <TextField {...params} variant={'outlined'}/>
-                )}
-                value={jobLocationValue}
-              />
-            </Grid>
-            <Grid item xs>
-              <Typography 
-                variant={'caption'} 
-                className={
-                  FormikValues.isHomeOccupied || isHomeOccupied
-                  ? `required ${'previewCaption'}`
-                  : 'previewCaption'}
-                >
-                Job Address
-              </Typography>
-              <Autocomplete
-                className={detail ? 'detail-only' : ''}
-                disabled={
-                  FormikValues.jobLocationId === '' ||
-                  isLoadingDatas ||
-                  detail ||
-                  !!ticket.jobCreated
-                }
-                getOptionLabel={(option) => (option.name ? option.name : '')}
-                id={'tags-standard'}
-                freeSolo
-                selectOnFocus
-                clearOnBlur
-                handleHomeEndKeys
-                onChange={(ev: any, newValue: any) =>
-                  handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)
-                }
-                options={
-                  jobSites && jobSites.length !== 0
-                    ? jobSites.sort((a: any, b: any) =>
-                      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-                    )
-                    : []
-                }
-                renderInput={(params) => (
-                  <TextField {...params} variant={'outlined'}/>
-                )}
-                filterOptions={(options, params) => {
-                  const filtered = filter(options, params);
-
-                  // Suggest the creation of a new value
-                  if (params.inputValue !== '' && filtered.length === 0) {
-                    filtered.push({
-                      inputValue: params.inputValue,
-                      name: `Add "${params.inputValue}"`,
-                    });
-                  }
-
-                  return filtered;
-                }}
-                value={jobSiteValue}
-              />
-            </Grid>
-          </Grid>
-          {FormikValues.jobTypes.map((jobType: any, index: number) =>
-            <Grid container key={`Grid_${index}`}
-              className={`modalContent ${classes.relative} jobTypesContainer`}
-              justify={'space-between'} spacing={3}>
-              <Grid item xs={6} className={'noPaddingTopAndButton'}>
-                <Typography
-                  variant={'caption'}
-                  className={`required ${'previewCaption'}`}
-                >
-                  job type
-                </Typography>
-                <Autocomplete
-                  className={detail ? 'detail-only' : ''}
-                  value={jobType.jobTypeId}
-                  getOptionDisabled={(option) => !option.isJobType}
-                  disabled={detail || !!ticket.jobCreated}
-                  getOptionLabel={(option) => {
-                    const { title, description } = option;
-                    return `${title || '...'}${description ? ' - ' + description : ''
-                      }`;
-                  }}
-                  id={'tags-standard'}
-                  onChange={(ev: any, newValue: any) =>
-                    handleJobTypeChange("jobType", newValue, index)
-                  }
-                  options={
-                    items && items.length !== 0
-                      ? stringSortCaseInsensitive(
-                        items.map(
-                          (item: { name: string; jobType: string }) => ({
-                            ...item,
-                            title: item.name,
-                            _id: item.jobType,
-                          })
-                        ),
-                        'title'
-                      ).sort(
-                        (
-                          a: { isJobType: boolean },
-                          b: { isJobType: boolean }
-                        ) =>
-                          a.isJobType.toString() > b.isJobType.toString()
-                            ? -1
-                            : 1
+              <Grid container xs={8} spacing={3}>
+                <Grid item xs={6}>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                    Subdivision
+                  </Typography>
+                  <Autocomplete
+                    defaultValue={
+                      ticket.jobLocation !== '' &&
+                      jobLocations.length !== 0 &&
+                      jobLocations.filter(
+                        (jobLocation: any) => jobLocation._id === ticket.jobLocation
+                      )[0]
+                    }
+                    disabled={
+                      FormikValues.customerId === '' ||
+                      isLoadingDatas ||
+                      detail ||
+                      !!ticket.jobCreated
+                    }
+                    getOptionLabel={(option) => (option.name ? option.name : '')}
+                    getOptionDisabled={(option) => !option.isActive}
+                    id={'tags-standard'}
+                    onChange={(ev: any, newValue: any) =>
+                      handleLocationChange(
+                        ev,
+                        'jobLocationId',
+                        setFieldValue,
+                        getFieldMeta,
+                        newValue
                       )
-                      : []
-                  }
-                  classes={{ popper: classes.popper }}
-                  renderOption={(option: {
-                    title: string;
-                    description: string;
-                    isJobType: string;
-                  }) => {
-                    const { title, description, isJobType } = option;
-                    if (!isJobType) {
-                      return '';
-                    } else {
-                      return `${title || '...'}${description ? ' - ' + description : ''
-                        }`;
                     }
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      inputRef={jobTypesInput}
-                      variant={'outlined'}
-                    />
-                  )}
-                  getOptionSelected={() => false}
-                />
-              </Grid>
-              <Grid item xs={2} className={'noPaddingTopAndButton'}>
-                <Typography
-                  variant={'caption'}
-                  className={`${'previewCaption'}`}
-                >
-                  quantity
-                </Typography>
-                <BCInput
-                  type="number"
-                  disabled={detail || !!ticket.jobCreated}
-                  className={'serviceTicketLabel'}
-                  handleChange={(ev: any, newValue: any) =>
-                    handleJobTypeChange("quantity", ev.target?.value, index)
-                  }
-                  name={'quantity'}
-                  value={jobType.quantity}
-                />
-              </Grid>
-              <Grid item xs={3} className={'noPaddingTopAndButton'}>
-                <Typography
-                  variant={'caption'}
-                  className={`${'previewCaption'}`}
-                >
-                  Price
-                </Typography>
-                <BCInput
-                  type="text"
-                  className={'serviceTicketLabel'}
-                  disabled={true}
-                  handleChange={(ev: any, newValue: any) =>
-                    handleJobTypeChange("quantity", ev.target?.value, index)
-                  }
-                  name={'price'}
-                  value={jobType.price}
-                />
-              </Grid>
-              <Grid 
-                container xs={1}
-                justify={"flex-start"}
-                alignItems="center"
-              > 
-                {!(detail || !!ticket.jobCreated) && (
-                  <>
-                    <IconButton
-                      component="span"
-                      color={'primary'}
-                      size="small"
-                      onClick={() => addEmptyJobType()}
-                    >
-                      <AddCircleIcon />
-                    </IconButton>
-                    {index > 0 &&
-                      <IconButton 
-                        component="span"
-                        size="small"
-                        onClick={() => removeJobType(index)}
-                      >
-                        <RemoveCircleIcon />
-                      </IconButton>
+                    options={
+                      jobLocations && jobLocations.length !== 0
+                        ? jobLocations.sort((a: any, b: any) =>
+                          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                        )
+                        : []
                     }
-                  </>
-                )}
-              </Grid>
-            </Grid>
-          )}
-          <Grid
-            container
-            className={'modalContent'}
-            justify={'space-between'}
-            spacing={4}
-          >
-            <Grid container xs={8} spacing={4}>
-              <Grid container xs={12} spacing={4}>
-                <Grid item xs>
+                    renderInput={(params) => (
+                      <TextField {...params} variant={'outlined'} />
+                    )}
+                    value={jobLocationValue}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography
+                    variant={'caption'}
+                    className={
+                      FormikValues.isHomeOccupied || isHomeOccupied
+                        ? `required ${'previewCaption'}`
+                        : 'previewCaption'}
+                  >
+                    Job Address
+                  </Typography>
+                  <Autocomplete
+                    className={detail ? 'detail-only' : ''}
+                    disabled={
+                      FormikValues.jobLocationId === '' ||
+                      isLoadingDatas ||
+                      detail ||
+                      !!ticket.jobCreated
+                    }
+                    getOptionLabel={(option) => (option.name ? option.name : '')}
+                    id={'tags-standard'}
+                    freeSolo
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+                    onChange={(ev: any, newValue: any) =>
+                      handleJobSiteChange(ev, 'jobSiteId', setFieldValue, newValue)
+                    }
+                    options={
+                      jobSites && jobSites.length !== 0
+                        ? jobSites.sort((a: any, b: any) =>
+                          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+                        )
+                        : []
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} variant={'outlined'} />
+                    )}
+                    filterOptions={(options, params) => {
+                      const filtered = filter(options, params);
+
+                      // Suggest the creation of a new value
+                      if (params.inputValue !== '' && filtered.length === 0) {
+                        filtered.push({
+                          inputValue: params.inputValue,
+                          name: `Add "${params.inputValue}"`,
+                        });
+                      }
+
+                      return filtered;
+                    }}
+                    value={jobSiteValue}
+                  />
+                </Grid>
+                <Grid item xs={6}>
                   <Typography variant={'caption'} className={'previewCaption'}>
                     contact associated
                   </Typography>
@@ -1410,19 +1312,18 @@ function BCServiceTicketModal(
                         : []
                     }
                     renderInput={(params) => (
-                      <TextField {...params} variant={'outlined'}/>
+                      <TextField {...params} variant={'outlined'} />
                     )}
                     renderTags={(tagValue, getTagProps) =>
                       tagValue.map((option, index) => {
                         return (
                           <Chip
-                            label={`${option.title}${
-                              option.description
+                            label={`${option.title}${option.description
                                 ? ' - ' + option.description
                                 : ''
-                            }`}
-                            {...getTagProps({index})}
-                            // disabled={disabledChips.includes(option._id) || !job._id}
+                              }`}
+                            {...getTagProps({ index })}
+                          // disabled={disabledChips.includes(option._id) || !job._id}
                           />
                         );
                       })
@@ -1430,7 +1331,7 @@ function BCServiceTicketModal(
                     value={contactValue}
                   />
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={6}>
                   <Typography variant={'caption'} className={'previewCaption'}>
                     customer PO
                   </Typography>
@@ -1441,9 +1342,258 @@ function BCServiceTicketModal(
                     value={FormikValues.customerPO}
                   />
                 </Grid>
+
+                {/* JOB Types Field */}
+                {FormikValues.jobTypes.map((jobType: any, index: number) =>
+                  <>
+                    <Grid item xs={6} className={'noPaddingTopAndButton'}>
+                      <Typography
+                        variant={'caption'}
+                        className={`required ${'previewCaption'}`}
+                      >
+                        job type
+                      </Typography>
+                      <Autocomplete
+                        className={detail ? 'detail-only' : ''}
+                        value={jobType.jobTypeId}
+                        getOptionDisabled={(option) => !option.isJobType}
+                        disabled={detail || !!ticket.jobCreated}
+                        getOptionLabel={(option) => {
+                          const { title, description } = option;
+                          return `${title || '...'}${description ? ' - ' + description : ''
+                            }`;
+                        }}
+                        id={'tags-standard'}
+                        onChange={(ev: any, newValue: any) =>
+                          handleJobTypeChange("jobType", newValue, index)
+                        }
+                        options={
+                          items && items.length !== 0
+                            ? stringSortCaseInsensitive(
+                              items.map(
+                                (item: { name: string; jobType: string }) => ({
+                                  ...item,
+                                  title: item.name,
+                                  _id: item.jobType,
+                                })
+                              ),
+                              'title'
+                            ).sort(
+                              (
+                                a: { isJobType: boolean },
+                                b: { isJobType: boolean }
+                              ) =>
+                                a.isJobType.toString() > b.isJobType.toString()
+                                  ? -1
+                                  : 1
+                            )
+                            : []
+                        }
+                        classes={{ popper: classes.popper }}
+                        renderOption={(option: {
+                          title: string;
+                          description: string;
+                          isJobType: string;
+                        }) => {
+                          const { title, description, isJobType } = option;
+                          if (!isJobType) {
+                            return '';
+                          } else {
+                            return `${title || '...'}${description ? ' - ' + description : ''
+                              }`;
+                          }
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            inputRef={jobTypesInput}
+                            variant={'outlined'}
+                          />
+                        )}
+                        getOptionSelected={() => false}
+                      />
+                    </Grid>
+                    <Grid item xs={2} className={'noPaddingTopAndButton'}>
+                      <Typography
+                        variant={'caption'}
+                        className={`${'previewCaption'}`}
+                      >
+                        quantity
+                      </Typography>
+                      <BCInput
+                        type="number"
+                        disabled={detail || !!ticket.jobCreated}
+                        className={'serviceTicketLabel'}
+                        handleChange={(ev: any, newValue: any) =>
+                          handleJobTypeChange("quantity", ev.target?.value, index)
+                        }
+                        name={'quantity'}
+                        value={jobType.quantity}
+                      />
+                    </Grid>
+                    <Grid item xs={3} className={'noPaddingTopAndButton'}>
+                      <Typography
+                        variant={'caption'}
+                        className={`${'previewCaption'}`}
+                      >
+                        Price 
+                        {!jobType.isPriceEditable && (
+                          <Tooltip title="Edit Price" placement="top" >
+                            <IconButton 
+                              component="span"
+                              color={'primary'}
+                              size="small"
+                              className={"btnPrice"}  
+                              onClick={() => {
+                                handleJobTypeChange("isPriceEditable", true, index);
+                              }}
+                            >
+                              <EditIcon fontSize="small" className="btnPriceIcon" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </Typography>
+                      <BCInput
+                        type="text"
+                        className={'serviceTicketLabel'}
+                        disabled={!jobType.isPriceEditable}
+                        handleChange={(ev: any, newValue: any) =>
+                          handleJobTypeChange("price", ev.target?.value, index)
+                        }
+                        onBlur={(ev: any, newValue: any) => {
+                          handleJobTypeChange("isPriceEditable", false, index)
+                        }}
+                        name={'price'}
+                        value={jobType.price}
+                      />
+                    </Grid>
+                    <Grid
+                      container xs={1}
+                      justify={"flex-start"}
+                      alignItems="center"
+                    >
+                      {!(detail || !!ticket.jobCreated) && (
+                        <>
+                          <IconButton
+                            component="span"
+                            color={'primary'}
+                            size="small"
+                            onClick={() => addEmptyJobType()}
+                          >
+                            <AddCircleIcon />
+                          </IconButton>
+                          {index > 0 &&
+                            <IconButton
+                              component="span"
+                              size="small"
+                              onClick={() => removeJobType(index)}
+                            >
+                              <RemoveCircleIcon />
+                            </IconButton>
+                          }
+                        </>
+                      )}
+                    </Grid>
+                  </>
+                )}
+
+                {/* House Is Occupied Field*/}
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    classes={{ label: classes.checkboxLabel }}
+                    control={
+                      <Checkbox
+                        color={'primary'}
+                        checked={FormikValues.isHomeOccupied || isHomeOccupied}
+                        onChange={(e) => {
+                          formikChange(e)
+                          setHomeOccupied((v) => !v)
+                        }}
+                        name="isHomeOccupied"
+                        classes={{ root: classes.checkboxInput }}
+                      />
+                    }
+                    label={`HOUSE IS OCCUPIED`}
+                  />
+                </Grid>
+                {(FormikValues.isHomeOccupied || isHomeOccupied) && (
+                    <>
+                      <Grid item xs={3}>
+                        <Typography
+                          variant={'caption'}
+                          className={`required ${'previewCaption'}`}
+                        >
+                          First name
+                        </Typography>
+                        <BCInput
+                          disabled={detail || isFieldsDisabled}
+                          handleChange={formikChange}
+                          name={'customerFirstName'}
+                          value={FormikValues?.customerFirstName}
+                          required={true}
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <Typography variant={'caption'} className={'previewCaption'}>
+                          Last name
+                        </Typography>
+                        <BCInput
+                          disabled={detail || isFieldsDisabled}
+                          handleChange={formikChange}
+                          name={'customerLastName'}
+                          value={FormikValues?.customerLastName}
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <Typography
+                          variant={'caption'}
+                          className={'previewCaption'}
+                        >
+                          Email
+                        </Typography>
+                        <BCEmailValidateInput
+                          id={'email'}
+                          inputData={formDataEmail}
+                          disabled={detail || isFieldsDisabled}
+                          label={''}
+                          onChange={(newEmail: FormDataModel) => setFormDataEmail(newEmail)}
+                          size={'small'}
+                          variant={'outlined'}
+                          required={false}
+                          referenceEmail=" "
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <Typography
+                          variant={'caption'}
+                          className={'previewCaption'}
+                        >
+                          Phone
+                        </Typography>
+                        <BCPhoneNumberInput
+                          changeData={(data: FormDataModel) => setFormDataPhone(data)}
+                          id={'phone_number'}
+                          inputData={formDataPhone}
+                          label={''}
+                          size={'small'}
+                        />
+                      </Grid>
+                    </>
+                  )}
               </Grid>
-              <Grid container xs={12}>
-                <Grid item xs>
+              <Grid container xs={4} spacing={3}>
+                <Grid item xs={12}>
+                  <Typography variant={'caption'} className={'previewCaption'}>
+                   Add Photo(s)
+                  </Typography>
+                  <BCDragAndDrop
+                    images={thumbs}
+                    onDrop={(files) => handleImageDrop(files)}
+                    onDelete={handleRemoveImage}
+                    readonly={!!ticket.jobCreated}
+                  />
+                </Grid>
+                <Grid item xs={12}>
                   <Typography variant={'caption'} className={'previewCaption'}>
                     notes / special instructions
                   </Typography>
@@ -1453,6 +1603,7 @@ function BCServiceTicketModal(
                     handleChange={formikChange}
                     multiline
                     name={'note'}
+                    rows={5}
                     value={FormikValues.note}
                   />
                   <Label>
@@ -1461,111 +1612,7 @@ function BCServiceTicketModal(
                       : null}
                   </Label>
                 </Grid>
-              </Grid>
-            </Grid>
-            <Grid item container xs={4} style={{paddingTop: 0}}>
-              <BCDragAndDrop
-                images={thumbs}
-                onDrop={(files) => handleImageDrop(files)}
-                onDelete={handleRemoveImage}
-                readonly={!!ticket.jobCreated}
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            className={'modalContent'}
-            justify={'space-between'}
-            spacing={4}
-          >
-            <Grid container xs={3} spacing={4}>
-              <Grid container xs={12} spacing={4}>
-                <FormControlLabel
-                  classes={{label: classes.checkboxLabel}}
-                  control={
-                    <Checkbox
-                      color={'primary'}
-                      checked={FormikValues.isHomeOccupied || isHomeOccupied}
-                      onChange={(e) => {
-                        formikChange(e)
-                        setHomeOccupied((v) => !v)
-                      }}
-                      name="isHomeOccupied"
-                      classes={{root: classes.checkboxInput}}
-                    />
-                  }
-                  label={`HOUSE IS OCCUPIED`}
-                />
-              </Grid>
-            </Grid>
-            { 
-              FormikValues.isHomeOccupied || isHomeOccupied ? (
-              <Grid container xs={9} spacing={4}>
-                <Grid container xs={12} spacing={4}>
-                  <Grid item xs>
-                    <Typography 
-                      variant={'caption'} 
-                      className={`required ${'previewCaption'}`}
-                    >
-                      First name
-                    </Typography>
-                    <BCInput
-                      disabled={detail || isFieldsDisabled}
-                      handleChange={formikChange}
-                      name={'customerFirstName'}
-                      value={FormikValues?.customerFirstName}
-                      required={true}
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <Typography variant={'caption'} className={'previewCaption'}>
-                      Last name
-                    </Typography>
-                    <BCInput
-                      disabled={detail || isFieldsDisabled}
-                      handleChange={formikChange}
-                      name={'customerLastName'}
-                      value={FormikValues?.customerLastName}
-                    />
-                  </Grid>
-                  <Grid item xs>
-                    <Typography 
-                      variant={'caption'} 
-                      className={'previewCaption'}
-                    >
-                      Email
-                    </Typography>
-                    <BCEmailValidateInput
-                      id={'email'}
-                      inputData={formDataEmail}
-                      disabled={detail || isFieldsDisabled}
-                      label={''}
-                      onChange={(newEmail: FormDataModel) => setFormDataEmail(newEmail)}
-                      size={'small'}
-                      variant={'outlined'}
-                      required={false}
-                      referenceEmail=" "
-                    />  
-                  </Grid>
-                  <Grid item xs>
-                    <Typography 
-                        variant={'caption'}
-                        className={'previewCaption'}
-                      >
-                        Phone
-                    </Typography>
-                    <BCPhoneNumberInput
-                      changeData={(data: FormDataModel) => setFormDataPhone(data)}
-                      id={'phone_number'}
-                      inputData={formDataPhone}
-                      label={''}
-                      size={'small'}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              ) : null
-            }
+              </Grid> 
           </Grid>
 
           <DialogActions>
@@ -1587,15 +1634,51 @@ function BCServiceTicketModal(
                 {'Cancel Ticket'}
               </Button>
             )}
-            <Button
-              color={'primary'}
-              disableElevation={true}
-              disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
-              type={'submit'}
-              variant={'contained'}
-            >
-              Submit
-            </Button>
+
+            <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button" className={"groupBtnContainer"}>
+              <Button onClick={handleSubmit} className={'groupBtnRight'} disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}>{submitOptions[submitSelectedIndex]}</Button>
+              <Button
+                color="primary"
+                size="small"
+                aria-controls={openSubmitBtn ? 'split-button-menu' : undefined}
+                aria-expanded={openSubmitBtn ? 'true' : undefined}
+                aria-label="select merge strategy"
+                aria-haspopup="menu"
+                className={'groupBtnLeft'}
+                onClick={handleSubmitToggle}
+                disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
+              >
+                <ArrowDropDownIcon />
+              </Button>
+            </ButtonGroup>
+            <Popper open={openSubmitBtn} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  style={{
+                    transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+                  }}
+                >
+                  <Paper>
+                    <ClickAwayListener onClickAway={handleCloseSubmitList}>
+                      <MenuList id="split-button-menu">
+                          {submitOptions.map((option, index) => (
+                          <MenuItem
+                            key={option}
+                            disabled={index === 2}
+                            selected={index === submitSelectedIndex}
+                            onClick={(event) => handleMenuItemClick(event, index)}
+                          >
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
+
             {isFieldsDisabled && (
               <Button
                 color={'primary'}
@@ -1618,7 +1701,7 @@ function BCServiceTicketModal(
       fullWidth={true}
       maxWidth={"sm"}
       onClose={handleClosePORequestEmail}
-      open={openSendEmailPO}
+      open={openSendEmailTicket}
       PaperProps={{
         'style': {
           'maxHeight': `${data && data.maxHeight ? data.maxHeight : ''}`,
@@ -1632,7 +1715,7 @@ function BCServiceTicketModal(
             key={"sendPORequest"}
             variant={'h6'}>
             <strong>
-              Send PO Request
+              Send {emailTicketData.type}
             </strong>
           </Typography>
           <IconButton
@@ -1647,7 +1730,8 @@ function BCServiceTicketModal(
           </IconButton>
         </DialogTitle>
         <EmailModalPORequest 
-          po_request_id={emailPORequestId}
+          id={emailTicketData.id}
+          type={emailTicketData.type}
         />
       </Dialog>
     </>
@@ -1716,6 +1800,35 @@ const DataContainer = styled.div`
 
   .jobTypesContainer{
     padding: 0px 40px!important;
+  }
+
+  .groupBtnContainer{
+    border-radius: 8px!important;
+    box-shadow: none!important; 
+  }
+
+  .groupBtnRight{
+    margin: 0px!important;
+    border-radius: 8px 0px 0px 8px!important;
+  }
+
+  .groupBtnLeft{
+    margin: 0px!important;
+    border-radius: 0px 8px 8px 0px!important;
+  }
+
+  .noteContainer{
+    margin-top: 18px;
+  }
+
+  .btnPrice {
+    position: absolute;
+    margin-left: 3px;
+    margin-bottom: 3px;
+  }
+
+  .btnPriceIcon{
+    font-size: 13px!important;
   }
 
   span.required:after {

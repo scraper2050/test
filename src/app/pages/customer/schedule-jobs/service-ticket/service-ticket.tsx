@@ -7,7 +7,7 @@ import {
   getAllServiceTicketsAPI
 } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
-import { formatDate } from 'helpers/format';
+import { formatDate, formatDateMMMDDYYYY } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
 import { Checkbox, FormControlLabel, withStyles, Grid } from "@material-ui/core";
@@ -99,18 +99,6 @@ function ServiceTicket({ classes, hidden }: any) {
     }
   };
 
-  const openJobModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Create Job',
-        'removeFooter': false
-      },
-      'type': modalTypes.CREATE_JOB_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
       customerId: ticket.customer?._id,
@@ -132,7 +120,7 @@ function ServiceTicket({ classes, hidden }: any) {
         'removeFooter': false,
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
-        'maxHeight': '754px',
+        'maxHeight': '900px',
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));

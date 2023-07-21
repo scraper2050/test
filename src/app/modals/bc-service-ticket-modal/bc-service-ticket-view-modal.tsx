@@ -68,20 +68,23 @@ function BCViewServiceTicketModal({
         let jobType = {
           title: task.jobType?.title,
           quantity: task.quantity || 1,
-          price: 0
+          price: task.price || 0
         };
 
-        const item = items.find((res: any) => res.jobType == task.jobType?._id);
-        const customer = customers.find((res: any) => res._id == job?.customer?._id);
-        if (item) {
-          let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
-          if (customer && price) {
-            jobType.price = price?.charge * jobType.quantity;
-          } else {
-            price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-            jobType.price = price?.charge * jobType.quantity;
+        if (!("price" in task)) {
+          const item = items.find((res: any) => res.jobType == task.jobType?._id);
+          const customer = customers.find((res: any) => res._id == job?.customer?._id);
+          if (item) {
+            let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+            if (customer && price) {
+              jobType.price = price?.charge * jobType.quantity;
+            } else {
+              price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+              jobType.price = price?.charge * jobType.quantity;
+            }
           }
         }
+        
         title.push(jobType);
       })
     } else if (job.jobType) {
@@ -179,7 +182,8 @@ function BCViewServiceTicketModal({
   const sendPORequestEmail = (id:string) => {
     dispatch(setModalDataAction({
       'data': {
-        'po_request_id': id,
+        'id': id,
+        'type': "PO Request",
         'modalTitle': `Send PO Request`,
         'removeFooter': false,
       },
@@ -194,8 +198,8 @@ function BCViewServiceTicketModal({
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
-        {job._id && job?.type == "PO Request" && (
-          <Grid item xs={12}>
+        {job._id && !job.customerPO && job?.type == "PO Request" && (
+          <Grid item xs={12} style={{ padding: "16px 0px"}}>
             <Button
               color='primary'
               variant="outlined"
