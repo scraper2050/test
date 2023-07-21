@@ -50,7 +50,7 @@ const EditItemValidation = yup.object().shape({
     .string()
     .required(),
   'itemType': yup
-    .string().required()
+    .string().required().min(2, 'Must be longer than 2 characters')
 
 });
 
@@ -378,9 +378,7 @@ let isFixedDisabled=false;
                 TYPE
               </div>
               <Select
-                error={
-                  formik.touched.itemType && Boolean(formik.errors.itemType)
-                }
+               
                 input={<StyledInput />}
                 name={'itemType'}
                 onChange={formik.handleChange}
@@ -390,7 +388,26 @@ let isFixedDisabled=false;
                 <MenuItem value={'Service'} >{'Service'}</MenuItem>
                 <MenuItem value={'Product'}>{'Product'}</MenuItem>
               </Select>
+              
+
             </Grid>
+            <Grid
+              item
+              xs={12}
+              style={{
+                textAlign:"center"
+              }}
+            >
+
+              <Typography
+                color={'error'}
+                display={'block'}
+                style={{ 'lineHeight': '1' ,fontSize:"0.8rem",marginLeft:"50px"}}>
+                {formik.errors.itemType?.replace("itemType","Type")}
+              </Typography>
+
+            </Grid>
+
             <Grid container>
               {formik.values.itemType == 'Service'&&<Grid
                 item
