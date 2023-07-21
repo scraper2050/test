@@ -229,7 +229,7 @@ function AdminInvoicingItemsPage({ classes }:Props) {
           name: '',
           description: '',
           isFixed: true,
-          itemType:"Service",
+          itemType:"",
           productCost:'',
           isJobType: true,
           tax: 0,
