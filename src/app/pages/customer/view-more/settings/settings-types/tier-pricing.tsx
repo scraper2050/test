@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button/Button';
 import { Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import PricingHeader from '../pricing-header';
+import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import {info, success} from 'actions/snackbar/snackbar.action';
 
@@ -59,7 +59,7 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
 
 
   return <TierPricingContainer>
-    <PricingHeader {...header} />
+    <SettingHeader {...header} />
     <div className={'body'}>
       <FormControl
         fullWidth

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import { Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
-import PricingHeader from '../pricing-header';
+import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 
 
@@ -39,7 +39,7 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
   };
 
   return <PORequiredContainer>
-    <PricingHeader {...header} />
+    <SettingHeader {...header} />
     <div className={'body'}>
       <FormControl
         fullWidth

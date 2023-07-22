@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import Button from '@material-ui/core/Button/Button';
 import { Fab } from '@material-ui/core';
-import PricingHeader from '../pricing-header';
+import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import { success } from 'actions/snackbar/snackbar.action';
 
@@ -36,7 +36,7 @@ export default function DefaultPricing({ customer, header, dispatch }:DefaultPri
 
 
   return <DefaultPricingContainer>
-    <PricingHeader {...header} />
+    <SettingHeader {...header} />
     <div className={'body'}>
       <h3>
         {!isDefault && <>

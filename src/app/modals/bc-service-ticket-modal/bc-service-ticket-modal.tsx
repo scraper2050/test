@@ -20,6 +20,7 @@ import {
   Grid,
   Grow,
   IconButton,
+  InputAdornment,
   MenuItem,
   MenuList,
   Paper,
@@ -538,7 +539,7 @@ function BCServiceTicketModal(
         }
       }
 
-      const editTicketObj = {...values, ticketId: ''};
+      const editTicketObj = { ...values, ticketId: '', type: '' };
       const updateHomeOccupationStatus = () => {
         if (jobSiteValue.isHomeOccupied === isHomeOccupied) return;
         
@@ -557,6 +558,7 @@ function BCServiceTicketModal(
       };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
+        editTicketObj.type = ticket.type;
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
@@ -1149,12 +1151,12 @@ function BCServiceTicketModal(
             />
           </Grid>
           <Grid container xs={6}>
-            <Grid item className={'noPaddingTopAndButton'} xs={3}>
+            <Grid item className={'noPaddingTopAndButton'} xs={2}>
               <Typography variant={'subtitle1'} className={'totalDetailText'} >
                 Tier : {itemTier}
               </Typography>
             </Grid>
-            <Grid item className={'noPaddingTopAndButton'} xs={3}>
+            <Grid item className={'noPaddingTopAndButton'} xs={4}>
               <Typography variant={'subtitle1'} className={'totalDetailText'}>
                 Total : {totalCharge ? "$"+totalCharge : ""}
               </Typography>
@@ -1437,24 +1439,22 @@ function BCServiceTicketModal(
                         className={`${'previewCaption'}`}
                       >
                         Price 
-                        {!jobType.isPriceEditable && (
-                          <Tooltip title="Edit Price" placement="top" >
-                            <IconButton 
-                              component="span"
-                              color={'primary'}
-                              size="small"
-                              className={"btnPrice"}  
-                              onClick={() => {
-                                handleJobTypeChange("isPriceEditable", true, index);
-                              }}
-                            >
-                              <EditIcon fontSize="small" className="btnPriceIcon" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
+                        <Tooltip title="Edit Price" placement="top" >
+                          <IconButton 
+                            component="span"
+                            color={'primary'}
+                            size="small"
+                            className={"btnPrice"}  
+                            onClick={() => {
+                              handleJobTypeChange("isPriceEditable", true, index);
+                            }}
+                          >
+                            <EditIcon fontSize="small" className="btnPriceIcon" />
+                          </IconButton>
+                        </Tooltip>
                       </Typography>
                       <BCInput
-                        type="text"
+                        type="number"
                         className={'serviceTicketLabel'}
                         disabled={!jobType.isPriceEditable}
                         handleChange={(ev: any, newValue: any) =>
@@ -1462,6 +1462,10 @@ function BCServiceTicketModal(
                         }
                         onBlur={(ev: any, newValue: any) => {
                           handleJobTypeChange("isPriceEditable", false, index)
+                        }}
+                        InputProps={{
+                          style: { paddingLeft: 14 },
+                          startAdornment: <InputAdornment position="start">$</InputAdornment>,
                         }}
                         name={'price'}
                         value={jobType.price}

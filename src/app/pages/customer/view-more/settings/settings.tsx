@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import MoneyIcon from '@material-ui/icons/Money';
-import BuildIcon from '@material-ui/icons/Build';
 import SignalCellularAltIcon from '@material-ui/icons/SignalCellularAlt';
-import { green, orange, yellow } from '@material-ui/core/colors';
+import { blue, green, orange, yellow } from '@material-ui/core/colors';
 import { Customer } from 'reducers/customer.types';
 import { Card } from '@material-ui/core';
-import PricingCards from './pricing-cards';
-import DefaultPricing from './pricing-types/default-pricing';
-import TierPricing from './pricing-types/tier-pricing';
-import CustomPricing from './pricing-types/custom-pricing';
+import SettingsCards from './settings-cards';
+import TierPricing from './settings-types/tier-pricing';
 import { useDispatch } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import PORequired from './pricing-types/po-required';
+import PORequired from './settings-types/po-required';
+import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import PaymentTerms from './settings-types/payment-terms';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
-
-interface PricingProps {
+interface SettingsProps {
     customer: Customer;
 }
 
-const PricingTypes = [
+const SettingsTypes = [
 /*  {
     'color': green,
     'icon': MoneyIcon,
@@ -34,10 +32,16 @@ const PricingTypes = [
     'title': 'Tier Pricing'
   },
   {
-    'color': orange,
-    'icon': SignalCellularAltIcon,
+    'color': green,
+    'icon': ShoppingCartIcon,
     'subtitle': 'Set Customer PO Required',
     'title': 'PO Required'
+  },
+  {
+    'color': blue,
+    'icon': MonetizationOnIcon,
+    'subtitle': 'Set Customer Payment Terms',
+    'title': 'Payment Terms'
   },
 /*  {
     'color': yellow,
@@ -48,7 +52,7 @@ const PricingTypes = [
 ];
 
 
-export default function Pricing({ customer }:PricingProps) {
+export default function Settings({ customer }:SettingsProps) {
   const dispatch = useDispatch();
 /*  const currentActive = customer?.isCustomPrice
     ? 2
@@ -70,9 +74,9 @@ export default function Pricing({ customer }:PricingProps) {
   return (
     <PricingContainer>
       <div className={'pricing-select'}>
-        <PricingCards
+        <SettingsCards
           active={active}
-          pricing={PricingTypes}
+          pricing={SettingsTypes}
           setActive={handleClick}
         />
       </div>
@@ -80,22 +84,27 @@ export default function Pricing({ customer }:PricingProps) {
 {/*        {active === 0 && <DefaultPricing
           customer={customer}
           dispatch={dispatch}
-          header={PricingTypes[active]}
+          header={SettingsTypes[active]}
         />}*/}
         {active === 0 && <TierPricing
           customer={customer}
           dispatch={dispatch}
-          header={PricingTypes[active]}
+          header={SettingsTypes[active]}
         />}
 {/*        {active === 2 && <CustomPricing
           customer={customer}
           dispatch={dispatch}
-          header={PricingTypes[active]}
+          header={SettingsTypes[active]}
         />}*/}
         {active === 1 && <PORequired
           customer={customer}
           dispatch={dispatch}
-          header={PricingTypes[active]}
+          header={SettingsTypes[active]}
+        />}
+        {active === 2 && <PaymentTerms
+          customer={customer}
+          dispatch={dispatch}
+          header={SettingsTypes[active]}
         />}
       </Card>
     </PricingContainer>
