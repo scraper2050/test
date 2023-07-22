@@ -58,7 +58,11 @@ import { NotificationsReducer as notifications } from './notifications.reducer';
 import { NotificationState } from './notifications.types';
 import { UserModel } from 'app/models/user';
 import { VendorsState } from 'actions/vendor/vendor.types';
-import { QuickbooksState, quickbooksReducer as quickbooks } from './quickbooks.reducer';
+import { PermissionsState } from 'actions/permissions/permissions.types';
+import {
+  QuickbooksState,
+  quickbooksReducer as quickbooks,
+} from './quickbooks.reducer';
 import { mapState, mapReducer as map } from './map.reducer';
 
 import { InvoiceItemsState
@@ -80,6 +84,7 @@ import { WorkTypeReducer as workTypes } from './work-type.reducer';
 import { DivisionReducer as divisions } from './division.reducer';
 import { FilterDivisionReducer as currentDivision } from "./filter-division.reducer";
 import homeOwner from './home-owner.reducer';
+import permissions from './permissions.reducer';
 
 export interface ReducerParamsInterface {
   payload: any;
@@ -103,6 +108,7 @@ export interface RootState {
   discountItems: DiscountState;
   paymentList: PaymentsState;
   invoicesForBulkPayments: InvoicesForBulkPaymentsState;
+  permissions: PermissionsState;
 }
 
 
@@ -166,7 +172,8 @@ const appReducer = combineReducers({
   workTypes,
   divisions,
   currentDivision,
-  homeOwner
+  homeOwner,
+  permissions,
 });
 
 const rootReducer = (state: any, action: any) => {
