@@ -101,6 +101,7 @@ function BCCompanyLocationModal({
 
   const workTypes = useSelector((state: any) => state.workTypes.data);
   const [openWarning, setOpenWarning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     dispatch(getWorkType())
@@ -132,8 +133,9 @@ function BCCompanyLocationModal({
       emailSender: companyLocation?.billingAddress?.emailSender ?? '',
       poRequestEmailSender: companyLocation?.poRequestEmailSender ?? '',
     },
-    onSubmit: async (values: any, { setSubmitting }: any) => {
-      let workTypes = FormikValues.workTypes.map(res => res._id);
+    onSubmit: async (values: any) => {
+      setIsSubmitting(true);
+      let workTypes = FormikValues.workTypes.map((res: any) => res._id);
       let oldAssignedVendors: any[] = [];
       let oldAssignedEmployee: any[] = [];
 
@@ -218,7 +220,7 @@ function BCCompanyLocationModal({
           if (status) {
             closeModal();
           }else {
-            setSubmitting(false);
+            setIsSubmitting(false);
             setShowWarning(false);
           }
         }))
@@ -227,7 +229,7 @@ function BCCompanyLocationModal({
           if (status){
             closeModal();
           }else {
-            setSubmitting(false);
+            setIsSubmitting(false);
             setShowWarning(false);
           }
         }))
@@ -243,7 +245,6 @@ function BCCompanyLocationModal({
     'handleSubmit': FormikSubmit,
     setFieldValue,
     submitForm,
-    isSubmitting,
     touched,
     setFieldTouched,
   } = form;

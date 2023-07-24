@@ -25,6 +25,7 @@ import * as yup from 'yup';
 import BCSent from "../../components/bc-sent";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { generatePORequestEmailTemplate, sendPORequestEmail } from 'api/po-requests.api';
+import { Autocomplete } from '@material-ui/lab';
 
 const validationSchema = yup.object().shape({
     to: yup.string().email('Please insert a valid email').required('Please add recipient'),
@@ -38,6 +39,8 @@ function EmailPORequestModal({ classes, id, type }: any) {
     const [emailTemplate, setEmailTemplate] = useState({subject: '', message: '', from: '', to: ''})
     const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
     const { user } = useSelector((state: any) => state.auth);
+    const [emailList, setEmailList] = useState([]);
+
     const closeModal = () => {
         dispatch(closeModalAction());
         setTimeout(() => {
@@ -61,6 +64,7 @@ function EmailPORequestModal({ classes, id, type }: any) {
                 closeModal();
             } else {
                 setEmailTemplate(data);
+                setEmailList(data.emailList);
                 setTimeout(() => {
                     form.validateForm()
                 }, 100)
@@ -89,6 +93,7 @@ function EmailPORequestModal({ classes, id, type }: any) {
         onSubmit: async (values: any, { setSubmitting }: any) => {
             const params = {
                 ticketId: id,
+                sender: values.from?.email || values.from,
                 recipients: JSON.stringify([values.to]),
                 subject: values.subject,
                 message: values.message,
@@ -119,7 +124,15 @@ function EmailPORequestModal({ classes, id, type }: any) {
         values: FormikValues,
         handleChange: formikChange,
         handleSubmit: FormikSubmit,
+        setFieldValue: FormikSetFieldValue,
     } = form;
+
+    const handleSenderChange = (fieldName: string, data: any) => {
+        FormikSetFieldValue(
+            fieldName,
+            data
+        );
+    };
 
     return (
         <DataContainer>
@@ -147,15 +160,22 @@ function EmailPORequestModal({ classes, id, type }: any) {
                                         <Typography variant={'button'}>FROM</Typography>
                                     </Grid>
                                     <Grid item xs={10}>
-                                        <TextField
-                                            disabled
-                                            autoComplete={'off'}
-                                            className={classes.fullWidth}
-                                            id={'outlined-textarea'}
-                                            name={'from'}
-                                            onChange={(e: any) => formikChange(e)}
+                                        <Autocomplete
+                                            classes={{
+                                                inputRoot: classes.inputRootSingle
+                                            }}
+                                            id="email-from"
+                                            freeSolo
+                                            clearOnBlur
+                                            fullWidth
+                                            autoSelect
+                                            options={emailList}
+                                            getOptionLabel={(option: any) => option.email || option}
+                                            renderInput={(params) => <TextField {...params} variant="outlined" />}
                                             value={FormikValues.from}
-                                            variant={'outlined'}
+                                            onChange={(ev: any, newValue: any) =>
+                                                handleSenderChange('from', newValue)
+                                            }
                                         />
                                     </Grid>
                                 </Grid>
