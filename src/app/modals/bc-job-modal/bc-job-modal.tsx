@@ -1212,21 +1212,19 @@ function BCJobModal({
                               className={`${'previewCaption'}`}
                             >
                               Price
-                              {!jobType.isPriceEditable && (
-                                <Tooltip title="Edit Price" placement="top" >
-                                  <IconButton
-                                    component="span"
-                                    color={'primary'}
-                                    size="small"
-                                    className={"btnPrice"}
-                                    onClick={() => {
-                                      handleJobTypeChange("isPriceEditable", true, jobTypeIdx, index);
-                                    }}
-                                  >
-                                    <EditIcon fontSize="small" className="btnPriceIcon" />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
+                              <Tooltip title="Edit Price" placement="top" >
+                                <IconButton
+                                  component="span"
+                                  color={'primary'}
+                                  size="small"
+                                  className={"btnPrice"}
+                                  onClick={() => {
+                                    handleJobTypeChange("isPriceEditable", true, jobTypeIdx, index);
+                                  }}
+                                >
+                                  <EditIcon fontSize="small" className="btnPriceIcon" />
+                                </IconButton>
+                              </Tooltip>
                             </Typography>
                             <BCInput
                               type="number"
