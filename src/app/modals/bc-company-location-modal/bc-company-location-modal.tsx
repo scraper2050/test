@@ -73,6 +73,7 @@ interface API_PARAMS {
   billingState?: string;
   billingZipCode?: string;
   billingEmailSender?: string;
+  poRequestEmailSender?: string;
   phone?: string;
   workTypes?: string[];
   assignedVendors?: {
@@ -129,6 +130,7 @@ function BCCompanyLocationModal({
       billingState: allStates.find((state) => state.name === companyLocation?.billingAddress?.state),
       billingZipCode: companyLocation?.billingAddress?.zipCode ?? '',
       emailSender: companyLocation?.billingAddress?.emailSender ?? '',
+      poRequestEmailSender: companyLocation?.poRequestEmailSender ?? '',
     },
     onSubmit: async (values: any, { setSubmitting }: any) => {
       let workTypes = FormikValues.workTypes.map(res => res._id);
@@ -182,6 +184,7 @@ function BCCompanyLocationModal({
         billingState: FormikValues.billingState?.name || '',
         billingZipCode: FormikValues.billingZipCode,
         billingEmailSender: FormikValues.emailSender,
+        poRequestEmailSender: FormikValues.poRequestEmailSender,
         assignedVendors: oldAssignedVendors,
         assignedEmployees: oldAssignedEmployee,
       };
@@ -615,6 +618,28 @@ function BCCompanyLocationModal({
                         helperText={FormikErrors.emailSender}
                       />
                       <small style={{textAlign: 'center', color: '#828282'}}>*If no email is set here, invoices will be sent from the logged in user</small>
+                    </Grid>
+                  </Grid>
+                  <Grid container direction={'row'} spacing={1}>
+                    <Grid container item justify={'flex-end'}
+                      style={{ marginTop: 8 }} xs={3}>
+                      <Typography variant={'button'}>Send PO requests from</Typography>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        autoComplete={'off'}
+                        className={classes.fullWidth}
+                        id={'outlined-textarea'}
+                        label={''}
+                        name={'poRequestEmailSender'}
+                        onChange={formikChange}
+                        type={'email'}
+                        value={FormikValues.poRequestEmailSender}
+                        variant={'outlined'}
+                        error={!!FormikErrors.poRequestEmailSender}
+                        helperText={FormikErrors.poRequestEmailSender}
+                      />
+                      <small style={{ textAlign: 'center', color: '#828282' }}>*If no email is set here, PO requests will be sent from the logged in user</small>
                     </Grid>
                   </Grid>
               </Grid>

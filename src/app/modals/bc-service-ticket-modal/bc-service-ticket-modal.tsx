@@ -1821,9 +1821,8 @@ const DataContainer = styled.div`
   }
 
   .btnPrice {
-    position: absolute;
     margin-left: 3px;
-    margin-bottom: 3px;
+    margin-top: -7px;
   }
 
   .btnPriceIcon{
