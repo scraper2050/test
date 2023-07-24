@@ -297,9 +297,6 @@ function BCServiceTicketModal(
         break;
       case "quantity":
         jobTypes[index].quantity = value;
-        if (jobTypes[index].default_price){
-          jobTypes[index].price = value * jobTypes[index].default_price;
-        }
         break;
       case "price":
         jobTypes[index].price = Number(value);
@@ -352,12 +349,10 @@ function BCServiceTicketModal(
       if (item) {
         let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
         if (customer && price) {
-          jobType.default_price = price?.charge;
-          jobType.price = price?.charge * jobType.quantity;
+          jobType.price = price?.charge;
         } else {
           price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-          jobType.default_price = price?.charge;
-          jobType.price = price?.charge * jobType.quantity;
+          jobType.price = price?.charge;
         }
       }
     }
@@ -372,7 +367,7 @@ function BCServiceTicketModal(
     let discountTotal = 0;
 
     jobTypes?.forEach((jobType: any, index: number) => {
-      total += jobType.price;
+      total += jobType.price * Number(jobType.quantity);
     })
 
     const customer = customers.find((res: any) => res._id == FormikValues.customerId);
@@ -963,23 +958,22 @@ function BCServiceTicketModal(
                 description: currentItem?.description,
               },
               quantity: task.quantity || 1,
-              default_price: 0,
               price: task.price || 0,
             }
             
+          if (!("price" in task)){
             const item = items.find((res: any) => res.jobType == task.jobType);
             const customer = customers.find((res: any) => res._id == FormikValues.customerId);
             if (item) {
               let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
               if (customer && price) {
-                jobType.default_price = price?.charge;
-                if (!("price" in task)) jobType.price = price?.charge * jobType.quantity;
+                jobType.price = price?.charge;
               } else {
                 price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-                jobType.default_price = price?.charge;
-                if (!("price" in task)) jobType.price = price?.charge * jobType.quantity;
+                jobType.price = price?.charge;
               }
             }
+          }
             
           return jobType;
         });
@@ -1003,11 +997,12 @@ function BCServiceTicketModal(
     }
   }, [items, discountItems]);
   
-  const sendPORequestEmail = (po_request_id?: string) => {
+  const sendPORequestEmail = (po_request_id: any) => {
     dispatch(setModalDataAction({
       'data': {
-        'po_request_id': po_request_id,
+        'id': po_request_id,
         'modalTitle': `Send PO Request`,
+        'type': "PO Request",
         'removeFooter': false,
       },
       'type': modalTypes.EMAIL_PO_REQUEST_MODAL
@@ -1158,7 +1153,7 @@ function BCServiceTicketModal(
             </Grid>
             <Grid item className={'noPaddingTopAndButton'} xs={4}>
               <Typography variant={'subtitle1'} className={'totalDetailText'}>
-                Total : {totalCharge ? "$"+totalCharge : ""}
+                Total : {totalCharge ? "$"+totalCharge.toFixed(2) : ""}
               </Typography>
             </Grid>
             <Grid item className={'noPaddingTopAndButton'} xs={6}>
@@ -1468,7 +1463,7 @@ function BCServiceTicketModal(
                           startAdornment: <InputAdornment position="start">$</InputAdornment>,
                         }}
                         name={'price'}
-                        value={jobType.price}
+                        value={jobType.price || ""}
                       />
                     </Grid>
                     <Grid

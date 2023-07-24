@@ -25,7 +25,8 @@ import {
   withStyles,
   FormControlLabel,
   Checkbox,
-  Tooltip
+  Tooltip,
+  InputAdornment
 } from '@material-ui/core';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
@@ -147,22 +148,21 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
         description: currentItem?.description
       },
       quantity: task.quantity || 1,
-      default_price: 0,
       price: task.price || 0,
     }
 
-    const item = items.find((res: any) => res.jobType == (task.jobType._id || task.jobType));
-    const customer = customers.find((res: any) => res._id == customerId);
-    
-    if (item) {
-      let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
-      if (customer && price) {
-        jobType.default_price = price?.charge;
-        if (!("price" in task)) jobType.price = price?.charge * jobType.quantity;
-      } else {
-        price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-        jobType.default_price = price?.charge;
-        if (!("price" in task)) jobType.price = price?.charge * jobType.quantity;
+    if (!("price" in task)){
+      const item = items.find((res: any) => res.jobType == (task.jobType._id || task.jobType));
+      const customer = customers.find((res: any) => res._id == customerId);
+      
+      if (item) {
+        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+        if (customer && price) {
+          jobType.price = price?.charge;
+        } else {
+          price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
+          jobType.price = price?.charge;
+        }
       }
     }
     return jobType;
@@ -856,9 +856,6 @@ function BCJobModal({
         break;
       case "quantity":
         jobTypes[index].quantity = value;
-        if (jobTypes[index].default_price) {
-          jobTypes[index].price = value * jobTypes[index].default_price;
-        }
         break;
       case "price":
         jobTypes[index].price = Number(value);
@@ -888,12 +885,10 @@ function BCJobModal({
       if (item) {
         let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
         if (customer && price) {
-          jobType.default_price = price?.charge;
-          jobType.price = price?.charge * jobType.quantity;
+          jobType.price = price?.charge;
         } else {
           price = item?.tiers?.find((res: any) => res.tier?.isActive == true)
-          jobType.default_price = price?.charge;
-          jobType.price = price?.charge * jobType.quantity;
+          jobType.price = price?.charge;
         }
       }
     }
@@ -1234,7 +1229,7 @@ function BCJobModal({
                               )}
                             </Typography>
                             <BCInput
-                              type="text"
+                              type="number"
                               className={'serviceTicketLabel'}
                               disabled={!jobType.isPriceEditable}
                               handleChange={(ev: any, newValue: any) =>
@@ -1243,8 +1238,12 @@ function BCJobModal({
                               onBlur={(ev: any, newValue: any) => {
                                 handleJobTypeChange("isPriceEditable", false, jobTypeIdx, index)
                               }}
+                              InputProps={{
+                                style: { paddingLeft: 14 },
+                                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                              }}
                               name={'price'}
-                              value={jobType.price}
+                              value={jobType.price || ""}
                             />
                           </Grid>
                           <Grid
