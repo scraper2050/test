@@ -319,7 +319,7 @@ function EmailPORequestModal({ classes, id, type }: any) {
                                                     classes={{ root: classes.checkboxInput }}
                                                 />
                                             }
-                                            label={`Send copy to myself at ${FormikValues.from}`}
+                                            label={`Send copy to myself at ${user.auth?.email}`}
                                         />
                                     </Grid>
                                 </Grid>
