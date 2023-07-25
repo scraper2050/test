@@ -310,7 +310,7 @@ function ViewInvoice() {
           'modalTitle': '',
           'removeFooter': false
         },
-        type: modalTypes.CONFIRM_VOID_INVOICE_MODAL,
+        type: modalTypes.CONFIRM_DUPLICATE_INVOICE_MODAL,
       })
     );
     setTimeout(() => {

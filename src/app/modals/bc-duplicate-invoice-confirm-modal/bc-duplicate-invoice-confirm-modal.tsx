@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./bc-void-invoice-confirm-modal.style";
+import styles from "./bc-duplicate-invoice-confirm-modal.style";
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from "react-redux";
 import { setModalDataAction, closeModalAction } from "actions/bc-modal/bc-modal.action";
@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   }
 })
 
-function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
+function BCDuplicateInvoiceConfirmModal({classes, data}: Props):JSX.Element {
   const dispatch = useDispatch();
   
   const closeModal = () => {
@@ -38,7 +38,7 @@ function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
   return (
     <DialogContent classes={{ root: classes.dialogContent }}>
       <Typography className={classes.description}>
-        You will stil need to pay your tech. Are you sure you want to void the invoice? 
+        Are you sure you want to duplicate this invoice?
       </Typography>
       <Box className={classes.buttons}>
         <Fab
@@ -67,4 +67,4 @@ function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
   )
 }
 
-export default withStyles(styles, { withTheme: true })(BCEditInvoiceConfirmModal);
+export default withStyles(styles, { withTheme: true })(BCDuplicateInvoiceConfirmModal);

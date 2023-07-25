@@ -25,6 +25,7 @@ import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-mo
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
 import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
 import BCVoidInvoiceConfirmModal from './bc-void-invoice-confirm-modal/bc-void-invoice-confirm-modal';
+import BCDuplicateInvoiceConfirmModal from './bc-duplicate-invoice-confirm-modal/bc-duplicate-invoice-confirm-modal';
 import BcManualSyncModalInvoice from './bc-manual-sync-modal/bc-manual-sync-invoices';
 import BcManualSyncModalPayments from './bc-manual-sync-modal/bc-manual-sync-payments';
 import BCEditPaidInvoiceConfirmModal from './bc-edit-paid-invoice-confirm-modal/bc-edit-paid-invoice-confirm-modal';
@@ -317,6 +318,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCVoidInvoiceConfirmModal data={data.data} />);
+        break;
+      case modalTypes.CONFIRM_DUPLICATE_INVOICE_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCDuplicateInvoiceConfirmModal data={data.data} />);
         break;
       case modalTypes.MANUAL_SYNC_MODAL_INVOICES:
         setModalOptions({
