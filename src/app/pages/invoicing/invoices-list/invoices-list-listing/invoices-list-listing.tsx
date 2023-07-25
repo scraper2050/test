@@ -129,7 +129,7 @@ function InvoicingListListing({ classes, theme }: any) {
       'Header': 'Customer PO',
     },
     {
-      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
+      'accessor': (originalRow: any) => originalRow.isVoid?"Void":formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 20

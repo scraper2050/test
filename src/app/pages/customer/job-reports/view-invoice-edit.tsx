@@ -18,7 +18,7 @@ import { getAllSalesTaxAPI } from "api/tax.api";
 import { getCustomerDetailAction, getCustomers, resetCustomer } from "actions/customer/customer.action";
 import { getCompanyProfile } from "api/user.api";
 import { getItems } from 'api/items.api'
-import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI } from "api/invoicing.api";
+import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI, unvoidInvoice as unvoidInvoiceAPI } from "api/invoicing.api";
 import { getCompanyLocations } from "api/user.api";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
@@ -286,6 +286,37 @@ function ViewInvoice() {
     }, 200);
   }
 
+  const unvoidInvoiceHandler = (invoiceId: string) => {
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'data': {
+            handleOnConfirm: async () => {
+              try {
+                const res: any = await unvoidInvoiceAPI({ invoiceId })
+                if (res.status === 1) {
+                  dispatch(success(res.message));
+                  history.push({
+                    'pathname': currentDivision.urlParams ? `/main/invoicing/invoices-list/${currentDivision.urlParams}` : "/main/invoicing/invoices-list",
+                  });
+                } else {
+                  dispatch(errorSnackBar(res.message));
+                }
+              } catch (error) {
+                dispatch(errorSnackBar(`Something went wrong`))
+              }
+            }
+          },
+          'modalTitle': '',
+          'removeFooter': false
+        },
+        type: modalTypes.CONFIRM_VOID_INVOICE_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
   if ((customerId && !customer?._id) || (!customerId && customers?.length === 0) || !invoiceDetail.company)
     return <BCCircularLoader heightValue={'200px'} />
 
@@ -302,6 +333,7 @@ function ViewInvoice() {
           updateInvoiceHandler={updateInvoiceHandler}
           createInvoiceHandler={createInvoiceHandler}
           voidInvoiceHandler={voidInvoiceHandler}
+          unvoidInvoiceHandler={unvoidInvoiceHandler}
           getItems={getItems}
         />
       </PageContainer>

@@ -487,6 +487,7 @@ interface Props {
   updateInvoiceHandler: (data: any) => Promise<any>;
   createInvoiceHandler: (data: any) => Promise<any>;
   voidInvoiceHandler: (invoiceId: string) => void;
+  unvoidInvoiceHandler: (invoiceId: string) => void;
   getItems: (includeDiscountItems?: boolean) => Promise<any>;
 }
 
@@ -525,6 +526,7 @@ function BCEditInvoice({
   updateInvoiceHandler,
   createInvoiceHandler,
   voidInvoiceHandler,
+  unvoidInvoiceHandler,
   getItems,
   }: Props) {
   const invoiceStyles = invoicePageStyles();
@@ -597,7 +599,10 @@ function BCEditInvoice({
   const handleVoidInvoice = () => {
     voidInvoiceHandler(invoiceData._id)
   }
+  const handleUnVoidInvoice=()=>{
+    unvoidInvoiceHandler(invoiceData._id)
 
+  }
   const handleTicketClick = () => {
     dispatch(setModalDataAction({
       data: {
@@ -862,7 +867,7 @@ function BCEditInvoice({
                       Job Details
                     </Button>
                   )}
-                  {!invoiceData?.isDraft && (
+                  {!invoiceData?.isDraft && !invoiceData?.isVoid && (
                     <Button
                       variant="contained"
                       color="secondary"
@@ -870,6 +875,16 @@ function BCEditInvoice({
                       onClick={handleVoidInvoice}
                     >
                       Void Invoice
+                    </Button>
+                  )}
+                  {!invoiceData?.isDraft && invoiceData?.isVoid && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleUnVoidInvoice}
+                    >
+                      Un-Void Invoice
                     </Button>
                   )}
                   <Button
@@ -1436,7 +1451,7 @@ function BCEditInvoice({
                       Job Details
                     </Button>
                   )}
-                  {!invoiceData?.isDraft && (
+                  {!invoiceData?.isDraft && !invoiceData?.isVoid && (
                     <Button
                       variant="contained"
                       color="secondary"
@@ -1444,6 +1459,16 @@ function BCEditInvoice({
                       onClick={handleVoidInvoice}
                     >
                       Void Invoice
+                    </Button>
+                  )}
+                  {!invoiceData?.isDraft && invoiceData?.isVoid && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleUnVoidInvoice}
+                    >
+                      Un-Void Invoice
                     </Button>
                   )}
                   <Button
