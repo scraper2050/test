@@ -66,6 +66,14 @@ interface Props {
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
+    voidTag:{
+    height: "auto",
+    background: "#f50057",
+    padding: "5px 10px",
+    borderRadius: "15px",
+    color: "white",
+    fontWeight: "bold"
+    },
     companyLogo: {
       width: '100%',
       '& > img': {
@@ -940,8 +948,12 @@ function BCEditInvoice({
                         </div>
                       </Grid>
                       <Grid item xs>
+                        <FormControl className={invoiceStyles.formField}>
+                          {invoiceData?.isVoid &&<span className={invoiceStyles.voidTag}>Void</span>}
+ </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
+
                           <InputBase
                             id="invoice-title"
                             name="invoice_title"
