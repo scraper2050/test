@@ -136,11 +136,11 @@ function InvoicingListListing({ classes, theme }: any) {
     },
     {
       Cell({ row }: any) {
-        const { status = '' } = row.original;
+        const { status = '',isVoid } = row.original;
         const textStatus = status.split('_').join(' ').toLowerCase();
         return (
           <div className={customStyles.centerContainer}>
-            <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />
+           {!isVoid&& <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />}
           </div>
         )
       },

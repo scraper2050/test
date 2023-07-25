@@ -884,7 +884,7 @@ function BCEditInvoice({
                       className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
                       onClick={handleUnVoidInvoice}
                     >
-                      Un-Void Invoice
+                      Duplicate Invoice
                     </Button>
                   )}
                   <Button
@@ -1468,7 +1468,7 @@ function BCEditInvoice({
                       className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
                       onClick={handleUnVoidInvoice}
                     >
-                      Un-Void Invoice
+                      Duplicate Invoice
                     </Button>
                   )}
                   <Button
