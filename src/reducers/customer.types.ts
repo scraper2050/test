@@ -43,7 +43,8 @@ export interface Customer {
         _id: string;
         name: string;
     },
-    isPORequired: boolean,
+    isPORequired: boolean
+    notes: string
   paymentTerm: {
     createdAt: string,
     createdBy: string,

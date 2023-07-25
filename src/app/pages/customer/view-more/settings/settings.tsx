@@ -12,6 +12,8 @@ import PORequired from './settings-types/po-required';
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import PaymentTerms from './settings-types/payment-terms';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import Notes from './settings-types/notes';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 
 interface SettingsProps {
     customer: Customer;
@@ -42,6 +44,12 @@ const SettingsTypes = [
     'icon': MonetizationOnIcon,
     'subtitle': 'Set Customer Payment Terms',
     'title': 'Payment Terms'
+  },
+  {
+    'color': blue,
+    'icon': AssignmentIcon,
+    'subtitle': 'Set Customer Notes',
+    'title': 'Notes'
   },
 /*  {
     'color': yellow,
@@ -102,6 +110,11 @@ export default function Settings({ customer }:SettingsProps) {
           header={SettingsTypes[active]}
         />}
         {active === 2 && <PaymentTerms
+          customer={customer}
+          dispatch={dispatch}
+          header={SettingsTypes[active]}
+        />}
+        {active === 3 && <Notes
           customer={customer}
           dispatch={dispatch}
           header={SettingsTypes[active]}

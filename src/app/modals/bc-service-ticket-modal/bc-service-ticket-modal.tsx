@@ -26,6 +26,7 @@ import {
   Paper,
   Popper,
   TextField,
+  Theme,
   Tooltip,
   Typography,
   withStyles,
@@ -118,6 +119,9 @@ function BCServiceTicketModal(
     refreshTicketAfterEditing = true,
   }: any): JSX.Element {
   const dispatch = useDispatch();
+  const [isPORequired, setIsPORequired] = useState(false);
+  const [customerNote, setCustomerNote] = useState("");
+  const [itemTier, setItemTier] = useState("");
   const [notesLabelState, setNotesLabelState] = useState(false);
   const [isHomeOccupied, setHomeOccupied] = useState(false);
   const [homeOwnerId, setHomeOwnerId] = useState("");
@@ -144,8 +148,6 @@ function BCServiceTicketModal(
   const jobTypesInput = useRef<HTMLInputElement>(null);
   const history = useHistory();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
-  const [isPORequired, setIsPORequired] = useState(false);
-  const [itemTier, setItemTier] = useState("");
   const [totalCharge, settotalCharge] = useState(0);
   const [discountApplied, setDiscountApplied] = useState(0);
   const {discountItems} = useSelector(({ discountItems }: any) => discountItems);
@@ -167,6 +169,7 @@ function BCServiceTicketModal(
     newValue: any
   ) => {
     setIsPORequired(newValue?.isPORequired || false);
+    setCustomerNote(newValue?.notes);
     setItemTier(newValue?.itemTierObj?.[0]?.name || "");
 
     const customerId = newValue ? newValue._id : '';
@@ -838,6 +841,7 @@ function BCServiceTicketModal(
       dispatch(getContacts(data));
 
       setIsPORequired(ticket.customer?.isPORequired || false);
+      setCustomerNote(ticket.customer?.notes);
       setItemTier(ticket?.customer?.itemTierObj?.[0]?.name || "");
     }
   }, []);
@@ -1052,6 +1056,25 @@ function BCServiceTicketModal(
     setOpenSubmitBtn(false);
   };
 
+  const getCustomerNote = () => {
+    if (customerNote) {
+      return <Tooltip title={customerNote} arrow>
+        <div className={'customerNoteContainer'}>
+          <IconButton
+            component="span"
+            color={'primary'}
+            size="small"
+          >
+            <InfoIcon></InfoIcon>
+          </IconButton>
+          <Typography variant={'subtitle1'} className={'customerNoteText'}>
+            Customer Notes
+          </Typography>
+        </div>
+      </Tooltip>
+    }
+  }
+
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
@@ -1120,14 +1143,7 @@ function BCServiceTicketModal(
             />
           </Grid>
           <Grid item xs={5}>
-            {isPORequired && (
-              <Grid container className={'poRequiredContainer'}>
-                <InfoIcon style={{ color: red[400] }} ></InfoIcon> 
-                <Typography variant={'body1'} className='poRequiredText'>
-                  Customer PO Is Required
-                </Typography>
-              </Grid>
-            )}
+              {getCustomerNote()}
           </Grid>
           <Grid item xs={2} className={'noPaddingTopAndButton'}>
             <Typography variant={'caption'} className={'previewCaption'}>
@@ -1167,6 +1183,14 @@ function BCServiceTicketModal(
               <Typography variant={'subtitle1'} className='customerOverriddenByText'>
                 PO Required: Overridden by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
+            )}
+            {isPORequired && (
+              <Grid container className={'poRequiredContainer'}>
+                {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
+                <Typography variant={'subtitle1'} className='poRequiredText'>
+                  Customer PO Is Required
+                </Typography>
+              </Grid>
             )}
           </Grid>
         </Grid>
@@ -1791,6 +1815,17 @@ const DataContainer = styled.div`
     color: #ef5350;
     margin-left: 4px;
   }
+  
+  .customerNoteContainer{
+    display: flex;
+    align-items: center;
+    width: 150px;
+  }
+
+  .customerNoteText {
+    margin-left: 4px;
+    color: #626262;
+  }
 
   .customerOverriddenByText {
     color: red;
@@ -1833,6 +1868,11 @@ const DataContainer = styled.div`
     margin-left: 3px;
     content: '*';
     color: red;
+  }
+
+  .btnNotesInfo {
+    position: absolute;
+    margin-top: 8px;
   }
 `;
 

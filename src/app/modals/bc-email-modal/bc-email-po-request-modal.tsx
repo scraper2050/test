@@ -91,10 +91,15 @@ function EmailPORequestModal({ classes, id, type }: any) {
         },
         validationSchema,
         onSubmit: async (values: any, { setSubmitting }: any) => {
+            const recipients = [values.to];
+            if (values.cc) {
+                recipients.push(values.cc);
+            }
+
             const params = {
                 ticketId: id,
                 sender: values.from?.email || values.from,
-                recipients: JSON.stringify([values.to]),
+                recipients: JSON.stringify(recipients),
                 subject: values.subject,
                 message: values.message,
                 copyToMyself: values.sendToMe,
