@@ -1819,7 +1819,7 @@ const DataContainer = styled.div`
   .customerNoteContainer{
     display: flex;
     align-items: center;
-    width: 150px;
+    width: 155px;
   }
 
   .customerNoteText {
