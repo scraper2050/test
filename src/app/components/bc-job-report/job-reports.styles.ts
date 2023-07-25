@@ -209,7 +209,19 @@ export default (theme: Theme): any => ({
     'max-width': '30px',
     'height': 'auto',
     'max-height': '30px',
-  }
+  },
+  "customerNoteContainer": {
+    "display": "flex",
+    "align-items": "center",
+    "width": "155px",
+    "position": "absolute",
+    "margin-left": "248px"
+  },
+  "customerNoteText": {
+    "margin-left": "4px",
+    "color": "#626262",
+    "cursor": "pointer"
+  },
 });
 
 export const MainContainer = styled.div`

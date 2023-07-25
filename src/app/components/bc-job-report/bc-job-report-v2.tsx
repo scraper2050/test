@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { Button, Grid, withStyles } from '@material-ui/core';
+import { Button, Grid, Theme, Tooltip, Typography, withStyles } from '@material-ui/core';
 import { formatDatTimell, formatDatTimelll } from 'helpers/format';
 import styles, {
   DataContainer,
@@ -23,6 +23,7 @@ import {
   error as SnackBarError,
   success,
 } from 'actions/snackbar/snackbar.action';
+import InfoIcon from '@material-ui/icons/Info';
 
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
@@ -172,11 +173,21 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     }
   }
 
+  const LightTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: "1rem",
+    },
+  }))(Tooltip);
+
+
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
     <MainContainer>
       <PageContainer>
-        <div style={{display: 'flex'}}>
+        <div style={{ display: 'flex', alignItems: "flex-start"}}>
           <IconButton
             color="default"
             size="small"
@@ -185,6 +196,22 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           >
             <ArrowBackIcon/>
           </IconButton>
+          {job.customer?.notes && (
+            <LightTooltip title={job.customer?.notes}>
+              <div className={classes.customerNoteContainer}>
+                <IconButton
+                  component="span"
+                  color={'primary'}
+                  size="small"
+                >
+                  <InfoIcon></InfoIcon>
+                </IconButton>
+                <Typography variant={'subtitle1'} className={classes.customerNoteText}>
+                  Customer Notes
+                </Typography>
+              </div>
+            </LightTooltip>
+          )}
         </div>  
         <Grid
           className={classes.btn}

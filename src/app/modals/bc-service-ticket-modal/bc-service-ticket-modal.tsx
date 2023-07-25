@@ -1056,9 +1056,18 @@ function BCServiceTicketModal(
     setOpenSubmitBtn(false);
   };
 
+  const LightTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: "1rem",
+    },
+  }))(Tooltip);
+
   const getCustomerNote = () => {
     if (customerNote) {
-      return <Tooltip title={customerNote} arrow>
+      return <LightTooltip title={customerNote}>
         <div className={'customerNoteContainer'}>
           <IconButton
             component="span"
@@ -1071,7 +1080,7 @@ function BCServiceTicketModal(
             Customer Notes
           </Typography>
         </div>
-      </Tooltip>
+      </LightTooltip>
     }
   }
 
@@ -1825,6 +1834,7 @@ const DataContainer = styled.div`
   .customerNoteText {
     margin-left: 4px;
     color: #626262;
+    cursor: pointer;
   }
 
   .customerOverriddenByText {
