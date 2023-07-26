@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import { Fab, FormControl, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
 import SettingHeader from '../settings-header';
-import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
+import { getCustomerDetailAction, getCustomers, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import BcInput from 'app/components/bc-input/bc-input';
-
 
 interface NotesProps {
     customer: Customer;
@@ -36,6 +35,7 @@ export default function Notes({ customer, header, dispatch }:NotesProps) {
       setIsSubmitDisabled(false);
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerUpdate));
+      dispatch(getCustomers());
     }));
   };
 
@@ -45,7 +45,7 @@ export default function Notes({ customer, header, dispatch }:NotesProps) {
       <FormControl
         fullWidth
         variant={'outlined'}>
-        <Typography variant={'caption'} className={'previewCaption'}>
+        <Typography variant={'caption'} className={'notesTitle'}>
           Notes
         </Typography>
         <BcInput
@@ -69,7 +69,7 @@ export default function Notes({ customer, header, dispatch }:NotesProps) {
 
 const NotesContainer = styled.div`
     margin: 0 auto;
-    text-align: left;
+    text-align: center;
 
     h3 {
         max-width: 400px;
@@ -85,5 +85,9 @@ const NotesContainer = styled.div`
 
     .MuiOutlinedInput-inputMultiline{
       padding: 9.5px 4px!important;
+    }
+
+    .notesTitle{
+      text-align: left;
     }
 `;

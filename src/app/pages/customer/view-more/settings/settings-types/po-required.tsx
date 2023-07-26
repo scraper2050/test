@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import { Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import SettingHeader from '../settings-header';
-import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
-
+import { getCustomerDetailAction, getCustomers, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 
 interface PORequiredProps {
     customer: Customer;
@@ -35,6 +34,7 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
       setIsSubmitDisabled(false);
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerUpdate));
+      dispatch(getCustomers());
     }));
   };
 
