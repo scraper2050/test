@@ -34,6 +34,8 @@ function ViewInvoice() {
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }: any) => auth);
   const { state } = useLocation<any>();
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
   const { 'data': paymentTerms } = useSelector(({ paymentTerms }: any) => paymentTerms);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
@@ -293,16 +295,23 @@ function ViewInvoice() {
           'data': {
             handleOnConfirm: async () => {
               try {
+                setIsLoading(true);
                 const res: any = await unvoidInvoiceAPI({ invoiceId })
                 if (res.status === 1) {
                   dispatch(success(res.message));
+                  setIsLoading(false);
+
                   history.push({
                     'pathname': currentDivision.urlParams ? `/main/invoicing/invoices-list/${currentDivision.urlParams}` : "/main/invoicing/invoices-list",
                   });
                 } else {
+                  setIsLoading(false);
+
                   dispatch(errorSnackBar(res.message));
                 }
               } catch (error) {
+                setIsLoading(false);
+
                 dispatch(errorSnackBar(`Something went wrong`))
               }
             }
@@ -335,6 +344,7 @@ function ViewInvoice() {
           voidInvoiceHandler={voidInvoiceHandler}
           unvoidInvoiceHandler={unvoidInvoiceHandler}
           getItems={getItems}
+          isLoading={isLoading}
         />
       </PageContainer>
     </MainContainer>

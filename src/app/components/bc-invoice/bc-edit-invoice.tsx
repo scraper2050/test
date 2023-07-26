@@ -58,6 +58,7 @@ import {
   getEmployeesForJobAction
 } from "../../../actions/employees-for-job/employees-for-job.action";
 import {getVendors} from "../../../actions/vendor/vendor.action";
+import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 
 interface Props {
   classes?: any;
@@ -491,6 +492,7 @@ interface Props {
   customer: any;
   customersData: any;
   taxes: any;
+  isLoading:Boolean
   showSendInvoiceModalHandler: (invoiceId: string, customerId: string) => void;
   updateInvoiceHandler: (data: any) => Promise<any>;
   createInvoiceHandler: (data: any) => Promise<any>;
@@ -534,6 +536,7 @@ function BCEditInvoice({
   updateInvoiceHandler,
   createInvoiceHandler,
   voidInvoiceHandler,
+  isLoading,
   unvoidInvoiceHandler,
   getItems,
   }: Props) {
@@ -780,7 +783,7 @@ function BCEditInvoice({
 
   return (
     <MuiThemeProvider theme={theme}>
-      <Formik
+      {isLoading ? <BCCircularLoader heightValue={'100vh'} /> : <Formik
         initialValues={{
           invoice_id: invoiceData?._id,
           invoice_title: 'INVOICE',
@@ -1507,7 +1510,7 @@ function BCEditInvoice({
             </Form>
           )
         }}
-      </Formik>
+      </Formik>}
     </MuiThemeProvider>
   )
 }
