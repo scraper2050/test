@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
-import { Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/customer/customer.action';
 import { useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ export default function PaymentTerms({ customer, header, dispatch }:PaymentTerms
   const { 'data': paymentTerms } = useSelector(({ paymentTerms }: any) => paymentTerms);
   const [value, setValue] = useState<string>(customer?.paymentTerm?._id as string);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [isSubmiting, setIsSubmiting] = useState(false);
 
   useEffect(() => {
     dispatch(getAllPaymentTermsAPI());
@@ -27,7 +28,7 @@ export default function PaymentTerms({ customer, header, dispatch }:PaymentTerms
 
   const handleChange = (e:any) => {
     setValue(e.target.value);
-    const defaultValue = customer._id;
+    const defaultValue = customer?.paymentTerm?._id;
     if (defaultValue == e.target.value) {
       setIsSubmitDisabled(true);
     }else{
@@ -37,8 +38,10 @@ export default function PaymentTerms({ customer, header, dispatch }:PaymentTerms
 
   const handleSubmit = async () => {
     setIsSubmitDisabled(true);
+    setIsSubmiting(true);
     await dispatch(updateCustomerPaymentTermsAction(value, customer._id));
     setIsSubmitDisabled(false);
+    setIsSubmiting(false);
     dispatch(loadingSingleCustomers());
     const customerUpdate = {
       ...customer,
@@ -77,7 +80,10 @@ export default function PaymentTerms({ customer, header, dispatch }:PaymentTerms
       <Fab
         color={'primary'}
         disabled={isSubmitDisabled}
-        onClick={handleSubmit}>Save
+        onClick={handleSubmit}>
+        {isSubmiting ? (
+          <CircularProgress size={25} />
+        ) : "Save"}
       </Fab>
     </div>
   </PaymentTermsContainer>;

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
-import { Fab, FormControl, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
+import { CircularProgress, Fab, FormControl, Typography } from '@material-ui/core';
 import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, getCustomers, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import BcInput from 'app/components/bc-input/bc-input';
@@ -15,6 +15,8 @@ interface NotesProps {
 export default function Notes({ customer, header, dispatch }:NotesProps) {
   const [value, setValue] = useState(customer.notes);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [isSubmiting, setIsSubmiting] = useState(false);
+
   const handleChange = (e:any) => {
     setValue(e.target.value);
     const defaultValue = customer.notes;
@@ -27,12 +29,14 @@ export default function Notes({ customer, header, dispatch }:NotesProps) {
 
   const handleSubmit = async () => {
     setIsSubmitDisabled(true);
+    setIsSubmiting(true);
     const customerUpdate = { ...customer,
       'customerId': customer._id,
       'notes': value
     };
     await dispatch(updateCustomerAction(customerUpdate, () => {
       setIsSubmitDisabled(false);
+      setIsSubmiting(false);
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerUpdate));
       dispatch(getCustomers());
@@ -60,7 +64,10 @@ export default function Notes({ customer, header, dispatch }:NotesProps) {
       <Fab
         color={'primary'}
         disabled={isSubmitDisabled}
-        onClick={handleSubmit}>Save
+        onClick={handleSubmit}>
+        {isSubmiting ? (
+          <CircularProgress size={25} />
+        ) : "Save"}
       </Fab>
     </div>
   </NotesContainer>;

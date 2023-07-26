@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
-import { Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, getCustomers, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 
@@ -14,6 +14,8 @@ interface PORequiredProps {
 export default function PORequired({ customer, header, dispatch }:PORequiredProps) {
   const [value, setValue] = useState(customer.isPORequired ? "Yes" : "No");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [isSubmiting, setIsSubmiting] = useState(false);
+
   const handleChange = (e:any) => {
     setValue(e.target.value);
     const defaultValue = customer.isPORequired ? "Yes" : "No";
@@ -26,12 +28,14 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
 
   const handleSubmit = async () => {
     setIsSubmitDisabled(true);
+    setIsSubmiting(true);
     const customerUpdate = { ...customer,
       'customerId': customer._id,
       'isPORequired': value == "Yes" ? true : false
     };
     await dispatch(updateCustomerAction(customerUpdate, () => {
       setIsSubmitDisabled(false);
+      setIsSubmiting(false);
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerUpdate));
       dispatch(getCustomers());
@@ -67,7 +71,10 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
       <Fab
         color={'primary'}
         disabled={isSubmitDisabled}
-        onClick={handleSubmit}>Save
+        onClick={handleSubmit}>
+        {isSubmiting ? (
+          <CircularProgress size={25} />
+        ) : "Save"}
       </Fab>
     </div>
   </PORequiredContainer>;
