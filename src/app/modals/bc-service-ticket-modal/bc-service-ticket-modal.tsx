@@ -190,6 +190,9 @@ function BCServiceTicketModal(
 
     const customerId = newValue ? newValue._id : '';
     await setFieldValue(fieldName, '');
+    //Total price changes
+    changeJobTypesPrice(customerId);
+
     await setFieldValue('jobLocationId', '');
     await setFieldValue('jobSiteId', '');
     await setFieldValue('customerContactId', '');
@@ -211,7 +214,8 @@ function BCServiceTicketModal(
     }
 
     await setFieldValue(fieldName, customerId);
-    changeJobTypesPrice();
+    //The total price changes after the waiting process, which is a bit tricky. We can discuss it next time.
+    changeJobTypesPrice(customerId);
   };
 
   const handleContactChange = (
@@ -319,6 +323,9 @@ function BCServiceTicketModal(
     switch (fieldName) {
       case "jobType":
         jobTypes[index].jobTypeId = value;
+        if (!value) {
+          jobTypes[index].price = Number(0);
+        }
         _setJobTypePrice(jobTypes[index]);
         break;
       case "quantity":
@@ -338,10 +345,10 @@ function BCServiceTicketModal(
     _setJobTotal();
   };
 
-  const changeJobTypesPrice = () => {
+  const changeJobTypesPrice = (customerId?: string) => {
     const jobTypes = [...FormikValues.jobTypes];
     jobTypes?.forEach((jobType, index: number) => {
-      _setJobTypePrice(jobType);
+      _setJobTypePrice(jobType, customerId);
     })
     setFieldValue('jobTypes', jobTypes);
     _setJobTotal();
@@ -367,13 +374,13 @@ function BCServiceTicketModal(
    * @param jobType 
    * Assign a price to each job item
    */
-  const _setJobTypePrice = (jobType: any) => {
+  const _setJobTypePrice = (jobType: any, customerId?: string) => {
     if (jobType.jobTypeId) {
       const item = items.find((res: any) => res.jobType == jobType.jobTypeId._id);
-      const customer = customers.find((res: any) => res._id == FormikValues.customerId);
+      const customer = customers.find((res: any) => res._id == (customerId || FormikValues.customerId));
       
       if (item) {
-        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
+        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)        
         if (customer && price) {
           jobType.price = price?.charge;
         } else {
@@ -1422,7 +1429,10 @@ function BCServiceTicketModal(
                         className={detail ? 'detail-only' : ''}
                         value={jobType.jobTypeId}
                         getOptionDisabled={(option) => !option.isJobType}
-                        disabled={detail || !!ticket.jobCreated}
+                        disabled={
+                          detail ||
+                          isFieldsDisabled
+                        }
                         getOptionLabel={(option) => {
                           const { title, description } = option;
                           return `${title || '...'}${description ? ' - ' + description : ''
@@ -1487,7 +1497,7 @@ function BCServiceTicketModal(
                       </Typography>
                       <BCInput
                         type="number"
-                        disabled={detail || !!ticket.jobCreated}
+                        disabled={detail || isFieldsDisabled}
                         className={'serviceTicketLabel'}
                         handleChange={(ev: any, newValue: any) =>
                           handleJobTypeChange("quantity", ev.target?.value, index)
@@ -1502,19 +1512,21 @@ function BCServiceTicketModal(
                         className={`${'previewCaption'}`}
                       >
                         Price 
-                        <Tooltip title="Edit Price" placement="top" >
-                          <IconButton 
-                            component="span"
-                            color={'primary'}
-                            size="small"
-                            className={"btnPrice"}  
-                            onClick={() => {
-                              handleJobTypeChange("isPriceEditable", true, index);
-                            }}
-                          >
-                            <EditIcon fontSize="small" className="btnPriceIcon" />
-                          </IconButton>
-                        </Tooltip>
+                        {!(detail || isFieldsDisabled) && 
+                          <Tooltip title="Edit Price" placement="top" >
+                            <IconButton 
+                              component="span"
+                              color={'primary'}
+                              size="small"
+                              className={"btnPrice"}  
+                              onClick={() => {
+                                handleJobTypeChange("isPriceEditable", true, index);
+                              }}
+                            >
+                              <EditIcon fontSize="small" className="btnPriceIcon" />
+                            </IconButton>
+                          </Tooltip>
+                        }
                       </Typography>
                       <BCInput
                         type="number"

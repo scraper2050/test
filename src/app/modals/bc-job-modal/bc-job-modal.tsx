@@ -86,7 +86,7 @@ import BCPhoneNumberInput from '../../components/bc-phone-number-input/bc-phone-
 import { callCreateHomeOwner } from 'api/home-owner.api';
 import { getHomeOwnerAction, clearHomeOwnerStore } from 'actions/home-owner/home-owner.action';
 
-var initialJobType = {
+const initialJobType = {
   jobTypeId: null,
   price: null,
   quantity: 1,
@@ -510,7 +510,15 @@ function BCJobModal({
 
   const addEmptyTask = () => {
     const tasks = [...FormikValues.tasks];
-    tasks.push({...initialTask});
+    const newInitialTask = {...initialTask};
+    newInitialTask.jobTypes = [{
+      jobTypeId: null,
+      price: null,
+      quantity: 1,
+      isPriceEditable: false
+    }];
+    tasks.push(newInitialTask);
+
     setFieldValue('tasks', tasks);
   }
 
