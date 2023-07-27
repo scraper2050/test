@@ -201,7 +201,7 @@ function BcEditCommissionModal({
                   alignItems={'center'}
                   xs={3}
                 >
-                      <Typography variant={'button'}>COMMISSIONS TYPE</Typography>
+                      <Typography variant={'button'}>PAY TYPE</Typography>
                 </Grid>
                 <Grid
                   item
@@ -239,7 +239,7 @@ function BcEditCommissionModal({
                     alignItems={'center'}
                     xs={3}
                   >
-                        <Typography variant={'button'}>COMMISSIONS</Typography>
+                        <Typography variant={'button'}>PAY</Typography>
                   </Grid>
                   <Grid
                     item
@@ -403,7 +403,7 @@ function BcEditCommissionModal({
       </DialogContent>
       {!error && !warning && (
         <div style={{ fontSize: 12, textAlign: 'center', color: '#828282' }}>
-          * Changes to Commissions will only be applied from Effective Date and
+          * Changes to Pay will only be applied from Effective Date and
           onwards.
         </div>
       )}
