@@ -142,9 +142,9 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         const fullJobAddress = `${jobAddress?.street ? jobAddress?.street : ""}${jobAddress?.city ? ", " + jobAddress?.city : ""}${jobAddress?.state ? ", " + jobAddress?.state : ""} ${(jobAddress?.zipcode || jobAddress?.zipCode) || ""}`;
 
 
-        return <Tooltip title={fullJobAddress} arrow placement='top'>
+        return <HtmlTooltip title={fullJobAddress} placement='top'>
           <span>{jobAddress?.street}</span>
-        </Tooltip>
+        </HtmlTooltip>
       },
       'className': 'font-bold',
       'sortable': true
