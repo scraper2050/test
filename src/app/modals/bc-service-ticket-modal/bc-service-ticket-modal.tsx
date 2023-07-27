@@ -82,6 +82,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import EditIcon from '@material-ui/icons/Edit';
+import { ability } from 'app/config/Can';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -159,6 +160,7 @@ function BCServiceTicketModal(
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
   const [submitSelectedIndex, setSubmitSelectedIndex] = useState(0);
   const submitOptions = ["Submit", "Submit and Send"]
+  const hasPORequiredBypass = ability.can('bypass', 'PORequirement');
 
   const filter = createFilterOptions();
 
@@ -560,7 +562,7 @@ function BCServiceTicketModal(
       }
 
       if (!ticket.type) {
-        if (isPORequired && !tempData.customerPO) {
+        if (isPORequired && !tempData.customerPO && !hasPORequiredBypass) {
           tempData.type = "PO Request";
         } else {
           tempData.type = "Ticket";
@@ -1235,7 +1237,7 @@ function BCServiceTicketModal(
                 PO Required: Overridden by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
-            {isPORequired && (
+            {isPORequired && !hasPORequiredBypass && (
               <Grid container className={'poRequiredContainer'}>
                 {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
                 <Typography variant={'subtitle1'} className='poRequiredText'>

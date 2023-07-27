@@ -8,6 +8,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import {info, success} from 'actions/snackbar/snackbar.action';
+import { Can, ability } from 'app/config/Can';
 
 
 interface TierPricingProps {
@@ -81,6 +82,7 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
           {'Tier'}
         </InputLabel>
         <Select
+          disabled={!ability.can('edit', 'CustomerSettings')}
           label={'Tier'}
           onChange={handleChange}
           value={tier}>
@@ -99,15 +101,17 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
         </Select>
       </FormControl>
 
-      <Fab
-        color={'primary'}
-        disabled={isSubmitDisabled}
-        onClick={handleSubmit}>
-        {isSubmiting ? (
-          <CircularProgress size={25} />
-        ) : (isTier ? 'Save': 'Use Tier Pricing')
-        }
-      </Fab>
+      <Can I={'edit'} a={'CustomerSettings'}>
+        <Fab
+          color={'primary'}
+          disabled={isSubmitDisabled}
+          onClick={handleSubmit}>
+          {isSubmiting ? (
+            <CircularProgress size={25} />
+          ) : (isTier ? 'Save': 'Use Tier Pricing')
+          }
+        </Fab>
+      </Can>  
     </div>
   </TierPricingContainer>;
 }

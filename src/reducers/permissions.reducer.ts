@@ -23,9 +23,11 @@ export const initialRolesAndPermissions: RolesAndPermissions = {
     'reporting': false
   },
   'superAdmin': {
-    'deleteCompanyAccount': false,
-    'editCompanyLogo': false,
     'editBillingInformation': false
+  },
+  'customers': {
+    'editCustomerSettings': false,
+    'overridePORequired': false
   }
 };
 
@@ -49,7 +51,10 @@ const PermissionsReducer: Reducer<any> = (
       return {
         ...state,
         loading: false,
-        rolesAndPermissions: action.payload
+        rolesAndPermissions: {
+          ...initialRolesAndPermissions,
+          ...action.payload
+        }
       }
     case UserPermissionsActionType.NO_RECORD:
       return {

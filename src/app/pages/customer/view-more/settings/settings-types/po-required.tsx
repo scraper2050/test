@@ -4,6 +4,7 @@ import { Customer } from 'reducers/customer.types';
 import { CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, getCustomers, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
+import { Can, ability } from 'app/config/Can';
 
 interface PORequiredProps {
     customer: Customer;
@@ -52,6 +53,7 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
           {'PO Required'}
         </InputLabel>
         <Select
+          disabled={!ability.can('edit', 'CustomerSettings')}
           label={'PO Required'}
           onChange={handleChange}
           value={value}>
@@ -68,14 +70,16 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
         </Select>
       </FormControl>
     
-      <Fab
-        color={'primary'}
-        disabled={isSubmitDisabled}
-        onClick={handleSubmit}>
-        {isSubmiting ? (
-          <CircularProgress size={25} />
-        ) : "Save"}
-      </Fab>
+      <Can I={'edit'} a={'CustomerSettings'}>
+        <Fab
+          color={'primary'}
+          disabled={isSubmitDisabled}
+          onClick={handleSubmit}>
+          {isSubmiting ? (
+            <CircularProgress size={25} />
+          ) : "Save"}
+        </Fab>
+      </Can>
     </div>
   </PORequiredContainer>;
 }
