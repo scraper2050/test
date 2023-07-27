@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, CardHeader, Chip, createStyles, Divider, Grid, withStyles, Typography, Tooltip } from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, CardHeader, Chip, createStyles, Divider, Grid, withStyles, Typography } from "@material-ui/core";
 import styles from "./bc-invoice.styles";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import * as CONSTANTS from "../../../constants";
@@ -378,40 +378,11 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
     zipcode: invoiceDetail?.companyLocation ? (invoiceDetail?.companyLocation?.isAddressAsBillingAddress ? invoiceDetail?.companyLocation?.address?.zipCode ?? '' : invoiceDetail?.companyLocation?.billingAddress?.zipCode ?? '') : invoiceDetail?.company?.address?.zipCode,
   };
 
-  let jobAddress: any;
-  if (invoiceDetail?.customer) {
-    const customer = invoiceDetail?.customer;
-    const customerAddress = customer.address;
-    if (customerAddress?.street || customerAddress?.city || customerAddress?.state || customerAddress?.zipCode) {
-      jobAddress = customerAddress;
-    }
-  }
-
-  if (invoiceDetail?.jobLocation) {
-    const jobLocation = invoiceDetail?.jobLocation;
-    const jobLocationAddress = jobLocation.address;
-    if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
-      jobAddress = jobLocationAddress;
-    }
-  }
-
-  if (invoiceDetail?.jobSite) {
-    const jobSite = invoiceDetail?.jobSite;
-    const jobSiteAddress = jobSite.address;
-    if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
-      jobAddress = jobSiteAddress;
-    }
-  }
-
-  const fullJobAddress = `${jobAddress?.street ? jobAddress?.street : ""}${jobAddress?.city ? ", " + jobAddress?.city : ""}${jobAddress?.state ? ", " + jobAddress?.state : ""} ${(jobAddress?.zipcode || jobAddress?.zipCode) || ""}`;
-
   return (
     <DataContainer>
       <div className={invoiceStyles.invoiceTop}>
         {invoiceDetail?.job?._id && invoiceDetail?.showJobId &&
-          <Tooltip title={fullJobAddress} arrow>
-            <Typography variant={'caption'} className={'jobIdText'}>{jobAddress?.street}</Typography>
-          </Tooltip>
+          <Typography variant={'caption'} className={'jobIdText'}>{invoiceDetail?.job?.jobId}</Typography>
         }
         <Grid container>
           <Grid item xs={12} sm={6}>

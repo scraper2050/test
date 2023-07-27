@@ -89,9 +89,40 @@ function InvoicingListListing({ classes, theme }: any) {
       'sortable': true,
     },
     {
-      'Header': 'Job ID',
+      'Header': 'Job Address',
       Cell({ row }: any) {
-        return <span>{row.original.job?.jobId?.substring(4)}</span>
+        const invoiceDetail = row.original;
+        let jobAddress: any;
+        if (invoiceDetail?.customer) {
+          const customer = invoiceDetail?.customer;
+          const customerAddress = customer.address;
+          if (customerAddress?.street || customerAddress?.city || customerAddress?.state || customerAddress?.zipCode) {
+            jobAddress = customerAddress;
+          }
+        }
+
+        if (invoiceDetail?.jobLocation) {
+          const jobLocation = invoiceDetail?.jobLocation;
+          const jobLocationAddress = jobLocation.address;
+          if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
+            jobAddress = jobLocationAddress;
+          }
+        }
+
+        if (invoiceDetail?.jobSite) {
+          const jobSite = invoiceDetail?.jobSite;
+          const jobSiteAddress = jobSite.address;
+          if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
+            jobAddress = jobSiteAddress;
+          }
+        }
+
+        const fullJobAddress = `${jobAddress?.street ? jobAddress?.street : ""}${jobAddress?.city ? ", " + jobAddress?.city : ""}${jobAddress?.state ? ", " + jobAddress?.state : ""} ${(jobAddress?.zipcode || jobAddress?.zipCode) || ""}`;
+
+
+        return <Tooltip title={fullJobAddress} arrow placement='top'>
+          <span>{jobAddress?.street}</span>
+        </Tooltip>
       },
       'className': 'font-bold',
       'sortable': true
