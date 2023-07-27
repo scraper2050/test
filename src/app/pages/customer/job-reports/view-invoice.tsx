@@ -62,13 +62,12 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       display: "flex",
       alignItems: "center",
       width: "155px",
-      position: "absolute",
-      marginLeft: "140px"
+      marginRight: "35px"
     },
     customerNoteText: {
       marginLeft: "4px",
       color: "#626262",
-      cursor: "pointer"
+      cursor: "pointer",
     }
   }),
 );
@@ -352,6 +351,8 @@ function ViewInvoice({ classes, theme }: any) {
                 className={invoiceStyles.draftChip}
               />
             )}
+          </div>
+          <div style={{ display: 'flex' }}>
             {invoiceDetail.job?.customer?.notes && (
               <LightTooltip title={invoiceDetail.job?.customer?.notes}>
                 <div className={invoiceStyles.customerNoteContainer}>
@@ -368,8 +369,6 @@ function ViewInvoice({ classes, theme }: any) {
                 </div>
               </LightTooltip>
             )}
-          </div>
-          <div>
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
