@@ -300,7 +300,7 @@ function BCViewServiceTicketModal({
                 pageSize={5}
                 pagination={true}
                 stickyHeader
-                tableData={[{ action: 'Service Ticket Created', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
+                tableData={[{ action: job.__t == "PORequest" ? 'PO Request Created' : 'Service Ticket Created', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
               />
             </div>
           </Grid>
