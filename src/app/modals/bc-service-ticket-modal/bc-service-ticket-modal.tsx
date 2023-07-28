@@ -58,6 +58,7 @@ import {getContacts} from 'api/contacts.api';
 import {
   error as SnackBarError,
   success,
+  warning,
 } from 'actions/snackbar/snackbar.action';
 import {getEmployeesForJobAction} from 'actions/employees-for-job/employees-for-job.action';
 import {modalTypes} from '../../../constants';
@@ -1075,6 +1076,10 @@ function BCServiceTicketModal(
   };
 
   const handleSubmit = () => {
+    if(Object.keys(FormikErrors).length){
+      dispatch(warning("Please fill in all required fields with *"));
+    }
+    
     submitForm();
   };
 
