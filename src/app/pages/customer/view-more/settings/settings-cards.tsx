@@ -3,13 +3,13 @@ import { PRIMARY_BLUE, PRIMARY_GRAY } from '../../../../../constants';
 import React from 'react';
 import styled from 'styled-components';
 
-interface PricingCardsProps {
+interface SettingsCardsProps {
     pricing: any[];
     active: number;
     setActive: (index:number)=>void;
 }
 
-export default function PricingCards({ pricing, active, setActive }:PricingCardsProps) {
+export default function SettingsCards({ pricing, active, setActive }:SettingsCardsProps) {
   return <div>
     {pricing.map((type:any, index:number) =>
       <StyledCard

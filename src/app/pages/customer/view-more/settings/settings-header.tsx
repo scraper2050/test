@@ -6,15 +6,15 @@ import { Card, Fab } from '@material-ui/core';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 
 
-interface PricingHeaderProps {
+interface SettingHeaderProps {
     title: string;
     icon: OverridableComponent<any>;
     subtitle: string;
     color: any;
 }
 
-export default function PricingHeader({ title, 'icon': Icon, subtitle, color }:PricingHeaderProps) {
-  return <PricingHeaderContainer>
+export default function SettingHeader({ title, 'icon': Icon, subtitle, color }:SettingHeaderProps) {
+  return <SettingHeaderContainer>
     <StyledCard
       borderColor={color[500]}
       elevation={0}
@@ -31,11 +31,11 @@ export default function PricingHeader({ title, 'icon': Icon, subtitle, color }:P
         </p>
       </div>
     </StyledCard>
-  </PricingHeaderContainer>;
+  </SettingHeaderContainer>;
 }
 
 
-const PricingHeaderContainer = styled.div`
+const SettingHeaderContainer = styled.div`
     text-align: center;
     h2 {
         margin: 0px auto ;

@@ -224,14 +224,14 @@ function CustomerInfoPage({ classes }: any) {
           </button>
         </div>
       </div>
-      <div className='custom-action-button'>
+      {/* <div className='custom-action-button'>
         <BCAdminCard
           cardText={'Payment Terms'}
           color={'success'}
           func={viewPaymentTerms}>
           <MonetizationOnIcon />
         </BCAdminCard>
-      </div>
+      </div> */}
 
     </div>
   );
