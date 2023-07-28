@@ -33,6 +33,7 @@ export const initialRolesAndPermissions: RolesAndPermissions = {
 
 const initialPermissions: PermissionsState = {
   loading: false,
+  hasLoaded: false,
   rolesAndPermissions: initialRolesAndPermissions,
   error: '',
 };
@@ -51,6 +52,7 @@ const PermissionsReducer: Reducer<any> = (
       return {
         ...state,
         loading: false,
+        hasLoaded: true,
         rolesAndPermissions: {
           ...initialRolesAndPermissions,
           ...action.payload
@@ -60,6 +62,7 @@ const PermissionsReducer: Reducer<any> = (
       return {
         ...state,
         loading: false,
+        hasLoaded: true,
         rolesAndPermissions: initialRolesAndPermissions
       }
     case UserPermissionsActionType.UPDATE_SUCCESS:

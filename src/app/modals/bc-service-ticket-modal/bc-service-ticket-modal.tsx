@@ -588,7 +588,7 @@ function BCServiceTicketModal(
       };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        editTicketObj.type = ticket.type;
+        editTicketObj.type = ticket.type === "PO Request" && hasPORequiredBypass ? 'Ticket' : ticket.type;
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
@@ -1237,7 +1237,7 @@ function BCServiceTicketModal(
                 PO Required: Overridden by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
-            {isPORequired && !hasPORequiredBypass && (
+            {isPORequired && (
               <Grid container className={'poRequiredContainer'}>
                 {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
                 <Typography variant={'subtitle1'} className='poRequiredText'>
