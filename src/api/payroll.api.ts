@@ -60,9 +60,21 @@ export const getCommissionHistoryAPI = async (vendorId: string) => {
 export const getPayrollBalanceAPI = async (startDate: string|null, endDate: string|null, division?: DivisionParams) => {
   try {
     const offset = new Date().getTimezoneOffset() / 60;
-    const url = `/getPayrollBalance${startDate ? `?startDate=${startDate}&endDate=${endDate}&offset=${offset}` : ''}`
-    const response: any = await request(url, 'GET', {}, false, undefined, undefined, undefined, division);
-    const {status, message, vendors = [], employees = []} = response.data;
+    const url = `/getPayrollBalance${startDate
+        ? `?startDate=${startDate}&endDate=${endDate}&offset=${offset}`
+        : ''
+      }`;
+    const response: any = await request(
+      url,
+      'GET',
+      {},
+      false,
+      undefined,
+      undefined,
+      undefined,
+      division
+    );
+    const { status, message, vendors = [], employees = [] } = response.data;
     if (status === 1) {
       const data = [
         ...vendors.map((contractor: any) => {
@@ -99,9 +111,19 @@ export const getPayrollBalanceAPI = async (startDate: string|null, endDate: stri
 
 export const getPaymentsByContractorAPI = async (type?: string, id?: string, division?: DivisionParams) => {
   try {
-    const url = `/getPaymentsByContractor${type ? `?id=${id}&type=${type}`:''}`;
-    const response: any = await request(url, 'GET', {}, false, undefined,undefined,undefined,division);
-    const {status, message, payments, advancePayments} = response.data;
+    const url = `/getPaymentsByContractor${type ? `?id=${id}&type=${type}` : ''
+      }`;
+    const response: any = await request(
+      url,
+      'GET',
+      {},
+      false,
+      undefined,
+      undefined,
+      undefined,
+      division
+    );
+    const { status, message, payments, advancePayments } = response.data;
     if (status === 1) {
       const returnObj:any = {status, message, payments: []}
       if(payments?.length) {

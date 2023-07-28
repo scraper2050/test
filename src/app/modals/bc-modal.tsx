@@ -933,7 +933,6 @@ function BCModal() {
   };
 
   const showCloseIcon = type !== modalTypes.RECORD_SYNC_STATUS_MODAL;
-
   return (
     <div className={'modal-wrapper'}>
       <Dialog
