@@ -182,6 +182,17 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     },
   }))(Tooltip);
 
+  
+  const getJobTypesQty = (job: any) => job.tasks.reduce((acc: number[], task: any) => {
+    task.jobTypes.forEach((type: any) => {
+      if (type.jobType) {
+        acc.push(type.quantity || 1);
+      }
+    });
+    return acc;
+  }, []);
+
+
 
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
@@ -196,6 +207,12 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           >
             <ArrowBackIcon/>
           </IconButton>
+        </div>  
+        <Grid
+          className={classes.btn}
+          container
+          item
+          xs={12}>
           {job.customer?.notes && (
             <LightTooltip title={job.customer?.notes}>
               <div className={classes.customerNoteContainer}>
@@ -212,12 +229,6 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
               </div>
             </LightTooltip>
           )}
-        </div>  
-        <Grid
-          className={classes.btn}
-          container
-          item
-          xs={12}>
           <Button
             className={classes.cancelBtn}
             onClick={goBack}>
@@ -535,15 +546,26 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           </Grid>
                           <Grid
                             item
-                            xs={3}>
+                            xs={2}>
                             <div className={classes.addMargin}>
                               <p className={classes.attributeKey}>
                                 {'Job Type(s)'}
                               </p>
                               <span className={classes.grayBoldTextM_0}>
-                                  {getJobTypesFromJob(job).map((item: any) =>
-                                   { return item || 'N/A'; }).join(', ')}
-                                </span>
+                                {getJobTypesFromJob(job).map((item: any) => { return <div>{item || 'N/A'}</div> })}
+                              </span>
+                            </div>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={2}>
+                            <div className={classes.addMargin}>
+                              <p className={classes.attributeKey}>
+                                {'Quantity'}
+                              </p>
+                              <span className={classes.grayBoldTextM_0}>
+                                {getJobTypesQty(job).map((item: any) => { return <div>{item || '1'}</div> })}
+                              </span>
                             </div>
                           </Grid>
                         </Grid>
