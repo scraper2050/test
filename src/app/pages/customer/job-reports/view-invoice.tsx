@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, createStyles, withStyles, Grid, Paper, Badge} from "@material-ui/core";
+import { Button, createStyles, withStyles, Grid, Paper, Badge, Tooltip, Typography} from "@material-ui/core";
 import styles from "../customer.styles";
 import BCInvoice from "../../../components/bc-invoice/bc-invoice";
 import IconButton from '@material-ui/core/IconButton';
@@ -22,6 +22,8 @@ import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
 import { modalTypes } from "../../../../constants";
 import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
+import InfoIcon from '@material-ui/icons/Info';
+
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,6 +57,17 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     },
     buttonLabel: {
       textWrap: 'nowrap'
+    },
+    customerNoteContainer: {
+      display: "flex",
+      alignItems: "center",
+      width: "155px",
+      marginRight: "35px"
+    },
+    customerNoteText: {
+      marginLeft: "4px",
+      color: "#626262",
+      cursor: "pointer",
     }
   }),
 );
@@ -289,6 +302,15 @@ function ViewInvoice({ classes, theme }: any) {
     }, 200);
   }
 
+  const LightTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: "1rem",
+    },
+  }))(Tooltip);
+
   return (
     <MainContainer>
       <PageContainer>
@@ -330,7 +352,23 @@ function ViewInvoice({ classes, theme }: any) {
               />
             )}
           </div>
-          <div>
+          <div style={{ display: 'flex' }}>
+            {invoiceDetail.job?.customer?.notes && (
+              <LightTooltip title={invoiceDetail.job?.customer?.notes}>
+                <div className={invoiceStyles.customerNoteContainer}>
+                  <IconButton
+                    component="span"
+                    color={'primary'}
+                    size="small"
+                  >
+                    <InfoIcon></InfoIcon>
+                  </IconButton>
+                  <Typography variant={'subtitle1'} className={invoiceStyles.customerNoteText}>
+                    Customer Notes
+                  </Typography>
+                </div>
+              </LightTooltip>
+            )}
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (

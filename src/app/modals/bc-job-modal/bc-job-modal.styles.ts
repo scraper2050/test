@@ -59,6 +59,7 @@ export default (theme: Theme): any => ({
   },
   tableContainer: {
     'maxHeight': '30rem',
+    marginBottom: "0px!important"
   },
   popper: {
     '& li[aria-disabled="true"]': {

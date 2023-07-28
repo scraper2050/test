@@ -21,7 +21,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import '../../../../scss/index.scss';
 import { useHistory } from 'react-router-dom';
 import CustomerContactsPage from './contacts/contacts';
-import Pricing from './pricing/pricing';
+import Settings from './settings/settings';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
 import {CSButton, CSIconButton, useCustomStyles} from "helpers/custom";
 import EditIcon from '@material-ui/icons/Edit';
@@ -322,7 +322,7 @@ function ViewMorePage({ classes }: any) {
                     'value': 2
                   },
                   {
-                    'label': 'PRICING',
+                    'label': 'SETTINGS',
                     'value': 3
                   }
                 ]}
@@ -440,7 +440,7 @@ function ViewMorePage({ classes }: any) {
                     'marginTop': '20px'
                   }}>
 
-                  <Pricing customer={customerState.customerObj} />
+                  <Settings customer={customerState.customerObj} />
                 </div>
               </SwipeableViews>
           }

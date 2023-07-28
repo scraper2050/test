@@ -7,7 +7,7 @@ import {
   getServiceTicketDetail
 } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
-import { formatDate } from 'helpers/format';
+import { formatDate, formatDateMMMDDYYYY } from 'helpers/format';
 import styled from 'styled-components';
 import styles from '../../customer.styles';
 import { Checkbox, FormControlLabel, Grid, withStyles } from '@material-ui/core';
@@ -26,8 +26,8 @@ import {
   useCustomStyles
 } from '../../../../../helpers/custom';
 import { error, warning } from '../../../../../actions/snackbar/snackbar.action';
-import BCDateRangePicker, { Range }
-  from '../../../../components/bc-date-range-picker/bc-date-range-picker';
+import BCDateRangePicker, { Range } from '../../../../components/bc-date-range-picker/bc-date-range-picker';
+import PORequest from "./po-request";
 import { CSButton } from '../../../../../helpers/custom';
 import { IDivision, ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { ability } from 'app/config/Can';
@@ -36,6 +36,8 @@ import { useHistory } from 'react-router-dom';
 function ServiceTicket({ classes, hidden }: any) {
   const dispatch = useDispatch();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
+  const [curTab, setCurTab] = useState(0);
+
   const divisions = useSelector((state: any) => state.divisions);
   const divisionList = divisions.data as IDivision[];
   const history = useHistory();
@@ -108,18 +110,6 @@ function ServiceTicket({ classes, hidden }: any) {
     }
   };
 
-  const openJobModal = () => {
-    dispatch(setModalDataAction({
-      'data': {
-        'modalTitle': 'Create Job',
-        'removeFooter': false
-      },
-      'type': modalTypes.CREATE_JOB_MODAL
-    }));
-    setTimeout(() => {
-      dispatch(openModalAction());
-    }, 200);
-  };
   const openEditTicketModal = (ticket: any) => {
     const reqObj = {
       'customerId': ticket.customer?._id,
@@ -143,7 +133,7 @@ function ServiceTicket({ classes, hidden }: any) {
         'removeFooter': false,
         'ticketData': ticket,
         'className': 'serviceTicketTitle',
-        'maxHeight': '754px'
+        'maxHeight': '900px',
       },
       'type': modalTypes.EDIT_TICKET_MODAL
     }));
@@ -344,19 +334,24 @@ function ServiceTicket({ classes, hidden }: any) {
   const handleRowClick = (event: any, row: any) => {
   };
   const handleTabChange = (newValue: number) => {
+    setCurTab(newValue)
   };
   return (
     <div className={classes.pageMainContainer}>
       <div className={classes.pageContainer}>
         <div className={classes.pageContent}>
           <BCTabs
-            curTab={0}
+            curTab={curTab}
             indicatorColor={'primary'}
             onChangeTab={handleTabChange}
             tabsData={[
               {
                 'label': 'Tickets',
                 'value': 0
+              },
+              {
+                'label': 'PO Requests',
+                'value': 1
               }
             ]}
           />
@@ -370,7 +365,7 @@ function ServiceTicket({ classes, hidden }: any) {
               {'New Ticket'}
             </CSButton>}
           </div>
-          <SwipeableViews index={0}>
+          <SwipeableViews index={curTab}>
             <div
               className={classes.dataContainer}
               hidden={false}
@@ -403,12 +398,10 @@ function ServiceTicket({ classes, hidden }: any) {
               />
             </div>
             <div
-              hidden={true}
+              className={classes.dataContainer}
+              hidden={false}
               id={'1'}>
-              <Grid
-                item
-                xs={12}
-              />
+                <PORequest></PORequest>
             </div>
           </SwipeableViews>
         </div>

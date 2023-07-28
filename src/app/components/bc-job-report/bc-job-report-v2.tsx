@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { Button, Grid, withStyles } from '@material-ui/core';
+import { Button, Grid, Theme, Tooltip, Typography, withStyles } from '@material-ui/core';
 import { formatDatTimell, formatDatTimelll } from 'helpers/format';
 import styles, {
   DataContainer,
@@ -23,6 +23,7 @@ import {
   error as SnackBarError,
   success,
 } from 'actions/snackbar/snackbar.action';
+import InfoIcon from '@material-ui/icons/Info';
 
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
@@ -172,11 +173,32 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     }
   }
 
+  const LightTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: "1rem",
+    },
+  }))(Tooltip);
+
+  
+  const getJobTypesQty = (job: any) => job.tasks.reduce((acc: number[], task: any) => {
+    task.jobTypes.forEach((type: any) => {
+      if (type.jobType) {
+        acc.push(type.quantity || 1);
+      }
+    });
+    return acc;
+  }, []);
+
+
+
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
     <MainContainer>
       <PageContainer>
-        <div style={{display: 'flex'}}>
+        <div style={{ display: 'flex', alignItems: "flex-start"}}>
           <IconButton
             color="default"
             size="small"
@@ -191,6 +213,22 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           container
           item
           xs={12}>
+          {job.customer?.notes && (
+            <LightTooltip title={job.customer?.notes}>
+              <div className={classes.customerNoteContainer}>
+                <IconButton
+                  component="span"
+                  color={'primary'}
+                  size="small"
+                >
+                  <InfoIcon></InfoIcon>
+                </IconButton>
+                <Typography variant={'subtitle1'} className={classes.customerNoteText}>
+                  Customer Notes
+                </Typography>
+              </div>
+            </LightTooltip>
+          )}
           <Button
             className={classes.cancelBtn}
             onClick={goBack}>
@@ -508,15 +546,26 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           </Grid>
                           <Grid
                             item
-                            xs={3}>
+                            xs={2}>
                             <div className={classes.addMargin}>
                               <p className={classes.attributeKey}>
                                 {'Job Type(s)'}
                               </p>
                               <span className={classes.grayBoldTextM_0}>
-                                  {getJobTypesFromJob(job).map((item: any) =>
-                                   { return item || 'N/A'; }).join(', ')}
-                                </span>
+                                {getJobTypesFromJob(job).map((item: any) => { return <div>{item || 'N/A'}</div> })}
+                              </span>
+                            </div>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={2}>
+                            <div className={classes.addMargin}>
+                              <p className={classes.attributeKey}>
+                                {'Quantity'}
+                              </p>
+                              <span className={classes.grayBoldTextM_0}>
+                                {getJobTypesQty(job).map((item: any) => { return <div>{item || '1'}</div> })}
+                              </span>
                             </div>
                           </Grid>
                         </Grid>

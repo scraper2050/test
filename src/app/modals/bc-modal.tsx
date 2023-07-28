@@ -85,6 +85,8 @@ import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billi
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
 import BcAddTicketDetailsModal
   from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
+import EmailModalPORequest from './bc-email-modal/bc-email-po-request-modal';
+import BCPORequestWarningModal from './bc-po-request-warning-modal/bc-po-request-warning-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -916,6 +918,27 @@ function BCModal() {
           'maxWidth': 'lg'
         });
         setComponent(<BcAddTicketDetailsModal props={data}/>);
+        break;
+      case modalTypes.EMAIL_PO_REQUEST_MODAL:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<EmailModalPORequest
+          id={data.id}
+          type={data.type}
+        />);
+        break;
+      case modalTypes.PO_REQUEST_WARNING_MODAL:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCPORequestWarningModal
+          po_request_id={data.po_request_id}
+        />);
         break;
       default:
         setComponent(null);

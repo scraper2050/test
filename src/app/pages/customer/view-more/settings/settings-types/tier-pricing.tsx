@@ -2,10 +2,10 @@ import React, {useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import Button from '@material-ui/core/Button/Button';
-import { Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { CircularProgress, Fab, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-loader';
-import PricingHeader from '../pricing-header';
+import SettingHeader from '../settings-header';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import {info, success} from 'actions/snackbar/snackbar.action';
 
@@ -18,6 +18,9 @@ interface TierPricingProps {
 
 export default function TierPricing({ customer, header, dispatch }:TierPricingProps) {
   const { loading, error, tiers } = useSelector(({ invoiceItemsTiers }:any) => invoiceItemsTiers);
+  const [isSubmiting, setIsSubmiting] = useState(false);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+
   const [tier, setTier] = useState(customer.itemTier?.isActive
     ? customer.itemTier?._id
     : '');
@@ -34,15 +37,25 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
 
   const handleChange = (e:any) => {
     setTier(e.target.value);
+    const defaultValue = customer.itemTier?._id;
+    if (defaultValue == e.target.value) {
+      setIsSubmitDisabled(true);
+    } else {
+      setIsSubmitDisabled(false);
+    }
   };
 
 
   const handleSubmit = async () => {
+    setIsSubmitDisabled(true);
+    setIsSubmiting(true);
     const customerUpdate = { ...customer,
       'customerId': customer._id,
       'itemTierId': tier,
       'isCustomPrice': false };
     await dispatch(updateCustomerAction(customerUpdate, () => {
+      setIsSubmitDisabled(false);
+      setIsSubmiting(false);
       dispatch(loadingSingleCustomers());
       dispatch(getCustomerDetailAction(customerUpdate));
     }));
@@ -59,7 +72,7 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
 
 
   return <TierPricingContainer>
-    <PricingHeader {...header} />
+    <SettingHeader {...header} />
     <div className={'body'}>
       <FormControl
         fullWidth
@@ -88,10 +101,12 @@ export default function TierPricing({ customer, header, dispatch }:TierPricingPr
 
       <Fab
         color={'primary'}
+        disabled={isSubmitDisabled}
         onClick={handleSubmit}>
-        {isTier
-          ? 'Save'
-          : 'Use Tier Pricing'}
+        {isSubmiting ? (
+          <CircularProgress size={25} />
+        ) : (isTier ? 'Save': 'Use Tier Pricing')
+        }
       </Fab>
     </div>
   </TierPricingContainer>;

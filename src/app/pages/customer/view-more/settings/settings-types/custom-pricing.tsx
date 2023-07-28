@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Customer } from 'reducers/customer.types';
 import Button from '@material-ui/core/Button/Button';
 import { Fab, Input, Paper, TextField } from '@material-ui/core';
-import PricingHeader from '../pricing-header';
+import SettingHeader from '../settings-header';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import { getCustomerDetailAction, loadingSingleCustomers, updateCustomerAction } from 'actions/customer/customer.action';
 import { error, success } from 'actions/snackbar/snackbar.action';
@@ -145,7 +145,7 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
 
   if (!customer.isCustomPrice) {
     return <CustomPricingContainer>
-      <PricingHeader {...header} />
+      <SettingHeader {...header} />
       <div className={'body'}>
         <Fab
           color={'primary'}
@@ -157,7 +157,7 @@ export default function CustomPricing({ customer, header, dispatch }:CustomPrici
   }
 
   return <CustomPricingContainer>
-    <PricingHeader {...header} />
+    <SettingHeader {...header} />
     <div className={'body'}>
       {!addMode
         ? <div className={'actions'}>
