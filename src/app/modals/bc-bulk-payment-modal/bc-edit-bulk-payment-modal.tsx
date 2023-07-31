@@ -25,14 +25,14 @@ import BCSent from 'app/components/bc-sent';
 import { createStyles, makeStyles } from '@material-ui/core';
 import styled from 'styled-components';
 import { CSButtonSmall } from "helpers/custom";
-import { formatCurrency, formatShortDateNoDay } from 'helpers/format';
+import {formatCurrency, formatShortDateNoDay} from 'helpers/format';
 import { updatePayment } from 'api/payment.api';
 import { error } from "actions/snackbar/snackbar.action";
 import { voidPayment } from 'api/payment.api';
 import { modalTypes } from '../../../constants';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import axios from 'axios';
-import { getInvoicesbyid } from 'api/invoicing.api';
+import { getCustomerInvoicesForBulkPaymentEdit } from 'api/invoicing.api';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -87,7 +87,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
 
   const bgColors: { [index: string]: string } = { PAID: '#81c784', UNPAID: '#F50057', PARTIALLY_PAID: '#FA8029' };
 
-  const initialTotalAmount = paymentList.reduce((total: number, payment: any) => {
+  const initialTotalAmount = paymentList.reduce((total:number, payment:any) => {
     return total + payment.amountPaid;
   }, 0)
 
@@ -110,27 +110,27 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     },
     'onSubmit': (values: any, { setSubmitting }: any) => {
       setSubmitting(true);
-      if (!isValid()) {
+      if(!isValid()){
         return setSubmitting(false);
       }
-      const line: any = []
+      const line:any = []
       localPaymentList.forEach(payment => {
-        if (payment.checked && payment.amountToBeApplied) {
-          const lineObject: any = {
+        if(payment.checked && payment.amountToBeApplied){
+          const lineObject:any = {
             invoiceId: payment.invoice._id,
             amountPaid: payment.amountToBeApplied,
           };
           line.push(lineObject)
         }
       })
-      const paramObj: any = {
+      const paramObj:any = {
         line: JSON.stringify(line),
         customerId: values.customerId,
         paidAt: values.paymentDate,
         referenceNumber: values.referenceNumber,
         paymentId: values.paymentId
       };
-      if (values.paymentType !== '') {
+      if(values.paymentType !== ''){
         paramObj.paymentType = paymentTypeReference.filter(type => type._id == values.paymentType)[0].label
       }
       dispatch(updatePayment(paramObj, currentDivision.params))
@@ -152,7 +152,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   const isSumAmountDifferent = () => parseFloat(`${FormikValues.totalAmountToBePaid}`).toFixed(2) != parseFloat(`${FormikValues.totalAmount}`).toFixed(2);
 
   const isValid = () => {
-    if (!FormikValues.customerId) {
+    if(!FormikValues.customerId) {
       return false;
     }
     if (localPaymentList.filter(payment => payment.checked && !payment.amountToBeApplied).length) {
@@ -187,7 +187,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   };
 
   const handleOnFocus = (setCellValue: (text: string) => void, value: string) => {
-    if (value === '0') {
+    if(value === '0'){
       setCellValue('')
     }
   };
@@ -217,7 +217,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
         modalTitle: '         ',
         message: 'Are you sure you want to void this bulk payment?',
         subMessage: 'This action cannot be undone.',
-        action: voidPayment({ type: 'customer', paymentId: payments._id }, currentDivision.params),
+        action: voidPayment({type: 'customer', paymentId: payments._id},currentDivision.params),
         closeAction,
       },
       'type': modalTypes.WARNING_MODAL
@@ -324,14 +324,14 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <AttachMoney style={{ color: '#BDBDBD' }} />
+                  <AttachMoney style={{color: '#BDBDBD'}}/>
                 </InputAdornment>
               ),
               style: { background: '#fff' },
             }}
             disabled={row.original.status === "PAID"}
             classes={{ root: inputStyles.textField }}
-            onFocus={(event: any) => handleOnFocus(setCellValue, event.target.value)}
+            onFocus={(event: any)=> handleOnFocus(setCellValue, event.target.value)}
             onBlur={(event: any) => handleAmountToBeAppliedChange(row.original._id, event.target.value)}
             onChange={(event: any) => setCellValue(event.target.value)}
             type={'number'}
@@ -346,66 +346,59 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   ];
 
   useEffect(() => {
-
-    let allinvoices: any = [];
-    getInvoicesbyid({
+    let allInvoices: any = [];
+    getCustomerInvoicesForBulkPaymentEdit({
       id: payments.customer._id
     })
       .then((invoices) => {
-        allinvoices = invoices;
+        allInvoices = invoices;
 
-        if (allinvoices.length > 0) {
-          let listofallinvoices = allinvoices.map((item: any) => ({
-            'invoice': item,
+        if (allInvoices.length > 0) {
+          const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
+            'invoice': invoice,
             'amountToBeApplied': 0,
             'checked': 0,
             'amountPaid': 0
-
           }));
 
           if (paymentList.length > 0) {
-            const newPaymentList = paymentList.map((item: any) => ({
+            const checkedPaymentInvoices = paymentList.map((item: any) => ({
               ...item,
               'amountToBeApplied': item.amountPaid,
               'checked': 1
             }));
 
-            const concatenatedArray = newPaymentList.concat(listofallinvoices).reduce((acc: any, current: any) => {
+            const concatenatedArray = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((acc: any, current: any) => {
               if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
                 acc.push(current);
               }
               return acc;
             }, []);
-
             setLocalPaymentList([...concatenatedArray]);
           } else {
-            setLocalPaymentList([...allinvoices]);
+            setLocalPaymentList([...allInvoices]);
           }
 
         }
-
-
       })
       .catch((error) => {
-         setLocalPaymentList([...allinvoices]);
+         setLocalPaymentList([...allInvoices]);
         console.error('Error occurred:', error);
       });
     
   }, [paymentList])
 
   useEffect(() => {
-    
     setFieldValue('totalAmount', localPaymentList.reduce((total, payment) => {
       return total + payment.amountToBeApplied;
     }, 0))
-
   }, [localPaymentList])
 
   return (
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         {isSuccess ? (
-          <BCSent title={'The payment was successfully edited.'} />
+          <BCSent title={'The payment was successfully edited.'}/>
         ) : (
           <>
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
@@ -428,7 +421,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
               </StyledGrid>
               <StyledGrid item xs={3}>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
-                  <div style={{ marginTop: 21, height: 32 }} />
+                  <div style={{marginTop: 21, height: 32}} />
                 </div>
                 <div className={'form-filter-input'}>
                   <Typography variant={'caption'} className={'previewCaption'}>Total Amount To Be Paid</Typography>
@@ -438,7 +431,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                     type={'number'}
                     name={'totalAmountToBePaid'}
                     onFocus={(e) => {
-                      if (e.target.value === '0') {
+                      if(e.target.value === '0'){
                         setFieldValue('totalAmountToBePaid', '')
                       }
                     }}
@@ -454,7 +447,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AttachMoney style={{ color: '#BDBDBD' }} />
+                          <AttachMoney style={{color: '#BDBDBD'}}/>
                         </InputAdornment>
                       ),
                       style: { background: '#fff' },
@@ -465,10 +458,10 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                     helperText={isSumAmountDifferent() && 'The total amount is not match'}
                   />
                   {!!FormikValues.totalAmount && (
-                    <div style={{ marginTop: 10 }}>
+                    <div style={{marginTop: 10}}>
                       <Typography variant={'caption'} className={'previewCaption'}>Total Amount Applied</Typography>
                       <br />
-                      <Typography variant={'h6'} className={'previewCaption'} style={{ marginBottom: 0, width: 147, textAlign: 'center' }}>
+                      <Typography variant={'h6'} className={'previewCaption'} style={{marginBottom: 0, width: 147, textAlign: 'center'}}>
                         $ {parseFloat(`${FormikValues.totalAmount}`).toFixed(6).slice(-6) === '000000' ? FormikValues.totalAmount : parseFloat(`${FormikValues.totalAmount}`).toFixed(2)}
                         {/* $ {FormikValues.totalAmount} */}
                       </Typography>
@@ -478,7 +471,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
               </StyledGrid>
               <StyledGrid item xs={3}>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
-                  <div style={{ marginTop: 21, height: 32 }} />
+                  <div style={{marginTop: 21, height: 32}} />
                 </div>
                 <div className={'form-filter-input'}>
                   <Typography variant={'caption'} className={'previewCaption'}>Mode of Payment</Typography>
@@ -498,7 +491,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
               </StyledGrid>
               <StyledGrid item xs={3}>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
-                  <div style={{ marginTop: 21, height: 32 }} />
+                  <div style={{marginTop: 21, height: 32}} />
                 </div>
                 <div className={'form-filter-input'} style={{ paddingBottom: 5 }}>
                   <Typography variant={'caption'} className={'previewCaption'}>Reference No.</Typography>
