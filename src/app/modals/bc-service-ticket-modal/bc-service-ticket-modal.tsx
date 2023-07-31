@@ -590,7 +590,12 @@ function BCServiceTicketModal(
       };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        editTicketObj.type = ticket.type === "PO Request" && bypassPORequired ? 'Ticket' : ticket.type;
+        editTicketObj.type = ticket.type;
+        if (ticket.type === "PO Request" && bypassPORequired) {
+          editTicketObj.type = "Ticket";
+          //To allow bypass po required without any note
+          editTicketObj.note += " ";
+        }
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
