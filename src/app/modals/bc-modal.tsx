@@ -926,7 +926,7 @@ function BCModal() {
           'maxWidth': 'sm'
         });
         setComponent(<EmailModalPORequest
-          id={data.id}
+          data={data.data}
           type={data.type}
         />);
         break;

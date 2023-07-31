@@ -179,10 +179,10 @@ function BCViewServiceTicketModal({
 
   const scheduleDate = job?.dueDate;
 
-  const sendPORequestEmail = (id:string) => {
+  const sendPORequestEmail = (ticket:any) => {
     dispatch(setModalDataAction({
       'data': {
-        'id': id,
+        'data': ticket,
         'type': "PO Request",
         'modalTitle': `Send PO Request`,
         'removeFooter': false,
@@ -204,7 +204,7 @@ function BCViewServiceTicketModal({
               color='primary'
               variant="outlined"
               className={'whiteButton'}
-              onClick={() => {sendPORequestEmail(job._id)}}
+              onClick={() => {sendPORequestEmail(job)}}
             >
               Send PO Request
             </Button>

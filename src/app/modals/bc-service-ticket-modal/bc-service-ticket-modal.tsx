@@ -1044,10 +1044,10 @@ function BCServiceTicketModal(
     }
   }, [items, discountItems]);
   
-  const sendPORequestEmail = (po_request_id: any) => {
+  const sendPORequestEmail = (ticket: any) => {
     dispatch(setModalDataAction({
       'data': {
-        'id': po_request_id,
+        'data': ticket,
         'modalTitle': `Send PO Request`,
         'type': "PO Request",
         'removeFooter': false,
@@ -1150,7 +1150,7 @@ function BCServiceTicketModal(
                 color='primary'
                 variant="outlined"
                 className={'whiteButton'}
-                onClick={() => sendPORequestEmail(ticket._id)}
+                onClick={() => sendPORequestEmail(ticket)}
               >
                 Send PO Request
               </Button>
