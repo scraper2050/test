@@ -128,7 +128,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
         enableReinitialize: true,
         initialValues: {
             ...emailTemplate,
-            to: data.customerContactId?.email ? [{ email: data.customerContactId?.email }] : [], // To ensure we don't add an email with an empty value, use an empty array
+            to: [{ email: data.customerContactId?.email }],
             sendToMe: false
         } as formEmail,
         onSubmit: async (values: any, { setSubmitting }: any) => {
