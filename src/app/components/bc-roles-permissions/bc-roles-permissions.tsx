@@ -85,10 +85,6 @@ const BcRolesPermissions: FC<BcRolesPermissionsProps> = ({ classes }) => {
 
   return (
     <Grid container direction={'column'} className={classes.container}>
-      <div>
-        {'Viewing: '}
-        <strong>{`${employeeDetails.firstName} ${employeeDetails.lastName}`}</strong>  
-      </div>
       <div className={classes.headerContainer}>
         <Typography align={'left'} variant={'h4'} color={'primary'}>
           <strong>{'Permissions'}</strong>
