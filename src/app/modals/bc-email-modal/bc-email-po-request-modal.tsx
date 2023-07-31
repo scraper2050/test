@@ -104,7 +104,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
                     setCustomerContacts(custContacts);
                     if (custContacts.length) {
                         const initialContact = custContacts.filter(
-                            (contact: any) => data.customerContactId?.email === contact.email
+                            (contact: any) => data.customerContactId?.email === contact.email || data.customerContactId?.name === contact.name
                         );
 
                         // Set a timeout to ensure Formik is ready to accept changes to the value.
@@ -128,7 +128,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
         enableReinitialize: true,
         initialValues: {
             ...emailTemplate,
-            to: [{ email: data.customerContactId?.email }],
+            to: [{ email: data.customerContactId?.email || "" }],
             sendToMe: false
         } as formEmail,
         onSubmit: async (values: any, { setSubmitting }: any) => {
