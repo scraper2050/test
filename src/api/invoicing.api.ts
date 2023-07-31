@@ -572,4 +572,14 @@ export const updateJobCommission = (id: string, data: any) => {
       });
   });
 };
-
+export const getInvoicesbyid = (data: any) => {
+  return new Promise((resolve, reject) => {
+     requestApiV2(`/getinvoicesbyid`, 'post', data)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};

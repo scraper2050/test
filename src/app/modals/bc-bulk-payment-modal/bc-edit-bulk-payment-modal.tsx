@@ -32,6 +32,7 @@ import { voidPayment } from 'api/payment.api';
 import { modalTypes } from '../../../constants';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import axios from 'axios';
+import { getInvoicesbyid } from 'api/invoicing.api';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -347,61 +348,49 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   useEffect(() => {
 
     let allinvoices: any = [];
+    getInvoicesbyid({
+      id: payments.customer._id
+    })
+      .then((invoices) => {
+        allinvoices = invoices;
 
-    (async () => {
-      try {
-        const url = "http://localhost:3007/api/v1/getinvoicesbyid";
+        if (allinvoices.length > 0) {
+          let listofallinvoices = allinvoices.map((item: any) => ({
+            'invoice': item,
+            'amountToBeApplied': 0,
+            'checked': 0,
+            'amountPaid': 0
 
-        const response = await axios.post(url, {
-          id: payments.customer._id
-        }, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+          }));
 
-        if (response.status === 200) {
-          allinvoices = response.data;
-          
-          if (allinvoices.length > 0) {
-            let x = allinvoices.map((item: any) => ({
-              'invoice': item,
-              'amountToBeApplied': 0,
-              'checked': 0,
-              'amountPaid': 0
-
+          if (paymentList.length > 0) {
+            const newPaymentList = paymentList.map((item: any) => ({
+              ...item,
+              'amountToBeApplied': item.amountPaid,
+              'checked': 1
             }));
-          
-            if (paymentList.length > 0) {
-              const newPaymentList = paymentList.map((item: any) => ({
-                ...item,
-                'amountToBeApplied': item.amountPaid,
-                'checked': 1
-              }));
 
-              const concatenatedArray = newPaymentList.concat(x).reduce((acc:any, current:any) => {
-                if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
-                  acc.push(current);
-                }
-                return acc;
-              }, []);
-              
-              setLocalPaymentList([...concatenatedArray]);
-            } else {
-              setLocalPaymentList([]);
-            }
+            const concatenatedArray = newPaymentList.concat(listofallinvoices).reduce((acc: any, current: any) => {
+              if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
+                acc.push(current);
+              }
+              return acc;
+            }, []);
 
+            setLocalPaymentList([...concatenatedArray]);
+          } else {
+            setLocalPaymentList([...allinvoices]);
           }
 
-
-        } else {
-          console.log("Error:", response.status);
         }
-      } catch (error) {
-        console.log("Error:", error);
-      }
-    })();
 
+
+      })
+      .catch((error) => {
+         setLocalPaymentList([...allinvoices]);
+        console.error('Error occurred:', error);
+      });
+    
   }, [paymentList])
 
   useEffect(() => {
