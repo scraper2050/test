@@ -328,6 +328,10 @@ function ViewMorePage({ classes }: any) {
                 ]}
               />
             </div>
+            <div className={classes.viewingName}>
+              {'Viewing: '}
+              <strong className={classes.marginLeft}>{`${customerState.customerObj.profile ? customerState.customerObj.profile.displayName : 'N/A' }`}</strong>
+            </div>
           </Grid>
 
           {
