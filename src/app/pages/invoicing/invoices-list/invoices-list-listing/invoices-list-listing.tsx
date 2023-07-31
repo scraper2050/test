@@ -119,7 +119,7 @@ function InvoicingListListing({ classes, theme }: any) {
             jobAddress = jobSiteAddress;
           }
         }
-        const arrFullJobAddress = [jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
+        const arrFullJobAddress = [jobAddressName, jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
         const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
 
 
