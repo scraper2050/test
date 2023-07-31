@@ -39,6 +39,10 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     invoiceTop: {
       backgroundColor: CONSTANTS.PRIMARY_GRAY,
     },
+    invoiceCreatedBy:{
+      fontFamily:"Roboto",
+      fontSize:"18px"
+    },
     bgDark: {
       backgroundColor: '#fff',
     },
@@ -58,14 +62,20 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     buttonLabel: {
       textWrap: 'nowrap'
     },
+    textUnderlined: {
+      cursor: "pointer",
+      textDecoration: "underline",
+      "&:hover": {
+        color: "#00aaff"
+      }
+    },
     tooltip: {
-      height: 80,
-      width:100, 
-      backgroundColor: '#f5f5f9',
+      minWidth:175,
+      // backgroundColor: '#f5f5f9',
       color: 'rgba(0, 0, 0, 0.87)',
       maxWidth: 220,
       fontSize: theme.typography.pxToRem(12),
-      border: '1px solid #dadde9',
+      // border: '1px solid #dadde9',
     }
   }),
 );
@@ -92,6 +102,8 @@ function ViewInvoice({ classes, theme }: any) {
   const [showJobCosting, setShowJobCosting] = useState(false);
   const [isInfoDialogOpen, setIsInfoDialogOpen]=useState(false);
   const [isHistoryPopupOpen, setIsHistoryPopupOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
@@ -103,6 +115,7 @@ function ViewInvoice({ classes, theme }: any) {
   }, []);
 
   useEffect(() => {
+
     if (invoiceDetail && invoiceDetail.job) {
       const vendorWithCommisionTier = invoiceDetail.job?.tasks?.filter((res: any) => res.contractor?.commissionTier);
       setShowJobCosting(vendorWithCommisionTier.length > 0);
@@ -295,6 +308,18 @@ function ViewInvoice({ classes, theme }: any) {
   };
 
 
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: '#ffffff',
+      padding:"10px 25px",
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: '1px solid #dadde9',
+    },
+  }))(Tooltip);
+
+
   const handleTicketClick = () => {
     dispatch(setModalDataAction({
       data: {
@@ -315,6 +340,15 @@ function ViewInvoice({ classes, theme }: any) {
   };
   const handleViewHistoryClick = () => {
     setIsHistoryPopupOpen(true);
+    console.log(" history popup");
+  };
+
+  const handleTooltipClose = () => {
+    setOpen(false);
+  };
+
+  const handleTooltipOpen = () => {
+    setOpen(true);
   };
   return (
     <MainContainer>
@@ -358,9 +392,65 @@ function ViewInvoice({ classes, theme }: any) {
             )}
           </div>
           <div>
-            <Tooltip title={
-              <Typography className={invoiceStyles.tooltip} style={{ color:'grey', fontSize:'11px'}}>
-               <IconButton
+            <HtmlTooltip
+           
+              PopperProps={{
+                disablePortal: true,
+              }}
+              onClose={handleTooltipClose}
+              open={open}
+              disableFocusListener
+              disableHoverListener
+              disableTouchListener
+              interactive={true}
+              arrow
+              title={
+                <React.Fragment>
+                  <Typography color="inherit">
+                    <IconButton
+                      color="default"
+                      size="medium"
+                      className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                    >
+                      <InfoOutlinedIcon style={{ color: 'grey', fontSize: '19px', }} />
+                    </IconButton> Created By: <span>
+                     </span>
+                  </Typography>
+                  <Typography color="inherit" className={invoiceStyles.invoiceCreatedBy}>
+                    {invoiceDetail?.createdBy?.profile?.displayName}
+                  </Typography>
+
+                  <div>
+                    <Typography color="inherit">
+                      {invoiceDetail?.companyLocation?.name}
+                    </Typography>
+
+                    <Typography color="inherit">
+                      {invoiceDetail?.workType?.title}
+                    </Typography>
+                    
+                  </div>
+                  <Typography>
+                    <Typography
+                      
+                      className={invoiceStyles.textUnderlined}
+                      onClick={handleViewHistoryClick}
+                    >
+                      View History
+                    </Typography>
+                  </Typography>
+                </React.Fragment>
+              }
+            >
+              <Button onClick={handleTooltipOpen}> 
+              <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', }}  />
+              </Button>
+            </HtmlTooltip>
+            {/* <Tooltip title={
+              <div className={invoiceStyles.tooltip} style={{ color:'grey', fontSize:'11px'}}>
+              
+              <Typography> 
+                <IconButton
                   color="default"
                   size="small"
                   className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
@@ -368,6 +458,12 @@ function ViewInvoice({ classes, theme }: any) {
                   <InfoOutlinedIcon style={{ color: 'grey', fontSize: '19px', }} />
                 </IconButton>
                 Created By:
+                </Typography>
+
+                <Typography>
+                                    DUbib asohd s
+                </Typography>
+
                 <Link
                   component="button"
                   variant="body2"
@@ -375,7 +471,7 @@ function ViewInvoice({ classes, theme }: any) {
                 >
                   View History
                 </Link>
-              </Typography>
+              </div>
             }
             open={isInfoDialogOpen}
             onClose={handleInfoDialogToggle}
@@ -391,7 +487,7 @@ function ViewInvoice({ classes, theme }: any) {
               <InfoOutlinedIcon style={{ color: 'grey',fontSize:'36px', }} />
               </IconButton>
 
-            </Tooltip>
+            </Tooltip> */}
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
