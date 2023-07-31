@@ -1,6 +1,7 @@
 import {
     Button,
     Checkbox,
+    Chip,
     DialogActions,
     DialogContent,
     FormControlLabel,
@@ -21,25 +22,31 @@ import * as CONSTANTS from '../../../constants';
 import { useFormik } from 'formik';
 import BCCircularLoader from '../../components/bc-circular-loader/bc-circular-loader';
 import { error } from 'actions/snackbar/snackbar.action';
-import * as yup from 'yup';
 import BCSent from "../../components/bc-sent";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { generatePORequestEmailTemplate, sendPORequestEmail } from 'api/po-requests.api';
 import { Autocomplete } from '@material-ui/lab';
+import { stringSortCaseInsensitive } from 'helpers/sort';
+import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
+import { getCustomersContact } from 'api/customer.api';
 
-const validationSchema = yup.object().shape({
-    to: yup.string().email('Please insert a valid email').required('Please add recipient'),
-    cc: yup.string().email('Please insert a valid email').nullable(),
-});
+interface formEmail {
+    subject: string
+    message: string
+    from: string
+    to: any[]
+    sendToMe: boolean
+}
 
-function EmailPORequestModal({ classes, id, type }: any) {
+function EmailPORequestModal({ classes, data, type }: any) {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
     const [sent, setSent] = useState(false);
-    const [emailTemplate, setEmailTemplate] = useState({subject: '', message: '', from: '', to: ''})
+    const [emailTemplate, setEmailTemplate] = useState({subject: '', message: '', from: ''})
     const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
     const { user } = useSelector((state: any) => state.auth);
     const [emailList, setEmailList] = useState([]);
+    const [customerContacts, setCustomerContacts] = useState<any[]>([]);
 
     const closeModal = () => {
         dispatch(closeModalAction());
@@ -53,9 +60,9 @@ function EmailPORequestModal({ classes, id, type }: any) {
         }, 200);
     };
     
-    const getData = async () => {
+    const getEmailTemplate = async () => {
         const params: any = {
-            ticketId: id
+            ticketId: data._id
         };
         try {
             const { status, message, emailTemplate: data } = await generatePORequestEmailTemplate(params);
@@ -79,25 +86,64 @@ function EmailPORequestModal({ classes, id, type }: any) {
     }
 
     useEffect(() => {
-        getData();
+        getEmailTemplate();
+        
+        if (data.customer?._id !== '') {
+            getCustomersContact(data.customer?._id)
+            .then((res: any) => {
+                if (res.status === 1) {
+                    const custContacts = res.contacts
+                        .filter((contact: { email: string }) => !!contact.email)
+                        .filter(
+                            (
+                                contact: { email: string },
+                                index: number,
+                                self: { email: string }[]
+                            ) => index === self.findIndex((t) => t.email === contact.email)
+                        );
+                    setCustomerContacts(custContacts);
+                    if (custContacts.length) {
+                        const initialContact = custContacts.filter(
+                            (contact: any) => data.customerContactId?.email === contact.email
+                        );
+
+                        // Set a timeout to ensure Formik is ready to accept changes to the value.
+                        setTimeout(()=> {
+                            FormikSetFieldValue('to', initialContact);
+                        },200)
+                    }
+                }
+            })
+            .catch(() => {
+                dispatch(
+                    SnackBarError(
+                        "Something went wrong when fetching Customer's contacts. Please try again."
+                    )
+                );
+            });
+        }
     }, []);
 
     const form = useFormik({
         enableReinitialize: true,
         initialValues: {
             ...emailTemplate,
-            cc: '',
+            to: data.customerContactId?.email ? [{ email: data.customerContactId?.email }] : [], // To ensure we don't add an email with an empty value, use an empty array
             sendToMe: false
-        },
-        validationSchema,
+        } as formEmail,
         onSubmit: async (values: any, { setSubmitting }: any) => {
-            const recipients = [values.to];
+            if (!values.to.length) {
+                dispatch(SnackBarError('Please Add Recipient(s)'));
+                return;
+            }
+
+            const recipients = values.to.map((recipient: any) => recipient.email);
             if (values.cc) {
                 recipients.push(values.cc);
             }
 
             const params = {
-                ticketId: id,
+                ticketId: data._id,
                 sender: values.from?.email || values.from,
                 recipients: JSON.stringify(recipients),
                 subject: values.subject,
@@ -138,6 +184,31 @@ function EmailPORequestModal({ classes, id, type }: any) {
             data
         );
     };
+
+    const handleRecipientChange = (fieldName: string, data: any) => {
+        if (typeof data[data.length - 1] === 'string') {
+            const trimmedInput = data[data.length - 1].trim();
+            const test = trimmedInput
+                .toLowerCase()
+                .match(
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                );
+            if (!test) {
+                return;
+            }
+        }
+        FormikSetFieldValue(
+            fieldName,
+            data.map((datum: any) => {
+                if (typeof datum === 'string') {
+                    return { email: datum.trim() };
+                } else {
+                    return datum;
+                }
+            })
+        );
+    };
+
 
     return (
         <DataContainer>
@@ -198,51 +269,80 @@ function EmailPORequestModal({ classes, id, type }: any) {
                                         <Typography variant={'button'}>TO</Typography>
                                     </Grid>
                                     <Grid item xs={10}>
-                                        <TextField
-                                            // autoComplete={'off'}
-                                            className={classes.fullWidth}
-                                            id={'to'}
-                                            name={'to'}
-                                            onChange={(e: any) => formikChange(e)}
-                                            value={FormikValues.to}
-                                            variant={'outlined'}
-                                            placeholder="Enter email"
-                                            error={Boolean(FormikErrors.to)}
-                                            helperText={FormikErrors.to}
-                                        />
+                                        {!customerContacts.length ? (
+                                            <TextField
+                                                disabled
+                                                autoComplete={'off'}
+                                                className={classes.fullWidth}
+                                                id={'to'}
+                                                name={'to'}
+                                                onChange={(e: any) => formikChange(e)}
+                                                value={FormikValues.to[0].email}
+                                                variant={'outlined'}
+                                                placeholder="getting contact, please wait..."
+                                            />
+                                        ) : (
+                                            <Autocomplete
+                                                classes={{
+                                                    inputRoot:
+                                                        FormikValues.to.length > 1
+                                                            ? classes.inputRoot
+                                                            : classes.inputRootSingle,
+                                                }}
+                                                freeSolo
+                                                clearOnBlur
+                                                fullWidth
+                                                autoSelect
+                                                getOptionLabel={(option) => {
+                                                    const { name, email } = option;
+                                                    return `${name}, ${email}`;
+                                                }}
+                                                multiple
+                                                onInputChange={(ev: any, newValue: any) => {
+                                                    if (
+                                                        newValue.endsWith(',') ||
+                                                        newValue.endsWith(';') ||
+                                                        newValue.endsWith(' ')
+                                                    ) {
+                                                        ev?.target.blur();
+                                                        ev?.target.focus();
+                                                    }
+                                                }}
+                                                onChange={(ev: any, newValue: any) =>
+                                                    handleRecipientChange('to', newValue)
+                                                }
+                                                options={
+                                                    customerContacts && customerContacts.length !== 0
+                                                        ? stringSortCaseInsensitive(
+                                                            customerContacts,
+                                                            'name'
+                                                        )
+                                                        : []
+                                                }
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant={'outlined'}
+                                                        required={!customerContacts.length}
+                                                    />
+                                                )}
+                                                renderTags={(tagValue, getTagProps) =>
+                                                    tagValue.map((option, index) => {
+                                                        return (
+                                                            <Chip
+                                                                key={index}
+                                                                label={`${option.email}`}
+                                                                {...getTagProps({ index })}
+                                                            />
+                                                        );
+                                                    })
+                                                }
+                                                value={FormikValues.to}
+                                            />
+                                        )}
                                     </Grid>
                                 </Grid>
                             </Grid>
-
-                            <Grid item xs={12}>
-                                <Grid container direction={'row'} spacing={1}>
-                                    <Grid
-                                        container
-                                        item
-                                        justify={'flex-end'}
-                                        alignItems={'center'}
-                                        xs={2}
-                                    >
-                                        <Typography variant={'button'}>CC</Typography>
-                                    </Grid>
-                                    <Grid item xs={10}>
-                                        <TextField
-                                            // autoComplete={'off'}
-                                            className={classes.fullWidth}
-                                            id={'cc'}
-                                            name={'cc'}
-                                            onChange={(e: any) => formikChange(e)}
-                                            value={FormikValues.cc}
-                                            variant={'outlined'}
-                                            autoComplete='ViewCrunch'
-                                            placeholder="Enter email"
-                                            error={Boolean(FormikErrors.cc)}
-                                            helperText={FormikErrors.cc}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-
                             <Grid item xs={12}>
                                 <Grid container direction={'row'} spacing={1}>
                                     <Grid

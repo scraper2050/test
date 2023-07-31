@@ -256,7 +256,7 @@ function PORequired({ classes, hidden }: any) {
     const sendPORequestEmail = (ticket: any) => {
         dispatch(setModalDataAction({
             'data': {
-                'id': ticket._id,
+                'data': ticket,
                 'type': "PO Request",
                 'modalTitle': `Send this ${ticket.ticketId}`,
                 'removeFooter': false,
