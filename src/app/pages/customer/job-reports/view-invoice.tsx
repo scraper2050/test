@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, createStyles, withStyles, Grid, Paper, Badge} from "@material-ui/core";
+import {Button, createStyles, withStyles, Grid, Paper, Badge,Tooltip, Typography,Link} from "@material-ui/core";
 import styles from "../customer.styles";
 import BCInvoice from "../../../components/bc-invoice/bc-invoice";
 import IconButton from '@material-ui/core/IconButton';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
 import { makeStyles, Theme } from "@material-ui/core/styles";
@@ -19,6 +20,7 @@ import {CSChip} from "../../../../helpers/custom";
 import { generateInvoicePdfAPI, updateInvoice } from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
+import viewHistoryTable from "../../../components/bc-view-history-popup";
 import { modalTypes } from "../../../../constants";
 import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
@@ -38,7 +40,7 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       backgroundColor: CONSTANTS.PRIMARY_GRAY,
     },
     bgDark: {
-      backgroundColor: '#D0D3DC',
+      backgroundColor: '#fff',
     },
     extendedIcon: {
       marginRight: theme.spacing(1),
@@ -55,13 +57,32 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     },
     buttonLabel: {
       textWrap: 'nowrap'
+    },
+    tooltip: {
+      height: 80,
+      width:100, 
+      backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: '1px solid #dadde9',
     }
   }),
 );
-
+const customTooltipStyle = makeStyles((theme: Theme) => ({
+  customTooltip: {
+    backgroundColor: 'white', // Set tooltip background color to white
+    color: '#000', // Set tooltip text color to black
+    fontSize: '14px',
+    border: '1px solid white', // Set tooltip border color to white
+    borderRadius: '4px', // Add border radius to the tooltip
+    padding: theme.spacing(1), // Add padding to the tooltip content
+  },
+}));
 function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceStyles = invoicePageStyles();
+  const TooltipStyle = customTooltipStyle();
   let history = useHistory();
   const location = useLocation<any>();
   let { invoice } = useParams<any>();
@@ -69,7 +90,8 @@ function ViewInvoice({ classes, theme }: any) {
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const [showJobCosting, setShowJobCosting] = useState(false);
-
+  const [isInfoDialogOpen, setIsInfoDialogOpen]=useState(false);
+  const [isHistoryPopupOpen, setIsHistoryPopupOpen] = useState(false);
   useEffect(() => {
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
@@ -288,7 +310,12 @@ function ViewInvoice({ classes, theme }: any) {
       dispatch(openModalAction());
     }, 200);
   }
-
+   const handleInfoDialogToggle = () => {
+    setIsInfoDialogOpen((prev) => !prev);
+  };
+  const handleViewHistoryClick = () => {
+    setIsHistoryPopupOpen(true);
+  };
   return (
     <MainContainer>
       <PageContainer>
@@ -331,6 +358,40 @@ function ViewInvoice({ classes, theme }: any) {
             )}
           </div>
           <div>
+            <Tooltip title={
+              <Typography className={invoiceStyles.tooltip} style={{ color:'grey', fontSize:'11px'}}>
+               <IconButton
+                  color="default"
+                  size="small"
+                  className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                >
+                  <InfoOutlinedIcon style={{ color: 'grey', fontSize: '19px', }} />
+                </IconButton>
+                Created By:
+                <Link
+                  component="button"
+                  variant="body2"
+                  onClick={handleViewHistoryClick}
+                >
+                  View History
+                </Link>
+              </Typography>
+            }
+            open={isInfoDialogOpen}
+            onClose={handleInfoDialogToggle}
+            interactive={true}
+            arrow
+            >
+            <IconButton
+              color="default"
+              size="small"
+              className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+              onClick={handleInfoDialogToggle}
+           >
+              <InfoOutlinedIcon style={{ color: 'grey',fontSize:'36px', }} />
+              </IconButton>
+
+            </Tooltip>
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (

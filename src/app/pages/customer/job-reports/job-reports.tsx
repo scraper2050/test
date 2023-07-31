@@ -10,11 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
-import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
+import { CSButtonSmall, CSChip, useCustomStyles } from "../../../../helpers/custom";
 import moment from "moment";
-import BCDateRangePicker, {Range}
-  from "../../../components/bc-date-range-picker/bc-date-range-picker";
-import {getAllJobReportsAPI} from 'api/job-report.api'
+import BCDateRangePicker, { Range } from "../../../components/bc-date-range-picker/bc-date-range-picker";
+import { getAllJobReportsAPI } from 'api/job-report.api'
 import {
   setCurrentPageIndex,
   setCurrentPageSize,
