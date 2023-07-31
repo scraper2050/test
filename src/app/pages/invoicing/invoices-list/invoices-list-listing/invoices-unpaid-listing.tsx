@@ -132,19 +132,21 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
           }
         }
 
+        let jobAddressName;
         if (invoiceDetail?.jobSite) {
           const jobSite = invoiceDetail?.jobSite;
           const jobSiteAddress = jobSite.address;
+          jobAddressName = jobSite.name;
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
           }
         }
 
-        const fullJobAddress = `${jobAddress?.street ? jobAddress?.street : ""}${jobAddress?.city ? ", " + jobAddress?.city : ""}${jobAddress?.state ? ", " + jobAddress?.state : ""} ${(jobAddress?.zipcode || jobAddress?.zipCode) || ""}`;
-
+        const arrFullJobAddress = [jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
+        const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
 
         return <HtmlTooltip title={fullJobAddress} placement='top'>
-          <span>{jobAddress?.street}</span>
+          <span>{jobAddressName}</span>
         </HtmlTooltip>
       },
       'className': 'font-bold',
