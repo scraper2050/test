@@ -111,4 +111,8 @@ export default (theme: Theme): any => ({
     position: 'absolute',
     top: 12,
   },
+  checkboxInputPORequired: {
+    padding: "0px 10px 0px 0px!important",
+    marginLeft: "45px"
+  }
 });

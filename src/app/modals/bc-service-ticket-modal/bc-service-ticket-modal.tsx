@@ -155,6 +155,8 @@ function BCServiceTicketModal(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailTicketData, setEmailTicketData] = useState<{type?: string, id?: string}>({});
   const [openSendEmailTicket, setOpenSendEmailTicket] = useState(false);
+  const [bypassPORequired, setBypassPORequired] = useState(false);
+
   // Submit Button
   const anchorRef = useRef<HTMLDivElement>(null);
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
@@ -562,7 +564,7 @@ function BCServiceTicketModal(
       }
 
       if (!ticket.type) {
-        if (isPORequired && !tempData.customerPO && !hasPORequiredBypass) {
+        if (isPORequired && !tempData.customerPO && !bypassPORequired) {
           tempData.type = "PO Request";
         } else {
           tempData.type = "Ticket";
@@ -1238,12 +1240,32 @@ function BCServiceTicketModal(
               </Typography>
             )}
             {isPORequired && (
+              <>
               <Grid container className={'poRequiredContainer'}>
                 {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
                 <Typography variant={'subtitle1'} className='poRequiredText'>
                   Customer PO Is Required
                 </Typography>
+                { !ticket._id && (
+                    <FormControlLabel
+                      classes={{ label: classes.checkboxLabel }}
+                      control={
+                        <Checkbox
+                          color={'primary'}
+                          checked={bypassPORequired}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setBypassPORequired(e.target?.checked);
+                          }}
+                          name="bypassPORequired"
+                          classes={{ root: classes.checkboxInputPORequired }}
+                        />
+                      }
+                      label={`Bypass PO Required`}
+                    />
+                  )
+                }
               </Grid>
+              </>
             )}
           </Grid>
         </Grid>
