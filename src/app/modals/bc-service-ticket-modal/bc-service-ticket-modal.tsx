@@ -590,7 +590,7 @@ function BCServiceTicketModal(
       };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        editTicketObj.type = ticket.type === "PO Request" && hasPORequiredBypass ? 'Ticket' : ticket.type;
+        editTicketObj.type = ticket.type === "PO Request" && bypassPORequired ? 'Ticket' : ticket.type;
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
@@ -1246,24 +1246,23 @@ function BCServiceTicketModal(
                 <Typography variant={'subtitle1'} className='poRequiredText'>
                   Customer PO Is Required
                 </Typography>
-                { !ticket._id && (
-                    <FormControlLabel
-                      classes={{ label: classes.checkboxLabel }}
-                      control={
-                        <Checkbox
-                          color={'primary'}
-                          checked={bypassPORequired}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setBypassPORequired(e.target?.checked);
-                          }}
-                          name="bypassPORequired"
-                          classes={{ root: classes.checkboxInputPORequired }}
-                        />
-                      }
-                      label={`Bypass PO Required`}
-                    />
-                  )
-                }
+                {hasPORequiredBypass && (
+                  <FormControlLabel
+                    classes={{ label: classes.checkboxLabel }}
+                    control={
+                      <Checkbox
+                        color={'primary'}
+                        checked={bypassPORequired}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setBypassPORequired(e.target?.checked);
+                        }}
+                        name="bypassPORequired"
+                        classes={{ root: classes.checkboxInputPORequired }}
+                      />
+                    }
+                    label={`Bypass PO Required`}
+                  />
+                )}
               </Grid>
               </>
             )}
