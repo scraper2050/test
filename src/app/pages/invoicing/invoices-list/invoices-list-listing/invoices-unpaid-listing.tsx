@@ -51,9 +51,10 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
-      backgroundColor: '#f5f5f9',
+      backgroundColor: '#FFFFFF',
       color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: 220,
+      maxWidth: 350,
+      fontSize: "13px",
       border: '1px solid #dadde9',
     },
   }))(Tooltip);
@@ -111,9 +112,44 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       'sortable': true,
     },
     {
-      'Header': 'Job ID',
+      'Header': 'Job Address',
       Cell({ row }: any) {
-        return <span>{row.original.job?.jobId?.substring(4)}</span>
+        const invoiceDetail = row.original;
+        let jobAddress: any;
+        if (invoiceDetail?.customer) {
+          const customer = invoiceDetail?.customer;
+          const customerAddress = customer.address;
+          if (customerAddress?.street || customerAddress?.city || customerAddress?.state || customerAddress?.zipCode) {
+            jobAddress = customerAddress;
+          }
+        }
+
+        if (invoiceDetail?.jobLocation) {
+          const jobLocation = invoiceDetail?.jobLocation;
+          const jobLocationAddress = jobLocation.address;
+          if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
+            jobAddress = jobLocationAddress;
+          }
+        }
+
+        let jobAddressName;
+        if (invoiceDetail?.jobSite) {
+          const jobSite = invoiceDetail?.jobSite;
+          const jobSiteAddress = jobSite.address;
+          jobAddressName = jobSite.name;
+          if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
+            jobAddress = jobSiteAddress;
+          }
+        }
+
+        const arrFullJobAddress = [jobAddressName, jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
+        const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
+
+        return <div style={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip title={fullJobAddress} placement='top'>
+            <span>{jobAddressName}</span>
+          </HtmlTooltip>
+        </div>
       },
       'className': 'font-bold',
       'sortable': true
