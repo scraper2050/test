@@ -1237,7 +1237,7 @@ function BCServiceTicketModal(
           <Grid container xs={6}>
             {ticket?.poOverriddenBy && (
               <Typography variant={'subtitle1'} className='customerOverriddenByText'>
-                PO Required: Overridden by {ticket.poOverriddenBy?.profile?.displayName}
+                PO entered by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
             {isPORequired && (
