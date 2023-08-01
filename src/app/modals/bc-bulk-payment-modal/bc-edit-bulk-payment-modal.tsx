@@ -173,7 +173,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
 
   const handleAmountToBeAppliedChange = (id: string, value: string) => {
     let newPaymentList: any = [...localPaymentList];
-    const index = newPaymentList.findIndex((payment: any) => payment._id === id);
+    const index = newPaymentList.findIndex((payment: any) => payment.invoice._id === id);
     newPaymentList[index].amountToBeApplied = parseFloat(value);
     const parsedValue = parseFloat(value);
     if (!isNaN(parsedValue)) {
@@ -332,7 +332,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             disabled={row.original.status === "PAID"}
             classes={{ root: inputStyles.textField }}
             onFocus={(event: any)=> handleOnFocus(setCellValue, event.target.value)}
-            onBlur={(event: any) => handleAmountToBeAppliedChange(row.original._id, event.target.value)}
+            onBlur={(event: any) => handleAmountToBeAppliedChange(row.original.invoice._id, event.target.value)}
             onChange={(event: any) => setCellValue(event.target.value)}
             type={'number'}
             value={cellValue}
@@ -346,49 +346,91 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   ];
 
   useEffect(() => {
+  
     let allInvoices: any = [];
-    getCustomerInvoicesForBulkPaymentEdit({
-      id: payments.customer._id
-    })
-      .then((invoices) => {
-        allInvoices = invoices;
+    getCustomerInvoicesForBulkPaymentEdit(false, payments.customer._id).then((invoices:any) => {
+      allInvoices = invoices.invoices;
 
-        if (allInvoices.length > 0) {
-          const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
-            'invoice': invoice,
-            'amountToBeApplied': 0,
-            'checked': 0,
-            'amountPaid': 0
+      console.log("all invoice", allInvoices.length)
+      if (allInvoices.length > 0) {
+        const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
+          'invoice': invoice,
+          'amountToBeApplied': 0,
+          'checked': 0,
+          'amountPaid': 0
+        }));
+
+        if (paymentList.length > 0) {
+          const checkedPaymentInvoices = paymentList.map((item: any) => ({
+            ...item,
+            'amountToBeApplied': item.amountPaid,
+            'checked': 1
           }));
-
-          if (paymentList.length > 0) {
-            const checkedPaymentInvoices = paymentList.map((item: any) => ({
-              ...item,
-              'amountToBeApplied': item.amountPaid,
-              'checked': 1
-            }));
-
-            const concatenatedArray = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((acc: any, current: any) => {
-              if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
-                acc.push(current);
-              }
-              return acc;
-            }, []);
-            setLocalPaymentList([...concatenatedArray]);
-          } else {
-            setLocalPaymentList([...allInvoices]);
-          }
-
+          console.log("payment invoice", paymentList.length)
+          const concatenatedArray = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((acc: any, current: any) => {
+            if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
+              acc.push(current);
+            }
+            return acc;
+          }, []);
+          console.log("after concatination", concatenatedArray)
+          setLocalPaymentList([...concatenatedArray]);
+        } else {
+          setLocalPaymentList([...allInvoices]);
         }
-      })
+
+      }
+    })
       .catch((error) => {
-         setLocalPaymentList([...allInvoices]);
+        setLocalPaymentList([...allInvoices]);
         console.error('Error occurred:', error);
       });
+   
+    // getCustomerInvoicesForBulkPaymentEdit({
+    //   id: payments.customer._id
+    // })
+    //   .then((invoices) => {
+    //     allInvoices = invoices;
+
+    //     console.log("all invoice", allInvoices.length)
+    //     if (allInvoices.length > 0) {
+    //       const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
+    //         'invoice': invoice,
+    //         'amountToBeApplied': 0,
+    //         'checked': 0,
+    //         'amountPaid': 0
+    //       }));
+
+    //       if (paymentList.length > 0) {
+    //         const checkedPaymentInvoices = paymentList.map((item: any) => ({
+    //           ...item,
+    //           'amountToBeApplied': item.amountPaid,
+    //           'checked': 1
+    //         }));
+    //         console.log("payment invoice", paymentList.length)
+    //         const concatenatedArray = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((acc: any, current: any) => {
+    //           if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
+    //             acc.push(current);
+    //           }
+    //           return acc;
+    //         }, []);
+    //         console.log("after concatination", concatenatedArray.length)
+    //         setLocalPaymentList([...concatenatedArray]);
+    //       } else {
+    //         setLocalPaymentList([...allInvoices]);
+    //       }
+
+    //     }
+    //   })
+    //   .catch((error) => {
+    //      setLocalPaymentList([...allInvoices]);
+    //     console.error('Error occurred:', error);
+    //   });
     
   }, [paymentList])
 
   useEffect(() => {
+    
     setFieldValue('totalAmount', localPaymentList.reduce((total, payment) => {
       return total + payment.amountToBeApplied;
     }, 0))

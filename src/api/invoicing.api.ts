@@ -572,14 +572,55 @@ export const updateJobCommission = (id: string, data: any) => {
       });
   });
 };
-export const getCustomerInvoicesForBulkPaymentEdit = (data: any) => {
+
+
+
+
+export const getCustomerInvoicesForBulkPaymentEdit= (showPaid=false,customerId:any,selectionRange?: { startDate: Date; endDate: Date } | null,dueDate?: Date | null) => {
+
   return new Promise((resolve, reject) => {
-    requestApiV2(`/getCustomerInvoicesForBulkPaymentEdit`, 'post', data)
-      .then((res: any) => {
-        return resolve(res.data);
-      })
-      .catch(err => {
-        return reject(err);
-      });
-  });
+
+      const optionObj: any = {
+        pageSize:1000000,
+        currentPage:0,
+        'isDraft': false
+      };
+   
+      if (selectionRange) {
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).add(1, 'day')
+          .format('YYYY-MM-DD');
+      }
+      if (customerId) {
+        optionObj.customerId = customerId;
+      }
+      if (dueDate) {
+        optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
+      }
+      if (showPaid === false) {
+        optionObj.status = JSON.stringify(['UNPAID', 'PARTIALLY_PAID']);
+      }
+   
+
+      cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
+
+      requestApiV2(`/getInvoices`, 'post', optionObj, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
+        .then((res: any) => {
+          const tempInvoices = res.data.invoices;
+
+          return resolve(res.data);
+        })
+        .catch(err => {
+     
+          if (err.message !== 'axios canceled') {
+            return reject(err);
+          }
+        });
+    });
 };
+
+
+
+
+
+  
