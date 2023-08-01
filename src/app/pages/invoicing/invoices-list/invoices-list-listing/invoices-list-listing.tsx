@@ -123,9 +123,11 @@ function InvoicingListListing({ classes, theme }: any) {
         const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
 
 
-        return <HtmlTooltip title={fullJobAddress} placement='top'>
-          <span>{jobAddressName}</span>
-        </HtmlTooltip>
+        return <div style={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <HtmlTooltip title={fullJobAddress} placement='top'>
+            <span>{jobAddressName}</span>
+          </HtmlTooltip>
+        </div>
       },
       'className': 'font-bold',
       'sortable': true
