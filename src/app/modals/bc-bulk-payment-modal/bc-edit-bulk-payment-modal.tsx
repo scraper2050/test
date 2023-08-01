@@ -351,7 +351,6 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     getCustomerInvoicesForBulkPaymentEdit(false, payments.customer._id).then((invoices:any) => {
       allInvoices = invoices.invoices;
 
-      console.log("all invoice", allInvoices.length)
       if (allInvoices.length > 0) {
         const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
           'invoice': invoice,
@@ -366,15 +365,15 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             'amountToBeApplied': item.amountPaid,
             'checked': 1
           }));
-          console.log("payment invoice", paymentList.length)
-          const concatenatedArray = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((acc: any, current: any) => {
-            if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
-              acc.push(current);
+          
+          const totallpayments = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((accumulater: any, currentPayment: any) => {
+            if (!accumulater.some((payment: any) => payment.invoice._id === currentPayment.invoice._id)) {
+              accumulater.push(currentPayment);
             }
-            return acc;
+            return accumulater;
           }, []);
-          console.log("after concatination", concatenatedArray)
-          setLocalPaymentList([...concatenatedArray]);
+
+          setLocalPaymentList([...totallpayments]);
         } else {
           setLocalPaymentList([...allInvoices]);
         }
@@ -385,52 +384,10 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
         setLocalPaymentList([...allInvoices]);
         console.error('Error occurred:', error);
       });
-   
-    // getCustomerInvoicesForBulkPaymentEdit({
-    //   id: payments.customer._id
-    // })
-    //   .then((invoices) => {
-    //     allInvoices = invoices;
-
-    //     console.log("all invoice", allInvoices.length)
-    //     if (allInvoices.length > 0) {
-    //       const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
-    //         'invoice': invoice,
-    //         'amountToBeApplied': 0,
-    //         'checked': 0,
-    //         'amountPaid': 0
-    //       }));
-
-    //       if (paymentList.length > 0) {
-    //         const checkedPaymentInvoices = paymentList.map((item: any) => ({
-    //           ...item,
-    //           'amountToBeApplied': item.amountPaid,
-    //           'checked': 1
-    //         }));
-    //         console.log("payment invoice", paymentList.length)
-    //         const concatenatedArray = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((acc: any, current: any) => {
-    //           if (!acc.some((item: any) => item.invoice._id === current.invoice._id)) {
-    //             acc.push(current);
-    //           }
-    //           return acc;
-    //         }, []);
-    //         console.log("after concatination", concatenatedArray.length)
-    //         setLocalPaymentList([...concatenatedArray]);
-    //       } else {
-    //         setLocalPaymentList([...allInvoices]);
-    //       }
-
-    //     }
-    //   })
-    //   .catch((error) => {
-    //      setLocalPaymentList([...allInvoices]);
-    //     console.error('Error occurred:', error);
-    //   });
     
   }, [paymentList])
 
-  useEffect(() => {
-    
+  useEffect(() => {  
     setFieldValue('totalAmount', localPaymentList.reduce((total, payment) => {
       return total + payment.amountToBeApplied;
     }, 0))
