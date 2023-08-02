@@ -155,6 +155,8 @@ function BCServiceTicketModal(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailTicketData, setEmailTicketData] = useState<{type?: string, id?: string}>({});
   const [openSendEmailTicket, setOpenSendEmailTicket] = useState(false);
+  const [isCustomerLoading, setIsSetCustomerLoading] = useState(false);
+
   // Submit Button
   const anchorRef = useRef<HTMLDivElement>(null);
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
@@ -185,12 +187,14 @@ function BCServiceTicketModal(
     setFieldValue: any,
     newValue: any
   ) => {
+    setIsSetCustomerLoading(true);
+    
     setIsPORequired(newValue?.isPORequired || false);
     setCustomerNote(newValue?.notes);
     setItemTier(newValue?.itemTierObj?.[0]?.name || "");
 
     const customerId = newValue ? newValue._id : '';
-    await setFieldValue(fieldName, '');
+    await setFieldValue(fieldName, customerId);
     //Total price changes
     changeJobTypesPrice(customerId);
 
@@ -213,8 +217,8 @@ function BCServiceTicketModal(
       await dispatch(getContacts(data));
       await dispatch(getJobLocationsAction({customerId, isActive: true}));
     }
+    setIsSetCustomerLoading(false);
 
-    await setFieldValue(fieldName, customerId);
     //The total price changes after the waiting process, which is a bit tricky. We can discuss it next time.
     changeJobTypesPrice(customerId);
   };
@@ -1240,7 +1244,7 @@ function BCServiceTicketModal(
                 PO entered by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
-            {isPORequired && (
+            {isPORequired && !ticket?.poOverriddenBy && (
               <Grid container className={'poRequiredContainer'}>
                 {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
                 <Typography variant={'subtitle1'} className='poRequiredText'>
@@ -1273,7 +1277,7 @@ function BCServiceTicketModal(
                       )[0]
                     }
                     disabled={
-                      FormikValues.customerId === '' ||
+                      isCustomerLoading ||
                       isLoadingDatas ||
                       detail ||
                       !!ticket.jobCreated
@@ -1362,7 +1366,7 @@ function BCServiceTicketModal(
                   </Typography>
                   <Autocomplete
                     disabled={
-                      FormikValues.customerId === '' ||
+                      isCustomerLoading ||
                       isLoadingDatas ||
                       detail ||
                       isFieldsDisabled
