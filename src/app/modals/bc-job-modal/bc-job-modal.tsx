@@ -448,7 +448,7 @@ function BCJobModal({
   }, [homeOwners]);
 
   useEffect(() => {
-    const tasks = getJobTasks(job, items,customers,FormikValues.customerId);
+    const tasks = getJobTasks(job, items,customers,FormikValues.customerId || job.ticket?.customer?._id);
     setFieldValue('tasks', tasks);
   }, [items]);
 
