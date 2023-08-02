@@ -344,7 +344,7 @@ function ViewInvoice({ classes, theme }: any) {
         removeFooter: false,
         maxHeight: '100%',
         modalTitle: 'VIEW HISTORY',
-        invoiceData: invoiceDetail,
+        invoiceLogs: invoiceLogs,
         isEditing: false
       },
       type: modalTypes.VIEW_HISTORY_POPUP_MODAL

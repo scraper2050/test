@@ -65,8 +65,8 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 function ViewHistoryTable({ classes, data }: Props): JSX.Element {
+    console.log("data:",data);
     const dispatch = useDispatch();
-
     const closeModal = () => {
         setTimeout(() => {
             dispatch(
@@ -85,9 +85,12 @@ function ViewHistoryTable({ classes, data }: Props): JSX.Element {
     }
     return (
         <DialogContent classes={{ root: classes.dialogContent }}>
-            <Typography className={classes.description}>
-                Table in Progress
-            </Typography>
+            {data?.invoiceLogs.map((item:any)=>(
+                <Typography className={classes.description}>
+                    {item.type} - {item.companyLocation?.name} - {item.workType.title} - {item?.createdBy?.displayName} - {item?.createdAt}
+                </Typography>
+
+            ))}
             <Box className={classes.buttons}>
     
                 <Fab

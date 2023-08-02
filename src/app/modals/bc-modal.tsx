@@ -352,7 +352,7 @@ function BCModal() {
             'fullWidth': true,
             'maxWidth': 'xs'
           });
-        setComponent(<BcViewHistoryModal/>);
+        setComponent(<BcViewHistoryModal data={data}/>);
         break;
       case modalTypes.CONFIRM_EDIT_PAYMENT_MODAL:
         setModalOptions({
