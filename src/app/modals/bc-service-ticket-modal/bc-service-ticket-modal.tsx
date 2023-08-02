@@ -50,6 +50,7 @@ import {
 import {
   clearJobLocationStore,
   getJobLocationsAction,
+  loadingJobLocations,
   setJobLocations,
 } from 'actions/job-location/job-location.action';
 import styled from 'styled-components';
@@ -155,8 +156,6 @@ function BCServiceTicketModal(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailTicketData, setEmailTicketData] = useState<{type?: string, id?: string}>({});
   const [openSendEmailTicket, setOpenSendEmailTicket] = useState(false);
-  const [isCustomerLoading, setIsSetCustomerLoading] = useState(false);
-
   // Submit Button
   const anchorRef = useRef<HTMLDivElement>(null);
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
@@ -187,8 +186,6 @@ function BCServiceTicketModal(
     setFieldValue: any,
     newValue: any
   ) => {
-    setIsSetCustomerLoading(true);
-    
     setIsPORequired(newValue?.isPORequired || false);
     setCustomerNote(newValue?.notes);
     setItemTier(newValue?.itemTierObj?.[0]?.name || "");
@@ -214,10 +211,10 @@ function BCServiceTicketModal(
         referenceNumber: customerId,
       };
 
+      await dispatch(loadingJobLocations());
       await dispatch(getContacts(data));
       await dispatch(getJobLocationsAction({customerId, isActive: true}));
     }
-    setIsSetCustomerLoading(false);
 
     //The total price changes after the waiting process, which is a bit tricky. We can discuss it next time.
     changeJobTypesPrice(customerId);
@@ -814,11 +811,11 @@ function BCServiceTicketModal(
   });
 
   const customers = useSelector(({customers}: any) => customers.data);
-  const jobLocations = useSelector((state: any) => state.jobLocations.data);
+  const { data: jobLocations, loading: jobLocationLoading } = useSelector((state: any) => state.jobLocations);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
-  const {contacts} = useSelector((state: any) => state.contacts);
+  const { contacts, isLoading: contactsLoading } = useSelector((state: any) => state.contacts);
   const homeOwners = useSelector((state: any) => state.homeOwner.data);
 
   useEffect(() => {
@@ -1277,7 +1274,7 @@ function BCServiceTicketModal(
                       )[0]
                     }
                     disabled={
-                      isCustomerLoading ||
+                      jobLocationLoading ||
                       isLoadingDatas ||
                       detail ||
                       !!ticket.jobCreated
@@ -1366,7 +1363,7 @@ function BCServiceTicketModal(
                   </Typography>
                   <Autocomplete
                     disabled={
-                      isCustomerLoading ||
+                      contactsLoading ||
                       isLoadingDatas ||
                       detail ||
                       isFieldsDisabled
