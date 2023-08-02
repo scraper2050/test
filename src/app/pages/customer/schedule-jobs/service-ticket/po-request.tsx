@@ -26,6 +26,7 @@ import BCDateRangePicker, { Range }
     from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { getAllPORequestsAPI } from 'api/po-requests.api';
+import PopupMark from 'app/components/bc-bounce-email-tooltip/bc-popup-mark';
 
 function PORequired({ classes, hidden }: any) {
     const dispatch = useDispatch();
@@ -170,16 +171,20 @@ function PORequired({ classes, hidden }: any) {
             'sortable': true
         },
         {
-            Cell({ row }: any) {
-                return row.original.lastEmailSent
-                    ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
-                    : 'N/A';
-            },
-            'Header': 'Email Send Date ',
-            'accessor': 'lastEmailSent',
-            'className': 'font-bold',
-            'sortable': true
-        },
+            Cell: ({ row }: any) => (
+                <>
+                    <PopupMark data={()=>null} invoiceId={""} />
+                    {row.original.lastEmailSent
+                        ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
+                        : 'N/A'}
+                </>
+            ),
+            Header: 'Email Send Date',
+            accessor: 'lastEmailSent',
+            className: 'font-bold',
+            sortable: true,
+        }
+,
         {
             'Cell'({ row }: any) {
                 return <div className={'flex items-center'}>
