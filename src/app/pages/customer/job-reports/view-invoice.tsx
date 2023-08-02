@@ -14,6 +14,7 @@ import EmailIcon from '@material-ui/icons/Email';
 import classNames from "classnames";
 import {useHistory, useLocation, useParams} from "react-router-dom";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
+import { loadInvoiceLogs } from "../../../../actions/invoicing/logs/logs.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
 import {CSChip} from "../../../../helpers/custom";
@@ -96,7 +97,8 @@ function ViewInvoice({ classes, theme }: any) {
   const location = useLocation<any>();
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }: any) => auth);
-  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
+  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }: any) => invoiceDetail);
+  const { 'logs': invoiceLogs, 'loading': loadingInvoiceLogs, 'error': invoiceLogsError } = useSelector(({ invoiceLogs }: any) => invoiceLogs);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const [showJobCosting, setShowJobCosting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -104,13 +106,17 @@ function ViewInvoice({ classes, theme }: any) {
   useEffect(() => {
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
+      dispatch(loadInvoiceLogs.fetch(invoice));
+      
     }
 
     if (user) {
       dispatch(getCompanyProfileAction(user.company as string));
     }
   }, []);
-
+  useEffect(() => { if(invoiceLogs?.length){
+    console.log("invoiceLogs invoice detail", invoiceLogs)
+  }}, [invoiceLogs]);
   useEffect(() => {
 
     if (invoiceDetail && invoiceDetail.job) {
