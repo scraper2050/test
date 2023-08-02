@@ -1132,6 +1132,16 @@ function BCServiceTicketModal(
     }
   }
 
+  const getPORequired = () => {
+    if (isPORequired && !ticket?.poOverriddenBy) {
+      return <Grid container className={'poRequiredContainer'}>
+        <Typography variant={'subtitle1'} className='poRequiredText'>
+          Customer PO Is Required
+        </Typography>
+      </Grid>
+    }
+  }
+  
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
@@ -1241,14 +1251,7 @@ function BCServiceTicketModal(
                 PO entered by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
-            {isPORequired && !ticket?.poOverriddenBy && (
-              <Grid container className={'poRequiredContainer'}>
-                {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
-                <Typography variant={'subtitle1'} className='poRequiredText'>
-                  Customer PO Is Required
-                </Typography>
-              </Grid>
-            )}
+            {getPORequired()}
           </Grid>
         </Grid>
         <div className={'modalDataContainer'}>
