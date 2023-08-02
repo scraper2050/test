@@ -85,7 +85,7 @@ import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billi
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
 import BcAddTicketDetailsModal
   from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
-
+import BcViewHistoryModal from './bc-view-history-modal/bc-view-history-modal';
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
@@ -344,6 +344,15 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCEditPaidInvoiceConfirmModal data={data.data} />);
+        break;
+        case modalTypes.VIEW_HISTORY_POPUP_MODAL:
+          setModalOptions({
+            'disableBackdropClick': true,
+            'disableEscapeKeyDown': true,
+            'fullWidth': true,
+            'maxWidth': 'xs'
+          });
+        setComponent(<BcViewHistoryModal/>);
         break;
       case modalTypes.CONFIRM_EDIT_PAYMENT_MODAL:
         setModalOptions({

@@ -20,7 +20,6 @@ import {CSChip} from "../../../../helpers/custom";
 import { generateInvoicePdfAPI, updateInvoice } from "../../../../api/invoicing.api";
 import {error} from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
-import viewHistoryTable from "../../../components/bc-view-history-popup";
 import { modalTypes } from "../../../../constants";
 import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
@@ -100,10 +99,8 @@ function ViewInvoice({ classes, theme }: any) {
   const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const [showJobCosting, setShowJobCosting] = useState(false);
-  const [isInfoDialogOpen, setIsInfoDialogOpen]=useState(false);
-  const [isHistoryPopupOpen, setIsHistoryPopupOpen] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
   useEffect(() => {
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
@@ -335,20 +332,36 @@ function ViewInvoice({ classes, theme }: any) {
       dispatch(openModalAction());
     }, 200);
   }
-   const handleInfoDialogToggle = () => {
-    setIsInfoDialogOpen((prev) => !prev);
-  };
-  const handleViewHistoryClick = () => {
-    setIsHistoryPopupOpen(true);
+    const handleViewHistoryClick = () => {
+    dispatch(setModalDataAction({
+      data: {
+        removeFooter: false,
+        maxHeight: '100%',
+        modalTitle: 'VIEW HISTORY',
+        invoiceData: invoiceDetail,
+        isEditing: false
+      },
+      type: modalTypes.VIEW_HISTORY_POPUP_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200)
     console.log(" history popup");
   };
+ 
+
 
   const handleTooltipClose = () => {
-    setOpen(false);
+   
+    setIsInfoDialogOpen(false);
+     setOpen((prev) => !prev);
+   
   };
 
   const handleTooltipOpen = () => {
-    setOpen(true);
+    setIsInfoDialogOpen(false);
+    setOpen((prev) => !prev);
+   
   };
   return (
     <MainContainer>
@@ -397,7 +410,7 @@ function ViewInvoice({ classes, theme }: any) {
               PopperProps={{
                 disablePortal: true,
               }}
-              onClose={handleTooltipClose}
+              onClick={handleTooltipClose}
               open={open}
               disableFocusListener
               disableHoverListener
@@ -431,13 +444,14 @@ function ViewInvoice({ classes, theme }: any) {
                     
                   </div>
                   <Typography>
-                    <Typography
+                    {HtmlTooltip && <Typography
                       
                       className={invoiceStyles.textUnderlined}
                       onClick={handleViewHistoryClick}
                     >
                       View History
                     </Typography>
+              }
                   </Typography>
                 </React.Fragment>
               }
