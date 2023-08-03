@@ -108,6 +108,15 @@ function InvoicingListListing({ classes, theme }: any) {
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
+
+          //To check if invoice data is not provided with a job location, we can use the job field
+          if (!jobLocationAddress) {
+            const jobLocation2 = invoiceDetail?.job?.jobLocation;
+            const jobLocationAddress2 = jobLocation2.address;
+            if (jobLocationAddress2?.street || jobLocationAddress2?.city || jobLocationAddress2?.state || jobLocationAddress2?.zipcode) {
+              jobAddress = jobLocationAddress2;
+            }
+          }
         }
       
         let jobAddressName;
@@ -117,6 +126,16 @@ function InvoicingListListing({ classes, theme }: any) {
           jobAddressName = jobSite.name;
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
+          }
+
+          //To check if invoice data is not provided with a job site, we can use the job field
+          if (!jobSiteAddress) {
+            const jobSite2 = invoiceDetail?.job?.jobSite;
+            const jobSiteAddress2 = jobSite2.address;
+            jobAddressName = jobSite2.name;
+            if (jobSiteAddress2?.street || jobSiteAddress2?.city || jobSiteAddress2?.state || jobSiteAddress2?.zipcode) {
+              jobAddress = jobSiteAddress2;
+            }
           }
         }
         const arrFullJobAddress = [jobAddressName, jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
