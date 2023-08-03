@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStyles, makeStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,11 +8,13 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {Typography, Box, Fab } from "@material-ui/core";
+import { formatDate } from 'helpers/format';
 import { useDispatch, useSelector } from "react-redux";
 import { setModalDataAction, closeModalAction } from "actions/bc-modal/bc-modal.action";
 import moment from 'moment';
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
-
+import { getVendors } from "../../../actions/vendor/vendor.action";
+import { getEmployeesForJobAction } from 'actions/employees-for-job/employees-for-job.action';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -31,7 +33,15 @@ const styles = (theme: Theme) =>
             right:1,
             bottom:1,
             
-        }
+        }, 
+        dialogContent: {
+            padding: theme.spacing(2),
+        },
+        tableContainer: {
+            height: '100%', // Set the height of the table container to occupy the entire available height
+            maxHeight: 400, // Set a maximum height for the table container to limit its expansion
+            
+        },
 
     });
 
@@ -48,7 +58,8 @@ const DialogTitle = withStyles(styles)((props: Props) => {
     const { children, classes, onClose, ...other } = props;
     return (
         <MuiDialogTitle disableTypography className={classes.root} {...other}>
-            <Typography variant="h6">{children}</Typography>
+            <Typography variant="h6">{children}
+            </Typography>
             {onClose ? (
                 <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
                     <CloseIcon />
@@ -101,6 +112,7 @@ const DialogActions = withStyles((theme: Theme) => ({
     root: {
         margin: 0,
         padding: theme.spacing(1),
+        
     },
 }))(MuiDialogActions);
 
@@ -130,16 +142,30 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
     const vendorsList = useSelector(({ vendors }: any) =>
         vendors.data.filter((vendor: any) => vendor.status <= 1)
     );
+    useEffect(() => {
+        dispatch(getEmployeesForJobAction());
+    }, []);
     const columns: any = [
         {
             Header: 'User',
             id: 'user',
             sortable: true,
             Cell({ row }: any) {
-                const user = row.original.user;
-                const vendor = vendorsList.find((v: any) => v.contractor.admin._id === row.original.user);
-                const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
-                return <div>{displayName}</div>;
+                
+                
+                return (
+                    <>{
+                    data?.invoiceLogs.map((item: any) => (
+                        <Typography className={classes.description}>
+                            {item.companyLocation?.name}
+                        </Typography>
+
+                    ))
+
+                }
+                    </>
+                );
+                
             },
         },
         {
@@ -147,13 +173,17 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             id: 'date',
             sortable: true,
             Cell({ row }: any) {
-                const dataTime = moment(new Date(row.original.date)).format(
-                    'MM/DD/YYYY h:mm A'
-                );
                 return (
-                    <div style={{ color: 'gray', fontStyle: 'italic' }}>
-                        {`${dataTime}`}
-                    </div>
+                    <>{
+                        data?.invoiceLogs.map((item: any) => (
+                            <Typography className={classes.description}>
+                                {item?.createdAt}
+                            </Typography>
+
+                        ))
+
+                    }
+                    </>
                 );
             },
         },
@@ -162,19 +192,16 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             id: 'action',
             sortable: true,
             Cell({ row }: any) {
-                const splittedActions = row.original.action.split('|');
-                const actions = splittedActions.filter((action: any) => action !== '');
                 return (
-                    <>
-                        {actions.length === 0 ? (
-                            <div />
-                        ) : (
-                            <ul className={classes.actionsList}>
-                                {actions.map((action: any) => (
-                                    <li>{action}</li>
-                                ))}
-                            </ul>
-                        )}
+                    <>{
+                        data?.invoiceLogs.map((item: any) => (
+                            <Typography className={classes.description}>
+                                {item.type}
+                            </Typography>
+
+                        ))
+
+                    }
                     </>
                 );
             },
@@ -182,7 +209,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
     ];
     return (
         <DialogContent classes={{ root: classes.dialogContent }}>
-                <div style={{ height: 180, overflowY: 'auto' }}>
+                <div style={{ height: 300,width:700 }}>
                     <BCTableContainer
                         className={classes.tableContainer}
                         columns={columns}

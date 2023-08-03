@@ -352,20 +352,17 @@ function ViewInvoice({ classes, theme }: any) {
     setTimeout(() => {
       dispatch(openModalAction());
     }, 200)
-    console.log(" history popup");
   };
  
 
 
   const handleTooltipClose = () => {
-   
-    setIsInfoDialogOpen(false);
+
      setOpen((prev) => !prev);
    
   };
 
   const handleTooltipOpen = () => {
-    setIsInfoDialogOpen(false);
     setOpen((prev) => !prev);
    
   };
@@ -454,6 +451,7 @@ function ViewInvoice({ classes, theme }: any) {
                       
                       className={invoiceStyles.textUnderlined}
                       onClick={handleViewHistoryClick}
+                  
                     >
                       View History
                     </Typography>
