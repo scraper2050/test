@@ -10,9 +10,10 @@ interface PopupProps {
   mouseEnter: () => void;
   bounceEmails: string[];
   invoiceId: string;
+  incoiceFlag: boolean;
 }
 
-const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, invoiceId}) => {
+const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, invoiceId, incoiceFlag }) => {
 
   const dispatch = useDispatch()
   const advanceFilterInvoiceData: any = useSelector(({ advanceFilterInvoiceState }: any) => advanceFilterInvoiceState)
@@ -81,7 +82,7 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, inv
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     mouseLeave();
-    dispatch(markAsRead(invoiceId, advanceFilterInvoiceData))
+    dispatch(markAsRead(incoiceFlag, invoiceId, advanceFilterInvoiceData))
   };
 
   const emailStyles={

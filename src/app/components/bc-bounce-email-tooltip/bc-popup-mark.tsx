@@ -5,6 +5,7 @@ import Popup from './bc-popup';
 interface PopupMarkProps {
   data: () => any;
   invoiceId: string;
+  incoiceFlag: boolean;
 }
 
 interface IEmailsData {
@@ -14,7 +15,7 @@ interface IEmailsData {
   deliveryStatus?: boolean;
 }
 
-const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId }) => {
+const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId, incoiceFlag }) => {
   const [ isPopupVisible, setPopupVisible ] = useState<boolean>(false);
   const [emails, setEmails] = useState<IEmailsData[]>([]);
   const bounceEmails: Array<string>= [];
@@ -56,7 +57,13 @@ const PopupMark: React.FC<PopupMarkProps> = ({ data, invoiceId }) => {
         mouseLeave={handleMouseLeave}
       />
       {isPopupVisible && (
-        <Popup bounceEmails={bounceEmails} mouseEnter={handleMouseHover} mouseLeave={handleMouseLeave} invoiceId={invoiceId} />
+        <Popup 
+          bounceEmails={bounceEmails} 
+          mouseEnter={handleMouseHover} 
+          mouseLeave={handleMouseLeave} 
+          invoiceId={invoiceId} 
+          incoiceFlag={incoiceFlag}
+        />
       )}
     </div>
   );

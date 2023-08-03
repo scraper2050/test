@@ -173,10 +173,12 @@ function PORequired({ classes, hidden }: any) {
         {
             Cell: ({ row }: any) => (
                 <>
-                 <PopupMark data={()=>null} invoiceId={""} />
                     {row.original.lastEmailSent
                         ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
                         : 'N/A'}
+                    {row.original.bouncedEmailFlag 
+                        ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} incoiceFlag={false} />
+                        : ''}
                 </>
             ),
             Header: 'Email Send Date',
