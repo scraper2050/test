@@ -5,7 +5,7 @@ import InvoicingPaymentListing from './invoices-list-listing/payments-listing';
 import SwipeableViews from 'react-swipeable-views';
 import styles from './invoices-list.styles';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Button, Fab, Grid, useTheme, withStyles } from '@material-ui/core';
+import { Button, CircularProgress, Fab, Grid, useTheme, withStyles } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BCMenuToolbarButton from 'app/components/bc-menu-toolbar-button';
@@ -21,6 +21,7 @@ import { ISelectedDivision } from 'actions/filter-division/fiter-division.types'
 import { Can, ability } from 'app/config/Can';
 import BCMenuButton from 'app/components/bc-menu-more';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import { exportInvoicesToExcel } from 'api/invoicing.api';
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
@@ -45,6 +46,19 @@ function InvoiceList({ classes }: any) {
   const openCreateInvoicePage = () => {
     history.push('/main/invoicing/create-invoice');
   };
+  const [exportLoading, setExportLoading] = useState(false);
+  //Get Invoices property
+  const { total, currentPageIndex, currentPageSize, keyword } = useSelector(
+    ({ invoiceList }: any) => ({
+      prevCursor: invoiceList.prevCursor,
+      nextCursor: invoiceList.nextCursor,
+      total: invoiceList.total,
+      currentPageIndex: invoiceList.currentPageIndex,
+      currentPageSize: invoiceList.currentPageSize,
+      keyword: invoiceList.keyword,
+    })
+  );
+  const advanceFilterInvoiceData: any = useSelector(({ advanceFilterInvoiceState }: any) => advanceFilterInvoiceState);
 
   useEffect(() => {
     dispatch(getCustomers());
@@ -105,16 +119,33 @@ function InvoiceList({ classes }: any) {
   }
 
   const INITIAL_ITEMS = [
-    { id: 0, title: 'Export to Excel' },
+    { id: 0, title: 'Export Current' },
+    { id: 1, title: 'Export All' },
   ]
 
   const handleMenuButtonClick = (event: any, id: number) => {
     event.stopPropagation();
-    switch (id) {
-      case 0:
-        console.log("0");
-        break;
-    }
+    setExportLoading(true);
+
+    const allData = id ? true : false;
+    exportInvoicesToExcel(currentPageSize, currentPageIndex, keyword, advanceFilterInvoiceData, currentDivision.params, allData).then(({ data, fileName }: { data: Blob, fileName: string }) => {
+      const h = 0;
+      const href = window.URL.createObjectURL(data);
+
+      const anchorElement = document.createElement('a');
+
+      anchorElement.href = href;
+      anchorElement.download = fileName;
+
+      document.body.appendChild(anchorElement);
+      anchorElement.click();
+
+      document.body.removeChild(anchorElement);
+      window.URL.revokeObjectURL(href);
+      setExportLoading(false);
+    }).catch((error: any) => {
+      setExportLoading(false);
+    });
   }
 
 
@@ -124,14 +155,18 @@ function InvoiceList({ classes }: any) {
         const isSyncDisabled = unSyncedInvoicesCount === 0;
         return !loading ?
           <div className={classes.containerToolbar}>
-            <div>
+            <div className={classes.exportButton}>
               <InsertDriveFile />
-              Export
-              <BCMenuButton
-                icon={MoreHorizIcon}
-                items={INITIAL_ITEMS}
-                handleClick={handleMenuButtonClick}
-              />
+              <span className={classes.exportButtonLabel}>Export</span>
+              {exportLoading ? (
+                <CircularProgress size={17} />
+              ) : ( 
+                <BCMenuButton
+                  icon={MoreHorizIcon}
+                  items={INITIAL_ITEMS}
+                  handleClick={handleMenuButtonClick}
+                />
+              )}
             </div>
             <Button
               variant='outlined'
