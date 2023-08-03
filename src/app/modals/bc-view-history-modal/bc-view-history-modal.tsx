@@ -157,7 +157,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                     <>{
                     data?.invoiceLogs.map((item: any) => (
                         <Typography className={classes.description}>
-                            {item.companyLocation?.name}
+                            {item.createdBy?.profile?.displayName}
                         </Typography>
 
                     ))
@@ -177,7 +177,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                     <>{
                         data?.invoiceLogs.map((item: any) => (
                             <Typography className={classes.description}>
-                                {item?.createdAt}
+                                {item?.createdAt.replace("T"," ").split(".")[0]}
                             </Typography>
 
                         ))
@@ -209,7 +209,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
     ];
     return (
         <DialogContent classes={{ root: classes.dialogContent }}>
-                <div style={{ height: 300,width:700 }}>
+                <div style={{}}>
                     <BCTableContainer
                         className={classes.tableContainer}
                         columns={columns}
@@ -220,7 +220,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         pageSize={5}
                         pagination={true}
                         stickyHeader
-                        tableData={[{ action: 'Service Ticket Created', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
+                        tableData={[{ action: '', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
                     />
                 </div>
       
