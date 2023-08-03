@@ -8,9 +8,10 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {Typography, Box, Fab } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setModalDataAction, closeModalAction } from "actions/bc-modal/bc-modal.action";
-
+import moment from 'moment';
+import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 
 
 const styles = (theme: Theme) =>
@@ -25,6 +26,12 @@ const styles = (theme: Theme) =>
             top: 1,
             color: "grey",
         },
+        buttons:{
+            
+            right:1,
+            bottom:1,
+            
+        }
 
     });
 
@@ -51,6 +58,39 @@ const DialogTitle = withStyles(styles)((props: Props) => {
     );
 });
 
+const initialJobState = {
+    customer: {
+        _id: '',
+    },
+    description: '',
+    employeeType: false,
+    equipment: {
+        _id: '',
+    },
+    dueDate: '',
+    scheduleDate: null,
+    scheduledEndTime: null,
+    scheduledStartTime: null,
+    technician: {
+        _id: '',
+    },
+    contractor: {
+        _id: '',
+    },
+    ticket: {
+        _id: '',
+    },
+    type: {
+        _id: '',
+    },
+    jobLocation: {
+        _id: '',
+    },
+    jobSite: {
+        _id: '',
+    },
+    jobRescheduled: false,
+};
 const DialogContent = withStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(2),
@@ -64,9 +104,10 @@ const DialogActions = withStyles((theme: Theme) => ({
     },
 }))(MuiDialogActions);
 
-function ViewHistoryTable({ classes, data }: Props): JSX.Element {
-    console.log("data:",data);
+function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.Element {
+    console.log("invoice log data in modal",data);
     const dispatch = useDispatch();
+    const track = job.track ? job.track : [];
     const closeModal = () => {
         setTimeout(() => {
             dispatch(
@@ -82,29 +123,90 @@ function ViewHistoryTable({ classes, data }: Props): JSX.Element {
     const onConfirm = () => {
         closeModal();
         data.handleOnConfirm();
-    }
+    };
+    const { loading } = useSelector(
+        ({ employeesForJob }: any) => employeesForJob
+    );
+    const vendorsList = useSelector(({ vendors }: any) =>
+        vendors.data.filter((vendor: any) => vendor.status <= 1)
+    );
+    const columns: any = [
+        {
+            Header: 'User',
+            id: 'user',
+            sortable: true,
+            Cell({ row }: any) {
+                const user = row.original.user;
+                const vendor = vendorsList.find((v: any) => v.contractor.admin._id === row.original.user);
+                const { displayName } = user?.profile || vendor?.contractor.admin.profile || '';
+                return <div>{displayName}</div>;
+            },
+        },
+        {
+            Header: 'Date',
+            id: 'date',
+            sortable: true,
+            Cell({ row }: any) {
+                const dataTime = moment(new Date(row.original.date)).format(
+                    'MM/DD/YYYY h:mm A'
+                );
+                return (
+                    <div style={{ color: 'gray', fontStyle: 'italic' }}>
+                        {`${dataTime}`}
+                    </div>
+                );
+            },
+        },
+        {
+            Header: 'Actions',
+            id: 'action',
+            sortable: true,
+            Cell({ row }: any) {
+                const splittedActions = row.original.action.split('|');
+                const actions = splittedActions.filter((action: any) => action !== '');
+                return (
+                    <>
+                        {actions.length === 0 ? (
+                            <div />
+                        ) : (
+                            <ul className={classes.actionsList}>
+                                {actions.map((action: any) => (
+                                    <li>{action}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </>
+                );
+            },
+        },
+    ];
     return (
         <DialogContent classes={{ root: classes.dialogContent }}>
-            {data?.invoiceLogs.map((item:any)=>(
-                <Typography className={classes.description}>
-                    {item.type} - {item.companyLocation?.name} - {item.workType.title} - {item?.createdBy?.displayName} - {item?.createdAt}
-                </Typography>
-
-            ))}
+                <div style={{ height: 180, overflowY: 'auto' }}>
+                    <BCTableContainer
+                        className={classes.tableContainer}
+                        columns={columns}
+                        initialMsg={'No history yet'}
+                        isDefault
+                        isLoading={loading}
+                        onRowClick={() => { }}
+                        pageSize={5}
+                        pagination={true}
+                        stickyHeader
+                        tableData={[{ action: 'Service Ticket Created', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
+                    />
+                </div>
+            
             <Box className={classes.buttons}>
-    
-                <Fab
-                    classes={{
-                        root: classes.fabRoot,
-                    }}
-                    color={"primary"}
-                    type={"submit"}
-                    variant={"extended"}
+                <DialogActions>
+                <Button autoFocus 
                     onClick={onConfirm}
-                >
-                    {"Cancel"}
-                </Fab>
-            </Box>
+                    type={"submit"}
+                color="primary">
+                    Cancel
+                </Button>
+                </DialogActions>
+             </Box>
         </DialogContent>
     );
 }
