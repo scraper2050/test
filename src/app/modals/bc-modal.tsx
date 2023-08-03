@@ -346,12 +346,13 @@ function BCModal() {
         setComponent(<BCEditPaidInvoiceConfirmModal data={data.data} />);
         break;
         case modalTypes.VIEW_HISTORY_POPUP_MODAL:
-          setModalOptions({
-            'disableBackdropClick': true,
-            'disableEscapeKeyDown': true,
-            'fullWidth': true,
-            'maxWidth': 'xs'
-          });
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
         setComponent(<BcViewHistoryModal data={data}/>);
         break;
       case modalTypes.CONFIRM_EDIT_PAYMENT_MODAL:

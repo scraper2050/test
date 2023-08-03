@@ -196,17 +196,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         tableData={[{ action: 'Service Ticket Created', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
                     />
                 </div>
-            
-            <Box className={classes.buttons}>
-                <DialogActions>
-                <Button autoFocus 
-                    onClick={onConfirm}
-                    type={"submit"}
-                color="primary">
-                    Cancel
-                </Button>
-                </DialogActions>
-             </Box>
+      
         </DialogContent>
     );
 }

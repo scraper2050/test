@@ -339,11 +339,15 @@ function ViewInvoice({ classes, theme }: any) {
     }, 200);
   }
     const handleViewHistoryClick = () => {
+
+      setIsInfoDialogOpen(false);
+      setOpen((prev) => !prev);
+
     dispatch(setModalDataAction({
       data: {
         removeFooter: false,
         maxHeight: '100%',
-        modalTitle: 'VIEW HISTORY',
+        modalTitle: `View History: ${invoiceDetail?.invoiceId} `,
         invoiceLogs: invoiceLogs,
         isEditing: false
       },
@@ -429,11 +433,11 @@ function ViewInvoice({ classes, theme }: any) {
                     <IconButton
                       color="default"
                       size="medium"
+                      style={{padding:"5px"}}
                       className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
                     >
-                      <InfoOutlinedIcon style={{ color: 'grey', fontSize: '19px', }} />
-                    </IconButton> Created By: <span>
-                     </span>
+                      <InfoOutlinedIcon style={{ color: 'grey', fontSize: '25px', }} />
+                    </IconButton> Created By:
                   </Typography>
                   <Typography color="inherit" className={invoiceStyles.invoiceCreatedBy}>
                     {invoiceDetail?.createdBy?.profile?.displayName}
@@ -466,48 +470,7 @@ function ViewInvoice({ classes, theme }: any) {
               <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', }}  />
               </Button>
             </HtmlTooltip>
-            {/* <Tooltip title={
-              <div className={invoiceStyles.tooltip} style={{ color:'grey', fontSize:'11px'}}>
-              
-              <Typography> 
-                <IconButton
-                  color="default"
-                  size="small"
-                  className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
-                >
-                  <InfoOutlinedIcon style={{ color: 'grey', fontSize: '19px', }} />
-                </IconButton>
-                Created By:
-                </Typography>
-
-                <Typography>
-                                    DUbib asohd s
-                </Typography>
-
-                <Link
-                  component="button"
-                  variant="body2"
-                  onClick={handleViewHistoryClick}
-                >
-                  View History
-                </Link>
-              </div>
-            }
-            open={isInfoDialogOpen}
-            onClose={handleInfoDialogToggle}
-            interactive={true}
-            arrow
-            >
-            <IconButton
-              color="default"
-              size="small"
-              className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
-              onClick={handleInfoDialogToggle}
-           >
-              <InfoOutlinedIcon style={{ color: 'grey',fontSize:'36px', }} />
-              </IconButton>
-
-            </Tooltip> */}
+        
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
