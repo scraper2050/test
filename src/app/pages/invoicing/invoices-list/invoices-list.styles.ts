@@ -24,18 +24,35 @@ export default (theme: Theme): any => ({
   noLeftMargin: {
     marginLeft: '0 !important',
   },
-  syncButton: {
+  syncPaymentButton: {
     position: 'absolute',
     right: 30,
     textTransform: 'capitalize',
     borderRadius: 8,
     borderColor: GRAY5,
     boxShadow: `0 3px ${GRAY5}`,
+    zIndex: 1000
+  },
+  syncButton: {
+    textTransform: 'capitalize',
+    borderRadius: 8,
+    borderColor: GRAY5,
+    boxShadow: `0 3px ${GRAY5}`,
+    zIndex: 1000
+  },
+  exportButton: {
+    marginRight: "10px",
+    textTransform: 'capitalize',
+    borderRadius: 8,
+    backgroundColor: "#1d6c41",
+    boxShadow: `0 3px ${GRAY5}`,
+    color: "#ffffff",
     zIndex: 1000,
-    // '&& :active' : {
-    //   backgroundColor: PRIMARY_GREEN,
-    //   color: 'white',
-    // }
+  },
+  containerToolbar: {
+    display: 'flex',
+    position: 'absolute',
+    right: 30,
   },
   disabledButton: {
     backgroundColor: GRAY6,
