@@ -50,6 +50,7 @@ import {
 import {
   clearJobLocationStore,
   getJobLocationsAction,
+  loadingJobLocations,
   setJobLocations,
 } from 'actions/job-location/job-location.action';
 import styled from 'styled-components';
@@ -190,7 +191,7 @@ function BCServiceTicketModal(
     setItemTier(newValue?.itemTierObj?.[0]?.name || "");
 
     const customerId = newValue ? newValue._id : '';
-    await setFieldValue(fieldName, '');
+    await setFieldValue(fieldName, customerId);
     //Total price changes
     changeJobTypesPrice(customerId);
 
@@ -210,11 +211,11 @@ function BCServiceTicketModal(
         referenceNumber: customerId,
       };
 
+      await dispatch(loadingJobLocations());
       await dispatch(getContacts(data));
       await dispatch(getJobLocationsAction({customerId, isActive: true}));
     }
 
-    await setFieldValue(fieldName, customerId);
     //The total price changes after the waiting process, which is a bit tricky. We can discuss it next time.
     changeJobTypesPrice(customerId);
   };
@@ -810,11 +811,11 @@ function BCServiceTicketModal(
   });
 
   const customers = useSelector(({customers}: any) => customers.data);
-  const jobLocations = useSelector((state: any) => state.jobLocations.data);
+  const { data: jobLocations, loading: jobLocationLoading } = useSelector((state: any) => state.jobLocations);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
-  const {contacts} = useSelector((state: any) => state.contacts);
+  const { contacts, isLoading: contactsLoading } = useSelector((state: any) => state.contacts);
   const homeOwners = useSelector((state: any) => state.homeOwner.data);
 
   useEffect(() => {
@@ -1131,6 +1132,16 @@ function BCServiceTicketModal(
     }
   }
 
+  const getPORequired = () => {
+    if (isPORequired && !ticket?.poOverriddenBy) {
+      return <Grid container className={'poRequiredContainer'}>
+        <Typography variant={'subtitle1'} className='poRequiredText'>
+          Customer PO Is Required
+        </Typography>
+      </Grid>
+    }
+  }
+  
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
@@ -1240,14 +1251,7 @@ function BCServiceTicketModal(
                 PO entered by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
-            {isPORequired && (
-              <Grid container className={'poRequiredContainer'}>
-                {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
-                <Typography variant={'subtitle1'} className='poRequiredText'>
-                  Customer PO Is Required
-                </Typography>
-              </Grid>
-            )}
+            {getPORequired()}
           </Grid>
         </Grid>
         <div className={'modalDataContainer'}>
@@ -1273,7 +1277,7 @@ function BCServiceTicketModal(
                       )[0]
                     }
                     disabled={
-                      FormikValues.customerId === '' ||
+                      jobLocationLoading ||
                       isLoadingDatas ||
                       detail ||
                       !!ticket.jobCreated
@@ -1362,7 +1366,7 @@ function BCServiceTicketModal(
                   </Typography>
                   <Autocomplete
                     disabled={
-                      FormikValues.customerId === '' ||
+                      contactsLoading ||
                       isLoadingDatas ||
                       detail ||
                       isFieldsDisabled

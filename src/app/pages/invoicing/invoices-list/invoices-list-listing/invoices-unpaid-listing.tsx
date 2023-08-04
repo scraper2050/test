@@ -126,7 +126,14 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
 
         if (invoiceDetail?.jobLocation) {
           const jobLocation = invoiceDetail?.jobLocation;
-          const jobLocationAddress = jobLocation.address;
+          const jobLocationAddress = jobLocation?.address;
+          if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
+            jobAddress = jobLocationAddress;
+          }
+        } else {
+          //To check if invoice data is not provided with a job location, we can use the job field
+          const jobLocation = invoiceDetail?.job?.jobLocation;
+          const jobLocationAddress = jobLocation?.address;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
@@ -135,8 +142,16 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         let jobAddressName;
         if (invoiceDetail?.jobSite) {
           const jobSite = invoiceDetail?.jobSite;
-          const jobSiteAddress = jobSite.address;
-          jobAddressName = jobSite.name;
+          const jobSiteAddress = jobSite?.address;
+          jobAddressName = jobSite?.name;
+          if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
+            jobAddress = jobSiteAddress;
+          }
+        } else {
+          //To check if invoice data is not provided with a job site, we can use the job field
+          const jobSite = invoiceDetail?.job?.jobSite;
+          const jobSiteAddress = jobSite?.address;
+          jobAddressName = jobSite?.name;
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
           }
