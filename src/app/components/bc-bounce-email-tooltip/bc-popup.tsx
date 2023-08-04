@@ -11,10 +11,10 @@ interface PopupProps {
   mouseEnter: () => void;
   bounceEmails: string[];
   invoiceId: string;
-  incoiceFlag: boolean;
+  invoiceFlag: boolean;
 }
 
-const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, invoiceId, incoiceFlag }) => {
+const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, invoiceId, invoiceFlag }) => {
 
   const dispatch = useDispatch()
   const advanceFilterInvoiceData: any = useSelector(({ advanceFilterInvoiceState }: any) => advanceFilterInvoiceState)
@@ -83,9 +83,9 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, inv
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     mouseLeave();
-    dispatch(markAsRead(incoiceFlag, invoiceId, advanceFilterInvoiceData))
+    dispatch(markAsRead(invoiceFlag, invoiceId, advanceFilterInvoiceData))
 
-    if (!incoiceFlag)
+    if (!invoiceFlag)
       dispatch(getAllPORequestsAPI());
 
   };

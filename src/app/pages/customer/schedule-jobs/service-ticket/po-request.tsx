@@ -177,7 +177,7 @@ function PORequired({ classes, hidden }: any) {
                         ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
                         : 'N/A'}
                     {row.original.bouncedEmailFlag 
-                        ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} incoiceFlag={false} />
+                        ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} invoiceFlag={false} />
                         : ''}
                 </>
             ),
