@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { markAsRead } from 'api/invoicing.api';
 import { useSelector } from 'react-redux';
 import { getAllPORequestsAPI } from 'api/po-requests.api';
+import { setCurrentPageIndex, setCurrentPageSize } from 'actions/po-request/po-request.action';
 
 interface PopupProps {
   mouseLeave: () => void;
@@ -85,8 +86,11 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, inv
     mouseLeave();
     dispatch(markAsRead(invoiceFlag, invoiceId, advanceFilterInvoiceData))
 
-    if (!invoiceFlag)
+    if (!invoiceFlag){
       dispatch(getAllPORequestsAPI());
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(10));
+    }
 
   };
 

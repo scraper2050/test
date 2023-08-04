@@ -24,11 +24,12 @@ import BCCircularLoader from '../../components/bc-circular-loader/bc-circular-lo
 import { error } from 'actions/snackbar/snackbar.action';
 import BCSent from "../../components/bc-sent";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
-import { generatePORequestEmailTemplate, sendPORequestEmail } from 'api/po-requests.api';
+import { generatePORequestEmailTemplate, getAllPORequestsAPI, sendPORequestEmail } from 'api/po-requests.api';
 import { Autocomplete } from '@material-ui/lab';
 import { stringSortCaseInsensitive } from 'helpers/sort';
 import { error as SnackBarError } from 'actions/snackbar/snackbar.action';
 import { getCustomersContact } from 'api/customer.api';
+import { setCurrentPageIndex, setCurrentPageSize } from 'actions/po-request/po-request.action';
 
 interface formEmail {
     subject: string
@@ -60,6 +61,14 @@ function EmailPORequestModal({ classes, data, type }: any) {
         }, 200);
     };
     
+
+    const refresh = () => {
+        // Dispatch your action here
+        dispatch(getAllPORequestsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params));
+        dispatch(setCurrentPageIndex(0));
+        dispatch(setCurrentPageSize(10));
+    };
+
     const getEmailTemplate = async () => {
         const params: any = {
             ticketId: data._id
@@ -469,6 +478,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
                                         color="primary"
                                         type={'submit'}
                                         variant={'contained'}
+                                        onClick={refresh}
                                     >
                                         Submit
                                     </Button>
