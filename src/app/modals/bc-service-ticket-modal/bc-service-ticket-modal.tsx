@@ -84,6 +84,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import EditIcon from '@material-ui/icons/Edit';
+import { ability } from 'app/config/Can';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -156,11 +157,14 @@ function BCServiceTicketModal(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailTicketData, setEmailTicketData] = useState<{type?: string, id?: string}>({});
   const [openSendEmailTicket, setOpenSendEmailTicket] = useState(false);
+  const [bypassPORequired, setBypassPORequired] = useState(false);
+
   // Submit Button
   const anchorRef = useRef<HTMLDivElement>(null);
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
   const [submitSelectedIndex, setSubmitSelectedIndex] = useState(0);
   const submitOptions = ["Submit", "Submit and Send"]
+  const hasPORequiredBypass = ability.can('bypass', 'PORequirement');
 
   const filter = createFilterOptions();
 
@@ -562,7 +566,7 @@ function BCServiceTicketModal(
       }
 
       if (!ticket.type) {
-        if (isPORequired && !tempData.customerPO) {
+        if (isPORequired && !tempData.customerPO && !bypassPORequired) {
           tempData.type = "PO Request";
         } else {
           tempData.type = "Ticket";
@@ -589,6 +593,11 @@ function BCServiceTicketModal(
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         editTicketObj.type = ticket.type;
+        if (ticket.type === "PO Request" && bypassPORequired) {
+          editTicketObj.type = "Ticket";
+          //To allow bypass po required without any note
+          editTicketObj.note += " ";
+        }
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
@@ -1138,6 +1147,23 @@ function BCServiceTicketModal(
         <Typography variant={'subtitle1'} className='poRequiredText'>
           Customer PO Is Required
         </Typography>
+        {hasPORequiredBypass && (
+          <FormControlLabel
+            classes={{ label: classes.checkboxLabel }}
+            control={
+              <Checkbox
+                color={'primary'}
+                checked={bypassPORequired}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setBypassPORequired(e.target?.checked);
+                }}
+                name="bypassPORequired"
+                classes={{ root: classes.checkboxInputPORequired }}
+              />
+            }
+            label={`Bypass PO Required`}
+          />
+        )}
       </Grid>
     }
   }

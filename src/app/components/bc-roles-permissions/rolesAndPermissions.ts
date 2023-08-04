@@ -5,7 +5,6 @@ export const permissionDescriptions: { [key :string]: string } = {
   'addVendors': 'Add Vendors',
   'admin': 'Admin',
   'customerPayments': 'Customer Payments',
-  'deleteCompanyAccount': 'Delete company account',
   'dispatch': 'Scheduling/Dispatch',
   'editBillingInformation': 'Edit billing information',
   'editCompanyLogo': 'Edit company logo',
@@ -17,5 +16,8 @@ export const permissionDescriptions: { [key :string]: string } = {
   'reporting': 'Reporting',
   'serviceTickets': 'Service Tickets',
   'superAdmin': 'Super Admin',
-  'vendorPayments': 'Vendor Payments'
+  'vendorPayments': 'Vendor Payments',
+  'customers': 'Customers',
+  'editCustomerSettings': ' Can edit customer settings',
+  'overridePORequired': 'Can override PO required'
 };

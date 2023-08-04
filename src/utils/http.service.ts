@@ -3,6 +3,7 @@ import { getLocalStorageToken } from './local-storage.service';
 import axios, { AxiosRequestConfig, AxiosResponse, CancelTokenSource, Method } from 'axios';
 
 const api = config.apiBaseURL;
+const apiv2 = config.apiV2BaseURL;
 const customerApi = config.apiCustomerURL;
 // Api v2 URL
 const apiV2 = config.apiV2BaseURL;
@@ -186,6 +187,36 @@ export const downloadFile = (uri: string, type: Method, data?: any): Promise<Axi
       ? 'get'
       : type,
     'url': `${api}${uri}`,
+    responseType: 'blob',
+  };
+
+  if (type !== 'get') {
+    if (type === 'OPTIONS') {
+      request.params = data;
+    } else {
+      request.data = data;
+    }
+  }
+
+  return makeRequest(request);
+};
+
+
+/**
+ * Download file from specific uri
+ * @param uri uri where is located the file
+ * @param type type of HTTP method used to download the file
+ * @param data extra data to be sent on the request
+ * @returns Promise<AxiosResponse<any>>
+ */
+export const downloadFileV2 = (uri: string, type: Method, data?: any): Promise<AxiosResponse<any>> => {
+  const token = fetchToken(false);
+  const request: AxiosRequestConfig = {
+    'headers': { 'Authorization': token },
+    'method': type === 'OPTIONS'
+      ? 'get'
+      : type,
+    'url': `${apiv2}${uri}`,
     responseType: 'blob',
   };
 

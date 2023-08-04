@@ -1,10 +1,10 @@
 import { Action } from 'redux-actions';
 import { Dispatch } from 'redux';
 import { AuthInfo } from 'app/models/user';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { setAuthAction } from 'actions/auth/auth.action';
 import React, { useEffect } from 'react';
-import { Redirect, Route, RouteComponentProps, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import { setRouteDataAction, setRouteTitleAction } from 'actions/route/route.action';
 
 interface Props {
@@ -38,7 +38,11 @@ function AuthRoute({
     'tokenCustomerAPI': localStorage.getItem('tokenCustomerAPI'),
     'user': JSON.parse(localStorage.getItem('user') || '{}')
   };
+  const { hasLoaded: hasLoadedUserPermissions } = useSelector((state: any) => state.permissions)
+  const { user } = useSelector((state: any) => state.auth);
+  const isAdmin = user?.permissions?.role === 3;
   const dispatch = useDispatch();
+  const history = useHistory();
   const loginFromStorage =
     (token === null || token === '') &&
     (tokenCustomerAPI === null || tokenCustomerAPI === '') &&
@@ -72,12 +76,16 @@ function AuthRoute({
     ? 'You do not have access to this page'
     : 'Please log in to view this page';
 
+  if (!hasAccess && hasLoadedUserPermissions && !isAdmin) {
+    history.push("/main/dashboard")
+  }
+
   return (
     <Route
       exact={exact}
       path={path}
       render={(props: RouteComponentProps) =>
-        isAuthed && hasAccess
+        isAuthed
           ? <Component {...props} />
           : <Redirect
             to={{
