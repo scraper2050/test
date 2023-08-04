@@ -83,9 +83,12 @@ import BcDivisionConfirmModal from './bc-division-confirm-modal/bc-division-conf
 import BcDivisionWarningModal from './bc-division-warning-modal/bc-division-warning-modal';
 import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billing-address-warning';
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
+import EmailModalPORequest from './bc-email-modal/bc-email-po-request-modal';
+import BCPORequestWarningModal from './bc-po-request-warning-modal/bc-po-request-warning-modal';
 import BcAddTicketDetailsModal
   from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
 import BcViewHistoryModal from './bc-view-history-modal/bc-view-history-modal';
+
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
 interface BCModal { }
