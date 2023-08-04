@@ -27,6 +27,14 @@ export const quickbooksCustomerSync = async () => {
     throw new Error(`Something went wrong`);
   }
 };
+export const quickbooksItemSync = async (data:any) => {
+  try {
+    const response: any = await request("/syncQBItem", "POST", data, false);
+    return response;
+  } catch (err) {
+    throw new Error(`Something went wrong`);
+  }
+};
 
 export const quickbooksItemsSync = async () => {
   try {
