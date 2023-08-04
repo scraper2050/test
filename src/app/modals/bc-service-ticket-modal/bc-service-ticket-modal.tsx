@@ -421,7 +421,7 @@ function BCServiceTicketModal(
 
       // Find the discount item based on how many item that gonna be discounted
       const customerDiscount = customer.discountPrices?.find((disc: any) => disc.quantity === totalItemDiscounted);
-      const discountItem = discountItems.find((res: any) => res._id == customerDiscount?.discountItem);
+      const discountItem = discountItems.find((res: any) => res._id == customerDiscount?.discountItem && res.isActive);
 
       if (discountItem) {
         const discountAmount = discountItem.charges ?? 0;
@@ -675,7 +675,7 @@ function BCServiceTicketModal(
               setIsSubmitting(false);
               updateHomeOccupationStatus();
 
-              if (response.message === 'Ticket updated successfully.') {
+              if (response.message === 'Ticket updated successfully.' || response.message === 'PO Request updated successfully.') {
                 if (submitSelectedIndex === 1) {
                   setEmailTicketData({
                     id: ticket._id,
