@@ -84,10 +84,9 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, inv
     e.stopPropagation();
     mouseLeave();
     dispatch(markAsRead(incoiceFlag, invoiceId, advanceFilterInvoiceData))
-    if (!incoiceFlag){
+
+    if (!incoiceFlag)
       dispatch(getAllPORequestsAPI());
-    }
-     
 
   };
 
