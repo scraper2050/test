@@ -211,7 +211,7 @@ function InvoicingListListing({ classes, theme }: any) {
           )
           } { 
             row.original.bouncedEmailFlag
-              ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} incoiceFlag={true} /> 
+              ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} invoiceFlag={true} /> 
               : ''
           }
         </div>
