@@ -7,6 +7,7 @@ import { getCustomerDetailAction, loadingSingleCustomers } from 'actions/custome
 import { useSelector } from 'react-redux';
 import { getAllPaymentTermsAPI } from 'api/payment-terms.api';
 import { updateCustomerPaymentTermsAction } from 'actions/payment-terms/payment.terms.action';
+import { Can, ability } from 'app/config/Can';
 
 
 interface PaymentTermsProps {
@@ -60,6 +61,7 @@ export default function PaymentTerms({ customer, header, dispatch }:PaymentTerms
           {'Payment Terms'}
         </InputLabel>
         <Select
+          disabled={!ability.can('edit', 'CustomerSettings')}
           label={'Payment Terms'}
           onChange={handleChange}
           value={value}>
@@ -77,14 +79,16 @@ export default function PaymentTerms({ customer, header, dispatch }:PaymentTerms
         </Select>
       </FormControl>
     
-      <Fab
-        color={'primary'}
-        disabled={isSubmitDisabled}
-        onClick={handleSubmit}>
-        {isSubmiting ? (
-          <CircularProgress size={25} />
-        ) : "Save"}
-      </Fab>
+      <Can I={'edit'} a={'CustomerSettings'}>
+        <Fab
+          color={'primary'}
+          disabled={isSubmitDisabled}
+          onClick={handleSubmit}>
+          {isSubmiting ? (
+            <CircularProgress size={25} />
+          ) : "Save"}
+        </Fab>
+      </Can>
     </div>
   </PaymentTermsContainer>;
 }

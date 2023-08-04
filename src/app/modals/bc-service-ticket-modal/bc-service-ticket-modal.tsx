@@ -84,6 +84,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import EditIcon from '@material-ui/icons/Edit';
+import { ability } from 'app/config/Can';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -161,6 +162,7 @@ function BCServiceTicketModal(
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
   const [submitSelectedIndex, setSubmitSelectedIndex] = useState(0);
   const submitOptions = ["Submit", "Submit and Send"]
+  const hasPORequiredBypass = ability.can('bypass', 'PORequirement');
 
   const filter = createFilterOptions();
 
@@ -562,7 +564,7 @@ function BCServiceTicketModal(
       }
 
       if (!ticket.type) {
-        if (isPORequired && !tempData.customerPO) {
+        if (isPORequired && !tempData.customerPO && !hasPORequiredBypass) {
           tempData.type = "PO Request";
         } else {
           tempData.type = "Ticket";
@@ -588,7 +590,7 @@ function BCServiceTicketModal(
       };
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
-        editTicketObj.type = ticket.type;
+        editTicketObj.type = ticket.type === "PO Request" && hasPORequiredBypass ? 'Ticket' : ticket.type;
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
