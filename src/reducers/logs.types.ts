@@ -1,6 +1,6 @@
 
 
-export const enum logType {
+export  enum logType {
     CREATED = 'CREATED ',
     UPDATED = 'UPDATED ',
     VOID = 'VOID ',
