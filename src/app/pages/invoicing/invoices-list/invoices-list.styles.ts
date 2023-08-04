@@ -30,14 +30,12 @@ export default (theme: Theme): any => ({
     textTransform: 'capitalize',
     borderRadius: 8,
     borderColor: GRAY5,
-    boxShadow: `0 3px ${GRAY5}`,
     zIndex: 1000
   },
   syncButton: {
     textTransform: 'capitalize',
     borderRadius: 8,
     borderColor: GRAY5,
-    boxShadow: `0 3px ${GRAY5}`,
     zIndex: 1000
   },
   exportButton: {
