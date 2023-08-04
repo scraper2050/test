@@ -95,7 +95,7 @@ function BCEditJobCostingModal({
 
     setTabsData(newTabsData);
 
-    //Get Commission Histories
+    //Get Pay Histories
     getCommissionHistoryByJob(job._id).then((res) => {
       setJobCommisionHistory(res);
       setCommissionLoading(false);

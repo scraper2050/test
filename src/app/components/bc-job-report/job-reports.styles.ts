@@ -214,8 +214,6 @@ export default (theme: Theme): any => ({
     "display": "flex",
     "align-items": "center",
     "width": "155px",
-    "position": "absolute",
-    "margin-left": "248px"
   },
   "customerNoteText": {
     "margin-left": "4px",

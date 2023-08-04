@@ -241,6 +241,7 @@ function BCJobModal({
   const [contactValue, setContactValue] = useState<any>([]);
   const [isHomeOwnerAutocompleted, setIsHomeOwnerAutocompleted] = useState<any>(false);
   const [homeOwnerAutocompleted, sethomeOwnerAutocompleted] = useState<any>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   let {ticket = {}} = job;
 
@@ -447,7 +448,7 @@ function BCJobModal({
   }, [homeOwners]);
 
   useEffect(() => {
-    const tasks = getJobTasks(job, items,customers,FormikValues.customerId);
+    const tasks = getJobTasks(job, items,customers,FormikValues.customerId || job.ticket?.customer?._id);
     setFieldValue('tasks', tasks);
   }, [items]);
 
@@ -666,6 +667,8 @@ function BCJobModal({
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: async(values: any, {setSubmitting}: any) => {
+      setIsSubmitting(true);
+
       const tempData = {...values};
       tempData.scheduleTimeAMPM = tempData.scheduleTimeAMPM?.index || 0;
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
@@ -818,6 +821,7 @@ function BCJobModal({
           throw err;
         })
         .finally(() => {
+          setIsSubmitting(false);
           setSubmitting(false);
         });
     },
@@ -847,8 +851,7 @@ function BCJobModal({
     values: FormikValues,
     handleChange: formikChange,
     handleSubmit: FormikSubmit,
-    setFieldValue,
-    isSubmitting,
+    setFieldValue
   } = form;
 
   const closeModal = () => {
