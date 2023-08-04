@@ -60,7 +60,6 @@ function EmailPORequestModal({ classes, data, type }: any) {
             );
         }, 200);
     };
-    
 
     const refresh = () => {
         // Dispatch your action here
@@ -478,7 +477,6 @@ function EmailPORequestModal({ classes, data, type }: any) {
                                         color="primary"
                                         type={'submit'}
                                         variant={'contained'}
-                                        onClick={refresh}
                                     >
                                         Submit
                                     </Button>
@@ -489,7 +487,9 @@ function EmailPORequestModal({ classes, data, type }: any) {
                                     classes={{
                                         root: classes.closeButton,
                                     }}
-                                    onClick={() => closeModal()}
+                                        onClick={() => {
+                                            refresh();
+                                            closeModal(); } }
                                     variant={'outlined'}
                                 >
                                     Close
