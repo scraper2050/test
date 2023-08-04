@@ -4,6 +4,7 @@ import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { markAsRead } from 'api/invoicing.api';
 import { useSelector } from 'react-redux';
+import { getAllPORequestsAPI } from 'api/po-requests.api';
 
 interface PopupProps {
   mouseLeave: () => void;
@@ -83,6 +84,11 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, inv
     e.stopPropagation();
     mouseLeave();
     dispatch(markAsRead(incoiceFlag, invoiceId, advanceFilterInvoiceData))
+    if (!incoiceFlag){
+      dispatch(getAllPORequestsAPI());
+    }
+     
+
   };
 
   const emailStyles={
