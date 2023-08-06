@@ -80,7 +80,6 @@ const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
 const AdminPayrollPage = React.lazy(() => import('../admin/payroll/payroll'));
-const AdminIntegrationsPage = React.lazy(() => import('../admin/integrations/integrations'));
 const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
@@ -788,11 +787,6 @@ function Main(): any {
                   exact
                   path={'/main/admin/payroll'}
                   title={'Admin'}
-                />
-                <AuthRoute
-                  Component={AdminIntegrationsPage}
-                  path={'/main/admin/integrations'}
-                  title={'Integrations'}
                 />
                 <AuthRoute
                   actionData={{

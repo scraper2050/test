@@ -368,12 +368,6 @@ function BCAdminSidebar({
     //   'link': '/main/admin/payroll'
     // },
     {
-      'key': 'integrations',
-      'label': 'Integrations',
-      'icon': <SettingsApplicationsIcon />,
-      'link': '/main/admin/integrations'
-    },
-    {
       'key': 'data',
       'label': 'Data',
       'icon': <DescriptionIcon />,
