@@ -7,7 +7,8 @@ import React, { useState } from 'react';
 
 import BCTabs from 'app/components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
-import BcSalesTax from 'app/components/bc-sales-tax/bc-sales-tax';
+import BCSalesTax from 'app/components/bc-sales-tax/bc-sales-tax';
+import BCJobCosting from 'app/components/bc-job-costing/bc-job-costing'
 
 interface Props {
     classes: any;
@@ -32,11 +33,11 @@ function AdminPricingItemsPage({ classes, children }: Props) {
                         onChangeTab={handleTabChange}
                         tabsData={[
                             {
-                                'label': 'Item Tiers',
+                                'label': 'Pricing Tiers',
                                 'value': 0
                             },
                             {
-                                'label': 'Pricing Tiers',
+                                'label': 'Job Costing Tiers',
                                 'value': 1
                             },
                             
@@ -53,33 +54,18 @@ function AdminPricingItemsPage({ classes, children }: Props) {
                         className={`${classes.dataContainer} `}
                         hidden={curTab !== 0}
                         id={'0'}>
-                        <MainContainer>
-                            <PageContainer>
-                                <BCItemTiers />
-                            </PageContainer>
-
-                        </MainContainer>
+                        <BCItemTiers />
                     </div>
-
                     <div
                         hidden={curTab !== 1}
-                        style={{
-                            'padding': '40px'
-                        }}
                         id={'1'}>
-                        Second page
+                        <BCJobCosting />
                     </div>
                     <div
                         hidden={curTab !== 2}
-                        style={{
-                            'padding': '40px'
-                        }}
                         id={'2'}>
-                        <BcSalesTax />
+                        <BCSalesTax />
                     </div>
-
-
-
                 </SwipeableViews>
 
             </PageContainer>

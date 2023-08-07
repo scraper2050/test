@@ -15,12 +15,13 @@ import { ability } from 'app/config/Can';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../src/constants';
 import { TaxItem } from 'actions/tax/tax.types';
+import { MainContainer, PageContainer } from '../bc-job-report/job-reports.styles';
 
 
 
 interface BcSalesTaxProps extends WithStyles<typeof styles> { }
 
-const BcSalesTax: FC<BcSalesTaxProps> = ({ classes }) => {
+const BCSalesTax: FC<BcSalesTaxProps> = ({ classes }) => {
     const dispatch = useDispatch();
     const { 'data': taxes, isLoading, updating } = useSelector(({ tax }: any) => tax);
 
@@ -123,7 +124,8 @@ const BcSalesTax: FC<BcSalesTaxProps> = ({ classes }) => {
     }, []);
 
     return (
-        <Grid container direction={'column'} className={classes.container}>
+        <MainContainer>
+            <PageContainer>
                 <BcTableContainer
                     columns={columns}
                     isLoading={isLoading}
@@ -133,13 +135,13 @@ const BcSalesTax: FC<BcSalesTaxProps> = ({ classes }) => {
                     tableData={taxes}
                     toolbar={Toolbar()}
                 />
-                
-        </Grid>
+            </PageContainer>
+        </MainContainer>
     );
 };
 
 export default withStyles(
     styles,
     { 'withTheme': true }
-)(BcSalesTax);
+)(BCSalesTax);
 
