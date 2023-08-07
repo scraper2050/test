@@ -84,7 +84,7 @@ function BCAddAndEditSalesTaxModal({ item } : ModalProps) {
         dispatch(errorSnackBar(err.message));
       }
       
-      dispatch(success(`Taxes successfully ${isAdd ? 'added' : 'updated'}`));
+      dispatch(success(response.message));
       dispatch(getAllSalesTaxAPI());
       dispatch(closeModal())
     },
