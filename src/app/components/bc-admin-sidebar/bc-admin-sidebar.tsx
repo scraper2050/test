@@ -374,6 +374,12 @@ function BCAdminSidebar({
       'link': '/main/admin/data'
     },
     {
+      'key': 'company_settings',
+      'label': 'Company Settings',
+      'icon': <SettingsApplicationsIcon />,
+      'link': '/main/admin/company-settings'
+    },
+    {
       'label': 'Groups',
       'icon': <GroupIcon />,
       'link': '/main/employees/group'

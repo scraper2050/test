@@ -24,6 +24,7 @@ import { info } from '../../../actions/snackbar/snackbar.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { getUserPermissionsAction } from 'actions/permissions/permissions.action';
 
+const AdminCompanySettingsPage = React.lazy(() => import('../admin/company-settings/company-settings'));
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
@@ -682,6 +683,13 @@ function Main(): any {
                   path={'/main/admin/company-profile'}
                   title={'Admin'}
                   hasAccess={rolesAndPermissions?.admin?.manageCompanySettings}
+                />
+                <AuthRoute
+                  Component={AdminCompanySettingsPage}
+                  exact
+                  path={'/main/admin/company-settings'}
+                  title={'Company Settings'}
+                  hasAccess={ability.can('manage', 'Company')}
                 />
                 <AuthRoute
                   Component={AdminEmployeesPage}
