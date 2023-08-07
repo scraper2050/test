@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import styles from './company-settings.style';
-import { Fab, Grid, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import AdminIntegrationsPage from './integrations/integrations'
 
 import React, { useState } from 'react';

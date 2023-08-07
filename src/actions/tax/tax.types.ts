@@ -5,3 +5,10 @@ export const types = {
   'SET_SALES_TAX_LOADING': 'SET_SALES_TAX_LOADING',
   'UPDATE_SALES_TAX': 'UPDATE_SALES_TAX'
 };
+
+export interface TaxItem {
+  _id: string;
+  state: string;
+  tax: number;
+  company: string;
+}
