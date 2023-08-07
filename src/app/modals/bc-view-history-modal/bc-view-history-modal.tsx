@@ -117,7 +117,6 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.Element {
-    console.log("invoice log data in modal",data);
     const dispatch = useDispatch();
     const track = job.track ? job.track : [];
     const closeModal = () => {
@@ -142,9 +141,9 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
     const vendorsList = useSelector(({ vendors }: any) =>
         vendors.data.filter((vendor: any) => vendor.status <= 1)
     );
-    useEffect(() => {
-        dispatch(getEmployeesForJobAction());
-    }, []);
+    // useEffect(() => {
+    //     dispatch(getEmployeesForJobAction());
+    // }, []);
     const columns: any = [
         {
             Header: 'User',
@@ -152,18 +151,10 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             sortable: true,
             Cell({ row }: any) {
                 
-                
                 return (
-                    <>{
-                    data?.invoiceLogs.map((item: any) => (
-                        <Typography className={classes.description}>
-                            {item.createdBy?.profile?.displayName}
-                        </Typography>
-
-                    ))
-
-                }
-                    </>
+                      <Typography className={classes.description}>
+                        {row?.original?.createdBy?.profile?.displayName ? row.original.createdBy.profile.displayName:"NULL"}
+                    </Typography>
                 );
                 
             },
@@ -174,16 +165,9 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             sortable: true,
             Cell({ row }: any) {
                 return (
-                    <>{
-                        data?.invoiceLogs.map((item: any) => (
-                            <Typography className={classes.description}>
-                                {item?.createdAt.replace("T"," ").split(".")[0]}
-                            </Typography>
-
-                        ))
-
-                    }
-                    </>
+                    <Typography className={classes.description}>
+                        {row?.original?.createdAt?.replace("T", " ")?.split(".")[0]}
+                    </Typography>
                 );
             },
         },
@@ -193,16 +177,9 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             sortable: true,
             Cell({ row }: any) {
                 return (
-                    <>{
-                        data?.invoiceLogs.map((item: any) => (
-                            <Typography className={classes.description}>
-                                {item.type}
-                            </Typography>
-
-                        ))
-
-                    }
-                    </>
+                    <Typography className={classes.description}>
+                        {row?.original?.type}
+                    </Typography>
                 );
             },
         },
@@ -217,10 +194,10 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         isDefault
                         isLoading={loading}
                         onRowClick={() => { }}
-                        pageSize={5}
-                        pagination={true}
+                        // pageSize={5}
+                        // pagination={true}
                         stickyHeader
-                        tableData={[{ action: '', date: job.createdAt, user: job.createdBy }, ...track].reverse()}
+                    tableData={data?.invoiceLogs}
                     />
                 </div>
       

@@ -4,7 +4,6 @@ import request from 'utils/http.service';
 
 export const getLogs = async (data:any) => {
   try {
-    console.log("fetching invoice logs", data)
     const requestObj:any = {}
     if(data)
     {

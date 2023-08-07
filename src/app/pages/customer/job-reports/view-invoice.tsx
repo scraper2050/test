@@ -114,9 +114,7 @@ function ViewInvoice({ classes, theme }: any) {
       dispatch(getCompanyProfileAction(user.company as string));
     }
   }, []);
-  useEffect(() => { if(invoiceLogs?.length){
-    console.log("invoiceLogs invoice detail", invoiceLogs)
-  }}, [invoiceLogs]);
+  
   useEffect(() => {
 
     if (invoiceDetail && invoiceDetail.job) {
