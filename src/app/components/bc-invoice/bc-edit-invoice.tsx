@@ -58,6 +58,7 @@ import {
   getEmployeesForJobAction
 } from "../../../actions/employees-for-job/employees-for-job.action";
 import {getVendors} from "../../../actions/vendor/vendor.action";
+import BCCircularLoader from '../bc-circular-loader/bc-circular-loader';
 
 interface Props {
   classes?: any;
@@ -66,6 +67,14 @@ interface Props {
 
 const invoicePageStyles = makeStyles((theme: Theme) =>
   createStyles({
+    voidTag:{
+    height: "auto",
+    background: "#f50057",
+    padding: "5px 10px",
+    borderRadius: "15px",
+    color: "white",
+    fontWeight: "bold"
+    },
     companyLogo: {
       width: '100%',
       '& > img': {
@@ -483,10 +492,12 @@ interface Props {
   customer: any;
   customersData: any;
   taxes: any;
+  isLoading:Boolean
   showSendInvoiceModalHandler: (invoiceId: string, customerId: string) => void;
   updateInvoiceHandler: (data: any) => Promise<any>;
   createInvoiceHandler: (data: any) => Promise<any>;
   voidInvoiceHandler: (invoiceId: string) => void;
+  unvoidInvoiceHandler: (invoiceId: string) => void;
   getItems: (includeDiscountItems?: boolean) => Promise<any>;
 }
 
@@ -525,6 +536,8 @@ function BCEditInvoice({
   updateInvoiceHandler,
   createInvoiceHandler,
   voidInvoiceHandler,
+  isLoading,
+  unvoidInvoiceHandler,
   getItems,
   }: Props) {
   const invoiceStyles = invoicePageStyles();
@@ -597,7 +610,10 @@ function BCEditInvoice({
   const handleVoidInvoice = () => {
     voidInvoiceHandler(invoiceData._id)
   }
+  const handleUnVoidInvoice=()=>{
+    unvoidInvoiceHandler(invoiceData._id)
 
+  }
   const handleTicketClick = () => {
     dispatch(setModalDataAction({
       data: {
@@ -767,7 +783,7 @@ function BCEditInvoice({
 
   return (
     <MuiThemeProvider theme={theme}>
-      <Formik
+      {isLoading ? <BCCircularLoader heightValue={'100vh'} /> : <Formik
         initialValues={{
           invoice_id: invoiceData?._id,
           invoice_title: 'INVOICE',
@@ -862,7 +878,7 @@ function BCEditInvoice({
                       Job Details
                     </Button>
                   )}
-                  {!invoiceData?.isDraft && (
+                  {!invoiceData?.isDraft && !invoiceData?.isVoid && (
                     <Button
                       variant="contained"
                       color="secondary"
@@ -870,6 +886,16 @@ function BCEditInvoice({
                       onClick={handleVoidInvoice}
                     >
                       Void Invoice
+                    </Button>
+                  )}
+                  {!invoiceData?.isDraft && invoiceData?.isVoid && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleUnVoidInvoice}
+                    >
+                      Duplicate Invoice
                     </Button>
                   )}
                   <Button
@@ -925,8 +951,12 @@ function BCEditInvoice({
                         </div>
                       </Grid>
                       <Grid item xs>
+                        <FormControl className={invoiceStyles.formField}>
+                          {invoiceData?.isVoid &&<span className={invoiceStyles.voidTag}>Void</span>}
+ </FormControl>
 
                         <FormControl className={invoiceStyles.formField}>
+
                           <InputBase
                             id="invoice-title"
                             name="invoice_title"
@@ -1436,7 +1466,7 @@ function BCEditInvoice({
                       Job Details
                     </Button>
                   )}
-                  {!invoiceData?.isDraft && (
+                  {!invoiceData?.isDraft && !invoiceData?.isVoid && (
                     <Button
                       variant="contained"
                       color="secondary"
@@ -1444,6 +1474,16 @@ function BCEditInvoice({
                       onClick={handleVoidInvoice}
                     >
                       Void Invoice
+                    </Button>
+                  )}
+                  {!invoiceData?.isDraft && invoiceData?.isVoid && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                      onClick={handleUnVoidInvoice}
+                    >
+                      Duplicate Invoice
                     </Button>
                   )}
                   <Button
@@ -1470,7 +1510,7 @@ function BCEditInvoice({
             </Form>
           )
         }}
-      </Formik>
+      </Formik>}
     </MuiThemeProvider>
   )
 }
