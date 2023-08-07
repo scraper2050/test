@@ -689,7 +689,7 @@ function Main(): any {
                   exact
                   path={'/main/admin/company-settings'}
                   title={'Company Settings'}
-                  hasAccess={ability.can('manage', 'Company')}
+                  hasAccess={rolesAndPermissions?.admin?.manageCompanySettings}
                 />
                 <AuthRoute
                   Component={AdminEmployeesPage}
