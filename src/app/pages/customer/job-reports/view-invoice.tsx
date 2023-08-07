@@ -430,11 +430,11 @@ function ViewInvoice({ classes, theme }: any) {
                     <IconButton
                       color="default"
                       size="medium"
-                      style={{padding:"5px"}}
+                      style={{padding:"5px 0px"}}
                       className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
                     >
                       <InfoOutlinedIcon style={{ color: 'grey', fontSize: '25px', }} />
-                    </IconButton> Created By:
+                    </IconButton><b> Created By</b>
                   </Typography>
                   <Typography color="inherit" className={invoiceStyles.invoiceCreatedBy}>
                     {invoiceDetail?.createdBy?.profile?.displayName}
@@ -464,8 +464,8 @@ function ViewInvoice({ classes, theme }: any) {
                 </React.Fragment>
               }
             >
-              <Button onClick={handleTooltipOpen}> 
-              <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', }}  />
+              <Button onClick={handleTooltipOpen} style={{minWidth: "40px", width: "40px" }} > 
+                <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', minWidth: "40px", width: "40px" }}  />
               </Button>
             </HtmlTooltip>
         
