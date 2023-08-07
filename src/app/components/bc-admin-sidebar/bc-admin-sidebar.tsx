@@ -374,7 +374,7 @@ function BCAdminSidebar({
       'link': '/main/admin/data'
     },
     {
-      'key': 'company_settings',
+      'key': 'company',
       'label': 'Company Settings',
       'icon': <SettingsApplicationsIcon />,
       'link': '/main/admin/company-settings'
