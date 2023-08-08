@@ -11,6 +11,8 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PrintIcon from '@material-ui/icons/GetApp';
 import EmailIcon from '@material-ui/icons/Email';
+import AttachMoney from '@material-ui/icons/AttachMoney';
+
 import classNames from "classnames";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
@@ -116,13 +118,9 @@ function ViewInvoice({ classes, theme }: any) {
     }
   }, []);
   useEffect(() => {
-    if (invoiceDetail) {
-
+    if (invoiceDetail?._id && invoiceLogs!=null) {
       let logs = invoiceLogs;
-      if (logs.filter((logItem: any) => logItem.type == "CREATED").length) {
-        setInvoiceLogsData(logs);
-      }
-      else {
+      if (logs.filter((logItem: any) => logItem.type == "CREATED").length==0) {
         logs.unshift({
           "_id": "64d165ba67441a506b9b0e94-invoice",
           "invoiceId": invoiceDetail.invoiceId,
@@ -137,14 +135,14 @@ function ViewInvoice({ classes, theme }: any) {
           "updatedAt": invoiceDetail.updatedAt,
           "__v": 0
         })
-
-        setInvoiceLogsData(logs);
-
       }
+
+      setInvoiceLogsData(logs);
+
 
     }
     // console.log("my logs",logs);
-  }, [invoiceLogs])
+  }, [invoiceLogs, invoiceDetail])
 
   useEffect(() => {
 
@@ -430,7 +428,25 @@ function ViewInvoice({ classes, theme }: any) {
               />
             )}
           </div>
-          <div>
+          <div style={{ display: 'flex' }}>
+            {
+            invoiceDetail.job?.customer?.notes && 
+            (
+              <LightTooltip title={invoiceDetail.job?.customer?.notes}>
+                <div className={invoiceStyles.customerNoteContainer}>
+                  <IconButton
+                    component="span"
+                    color={'primary'}
+                    size="small"
+                  >
+                    <InfoIcon></InfoIcon>
+                  </IconButton>
+                  <Typography variant={'subtitle1'} className={invoiceStyles.customerNoteText}>
+                    Customer Notes
+                  </Typography>
+                </div>
+              </LightTooltip>
+            )}
             <HtmlTooltip
 
               PopperProps={{
@@ -487,12 +503,14 @@ function ViewInvoice({ classes, theme }: any) {
                 <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', minWidth: "40px", width: "40px" }} />
               </Button>
             </HtmlTooltip>
+          
             {showJobCosting &&
               <Button
                 variant="outlined"
-                color="primary"
+                color="default"
+                className={invoiceStyles.margin}
                 onClick={openEditJobCostingModal}
-                classes={{ root: invoiceStyles.costingButton, label: invoiceStyles.buttonLabel }}
+                startIcon={<AttachMoney />}
               >Job Costing
               </Button>
             }
