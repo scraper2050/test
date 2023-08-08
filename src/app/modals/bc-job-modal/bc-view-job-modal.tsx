@@ -366,7 +366,7 @@ function BCViewJobModal({
             <Grid item xs>
               <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
             </Grid>
-            <Grid item style={{width: 100}}>
+            <Grid item style={{width: 140}}>
             </Grid>
           </Grid>
             <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
@@ -380,7 +380,7 @@ function BCViewJobModal({
               <Grid item xs>
                   <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{calculateJobType(task).map((type: any, i: number) => <span key={i} className={'jobTypeText'}>{type.title} - {type.quantity} - ${type.price}</span>)}</Typography>
               </Grid>
-              <Grid item style={{width: 100}}>
+              <Grid item style={{width: 140}}>
                 <BCJobStatus status={task.status || 0} size={'small'}/>
               </Grid>
               </Grid>

@@ -21,6 +21,7 @@ export const STATUSES = [
   { id: 3, title: 'Cancelled', icon: IconCancelled, color: '#A107FF'},
   { id: 4, title: 'Rescheduled', icon: IconRescheduled, color: '#828282' },
   { id: 6, title: 'Incomplete', icon: IconIncomplete, color: '#F50057'},
+  { id: 7, title: 'Partially Completed', icon: IconCompleted, color: '#50AE55' },
 ];
 
 export const statusReference: {
@@ -37,7 +38,8 @@ export const statusReference: {
   '3': {text: 'Canceled', icon: IconCancelled, color: '#A107FF', statusNumber: '3'},
   '4': {text: 'Rescheduled', icon: IconRescheduled, color: '#828282', statusNumber: '4'},
   '5': {text: 'Paused', icon: IconPaused, color: '#FA8029', statusNumber: '5'},
-  '6': {text: 'Incomplete', icon: IconIncomplete, color: '#F50057', statusNumber: '6'}
+  '6': {text: 'Incomplete', icon: IconIncomplete, color: '#F50057', statusNumber: '6'},
+  '7': {text: 'Partially Completed', icon: IconCompleted, color: '#50AE55', statusNumber: '7' },
 }
 
 export const jobRequestStatusReference: {
