@@ -195,7 +195,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         isLoading={loading}
                         onRowClick={() => { }}
                         // pageSize={5}
-                        // pagination={true}
+                        pagination={false}
                         stickyHeader
                     tableData={data?.invoiceLogs}
                     />
