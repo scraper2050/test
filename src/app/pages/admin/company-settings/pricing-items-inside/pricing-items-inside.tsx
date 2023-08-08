@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import styles from './pricing-items-inside.style';
-import { withStyles } from '@material-ui/core';
+import { withStyles, Typography } from '@material-ui/core';
 import BCItemTiers from '../../../../components/bc-item-tiers/bc-item-tiers';
+import BCInvoiceNumber from 'app/components/bc-invoice-number/bc-invoice-number';
 
 import React, { useState } from 'react';
 
@@ -9,6 +10,7 @@ import BCTabs from 'app/components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import BCSalesTax from 'app/components/bc-sales-tax/bc-sales-tax';
 import BCJobCosting from 'app/components/bc-job-costing/bc-job-costing'
+import BCPayementTerms from 'app/components/bc-payement-terms/bc-payement-terms';
 
 interface Props {
     classes: any;
@@ -37,14 +39,17 @@ function AdminPricingItemsPage({ classes, children }: Props) {
                                 'value': 0
                             },
                             {
-                                'label': 'Job Costing Tiers',
+                                'label': 'Payement Terms',
                                 'value': 1
                             },
-                            
                             {
-                                'label': 'Sales tax',
+                                'label': 'Sales Tax',
                                 'value': 2
-                            }
+                            },
+                            {
+                                'label': 'Invoice Number',
+                                'value': 3
+                            },
                         ]}
                     />
                 </div>
@@ -59,12 +64,17 @@ function AdminPricingItemsPage({ classes, children }: Props) {
                     <div
                         hidden={curTab !== 1}
                         id={'1'}>
-                        <BCJobCosting />
+                        <BCPayementTerms />
                     </div>
                     <div
                         hidden={curTab !== 2}
                         id={'2'}>
                         <BCSalesTax />
+                    </div>
+                    <div
+                        hidden={curTab !== 3}
+                        id={'3'}>
+                        <BCInvoiceNumber />
                     </div>
                 </SwipeableViews>
 
