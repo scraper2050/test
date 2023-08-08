@@ -718,12 +718,12 @@ function Main(): any {
                   path={'/main/admin/equipment-type'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminGroupsPage}
                   exact
                   path={'/main/admin/groups'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   Component={AdminServiceAndProductsPage}
                   exact
@@ -736,12 +736,12 @@ function Main(): any {
                   path={'/main/admin/services-and-products/services/:type'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminInvoicingPage}
                   exact
                   path={'/main/admin/invoicing'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   Component={AdminInvoicingItemsPage}
                   exact
@@ -790,12 +790,12 @@ function Main(): any {
                   path={'/main/admin/vendors'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminPayrollPage}
                   exact
                   path={'/main/admin/payroll'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   actionData={{
                     'link': '/main/admin/vendors/:contractorName',

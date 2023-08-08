@@ -318,24 +318,24 @@ function BCAdminSidebar({
       'icon': <BuildIcon />,
       'link': '/main/admin/equipment-type'
     },
-    {
-      'key': 'groups',
-      'label': 'Groups',
-      'icon': <GroupIcon />,
-      'link': '/main/admin/groups'
-    },
+    // {
+    //   'key': 'groups',
+    //   'label': 'Groups',
+    //   'icon': <GroupIcon/>,
+    //   'link': '/main/admin/groups'
+    // },
     {
       'key': 'services_products',
       'label': 'Services & Products',
       'icon': <WorkIcon />,
       'link': '/main/admin/services-and-products'
     },
-    {
-      'key': 'invoicing',
-      'label': 'Invoicing',
-      'icon': <LibraryBooksIcon />,
-      'link': '/main/admin/invoicing'
-    },
+    // {
+    //   'key': 'invoicing',
+    //   'label': 'Invoicing',
+    //   'icon': <LibraryBooksIcon />,
+    //   'link': '/main/admin/invoicing'
+    // },
     /*
      * {
      *   'label': 'Job Types',
@@ -362,6 +362,11 @@ function BCAdminSidebar({
       'link': '/main/admin/vendors',
       'flag': currentDivision.isDivisionFeatureActivated && vendors.unsignedVendorsFlag
     },
+    // {
+    //   'label': 'Payroll',
+    //   'icon': <PaymentIcon/>,
+    //   'link': '/main/admin/payroll'
+    // },
     // {
     //   'label': 'Payroll',
     //   'icon': <PaymentIcon />,
