@@ -376,22 +376,12 @@ function ViewInvoice({ classes, theme }: any) {
             <IconButton
               color="default"
               size="small"
-              className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+              className={classNames(invoiceStyles.bgDark)}
               onClick={handleBackButtonClick}
             >
               <ArrowBackIcon/>
             </IconButton>
-            {showJobCosting && 
-              <div>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={openEditJobCostingModal}
-                  classes={{ root: invoiceStyles.costingButton, label: invoiceStyles.buttonLabel }}
-                >Job Costing
-                </Button>
-              </div>
-            }
+         
             {invoiceDetail?.isDraft ? (
               <CSChip
                 label={'Draft'}
@@ -466,7 +456,15 @@ function ViewInvoice({ classes, theme }: any) {
                 <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', minWidth: "40px", width: "40px" }}  />
               </Button>
             </HtmlTooltip>
-        
+            {showJobCosting &&
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={openEditJobCostingModal}
+                  classes={{ root: invoiceStyles.costingButton, label: invoiceStyles.buttonLabel }}
+                >Job Costing
+                </Button>
+            }
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
