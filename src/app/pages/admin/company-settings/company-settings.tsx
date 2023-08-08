@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import styles from './company-settings.style';
-import { withStyles } from '@material-ui/core';
+import { Typography, withStyles } from '@material-ui/core';
 import AdminIntegrationsPage from './integrations/integrations'
 
 import React, { useState } from 'react';
 import BCTabs from 'app/components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import AdminPricingItemsPage from './pricing-items-inside/pricing-items-inside';
+import AdminJobCostingPage from './job-costing/job-costing';
 
 interface Props {
   classes: any;
@@ -35,12 +36,16 @@ function AdminCompanySettingsPage ({ classes, children }: Props) {
               'value': 0
             },
             {
-              'label': 'Pricing/Items-inside',
+              'label': 'Invoicing',
               'value': 1
             },
             {
-              'label': 'Integrations',
+              'label': 'Job Costing',
               'value': 2
+            },
+            {
+              'label': 'Integrations',
+              'value': 3
             }
           ]}
         />
@@ -50,7 +55,13 @@ function AdminCompanySettingsPage ({ classes, children }: Props) {
           <div
             className={`${classes.dataContainer} `}
             hidden={curTab !== 0}
-            id={'0'}></div>
+            id={'0'}
+            style={{paddingTop: '20px'}}
+            >
+              <Typography align={'left'} variant={'h2'} color={'primary'}>
+                <strong>{'Company Settings'}</strong>
+              </Typography>
+            </div>
           <div
             hidden={curTab !== 1}
             id={'1'}>
@@ -60,6 +71,13 @@ function AdminCompanySettingsPage ({ classes, children }: Props) {
           <div
             className={`${classes.dataContainer} `}
             hidden={curTab !== 2}
+            id={'2'}>
+            <AdminJobCostingPage />
+          </div>
+
+          <div
+            className={`${classes.dataContainer} `}
+            hidden={curTab !== 3}
             id={'2'}>
               <AdminIntegrationsPage />
           </div>
