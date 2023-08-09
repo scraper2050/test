@@ -1817,7 +1817,7 @@ function BCJobModal({
                 onClick={() => closeModal()}
                 variant={'outlined'}
               >Close</Button>
-              {job._id &&
+              {(job._id && job.status != 7) &&
                 <>
                   <Button
                     color={'secondary'}

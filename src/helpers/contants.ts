@@ -5,6 +5,7 @@ import {ReactComponent as IconCompleted} from "../assets/img/icons/map/icon-comp
 import {ReactComponent as IconCancelled} from "../assets/img/icons/map/icon-cancelled.svg";
 import {ReactComponent as IconRescheduled} from "../assets/img/icons/map/icon-rescheduled.svg";
 import {ReactComponent as IconIncomplete} from "../assets/img/icons/map/icon-incomplete.svg";
+import {ReactComponent as IconPartiallyCompleted} from "../assets/img/icons/map/icon-partially-completed.svg";
 
 export enum SocketMessage {
   CREATESERVICETICKET= 'createServiceTicketMsg',
@@ -20,8 +21,7 @@ export const STATUSES = [
   { id: 2, title: 'Completed', icon: IconCompleted, color: '#50AE55'},
   { id: 3, title: 'Cancelled', icon: IconCancelled, color: '#A107FF'},
   { id: 4, title: 'Rescheduled', icon: IconRescheduled, color: '#828282' },
-  { id: 6, title: 'Incomplete', icon: IconIncomplete, color: '#F50057'},
-  { id: 7, title: 'Partially Completed', icon: IconCompleted, color: '#50AE55' },
+  { id: 7, title: 'Partially Completed', icon: IconPartiallyCompleted, color: '#F50057' }
 ];
 
 export const statusReference: {
@@ -39,7 +39,7 @@ export const statusReference: {
   '4': {text: 'Rescheduled', icon: IconRescheduled, color: '#828282', statusNumber: '4'},
   '5': {text: 'Paused', icon: IconPaused, color: '#FA8029', statusNumber: '5'},
   '6': {text: 'Incomplete', icon: IconIncomplete, color: '#F50057', statusNumber: '6'},
-  '7': {text: 'Partially Completed', icon: IconCompleted, color: '#50AE55', statusNumber: '7' },
+  '7': { text: 'Partially Completed', icon: IconPartiallyCompleted, color: '#F50057', statusNumber: '7' },
 }
 
 export const jobRequestStatusReference: {

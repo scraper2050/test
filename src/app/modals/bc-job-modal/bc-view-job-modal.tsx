@@ -6,7 +6,8 @@ import {
   Typography,
   withStyles,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Tooltip
 } from '@material-ui/core';
 import React, {useEffect, useMemo, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,11 +30,13 @@ import {
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
 import {getContacts} from "../../../api/contacts.api";
-import {callUpdateJobAPI} from "../../../api/job.api";
+import {callUpdateJobAPI, updatePartialJob} from "../../../api/job.api";
 import {refreshJobs} from "../../../actions/job/job.action";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
 import BCJobStatus from "../../components/bc-job-status";
 import { Job } from 'actions/job/job.types';
+import BCMenuButton from 'app/components/bc-menu-more';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const initialJobState = {
   customer: {
@@ -83,7 +86,10 @@ function BCViewJobModal({
         let jobType = {
           title: type.jobType?.title,
           quantity: type.quantity || 1,
-          price: type.price || 0
+          price: type.price || 0,
+          status: type.status,
+          completedComment: type.completedComment,
+          completedCount: type.completedCount
         };
         
         if (!("price" in type)) {
@@ -309,11 +315,58 @@ function BCViewJobModal({
     }, 200);
   };
   
+  const PARTIALLY_COMPLETED_ITEMS = [
+    { id: 0, title: 'Close Job-No Further Action' },
+    { id: 1, title: 'Close Job and Create New Ticket' },
+    { id: 2, title: 'Reschedule Job' },
+  ];
+
+  const handleMenuButtonClick = async (event: any, id: number) => {
+    switch (id) {
+      case 0:
+        let payload = {
+          jobId: job._id,
+          action: id
+        }
+        await updatePartialJob(payload);
+        dispatch(refreshJobs(true));
+        dispatch(closeModalAction());
+        setTimeout(() => {
+          dispatch(
+            setModalDataAction({
+              data: {},
+              type: '',
+            })
+          );
+        }, 200);
+        break;
+      case 1:
+        break;
+      case 2:
+          job.scheduleDate = null;
+          
+          dispatch(setModalDataAction({
+            'data': {
+              'job': job,
+              'modalTitle': 'Reschedule Job',
+              'removeFooter': false
+            },
+            'type': modalTypes.EDIT_JOB_MODAL
+          }));
+          setTimeout(() => {
+            dispatch(openModalAction());
+          }, 200);
+        break;
+      default:
+        break;
+    }
+  }
+  
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
+        <Grid container xs={12} className={classes.toolbarButton} >
         {vendorWithCommisionTier.length > 0 &&
-          <Grid item xs={12}>
             <Button
               color='primary'
               variant="outlined"
@@ -322,8 +375,18 @@ function BCViewJobModal({
             >
               Job Costing
             </Button>
-          </Grid>
         }
+        { job.status == 7 && (
+          <div className={classes.closeButton}>
+            <span className={classes.closeButtonLabel}>Close Job</span>
+              <BCMenuButton
+              icon={ArrowDropDownIcon}
+              items={PARTIALLY_COMPLETED_ITEMS}
+              handleClick={handleMenuButtonClick}
+              />
+          </div>
+        )}
+        </Grid>
         <Grid item style={{width: '40%'}}>
           {canEdit &&
             <>
@@ -378,7 +441,24 @@ function BCViewJobModal({
               <Typography variant={'h6'} className={'previewText'} style={{borderTop: 1}}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
               </Grid>
               <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{calculateJobType(task).map((type: any, i: number) => <span key={i} className={'jobTypeText'}>{type.title} - {type.quantity} - ${type.price}</span>)}</Typography>
+                <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{
+                  calculateJobType(task).map((type: any, i: number) => {
+                    if(type.status == 7) {
+                      if (type.completedComment) {
+                        return <Tooltip
+                          arrow
+                          title={type.completedComment}
+                        >
+                          <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
+                        </Tooltip>
+                      } else {
+
+                      }
+                    } else {
+                      return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
+                    }
+                  })
+                }</Typography>
               </Grid>
               <Grid item style={{width: 140}}>
                 <BCJobStatus status={task.status || 0} size={'small'}/>
@@ -413,12 +493,12 @@ function BCViewJobModal({
                 <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
               </Grid>
             </Grid>
-            <Grid container className={classes.innerRow} xs={12}>
+            <Grid container className={classes.innerRow} xs={6}>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>description</Typography>
                 <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.description || 'N/A'}</Typography>
               </Grid>
-        </Grid>
+            </Grid>
           </Grid>
           <Grid item container xs={4}>
             <Grid item xs>
@@ -556,7 +636,10 @@ const DataContainer = styled.div`
   .whiteButtonBg {
     background-color: #ffffff;
     border-radius: 8px;
-    margin-bottom: 10px
+  }
+
+  .jobTypeList{
+    cursor: pointer;
   }
 
   .MuiButton-containedSecondary {

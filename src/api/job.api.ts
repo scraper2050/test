@@ -567,3 +567,15 @@ export const callGetJobReportPDF = (id: string) => {
       });
   });
 };
+
+export const updatePartialJob: any = (payload: any) => {
+  return new Promise((resolve, reject) => {
+    requestApiV2(`/updatePartialJob`, 'POST', payload)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
