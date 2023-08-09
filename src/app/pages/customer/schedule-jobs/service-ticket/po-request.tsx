@@ -85,10 +85,10 @@ function PORequired({ classes, hidden }: any) {
     function Toolbar() {
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag));
                 dispatch(setCurrentPageIndex(0));
             }
-        }, [showAllPORequests]);
+        }, [showAllPORequests, bouncedEmailFlag]);
 
         useEffect(() => {
             if (loadCount.current !== 0) {
