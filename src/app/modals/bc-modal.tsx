@@ -88,6 +88,7 @@ import BcAddTicketDetailsModal
   from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
 import EmailModalPORequest from './bc-email-modal/bc-email-po-request-modal';
 import BCPORequestWarningModal from './bc-po-request-warning-modal/bc-po-request-warning-modal';
+import BCWarningModalV2 from './bc-warning-modal-v2/bc-warning-modal-v2-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -948,6 +949,17 @@ function BCModal() {
         });
         setComponent(<BCPORequestWarningModal
           po_request_id={data.po_request_id}
+        />);
+        break;
+      case modalTypes.WARNING_MODAL_V2:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCWarningModalV2
+          action={data.action}
+          message={data.message}
         />);
         break;
       default:
