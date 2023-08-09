@@ -34,6 +34,7 @@ function PORequired({ classes, hidden }: any) {
 
     const customers = useSelector(({ customers }: any) => customers.data);
     const [showAllPORequests, toggleShowAllPORequests] = useState(false);
+    const [bouncedEmailFlag, toggleBounceEmailFlag] = useState(false);
     const [selectionRange, setSelectionRange] = useState<Range | null>(null);
     const loadCount = useRef<number>(0);
     const customStyles = useCustomStyles();
@@ -97,7 +98,6 @@ function PORequired({ classes, hidden }: any) {
         }, [selectionRange]);
         return <>
             <FormControlLabel
-                classes={{ root: classes.noMarginRight }}
                 control={
                     <Checkbox
                         checked={showAllPORequests}
@@ -110,6 +110,21 @@ function PORequired({ classes, hidden }: any) {
                     />
                 }
                 label="Display All PO Requests"
+            />
+            <FormControlLabel
+                classes={{ root: classes.noMarginRight }}
+                control={
+                    <Checkbox
+                        checked={bouncedEmailFlag}
+                        onChange={() => {
+                            dispatch(setCurrentPageIndex(0))
+                            toggleBounceEmailFlag(!bouncedEmailFlag)
+                        }}
+                        name="checkedBouncedEmails"
+                        color="primary"
+                    />
+                }
+                label="Bounced Emails"
             />
             <BCDateRangePicker
                 range={selectionRange}
