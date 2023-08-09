@@ -2,14 +2,14 @@ import React from "react";
 import {Paper, Typography, Grid, Button, Checkbox, IconButton} from "@material-ui/core";
 import { green, grey, orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
-import QBIcon from "../../../../assets/img/qb.png";
-import { quickbooksCustomerSync, quickbooksItemsSync, quickbooksInvoicesSync } from "../../../../api/quickbooks.api";
-import { getCompanyProfile } from "../../../../api/user.api";
+import QBIcon from "../../../../../assets/img/qb.png";
+import { quickbooksCustomerSync, quickbooksItemsSync, quickbooksInvoicesSync } from "../../../../../api/quickbooks.api";
+import { getCompanyProfile } from "../../../../../api/user.api";
 import { useDispatch } from "react-redux";
-import {error, success} from "../../../../actions/snackbar/snackbar.action";
-import {openModalAction, setModalDataAction} from "../../../../actions/bc-modal/bc-modal.action";
-import {modalTypes} from "../../../../constants";
-import {setQuickbooksConnection} from "../../../../actions/quickbooks/quickbooks.actions";
+import {error, success} from "../../../../../actions/snackbar/snackbar.action";
+import {openModalAction, setModalDataAction} from "../../../../../actions/bc-modal/bc-modal.action";
+import {modalTypes} from "../../../../../constants";
+import {setQuickbooksConnection} from "../../../../../actions/quickbooks/quickbooks.actions";
 
 
 const useStyles = makeStyles((theme) => ({
