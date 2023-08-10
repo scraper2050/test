@@ -3,9 +3,6 @@ import WarningIcon from '@material-ui/icons/Warning';
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { markAsRead } from 'api/invoicing.api';
-import { useSelector } from 'react-redux';
-import { getAllPORequestsAPI } from 'api/po-requests.api';
-import { setCurrentPageIndex, setCurrentPageSize } from 'actions/po-request/po-request.action';
 
 interface PopupProps {
   mouseLeave: () => void;
