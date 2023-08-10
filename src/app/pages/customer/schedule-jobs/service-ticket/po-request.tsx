@@ -192,7 +192,14 @@ function PORequired({ classes, hidden }: any) {
                         ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
                         : 'N/A'}
                     {row.original.bouncedEmailFlag 
-                        ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} invoiceFlag={false} />
+                        ? <PopupMark
+                            data={row.original.emailHistory}
+                            endpoint={'/mark-as-read-po'}
+                            params={{ 'id': row.original._id }}
+                            callback={
+                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag)
+                            }
+                            />
                         : ''}
                 </>
             ),

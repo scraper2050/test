@@ -11,14 +11,14 @@ interface PopupProps {
   mouseLeave: () => void;
   mouseEnter: () => void;
   bounceEmails: string[];
-  invoiceId: string;
-  invoiceFlag: boolean;
+  endpoint: string;
+  params: object;
+  callback: (dispatch: any) => Promise<unknown>;
 }
 
-const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, invoiceId, invoiceFlag }) => {
+const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, endpoint, params, callback }) => {
 
   const dispatch = useDispatch()
-  const advanceFilterInvoiceData: any = useSelector(({ advanceFilterInvoiceState }: any) => advanceFilterInvoiceState)
 
   const popupStyles: React.CSSProperties = {
     position: 'absolute',
@@ -84,14 +84,7 @@ const Popup: React.FC<PopupProps> = ({ mouseEnter, mouseLeave, bounceEmails, inv
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     mouseLeave();
-    dispatch(markAsRead(invoiceFlag, invoiceId, advanceFilterInvoiceData))
-
-    if (!invoiceFlag){
-      dispatch(getAllPORequestsAPI());
-      dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
-    }
-
+    dispatch(markAsRead(endpoint, params, callback))
   };
 
   const emailStyles={
