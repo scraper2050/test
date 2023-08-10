@@ -167,7 +167,7 @@ function BCTableContainer({
         className={'actions-container'}
         item
         md={toolbar
-          ? 12
+          ? 10
           : 6}
         xs={12}>
         {search
