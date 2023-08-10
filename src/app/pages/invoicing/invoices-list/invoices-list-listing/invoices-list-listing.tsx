@@ -211,7 +211,14 @@ function InvoicingListListing({ classes, theme }: any) {
           )
           } { 
             row.original.bouncedEmailFlag
-              ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} invoiceFlag={true} /> 
+              ? <PopupMark
+                  endpoint={'/mark-as-read-invoices'}
+                  data={row.original.emailHistory}
+                  params={{ 'invoiceId': row.original._id }}
+                  callback={
+                    getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params)
+                  }
+                  /> 
               : ''
           }
         </div>
