@@ -318,11 +318,13 @@ function BCViewJobModal({
   const PARTIALLY_COMPLETED_ITEMS = [
     { id: 0, title: 'Close Job-No Further Action' },
     { id: 1, title: 'Close Job and Create New Ticket' },
-    { id: 2, title: 'Reschedule Job' },
+    { id: 2, title: 'Close Job and Create New Job' },
+    { id: 3, title: 'Reschedule Job' },
   ];
 
   const handleMenuButtonClick = async (event: any, id: number) => {
     switch (id) {
+      //Close Job-No Further Action
       case 0:
         let payload = {
           jobId: job._id,
@@ -339,12 +341,95 @@ function BCViewJobModal({
             })
           );
         }, 200);
+        dispatch(success("Close Job-No Further Action successfully"));
         break;
+      //Close Job and Create New Ticket
       case 1:
+        const customer = customers.find((res: any) => res._id == job?.customer?._id);
+
+        const action = async (type: "Ticket" | "PO Request") => {
+          let payload = {
+            jobId: job._id,
+            action: id,
+            type: type
+          };
+
+          await updatePartialJob(payload);
+          dispatch(refreshJobs(true));
+          dispatch(closeModalAction());
+          setTimeout(() => {
+            dispatch(
+              setModalDataAction({
+                data: {},
+                type: '',
+              })
+            );
+          }, 200);
+          dispatch(success("Close Job and Create New Ticket successfully"));
+        };
+
+        const yesAction = () => {
+          action("Ticket");
+        }
+
+        const noAction = () => {
+          action("PO Request");
+        }
+
+        if (customer.isPORequired) {
+          dispatch(setModalDataAction({
+            'data': {
+              'message': 'A PO is required for this customer.  Would you like to use the existing PO or create a new PO request?',
+              'actionText': "Ticket",
+              'action': yesAction,
+              'closeAction': noAction,
+              'closeText': "PO Request",
+            },
+            'type': modalTypes.WARNING_MODAL_V2
+          }));
+          setTimeout(() => {
+            dispatch(openModalAction());
+          }, 200);
+        } else {
+          action("Ticket");
+        }
+
         break;
+      //Close Job and Create New Job
       case 2:
+        const ticketJobTypes: any = [];
+
+        job.tasks.forEach((task: any) => {
+          task.jobTypes.forEach((jobType: any) => {
+            if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
+              //Split Quantity
+              ticketJobTypes.push({
+                quantity: jobType.quantity - jobType.completedCount,
+                jobType: jobType.jobType,
+                price: jobType.price,
+                completedCount: jobType.completedCount,
+                allQuantitiy: jobType.quantity
+              });
+            }
+          });
+        });
+
+        dispatch(setModalDataAction({
+          'data': {
+            'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, ticket: { ...job.ticket, tasks: ticketJobTypes} },
+            'modalTitle': 'Create Job',
+            'removeFooter': false
+          },
+          'type': modalTypes.EDIT_JOB_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+      //Reschedule Job
+      case 3:
           job.scheduleDate = null;
-          
+
           dispatch(setModalDataAction({
             'data': {
               'job': job,
@@ -378,7 +463,7 @@ function BCViewJobModal({
         }
         { job.status == 7 && (
           <div className={classes.closeButton}>
-            <span className={classes.closeButtonLabel}>Close Job</span>
+            <span className={classes.closeButtonLabel}>Actions</span>
               <BCMenuButton
               icon={ArrowDropDownIcon}
               items={PARTIALLY_COMPLETED_ITEMS}
@@ -452,10 +537,10 @@ function BCViewJobModal({
                           <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
                         </Tooltip>
                       } else {
-
+                        return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
                       }
                     } else {
-                      return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
+                      return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.quantity} - ${type.price}</span>
                     }
                   })
                 }</Typography>

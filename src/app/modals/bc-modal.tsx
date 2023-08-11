@@ -959,6 +959,9 @@ function BCModal() {
         });
         setComponent(<BCWarningModalV2
           action={data.action}
+          actionText={data.actionText}
+          closeAction={data.closeAction}
+          closeText={data.closeText}
           message={data.message}
         />);
         break;

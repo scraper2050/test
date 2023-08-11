@@ -8,14 +8,18 @@ import WarningIcon from "@material-ui/icons/Warning";
 
 interface Props {
   classes: any;
-  action: string;
+  actionText: string;
+  action: any;
+  closeAction: any;
+  closeText: string;
   message: string;
 }
 
-function BCPORequestWarningModal({ classes, action, message }: Props):JSX.Element {
+function BCPORequestWarningModal({ classes, actionText, action, message, closeAction, closeText }: Props):JSX.Element {
   const dispatch = useDispatch();
   
   const closeModal = () => {
+    if (closeAction) dispatch(closeAction)
     setTimeout(() => {
       dispatch(
         setModalDataAction({
@@ -64,12 +68,12 @@ function BCPORequestWarningModal({ classes, action, message }: Props):JSX.Elemen
         <Button
           onClick={closeModal}
           variant={'outlined'}
-        >Cancel</Button>
+        >{closeText || 'Cancel'}</Button>
         <Button
           color={'primary'}
           onClick={onSubmit}
           variant={'contained'}
-        >Confirm</Button>
+        >{actionText || 'Confirm'}</Button>
       </DialogActions>
     </DataContainer>
   )

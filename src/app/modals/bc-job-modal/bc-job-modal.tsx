@@ -33,6 +33,7 @@ import {
   callCreateJobAPI,
   callEditJobAPI, callUpdateJobAPI,
   getAllJobTypesAPI,
+  updatePartialJob,
 } from 'api/job.api';
 import {
   closeModalAction,
@@ -154,6 +155,8 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
       },
       quantity: task.quantity || 1,
       price: task.price || 0,
+      completedCount: task.completedCount,
+      allQuantitiy: task.allQuantitiy
     }
 
     if (!("price" in task)){
@@ -755,7 +758,14 @@ function BCJobModal({
         return callCreateJobAPI(tempData);
       };
 
-      const request = job._id ? editJob : createJob;
+      const partialJobCreate = (tempData: any) => {
+        tempData.jobId = job.oldJobId;
+        tempData.action = 2; //Close Job and Create New Job
+        
+        return updatePartialJob(tempData);
+      };
+
+      const request = job._id ? editJob : job.status == 7 ? partialJobCreate : createJob;
 
       request(requestObj)
         .then(async (response: any) => {
@@ -1219,6 +1229,7 @@ function BCJobModal({
                           />
                         )}
                         value={task.employeeType ? employeeTypes[1] : employeeTypes[0]}
+                        disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                       />
                     </Grid>
                     <Grid item xs={5}>
@@ -1259,6 +1270,7 @@ function BCJobModal({
                             />
                           )}
                           value={task.contractor}
+                          disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                         />
                         :
                         <Autocomplete
@@ -1306,7 +1318,12 @@ function BCJobModal({
                       </Grid>
                     }
                     {task.jobTypes.map((jobType: any, jobTypeIdx: number) =>
-                        <>
+                      <Grid
+                        container
+                        className={'jobTypeContainer modalContent'}
+                        justify={'space-between'}
+                        spacing={4}
+                      >
                           <Grid item xs={6}>
                             <Typography
                               variant={'caption'}
@@ -1356,9 +1373,17 @@ function BCJobModal({
                               }}
                               value={jobType.jobTypeId}
                               getOptionSelected={() => false}
+                              disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                             />
                           </Grid>
-                          <Grid item xs={2}>
+                          <Grid item xs={2} className={!(job.status == 7 && jobType.completedCount) ? "jobTypeQuantityContainer" : ""}>
+                          {(job.status == 7 && jobType.completedCount) && (
+                              <div
+                                className={`${'previewCaption'} completedCaption`}
+                              >
+                                {jobType.completedCount} / { jobType.allQuantitiy || jobType.quantity } are completed
+                              </div>
+                            )}
                             <Typography
                               variant={'caption'}
                               className={`${'previewCaption'}`}
@@ -1373,9 +1398,10 @@ function BCJobModal({
                               }
                               name={'quantity'}
                               value={jobType.quantity}
+                              disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                             />
                           </Grid>
-                          <Grid item xs={3}>
+                          <Grid item xs={3} className={'jobTypePriceContainer'}>
                             <Typography
                               variant={'caption'}
                               className={`${'previewCaption'}`}
@@ -1398,7 +1424,7 @@ function BCJobModal({
                             <BCInput
                               type="number"
                               className={'serviceTicketLabel'}
-                              disabled={!jobType.isPriceEditable}
+                              disabled={!jobType.isPriceEditable || (job.status == 7 && job._id)}
                               handleChange={(ev: any, newValue: any) =>
                                 handleJobTypeChange("price", ev.target?.value, jobTypeIdx, index)
                               }
@@ -1436,22 +1462,23 @@ function BCJobModal({
                               </IconButton>
                             }
                           </Grid>
-                        </>
+                        </Grid>
                     )}
                 </>
               )}
-              <Grid item xs={12}>
-                <Button
-                  color={'primary'}
-                  disabled={jobTypesLoading}
-                  classes={{ root: classes.addJobTypeButton }}
-                  variant={'outlined'}
-                  onClick={addEmptyTask}
-                  startIcon={<AddCircleIcon />}
-                >Add Technician</Button>
+              {!(job.status == 7 && job._id) && (
+                <Grid item xs={12}>
+                  <Button
+                    color={'primary'}
+                    disabled={jobTypesLoading}
+                    classes={{ root: classes.addJobTypeButton }}
+                    variant={'outlined'}
+                    onClick={addEmptyTask}
+                    startIcon={<AddCircleIcon />}
+                  >Add Technician</Button>
 
-              </Grid>
-
+                </Grid>
+              )}
               <Grid item xs={6}>
                 <Typography
                   variant={'caption'}
@@ -1890,10 +1917,31 @@ const DataContainer = styled.div`
     font-size: 13px!important;
   }
 
+  .completedCaption{
+    font-size: 9px;
+    padding: 0px;
+    margin: 0px!important;
+    color: red!important;
+  }
+
   span.required:after {
     margin-left: 3px;
     content: "*";
     color: red;
+  }
+
+  .jobTypeContainer{
+    padding: 0px!important;
+    margin-top: 0px!important;
+    align-items: center;
+  }
+
+  .jobTypePriceContainer {
+    margin-top: 13px!important;
+  }
+
+  .jobTypeQuantityContainer {
+    margin-top: 13px!important;
   }
 `;
 
