@@ -35,6 +35,8 @@ import EmailReportModal from './bc-email-modal/bc-email-report-modal';
 import CompanyLocationAssignModal from './bc-company-location-assign-modal/bc-company-location-assign-modal';
 import CompanyLocationBillingAddressModal from './bc-company-location-billing-address-modal/bc-company-location-billing-address-modal';
 import CompanyLocationAssignDeleteModal from './bc-delete-company-location-assign-modal/bc-delete-company-location-assign-modal';
+import BCAddAndEditSalesTaxModal from './bc-add-and-edit-sales-tax-modal/bc-add-and-edit-sales-tax-modal';
+
 import CloseIcon from '@material-ui/icons/Close';
 import {
   closeModalAction,
@@ -599,6 +601,15 @@ function BCModal() {
         setComponent(<BCDiscountEditModal
           item={data.discountItem}
         />);
+        break;
+      case modalTypes.ADD_AND_EDIT_SALES_TAX_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: 'xs',
+        });
+        setComponent(<BCAddAndEditSalesTaxModal item={data.taxItem} />);
         break;
       case modalTypes.SALES_TAX_MODAL:
         setModalOptions({
