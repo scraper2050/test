@@ -534,10 +534,10 @@ function BCViewJobModal({
                           arrow
                           title={type.completedComment}
                         >
-                          <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
+                          <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount || 0}/{type.quantity} - ${type.price}</span>
                         </Tooltip>
                       } else {
-                        return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount}/{type.quantity} - ${type.price}</span>
+                        return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount || 0}/{type.quantity} - ${type.price}</span>
                       }
                     } else {
                       return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.quantity} - ${type.price}</span>
