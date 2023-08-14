@@ -484,7 +484,7 @@ function BCViewJobModal({
               Job Costing
             </Button>
         }
-          {job.status == 7 || job.status == 2 && (
+        {(job.status == 7 || job.status == 2) && (
           <div className={classes.closeButton}>
             <span className={classes.closeButtonLabel}>Actions</span>
               <BCMenuButton
