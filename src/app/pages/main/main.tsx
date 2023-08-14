@@ -24,6 +24,7 @@ import { info } from '../../../actions/snackbar/snackbar.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { getUserPermissionsAction } from 'actions/permissions/permissions.action';
 
+const AdminCompanySettingsPage = React.lazy(() => import('../admin/company-settings/company-settings'));
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
@@ -80,7 +81,6 @@ const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
 const AdminPayrollPage = React.lazy(() => import('../admin/payroll/payroll'));
-const AdminIntegrationsPage = React.lazy(() => import('../admin/integrations/integrations'));
 const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
@@ -685,6 +685,13 @@ function Main(): any {
                   hasAccess={rolesAndPermissions?.admin?.manageCompanySettings}
                 />
                 <AuthRoute
+                  Component={AdminCompanySettingsPage}
+                  exact
+                  path={'/main/admin/company-settings'}
+                  title={'Company Settings'}
+                  hasAccess={rolesAndPermissions?.admin?.manageCompanySettings}
+                />
+                <AuthRoute
                   Component={AdminEmployeesPage}
                   exact
                   path={'/main/admin/employees'}
@@ -711,12 +718,12 @@ function Main(): any {
                   path={'/main/admin/equipment-type'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminGroupsPage}
                   exact
                   path={'/main/admin/groups'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   Component={AdminServiceAndProductsPage}
                   exact
@@ -729,12 +736,12 @@ function Main(): any {
                   path={'/main/admin/services-and-products/services/:type'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminInvoicingPage}
                   exact
                   path={'/main/admin/invoicing'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   Component={AdminInvoicingItemsPage}
                   exact
@@ -783,17 +790,12 @@ function Main(): any {
                   path={'/main/admin/vendors'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminPayrollPage}
                   exact
                   path={'/main/admin/payroll'}
                   title={'Admin'}
-                />
-                <AuthRoute
-                  Component={AdminIntegrationsPage}
-                  path={'/main/admin/integrations'}
-                  title={'Integrations'}
-                />
+                /> */}
                 <AuthRoute
                   actionData={{
                     'link': '/main/admin/vendors/:contractorName',

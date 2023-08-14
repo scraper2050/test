@@ -1,7 +1,7 @@
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import styles from './job-costing.styles';
+import styles from './bc-job-costing.styles';
 import { FormControlLabel, Grid, Switch, withStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDiscountItemsAPI } from 'api/discount.api';
@@ -9,9 +9,9 @@ import {
   openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
-import { modalTypes } from '../../../../../constants';
+import { modalTypes } from '../../../constants';
 import { getAllSalesTaxAPI } from 'api/tax.api';
-import { CSButton } from '../../../../../helpers/custom';
+import { CSButton } from '../../../helpers/custom';
 import { addJobCostingApi, updateJobCosting } from 'api/items.api';
 import {
   error as SnackBarError,
@@ -25,7 +25,7 @@ import {
 interface Props {
   classes: any;
 }
-function AdminSetupPage({ classes }: Props) {
+function BCJobCosting({ classes }: Props) {
   const dispatch = useDispatch();
   const { loading: costingTierLoading, error: tiersError, costingList } = useSelector(
     ({ InvoiceJobCosting }: any) => InvoiceJobCosting
@@ -206,4 +206,4 @@ const PageContainer = styled.div`
   padding: 30px;
   width: 100%;
 `;
-export default withStyles(styles, { withTheme: true })(AdminSetupPage);
+export default withStyles(styles, { withTheme: true })(BCJobCosting);

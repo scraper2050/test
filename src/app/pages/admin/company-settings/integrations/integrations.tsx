@@ -3,10 +3,10 @@ import { Grid, withStyles } from "@material-ui/core";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import QbIcon from "assets/img/integration-bg/intuitt_green.png";
-import { quickbooksGetUri, quickbooksAuthenticate } from "../../../../api/quickbooks.api";
+import { quickbooksGetUri, quickbooksAuthenticate } from "../../../../../api/quickbooks.api";
 import SyncPage from "./SyncPage";
 import { success, error } from 'actions/snackbar/snackbar.action';
-import {setQuickbooksConnection} from "../../../../actions/quickbooks/quickbooks.actions";
+import { setQuickbooksConnection } from "../../../../../actions/quickbooks/quickbooks.actions";
 const redirectUri = `${window.location.origin}/main/admin/integrations/callback`;
 
 
