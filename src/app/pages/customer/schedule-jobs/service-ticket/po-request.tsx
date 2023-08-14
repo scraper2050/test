@@ -323,6 +323,7 @@ function PORequired({ classes, hidden }: any) {
                 dispatch(setCurrentPageIndex(0))
                 dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params));
             }}
+            isBounceAlertVisible={true}
         />
     );
 }

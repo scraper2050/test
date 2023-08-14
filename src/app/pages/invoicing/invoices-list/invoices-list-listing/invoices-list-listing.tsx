@@ -562,6 +562,7 @@ function InvoicingListListing({ classes, theme }: any) {
         search
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
+        isBounceAlertVisible={true}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
