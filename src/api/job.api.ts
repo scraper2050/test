@@ -579,3 +579,15 @@ export const updatePartialJob: any = (payload: any) => {
       });
   });
 };
+
+export const getJobInvoice: any = (jobID: string) => {
+  return new Promise((resolve, reject) => {
+    requestApiV2(`/getJobInvoice/${jobID}`, 'GET')
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+}

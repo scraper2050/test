@@ -148,6 +148,7 @@ export const modalTypes = {
   'PO_REQUEST_WARNING_MODAL': 'po-request-warning-modal',
   'TICKET_DETAILS_MODAL': 'ticket-details-modal',
   'WARNING_MODAL_V2': 'po-warning-modal-v2',
+  'EDIT_COMPLETED_JOB': 'edit-completed-job',
 };
 
 export const rejectionReason = [

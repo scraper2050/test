@@ -1281,6 +1281,15 @@ function BCServiceTicketModal(
           </Grid>
         </Grid>
         <div className={'modalDataContainer'}>
+          {ticket.source?.includes("partially completed") && (
+            <Grid container
+              className={'modalContent'}
+              justify={'space-between'}
+              alignItems="flex-start"
+              style={{ paddingTop: 5, paddingBottom: 0, color: "#ef5350"}}
+              spacing={4}
+              >Ticket created from {ticket.source}</Grid>
+          )}
           <Grid
             container
             className={'modalContent'}

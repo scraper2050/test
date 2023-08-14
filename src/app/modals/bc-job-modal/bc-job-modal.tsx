@@ -182,7 +182,7 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
  * Helper function to get job tasks
  */
 const getJobTasks = (job: any, items: any, customers: any[], customerId: string) => {
-  if (job._id) {
+  if (job._id || job.oldJobId) {
     const tasks = job.tasks.map((task: any) => ({
       employeeType: task.employeeType ? 1 : 0,
       employee: !task.employeeType && task.technician ? task.technician : null,
@@ -761,6 +761,11 @@ function BCJobModal({
       const partialJobCreate = (tempData: any) => {
         tempData.jobId = job.oldJobId;
         tempData.action = 2; //Close Job and Create New Job
+        if (job.isCompletedJob) {
+          tempData.isCompletedJob = job.isCompletedJob;
+          tempData.updateInvoice = job.updateInvoice;
+          tempData.newJobTasks = job.newJobTasks;
+        }
         
         return updatePartialJob(tempData);
       };
@@ -1229,7 +1234,6 @@ function BCJobModal({
                           />
                         )}
                         value={task.employeeType ? employeeTypes[1] : employeeTypes[0]}
-                        disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                       />
                     </Grid>
                     <Grid item xs={5}>
@@ -1270,7 +1274,6 @@ function BCJobModal({
                             />
                           )}
                           value={task.contractor}
-                          disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                         />
                         :
                         <Autocomplete
@@ -1373,11 +1376,10 @@ function BCJobModal({
                               }}
                               value={jobType.jobTypeId}
                               getOptionSelected={() => false}
-                              disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                             />
                           </Grid>
-                          <Grid item xs={2} className={!(job.status == 7 && jobType.completedCount) ? "jobTypeQuantityContainer" : ""}>
-                          {(job.status == 7 && jobType.completedCount) && (
+                          <Grid item xs={2} className={job.status != 7 ? "jobTypeQuantityContainer" : ""}>
+                          {job.status == 7 && (
                               <div
                                 className={`${'previewCaption'} completedCaption`}
                               >
@@ -1398,7 +1400,6 @@ function BCJobModal({
                               }
                               name={'quantity'}
                               value={jobType.quantity}
-                              disabled={(job.status == 7 && job._id)} //Disable when rescheduling a job that's partially completed.
                             />
                           </Grid>
                           <Grid item xs={3} className={'jobTypePriceContainer'}>
@@ -1424,7 +1425,7 @@ function BCJobModal({
                             <BCInput
                               type="number"
                               className={'serviceTicketLabel'}
-                              disabled={!jobType.isPriceEditable || (job.status == 7 && job._id)}
+                              disabled={!jobType.isPriceEditable}
                               handleChange={(ev: any, newValue: any) =>
                                 handleJobTypeChange("price", ev.target?.value, jobTypeIdx, index)
                               }
@@ -1466,19 +1467,17 @@ function BCJobModal({
                     )}
                 </>
               )}
-              {!(job.status == 7 && job._id) && (
-                <Grid item xs={12}>
-                  <Button
-                    color={'primary'}
-                    disabled={jobTypesLoading}
-                    classes={{ root: classes.addJobTypeButton }}
-                    variant={'outlined'}
-                    onClick={addEmptyTask}
-                    startIcon={<AddCircleIcon />}
-                  >Add Technician</Button>
+              <Grid item xs={12}>
+                <Button
+                  color={'primary'}
+                  disabled={jobTypesLoading}
+                  classes={{ root: classes.addJobTypeButton }}
+                  variant={'outlined'}
+                  onClick={addEmptyTask}
+                  startIcon={<AddCircleIcon />}
+                >Add Technician</Button>
 
-                </Grid>
-              )}
+              </Grid>
               <Grid item xs={6}>
                 <Typography
                   variant={'caption'}
@@ -1844,7 +1843,7 @@ function BCJobModal({
                 onClick={() => closeModal()}
                 variant={'outlined'}
               >Close</Button>
-              {(job._id && job.status != 7) &&
+              {(job._id) &&
                 <>
                   <Button
                     color={'secondary'}

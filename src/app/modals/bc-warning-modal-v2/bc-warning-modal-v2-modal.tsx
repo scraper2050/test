@@ -13,35 +13,45 @@ interface Props {
   closeAction: any;
   closeText: string;
   message: string;
+  disableAutoCloseModal?: boolean;
 }
 
-function BCPORequestWarningModal({ classes, actionText, action, message, closeAction, closeText }: Props):JSX.Element {
+function BCPORequestWarningModal({ classes, actionText, action, message, closeAction, closeText, disableAutoCloseModal }: Props):JSX.Element {
   const dispatch = useDispatch();
-  
+  const [loading, setLoading] = useState(false);
+
   const closeModal = () => {
+    setLoading(true);
     if (closeAction) dispatch(closeAction)
-    setTimeout(() => {
-      dispatch(
-        setModalDataAction({
-          data: {},
-          type: "",
-        })
-      );
-    }, 200);
-    dispatch(closeModalAction());
+
+    if (!disableAutoCloseModal){
+      setTimeout(() => {
+        dispatch(
+          setModalDataAction({
+            data: {},
+            type: "",
+          })
+        );
+      }, 200);
+      dispatch(closeModalAction());
+    }
   }
 
   const onSubmit = () => {
+    setLoading(true);
     dispatch(action);
-    setTimeout(() => {
-      dispatch(closeModalAction());
+
+    if (!disableAutoCloseModal) {
       setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
+        dispatch(
+          setModalDataAction({
+            data: {},
+            type: "",
+          })
+        );
       }, 200);
-    }, 1000);
+      dispatch(closeModalAction());
+    }
   }
 
   return (
@@ -68,10 +78,12 @@ function BCPORequestWarningModal({ classes, actionText, action, message, closeAc
         <Button
           onClick={closeModal}
           variant={'outlined'}
+          disabled={loading}
         >{closeText || 'Cancel'}</Button>
         <Button
           color={'primary'}
           onClick={onSubmit}
+          disabled={loading}
           variant={'contained'}
         >{actionText || 'Confirm'}</Button>
       </DialogActions>

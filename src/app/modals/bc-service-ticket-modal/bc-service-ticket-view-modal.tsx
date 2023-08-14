@@ -222,6 +222,15 @@ function BCViewServiceTicketModal({
         <Grid item xs />
       </Grid>
       <div className={'modalDataContainer'}>
+        {job?.source?.includes("partially completed") && (
+          <Grid container
+            className={'modalContent'}
+            justify={'space-between'}
+            alignItems="flex-start"
+            style={{ paddingTop: 5, paddingBottom: 0, color: "#ef5350" }}
+            spacing={4}
+          >Ticket created from {job?.source}</Grid>
+        )}
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>subdivision</Typography>
