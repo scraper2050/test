@@ -113,7 +113,6 @@ function EmailJobReportModal({ classes, data }: any) {
         }
     }, []);
 
-    console.log(data.customerContactId);
     const form = useFormik({
         enableReinitialize: true,
         initialValues: {
