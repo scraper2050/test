@@ -1288,7 +1288,7 @@ function BCServiceTicketModal(
               alignItems="flex-start"
               style={{ paddingTop: 5, paddingBottom: 0, color: "#ef5350"}}
               spacing={4}
-              >Ticket created from {ticket.source}</Grid>
+              >{ticket.type} created from {ticket.source}</Grid>
           )}
           <Grid
             container
