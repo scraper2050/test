@@ -817,60 +817,20 @@ function BCJobModal({
               });
           }
 
+          setTimeout(() => {
+            dispatch(
+              setModalDataAction({
+                data: {},
+                type: '',
+              })
+            );
+          }, 200);
+
           if (
             response.message === 'Job created successfully.' ||
             response.message === 'Job edited successfully.'
           ) {
             dispatch(success(response.message));
-            
-            if (job.status == 7 && job.isCompletedJob) {
-              //Job costing pops up when a job is rescheduled from a completed job
-              dispatch(setModalDataAction({
-                'data': {
-                  'message': `This job has been completed, do you need to adjust Job Costing?`,
-                  'actionText': "Yes",
-                  'action': () => {
-                    dispatch(
-                      setModalDataAction({
-                        data: {
-                          job: response?.job,
-                          removeFooter: false,
-                          maxHeight: '100%',
-                          modalTitle: 'Job Costing'
-                        },
-                        type: modalTypes.EDIT_JOB_COSTING_MODAL,
-                      })
-                    );
-                    setTimeout(() => {
-                      dispatch(openModalAction());
-                    }, 200);
-                  }
-                },
-                'type': modalTypes.WARNING_MODAL_V2
-              }));
-
-              setTimeout(() => {
-                dispatch(openModalAction());
-              }, 200);
-            } else {
-              setTimeout(() => {
-                dispatch(
-                  setModalDataAction({
-                    data: {},
-                    type: '',
-                  })
-                );
-              }, 200);
-            }
-          } else {
-            setTimeout(() => {
-              dispatch(
-                setModalDataAction({
-                  data: {},
-                  type: '',
-                })
-              );
-            }, 200);
           }
         })
         .catch((err: any) => {

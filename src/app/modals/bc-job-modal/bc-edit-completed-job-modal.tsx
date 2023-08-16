@@ -151,37 +151,32 @@ function BCEditCompletedJobModal({
 
           const response = await updatePartialJob(payload);
           dispatch(success("Closed Job and Created New Ticket successfully"));
-          dispatch(refreshJobs(true));
+          dispatch(refreshJobs(true))
 
-          //Job costing pops up when a job is rescheduled from a completed job
-          dispatch(setModalDataAction({
-            'data': {
-              'message': `This job has been completed, do you need to adjust Job Costing?`,
-              'actionText': "Yes",
-              'action': () => {
-                dispatch(
-                  setModalDataAction({
-                    data: {
-                      job: response?.job,
-                      removeFooter: false,
-                      maxHeight: '100%',
-                      modalTitle: 'Job Costing'
-                    },
-                    type: modalTypes.EDIT_JOB_COSTING_MODAL,
-                  })
-                );
-                setTimeout(() => {
-                  dispatch(openModalAction());
-                }, 200);
-              }
-            },
-            'type': modalTypes.WARNING_MODAL_V2
-          }));
-
-          setTimeout(() => {
-            dispatch(openModalAction());
-          }, 200);
-
+          if (type == "PO Request") {
+            dispatch(setModalDataAction({
+              'data': {
+                'data': response.ticket,
+                'modalTitle': `Send PO Request`,
+                'type': "PO Request",
+                'removeFooter': false,
+              },
+              'type': modalTypes.EMAIL_PO_REQUEST_MODAL
+            }));
+            setTimeout(() => {
+              dispatch(openModalAction());
+            }, 200);
+          } else {
+            dispatch(closeModalAction());
+            setTimeout(() => {
+              dispatch(
+                setModalDataAction({
+                  data: {},
+                  type: '',
+                })
+              );
+            }, 200);
+          }
         break;
       case "reschedule":
         const newJobTasksMapped: any = [];
@@ -208,7 +203,7 @@ function BCEditCompletedJobModal({
         dispatch(setModalDataAction({
           'data': {
             'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasksMapped, isCompletedJob: true, status: 7, newJobTasks: JSON.stringify(newJobTasks)},
-            'modalTitle': 'Create Job',
+            'modalTitle': 'Reschedule Job',
             'removeFooter': false
           },
           'type': modalTypes.EDIT_JOB_MODAL
