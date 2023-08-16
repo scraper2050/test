@@ -315,11 +315,20 @@ function BCViewJobModal({
     }, 200);
   };
   
-  const PARTIALLY_COMPLETED_ITEMS = [
-    { id: 0, title: 'Close Job-No Further Action' },
-    { id: 1, title: 'Close Job and Create New Ticket' },
-    { id: 2, title: 'Close Job and Create New Job' }
-  ];
+  let ACTIONS_ITEM: any = [];
+
+  if (job.status == 2){
+    ACTIONS_ITEM = [
+      { id: 1, title: 'Reopen Job-Create New Ticket' },
+      { id: 2, title: 'Reopen Job-Reschedule' }
+    ];
+  } else if(job.status == 7){
+    ACTIONS_ITEM = [
+      { id: 0, title: 'Close Job-No Further Action' },
+      { id: 1, title: 'Close Job-Create New Ticket' },
+      { id: 2, title: 'Reschedule Job' }
+    ];
+  }
 
   const handleMenuButtonClick = (event: any, id: number) => {
     if (job.status == 2) {
@@ -415,6 +424,7 @@ function BCViewJobModal({
           dispatch(setModalDataAction({
             'data': {
               'message': 'A PO is required for this customer.  Would you like to use the existing PO or create a new PO request?',
+              'disableAutoCloseModal': true,
               'actionText': "Ticket",
               'action': yesAction,
               'closeAction': noAction,
@@ -430,7 +440,7 @@ function BCViewJobModal({
         }
 
         break;
-      //Close Job and Create New Job
+      //Reschedule Job
       case 2:
         const newJobTasks: any = [];
 
@@ -456,7 +466,7 @@ function BCViewJobModal({
         dispatch(setModalDataAction({
           'data': {
             'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasks },
-            'modalTitle': 'Create Job',
+            'modalTitle': 'Reschedule Job',
             'removeFooter': false
           },
           'type': modalTypes.EDIT_JOB_MODAL
@@ -489,7 +499,7 @@ function BCViewJobModal({
             <span className={classes.closeButtonLabel}>Actions</span>
               <BCMenuButton
               icon={ArrowDropDownIcon}
-              items={PARTIALLY_COMPLETED_ITEMS}
+              items={ACTIONS_ITEM}
               handleClick={handleMenuButtonClick}
               />
           </div>
@@ -551,7 +561,7 @@ function BCViewJobModal({
               <Grid item xs>
                 <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{
                   calculateJobType(task).map((type: any, i: number) => {
-                    if(type.completedCount) {
+                    if(type.completedCount || type.status == 7) {
                       if (type.completedComment) {
                         return <Tooltip
                           arrow

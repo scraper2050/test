@@ -40,18 +40,6 @@ function BCPORequestWarningModal({ classes, actionText, action, message, closeAc
   const onSubmit = () => {
     setLoading(true);
     dispatch(action);
-
-    if (!disableAutoCloseModal) {
-      setTimeout(() => {
-        dispatch(
-          setModalDataAction({
-            data: {},
-            type: "",
-          })
-        );
-      }, 200);
-      dispatch(closeModalAction());
-    }
   }
 
   return (
@@ -68,9 +56,7 @@ function BCPORequestWarningModal({ classes, actionText, action, message, closeAc
             <WarningIcon />
           </Grid>
           <Grid item>
-            <div style={{fontWeight: 'bold',  width: 430, fontSize: '18px', textAlign: 'center'}}>
-              { message }
-            </div>
+            <div style={{ fontWeight: 'bold', width: 430, fontSize: '18px', textAlign: 'center' }} dangerouslySetInnerHTML={{ __html: message }}></div>
           </Grid>
         </Grid>
       </DialogContent>

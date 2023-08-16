@@ -111,21 +111,14 @@ function BCEditCompletedJobModal({
       const { invoice } = await getJobInvoice(job._id);
       if (invoice) {
         const yesAction = () => {
-          executeJobEdit(true);
+          executeJobEdit();
         }
-  
-        const noAction = () => {
-          executeJobEdit(false);
-        }
-  
+
         dispatch(setModalDataAction({
           'data': {
             'message': `This job has already been invoiced${invoice.paid ? " and paid": ""}.Would you like to update it as well?`,
-            'disableAutoCloseModal': true,
-            'actionText': "Yes",
-            'action': yesAction,
-            'closeAction': noAction,
-            'closeText': "No",
+            'actionText': "Next",
+            'action': yesAction
           },
           'type': modalTypes.WARNING_MODAL_V2
         }));
@@ -133,7 +126,7 @@ function BCEditCompletedJobModal({
           dispatch(openModalAction());
         }, 200);
       } else {
-        executeJobEdit(false);
+        executeJobEdit();
       }
     } else {
       setLoading(false);
@@ -141,32 +134,10 @@ function BCEditCompletedJobModal({
     }
   }
 
-  const executeJobEdit = async (updateInvoice: boolean) => {
+  const executeJobEdit = async () => {
     const idAction = action;
 
     switch (action) {
-      //Close Job-No Further Action
-      case 0:
-        let payload = {
-          jobId: job._id,
-          action: idAction,
-          newJobTasks: JSON.stringify(newJobTasks),
-          isCompletedJob: true,
-          updateInvoice: updateInvoice
-        }
-        await updatePartialJob(payload);
-        dispatch(refreshJobs(true));
-        dispatch(closeModalAction());
-        setTimeout(() => {
-          dispatch(
-            setModalDataAction({
-              data: {},
-              type: '',
-            })
-          );
-        }, 200);
-        dispatch(success("Closed Job-No Further Action successfully"));
-        break;
       //Close Job and Create New Ticket
       case 1:
         const customer = customers.find((res: any) => res._id == job?.customer?._id);
@@ -176,8 +147,7 @@ function BCEditCompletedJobModal({
             action: idAction,
             type: type,
             newJobTasks: JSON.stringify(newJobTasks),
-            isCompletedJob: true,
-            updateInvoice: updateInvoice
+            isCompletedJob: true
           };
 
           const response = await updatePartialJob(payload);
@@ -237,7 +207,7 @@ function BCEditCompletedJobModal({
         }
 
         break;
-      //Close Job and Create New Job
+      //Reschedule Job
       case 2:
         const newJobTasksMapped: any = [];
 
@@ -262,7 +232,7 @@ function BCEditCompletedJobModal({
 
         dispatch(setModalDataAction({
           'data': {
-            'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasksMapped, isCompletedJob: true, updateInvoice: updateInvoice, status: 7, newJobTasks: JSON.stringify(newJobTasks)},
+            'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasksMapped, isCompletedJob: true, status: 7, newJobTasks: JSON.stringify(newJobTasks)},
             'modalTitle': 'Create Job',
             'removeFooter': false
           },
