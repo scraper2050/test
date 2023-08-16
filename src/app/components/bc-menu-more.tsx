@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {IconButton} from "@material-ui/core";
 
 interface ItemProps {
-  id: number;
+  id: any;
   title: string;
 }
 
@@ -14,7 +14,7 @@ interface ButtonProps {
   items: ItemProps[];
   icon: any;
   size?: string;
-  handleClick: (e: any, id: number) => void;
+  handleClick: (e: any, id: any) => void;
 }
 
 const StyledMenu = withStyles({
@@ -66,7 +66,7 @@ export default function CustomizedMenus({items, icon, handleClick}:ButtonProps) 
     setAnchorEl(event.currentTarget);
   };
 
-  const _handleListClick = (event: React.MouseEvent<HTMLElement>, id: number) => {
+  const _handleListClick = (event: React.MouseEvent<HTMLElement>, id: any) => {
     event.stopPropagation();
     setAnchorEl(null);
     handleClick(event, id);
@@ -94,7 +94,7 @@ export default function CustomizedMenus({items, icon, handleClick}:ButtonProps) 
       open={Boolean(anchorEl)}
       onClose={handleClose}
       >
-        {items.map((item: {title:string;id:number}, index:number) => <StyledMenuItem key={index} onClick={(e) => _handleListClick(e, item.id)}>
+        {items.map((item: {title:string;id:any}, index:number) => <StyledMenuItem key={index} onClick={(e) => _handleListClick(e, item.id)}>
             <ListItemText primary={item.title} />
           </StyledMenuItem>
         )}

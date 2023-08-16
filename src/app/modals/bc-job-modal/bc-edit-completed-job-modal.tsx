@@ -116,8 +116,8 @@ function BCEditCompletedJobModal({
 
         dispatch(setModalDataAction({
           'data': {
-            'message': `This job has already been invoiced${invoice.paid ? " and paid": ""}.Would you like to update it as well?`,
-            'actionText': "Next",
+            'message': `This job has already been invoiced${invoice.paid ? " and paid" : ""}. Here are the details of <a href="/main/invoicing/view/${invoice._id}" target="_blank">${invoice.invoiceId}</a>. Would you still like to update this job?`,
+            'actionText': "Yes",
             'action': yesAction
           },
           'type': modalTypes.WARNING_MODAL_V2
@@ -136,12 +136,11 @@ function BCEditCompletedJobModal({
 
   const executeJobEdit = async () => {
     const idAction = action;
+    switch (idAction) {
+      case "create-new-ticket":
+      case "create-new-po-request":
+          const type = idAction == "create-new-ticket" ? "Ticket" : "PO Request";
 
-    switch (action) {
-      //Close Job and Create New Ticket
-      case 1:
-        const customer = customers.find((res: any) => res._id == job?.customer?._id);
-        const action = async (type: "Ticket" | "PO Request") => {
           let payload = {
             jobId: job._id,
             action: idAction,
@@ -154,61 +153,37 @@ function BCEditCompletedJobModal({
           dispatch(success("Closed Job and Created New Ticket successfully"));
           dispatch(refreshJobs(true));
 
-          if (type == "PO Request") {
-            dispatch(setModalDataAction({
-              'data': {
-                'data': response.ticket,
-                'modalTitle': `Send PO Request`,
-                'type': "PO Request",
-                'removeFooter': false,
-              },
-              'type': modalTypes.EMAIL_PO_REQUEST_MODAL
-            }));
-            setTimeout(() => {
-              dispatch(openModalAction());
-            }, 200);
-          } else {
-            dispatch(closeModalAction());
-            setTimeout(() => {
-              dispatch(
-                setModalDataAction({
-                  data: {},
-                  type: '',
-                })
-              );
-            }, 200);
-          }
-        };
-
-        const yesAction = () => {
-          action("Ticket");
-        }
-
-        const noAction = () => {
-          action("PO Request");
-        }
-
-        if (customer.isPORequired) {
+          //Job costing pops up when a job is rescheduled from a completed job
           dispatch(setModalDataAction({
             'data': {
-              'message': 'A PO is required for this customer.  Would you like to use the existing PO or create a new PO request?',
-              'actionText': "Ticket",
-              'action': yesAction,
-              'closeAction': noAction,
-              'closeText': "PO Request",
+              'message': `This job has been completed, do you need to adjust Job Costing?`,
+              'actionText': "Yes",
+              'action': () => {
+                dispatch(
+                  setModalDataAction({
+                    data: {
+                      job: response?.job,
+                      removeFooter: false,
+                      maxHeight: '100%',
+                      modalTitle: 'Job Costing'
+                    },
+                    type: modalTypes.EDIT_JOB_COSTING_MODAL,
+                  })
+                );
+                setTimeout(() => {
+                  dispatch(openModalAction());
+                }, 200);
+              }
             },
             'type': modalTypes.WARNING_MODAL_V2
           }));
+
           setTimeout(() => {
             dispatch(openModalAction());
           }, 200);
-        } else {
-          action("Ticket");
-        }
 
         break;
-      //Reschedule Job
-      case 2:
+      case "reschedule":
         const newJobTasksMapped: any = [];
 
         newJobTasks.forEach((task: any) => {

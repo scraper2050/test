@@ -37,6 +37,7 @@ import {
 } from 'api/job.api';
 import {
   closeModalAction,
+  openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 import {useDispatch, useSelector} from 'react-redux';
@@ -760,10 +761,9 @@ function BCJobModal({
 
       const partialJobCreate = (tempData: any) => {
         tempData.jobId = job.oldJobId;
-        tempData.action = 2; //Close Job and Create New Job
+        tempData.action = "reschedule"; 
         if (job.isCompletedJob) {
           tempData.isCompletedJob = job.isCompletedJob;
-          tempData.updateInvoice = job.updateInvoice;
           tempData.newJobTasks = job.newJobTasks;
         }
         
@@ -816,20 +816,61 @@ function BCJobModal({
                 throw err;
               });
           }
-          setTimeout(() => {
-            dispatch(
-              setModalDataAction({
-                data: {},
-                type: '',
-              })
-            );
-          }, 200);
 
           if (
             response.message === 'Job created successfully.' ||
             response.message === 'Job edited successfully.'
           ) {
             dispatch(success(response.message));
+            
+            if (job.status == 7 && job.isCompletedJob) {
+              //Job costing pops up when a job is rescheduled from a completed job
+              dispatch(setModalDataAction({
+                'data': {
+                  'message': `This job has been completed, do you need to adjust Job Costing?`,
+                  'actionText': "Yes",
+                  'action': () => {
+                    dispatch(
+                      setModalDataAction({
+                        data: {
+                          job: response?.job,
+                          removeFooter: false,
+                          maxHeight: '100%',
+                          modalTitle: 'Job Costing'
+                        },
+                        type: modalTypes.EDIT_JOB_COSTING_MODAL,
+                      })
+                    );
+                    setTimeout(() => {
+                      dispatch(openModalAction());
+                    }, 200);
+                  }
+                },
+                'type': modalTypes.WARNING_MODAL_V2
+              }));
+
+              setTimeout(() => {
+                dispatch(openModalAction());
+              }, 200);
+            } else {
+              setTimeout(() => {
+                dispatch(
+                  setModalDataAction({
+                    data: {},
+                    type: '',
+                  })
+                );
+              }, 200);
+            }
+          } else {
+            setTimeout(() => {
+              dispatch(
+                setModalDataAction({
+                  data: {},
+                  type: '',
+                })
+              );
+            }, 200);
           }
         })
         .catch((err: any) => {

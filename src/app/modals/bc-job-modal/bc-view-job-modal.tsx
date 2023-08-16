@@ -76,6 +76,7 @@ function BCViewJobModal({
   job = initialJobState,
 }: any): JSX.Element {
   const dispatch = useDispatch();
+  const [customerPORequired, setCustomerPORequired] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
   
@@ -317,22 +318,34 @@ function BCViewJobModal({
   
   let ACTIONS_ITEM: any = [];
 
+  useEffect(() => {
+    const customer = customers.find((res: any) => res._id == job?.customer?._id);
+    setCustomerPORequired(customer.isPORequired);
+  }, [customers]);
+
   if (job.status == 2){
     ACTIONS_ITEM = [
-      { id: 1, title: 'Reopen Job-Create New Ticket' },
-      { id: 2, title: 'Reopen Job-Reschedule' }
+      { id: "create-new-ticket", title: 'Reopen Job-Create New Ticket' },
+      { id: "reschedule", title: 'Reopen Job-Reschedule' }
     ];
+
+    if (customerPORequired) {
+      ACTIONS_ITEM.unshift({ id: "create-new-po-request", title: 'Reopen Job-Create New P0 Request' });
+    }
   } else if(job.status == 7){
     ACTIONS_ITEM = [
-      { id: 0, title: 'Close Job-No Further Action' },
-      { id: 1, title: 'Close Job-Create New Ticket' },
-      { id: 2, title: 'Reschedule Job' }
+      { id: "close-job", title: 'Close Job-No Further Action' },
+      { id: "create-new-ticket", title: 'Close Job-Create New Ticket' },
+      { id: "reschedule", title: 'Reschedule Job' }
     ];
+
+    if (customerPORequired) {
+      ACTIONS_ITEM.splice(1,0,{ id: "create-new-po-request", title: 'Close Job-Create New PO Request' });
+    }
   }
 
-  const handleMenuButtonClick = (event: any, id: number) => {
+  const handleMenuButtonClick = (event: any, id: string) => {
     if (job.status == 2) {
-      const jobData = Object.assign(job);
       dispatch(setModalDataAction({
         'data': {
           'job': job,
@@ -350,11 +363,12 @@ function BCViewJobModal({
     }
   }
 
-  const executeJobActions = async (id:number) => {
+  const executeJobActions = async (id:string) => {
+    let payload;
+
     switch (id) {
-      //Close Job-No Further Action
-      case 0:
-        let payload = {
+      case "close-job":
+        payload = {
           jobId: job._id,
           action: id
         }
@@ -371,77 +385,45 @@ function BCViewJobModal({
         }, 200);
         dispatch(success("Closed Job-No Further Action successfully"));
         break;
-      //Close Job and Create New Ticket
-      case 1:
-        const customer = customers.find((res: any) => res._id == job?.customer?._id);
-
-        const action = async (type: "Ticket" | "PO Request") => {
-          let payload = {
-            jobId: job._id,
-            action: id,
-            type: type
-          };
-
-          const response = await updatePartialJob(payload);
-          dispatch(success("Closed Job and Created New Ticket successfully"));
-          dispatch(refreshJobs(true));
-
-          if (type == "PO Request") {
-            dispatch(setModalDataAction({
-              'data': {
-                'data': response.ticket,
-                'modalTitle': `Send PO Request`,
-                'type': "PO Request",
-                'removeFooter': false,
-              },
-              'type': modalTypes.EMAIL_PO_REQUEST_MODAL
-            }));
-            setTimeout(() => {
-              dispatch(openModalAction());
-            }, 200);
-          } else {
-            dispatch(closeModalAction());
-            setTimeout(() => {
-              dispatch(
-                setModalDataAction({
-                  data: {},
-                  type: '',
-                })
-              );
-            }, 200);
-          }
+      case "create-new-ticket":
+      case "create-new-po-request":
+        const type = id == "create-new-ticket" ? "Ticket" : "PO Request";
+        payload = {
+          jobId: job._id,
+          action: id,
+          type: type
         };
 
-        const yesAction = () => {
-          action("Ticket");
-        }
+        const response = await updatePartialJob(payload);
+        dispatch(success("Closed Job and Created New Ticket successfully"));
+        dispatch(refreshJobs(true));
 
-        const noAction = () => {
-          action("PO Request");
-        }
-
-        if (customer.isPORequired) {
+        if (type == "PO Request") {
           dispatch(setModalDataAction({
             'data': {
-              'message': 'A PO is required for this customer.  Would you like to use the existing PO or create a new PO request?',
-              'disableAutoCloseModal': true,
-              'actionText': "Ticket",
-              'action': yesAction,
-              'closeAction': noAction,
-              'closeText': "PO Request",
+              'data': response.ticket,
+              'modalTitle': `Send PO Request`,
+              'type': "PO Request",
+              'removeFooter': false,
             },
-            'type': modalTypes.WARNING_MODAL_V2
+            'type': modalTypes.EMAIL_PO_REQUEST_MODAL
           }));
           setTimeout(() => {
             dispatch(openModalAction());
           }, 200);
         } else {
-          action("Ticket");
+          dispatch(closeModalAction());
+          setTimeout(() => {
+            dispatch(
+              setModalDataAction({
+                data: {},
+                type: '',
+              })
+            );
+          }, 200);
         }
-
-        break;
-      //Reschedule Job
-      case 2:
+      break;
+      case "reschedule":
         const newJobTasks: any = [];
 
         job.tasks.forEach((task: any) => {
@@ -484,7 +466,7 @@ function BCViewJobModal({
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid container xs={12} className={classes.toolbarButton} >
-        {vendorWithCommisionTier.length > 0 &&
+        {(vendorWithCommisionTier.length > 0 && job.status ==2) &&
             <Button
               color='primary'
               variant="outlined"

@@ -590,6 +590,9 @@ function BCServiceTicketModal(
         };
         dispatch(updateJobSiteAction(newJobSiteValue));
       };
+
+      console.log(editTicketObj);
+      
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         editTicketObj.type = ticket.type;
