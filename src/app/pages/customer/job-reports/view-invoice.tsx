@@ -374,7 +374,7 @@ function ViewInvoice({ classes, theme }: any) {
       data: {
         removeFooter: false,
         maxHeight: '100%',
-        modalTitle: `View History: ${invoiceDetail?.invoiceId} `,
+        modalTitle: `History: ${invoiceDetail?.workType?.title}/${invoiceDetail?.companyLocation?.name} - ${invoiceDetail?.invoiceId}  `,
         invoiceLogs: invoiceLogsData,
         isEditing: false
       },
@@ -430,23 +430,24 @@ function ViewInvoice({ classes, theme }: any) {
           </div>
           <div style={{ display: 'flex' }}>
             {
-            invoiceDetail.job?.customer?.notes && 
-            (
-              <LightTooltip title={invoiceDetail.job?.customer?.notes}>
-                <div className={invoiceStyles.customerNoteContainer}>
-                  <IconButton
-                    component="span"
-                    color={'primary'}
-                    size="small"
-                  >
-                    <InfoIcon></InfoIcon>
-                  </IconButton>
-                  <Typography variant={'subtitle1'} className={invoiceStyles.customerNoteText}>
-                    Customer Notes
-                  </Typography>
-                </div>
-              </LightTooltip>
-            )}
+            // invoiceDetail.job?.customer?.notes && 
+            // (
+            //   <LightTooltip title={invoiceDetail.job?.customer?.notes}>
+            //     <div className={invoiceStyles.customerNoteContainer}>
+            //       <IconButton
+            //         component="span"
+            //         color={'primary'}
+            //         size="small"
+            //       >
+            //         <InfoIcon></InfoIcon>
+            //       </IconButton>
+            //       <Typography variant={'subtitle1'} className={invoiceStyles.customerNoteText}>
+            //         Customer Notes
+            //       </Typography>
+            //     </div>
+            //   </LightTooltip>
+            // )
+          }
             <HtmlTooltip
 
               PopperProps={{
