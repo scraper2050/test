@@ -71,7 +71,7 @@ export default (theme: Theme): any => ({
     paddingTop: "20px",
     overflow: "hidden"
   },
-  closeButton: {
+  actionButton: {
     marginRight: "10px",
     textTransform: 'capitalize',
     borderRadius: 8,
@@ -82,11 +82,10 @@ export default (theme: Theme): any => ({
     justifyContent: "center",
     alignItems: "center",
     padding: "0px 10px 0px 10px",
-    marginLeft: "20px",
     fontWeight: "bold",
     background: "#fff"
   },
-  closeButtonLabel: {
+  actionButtonLabel: {
     marginLeft: "10px",
     marginRight: "10px",
   },

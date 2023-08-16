@@ -477,8 +477,8 @@ function BCViewJobModal({
             </Button>
         }
         {(job.status == 7 || job.status == 2) && (
-          <div className={classes.closeButton}>
-            <span className={classes.closeButtonLabel}>Actions</span>
+          <div className={classes.actionButton}>
+            <span className={classes.actionButtonLabel}>Actions</span>
               <BCMenuButton
               icon={ArrowDropDownIcon}
               items={ACTIONS_ITEM}
@@ -740,6 +740,7 @@ const DataContainer = styled.div`
   .whiteButtonBg {
     background-color: #ffffff;
     border-radius: 8px;
+    margin-right: 20px;
   }
 
   .jobTypeList{
