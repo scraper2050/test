@@ -162,7 +162,7 @@ function BCServiceTicketModal(
   // Submit Button
   const anchorRef = useRef<HTMLDivElement>(null);
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
-  const [submitSelectedIndex, setSubmitSelectedIndex] = useState(0);
+  const [submitSelectedIndex, setSubmitSelectedIndex] = useState(1);
   const submitOptions = ["Submit", "Submit and Send"]
   const hasPORequiredBypass = ability.can('bypass', 'PORequirement');
 
@@ -346,7 +346,7 @@ function BCServiceTicketModal(
       default:
         break;
     }
-    
+
     setFieldValue('jobTypes', jobTypes);
     _setJobTotal();
   };
@@ -361,7 +361,7 @@ function BCServiceTicketModal(
   }
 
   /**
-   * 
+   *
    * @returns Quantity
    * Retrieve the quantity for each Job Type
    */
@@ -371,22 +371,22 @@ function BCServiceTicketModal(
     jobTypes?.forEach((jobType: any, index: number) => {
       qty += Number(jobType.quantity);
     })
-    
+
     return qty
   }
 
   /**
-   * 
-   * @param jobType 
+   *
+   * @param jobType
    * Assign a price to each job item
    */
   const _setJobTypePrice = (jobType: any, customerId?: string) => {
     if (jobType.jobTypeId) {
       const item = items.find((res: any) => res.jobType == jobType.jobTypeId._id);
       const customer = customers.find((res: any) => res._id == (customerId || FormikValues.customerId));
-      
+
       if (item) {
-        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)        
+        let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
         if (customer && price) {
           jobType.price = price?.charge;
         } else {
@@ -430,7 +430,7 @@ function BCServiceTicketModal(
       if (discountItem) {
         const discountAmount = discountItem.charges ?? 0;
 
-        discountTotal += discountAmount; 
+        discountTotal += discountAmount;
         total += discountAmount;
       }
     }
@@ -513,7 +513,7 @@ function BCServiceTicketModal(
       });
     else return [];
   };
-  
+
   const {
     values: FormikValues,
     handleChange: formikChange,
@@ -530,7 +530,7 @@ function BCServiceTicketModal(
       jobLocationId: ticket.jobLocation
         ? ticket?.jobLocation?._id || ticket.jobLocation
         : '',
-      jobTypes: ticket.tasks ? mapTask(ticket.tasks) : [{...initialJobType}],  
+      jobTypes: ticket.tasks ? mapTask(ticket.tasks) : [{...initialJobType}],
       note: ticket.note || "",
       dueDate: parseISODate(ticket.dueDate),
       updateFlag: ticket.updateFlag,
@@ -546,7 +546,7 @@ function BCServiceTicketModal(
     },
     onSubmit: async (values) => {
       setIsSubmitting(true);
-      
+
       const tempData = {
         ...ticket,
         ...values,
@@ -560,7 +560,7 @@ function BCServiceTicketModal(
       if (currentDivision.data?.locationId) {
         tempData.companyLocation = currentDivision.data?.locationId;
       }
-      
+
       if (currentDivision.data?.workTypeId) {
         tempData.workType = currentDivision.data?.workTypeId;
       }
@@ -576,7 +576,7 @@ function BCServiceTicketModal(
       const editTicketObj = { ...values, ticketId: '', type: '' };
       const updateHomeOccupationStatus = () => {
         if (jobSiteValue.isHomeOccupied === isHomeOccupied) return;
-        
+
         //Verify if the location payload meets the requirements of the backend => location: {long: 0, lat: 0}
         if (jobSiteValue?.location && jobSiteValue?.location?.coordinates.length && (!jobSiteValue?.long && !jobSiteValue?.lat)) {
           jobSiteValue.location.long = jobSiteValue.location.coordinates[0];
@@ -625,7 +625,7 @@ function BCServiceTicketModal(
             ) {
               formatedRequest.homeOwnerId = homeOwners?.[0]._id;
             }
-            else if(!ticket.isHomeOccupied || 
+            else if(!ticket.isHomeOccupied ||
               formatedRequest.customerFirstName !== ticket.homeOwner?.profile?.firstName ||
               formatedRequest.customerLastName !== ticket.homeOwner?.profile?.lastName ||
               formDataEmail.value !== ticket.homeOwner.info?.email ||
@@ -722,7 +722,7 @@ function BCServiceTicketModal(
         // Create home owner if needed
         if (formatedRequest.isHomeOccupied) {
           if(!checkValidHomeOwner()) return;
-          if(homeOwnerId !== '' && 
+          if(homeOwnerId !== '' &&
             formatedRequest.customerFirstName === homeOwners?.[0]?.profile?.firstName &&
             formatedRequest.customerLastName === homeOwners?.[0]?.profile?.lastName &&
             formDataEmail.value === homeOwners?.[0]?.info?.email &&
@@ -778,7 +778,7 @@ function BCServiceTicketModal(
               }
               setIsSubmitting(false);
               updateHomeOccupationStatus();
-  
+
               if (response.message === 'Service Ticket created successfully.' || response.message === 'Purchase Order Request created successfully.') {
                 if (submitSelectedIndex === 1) {
                   setEmailTicketData({
@@ -828,7 +828,7 @@ function BCServiceTicketModal(
   const homeOwners = useSelector((state: any) => state.homeOwner.data);
 
   useEffect(() => {
-    const filteredHomeOwners = homeOwners.filter((item: any) => 
+    const filteredHomeOwners = homeOwners.filter((item: any) =>
       item?.address === FormikValues.jobSiteId || item?.address === jobSiteValue?._id
     );
     if (filteredHomeOwners && filteredHomeOwners.length > 0 && (FormikValues.jobSiteId !== '' || jobSiteValue?._id)) {
@@ -842,7 +842,7 @@ function BCServiceTicketModal(
         ...formDataPhone,
         value: filteredHomeOwners[0].contact?.phone || ''
       });
-      setHomeOwnerId(filteredHomeOwners[0]._id); 
+      setHomeOwnerId(filteredHomeOwners[0]._id);
       setHomeOccupied(true);
       setFieldValue('isHomeOccupied', true);
     }
@@ -1007,7 +1007,7 @@ function BCServiceTicketModal(
             (item: { jobType: string }) =>
               item.jobType && (item.jobType === task.jobType || item.jobType === task.jobType?._id)
             )[0];
-            
+
             let jobType = {
               jobTypeId: {
                 _id: currentItem?.jobType,
@@ -1017,7 +1017,7 @@ function BCServiceTicketModal(
               quantity: task.quantity || 1,
               price: task.price || 0,
             }
-            
+
           if (!("price" in task)){
             const item = items.find((res: any) => res.jobType == task.jobType);
             const customer = customers.find((res: any) => res._id == FormikValues.customerId);
@@ -1031,7 +1031,7 @@ function BCServiceTicketModal(
               }
             }
           }
-            
+
           return jobType;
         });
         setFieldValue('jobTypes', result);
@@ -1053,7 +1053,7 @@ function BCServiceTicketModal(
       setItemTier(customer?.itemTierObj?.[0]?.name || "");
     }
   }, [items, discountItems]);
-  
+
   const sendPORequestEmail = (ticket: any) => {
     dispatch(setModalDataAction({
       'data': {
@@ -1089,7 +1089,7 @@ function BCServiceTicketModal(
     if(Object.keys(FormikErrors).length){
       dispatch(warning("Please fill in all required fields with *"));
     }
-    
+
     submitForm();
   };
 
@@ -1167,7 +1167,7 @@ function BCServiceTicketModal(
       </Grid>
     }
   }
-  
+
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
@@ -1546,14 +1546,14 @@ function BCServiceTicketModal(
                         variant={'caption'}
                         className={`${'previewCaption'}`}
                       >
-                        Price 
-                        {!(detail || isFieldsDisabled) && 
+                        Price
+                        {!(detail || isFieldsDisabled) &&
                           <Tooltip title="Edit Price" placement="top" >
-                            <IconButton 
+                            <IconButton
                               component="span"
                               color={'primary'}
                               size="small"
-                              className={"btnPrice"}  
+                              className={"btnPrice"}
                               onClick={() => {
                                 handleJobTypeChange("isPriceEditable", true, index);
                               }}
@@ -1726,7 +1726,7 @@ function BCServiceTicketModal(
                       : null}
                   </Label>
                 </Grid>
-              </Grid> 
+              </Grid>
           </Grid>
 
           <DialogActions>
@@ -1843,7 +1843,7 @@ function BCServiceTicketModal(
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <EmailModalPORequest 
+        <EmailModalPORequest
           id={emailTicketData.id}
           type={emailTicketData.type}
         />
@@ -1888,11 +1888,11 @@ const DataContainer = styled.div`
     background-color: #ffffff;
     border-radius: 6px;
   }
-  
+
   .noPaddingTopAndButton {
     padding: 0px 16px!important;
   }
-  
+
   .totalDetailText {
     color: #828282;
     text-transform: uppercase;
@@ -1906,7 +1906,7 @@ const DataContainer = styled.div`
     color: #ef5350;
     margin-left: 4px;
   }
-  
+
   .customerNoteContainer{
     display: flex;
     align-items: center;
@@ -1930,7 +1930,7 @@ const DataContainer = styled.div`
 
   .groupBtnContainer{
     border-radius: 8px!important;
-    box-shadow: none!important; 
+    box-shadow: none!important;
   }
 
   .groupBtnRight{
