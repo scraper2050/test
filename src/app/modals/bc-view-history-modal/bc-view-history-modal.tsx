@@ -166,7 +166,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             Cell({ row }: any) {
                 return (
                     <Typography className={classes.description}>
-                        {new Date(row?.original?.createdAt).toLocaleString()}
+                        {row?.original?.createdAt?.replace("T", " ")?.split(".")[0]}
                     </Typography>
                 );
             },
@@ -176,13 +176,21 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             id: 'action',
             sortable: true,
             Cell({ row }: any) {
+                const splittedActions = row?.original?.info.split(',');
+                const actions = splittedActions.filter((info: any) => info !== ''); // Remove empty actions
+                if (row.original.note) {
+                    actions.push(`Note: ${row.original.note}`);
+                }
                 return (
-                    <Typography className={classes.description}>
-                        {row?.original?.info}
-                    </Typography>
+                    <ul style={{ listStyleType: 'circle' }}>
+                        {actions.map((type: any, index: number) => (
+                            <li key={index}>{type.trim()}</li>
+                        ))}
+                    </ul>
                 );
             },
         },
+
     ];
     return (
         <DialogContent classes={{ root: classes.dialogContent }}>
@@ -195,7 +203,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         isLoading={loading}
                         onRowClick={() => { }}
                         // pageSize={5}
-                        pagination={false}
+                        // pagination={true}
                         stickyHeader
                     tableData={data?.invoiceLogs.reverse()}
                     />
