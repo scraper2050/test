@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Button, Grid, Theme, Tooltip, Typography, withStyles } from '@material-ui/core';
-import { formatDatTimell, formatDatTimelll } from 'helpers/format';
+import { formatDatTimell, formatTime } from 'helpers/format';
 import styles, {
   DataContainer,
   MainContainer,
@@ -192,7 +192,20 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     return acc;
   }, []);
 
-
+  const endTime = job?.scheduledEndTime ? `:${formatTime(job?.scheduledEndTime)}` : '';
+  const specificTime = `${formatTime(job?.scheduledStartTime)}${endTime}`
+  let time = 'N/A';
+  switch (job?.scheduleTimeAMPM) {
+    case 0:
+      time = specificTime;
+      break;
+    case 1:
+      time = 'AM';
+      break;
+    case 2:
+      time = 'PM';
+      break;
+  }
 
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
@@ -447,33 +460,15 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                       <Grid
                         item
                         xs={5}>
-                        <Grid container>
-                          {/* start & end time */}
-                          <Grid
-                            item
-                            xs={6}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Start time'}
-                              </p>
-                              <p className={classes.grayBoldTextM_0}>
-                                {formatDatTimelll(job.startTime) || 'N/A'}
-                              </p>
-                            </div>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={6}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'End time'}
-                              </p>
-                              <p className={classes.grayBoldTextM_0}>
-                                {formatDatTimelll(job.endTime) || 'N/A'}
-                              </p>
-                            </div>
-                          </Grid>
-                        </Grid>
+                        <div className={classes.addMargin}>
+                          <p className={classes.attributeKey}>
+                            {'Time'}
+                          </p>
+                          <p className={classes.grayBoldTextM_0}>
+                            {time}
+                          </p>
+                        </div>
+                        
                       </Grid>
                       { /* Customer contact info */}
                       {job.customerContactId && <Grid
