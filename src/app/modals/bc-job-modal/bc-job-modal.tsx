@@ -157,6 +157,7 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
       quantity: task.quantity || 1,
       price: task.price || 0,
       completedCount: task.completedCount,
+      status: task.status,
       allQuantitiy: task.allQuantitiy
     }
 
@@ -188,6 +189,7 @@ const getJobTasks = (job: any, items: any, customers: any[], customerId: string)
       employeeType: task.employeeType ? 1 : 0,
       employee: !task.employeeType && task.technician ? task.technician : null,
       contractor: task.employeeType && task.contractor ? task.contractor : null,
+      status: task.status,
       jobTypes: getJobData(task.jobTypes, items, customers, customerId)
     }));
     return tasks;
@@ -196,6 +198,7 @@ const getJobTasks = (job: any, items: any, customers: any[], customerId: string)
       employeeType: 1,
       contractor: null,
       employee: null,
+      status: 0,
       jobTypes: getJobData(job.ticket.tasks, items, customers, customerId),
     }]
   }
@@ -828,7 +831,8 @@ function BCJobModal({
 
           if (
             response.message === 'Job created successfully.' ||
-            response.message === 'Job edited successfully.'
+            response.message === 'Job edited successfully.' ||
+            response.message === 'Job rescheduled successfully.'
           ) {
             dispatch(success(response.message));
           }
@@ -1219,6 +1223,7 @@ function BCJobModal({
                           technician type
                       </Typography>
                       <Autocomplete
+                        disabled={task.status == 2 || task.status == 7}
                         getOptionLabel={(option) =>
                           option.name ? option.name : ''
                         }
@@ -1246,6 +1251,7 @@ function BCJobModal({
                       </Typography>
                       {task.employeeType ?
                         <Autocomplete
+                          disabled={task.status == 2 || task.status == 7}
                           getOptionLabel={(option) => {
                             return option?.info?.displayName ? option.info.displayName : option?.info?.companyName ? option.info.companyName : ''
                           }
@@ -1278,6 +1284,7 @@ function BCJobModal({
                         />
                         :
                         <Autocomplete
+                          disabled={task.status == 2 || task.status == 7}
                           getOptionLabel={(option) =>
                             option.profile ? option.profile.displayName : ''
                           }
@@ -1336,6 +1343,7 @@ function BCJobModal({
                               job type
                             </Typography>
                             <Autocomplete
+                              disabled={jobType.status == 2}
                               getOptionDisabled={(option) => !option.isJobType}
                               getOptionLabel={option => {
                                 const { title } = option;
@@ -1399,6 +1407,7 @@ function BCJobModal({
                               handleChange={(ev: any, newValue: any) =>
                                 handleJobTypeChange("quantity", ev.target?.value, jobTypeIdx, index)
                               }
+                              disabled={jobType.status == 2}
                               name={'quantity'}
                               value={jobType.quantity}
                             />

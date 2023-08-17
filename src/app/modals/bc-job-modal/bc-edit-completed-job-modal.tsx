@@ -196,7 +196,7 @@ function BCEditCompletedJobModal({
             }
           });
           if (newJobTypes.length) {
-            newJobTasksMapped.push({ ...task, jobTypes: newJobTypes });
+            newJobTasksMapped.push({ ...task, jobTypes: newJobTypes, status: 0 });
           }
         });
 
