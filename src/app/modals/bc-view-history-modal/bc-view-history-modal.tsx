@@ -178,7 +178,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             Cell({ row }: any) {
                 return (
                     <Typography className={classes.description}>
-                        {row?.original?.type}
+                        {row?.original?.info}
                     </Typography>
                 );
             },
@@ -197,7 +197,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         // pageSize={5}
                         pagination={false}
                         stickyHeader
-                    tableData={data?.invoiceLogs}
+                    tableData={data?.invoiceLogs.reverse()}
                     />
                 </div>
       

@@ -230,7 +230,8 @@ function BCInvoiceItemsTableRow({ classes, values, invoiceItems=[], handleChange
   useEffect(() => {
     getItems(true)
       .then(res => {
-        const tempServiceItems = res.items;
+        const tempServiceItems = res.items.filter((item: any) => item.name != null);
+
         tempServiceItems
           .sort((a:any, b:any) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : a.name.toLowerCase() <b.name.toLowerCase() ? -1 : 0)
           .sort((a:any, b:any) => !a.isDiscountItem && b.isDiscountItem ? 1 : -1)

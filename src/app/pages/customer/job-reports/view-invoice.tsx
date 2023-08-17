@@ -126,6 +126,7 @@ function ViewInvoice({ classes, theme }: any) {
           "invoiceId": invoiceDetail.invoiceId,
           "invoice": invoiceDetail._id,
           "type": "CREATED",
+          "info":"Invoice created",
           "customer": invoiceDetail.customer,
           "companyLocation": invoiceDetail.companyLocation,
           "workType": invoiceDetail.workType,
