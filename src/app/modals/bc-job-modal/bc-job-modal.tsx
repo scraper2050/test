@@ -1223,7 +1223,7 @@ function BCJobModal({
                           technician type
                       </Typography>
                       <Autocomplete
-                        disabled={task.status == 2 || task.status == 7}
+                        disabled={task.status == 2}
                         getOptionLabel={(option) =>
                           option.name ? option.name : ''
                         }
@@ -1251,7 +1251,7 @@ function BCJobModal({
                       </Typography>
                       {task.employeeType ?
                         <Autocomplete
-                          disabled={task.status == 2 || task.status == 7}
+                          disabled={task.status == 2}
                           getOptionLabel={(option) => {
                             return option?.info?.displayName ? option.info.displayName : option?.info?.companyName ? option.info.companyName : ''
                           }
@@ -1284,7 +1284,7 @@ function BCJobModal({
                         />
                         :
                         <Autocomplete
-                          disabled={task.status == 2 || task.status == 7}
+                          disabled={task.status == 2}
                           getOptionLabel={(option) =>
                             option.profile ? option.profile.displayName : ''
                           }
