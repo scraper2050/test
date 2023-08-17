@@ -313,7 +313,7 @@ function ServiceTicket({ classes, hidden }: any) {
     if (refresh) {
       dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(30));
+      dispatch(setCurrentPageSize(15));
     }
     setTimeout(() => {
       loadCount.current++;
@@ -328,7 +328,7 @@ function ServiceTicket({ classes, hidden }: any) {
     dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(30));
+    dispatch(setCurrentPageSize(15));
   }, [currentDivision.params]);
 
   const handleRowClick = (event: any, row: any) => {

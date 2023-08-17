@@ -25,7 +25,7 @@ const initialServiceTicket = {
   'nextCursor': '',
   'total': 0,
   'currentPageIndex': 0,
-  'currentPageSize': 30,
+  'currentPageSize': 15,
   'keyword': '',
 };
 
