@@ -275,7 +275,7 @@ function InvoicingListListing({ classes, theme }: any) {
   useEffect(() => {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
-    dispatch(getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined,undefined,undefined, currentDivision.params));
+    dispatch(getAllInvoicesAPI(currentPageSize, currentPageIndex, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined,undefined,undefined, currentDivision.params));
     return () => {
       dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(currentPageIndex));

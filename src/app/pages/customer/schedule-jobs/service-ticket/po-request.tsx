@@ -230,9 +230,9 @@ function PORequired({ classes, hidden }: any) {
 
     useEffect(() => {
         if (refresh) {
-            dispatch(getAllPORequestsAPI(undefined, undefined, showAllPORequests, keyword, selectionRange, currentDivision.params));
+            dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
             dispatch(setCurrentPageIndex(0));
-            dispatch(setCurrentPageSize(10));
+            dispatch(setCurrentPageSize(30));
         }
         setTimeout(() => {
             loadCount.current++;
@@ -240,14 +240,14 @@ function PORequired({ classes, hidden }: any) {
     }, [refresh]);
 
     useEffect(() => {
-        dispatch(getAllPORequestsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params));
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined, currentDivision.params));
         if (customers.length == 0) {
             dispatch(getCustomers());
         }
         dispatch(getAllJobTypesAPI());
         dispatch(setKeyword(''));
         dispatch(setCurrentPageIndex(0));
-        dispatch(setCurrentPageSize(10));
+        dispatch(setCurrentPageSize(30));
     }, [currentDivision.params])
 
     const handleRowClick = (event: any, row: any) => {

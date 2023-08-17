@@ -311,9 +311,9 @@ function ServiceTicket({ classes, hidden }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllServiceTicketsAPI(undefined, undefined, showAllTickets, keyword, selectionRange, currentDivision.params));
+      dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      dispatch(setCurrentPageSize(30));
     }
     setTimeout(() => {
       loadCount.current++;
@@ -321,14 +321,14 @@ function ServiceTicket({ classes, hidden }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params));
+    dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined, currentDivision.params));
     if (customers.length == 0) {
       dispatch(getCustomers());
     }
     dispatch(getAllJobTypesAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
+    dispatch(setCurrentPageSize(30));
   }, [currentDivision.params]);
 
   const handleRowClick = (event: any, row: any) => {

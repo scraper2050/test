@@ -178,7 +178,7 @@ function JobReportsPage({ classes, theme }: any) {
 
     if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
       // dispatch(loadJobReportsActions.fetch());
-      dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,currentDivision.params));
+      dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,undefined,undefined,currentDivision.params));
       return () => {
         dispatch(setKeyword(''));
         dispatch(setDateFilterRange(null));
