@@ -176,14 +176,12 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             id: 'action',
             sortable: true,
             Cell({ row }: any) {
-                const splittedActions = row?.original?.info.split(',');
-                const actions = splittedActions.filter((info: any) => info !== ''); // Remove empty actions
-                if (row.original.note) {
-                    actions.push(`Note: ${row.original.note}`);
-                }
+                const splittedActions = row?.original?.info?.split(',');
+                const actions = splittedActions?.filter((info: any) => info !== ''); // Remove empty actions
+             
                 return (
                     <ul style={{ listStyleType: 'circle' }}>
-                        {actions.map((type: any, index: number) => (
+                        {actions?.map((type: any, index: number) => (
                             <li key={index}>{type.trim()}</li>
                         ))}
                     </ul>
@@ -205,7 +203,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
                         // pageSize={5}
                         // pagination={true}
                         stickyHeader
-                    tableData={data?.invoiceLogs.reverse()}
+                    tableData={data?.invoiceLogs}
                     />
                 </div>
       
