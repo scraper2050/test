@@ -121,7 +121,7 @@ function ViewInvoice({ classes, theme }: any) {
     if (invoiceDetail?._id && invoiceLogs!=null) {
       let logs = invoiceLogs;
       if (logs.filter((logItem: any) => logItem.type == "CREATED").length==0) {
-        logs.unshift({
+        logs.push({
           "_id": "64d165ba67441a506b9b0e94-invoice",
           "invoiceId": invoiceDetail.invoiceId,
           "invoice": invoiceDetail._id,

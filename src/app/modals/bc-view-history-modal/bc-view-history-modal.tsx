@@ -166,7 +166,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             Cell({ row }: any) {
                 return (
                     <Typography className={classes.description}>
-                        {new Date(row?.original?.createdAt).toLocaleString('en-US')}
+                        {new Date(row?.original?.createdAt).toLocaleTimeString([], { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </Typography>
                 );
             },
