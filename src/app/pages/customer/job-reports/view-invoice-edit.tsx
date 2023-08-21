@@ -138,6 +138,7 @@ function ViewInvoice() {
             quantity: parseInt(o.quantity),
             tax: parseFloat(o.tax) ?? 0,
             isFixed: o.isFixed,
+            name: o.name
           }
           if (o._id)
             item.item = o._id;
