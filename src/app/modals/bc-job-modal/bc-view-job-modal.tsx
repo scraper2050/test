@@ -7,7 +7,8 @@ import {
   withStyles,
   FormControlLabel,
   Checkbox,
-  Tooltip
+  Tooltip,
+  CircularProgress
 } from '@material-ui/core';
 import React, {useEffect, useMemo, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -77,6 +78,7 @@ function BCViewJobModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [customerPORequired, setCustomerPORequired] = useState(false);
+  const [actionsLoading, setActionsLoading] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
   
@@ -365,7 +367,8 @@ function BCViewJobModal({
 
   const executeJobActions = async (id:string) => {
     let payload;
-
+    
+    setActionsLoading(true);
     switch (id) {
       case "close-job":
         payload = {
@@ -432,10 +435,10 @@ function BCViewJobModal({
             if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
               //Split Quantity
               newJobTypes.push({
-                quantity: jobType.quantity - jobType.completedCount,
+                quantity: jobType.quantity - (jobType.completedCount || 0),
                 jobType: jobType.jobType,
                 price: jobType.price,
-                completedCount: jobType.completedCount,
+                completedCount: (jobType.completedCount || 0),
                 allQuantitiy: jobType.quantity
               });
             }
@@ -460,6 +463,8 @@ function BCViewJobModal({
       default:
         break;
     }
+
+    setActionsLoading(false);
   }
   
   return (
@@ -479,10 +484,14 @@ function BCViewJobModal({
         {(job.status == 7 || job.status == 2) && (
           <div className={classes.actionButton}>
             <span className={classes.actionButtonLabel}>Actions</span>
+              {actionsLoading && (
+                <CircularProgress size={17} />
+              )}
               <BCMenuButton
-              icon={ArrowDropDownIcon}
-              items={ACTIONS_ITEM}
-              handleClick={handleMenuButtonClick}
+                icon={ArrowDropDownIcon}
+                items={ACTIONS_ITEM}
+                
+                handleClick={handleMenuButtonClick}
               />
           </div>
         )}

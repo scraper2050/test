@@ -1463,7 +1463,7 @@ function BCJobModal({
                             >
                               <AddCircleIcon />
                             </IconButton>
-                            {jobTypeIdx > 0 &&
+                          {(jobTypeIdx > 0 && jobType.status != 2 ) &&
                               <IconButton
                                 component="span"
                                 size="small"
