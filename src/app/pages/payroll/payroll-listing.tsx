@@ -24,7 +24,8 @@ import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
 import { getPayrollBalance, refreshContractorPayment } from "../../../actions/payroll/payroll.action";
 import { Contractor } from "../../../actions/payroll/payroll.types";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
-import { warning } from 'actions/snackbar/snackbar.action';
+import { error, warning } from 'actions/snackbar/snackbar.action';
+import { exportVendorPayments } from 'api/payroll.api';
 
 interface Props {
   classes: any;
@@ -33,6 +34,8 @@ interface Props {
 const ITEMS = [
   { id: 0, title: 'Record Payment' },
   { id: 1, title: 'Past Payment' },
+  { id: 2, title: 'Export Payements' },
+
   // {id: 2, title:'View Details'},
 ]
 
@@ -104,6 +107,32 @@ function Payroll({ classes }: Props) {
           }
         });
         break;
+      case 2:
+        if (!selectionRange) return dispatch(error("Please select a date range"));
+        const companyLocation = currentDivision.params?.companyLocation ? `&companyLocation=${currentDivision.params?.companyLocation}` : '';
+        const startDate = formatDateYMD(selectionRange.startDate);
+        const endDate = formatDateYMD(selectionRange.endDate);
+        const query = `?id=${row._id}&startDate=${startDate}&endDate=${endDate}${companyLocation}`;
+        exportVendorPayments(query).then(({ data, fileName }: { data: Blob, fileName: string }) => {
+          if (fileName == '') {
+            dispatch(warning('No payement found'));
+            return;
+          }
+          const href = window.URL.createObjectURL(data);
+
+          const anchorElement = document.createElement('a');
+
+          anchorElement.href = href;
+          anchorElement.download = fileName;
+
+          document.body.appendChild(anchorElement);
+          anchorElement.click();
+
+          document.body.removeChild(anchorElement);
+          window.URL.revokeObjectURL(href);
+        })
+        break;
+     
     }
   }
 
