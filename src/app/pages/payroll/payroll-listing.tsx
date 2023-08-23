@@ -25,7 +25,8 @@ import { getPayrollBalance, refreshContractorPayment } from "../../../actions/pa
 import { Contractor } from "../../../actions/payroll/payroll.types";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { error, warning } from 'actions/snackbar/snackbar.action';
-import { exportVendorPayments } from 'api/payroll.api';
+import { exportVendorJobs } from 'api/payroll.api';
+import moment from 'moment';
 
 interface Props {
   classes: any;
@@ -34,7 +35,7 @@ interface Props {
 const ITEMS = [
   { id: 0, title: 'Record Payment' },
   { id: 1, title: 'Past Payment' },
-  { id: 2, title: 'Export Payements' },
+  { id: 2, title: 'Export Jobs' },
 
   // {id: 2, title:'View Details'},
 ]
@@ -108,12 +109,19 @@ function Payroll({ classes }: Props) {
         });
         break;
       case 2:
-        if (!selectionRange) return dispatch(error("Please select a date range"));
         const companyLocation = currentDivision.params?.companyLocation ? `&companyLocation=${currentDivision.params?.companyLocation}` : '';
-        const startDate = formatDateYMD(selectionRange.startDate);
-        const endDate = formatDateYMD(selectionRange.endDate);
-        const query = `?id=${row._id}&startDate=${startDate}&endDate=${endDate}${companyLocation}`;
-        exportVendorPayments(query).then(({ data, fileName }: { data: Blob, fileName: string }) => {
+        const workType = currentDivision.params?.workType ? `&workType=${currentDivision.params?.workType}` : '';
+        let rangeQuery = '';
+        if (selectionRange) {
+          rangeQuery = `&startDate=${formatDateYMD(selectionRange.startDate)}&endDate=${formatDateYMD(selectionRange.endDate)}`
+        }else {
+          const now = new Date();
+          const startDate = moment().subtract(90, 'd').format();
+          rangeQuery = `&startDate=${formatDateYMD(startDate)}}&endDate=${formatDateYMD(now)}`;
+        }
+        
+        const query = `?id=${row._id}${rangeQuery}${companyLocation}${workType}`;
+        exportVendorJobs(query).then(({ data, fileName }: { data: Blob, fileName: string }) => {
           if (fileName == '') {
             dispatch(warning('No payement found'));
             return;

@@ -270,9 +270,9 @@ export const getPayrollReportAPI = async (type?: string, id?: string, division?:
   }
 }
 
-export const exportVendorPayments = async (query: string): Promise<{ data: Blob, fileName: string }> => {
+export const exportVendorJobs = async (query: string): Promise<{ data: Blob, fileName: string }> => {
   return new Promise((resolve, reject) => {
-    downloadFile(`/exportVendorPayments/${query}`, 'GET').then((value: AxiosResponse<any>) => {
+    downloadFile(`/exportVendorJobs/${query}`, 'GET').then((value: AxiosResponse<any>) => {
       let fileName = '';
       const contentDisposition = value.headers['content-disposition'];
       if (contentDisposition) {
