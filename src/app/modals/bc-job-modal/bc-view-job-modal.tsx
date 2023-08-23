@@ -31,13 +31,14 @@ import {
 } from "../../../actions/bc-modal/bc-modal.action";
 import {modalTypes} from "../../../constants";
 import {getContacts} from "../../../api/contacts.api";
-import {callUpdateJobAPI, updatePartialJob} from "../../../api/job.api";
+import {callUpdateJobAPI, getAllJobTypesAPI, updatePartialJob} from "../../../api/job.api";
 import {refreshJobs} from "../../../actions/job/job.action";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
 import BCJobStatus from "../../components/bc-job-status";
 import { Job } from 'actions/job/job.types';
 import BCMenuButton from 'app/components/bc-menu-more';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 
 const initialJobState = {
   customer: {
@@ -390,41 +391,61 @@ function BCViewJobModal({
         break;
       case "create-new-ticket":
       case "create-new-po-request":
-        const type = id == "create-new-ticket" ? "Ticket" : "PO Request";
-        payload = {
-          jobId: job._id,
-          action: id,
-          type: type
+        // const type = id == "create-new-ticket" ? "Ticket" : "PO Request";
+        // payload = {
+        //   jobId: job._id,
+        //   action: id,
+        //   type: type
+        // };
+        
+        const newTicketTasks: any = [];
+        job.tasks.forEach((task: any) => {
+          task.jobTypes.forEach((jobType: any) => {
+            if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
+              //Split Quantity
+              newTicketTasks.push({
+                quantity: jobType.quantity - (jobType.completedCount || 0),
+                jobType: jobType.jobType?._id,
+                price: jobType.price,
+                completedCount: (jobType.completedCount || 0),
+                allQuantitiy: jobType.quantity,
+                status: 7
+              });
+            }
+          });
+        });
+
+        const ticket = { ...job.ticketObj[0], tasks: newTicketTasks, _id: null, jobCreated: false, customer: job.customerObj[0] };
+        
+        const reqObj = {
+          'customerId': ticket.customer?._id,
+          'locationId': ticket.jobLocation
         };
-
-        const response = await updatePartialJob(payload);
-        dispatch(success("Closed Job and Created New Ticket successfully"));
-        dispatch(refreshJobs(true));
-
-        if (type == "PO Request") {
-          dispatch(setModalDataAction({
-            'data': {
-              'data': response.ticket,
-              'modalTitle': `Send PO Request`,
-              'type': "PO Request",
-              'removeFooter': false,
-            },
-            'type': modalTypes.EMAIL_PO_REQUEST_MODAL
-          }));
-          setTimeout(() => {
-            dispatch(openModalAction());
-          }, 200);
+        /*
+         * Dispatch(loadingJobLocations());
+         * dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
+         */
+        if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+          dispatch(loadingJobSites());
+          dispatch(getJobSites(reqObj));
         } else {
-          dispatch(closeModalAction());
-          setTimeout(() => {
-            dispatch(
-              setModalDataAction({
-                data: {},
-                type: '',
-              })
-            );
-          }, 200);
+          dispatch(clearJobSiteStore());
         }
+        dispatch(getAllJobTypesAPI());
+      
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': 'Create Ticket',
+            'removeFooter': false,
+            'ticketData': ticket,
+            'className': 'serviceTicketTitle',
+            'maxHeight': '900px',
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
       break;
       case "reschedule":
         const newJobTasks: any = [];

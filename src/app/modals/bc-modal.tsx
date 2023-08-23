@@ -133,7 +133,7 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'lg'
         });
-        setComponent(<BCServiceTicketModal error={data.error} />);
+        setComponent(<BCServiceTicketModal error={data.error} ticket={data.ticketData}/>);
         break;
       case modalTypes.EDIT_TICKET_MODAL:
         setModalOptions({
