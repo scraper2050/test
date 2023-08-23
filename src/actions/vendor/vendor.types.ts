@@ -33,6 +33,7 @@ export interface VendorsState {
   readonly response?: string
   readonly vendorObj?: Vendor | {}
   readonly vendorPayments?: any[]
+  readonly vendorContracts?: any[]
   readonly assignedVendors?: string[]
   readonly unsignedVendorsFlag?: boolean
 }

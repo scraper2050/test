@@ -2,7 +2,6 @@ import { ArrowDropDown } from '@material-ui/icons';
 import { CSButton } from 'helpers/custom';
 import axios from 'axios';
 import styles from './bc-roles-permissions.style';
-import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Accordion,
@@ -20,7 +19,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { permissionDescriptions } from './rolesAndPermissions';
 import { RolesAndPermissions } from 'actions/permissions/permissions.types';
 import { initialRolesAndPermissions } from 'reducers/permissions.reducer';
-import { updateUserPermissions } from 'api/permissions.api';
 import { updateUserPermissionsAction } from 'actions/permissions/permissions.action';
 
 

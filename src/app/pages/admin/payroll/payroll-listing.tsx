@@ -80,7 +80,7 @@ function Payroll({classes}: Props) {
   const viewHistory = (vendor: any) => {
     dispatch(setModalDataAction({
       'data': {
-        'modalTitle': `${vendor.vendor} \n Commission History`,
+        'modalTitle': `${vendor.vendor} \n Pay History`,
         'vendorId': vendor._id,
       },
       'type': modalTypes.VIEW_COMMISSION_HISTORY_MODAL

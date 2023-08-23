@@ -22,9 +22,9 @@ import { setCurrentPageIndex, setCurrentPageSize } from 'actions/job-request/job
 import { markNotificationAsRead } from 'actions/notifications/notifications.action';
 import { info } from '../../../actions/snackbar/snackbar.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
-import { Can, ability } from 'app/config/Can';
 import { getUserPermissionsAction } from 'actions/permissions/permissions.action';
 
+const AdminCompanySettingsPage = React.lazy(() => import('../admin/company-settings/company-settings'));
 const UpdateInvoicePage = React.lazy(() => import('../invoicing/invoices-list/update-invoice/update-invoice'));
 const DashboardPage = React.lazy(() => import('../dashboard/dashboard'));
 const CustomersPage = React.lazy(() => import('../customer/customer'));
@@ -81,7 +81,6 @@ const RolesTechnicianPage = React.lazy(() => import('../admin/roles-permissions/
 const ViewRolePage = React.lazy(() => import('../admin/roles-permissions/roles/roles'));
 const AdminVendorsPage = React.lazy(() => import('../admin/vendors/vendors'));
 const AdminPayrollPage = React.lazy(() => import('../admin/payroll/payroll'));
-const AdminIntegrationsPage = React.lazy(() => import('../admin/integrations/integrations'));
 const ViewMoreVendorPage = React.lazy(() => import('../admin/vendors/view-more/view-more'));
 const InventoryPage = React.lazy(() => import('../inventory/inventory'));
 const PurchasedTagsPage = React.lazy(() => import('../tags/purchased-tags/purchased-tags'));
@@ -261,11 +260,12 @@ function Main(): any {
 
   let AdminPage: any = BillingPage;
 
-  if (ability.can('edit', 'BillingInformation')) {
+  const isAdmin = user?.permissions?.role === 3;
+  if (rolesAndPermissions?.superAdmin?.editBillingInformation || isAdmin) {
     AdminPage = BillingPage;
-  } else if (ability.can('manage', 'Company')) {
+  } else if (rolesAndPermissions?.admin?.manageCompanySettings || isAdmin) {
     AdminPage = CompanyProfilePage;
-  } else if (ability.can('manage', 'Employee')) {
+  } else if (rolesAndPermissions?.admin?.manageEmployeeInfoAndPermissions || isAdmin) {
     AdminPage = AdminEmployeesPage;
   }
 
@@ -341,28 +341,28 @@ function Main(): any {
                   exact
                   path={'/main/payroll/pastpayment/:contractorName'}
                   title={'Tags'}
-                  hasAccess={ability.can('manage', 'VendorPayments')}
+                  hasAccess={rolesAndPermissions?.accounting?.vendorPayments}
                 />
                 <AuthRoute
                   Component={PastPaymentPage}
                   exact
                   path={'/main/payroll/pastpayment/:companyLocation?/:workType?'}
                   title={'Tags'}
-                  hasAccess={ability.can('manage', 'VendorPayments')}
+                  hasAccess={rolesAndPermissions?.accounting?.vendorPayments}
                 />
                 <AuthRoute
                   Component={PayrollReportsPage}
                   exact
                   path={'/main/payroll/reports/:companyLocation?/:workType?'}
                   title={'Tags'}
-                  hasAccess={ability.can('manage', 'VendorPayments')}
+                  hasAccess={rolesAndPermissions?.accounting?.vendorPayments}
                 />
                 <AuthRoute
                   Component={PayrollPage}
                   exact
                   path={'/main/payroll/:companyLocation?/:workType?'}
                   title={'Tags'}
-                  hasAccess={ability.can('manage', 'VendorPayments')}
+                  hasAccess={rolesAndPermissions?.accounting?.vendorPayments}
                 />
                 <AuthRoute
                   Component={BlueTagsPage}
@@ -422,14 +422,14 @@ function Main(): any {
                   exact
                   path={'/main/customers/schedule/jobs/:companyLocation?/:workType?'}
                   title={'Customers'}
-                  hasAccess={ability.can('manage', 'Jobs')}
+                  hasAccess={rolesAndPermissions?.dispatch?.jobs}
                 />
                 <AuthRoute
                   Component={ScheduleServiceTicketsPage}
                   exact
                   path={'/main/customers/schedule/tickets/:companyLocation?/:workType?'}
                   title={'Customers'}
-                  hasAccess={ability.can('manage', 'Tickets')}
+                  hasAccess={rolesAndPermissions?.dispatch?.serviceTickets}
                 />
                 <AuthRoute
                   Component={ScheduleJobRequestsPage}
@@ -442,7 +442,7 @@ function Main(): any {
                   exact
                   path={'/main/customers/calendar/:companyLocation?/:workType?'}
                   title={'Customers'}
-                  hasAccess={ability.can('manage', 'Tickets') || ability.can('manage', 'Jobs')}
+                  hasAccess={rolesAndPermissions?.dispatch?.serviceTickets || rolesAndPermissions?.dispatch?.jobs}
                 />
                 <AuthRoute
                   Component={ViewInvoicePage}
@@ -455,7 +455,7 @@ function Main(): any {
                   exact
                   path={'/main/customers/ticket-map-view/:companyLocation?/:workType?'}
                   title={'Map View'}
-                  hasAccess={ability.can('manage', 'Tickets') || ability.can('manage', 'Jobs')}
+                  hasAccess={rolesAndPermissions?.dispatch?.serviceTickets || rolesAndPermissions?.dispatch?.jobs}
                 />
                 <AuthRoute
                   Component={ViewJobReportsPage}
@@ -565,7 +565,7 @@ function Main(): any {
                   exact
                   path={'/main/invoicing/edit/:invoice'}
                   title={'Edit Invoice'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <Redirect
@@ -584,35 +584,35 @@ function Main(): any {
                   Component={InvoicingListPage}
                   path={'/main/invoicing/invoices-list/:companyLocation?/:workType?'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing') || ability.can('manage', 'CustomerPayments')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing || rolesAndPermissions?.accounting?.customerPayments}
                 />
 
                 <AuthRoute
                   Component={EditInvoicePage}
                   path={'/main/invoicing/create-invoice'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
                   Component={UpdateInvoicePage}
                   path={'/main/invoicing/update-invoice'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
                   Component={InvoicingPurchaseOrderPage}
                   path={'/main/invoicing/purchase-order'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
                   Component={CreatePurchaseOrderPage}
                   path={'/main/invoicing/create-purchase-order'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
@@ -620,21 +620,21 @@ function Main(): any {
                   exact
                   path={'/main/invoicing/view/:invoice'}
                   title={'View Invoice'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
                   Component={InvoicingEstimatesPage}
                   path={'/main/invoicing/estimates'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
                   Component={CreateEstimatePage}
                   path={'/main/invoicing/create-estimates'}
                   title={'Invoicing'}
-                  hasAccess={ability.can('manage', 'Invoicing')}
+                  hasAccess={rolesAndPermissions?.accounting?.invoicing}
                 />
 
                 <AuthRoute
@@ -648,28 +648,28 @@ function Main(): any {
                   exact
                   path={'/main/admin/billing'}
                   title={'Admin'}
-                  hasAccess={ability.can('edit', 'BillingInformation')}
+                  hasAccess={rolesAndPermissions?.superAdmin?.editBillingInformation}
                 />
                 <AuthRoute
                   Component={BillingMethodsPage}
                   exact
                   path={'/main/admin/billing/billing-methods'}
                   title={'Admin'}
-                  hasAccess={ability.can('edit', 'BillingInformation')}
+                  hasAccess={rolesAndPermissions?.superAdmin?.editBillingInformation}
                 />
                 <AuthRoute
                   Component={BillingHistoryPage}
                   exact
                   path={'/main/admin/billing/billing-history'}
                   title={'Admin'}
-                  hasAccess={ability.can('edit', 'BillingInformation')}
+                  hasAccess={rolesAndPermissions?.superAdmin?.editBillingInformation}
                 />
                 <AuthRoute
                   Component={BillingSubscriptionPage}
                   exact
                   path={'/main/admin/billing/subscription'}
                   title={'Admin'}
-                  hasAccess={ability.can('edit', 'BillingInformation')}
+                  hasAccess={rolesAndPermissions?.superAdmin?.editBillingInformation}
                 />
                 <AuthRoute
                   Component={BrandsPage}
@@ -682,28 +682,35 @@ function Main(): any {
                   exact
                   path={'/main/admin/company-profile'}
                   title={'Admin'}
-                  hasAccess={ability.can('manage', 'Company')}
+                  hasAccess={rolesAndPermissions?.admin?.manageCompanySettings}
+                />
+                <AuthRoute
+                  Component={AdminCompanySettingsPage}
+                  exact
+                  path={'/main/admin/company-settings'}
+                  title={'Company Settings'}
+                  hasAccess={rolesAndPermissions?.admin?.manageCompanySettings}
                 />
                 <AuthRoute
                   Component={AdminEmployeesPage}
                   exact
                   path={'/main/admin/employees'}
                   title={'Admin'}
-                  hasAccess={ability.can('manage', 'Employee')}
+                  hasAccess={rolesAndPermissions?.admin?.manageEmployeeInfoAndPermissions}
                 />
                 <AuthRoute
                   Component={AdminAddNewEmployeePage}
                   exact
                   path={'/main/admin/employees/add-new-employee'}
                   title={'Admin'}
-                  hasAccess={ability.can('manage', 'Employee')}
+                  hasAccess={rolesAndPermissions?.admin?.manageEmployeeInfoAndPermissions}
                 />
                 <AuthRoute
                   Component={EmployeeProfilePage}
                   exact
                   path={'/main/admin/employees/:contractorName'}
                   title={'Admin'}
-                  hasAccess={ability.can('manage', 'Employee')}
+                  hasAccess={rolesAndPermissions?.admin?.manageEmployeeInfoAndPermissions}
                 />
                 <AuthRoute
                   Component={EquipmentTypePage}
@@ -711,12 +718,12 @@ function Main(): any {
                   path={'/main/admin/equipment-type'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminGroupsPage}
                   exact
                   path={'/main/admin/groups'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   Component={AdminServiceAndProductsPage}
                   exact
@@ -729,12 +736,12 @@ function Main(): any {
                   path={'/main/admin/services-and-products/services/:type'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminInvoicingPage}
                   exact
                   path={'/main/admin/invoicing'}
                   title={'Admin'}
-                />
+                /> */}
                 <AuthRoute
                   Component={AdminInvoicingItemsPage}
                   exact
@@ -783,17 +790,12 @@ function Main(): any {
                   path={'/main/admin/vendors'}
                   title={'Admin'}
                 />
-                <AuthRoute
+                {/* <AuthRoute
                   Component={AdminPayrollPage}
                   exact
                   path={'/main/admin/payroll'}
                   title={'Admin'}
-                />
-                <AuthRoute
-                  Component={AdminIntegrationsPage}
-                  path={'/main/admin/integrations'}
-                  title={'Integrations'}
-                />
+                /> */}
                 <AuthRoute
                   actionData={{
                     'link': '/main/admin/vendors/:contractorName',
@@ -820,21 +822,21 @@ function Main(): any {
                   exact
                   path={'/main/reports/revenue/:companyLocation?/:workType?'}
                   title={'Reports'}
-                  hasAccess={ability.can('manage', 'Reporting')}
+                  hasAccess={rolesAndPermissions?.accounting?.reporting}
                 />
                 <AuthRoute
                   Component={ARReportsPage}
                   exact
                   path={'/main/reports/ar/:companyLocation?/:workType?'}
                   title={'Reports'}
-                  hasAccess={ability.can('manage', 'Reporting')}
+                  hasAccess={rolesAndPermissions?.accounting?.reporting}
                 />
                 <AuthRoute
                   Component={NewPayrollReportsPage}
                   exact
                   path={'/main/reports/payroll'}
                   title={'Reports'}
-                  hasAccess={ability.can('manage', 'Reportings')}
+                  hasAccess={rolesAndPermissions?.accounting?.reporting}
                 />
                 <AuthRoute
                   Component={ViewProfilePage}

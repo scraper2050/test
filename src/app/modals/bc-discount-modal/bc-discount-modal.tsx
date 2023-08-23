@@ -110,6 +110,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
         : 0,
       'charges': charges ? `${Math.abs(charges)}` : '',
       'isCustomerSpecific': !!customer?._id,
+      'status': item.isActive ? 1 : 0,
       'noOfItems': noOfItems || 0,
       'customer': customer || null,
     },
@@ -126,6 +127,7 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
         charges: values.charges ? -parseInt(values.charges) : 0,
         noOfItems: values.noOfItems,
         customerId: values?.customer?._id ? values.customer._id : '',
+        isActive: values.status ? true : false
       }
       if(!isAdd){
         discountObject.discountItemId = _id
@@ -165,6 +167,38 @@ function BCDiscountEditModal({ item, classes }:ModalProps) {
     <form onSubmit={formik.handleSubmit}>
       <DialogContent classes={{'root': classes.dialogContent}}>
         <Grid container alignItems={'center'}>
+          {!isAdd && (
+            <>
+              <Grid
+                item
+                xs={12}
+                sm={3}
+                container
+                alignItems={'center'}
+                justify={window.innerWidth < 600 ? 'flex-start' : 'flex-end'}
+                style={{ padding: '0 7px' }}
+              >
+                <span style={{ color: '#4F4F4F', fontWeight: 500, whiteSpace: 'nowrap' }}>STATUS</span>
+              </Grid>
+              <Grid item xs={12} sm={9} style={{ padding: '0 7px' }}>
+                <FormControl>
+                  <Select
+                    error={formik.touched.status && Boolean(formik.errors.status)}
+                    input={<StyledInput />}
+                    name={'status'}
+                    onChange={formik.handleChange}
+                    value={formik.values.status}>
+                    <MenuItem value={1}>
+                      {'Active'}
+                    </MenuItem>
+                    <MenuItem value={0}>
+                      {'Inactive'}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </>
+          )}
           <Grid 
             item 
             xs={12} 

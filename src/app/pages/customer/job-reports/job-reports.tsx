@@ -109,8 +109,9 @@ function JobReportsPage({ classes, theme }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return row.original.invoiceCreated
-          ? row.original.invoice?.isDraft ?
+        return !row.original.invoiceVoid
+          ? row.original.invoiceCreated
+            ? row.original.invoice?.isDraft ?
             <CSChip
               label={'Draft'}
               style={{ 'backgroundColor': '#FA8029',
@@ -124,6 +125,15 @@ function JobReportsPage({ classes, theme }: any) {
           : <CSChip
             color={'secondary'}
             label={'No'}
+          />
+          : <CSChip
+            // color={'secondary'}
+            style={{
+              'backgroundColor': "#f5c000",
+              'color': '#fff'
+            }}
+
+            label={'Voided'}
           />;
       },
       'Header': 'Invoiced',

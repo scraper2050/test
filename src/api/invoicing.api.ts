@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import moment from 'moment';
-import request, { requestApiV2 } from 'utils/http.service';
+import request, { downloadFile, downloadFileV2, requestApiV2 } from 'utils/http.service';
 import {
   setDraftInvoices,
   setDraftInvoicesLoading,
@@ -486,6 +486,17 @@ export const updateInvoiceMessages = ({invoiceId, notes, images, showJobId}: any
       });
   });
 };
+export const unvoidInvoice = (data: any) => {
+  return new Promise((resolve, reject) => {
+    request(`/unvoidInvoice`, 'post', data)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
 export const voidInvoice = (data: any) => {
   return new Promise((resolve, reject) => {
@@ -572,4 +583,93 @@ export const updateJobCommission = (id: string, data: any) => {
       });
   });
 };
+
+/**
+ * Do the call to the endpoint for download the invoice as excel file
+ * @returns { data: Blob, fileName: string }
+ */
+export const exportInvoicesToExcel = async (pageSize = 10, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, division?: DivisionParams, allData?: boolean): Promise<{ data: Blob, fileName: string }> => {
+  const optionObj: any = {
+    pageSize,
+    currentPage: currentPageIndex,
+    'isDraft': false,
+    allData: allData
+  };
+  if (keyword) {
+    optionObj.keyword = keyword;
+  }
+  if (advanceFilterInvoiceData) {
+    optionObj.missingPO = advanceFilterInvoiceData.checkMissingPo;
+    optionObj.bouncedEmailFlag = advanceFilterInvoiceData.checkBouncedEmails;
+
+    if (advanceFilterInvoiceData.invoiceDateRange) {
+      optionObj.startDate = moment(advanceFilterInvoiceData.invoiceDateRange.startDate).format('YYYY-MM-DD');
+      optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDateRange.endDate).format('YYYY-MM-DD');
+    }
+    if (advanceFilterInvoiceData.invoiceDate) {
+      optionObj.startDate = moment(advanceFilterInvoiceData.invoiceDate).format('YYYY-MM-DD');
+      optionObj.endDate = moment(advanceFilterInvoiceData.invoiceDate).format('YYYY-MM-DD');
+    }
+    if (advanceFilterInvoiceData.invoiceId) {
+      optionObj.invoiceId = advanceFilterInvoiceData.invoiceId;
+    }
+    if (advanceFilterInvoiceData.jobId) {
+      optionObj.jobId = advanceFilterInvoiceData.jobId;
+    }
+    if (advanceFilterInvoiceData.poNumber) {
+      optionObj.customerPO = advanceFilterInvoiceData.poNumber;
+    }
+    if (advanceFilterInvoiceData.selectedPaymentStatus && advanceFilterInvoiceData.selectedPaymentStatus !== 'all') {
+      optionObj.status = `["${advanceFilterInvoiceData.selectedPaymentStatus}"]`;
+    }
+    if (advanceFilterInvoiceData.selectedCustomer) {
+      optionObj.customerId = advanceFilterInvoiceData.selectedCustomer.value;
+    }
+    if (advanceFilterInvoiceData.selectedTechnician) {
+      optionObj.technicianId = advanceFilterInvoiceData.selectedTechnician.value;
+    }
+    if (advanceFilterInvoiceData.selectedContact) {
+      optionObj.customerContactId = advanceFilterInvoiceData.selectedContact.value;
+    }
+    if (advanceFilterInvoiceData.lastEmailSentDateRange) {
+      optionObj.lastEmailStartDate = moment(advanceFilterInvoiceData.lastEmailSentDateRange.startDate).format('YYYY-MM-DD');
+      optionObj.lastEmailEndDate = moment(advanceFilterInvoiceData.lastEmailSentDateRange.endDate).format('YYYY-MM-DD');
+    }
+    if (advanceFilterInvoiceData.amountRangeFrom) {
+      optionObj.startAmount = parseInt(advanceFilterInvoiceData.amountRangeFrom);
+    }
+    if (advanceFilterInvoiceData.amountRangeTo) {
+      optionObj.endAmount = parseInt(advanceFilterInvoiceData.amountRangeTo);
+    }
+    if (advanceFilterInvoiceData.selectedSubdivision) {
+      optionObj.jobLocationId = advanceFilterInvoiceData.selectedSubdivision.value;
+    }
+    if (advanceFilterInvoiceData.jobAddressStreet) {
+      optionObj.jobAddress = advanceFilterInvoiceData.jobAddressStreet;
+    }
+    if (advanceFilterInvoiceData.jobAddressCity) {
+      optionObj.jobCity = advanceFilterInvoiceData.jobAddressCity;
+    }
+    if (advanceFilterInvoiceData.selectedJobAddressState) {
+      optionObj.jobState = advanceFilterInvoiceData.selectedJobAddressState;
+    }
+    if (advanceFilterInvoiceData.jobAddressZip) {
+      optionObj.jobZip = advanceFilterInvoiceData.jobAddressZip;
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    downloadFileV2('/exportInvoices', 'POST', optionObj).then((value: AxiosResponse<any>) => {
+      let fileName = '';
+      const contentDisposition = value.headers['content-disposition'];
+      if (contentDisposition) {
+        fileName = contentDisposition.split('=')[1].replace(/"/g, '');
+      }
+      resolve({ data: value.data, fileName });
+    }).catch((error) => {
+      reject(error);
+    })
+  });
+}
+
 

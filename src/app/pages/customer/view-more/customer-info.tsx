@@ -17,6 +17,7 @@ import BCCircularLoader from 'app/components/bc-circular-loader/bc-circular-load
 import { getAllPaymentTermsAPI } from "../../../../api/payment-terms.api";
 import BCAdminCard from "../../../components/bc-admin-card/bc-admin-card";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import { Can } from 'app/config/Can';
 
 function CustomerInfoPage({ classes }: any) {
   const dispatch = useDispatch();
@@ -214,24 +215,26 @@ function CustomerInfoPage({ classes }: any) {
             </span>
           </div>
         </div>
-        <div
-          className={'edit_button'}
-          onClick={() => handleEditClick(customerData)}>
-          <button className={'MuiFab-primary'}>
-            <i className={'material-icons'}>
-              {'edit'}
-            </i>
-          </button>
-        </div>
+        <Can I={'edit'} a={'CustomerSettings'}>
+          <div
+            className={'edit_button'}
+            onClick={() => handleEditClick(customerData)}>
+            <button className={'MuiFab-primary'}>
+              <i className={'material-icons'}>
+                {'edit'}
+              </i>
+            </button>
+          </div>
+        </Can>
       </div>
-      <div className='custom-action-button'>
+      {/* <div className='custom-action-button'>
         <BCAdminCard
           cardText={'Payment Terms'}
           color={'success'}
           func={viewPaymentTerms}>
           <MonetizationOnIcon />
         </BCAdminCard>
-      </div>
+      </div> */}
 
     </div>
   );

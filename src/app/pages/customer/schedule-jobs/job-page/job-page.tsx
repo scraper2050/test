@@ -29,6 +29,7 @@ import { CSButton } from '../../../../../helpers/custom';
 import debounce from 'lodash.debounce';
 import { warning } from 'actions/snackbar/snackbar.action';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import { ability } from 'app/config/Can';
 
 function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
@@ -407,6 +408,11 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     console.log('refetch', keyword);
     dispatch(getAllJobsAPI(currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
   }, [currentPageSize, currentPageIndex, selectedStatus, keyword, selectionRange]);
+
+  useEffect(() => {
+    dispatch(loadInvoiceItems.fetch());
+    dispatch(getCustomers());
+  }, []);
 
   const handleTabChange = (newValue: number) => {
   };

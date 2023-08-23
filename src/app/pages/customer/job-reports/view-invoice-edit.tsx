@@ -18,7 +18,7 @@ import { getAllSalesTaxAPI } from "api/tax.api";
 import { getCustomerDetailAction, getCustomers, resetCustomer } from "actions/customer/customer.action";
 import { getCompanyProfile } from "api/user.api";
 import { getItems } from 'api/items.api'
-import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI } from "api/invoicing.api";
+import { callCreateInvoiceAPI, updateInvoice as updateInvoiceAPI, voidInvoice as voidInvoiceAPI, unvoidInvoice as unvoidInvoiceAPI } from "api/invoicing.api";
 import { getCompanyLocations } from "api/user.api";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
 
@@ -34,6 +34,8 @@ function ViewInvoice() {
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }: any) => auth);
   const { state } = useLocation<any>();
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [invoiceDetail, setInvoiceDetail] = useState(state ? state.invoiceDetail : newInvoice);
   const { 'data': paymentTerms } = useSelector(({ paymentTerms }: any) => paymentTerms);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
@@ -287,6 +289,44 @@ function ViewInvoice() {
     }, 200);
   }
 
+  const unvoidInvoiceHandler = (invoiceId: string) => {
+    dispatch(
+      setModalDataAction({
+        'data': {
+          'data': {
+            handleOnConfirm: async () => {
+              try {
+                setIsLoading(true);
+                const res: any = await unvoidInvoiceAPI({ invoiceId })
+                if (res.status === 1) {
+                  dispatch(success(res.message));
+                  setIsLoading(false);
+
+                  history.push({
+                    'pathname': currentDivision.urlParams ? `/main/invoicing/invoices-list/${currentDivision.urlParams}` : "/main/invoicing/invoices-list",
+                  });
+                } else {
+                  setIsLoading(false);
+
+                  dispatch(errorSnackBar(res.message));
+                }
+              } catch (error) {
+                setIsLoading(false);
+
+                dispatch(errorSnackBar(`Something went wrong`))
+              }
+            }
+          },
+          'modalTitle': '',
+          'removeFooter': false
+        },
+        type: modalTypes.CONFIRM_DUPLICATE_INVOICE_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  }
   if ((customerId && !customer?._id) || (!customerId && customers?.length === 0) || !invoiceDetail.company)
     return <BCCircularLoader heightValue={'200px'} />
 
@@ -303,7 +343,9 @@ function ViewInvoice() {
           updateInvoiceHandler={updateInvoiceHandler}
           createInvoiceHandler={createInvoiceHandler}
           voidInvoiceHandler={voidInvoiceHandler}
+          unvoidInvoiceHandler={unvoidInvoiceHandler}
           getItems={getItems}
+          isLoading={isLoading}
         />
       </PageContainer>
     </MainContainer>
