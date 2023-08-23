@@ -31,9 +31,10 @@ export const getContractorDetail = async (data: any, type: string = 'vendor') =>
   let responseData;
   try {
     const response: any = await request('/getContractorDetail', 'POST', body, false);
-    const {details, payments} = response.data;
+    const {details, payments, contracts} = response.data;
     responseData = {
       details,
+      contracts,
       payments: payments.map((payment: ContractorPayment) => ({
         ...payment,
         payedPerson: normalizeData(payment.contractor, 'contractor'),
