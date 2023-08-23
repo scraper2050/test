@@ -79,6 +79,33 @@ function ViewInvoice({ classes, theme }: any) {
       dispatch(getCompanyProfileAction(user.company as string));
     }
   }, []);
+  useEffect(() => {
+    if (invoiceDetail?._id && invoiceLogs!=null) {
+      let logs = invoiceLogs;
+      if (logs.filter((logItem: any) => logItem.type == "INVOICE_CREATED" || logItem.type == "INVOICE_DUPLICATE").length==0) {
+        logs.push({
+          "_id": "64d165ba67441a506b9b0e94-invoice",
+          "invoiceId": invoiceDetail.invoiceId,
+          "invoice": invoiceDetail._id,
+          "type": "CREATED",
+          "info":"Invoice created",
+          "customer": invoiceDetail.customer,
+          "companyLocation": invoiceDetail.companyLocation,
+          "workType": invoiceDetail.workType,
+          "company": invoiceDetail.company,
+          "createdBy": invoiceDetail.createdBy,
+          "createdAt": invoiceDetail.createdAt,
+          "updatedAt": invoiceDetail.updatedAt,
+          "__v": 0
+        })
+      }
+
+      setInvoiceLogsData(logs);
+
+
+    }
+    // console.log("my logs",logs);
+  }, [invoiceLogs, invoiceDetail])
 
   useEffect(() => {
     if (invoiceDetail && invoiceDetail.job) {
