@@ -117,7 +117,7 @@ function Payroll({ classes }: Props) {
         }else {
           const now = new Date();
           const startDate = moment().subtract(90, 'd').format();
-          rangeQuery = `&startDate=${formatDateYMD(startDate)}}&endDate=${formatDateYMD(now)}`;
+          rangeQuery = `&startDate=${formatDateYMD(startDate)}&endDate=${formatDateYMD(now)}`;
         }
         
         const query = `?id=${row._id}${rangeQuery}${companyLocation}${workType}`;
