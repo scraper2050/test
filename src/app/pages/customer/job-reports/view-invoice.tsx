@@ -375,7 +375,7 @@ function ViewInvoice({ classes, theme }: any) {
       data: {
         removeFooter: false,
         maxHeight: '100%',
-        modalTitle: `History: ${invoiceDetail?.workType?.title}/${invoiceDetail?.companyLocation?.name} - ${invoiceDetail?.invoiceId}  `,
+        modalTitle: `History: ${invoiceDetail?.companyLocation?.name}/${invoiceDetail?.workType?.title} - ${invoiceDetail?.invoiceId}  `,
         invoiceLogs: invoiceLogsData,
         isEditing: false
       },
