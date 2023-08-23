@@ -32,7 +32,8 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
   const history = useHistory();
   const location = useLocation<any>();
 
-  const unpaidInvoices = useSelector(getSortedInvoices)
+  const unpaidInvoices = useSelector(getSortedInvoices);
+  
   const { loading, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(
     ({ invoiceList }: any) => ({
       unpaidInvoices: invoiceList.unpaid,
