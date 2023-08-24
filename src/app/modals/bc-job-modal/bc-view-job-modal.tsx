@@ -366,15 +366,15 @@ function BCViewJobModal({
     }
   }
 
-  const executeJobActions = async (id:string) => {
+  const executeJobActions = async (idAction:string) => {
     let payload;
     
     setActionsLoading(true);
-    switch (id) {
+    switch (idAction) {
       case "close-job":
         payload = {
           jobId: job._id,
-          action: id
+          action: idAction
         }
         await updatePartialJob(payload);
         dispatch(refreshJobs(true));
@@ -391,13 +391,6 @@ function BCViewJobModal({
         break;
       case "create-new-ticket":
       case "create-new-po-request":
-        // const type = id == "create-new-ticket" ? "Ticket" : "PO Request";
-        // payload = {
-        //   jobId: job._id,
-        //   action: id,
-        //   type: type
-        // };
-        
         const newTicketTasks: any = [];
         job.tasks.forEach((task: any) => {
           task.jobTypes.forEach((jobType: any) => {
@@ -415,8 +408,24 @@ function BCViewJobModal({
           });
         });
 
-        const ticket = { ...job.ticketObj[0], tasks: newTicketTasks, _id: null, jobCreated: false, customer: job.customerObj[0] };
-        
+        const ticket = { 
+          ...job.ticketObj[0], 
+          tasks: newTicketTasks, 
+          _id: null, 
+          jobCreated: false,
+          customer: job.customerObj[0], 
+          source: `${job.jobId} partially completed`, 
+          customerPO: idAction == "create-new-po-request" ? null : job.ticketObj[0].customerPO,
+          images: job.images,
+          jobStatus: 7, 
+          jobId: job._id,
+          type: null,
+          partialJobPayload: {
+            jobId: job._id,
+            action: idAction
+          }
+        };
+
         const reqObj = {
           'customerId': ticket.customer?._id,
           'locationId': ticket.jobLocation
@@ -435,7 +444,7 @@ function BCViewJobModal({
       
         dispatch(setModalDataAction({
           'data': {
-            'modalTitle': 'Create Ticket',
+            'modalTitle': `Create ${idAction == "create-new-po-request" ? "PO Request" : "Ticket" }`,
             'removeFooter': false,
             'ticketData': ticket,
             'className': 'serviceTicketTitle',

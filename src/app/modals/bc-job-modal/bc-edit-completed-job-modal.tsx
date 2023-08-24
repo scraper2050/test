@@ -13,11 +13,12 @@ import BcInput from 'app/components/bc-input/bc-input';
 import BCTabs from 'app/components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import { closeModalAction, openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { getJobInvoice, updatePartialJob } from 'api/job.api';
+import { getAllJobTypesAPI, getJobInvoice, updatePartialJob } from 'api/job.api';
 import { refreshJobs } from 'actions/job/job.action';
 import { success, warning } from 'actions/snackbar/snackbar.action';
 import { modalTypes } from "../../../constants";
 import { useFormik } from 'formik';
+import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 
 const initialJobType = {
   jobTypeId: null,
@@ -111,7 +112,6 @@ function BCEditCompletedJobModal({
     onSubmit: async (values: any) => {
       setLoading(true);
 
-
       const newTasks:any[] = [];
       let isUpdateable = false;
 
@@ -129,10 +129,6 @@ function BCEditCompletedJobModal({
           isUpdateable = true;
         }
       })
-
-
-      console.log(newTasks);
-      
 
       if (isUpdateable) {
         const { invoice } = await getJobInvoice(job._id);
@@ -211,44 +207,73 @@ function BCEditCompletedJobModal({
     switch (idAction) {
       case "create-new-ticket":
       case "create-new-po-request":
-        const type = idAction == "create-new-ticket" ? "Ticket" : "PO Request";
+        const newTicketTasks: any = [];
+        tasks.forEach((task: any) => {
+          task.jobTypes.forEach((jobType: any) => {
+            if ((jobType.completedCount || 0) < jobType.quantity) {
+              //Split Quantity
+              newTicketTasks.push({
+                quantity: jobType.quantity - (jobType.completedCount || 0),
+                jobType: jobType.jobType?._id,
+                price: jobType.price,
+                completedCount: (jobType.completedCount || 0),
+                allQuantitiy: jobType.quantity,
+                status: 7
+              });
+            }
+          });
+        });
 
-        let payload = {
+        const ticket = {
+          ...job.ticketObj[0],
+          tasks: newTicketTasks,
+          _id: null,
+          jobCreated: false,
+          customer: job.customerObj[0],
+          source: `${job.jobId} partially completed`,
+          customerPO: idAction == "create-new-po-request" ? null : job.ticketObj[0].customerPO,
+          images: job.images,
           jobId: job._id,
-          action: idAction,
-          type: type,
-          newJobTasks: JSON.stringify(tasks),
-          isCompletedJob: true
+          jobStatus: 7,
+          type: null,
+          partialJobPayload: {
+            jobId: job._id,
+            action: idAction,
+            newJobTasks: JSON.stringify(tasks),
+            isCompletedJob: true
+          }
         };
 
-        const response = await updatePartialJob(payload);
-        dispatch(success("Closed Job and Created New Ticket successfully"));
-        dispatch(refreshJobs(true))
+        const reqObj = {
+          'customerId': ticket.customer?._id,
+          'locationId': ticket.jobLocation
+        };
 
-        if (type == "PO Request") {
-          dispatch(setModalDataAction({
-            'data': {
-              'data': response.ticket,
-              'modalTitle': `Send PO Request`,
-              'type': "PO Request",
-              'removeFooter': false,
-            },
-            'type': modalTypes.EMAIL_PO_REQUEST_MODAL
-          }));
-          setTimeout(() => {
-            dispatch(openModalAction());
-          }, 200);
+        /*
+         * Dispatch(loadingJobLocations());
+         * dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
+         */
+        if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+          dispatch(loadingJobSites());
+          dispatch(getJobSites(reqObj));
         } else {
-          dispatch(closeModalAction());
-          setTimeout(() => {
-            dispatch(
-              setModalDataAction({
-                data: {},
-                type: '',
-              })
-            );
-          }, 200);
+          dispatch(clearJobSiteStore());
         }
+        dispatch(getAllJobTypesAPI());
+
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': `Create ${idAction == "create-new-po-request" ? "PO Request" : "Ticket"}`,
+            'removeFooter': false,
+            'ticketData': ticket,
+            'className': 'serviceTicketTitle',
+            'maxHeight': '900px',
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
         break;
       case "reschedule":
         const newJobTasksMapped: any = [];

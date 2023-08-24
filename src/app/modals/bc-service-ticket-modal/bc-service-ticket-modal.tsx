@@ -85,6 +85,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import EditIcon from '@material-ui/icons/Edit';
 import { ability } from 'app/config/Can';
+import { updatePartialJob } from 'api/job.api';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -591,8 +592,7 @@ function BCServiceTicketModal(
         dispatch(updateJobSiteAction(newJobSiteValue));
       };
 
-      console.log(editTicketObj);
-      
+
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         editTicketObj.type = ticket.type;
@@ -759,6 +759,13 @@ function BCServiceTicketModal(
           }
         }
 
+        if (ticket.jobStatus == 7){
+          // When a ticket is created from a partially completed job
+          await updatePartialJob(ticket.partialJobPayload);
+          
+          formatedRequest.source = ticket.source;
+        }
+          
           callCreateTicketAPI(formatedRequest)
             .then((response: any) => {
               if (response.status === 0) {
@@ -768,6 +775,12 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
+              
+              if (ticket.jobStatus == 7) {
+                // When a ticket is created from a partially completed job
+                dispatch(refreshJobs(true))
+              }
+
               if (submitSelectedIndex === 0){
                 dispatch(closeModalAction());
                 setTimeout(() => {
