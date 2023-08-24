@@ -418,7 +418,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
   };
   const handleRowClick = (event: any, row: any) => {
     if (
-      [0, 4].includes(row.original.status) &&
+      [0].includes(row.original.status) &&
       (!row.original.employeeType ||
         row.original.createdBy?.profile?._id === _id)
     ) {

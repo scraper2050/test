@@ -312,7 +312,7 @@ function BCViewJobModal({
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
-        {vendorWithCommisionTier.length > 0 &&
+        {(vendorWithCommisionTier.length > 0 && job.status == 2) &&
           <Grid item xs={12}>
             <Button
               color='primary'
