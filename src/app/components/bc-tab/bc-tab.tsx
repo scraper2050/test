@@ -16,9 +16,10 @@ interface BCTabsProps {
   variant?: string;
   disabled?: boolean;
   minWidth?: string;
+  orientaion?: 'horizontal' | 'vertical';
 }
 
-function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, responsiveLabel = false, variant = 'scrollable', disabled = false, minWidth = '' }: BCTabsProps): JSX.Element {
+function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, responsiveLabel = false, variant = 'scrollable', disabled = false, minWidth = '', orientaion = 'horizontal' }: BCTabsProps): JSX.Element {
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     onChangeTab(newValue);
   };
@@ -32,6 +33,7 @@ function BCTabs({ curTab, onChangeTab, indicatorColor, tabsData, chip = false, r
       minwidth={minWidth}
       scrollButtons="on"
       chip={chip ? 1 : 0}
+      orientation={orientaion}
     >
       {tabsData.map((item: any, idx: number) => {
         return <Tab
@@ -122,14 +124,16 @@ const FlexDiv = styled.div`
 `
 
 const StyledTabs = styled(Tabs)<{chip: boolean|number, variant: any, minwidth: string}>`
-  border-bottom: 1px solid #C4C4C4;
+  border-${props => props.orientation === 'horizontal' ? 'bottom' : 'right'}: 1px solid #C4C4C4;
   .MuiTab-root {
     font-size: 16px;
     line-height: 20px;
     color: #000;
     min-width: ${props => props.minwidth || '190px'};
     text-transform: uppercase;
-    padding-top: 0;
+    
+    ${props => props.orientation === 'horizontal' && 'padding-top: 0;'}
+    ${props => props.orientation === 'vertical' && 'border-bottom: 1px solid gray;'}
 
     &:last-of-type {
       .MuiTab-wrapper {
@@ -145,7 +149,10 @@ const StyledTabs = styled(Tabs)<{chip: boolean|number, variant: any, minwidth: s
 
   .MuiTabs-indicator {
     height: 6px;
+  ${props => props.orientation == 'vertical' && 'background: rgba(0, 170, 255, .2); border: 3px solid #00aaff; width: 100%'}
+
   }
+
 
   .MuiTab-wrapper {
     align-items: ${props => props.chip ? 'end' : 'center'};

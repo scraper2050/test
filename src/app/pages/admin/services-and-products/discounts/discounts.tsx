@@ -95,6 +95,20 @@ function AdminDiscountPage({ classes }:Props) {
       Cell({ row }: any) {
         return (
           <div>
+            {row.original.isActive
+              ? 'Active'
+              : 'Inactive'}
+          </div>
+        );
+      },
+      'Header': 'Status',
+      'accessor': 'isActive',
+      'sortable': true
+    },
+    {
+      Cell({ row }: any) {
+        return (
+          <div>
             {row.original.isFixed
               ? 'Fixed'
               : 'Hourly'}

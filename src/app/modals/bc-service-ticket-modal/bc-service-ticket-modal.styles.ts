@@ -97,4 +97,22 @@ export default (theme: Theme): any => ({
     'textTransform': 'none',
     'width': '160px'
   },
+  relative: {
+    position: 'relative',
+    marginBottom: "2px!important"
+  },
+  addJobTypeButton: {
+    width: '100%',
+    border: '1px dashed #BDBDBD',
+    borderRadius: 8,
+    textTransform: 'none',
+  },
+  removeJobTypeButton: {
+    position: 'absolute',
+    top: 12,
+  },
+  checkboxInputPORequired: {
+    padding: "0px 10px 0px 0px!important",
+    marginLeft: "45px"
+  }
 });

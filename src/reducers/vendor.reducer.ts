@@ -8,6 +8,7 @@ const initialVendors: VendorsState = {
   data: [],
   vendorObj: undefined,
   vendorPayments: [],
+  vendorContracts: [],
   assignedVendors: [],
   unsignedVendorsFlag: false
 };
@@ -61,6 +62,7 @@ export const VendorsReducer: Reducer<any> = (state = initialVendors, action) => 
         'loading': false,
         'vendorObj': action.payload.details,
         'vendorPayments': action.payload.payments,
+        'vendorContracts': action.payload.contracts,
       };
     case VendorActionType.UPDATE_SINGLE_VENDOR_PAYMENT:
     case VendorActionType.DELETE_SINGLE_VENDOR_PAYMENT:

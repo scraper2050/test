@@ -193,7 +193,7 @@ function EmailJobReportModal({ classes, data }: any) {
     enableReinitialize: true,
     initialValues: {
       from: invoiceToView?.from || user?.auth?.email,
-      to: invoiceToView?.receipients || [{ email: invoiceToView.customerEmail }],
+      to: [{ email: invoiceToView.customerEmail }],
       subject: invoiceToView?.emailDefault?.subject,
       message: invoiceToView?.emailDefault?.message,
       sendToMe: invoiceToView?.emailDefault?.sendToMe || false,

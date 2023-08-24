@@ -53,6 +53,7 @@ export interface CompanyLocation {
   workTypes?: any[],
   assignedVendors?: any[],
   assignedEmployees?: any[],
+  poRequestEmailSender?: string
 }
 
 export interface CompanyProfileOtherState {

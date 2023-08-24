@@ -1,5 +1,6 @@
 import { Reducer } from 'redux';
 import { UsersState, UsersActionType, types } from './../actions/employee/employee.types';
+import { initialRolesAndPermissions } from './permissions.reducer';
 
 const initialEmployees: UsersState = {
   loading: false,
@@ -46,7 +47,10 @@ export const EmployeesReducer: Reducer<any> = (state = initialEmployees, action)
       return {
         ...state,
         loading: false,
-        employeePermissions: action.payload
+        employeePermissions: {
+          ...initialRolesAndPermissions,
+          ...action.payload
+        }
       }  
     default:
   }
