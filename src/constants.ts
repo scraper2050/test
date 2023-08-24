@@ -147,6 +147,7 @@ export const modalTypes = {
   'EMAIL_PO_REQUEST_MODAL': 'email-po-request-modal',
   'PO_REQUEST_WARNING_MODAL': 'po-request-warning-modal',
   'TICKET_DETAILS_MODAL': 'ticket-details-modal',
+  'VIEW_HISTORY_POPUP_MODAL':'view-history-modal',
   'WARNING_MODAL_V2': 'po-warning-modal-v2',
   'EDIT_COMPLETED_JOB': 'edit-completed-job',
 };
