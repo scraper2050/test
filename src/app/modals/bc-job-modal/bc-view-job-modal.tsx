@@ -391,7 +391,7 @@ function BCViewJobModal({
               </Grid>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>{'Customer PO'}</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
+                <Typography variant={'h6'} className={'previewText'}>{job.ticket.customerPO || 'N/A'}</Typography>
               </Grid>
             </Grid>
             <Grid container className={classes.innerRow} xs={12}>
