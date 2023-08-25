@@ -322,8 +322,6 @@ function BCTableContent({
 
   // this isBounceAlertVisible returns true incase of PO Requests and Invoice to set the height of table.
   const customMarginBottom = { marginBottom : isBounceAlertVisible ? '190px' : '0' }
-
-  console.log('hello', customMarginBottom, isBounceAlertVisible)
   // Render the UI for your table
   return (
     <TableContainer
