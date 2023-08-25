@@ -321,7 +321,7 @@ function BCTableContent({
   const tableClass = useStyles();
 
   // this isBounceAlertVisible returns true incase of PO Requests and Invoice to set the height of table.
-  const customMarginBottom = { marginBottom : isBounceAlertVisible ? '300px' : '0' }
+  const customMarginBottom = { marginBottom : isBounceAlertVisible ? '190px' : '0' }
 
   console.log('hello', customMarginBottom, isBounceAlertVisible)
   // Render the UI for your table
@@ -333,7 +333,7 @@ function BCTableContent({
       component={StyledPaperContainer}
       style={customMarginBottom}
       >
-        
+
       <MaUTable
         size="small"
         stickyHeader={stickyHeader}
