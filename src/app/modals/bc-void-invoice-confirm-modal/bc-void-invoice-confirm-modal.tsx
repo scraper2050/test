@@ -38,8 +38,9 @@ function BCEditInvoiceConfirmModal({classes, data}: Props):JSX.Element {
   return (
     <DialogContent classes={{ root: classes.dialogContent }}>
       <Typography className={classes.description}>
-        Are you sure you want to void the invoice?
+        Are you sure you want to void the invoice? 
       </Typography>
+      <p>The technician may still be paid on this after it is void, please check job costing if you need to adjust.</p>
       <Box className={classes.buttons}>
         <Fab
           classes={{

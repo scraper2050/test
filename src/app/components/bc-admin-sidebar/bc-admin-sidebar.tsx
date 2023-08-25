@@ -318,24 +318,24 @@ function BCAdminSidebar({
       'icon': <BuildIcon />,
       'link': '/main/admin/equipment-type'
     },
-    {
-      'key': 'groups',
-      'label': 'Groups',
-      'icon': <GroupIcon />,
-      'link': '/main/admin/groups'
-    },
+    // {
+    //   'key': 'groups',
+    //   'label': 'Groups',
+    //   'icon': <GroupIcon/>,
+    //   'link': '/main/admin/groups'
+    // },
     {
       'key': 'services_products',
       'label': 'Services & Products',
       'icon': <WorkIcon />,
       'link': '/main/admin/services-and-products'
     },
-    {
-      'key': 'invoicing',
-      'label': 'Invoicing',
-      'icon': <LibraryBooksIcon />,
-      'link': '/main/admin/invoicing'
-    },
+    // {
+    //   'key': 'invoicing',
+    //   'label': 'Invoicing',
+    //   'icon': <LibraryBooksIcon />,
+    //   'link': '/main/admin/invoicing'
+    // },
     /*
      * {
      *   'label': 'Job Types',
@@ -364,20 +364,25 @@ function BCAdminSidebar({
     },
     // {
     //   'label': 'Payroll',
+    //   'icon': <PaymentIcon/>,
+    //   'link': '/main/admin/payroll'
+    // },
+    // {
+    //   'label': 'Payroll',
     //   'icon': <PaymentIcon />,
     //   'link': '/main/admin/payroll'
     // },
-    {
-      'key': 'integrations',
-      'label': 'Integrations',
-      'icon': <SettingsApplicationsIcon />,
-      'link': '/main/admin/integrations'
-    },
     {
       'key': 'data',
       'label': 'Data',
       'icon': <DescriptionIcon />,
       'link': '/main/admin/data'
+    },
+    {
+      'key': 'company',
+      'label': 'Company Settings',
+      'icon': <SettingsApplicationsIcon />,
+      'link': '/main/admin/company-settings'
     },
     {
       'label': 'Groups',

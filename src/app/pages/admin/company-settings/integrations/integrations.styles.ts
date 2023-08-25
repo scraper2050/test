@@ -1,5 +1,5 @@
 import { Theme } from '@material-ui/core/styles';
-import * as CONSTANTS from '../../../../constants';
+import * as CONSTANTS from '../../../../../constants';
 import { dataContainer, fabRoot, pageContainer, pageContent, pageMainContainer, topActionBar } from 'app/pages/main/main.styles';
 export default (theme: Theme): any => ({
   ...fabRoot,

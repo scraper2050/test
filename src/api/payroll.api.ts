@@ -1,8 +1,9 @@
-import request from '../utils/http.service';
+import request, { downloadFile } from '../utils/http.service';
 import {sortByField} from "../helpers/sort";
 import { error, success } from 'actions/snackbar/snackbar.action';
 import { getContractorPayments, getPayrollBalance } from 'actions/payroll/payroll.action';
 import { DivisionParams } from 'app/models/division';
+import { AxiosResponse } from 'axios';
 
 export const getContractorsAPI = async (division?: DivisionParams) => {
   try {
@@ -267,6 +268,21 @@ export const getPayrollReportAPI = async (type?: string, id?: string, division?:
   } catch {
     return {status: 0, message: `Something went wrong`};
   }
+}
+
+export const exportVendorJobs = async (query: string): Promise<{ data: Blob, fileName: string }> => {
+  return new Promise((resolve, reject) => {
+    downloadFile(`/exportVendorJobs/${query}`, 'GET').then((value: AxiosResponse<any>) => {
+      let fileName = '';
+      const contentDisposition = value.headers['content-disposition'];
+      if (contentDisposition) {
+        fileName = contentDisposition.split('=')[1].replace(/"/g, '');
+      }
+      resolve({ data: value.data, fileName });
+    }).catch((error) => {
+      reject(error);
+    })
+  });
 }
 
 export const normalizeData = (item: any, type: string) => {

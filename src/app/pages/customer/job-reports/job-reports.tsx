@@ -10,11 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
-import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
+import { CSButtonSmall, CSChip, useCustomStyles } from "../../../../helpers/custom";
 import moment from "moment";
-import BCDateRangePicker, {Range}
-  from "../../../components/bc-date-range-picker/bc-date-range-picker";
-import {getAllJobReportsAPI} from 'api/job-report.api'
+import BCDateRangePicker, { Range } from "../../../components/bc-date-range-picker/bc-date-range-picker";
+import { getAllJobReportsAPI } from 'api/job-report.api'
 import {
   setCurrentPageIndex,
   setCurrentPageSize,
@@ -110,8 +109,9 @@ function JobReportsPage({ classes, theme }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return row.original.invoiceCreated
-          ? row.original.invoice?.isDraft ?
+        return !row.original.invoiceVoid
+          ? row.original.invoiceCreated
+            ? row.original.invoice?.isDraft ?
             <CSChip
               label={'Draft'}
               style={{ 'backgroundColor': '#FA8029',
@@ -125,6 +125,15 @@ function JobReportsPage({ classes, theme }: any) {
           : <CSChip
             color={'secondary'}
             label={'No'}
+          />
+          : <CSChip
+            // color={'secondary'}
+            style={{
+              'backgroundColor': "#f5c000",
+              'color': '#fff'
+            }}
+
+            label={'Voided'}
           />;
       },
       'Header': 'Invoiced',

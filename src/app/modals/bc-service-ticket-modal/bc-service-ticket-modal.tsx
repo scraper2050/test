@@ -50,6 +50,7 @@ import {
 import {
   clearJobLocationStore,
   getJobLocationsAction,
+  loadingJobLocations,
   setJobLocations,
 } from 'actions/job-location/job-location.action';
 import styled from 'styled-components';
@@ -83,6 +84,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import EditIcon from '@material-ui/icons/Edit';
+import { ability } from 'app/config/Can';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -155,11 +157,14 @@ function BCServiceTicketModal(
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailTicketData, setEmailTicketData] = useState<{type?: string, id?: string}>({});
   const [openSendEmailTicket, setOpenSendEmailTicket] = useState(false);
+  const [bypassPORequired, setBypassPORequired] = useState(false);
+
   // Submit Button
   const anchorRef = useRef<HTMLDivElement>(null);
   const [openSubmitBtn, setOpenSubmitBtn] = React.useState(false);
   const [submitSelectedIndex, setSubmitSelectedIndex] = useState(0);
   const submitOptions = ["Submit", "Submit and Send"]
+  const hasPORequiredBypass = ability.can('bypass', 'PORequirement');
 
   const filter = createFilterOptions();
 
@@ -190,7 +195,7 @@ function BCServiceTicketModal(
     setItemTier(newValue?.itemTierObj?.[0]?.name || "");
 
     const customerId = newValue ? newValue._id : '';
-    await setFieldValue(fieldName, '');
+    await setFieldValue(fieldName, customerId);
     //Total price changes
     changeJobTypesPrice(customerId);
 
@@ -210,11 +215,11 @@ function BCServiceTicketModal(
         referenceNumber: customerId,
       };
 
+      await dispatch(loadingJobLocations());
       await dispatch(getContacts(data));
       await dispatch(getJobLocationsAction({customerId, isActive: true}));
     }
 
-    await setFieldValue(fieldName, customerId);
     //The total price changes after the waiting process, which is a bit tricky. We can discuss it next time.
     changeJobTypesPrice(customerId);
   };
@@ -420,7 +425,7 @@ function BCServiceTicketModal(
 
       // Find the discount item based on how many item that gonna be discounted
       const customerDiscount = customer.discountPrices?.find((disc: any) => disc.quantity === totalItemDiscounted);
-      const discountItem = discountItems.find((res: any) => res._id == customerDiscount?.discountItem);
+      const discountItem = discountItems.find((res: any) => res._id == customerDiscount?.discountItem && res.isActive);
 
       if (discountItem) {
         const discountAmount = discountItem.charges ?? 0;
@@ -561,7 +566,7 @@ function BCServiceTicketModal(
       }
 
       if (!ticket.type) {
-        if (isPORequired && !tempData.customerPO) {
+        if (isPORequired && !tempData.customerPO && !bypassPORequired) {
           tempData.type = "PO Request";
         } else {
           tempData.type = "Ticket";
@@ -588,6 +593,11 @@ function BCServiceTicketModal(
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         editTicketObj.type = ticket.type;
+        if (ticket.type === "PO Request" && bypassPORequired) {
+          editTicketObj.type = "Ticket";
+          //To allow bypass po required without any note
+          editTicketObj.note += " ";
+        }
         // Delete editTicketObj.customerId;
         if (isValidate(editTicketObj)) {
           const formatedRequest = formatRequestObj(editTicketObj);
@@ -674,7 +684,7 @@ function BCServiceTicketModal(
               setIsSubmitting(false);
               updateHomeOccupationStatus();
 
-              if (response.message === 'Ticket updated successfully.') {
+              if (response.message === 'Ticket updated successfully.' || response.message === 'PO Request updated successfully.') {
                 if (submitSelectedIndex === 1) {
                   setEmailTicketData({
                     id: ticket._id,
@@ -810,11 +820,11 @@ function BCServiceTicketModal(
   });
 
   const customers = useSelector(({customers}: any) => customers.data);
-  const jobLocations = useSelector((state: any) => state.jobLocations.data);
+  const { data: jobLocations, loading: jobLocationLoading } = useSelector((state: any) => state.jobLocations);
   const jobSites = useSelector((state: any) => state.jobSites.data);
   const jobTypes = useSelector((state: any) => state.jobTypes.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
-  const {contacts} = useSelector((state: any) => state.contacts);
+  const { contacts, isLoading: contactsLoading } = useSelector((state: any) => state.contacts);
   const homeOwners = useSelector((state: any) => state.homeOwner.data);
 
   useEffect(() => {
@@ -1131,6 +1141,33 @@ function BCServiceTicketModal(
     }
   }
 
+  const getPORequired = () => {
+    if (isPORequired && !ticket?.poOverriddenBy) {
+      return <Grid container className={'poRequiredContainer'}>
+        <Typography variant={'subtitle1'} className='poRequiredText'>
+          Customer PO Is Required
+        </Typography>
+        {hasPORequiredBypass && (
+          <FormControlLabel
+            classes={{ label: classes.checkboxLabel }}
+            control={
+              <Checkbox
+                color={'primary'}
+                checked={bypassPORequired}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setBypassPORequired(e.target?.checked);
+                }}
+                name="bypassPORequired"
+                classes={{ root: classes.checkboxInputPORequired }}
+              />
+            }
+            label={`Bypass PO Required`}
+          />
+        )}
+      </Grid>
+    }
+  }
+  
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
@@ -1240,14 +1277,7 @@ function BCServiceTicketModal(
                 PO entered by {ticket.poOverriddenBy?.profile?.displayName}
               </Typography>
             )}
-            {isPORequired && (
-              <Grid container className={'poRequiredContainer'}>
-                {/* <InfoIcon style={{ color: red[400] }} ></InfoIcon> */}
-                <Typography variant={'subtitle1'} className='poRequiredText'>
-                  Customer PO Is Required
-                </Typography>
-              </Grid>
-            )}
+            {getPORequired()}
           </Grid>
         </Grid>
         <div className={'modalDataContainer'}>
@@ -1273,7 +1303,7 @@ function BCServiceTicketModal(
                       )[0]
                     }
                     disabled={
-                      FormikValues.customerId === '' ||
+                      jobLocationLoading ||
                       isLoadingDatas ||
                       detail ||
                       !!ticket.jobCreated
@@ -1362,7 +1392,7 @@ function BCServiceTicketModal(
                   </Typography>
                   <Autocomplete
                     disabled={
-                      FormikValues.customerId === '' ||
+                      contactsLoading ||
                       isLoadingDatas ||
                       detail ||
                       isFieldsDisabled

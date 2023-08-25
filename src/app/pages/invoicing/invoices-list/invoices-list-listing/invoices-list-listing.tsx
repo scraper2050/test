@@ -104,7 +104,14 @@ function InvoicingListListing({ classes, theme }: any) {
 
         if (invoiceDetail?.jobLocation) {
           const jobLocation = invoiceDetail?.jobLocation;
-          const jobLocationAddress = jobLocation.address;
+          const jobLocationAddress = jobLocation?.address;
+          if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
+            jobAddress = jobLocationAddress;
+          }
+        } else {
+          //To check if invoice data is not provided with a job location, we can use the job field
+          const jobLocation = invoiceDetail?.job?.jobLocation;
+          const jobLocationAddress = jobLocation?.address;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
@@ -113,12 +120,21 @@ function InvoicingListListing({ classes, theme }: any) {
         let jobAddressName;
         if (invoiceDetail?.jobSite) {
           const jobSite = invoiceDetail?.jobSite;
-          const jobSiteAddress = jobSite.address;
-          jobAddressName = jobSite.name;
+          const jobSiteAddress = jobSite?.address;
+          jobAddressName = jobSite?.name;
+          if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
+            jobAddress = jobSiteAddress;
+          }
+        } else {
+          //To check if invoice data is not provided with a job site, we can use the job field
+          const jobSite = invoiceDetail?.job?.jobSite;
+          const jobSiteAddress = jobSite?.address;
+          jobAddressName = jobSite?.name;
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
           }
         }
+        
         const arrFullJobAddress = [jobAddressName, jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
         const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
 
@@ -165,18 +181,18 @@ function InvoicingListListing({ classes, theme }: any) {
       'Header': 'Customer PO',
     },
     {
-      'accessor': (originalRow: any) => formatCurrency(originalRow.total),
+      'accessor': (originalRow: any) => originalRow.isVoid?"Void":formatCurrency(originalRow.total),
       'Header': 'Total',
       'sortable': true,
       'width': 20
     },
     {
       Cell({ row }: any) {
-        const { status = '' } = row.original;
+        const { status = '',isVoid } = row.original;
         const textStatus = status.split('_').join(' ').toLowerCase();
         return (
           <div className={customStyles.centerContainer}>
-            <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />
+           {!isVoid&& <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />}
           </div>
         )
       },

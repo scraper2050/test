@@ -10,7 +10,8 @@ export type Actions =
   | 'create'
   | 'read'
   | 'update'
-  | 'delete';
+  | 'delete'
+  | 'bypass';
 export type Subjects =
   | 'Vendor'
   | 'Items'
@@ -22,7 +23,9 @@ export type Subjects =
   | 'CustomerPayments'
   | 'VendorPayments'
   | 'Reporting'
-  | 'BillingInformation';
+  | 'BillingInformation'
+  | 'CustomerSettings'
+  | 'PORequirement';
 
 export type AppAbility = PureAbility<[Actions, Subjects]>;
 export const appAbility = PureAbility as AbilityClass<AppAbility>;
@@ -73,5 +76,14 @@ export default function defineRulesFor(user: User, rolesAndPermissions: RolesAnd
   if (rolesAndPermissions?.superAdmin?.editBillingInformation || isAdmin) {
     can('edit', 'BillingInformation');
   }
+
+  if (rolesAndPermissions?.customers?.editCustomerSettings || isAdmin) {
+    can('edit', 'CustomerSettings');
+  }
+
+  if (rolesAndPermissions?.customers?.overridePORequired || isAdmin) {
+    can('bypass', 'PORequirement');
+  }
+
   return rules;
 }

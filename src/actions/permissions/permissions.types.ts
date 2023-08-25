@@ -16,6 +16,7 @@ export enum UserPermissionsActionType {
 
 export interface PermissionsState {
   readonly loading: boolean
+  readonly hasLoaded: boolean
   readonly error?: string
   readonly rolesAndPermissions?: RolesAndPermissions | null
 }

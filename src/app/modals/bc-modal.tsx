@@ -25,6 +25,7 @@ import BCEditCutomerInfoModal from './bc-customer-info-modal/bc-customer-info-mo
 import BCAddBillingModal from './bc-add-billing-modal/bc-add-billing-modal';
 import BCDeleteBillingConfirmModal from './bc-delete-billing-modal/bc-delete-billing-confirm';
 import BCVoidInvoiceConfirmModal from './bc-void-invoice-confirm-modal/bc-void-invoice-confirm-modal';
+import BCDuplicateInvoiceConfirmModal from './bc-duplicate-invoice-confirm-modal/bc-duplicate-invoice-confirm-modal';
 import BcManualSyncModalInvoice from './bc-manual-sync-modal/bc-manual-sync-invoices';
 import BcManualSyncModalPayments from './bc-manual-sync-modal/bc-manual-sync-payments';
 import BCEditPaidInvoiceConfirmModal from './bc-edit-paid-invoice-confirm-modal/bc-edit-paid-invoice-confirm-modal';
@@ -34,6 +35,8 @@ import EmailReportModal from './bc-email-modal/bc-email-report-modal';
 import CompanyLocationAssignModal from './bc-company-location-assign-modal/bc-company-location-assign-modal';
 import CompanyLocationBillingAddressModal from './bc-company-location-billing-address-modal/bc-company-location-billing-address-modal';
 import CompanyLocationAssignDeleteModal from './bc-delete-company-location-assign-modal/bc-delete-company-location-assign-modal';
+import BCAddAndEditSalesTaxModal from './bc-add-and-edit-sales-tax-modal/bc-add-and-edit-sales-tax-modal';
+
 import CloseIcon from '@material-ui/icons/Close';
 import {
   closeModalAction,
@@ -83,10 +86,13 @@ import BcDivisionConfirmModal from './bc-division-confirm-modal/bc-division-conf
 import BcDivisionWarningModal from './bc-division-warning-modal/bc-division-warning-modal';
 import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billing-address-warning';
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
-import BcAddTicketDetailsModal
-  from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
 import EmailModalPORequest from './bc-email-modal/bc-email-po-request-modal';
 import BCPORequestWarningModal from './bc-po-request-warning-modal/bc-po-request-warning-modal';
+import BcAddTicketDetailsModal
+  from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
+import BcViewHistoryModal from './bc-view-history-modal/bc-view-history-modal';
+import EmailJobReportModal from './bc-email-modal/bc-email-job-report-modal';
+import BCWarningModalV2 from './bc-warning-modal-v2/bc-warning-modal-v2-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -320,6 +326,15 @@ function BCModal() {
         });
         setComponent(<BCVoidInvoiceConfirmModal data={data.data} />);
         break;
+      case modalTypes.CONFIRM_DUPLICATE_INVOICE_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'xs'
+        });
+        setComponent(<BCDuplicateInvoiceConfirmModal data={data.data} />);
+        break;
       case modalTypes.MANUAL_SYNC_MODAL_INVOICES:
         setModalOptions({
           'disableBackdropClick': true,
@@ -346,6 +361,16 @@ function BCModal() {
           'maxWidth': 'xs'
         });
         setComponent(<BCEditPaidInvoiceConfirmModal data={data.data} />);
+        break;
+        case modalTypes.VIEW_HISTORY_POPUP_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BcViewHistoryModal data={data}/>);
         break;
       case modalTypes.CONFIRM_EDIT_PAYMENT_MODAL:
         setModalOptions({
@@ -499,12 +524,8 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'sm'
         });
-        setComponent(<EmailModalOld
-          customer={data.customer}
-          customerEmail={data.customerEmail}
-          id={data.id}
-          onClick={data.handleClick}
-          typeText={data.typeText}
+        setComponent(<EmailJobReportModal
+          data={data}
         />);
         break;
       case modalTypes.ADD_BILLING_MODAL:
@@ -588,6 +609,15 @@ function BCModal() {
         setComponent(<BCDiscountEditModal
           item={data.discountItem}
         />);
+        break;
+      case modalTypes.ADD_AND_EDIT_SALES_TAX_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: 'xs',
+        });
+        setComponent(<BCAddAndEditSalesTaxModal item={data.taxItem} />);
         break;
       case modalTypes.SALES_TAX_MODAL:
         setModalOptions({
@@ -938,6 +968,17 @@ function BCModal() {
         });
         setComponent(<BCPORequestWarningModal
           po_request_id={data.po_request_id}
+        />);
+        break;
+      case modalTypes.WARNING_MODAL_V2:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCWarningModalV2
+          action={data.action}
+          message={data.message}
         />);
         break;
       default:
