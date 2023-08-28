@@ -286,39 +286,39 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         },
       ];
 
-      const activateButton=[
-        {
-          Cell({ row }: any) {
-            const handleActivateDeactivate = () => {
+      // const activateButton=[
+      //   {
+      //     Cell({ row }: any) {
+      //       const handleActivateDeactivate = () => {
 
-              const updatedItem = { ...row.original, isActive: !row.original.isActive };
-              // Update the item in your localItems state
-              const updatedLocalItems = localItems.map((item: Item) =>
-                item._id === updatedItem._id ? updatedItem : item
-              );
-              setLocalItems(updatedLocalItems);
-              console.log(`Toggled activation for item: ${row.original._id}`);
-            };
+      //         const updatedItem = { ...row.original, isActive: !row.original.isActive };
+      //         // Update the item in your localItems state
+      //         const updatedLocalItems = localItems.map((item: Item) =>
+      //           item._id === updatedItem._id ? updatedItem : item
+      //         );
+      //         setLocalItems(updatedLocalItems);
+      //         console.log(`Toggled activation for item: ${row.original._id}`);
+      //       };
 
-            return (
-              <div className="flex items-center">
-                <Button
-                  variant="outlined"
-                  color={row.original.isActive ? 'secondary' : 'primary'}
-                  onClick={handleActivateDeactivate}
-                  disabled={!isRowEnabled}
-                >
-                  {row.original.isActive ? 'Deactivate' : 'Activate'}
-                </Button>
-              </div>
-            );
-          },
-          Header: 'Activate/Deactivate',
-          id: 'activateDeactivate',
-          sortable: false,
-          width: 150, // Adjust the width as needed
-        },  
-      ];
+      //       return (
+      //         <div className="flex items-center">
+      //           <Button
+      //             variant="outlined"
+      //             color={row.original.isActive ? 'secondary' : 'primary'}
+      //             onClick={handleActivateDeactivate}
+      //             disabled={!isRowEnabled}
+      //           >
+      //             {row.original.isActive ? 'Deactivate' : 'Activate'}
+      //           </Button>
+      //         </div>
+      //       );
+      //     },
+      //     Header: 'Activate/Deactivate',
+      //     id: 'activateDeactivate',
+      //     sortable: false,
+      //     width: 150, // Adjust the width as needed
+      //   },  
+      // ];
       const dbSync = [
         {
           Cell({ row }: any) {
@@ -434,9 +434,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         ...ability.can('manage', 'Company')
           ? actions
           : [],
-        ...activateButton,
         ...dbSync,
-        
       ];
 
       if (tiers.length > 0) {
@@ -446,9 +444,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           ...ability.can('manage', 'Company')
             ? actions
             : [],
-          ...activateButton,
           ...dbSync,
-          
         ];
       }
       setColumns(constructedColumns);
