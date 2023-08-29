@@ -166,7 +166,7 @@ function PORequired({ classes, hidden }: any) {
             'Header': 'Ticket ID',
             'accessor': 'ticketId',
             'className': 'font-bold',
-            'sortable': true
+            'sortable': true,
         },
         {
             'Header': 'Due Date',
@@ -250,6 +250,22 @@ function PORequired({ classes, hidden }: any) {
                                 Send PO Request
                             </CSButtonSmall>
                             : null
+                    }
+                    {
+                        row.original.isHomeOccupied == true ? 
+                        
+                        <>
+                            <span className={'ml-2'} title='House is Occupied' >
+                                <Checkbox
+                                    checked={true}
+                                    disabled={false}
+                                    name="checkedB"
+                                    color="secondary"
+                                />
+                            </span>
+                        </>
+                            
+                        : null
                     }
                 </div>;
             },

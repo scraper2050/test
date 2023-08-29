@@ -305,6 +305,22 @@ function ServiceTicket({ classes, hidden }: any) {
               </CSButtonSmall>
               : null
           }
+          {
+            row.original.isHomeOccupied == true ?
+
+              <>
+                <span className={'ml-2'} title='House is Occupied' >
+                  <Checkbox
+                    checked={true}
+                    disabled={false}
+                    name="checkedB"
+                    color="secondary"
+                  />
+                </span>
+              </>
+
+              : null
+          }
         </div>;
       },
       'Header': 'Actions',
