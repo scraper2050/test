@@ -17,6 +17,7 @@ import { Item } from 'actions/invoicing/items/items.types';
 import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
 import { updateItems } from 'api/items.api';
+import { quickbooksGetAccounts } from 'api/quickbooks.api';
 import {
   error as SnackBarError,
   success,
@@ -70,6 +71,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [qbAccounts, setQBAccounts] = useState();
 
   const { loading: tiersLoading, error: tiersError, tiers } = useSelector(
     ({ invoiceItemsTiers }: any) => invoiceItemsTiers
@@ -284,7 +286,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       const dbSync = [
         {
           Cell({ row }: any) {
-            return <BCQbSyncStatus data={row.original}  />;
+            return <BCQbSyncStatus data={row.original} qbAccounts={qbAccounts} />;
           },
           id: 'qbSync',
           sortable: false,
@@ -414,6 +416,15 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   }, [tiers, editMode]);
 
   useEffect(() => {
+    quickbooksGetAccounts().then((qb_accounts:any)=>{
+      const {data}=qb_accounts;
+      const { status, accounts }=data;
+      console.log('qb_accounts', accounts);
+      if (status){
+        setQBAccounts(accounts)
+
+      }
+    });
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllSalesTaxAPI());
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
