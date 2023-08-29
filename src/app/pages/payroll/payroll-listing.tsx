@@ -48,7 +48,7 @@ function Payroll({ classes }: Props) {
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
-    'pageSize': prevPage ? prevPage.pageSize : 10,
+    'pageSize': prevPage ? prevPage.pageSize : 15,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);

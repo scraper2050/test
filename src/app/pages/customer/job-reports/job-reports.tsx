@@ -89,9 +89,9 @@ function JobReportsPage({ classes, theme }: any) {
     {
       'Header': 'Technician',
       'accessor': (originalRow: any) => {
-        return originalRow?.contractorsObj?.length === 1 ? 
-          originalRow?.contractorsObj[0]?.info?.displayName || originalRow?.contractorsObj[0]?.info?.companyName : 
-          originalRow?.contractorsObj?.length > 1 ? 
+        return originalRow?.contractorsObj?.length === 1 ?
+          originalRow?.contractorsObj[0]?.info?.displayName || originalRow?.contractorsObj[0]?.info?.companyName :
+          originalRow?.contractorsObj?.length > 1 ?
             'Multiple Techs' :
             'N/A';
       },
@@ -178,12 +178,12 @@ function JobReportsPage({ classes, theme }: any) {
 
     if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
       // dispatch(loadJobReportsActions.fetch());
-      dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex,undefined,undefined,currentDivision.params));
+      dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, undefined, undefined, currentDivision.params));
       return () => {
         dispatch(setKeyword(''));
         dispatch(setDateFilterRange(null));
         dispatch(setCurrentPageIndex(currentPageIndex));
-        dispatch(setCurrentPageSize(currentPageSize));
+        dispatch(setCurrentPageSize(15));
       }
     }
   }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);
@@ -284,7 +284,7 @@ function JobReportsPage({ classes, theme }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) =>
                   {
                     dispatch(setCurrentPageIndex(num));
                     if(apiCall)

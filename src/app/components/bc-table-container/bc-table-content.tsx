@@ -89,7 +89,7 @@ function BCTableContent({
 
   const initialPageIndex = prevPage ? prevPage.page : 0;
 
-  const initialPageSize = prevPage ? prevPage.pageSize : 10;
+  const initialPageSize = prevPage ? prevPage.pageSize : 15;
 
   const {
     getTableProps,
@@ -328,7 +328,7 @@ function BCTableContent({
       component={StyledPaperContainer}
       style={{marginBottom: '300px'}}
       >
-        
+
       <MaUTable
         size="small"
         stickyHeader={stickyHeader}
@@ -418,7 +418,7 @@ function BCTableContent({
                   page={pageIndex}
                   rowsPerPage={pageSize}
                   rowsPerPageOptions={[
-                    5, 10, 25, {
+                    5, 10, 15, 25, {
                       'label': 'All',
                       'value': manualPagination ? total : data.length + 1
                     }

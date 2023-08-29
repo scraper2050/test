@@ -78,7 +78,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined,currentDivision.params));
+    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined, currentDivision.params));
     return () => {
       dispatch(setDraftKeyword(''));
       dispatch(setCurrentDraftPageSize(currentPageSize));
@@ -106,7 +106,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         tab: 2,
         currentPageIndex,
         lastNextCursor,
-        lastPrevCursor, 
+        lastPrevCursor,
       }
     });
   };
