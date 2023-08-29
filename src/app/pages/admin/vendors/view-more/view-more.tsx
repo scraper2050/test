@@ -54,6 +54,7 @@ function CompanyProfilePage({classes}: any) {
   const image = useSelector((state: any) => state.image);
   const {
     vendorObj,
+    vendorContracts,
     response,
     loading = true
   } = useSelector((state: any) => state.vendors);
@@ -79,7 +80,8 @@ function CompanyProfilePage({classes}: any) {
   const [stateValid] = useState(true);
   const [zipCode, setZipCode] = useState('');
   const [zipCodeValid, setZipCodeValid] = useState(true);
-  const [vendorStatus, setVendorStatus] = useState(localStorage.getItem('companyContractStatus') === 'true');
+  const [vendorStatus, setVendorStatus] = useState(false);
+  const [contractId, setContractId] = useState('');
   const [displayName, setDisplayName] = useState('');
 
   const cancel = () => {
@@ -146,6 +148,14 @@ function CompanyProfilePage({classes}: any) {
     }
   }, [vendorObj]);
 
+  useEffect(() => {
+    if(vendorContracts.length){
+      const latestContract = vendorContracts[0];
+      setVendorStatus(latestContract.status == 1);
+      setContractId(latestContract._id);
+    }
+  }, [vendorContracts])
+
 
   const renderGoBack = (location: any) => {
     const baseObj = location;
@@ -176,7 +186,7 @@ function CompanyProfilePage({classes}: any) {
 
   const finishVendor = () => {
     return async () => {
-      const companyContractId = localStorage.getItem('companyContractId');
+      const companyContractId = contractId;
       const result: any = await finishVendorApi({
         contractId: companyContractId || '',
         status: 'finish'
@@ -213,7 +223,7 @@ function CompanyProfilePage({classes}: any) {
   }
 
   const editVendor = async () => {
-    const companyContractId = localStorage.getItem('companyContractId');
+    const companyContractId = contractId;
     const result: any = await finishVendorApi({
       contractId: companyContractId || '',
       status: 'finish'

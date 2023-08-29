@@ -86,7 +86,7 @@ function BcEditCommissionModal({
     dispatch(
       setModalDataAction({
         data: {
-          modalTitle: `${vendorCommission.vendor} \n Commission History`,
+          modalTitle: `${vendorCommission.vendor} \n Pay History`,
           vendorId: vendorCommission._id,
           handleGoingBack: () => {
             dispatch(

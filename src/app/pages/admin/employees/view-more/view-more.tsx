@@ -192,7 +192,13 @@ function EmployeeProfilePage({ classes }: any) {
                   ]}
                 />
               </div>
-
+              <div className={classes.viewingName}>
+                {'Viewing: '}
+                {employeeDetails ? (
+                  <strong className={classes.marginLeft}>{`${employeeDetails.firstName} ${employeeDetails.lastName}`}</strong>
+                ) : ''}
+                
+              </div>
             </Grid>
 
             {loading
