@@ -346,7 +346,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   ];
 
   useEffect(() => {
-  
+
     let allInvoices: any = [];
     getCustomerInvoicesForBulkPaymentEdit(false, payments.customer._id).then((invoices:any) => {
       allInvoices = invoices.invoices;
@@ -365,7 +365,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             'amountToBeApplied': item.amountPaid,
             'checked': 1
           }));
-          
+
           const totallpayments = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((accumulater: any, currentPayment: any) => {
             if (!accumulater.some((payment: any) => payment.invoice._id === currentPayment.invoice._id)) {
               accumulater.push(currentPayment);
@@ -384,10 +384,10 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
         setLocalPaymentList([...allInvoices]);
         console.error('Error occurred:', error);
       });
-    
+
   }, [paymentList])
 
-  useEffect(() => {  
+  useEffect(() => {
     setFieldValue('totalAmount', localPaymentList.reduce((total, payment) => {
       return total + payment.amountToBeApplied;
     }, 0))
@@ -454,7 +454,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                     value={FormikValues.totalAmountToBePaid}
                     error={isSumAmountDifferent()}
                     // helperText={isSumAmountDifferent() && 'The total amount is not the same as the sum of all invoice payments'}
-                    helperText={isSumAmountDifferent() && 'The total amount is not match'}
+                    helperText={isSumAmountDifferent() && "The total amount doesn't match"}
                   />
                   {!!FormikValues.totalAmount && (
                     <div style={{marginTop: 10}}>

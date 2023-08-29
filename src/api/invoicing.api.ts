@@ -623,9 +623,7 @@ export const getCustomerInvoicesForBulkPaymentEdit= (showPaid = false, customerI
           }
         });
     });
-<<<<<<< HEAD
-};
-=======
+
 };
 
 /**
@@ -714,5 +712,4 @@ export const exportInvoicesToExcel = async (pageSize = 10, currentPageIndex = 0,
       reject(error);
     })
   });
-}
->>>>>>> 5a2e03bcae3a16f9a445e1b74aef96d868333d4c
+};
