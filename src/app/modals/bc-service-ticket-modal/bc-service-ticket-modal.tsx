@@ -670,7 +670,7 @@ function BCServiceTicketModal(
                 dispatch(refreshServiceTickets(true));
               }
               dispatch(refreshJobs(true));
-              if (submitSelectedIndex === 0) {
+              if (submitSelectedIndex === 0 || (submitSelectedIndex != 0 && ticket.type != "PO Request")) {
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
@@ -769,7 +769,7 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
-              if (submitSelectedIndex === 0){
+              if (submitSelectedIndex === 0 || (submitSelectedIndex != 0 && tempData.type != "PO Request")) {
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
