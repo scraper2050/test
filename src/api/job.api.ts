@@ -496,7 +496,7 @@ export const editJobType = async (body: { jobTypeId: string, title: string, desc
     const response: any = await request('/editJobType', 'POST', body, false);
     responseData = response.data;
   } catch (err) {
-    responseData = err.data;dispatch
+    responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
