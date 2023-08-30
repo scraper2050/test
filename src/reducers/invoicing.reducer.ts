@@ -25,7 +25,7 @@ const initialState: InvoicingState = {
   nextCursorDraft: '',
   totalDraft: 0,
   currentPageIndexDraft: 0,
-  currentPageSizeDraft: 10,
+  currentPageSizeDraft: 15,
   keywordDraft: '',
 
   unpaid: [],
