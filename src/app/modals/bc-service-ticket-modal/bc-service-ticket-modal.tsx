@@ -685,7 +685,7 @@ function BCServiceTicketModal(
               updateHomeOccupationStatus();
 
               if (response.message === 'Ticket updated successfully.' || response.message === 'PO Request updated successfully.') {
-                if (submitSelectedIndex === 1) {
+                if (submitSelectedIndex === 1 && ticket.type == "PO Request") {
                   setEmailTicketData({
                     data: {
                       _id: ticket._id,
@@ -784,7 +784,7 @@ function BCServiceTicketModal(
               updateHomeOccupationStatus();
   
               if (response.message === 'Service Ticket created successfully.' || response.message === 'Purchase Order Request created successfully.') {
-                if (submitSelectedIndex === 1) {
+                if (submitSelectedIndex === 1 && tempData.type == "PO Request") {
                   setEmailTicketData({
                     data: {
                       _id: response.createdID,
