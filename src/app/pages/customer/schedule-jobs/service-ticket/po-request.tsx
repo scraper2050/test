@@ -24,6 +24,7 @@ import {
 import { error, warning } from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker, { Range }
     from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { getAllPORequestsAPI } from 'api/po-requests.api';
 import PopupMark from 'app/components/bc-bounce-email-tooltip/bc-popup-mark';
@@ -37,7 +38,8 @@ function PORequired({ classes, hidden }: any) {
     const [bouncedEmailFlag, toggleBounceEmailFlag] = useState(false);
     const [selectionRange, setSelectionRange] = useState<Range | null>(null);
     const loadCount = useRef<number>(0);
-    const customStyles = useCustomStyles();
+    const customStyles = useCustomStyles(); 
+    const [filterHouseOccupied, toggleFilterHouseOccupied] = useState(false);
     const { isLoading = true, po_request, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(({ PORequest }: any) => ({
         isLoading: PORequest.isLoading,
         refresh: PORequest.refresh,
@@ -98,6 +100,7 @@ function PORequired({ classes, hidden }: any) {
         }, [selectionRange]);
         return <>
             <FormControlLabel
+                classes={{ root: classes.noMarginLeft }}
                 control={
                     <Checkbox
                         checked={showAllPORequests}
@@ -126,6 +129,23 @@ function PORequired({ classes, hidden }: any) {
                 }
                 label="Bounced Emails"
             />
+            <>
+                <FormControlLabel
+                    classes={{ 'root': classes.noMarginLeft }}
+                    control={
+                        <Checkbox
+                            checked={filterHouseOccupied}
+                            onChange={() => {
+                                // dispatch(setCurrentPageIndex(0));
+                                toggleFilterHouseOccupied(!filterHouseOccupied);
+                            }}
+                            name={'checkedB'}
+                            color={'primary'}
+                        />
+                    }
+                    label={'House Occupied'}
+                />
+            </>
             <BCDateRangePicker
                 range={selectionRange}
                 onChange={(range: Range | null) => {
