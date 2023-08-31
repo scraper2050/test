@@ -11,11 +11,13 @@ import {
   success,
 } from 'actions/snackbar/snackbar.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import QbSyncDialog from '../bc-qbsync-popup';
 
 
 interface Props {
   qbAccounts:any;
   data: any;
+  itemName: string;   
   hasError?: boolean;
 }
 
@@ -23,13 +25,14 @@ function isNotEmpty(str: string | undefined | null) {
   return !(!str || 0 === str.trim().length);
 }
 
-function BCQbSyncStatus({ data, qbAccounts, hasError = false }: Props) {
+function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) {
   const dispatch = useDispatch();
   console.log("qb_accounts", qbAccounts);
 
 
   const [resyncing, setResyncing] = useState(false);
   const [resyncStatus, setResyncStatus] = useState(false);
+  const [qbSyncDialogOpen,setQbSyncDialogOpen]=useState(false);
   const classes = useStyles({ isSynced: data.isSynced, hasError });
   const resyncItem = async (data: any) => {
     setResyncing(true);
@@ -50,7 +53,16 @@ function BCQbSyncStatus({ data, qbAccounts, hasError = false }: Props) {
 
     }
   }
-
+const handleOpenQbSyncDialog=()=>
+{
+  setQbSyncDialogOpen(true);
+  console.log("dialog open");
+};
+const handleCloseQbSyncDialog=()=>
+{
+  setQbSyncDialogOpen(false);
+  console.log("dialog close");
+};
   return (
     <div className={classes.container} style={{ justifyContent: "center" }}>
       {isNotEmpty(data.quickbookId) ?
@@ -80,7 +92,9 @@ function BCQbSyncStatus({ data, qbAccounts, hasError = false }: Props) {
               <div className={'flex items-center'}>
               <CSButtonSmall
                 aria-label={'edit'}
-                onClick={() => resyncItem(data)}
+                onClick={() => {resyncItem(data);
+                handleOpenQbSyncDialog();
+              }}
                 size={'small'}
                 style={{
                   marginRight: 10,
@@ -92,6 +106,11 @@ function BCQbSyncStatus({ data, qbAccounts, hasError = false }: Props) {
               </CSButtonSmall>
             </div>
       }
+      <QbSyncDialog
+        open={qbSyncDialogOpen}
+        handleClose={handleCloseQbSyncDialog}    
+        itemName={itemName}
+      />
     </div>
   );
 }

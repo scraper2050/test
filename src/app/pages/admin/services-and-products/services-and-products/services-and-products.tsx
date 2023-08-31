@@ -286,7 +286,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       const dbSync = [
         {
           Cell({ row }: any) {
-            return <BCQbSyncStatus data={row.original} qbAccounts={qbAccounts} />;
+            return <BCQbSyncStatus data={row.original} qbAccounts={qbAccounts} itemName={row.original.name} />;
           },
           id: 'qbSync',
           sortable: false,
