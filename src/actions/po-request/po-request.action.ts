@@ -70,8 +70,6 @@ export const getPORequestDetailAction = (ticketId:string) => {
   };
 };
 export const setIsHomeOccupied = (filterIsHomeOccupied: boolean) => {
-  console.clear()
-  console.log('From action', filterIsHomeOccupied);
   return {
     'payload': filterIsHomeOccupied,
     'type': types.SET_IS_HOME_OCCUPIED

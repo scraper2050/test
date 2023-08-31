@@ -138,7 +138,6 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
         'ticket2Job': payload
       };
     case types.IS_HOME_OCCUPIED:
-      console.log('IS_HOME_OCCUPIED', state ,payload," from reducer")
       return {
         ...state,
         'filterIsHomeOccupied': payload

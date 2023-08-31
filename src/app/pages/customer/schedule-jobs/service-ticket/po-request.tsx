@@ -70,7 +70,7 @@ function PORequired({ classes, hidden }: any) {
     const checkBoxClass = useStyles();
 
     const handleFilter = (filterIsHomeOccupied: boolean) => {
-        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
+    dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
     }
 
     const openEditTicketModal = (ticket: any) => {

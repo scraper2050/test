@@ -64,7 +64,6 @@ export default (state = initialPORequest, { payload, type }: ReducerParamsInterf
       };
 
     case types.SET_IS_HOME_OCCUPIED:
-      console.log("From reducer",payload)
       return {
         ...state,
         filterIsHomeOccupied: payload,
