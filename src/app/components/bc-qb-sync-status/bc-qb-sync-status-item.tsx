@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useStyles } from './bc-qb-sync-status.style';
 import qbLogo from "../../../assets/img/integration-bg/quickbooks.png";
 import { SyncProblem as SyncProblemIcon, Sync as SyncIcon } from '@material-ui/icons';
@@ -15,7 +15,7 @@ import QbSyncDialog from '../bc-qbsync-popup';
 
 
 interface Props {
-  qbAccounts:any;
+  getAccounts:any;
   data: any;
   itemName: string;   
   hasError?: boolean;
@@ -25,10 +25,9 @@ function isNotEmpty(str: string | undefined | null) {
   return !(!str || 0 === str.trim().length);
 }
 
-function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) {
+function BCQbSyncStatus({ data, itemName,hasError = false }: Props) {
+  
   const dispatch = useDispatch();
-  console.log("qb_accounts", qbAccounts);
-
 
   const [resyncing, setResyncing] = useState(false);
   const [resyncStatus, setResyncStatus] = useState(false);
@@ -45,13 +44,15 @@ function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) 
       setResyncStatus(true);
       dispatch(success('Item synced successfully'));
       // dispatch(loadInvoiceItems.fetch());
+
     }
     else {
       setResyncStatus(false);
-
       dispatch(SnackBarError('Item sync failed'));
 
     }
+    handleCloseQbSyncDialog();
+
   }
 const handleOpenQbSyncDialog=()=>
 {
@@ -92,7 +93,7 @@ const handleCloseQbSyncDialog=()=>
               <div className={'flex items-center'}>
               <CSButtonSmall
                 aria-label={'edit'}
-                onClick={() => {resyncItem(data);
+                onClick={() => {
                 handleOpenQbSyncDialog();
               }}
                 size={'small'}
@@ -108,7 +109,9 @@ const handleCloseQbSyncDialog=()=>
       }
       <QbSyncDialog
         open={qbSyncDialogOpen}
-        handleClose={handleCloseQbSyncDialog}    
+        // @ts-ignore
+        handleSync={resyncItem}    
+        handleClose={handleCloseQbSyncDialog}
         itemName={itemName}
       />
     </div>

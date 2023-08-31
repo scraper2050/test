@@ -9,26 +9,26 @@ interface QbSyncDialogProps
     open:boolean;
     itemName:string;
     handleClose:()=>void;
+    handleSync: () => any;
 }
 
-const QbSyncDialog: React.FC<QbSyncDialogProps> = ({open, handleClose,itemName}) =>{
+const QbSyncDialog: React.FC<QbSyncDialogProps> = ({ open, handleClose, itemName, handleSync }) =>{
     const [selectedOption, setSelectedOption] = useState('1');
    
     const handleOptionChange = (event: { target: { value: any; }; }) => {
         setSelectedOption(event.target.value);
     };
-    console.log("item Name :",itemName);
 return(
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} >
         <DialogTitle>
             <IconButton aria-label="close" onClick={handleClose} style={{ position: 'absolute', top: '10px', right: '10px' }}>
                 <CloseIcon />
             </IconButton>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent style={{ width: "400px" }}>
 
                 <Typography variant="h6" gutterBottom>
-                {itemName ? itemName : ' '}
+                Syncing Item {itemName ? itemName : ' '}
                 </Typography>
                 <InputLabel id="demo-controlled-open-select-label">Select income account</InputLabel>
                 <Select
@@ -50,7 +50,7 @@ return(
             <Button onClick={handleClose} color="primary">
                 Close
             </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleSync} color="primary">
                 Sync
             </Button>
         </DialogActions>
