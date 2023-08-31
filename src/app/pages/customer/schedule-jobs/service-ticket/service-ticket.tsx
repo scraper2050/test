@@ -171,8 +171,9 @@ function ServiceTicket({ classes, hidden }: any) {
       }
     }, [selectionRange,filterIsHomeOccupied]);
     return <>
+      
       <FormControlLabel
-        classes={{ 'root': classes.noMarginRight }}
+        classes={{ root: classes.noMarginRight }}
         control={
           <Checkbox
             checked={showAllTickets}
@@ -181,31 +182,29 @@ function ServiceTicket({ classes, hidden }: any) {
               dispatch(setFilterIsHomeOccupied(false));
               toggleShowAllTickets(!showAllTickets);
             }}
-            name={'checkedB'}
-            color={'primary'}
+            name="checkedB"
+            color="primary"
           />
         }
         label={'Display All Tickets'}
       />
-      <>
-        <FormControlLabel
-          classes={{ 'root': classes.noMarginRight }}
-          control={
-            <Checkbox
-              checked={filterIsHomeOccupied}
-              onChange={() => {
-                dispatch(setFilterIsHomeOccupied(!filterIsHomeOccupied));
-                dispatch(setCurrentPageIndex(0));
-                handleFilter(filterIsHomeOccupied)
-
-              }}
-              name={'checkedB'}
-              color={'primary'}
-            />
-          }
-          label={'Occupied'}
-        />
-      </>
+      <FormControlLabel
+        classes={{ root: classes.noMarginLeft }}
+        control={
+          <Checkbox
+            classes={{ root: classes.noMarginLeft}}
+            checked={filterIsHomeOccupied}
+            onChange={() => {
+              dispatch(setFilterIsHomeOccupied(!filterIsHomeOccupied));
+              dispatch(setCurrentPageIndex(0));
+              handleFilter(filterIsHomeOccupied)
+            }}
+            name="checkedBouncedEmails"
+            color="primary"
+          />
+        }
+        label="Occupied"
+      />
       <BCDateRangePicker
         range={selectionRange}
         onChange={(range: Range | null) => {

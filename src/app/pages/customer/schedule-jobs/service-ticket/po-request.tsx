@@ -111,7 +111,7 @@ function PORequired({ classes, hidden }: any) {
 
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag, filterIsHomeOccupied));
                 dispatch(setCurrentPageIndex(0));
             }
         }, [selectionRange]);
@@ -146,24 +146,23 @@ function PORequired({ classes, hidden }: any) {
                 }
                 label="Bounced Emails"
             />
-            <>
-                <FormControlLabel
-                    classes={{ 'root': classes.noMarginLeft }}
-                    control={
-                        <Checkbox
-                            checked={filterIsHomeOccupied}
-                            onChange={() => {
-                                dispatch(setIsHomeOccupied(!filterIsHomeOccupied));
-                                dispatch(setCurrentPageIndex(0));
-                                handleFilter(!filterIsHomeOccupied)
-                            }}
-                            name={'checkedB'}
-                            color='primary'
-                        />
-                    }
-                    label={'Occupied'}
-                />
-            </>
+            <FormControlLabel
+                classes={{ root: classes.noMarginRight }}
+                control={
+                    <Checkbox
+                        checked={filterIsHomeOccupied}
+                        onChange={() => {
+                            dispatch(setIsHomeOccupied(!filterIsHomeOccupied));
+                            dispatch(setCurrentPageIndex(0));
+                            handleFilter(!filterIsHomeOccupied)
+                        }}
+                        name="checkedBouncedEmails"
+                        color="primary"
+                    />
+                }
+                label="Occupied"
+            />
+
             <BCDateRangePicker
                 range={selectionRange}
                 onChange={(range: Range | null) => {
@@ -238,7 +237,7 @@ function PORequired({ classes, hidden }: any) {
                             endpoint={'/mark-as-read-po'}
                             params={{ 'id': row.original._id }}
                             callback={
-                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag)
+                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag, filterIsHomeOccupied)
                             }
                             />
                         : ''}
@@ -320,7 +319,7 @@ function PORequired({ classes, hidden }: any) {
 
     useEffect(() => {
         if (refresh) {
-            dispatch(getAllPORequestsAPI(undefined, undefined, showAllPORequests, keyword, selectionRange, currentDivision.params));
+            dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange,currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             dispatch(setCurrentPageIndex(0));
             dispatch(setCurrentPageSize(10));
         }
@@ -330,7 +329,7 @@ function PORequired({ classes, hidden }: any) {
     }, [refresh]);
 
     useEffect(() => {
-        dispatch(getAllPORequestsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params));
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined,currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
         if (customers.length == 0) {
             dispatch(getCustomers());
         }
@@ -374,7 +373,7 @@ function PORequired({ classes, hidden }: any) {
             setCurrentPageIndexFunction={(num: number, apiCall: boolean) => {
                 dispatch(setCurrentPageIndex(num))
                 if (apiCall) {
-                    dispatch(getAllPORequestsAPI(currentPageSize, num, showAllPORequests, keyword, selectionRange, currentDivision.params, filterIsHomeOccupied))
+                    dispatch(getAllPORequestsAPI(currentPageSize, num, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied))
                 }
             }}
             currentPageSize={currentPageSize}
@@ -382,7 +381,7 @@ function PORequired({ classes, hidden }: any) {
             setKeywordFunction={(query: string) => {
                 dispatch(setKeyword(query));
                 dispatch(setCurrentPageIndex(0))
-                dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params, filterIsHomeOccupied));
+                dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             }}
             isBounceAlertVisible={true}
         />
