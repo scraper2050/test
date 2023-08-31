@@ -15,7 +15,7 @@ const compareByDate = (a: any, b: any) => {
 
 
 let cancelTokenGetAllPORequestsAPI: any;
-export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any, bouncedEmailFlag: boolean = false) => {
+export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any, bouncedEmailFlag: boolean = false,filterIsHomeOccupied?:boolean) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setPORequestLoading(true));
@@ -34,7 +34,10 @@ export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAll
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
-
+      
+      if(filterIsHomeOccupied){
+        optionObj.isHomeOccupied = filterIsHomeOccupied;
+      }
       if (cancelTokenGetAllPORequestsAPI) {
         cancelTokenGetAllPORequestsAPI.cancel('axios canceled');
         setTimeout(() => {
