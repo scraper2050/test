@@ -104,11 +104,13 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
                   jobType: currentItem
                 }
               });
+              const technician = tempJob.technicianObj.find((res:any) => res._id == tempTask.technician);
+              const contractor = tempJob.contractorsObj.find((res: any) => res._id == tempTask.contractor);
               // Jobs data to be sent on List Page
               return {
                 ...tempTask,
-                technician: tempJob.technicianObj[index],
-                contractor: tempJob.contractorsObj[index],
+                technician: technician || null,
+                contractor: contractor || null,
                 jobTypes: tempJobTypes,
               }
             })

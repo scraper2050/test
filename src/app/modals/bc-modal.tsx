@@ -35,6 +35,8 @@ import EmailReportModal from './bc-email-modal/bc-email-report-modal';
 import CompanyLocationAssignModal from './bc-company-location-assign-modal/bc-company-location-assign-modal';
 import CompanyLocationBillingAddressModal from './bc-company-location-billing-address-modal/bc-company-location-billing-address-modal';
 import CompanyLocationAssignDeleteModal from './bc-delete-company-location-assign-modal/bc-delete-company-location-assign-modal';
+import BCAddAndEditSalesTaxModal from './bc-add-and-edit-sales-tax-modal/bc-add-and-edit-sales-tax-modal';
+
 import CloseIcon from '@material-ui/icons/Close';
 import {
   closeModalAction,
@@ -84,8 +86,13 @@ import BcDivisionConfirmModal from './bc-division-confirm-modal/bc-division-conf
 import BcDivisionWarningModal from './bc-division-warning-modal/bc-division-warning-modal';
 import BcBillingAddressWarning from './bc-billing-address-warning-modal/bc-billing-address-warning';
 import BcSelectDivisionModal from './bc-select-division-modal/bc-select-division-modal';
+import EmailModalPORequest from './bc-email-modal/bc-email-po-request-modal';
+import BCPORequestWarningModal from './bc-po-request-warning-modal/bc-po-request-warning-modal';
 import BcAddTicketDetailsModal
   from "./bc-add-ticket-details-modal/bc-add-ticket-details-modal";
+import BcViewHistoryModal from './bc-view-history-modal/bc-view-history-modal';
+import EmailJobReportModal from './bc-email-modal/bc-email-job-report-modal';
+import BCWarningModalV2 from './bc-warning-modal-v2/bc-warning-modal-v2-modal';
 
 const BCTermsContent = React.lazy(() => import('../components/bc-terms-content/bc-terms-content'));
 
@@ -355,6 +362,16 @@ function BCModal() {
         });
         setComponent(<BCEditPaidInvoiceConfirmModal data={data.data} />);
         break;
+        case modalTypes.VIEW_HISTORY_POPUP_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BcViewHistoryModal data={data}/>);
+        break;
       case modalTypes.CONFIRM_EDIT_PAYMENT_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
@@ -507,12 +524,8 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'sm'
         });
-        setComponent(<EmailModalOld
-          customer={data.customer}
-          customerEmail={data.customerEmail}
-          id={data.id}
-          onClick={data.handleClick}
-          typeText={data.typeText}
+        setComponent(<EmailJobReportModal
+          data={data}
         />);
         break;
       case modalTypes.ADD_BILLING_MODAL:
@@ -596,6 +609,15 @@ function BCModal() {
         setComponent(<BCDiscountEditModal
           item={data.discountItem}
         />);
+        break;
+      case modalTypes.ADD_AND_EDIT_SALES_TAX_MODAL:
+        setModalOptions({
+          disableBackdropClick: true,
+          disableEscapeKeyDown: true,
+          fullWidth: true,
+          maxWidth: 'xs',
+        });
+        setComponent(<BCAddAndEditSalesTaxModal item={data.taxItem} />);
         break;
       case modalTypes.SALES_TAX_MODAL:
         setModalOptions({
@@ -926,6 +948,38 @@ function BCModal() {
           'maxWidth': 'lg'
         });
         setComponent(<BcAddTicketDetailsModal props={data}/>);
+        break;
+      case modalTypes.EMAIL_PO_REQUEST_MODAL:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<EmailModalPORequest
+          data={data.data}
+          type={data.type}
+        />);
+        break;
+      case modalTypes.PO_REQUEST_WARNING_MODAL:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCPORequestWarningModal
+          po_request_id={data.po_request_id}
+        />);
+        break;
+      case modalTypes.WARNING_MODAL_V2:
+        setModalOptions({
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'sm'
+        });
+        setComponent(<BCWarningModalV2
+          action={data.action}
+          message={data.message}
+        />);
         break;
       default:
         setComponent(null);

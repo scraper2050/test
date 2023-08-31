@@ -21,7 +21,7 @@ import {
   error as SnackBarError,
   success,
 } from 'actions/snackbar/snackbar.action';
-import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-status';
+import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-status-item';
 import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 import { Can, ability } from 'app/config/Can';
@@ -284,7 +284,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       const dbSync = [
         {
           Cell({ row }: any) {
-            return <BCQbSyncStatus data={row.original} />;
+            return <BCQbSyncStatus data={row.original}  />;
           },
           id: 'qbSync',
           sortable: false,
