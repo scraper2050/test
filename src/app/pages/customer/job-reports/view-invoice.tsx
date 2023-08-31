@@ -552,7 +552,7 @@ function ViewInvoice({ classes, theme }: any) {
                       color="primary"
                       className={classNames(invoiceStyles.white)}
                       onClick={handleTicketClick}
-                      style = {{display:invoiceDetail.isDraft ? 'none' : 'block'}}
+                      style = {{display: invoiceDetail.isDraft ? 'none' : 'block'}}
 
                     >
                       Job Details
@@ -564,7 +564,7 @@ function ViewInvoice({ classes, theme }: any) {
                     color="primary"
                     className={classNames(invoiceStyles.margin, invoiceStyles.white)}
                     onClick={handleTicketClick}
-                    style = {{display:invoiceDetail.isDraft ? 'none' : 'block'}}
+                    style = {{display: invoiceDetail.isDraft ? 'none' : 'block'}}
                   >
                     Job Details
                   </Button>

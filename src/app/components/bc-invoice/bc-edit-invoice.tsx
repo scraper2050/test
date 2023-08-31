@@ -864,7 +864,7 @@ function BCEditInvoice({
                         color="primary"
                         className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
                         onClick={handleTicketClick}
-                        style = {{display:invoiceData.isDraft ? 'none' : 'block'}}
+                        style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
                       >
                         Job Details
                       </Button>
@@ -875,7 +875,7 @@ function BCEditInvoice({
                       color="primary"
                       className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
                       onClick={handleTicketClick}
-                      style = {{display:invoiceData.isDraft ? 'none' : 'block'}}
+                      style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
                     >
                       Job Details
                     </Button>
@@ -1454,7 +1454,7 @@ function BCEditInvoice({
                         color="primary"
                         className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
                         onClick={handleTicketClick}
-                        style = {{display:invoiceData.isDraft ? 'none' : 'block'}}
+                        style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
                       >
                         Job Details
                       </Button>
@@ -1465,7 +1465,7 @@ function BCEditInvoice({
                       color="primary"
                       className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
                       onClick={handleTicketClick}
-                      style = {{display:invoiceData.isDraft ? 'none' : 'block'}}
+                      style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
                     >
                       Job Details
                     </Button>
