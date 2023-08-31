@@ -95,13 +95,11 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
     }
   }) : [];
 
-
   const {loading, data} = useSelector(
     ({employeesForJob}: any) => employeesForJob
   );
   const vendorsList = useSelector(({vendors}: any) =>
-    vendors.data.filter((vendor: any) => vendor.status <= 1)
-  );
+    vendors.data.filter((vendor: any) => vendor.status <= 1)  );
 
   const employeesForJob = useMemo(() => [...data], [data]);
 

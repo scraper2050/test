@@ -518,7 +518,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
         <div className={invoiceTableStyle.itemsTableHeader}>
           <Grid container>
             <Grid item xs={12} lg={6}>
-              <span className={invoiceTableStyle.itemsTableHeaderText}>SERVICE / PRODUCT</span>
+              <span className={invoiceTableStyle.itemsTableHeaderText}>fSERVICE / PRODUCT</span>
             </Grid>
             <Grid item xs={12} lg={1}>
               <span className={classNames(invoiceTableStyle.itemsTableHeaderText, invoiceTableStyle.itemsTableHeaderTextCenter)}>QUANTITY</span>
