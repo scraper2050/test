@@ -466,7 +466,14 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                 </div>
                 {!invoiceDetail.isDraft &&
                 <div className={invoiceStyles.companyInfo} style={{textAlign: 'right'}}>
-                  {invoiceDetail.paid && invoiceDetail.status === 'PAID'
+                    {invoiceDetail.isVoid ? <Chip
+                      style={{
+                        textTransform: 'capitalize',
+                        backgroundColor: invoiceDetail?.status === 'UNPAID' ? '#F50057' : '#FA8029',
+                        color: '#fff'
+                      }}
+                      label={"Void"}
+                    /> :invoiceDetail.paid && invoiceDetail.status === 'PAID'
                     ? <Chip
                       label={'Paid'}
                       style={{
