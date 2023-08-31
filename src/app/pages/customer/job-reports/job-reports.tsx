@@ -183,7 +183,7 @@ function JobReportsPage({ classes, theme }: any) {
         dispatch(setKeyword(''));
         dispatch(setDateFilterRange(null));
         dispatch(setCurrentPageIndex(currentPageIndex));
-        dispatch(setCurrentPageSize(15));
+        dispatch(setCurrentPageSize(currentPageSize));
       }
     }
   }, [currentDivision.isDivisionFeatureActivated, currentDivision.params]);

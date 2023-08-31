@@ -46,7 +46,6 @@ function PayrollInvoices({classes}: Props) {
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
     'pageSize': prevPage ? prevPage.pageSize : 15,
-    'sortBy': prevPage ? prevPage.sortBy : [],
     'sortBy': prevPage ? prevPage.sortBy : []
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
