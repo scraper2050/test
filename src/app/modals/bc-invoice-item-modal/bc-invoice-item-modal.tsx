@@ -18,6 +18,8 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
+  Dialog,
+  DialogTitle,
 } from '@material-ui/core';
 
 import { validateDecimalAmount, replaceAmountToDecimal } from 'utils/validation'
@@ -93,7 +95,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [timer, setTimer] = useState<any>(null)
   const [itemExist, setItemExist] = useState<boolean>(false)
-
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
  
@@ -266,6 +268,7 @@ let isFixedDisabled=false;
 
 
   const handleDisableItem=async ()=>{
+    setIsConfirmDialogOpen(false);
     const itemObject:any = {
       itemId: _id
 }
@@ -278,7 +281,10 @@ let isFixedDisabled=false;
     dispatch(success(`Items successfully deactivated`));
     closeModal();
   }
-  }
+  };
+  const closeConfirmDialog = () => {
+    setIsConfirmDialogOpen(false);
+  };
   const handleItemName=(name:string)=>{
     console.log("Item Name",name);
     formik.setFieldValue(
@@ -747,7 +753,7 @@ let isFixedDisabled=false;
             !isAdd&&<Button
               disabled={isSubmitting}
               aria-label={'deactivate-item'}
-              onClick={handleDisableItem}
+                onClick={() => setIsConfirmDialogOpen(true)}
               classes={{
                 root: classes.closeButton,
               }}
@@ -785,6 +791,27 @@ let isFixedDisabled=false;
         </Grid>
       </DialogActions>
     </form>
+    <Dialog
+      open={isConfirmDialogOpen}
+      onClose={closeConfirmDialog}
+      aria-labelledby="confirm-deactivate-title"
+      aria-describedby="confirm-deactivate-description"
+    >
+      <DialogTitle id="confirm-deactivate-title" style={{ textAlign: 'center' }}>Confirm Deactivation</DialogTitle>
+      <DialogContent>
+        <Typography variant="body1" id="confirm-deactivate-description">
+          Do you still want to deactivate this item?
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={closeConfirmDialog} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleDisableItem} color="primary">
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
   </DataContainer>
 
 }
