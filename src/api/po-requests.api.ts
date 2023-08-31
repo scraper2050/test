@@ -1,5 +1,5 @@
 import request, { requestApiV2 } from '../utils/http.service';
-import { refreshPORequests, setPORequest, setPORequestLoading, setPreviousPORequestCursor, setNextPORequestCursor, setTotal} from 'actions/po-request/po-request.action';
+import { refreshPORequests, setPORequest, setPORequestLoading, setPreviousPORequestCursor, setNextPORequestCursor, setTotal, setIsHomeOccupied} from 'actions/po-request/po-request.action';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -23,7 +23,8 @@ export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAll
         pageSize,
         currentPage: currentPageIndex,
         showAll: showAllPORequests,
-        bouncedEmailFlag
+        bouncedEmailFlag,
+        isHomeOccupied:filterIsHomeOccupied
       };
 
       if (keyword) {
@@ -35,9 +36,6 @@ export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAll
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
       
-      if(filterIsHomeOccupied){
-        optionObj.isHomeOccupied = filterIsHomeOccupied;
-      }
       if (cancelTokenGetAllPORequestsAPI) {
         cancelTokenGetAllPORequestsAPI.cancel('axios canceled');
         setTimeout(() => {

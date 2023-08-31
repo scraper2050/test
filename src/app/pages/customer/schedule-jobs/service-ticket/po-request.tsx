@@ -70,7 +70,7 @@ function PORequired({ classes, hidden }: any) {
     const checkBoxClass = useStyles();
 
     const handleFilter = (filterIsHomeOccupied: boolean) => {
-        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, filterIsHomeOccupied));
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
     }
 
     const openEditTicketModal = (ticket: any) => {
@@ -156,11 +156,12 @@ function PORequired({ classes, hidden }: any) {
                             dispatch(setCurrentPageIndex(0));
                             handleFilter(!filterIsHomeOccupied)
                         }}
-                        name="checkedBouncedEmails"
+                        name="checkedOccupied"
                         color="primary"
                     />
                 }
-                label="Occupied"
+                label="Occupied" 
+
             />
 
             <BCDateRangePicker

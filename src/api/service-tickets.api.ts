@@ -43,7 +43,8 @@ export const getAllServiceTicketsAPI = (pageSize = 10, currentPageIndex = 0, sta
       const optionObj:any = {
         pageSize,
         currentPage: currentPageIndex,
-        type: "Ticket"
+        type: "Ticket",
+        isHomeOccupied: filterIsHomeOccupied
       };
 
       if(status)
@@ -51,8 +52,7 @@ export const getAllServiceTicketsAPI = (pageSize = 10, currentPageIndex = 0, sta
       else
         optionObj.status = 0;
 
-      if(filterIsHomeOccupied)
-        optionObj.filterIsHomeOccupied = true;
+      
 
       if(keyword){
         optionObj.keyword = keyword
