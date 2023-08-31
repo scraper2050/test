@@ -3,6 +3,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import {
     getServiceTicketDetail
 } from 'api/service-tickets.api';
+import { makeStyles } from '@material-ui/core/styles';
+import * as CONSTANTS from '../../../../../../src/constants';
 import { modalTypes } from '../../../../../constants';
 import { formatDate, formatDateMMMDDYYYY } from 'helpers/format';
 import styles from '../../customer.styles';
@@ -56,6 +58,16 @@ function PORequired({ classes, hidden }: any) {
         let cond = true
         return cond;
     });
+    const useStyles = makeStyles({
+        root: {
+            color: CONSTANTS.PRIMARY_ORANGE,
+            '&$checked': {
+                color: CONSTANTS.PRIMARY_ORANGE,
+            },
+        },
+        checked: {},
+    });
+    const checkBoxClass = useStyles();
 
     const handleFilter = (filterIsHomeOccupied: boolean) => {
         dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, filterIsHomeOccupied));
@@ -88,7 +100,7 @@ function PORequired({ classes, hidden }: any) {
             dispatch(openModalAction());
         }, 200);
     };
-
+    
     function Toolbar() {
         useEffect(() => {
             if (loadCount.current !== 0) {
@@ -146,10 +158,10 @@ function PORequired({ classes, hidden }: any) {
                                 handleFilter(!filterIsHomeOccupied)
                             }}
                             name={'checkedB'}
-                            color={'primary'}
+                            color='primary'
                         />
                     }
-                    label={'Only Home Occupied'}
+                    label={'Occupied'}
                 />
             </>
             <BCDateRangePicker
@@ -283,6 +295,10 @@ function PORequired({ classes, hidden }: any) {
                         <>
                             <span className={'ml-2'} title='House is Occupied' >
                                 <Checkbox
+                                    classes={{
+                                        root: checkBoxClass.root,
+                                        checked: checkBoxClass.checked,
+                                    }}
                                     checked={true}
                                     disabled={false}
                                     name="checkedB"

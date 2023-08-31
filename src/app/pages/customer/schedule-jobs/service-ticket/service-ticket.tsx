@@ -20,6 +20,8 @@ import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-sit
 import { getAllJobTypesAPI } from 'api/job.api';
 import '../../../../../scss/popup.scss';
 import EditIcon from '@material-ui/icons/Edit';
+import { makeStyles } from '@material-ui/core/styles';
+import * as CONSTANTS from '../../../../../../src/constants';
 import {
   CSButtonSmall,
   CSIconButton,
@@ -64,6 +66,16 @@ function ServiceTicket({ classes, hidden }: any) {
     // If (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     return cond;
   });
+  const useStyles = makeStyles({
+    root: {
+      color: CONSTANTS.PRIMARY_ORANGE,
+      '&$checked': {
+        color: CONSTANTS.PRIMARY_ORANGE,
+      },
+    },
+    checked: {},
+  });
+  const checkBoxClass = useStyles();
   const canManageTickets = ability.can('manage', 'Tickets');
   const canManageJobs = ability.can('manage', 'Jobs');
   const handleFilter = (filterIsHomeOccupied: boolean) => {
@@ -160,7 +172,7 @@ function ServiceTicket({ classes, hidden }: any) {
     }, [selectionRange,filterIsHomeOccupied]);
     return <>
       <FormControlLabel
-        classes={{ 'root': classes.noMarginLeft }}
+        classes={{ 'root': classes.noMarginRight }}
         control={
           <Checkbox
             checked={showAllTickets}
@@ -191,7 +203,7 @@ function ServiceTicket({ classes, hidden }: any) {
               color={'primary'}
             />
           }
-          label={'Only Home Occupied'}
+          label={'Occupied'}
         />
       </>
       <BCDateRangePicker
@@ -333,6 +345,10 @@ function ServiceTicket({ classes, hidden }: any) {
               <>
                 <span className={'ml-2'} title='House is Occupied' >
                   <Checkbox
+                    classes={{
+                      root: checkBoxClass.root,
+                      checked: checkBoxClass.checked,
+                    }}
                     checked={true}
                     disabled={false}
                     name="checkedB"
