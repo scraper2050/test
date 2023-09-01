@@ -6,7 +6,10 @@ import {
   Typography,
   withStyles,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Dialog,
+  DialogTitle,
+  IconButton
 } from '@material-ui/core';
 import React, {useEffect, useMemo, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,6 +37,8 @@ import {refreshJobs} from "../../../actions/job/job.action";
 import {error, success} from "../../../actions/snackbar/snackbar.action";
 import BCJobStatus from "../../components/bc-job-status";
 import { Job } from 'actions/job/job.types';
+import CloseIcon from '@material-ui/icons/Close';
+import bcModalTransition from '../bc-modal-transition';
 
 const initialJobState = {
   customer: {
@@ -75,6 +80,7 @@ function BCViewJobModal({
   const dispatch = useDispatch();
   const customers = useSelector(({ customers }: any) => customers.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
+  const [jobHistoryModal, setOpenJobHistoryModal] = useState(false);
   
   const calculateJobType = (task: any) => {
     let title: any[] = [];
@@ -201,14 +207,17 @@ function BCViewJobModal({
   : 'N/A';
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
   let jobImages = job?.images?.length ? [...job.images] : [];
-  jobImages = job?.technicianImages?.length ? [...jobImages, ...job.technicianImages] : jobImages;
+  const technicianImages = job?.technicianImages?.length ? job.technicianImages : [];
   let technicianNotes = job?.tasks?.length ?  job.tasks.filter((task: any) => task.comment).map((task: any) => {
     return {
       user: 'tech',
       action: task.comment,
       date: '',
+      userName: task.technician?.profile?.displayName || ""
     }
   }) : [];
+
+  let rescheduleTrack = job.track.filter((res: { user: string, action: string, date: string, userName: string }) => res.action.includes("Rescheduling the job"))
 
   const rescheduleJob= () => {
     dispatch(
@@ -308,9 +317,24 @@ function BCViewJobModal({
       dispatch(openModalAction());
     }, 200);
   };
+
+  const openJobHistory = () => {
+    setOpenJobHistoryModal(true);
+  }
   
   return (
+    <>
     <DataContainer className={'new-modal-design'}>
+      { (technicianImages.length > 0 || rescheduleTrack.length > 0 || technicianImages.length > 0) && 
+        <Button
+          color='primary'
+          variant="outlined"
+          className='jobCommentBtn'
+          onClick={openJobHistory}
+        >
+          Job History
+        </Button>
+      }
       <Grid container className={'modalPreview'} justify={'space-around'}>
         {(vendorWithCommisionTier.length > 0 && job.status == 2) &&
           <Grid item xs={12}>
@@ -472,7 +496,7 @@ function BCViewJobModal({
         </Grid>
         <Grid container className={classNames('modalContent', classes.lastRow)}  justify={'space-between'}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;job history</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;job history Change Log</Typography>
             <div >
               <BCTableContainer
                 className={classes.tableContainer}
@@ -535,6 +559,80 @@ function BCViewJobModal({
         }
       </div>
     </DataContainer>
+
+    {/* Job History Modal. */ }
+    <Dialog
+      aria-labelledby={'responsive-dialog-title'}
+      disableEscapeKeyDown={true}
+      fullWidth={true}
+      maxWidth={"md"}
+      onClose={() => {
+        setOpenJobHistoryModal(false);
+      }}
+      open={jobHistoryModal}
+      PaperProps={{
+        'style': {
+          'maxHeight': `100%`
+        }
+      }}
+      scroll={'paper'}
+      TransitionComponent={bcModalTransition}>
+      <DialogTitle className='new-modal-design'>
+        <Typography
+          key={"sendPORequest"}
+          variant={'h6'}>
+          <strong>
+            Job History
+          </strong>
+        </Typography>
+        <IconButton
+          aria-label={'close'}
+          onClick={() => {
+            setOpenJobHistoryModal(false);
+          }}
+          style={{
+            'position': 'absolute',
+            'right': 1,
+            'top': 1
+          }}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DataContainer>
+          <Grid container className={'modalContent jobHistoryModal new-modal-design'} style={{padding: 15}} justify={'flex-start'} alignItems="flex-start">
+          <Grid item container xs={12} spacing={4} >
+              <Grid item xs={5}>
+                <Typography variant={'caption'} className={'previewCaption'}>Technician's Comments</Typography>
+                {
+                  technicianNotes.map((note: {user: string, action: string, date:string, userName: string}, index: number) => 
+                    <div>
+                      <Typography variant={'caption'} className={classes.jobHistoryTechName}>{note.userName}</Typography>
+                      <Typography variant={'caption'} className={classes.jobHistoryTechComment}>{note.action}</Typography>
+                    </div>
+                  )
+                }
+              </Grid>
+            <Grid item xs={5}>
+              <Typography variant={'caption'} className={'previewCaption'}>Technician's Photos</Typography>
+              <BCDragAndDrop images={technicianImages.map((image: any) => image.imageUrl)} readonly={true} />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+              <Typography variant={'caption'} className={'previewCaption'}>Reschedule Notes</Typography>
+              <ul>
+                {
+                  rescheduleTrack.map((track: { user: string, action: string, date: string, userName: string, note: string}, index: number) =>
+                    <li>
+                      <Typography variant={'caption'} className={classes.jobHistoryTechComment}>{track.note}</Typography>
+                    </li>
+                  )
+                }
+              </ul>
+          </Grid>
+        </Grid>
+      </DataContainer>
+    </Dialog>
+    </>
   );
 }
 
@@ -561,8 +659,14 @@ const DataContainer = styled.div`
 
   .MuiButton-containedSecondary {
     margin-left: 15px !important;
-}
-
+  }
+  
+  .jobCommentBtn{
+    position: absolute;
+    top: 12px;
+    right: 55px;
+    background: #fff;
+  }
 `;
 
 export default withStyles(styles, { withTheme: true })(BCViewJobModal);
