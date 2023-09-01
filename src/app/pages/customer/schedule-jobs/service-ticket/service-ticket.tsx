@@ -68,9 +68,18 @@ function ServiceTicket({ classes, hidden }: any) {
   });
   const useStyles = makeStyles({
     root: {
-      color: CONSTANTS.PRIMARY_ORANGE,
+      color: CONSTANTS.OCCUPIED_ORANGE,
+      padding: '5px 10px',
+      borderRadius: '8px',
+      height: '30px',
+      margin: '0 15px 0 0',
+
       '&$checked': {
-        color: CONSTANTS.PRIMARY_ORANGE,
+        color: CONSTANTS.OCCUPIED_ORANGE,
+        padding: '5px 10px',
+        borderRadius: '8px',
+        height: '30px',
+        margin: '0 15px 0 0',
       },
     },
     checked: {},
@@ -171,40 +180,37 @@ function ServiceTicket({ classes, hidden }: any) {
       }
     }, [selectionRange,filterIsHomeOccupied]);
     return <>
+      <div>
+        <Checkbox
+          checked={showAllTickets}
+          onChange={() => {
+            dispatch(setCurrentPageIndex(0));
+            dispatch(setFilterIsHomeOccupied(false));
+            toggleShowAllTickets(!showAllTickets);
+          }}
+          name="checkedB"
+          color="primary"
+          id="allTickets"
+        />
+        <label htmlFor="allTickets" style={{ marginLeft: '-10px' }}>Show All Tickets</label>
+
+      </div>
+      <div>
+        <Checkbox
+          checked={filterIsHomeOccupied}
+          onChange={() => {
+            dispatch(setFilterIsHomeOccupied(!filterIsHomeOccupied));
+            dispatch(setCurrentPageIndex(0));
+            handleFilter(filterIsHomeOccupied)
+          }}
+          name="checkedB"
+          color="primary"
+          id="Occupied"
+        />
+        <label htmlFor="Occupied" style={{ marginLeft: '-10px' }}>Occupied</label>
+
+      </div>
       
-      <FormControlLabel
-        classes={{ root: classes.noMarginRight }}
-        control={
-          <Checkbox
-            checked={showAllTickets}
-            onChange={() => {
-              dispatch(setCurrentPageIndex(0));
-              dispatch(setFilterIsHomeOccupied(false));
-              toggleShowAllTickets(!showAllTickets);
-            }}
-            name="checkedB"
-            color="primary"
-          />
-        }
-        label={'Display All Tickets'}
-      />
-      <FormControlLabel
-        classes={{ root: classes.noMarginLeft }}
-        control={
-          <Checkbox
-            classes={{ root: classes.noMarginLeft}}
-            checked={filterIsHomeOccupied}
-            onChange={() => {
-              dispatch(setFilterIsHomeOccupied(!filterIsHomeOccupied));
-              dispatch(setCurrentPageIndex(0));
-              handleFilter(filterIsHomeOccupied)
-            }}
-            name="checkedBouncedEmails"
-            color="primary"
-          />
-        }
-        label="Occupied"
-      />
       <BCDateRangePicker
         range={selectionRange}
         onChange={(range: Range | null) => {

@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 8,
     '& .MuiButton-startIcon': {
       marginTop: -4,
-      padding: 0,
+      padding: 10,
     },
     width: props.showClearButton ? 350 : 315,
     justifyContent: 'flex-start',

@@ -60,9 +60,18 @@ function PORequired({ classes, hidden }: any) {
     });
     const useStyles = makeStyles({
         root: {
-            color: CONSTANTS.PRIMARY_ORANGE,
+            color: CONSTANTS.OCCUPIED_ORANGE,
+            padding: '5px 10px',
+            borderRadius: '8px',
+            height: '30px',
+            margin: '0 15px 0 0',
+            
             '&$checked': {
-                color: CONSTANTS.PRIMARY_ORANGE,
+                color: CONSTANTS.OCCUPIED_ORANGE,
+                padding: '5px 10px',
+                borderRadius: '8px',
+                height: '30px',
+                margin: '0 15px 0 0',
             },
         },
         checked: {},
@@ -116,10 +125,10 @@ function PORequired({ classes, hidden }: any) {
             }
         }, [selectionRange]);
         return <>
-            <FormControlLabel
-                classes={{ root: classes.noMarginLeft }}
-                control={
+            <div style={{ width: '500px', display: 'flex', justifyContent: 'space-between', }} >
+                <div  >
                     <Checkbox
+                        style={{ marginLeft: '10px', marginRight: '10px', alignItems: 'left' }}
                         checked={showAllPORequests}
                         onChange={() => {
                             dispatch(setCurrentPageIndex(0))
@@ -127,28 +136,26 @@ function PORequired({ classes, hidden }: any) {
                         }}
                         name="checkedB"
                         color="primary"
+                        id="DisplayAll"
                     />
-                }
-                label="Display All PO Requests"
-            />
-            <FormControlLabel
-                classes={{ root: classes.noMarginRight }}
-                control={
+                    <label htmlFor="DisplayAll" style={{ marginLeft: '-10px' }}>Display All PO Requests</label>
+                </div>
+
+                <div >
                     <Checkbox
                         checked={bouncedEmailFlag}
                         onChange={() => {
                             dispatch(setCurrentPageIndex(0))
                             toggleBounceEmailFlag(!bouncedEmailFlag)
                         }}
-                        name="checkedBouncedEmails"
+                        name="checkedB"
                         color="primary"
+                        id="BouncedEmails"
                     />
-                }
-                label="Bounced Emails"
-            />
-            <FormControlLabel
-                classes={{ root: classes.noMarginRight }}
-                control={
+                    <label htmlFor="BouncedEmails" style={{ marginLeft: '-10px' }}>Bounced Emails</label>
+                </div>
+
+                <div >
                     <Checkbox
                         checked={filterIsHomeOccupied}
                         onChange={() => {
@@ -156,23 +163,26 @@ function PORequired({ classes, hidden }: any) {
                             dispatch(setCurrentPageIndex(0));
                             handleFilter(!filterIsHomeOccupied)
                         }}
-                        name="checkedOccupied"
+                        name="checkedB"
                         color="primary"
+                        id="Occupied"
                     />
-                }
-                label="Occupied" 
+                    <label htmlFor="Occupied" style={{ marginLeft: '-10px' }}>Occupied</label>
+                </div>
+            </div>
+            <div >
+                <BCDateRangePicker
+                    range={selectionRange}
+                    onChange={(range: Range | null) => {
+                        dispatch(setCurrentPageIndex(0))
+                        setSelectionRange(range);
+                    }}
+                    showClearButton={true}
+                    title={'Filter by Due Date...'}
+                />
+            </div>
 
-            />
-
-            <BCDateRangePicker
-                range={selectionRange}
-                onChange={(range: Range | null) => {
-                    dispatch(setCurrentPageIndex(0))
-                    setSelectionRange(range);
-                }}
-                showClearButton={true}
-                title={'Filter by Due Date...'}
-            />
+            
         </>
     }
 
@@ -293,8 +303,9 @@ function PORequired({ classes, hidden }: any) {
                         row.original.isHomeOccupied == true ? 
                         
                         <>
-                            <span className={'ml-2'} title='House is Occupied' >
+                            <span className={''} title='House is Occupied' >
                                 <Checkbox
+                                    size={"medium"}
                                     classes={{
                                         root: checkBoxClass.root,
                                         checked: checkBoxClass.checked,
