@@ -8,36 +8,38 @@ import WarningIcon from "@material-ui/icons/Warning";
 
 interface Props {
   classes: any;
-  action: string;
+  actionText: string;
+  action: any;
+  closeAction: any;
+  closeText: string;
   message: string;
+  disableAutoCloseModal?: boolean;
 }
 
-function BCPORequestWarningModal({ classes, action, message }: Props):JSX.Element {
+function BCPORequestWarningModal({ classes, actionText, action, message, closeAction, closeText, disableAutoCloseModal }: Props):JSX.Element {
   const dispatch = useDispatch();
-  
+  const [loading, setLoading] = useState(false);
+
   const closeModal = () => {
-    setTimeout(() => {
-      dispatch(
-        setModalDataAction({
-          data: {},
-          type: "",
-        })
-      );
-    }, 200);
-    dispatch(closeModalAction());
+    setLoading(true);
+    if (closeAction) dispatch(closeAction)
+
+    if (!disableAutoCloseModal){
+      setTimeout(() => {
+        dispatch(
+          setModalDataAction({
+            data: {},
+            type: "",
+          })
+        );
+      }, 200);
+      dispatch(closeModalAction());
+    }
   }
 
   const onSubmit = () => {
+    setLoading(true);
     dispatch(action);
-    setTimeout(() => {
-      dispatch(closeModalAction());
-      setTimeout(() => {
-        dispatch(setModalDataAction({
-          'data': {},
-          'type': ''
-        }));
-      }, 200);
-    }, 1000);
   }
 
   return (
@@ -54,9 +56,7 @@ function BCPORequestWarningModal({ classes, action, message }: Props):JSX.Elemen
             <WarningIcon />
           </Grid>
           <Grid item>
-            <div style={{fontWeight: 'bold',  width: 430, fontSize: '18px', textAlign: 'center'}}>
-              { message }
-            </div>
+            <div style={{ fontWeight: 'bold', width: 430, fontSize: '18px', textAlign: 'center' }} dangerouslySetInnerHTML={{ __html: message }}></div>
           </Grid>
         </Grid>
       </DialogContent>
@@ -64,12 +64,14 @@ function BCPORequestWarningModal({ classes, action, message }: Props):JSX.Elemen
         <Button
           onClick={closeModal}
           variant={'outlined'}
-        >Cancel</Button>
+          disabled={loading}
+        >{closeText || 'Cancel'}</Button>
         <Button
           color={'primary'}
           onClick={onSubmit}
+          disabled={loading}
           variant={'contained'}
-        >Confirm</Button>
+        >{actionText || 'Confirm'}</Button>
       </DialogActions>
     </DataContainer>
   )
