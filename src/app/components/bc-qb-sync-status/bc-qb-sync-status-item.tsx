@@ -4,7 +4,7 @@ import qbLogo from "../../../assets/img/integration-bg/quickbooks.png";
 import { SyncProblem as SyncProblemIcon, Sync as SyncIcon } from '@material-ui/icons';
 import { CSButtonSmall } from '../../../helpers/custom';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { quickbooksItemSync } from 'api/quickbooks.api';
+import { quickbooksGetAccounts } from 'api/quickbooks.api';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   error as SnackBarError,
@@ -27,7 +27,6 @@ function isNotEmpty(str: string | undefined | null) {
 
 function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) {
   const dispatch = useDispatch();
-  console.log("qb_accounts", qbAccounts);
 
 
   const [resyncing, setResyncing] = useState(false);
@@ -37,9 +36,10 @@ function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) 
   const resyncItem = async (data: any) => {
     setResyncing(true);
 
-    const itemSynced = await quickbooksItemSync({ itemId: data?._id });
+    const itemSynced = await quickbooksGetAccounts();
     setResyncing(false);
-
+    qbAccounts = itemSynced.data.accounts;
+    console.log("qb_accounts", qbAccounts );
 
     if (itemSynced?.data?.status) {
       setResyncStatus(true);
@@ -110,6 +110,7 @@ const handleCloseQbSyncDialog=()=>
         open={qbSyncDialogOpen}
         handleClose={handleCloseQbSyncDialog}    
         itemName={itemName}
+        qbAccounts={qbAccounts}
       />
     </div>
   );

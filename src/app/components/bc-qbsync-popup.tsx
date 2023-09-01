@@ -9,10 +9,11 @@ interface QbSyncDialogProps
     open:boolean;
     itemName:string;
     handleClose:()=>void;
+    qbAccounts: any[];
 }
 
-const QbSyncDialog: React.FC<QbSyncDialogProps> = ({open, handleClose,itemName}) =>{
-    const [selectedOption, setSelectedOption] = useState('1');
+const QbSyncDialog: React.FC<QbSyncDialogProps> = ({ open, handleClose, itemName, qbAccounts }) =>{
+    const [selectedOption, setSelectedOption] = useState('Select');
    
     const handleOptionChange = (event: { target: { value: any; }; }) => {
         setSelectedOption(event.target.value);
@@ -26,7 +27,6 @@ return(
             </IconButton>
         </DialogTitle>
         <DialogContent>
-
                 <Typography variant="h6" gutterBottom>
                 {itemName ? itemName : ' '}
                 </Typography>
@@ -38,9 +38,13 @@ return(
                     variant="outlined"
                     style={{ marginTop: '20px' }}
                 >
-                    <MenuItem value="Option 1"> 1</MenuItem>
-                    <MenuItem value="Option 2"> 2</MenuItem>
-                    <MenuItem value="Option 3"> 3</MenuItem>
+                {qbAccounts && qbAccounts.length > 0 ? (
+                    qbAccounts.map((accounts, index) => (
+                        <MenuItem key={index} value={accounts.Name}> {accounts.Name}</MenuItem>
+                    ))
+                ) : (
+                    <MenuItem disabled>No accounts available</MenuItem>
+                )}
                 </Select>   
                 
             
