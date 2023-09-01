@@ -83,5 +83,27 @@ export default (theme: Theme): any => ({
   jobHistoryTechComment: {
     fontSize: "0.9rem",
     marginLeft: "15px"
+  },
+  actionButton: {
+    marginRight: "10px",
+    textTransform: 'capitalize',
+    borderRadius: 8,
+    display: "flex",
+    color: "#F50057",
+    zIndex: 1000,
+    border: "1px solid #F50057",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "0px 10px 0px 10px",
+    fontWeight: "bold",
+    background: "#fff"
+  },
+  actionButtonLabel: {
+    marginLeft: "10px",
+    marginRight: "10px",
+  },
+  toolbarButton: {
+    marginBottom: "10px"
+
   }
 });

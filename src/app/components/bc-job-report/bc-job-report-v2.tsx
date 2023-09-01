@@ -184,11 +184,19 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
 
   
   const getJobTypesQty = (job: any) => job.tasks.reduce((acc: number[], task: any) => {
+    let qtyMaps: { [p: string]: number } = {};
     task.jobTypes.forEach((type: any) => {
       if (type.jobType) {
-        acc.push(type.quantity || 1);
+        const qty = type.quantity || 1;
+        if (qtyMaps[type.jobType?._id]) {
+          qtyMaps[type.jobType?._id] += qty;
+        } else {
+          qtyMaps[type.jobType?._id] = qty;
+        }
       }
     });
+
+    acc = Object.values(qtyMaps);
     return acc;
   }, []);
 

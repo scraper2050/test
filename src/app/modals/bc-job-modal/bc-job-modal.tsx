@@ -33,9 +33,11 @@ import {
   callCreateJobAPI,
   callEditJobAPI, callUpdateJobAPI,
   getAllJobTypesAPI,
+  updatePartialJob,
 } from 'api/job.api';
 import {
   closeModalAction,
+  openModalAction,
   setModalDataAction,
 } from 'actions/bc-modal/bc-modal.action';
 import {useDispatch, useSelector} from 'react-redux';
@@ -154,6 +156,9 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
       },
       quantity: task.quantity || 1,
       price: task.price || 0,
+      completedCount: task.completedCount,
+      status: task.status,
+      allQuantitiy: task.allQuantitiy
     }
 
     if (!("price" in task)){
@@ -179,11 +184,12 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
  * Helper function to get job tasks
  */
 const getJobTasks = (job: any, items: any, customers: any[], customerId: string) => {
-  if (job._id) {
+  if (job._id || job.oldJobId) {
     const tasks = job.tasks.map((task: any) => ({
       employeeType: task.employeeType ? 1 : 0,
       employee: !task.employeeType && task.technician ? task.technician : null,
       contractor: task.employeeType && task.contractor ? task.contractor : null,
+      status: task.status,
       jobTypes: getJobData(task.jobTypes, items, customers, customerId)
     }));
     return tasks;
@@ -192,6 +198,7 @@ const getJobTasks = (job: any, items: any, customers: any[], customerId: string)
       employeeType: 1,
       contractor: null,
       employee: null,
+      status: 0,
       jobTypes: getJobData(job.ticket.tasks, items, customers, customerId),
     }]
   }
@@ -755,7 +762,18 @@ function BCJobModal({
         return callCreateJobAPI(tempData);
       };
 
-      const request = job._id ? editJob : createJob;
+      const partialJobCreate = (tempData: any) => {
+        tempData.jobId = job.oldJobId;
+        tempData.action = "reschedule"; 
+        if (job.isCompletedJob) {
+          tempData.isCompletedJob = job.isCompletedJob;
+          tempData.newJobTasks = job.newJobTasks;
+        }
+        
+        return updatePartialJob(tempData);
+      };
+
+      const request = job._id ? editJob : job.status == 7 ? partialJobCreate : createJob;
 
       request(requestObj)
         .then(async (response: any) => {
@@ -801,6 +819,7 @@ function BCJobModal({
                 throw err;
               });
           }
+
           setTimeout(() => {
             dispatch(
               setModalDataAction({
@@ -812,7 +831,8 @@ function BCJobModal({
 
           if (
             response.message === 'Job created successfully.' ||
-            response.message === 'Job edited successfully.'
+            response.message === 'Job edited successfully.' ||
+            response.message === 'Job rescheduled successfully.'
           ) {
             dispatch(success(response.message));
           }
@@ -1203,6 +1223,7 @@ function BCJobModal({
                           technician type
                       </Typography>
                       <Autocomplete
+                        disabled={task.status == 2}
                         getOptionLabel={(option) =>
                           option.name ? option.name : ''
                         }
@@ -1230,6 +1251,7 @@ function BCJobModal({
                       </Typography>
                       {task.employeeType ?
                         <Autocomplete
+                          disabled={task.status == 2}
                           getOptionLabel={(option) => {
                             return option?.info?.displayName ? option.info.displayName : option?.info?.companyName ? option.info.companyName : ''
                           }
@@ -1262,6 +1284,7 @@ function BCJobModal({
                         />
                         :
                         <Autocomplete
+                          disabled={task.status == 2}
                           getOptionLabel={(option) =>
                             option.profile ? option.profile.displayName : ''
                           }
@@ -1306,7 +1329,12 @@ function BCJobModal({
                       </Grid>
                     }
                     {task.jobTypes.map((jobType: any, jobTypeIdx: number) =>
-                        <>
+                      <Grid
+                        container
+                        className={'jobTypeContainer modalContent'}
+                        justify={'space-between'}
+                        spacing={4}
+                      >
                           <Grid item xs={6}>
                             <Typography
                               variant={'caption'}
@@ -1315,6 +1343,7 @@ function BCJobModal({
                               job type
                             </Typography>
                             <Autocomplete
+                              disabled={jobType.status == 2}
                               getOptionDisabled={(option) => !option.isJobType}
                               getOptionLabel={option => {
                                 const { title } = option;
@@ -1358,7 +1387,14 @@ function BCJobModal({
                               getOptionSelected={() => false}
                             />
                           </Grid>
-                          <Grid item xs={2}>
+                          <Grid item xs={2} className={job.status != 7 ? "jobTypeQuantityContainer" : ""}>
+                          {job.status == 7 && (
+                              <div
+                                className={`${'previewCaption'} completedCaption`}
+                              >
+                                {jobType.completedCount} / { jobType.allQuantitiy || jobType.quantity } are completed
+                              </div>
+                            )}
                             <Typography
                               variant={'caption'}
                               className={`${'previewCaption'}`}
@@ -1371,11 +1407,12 @@ function BCJobModal({
                               handleChange={(ev: any, newValue: any) =>
                                 handleJobTypeChange("quantity", ev.target?.value, jobTypeIdx, index)
                               }
+                              disabled={jobType.status == 2}
                               name={'quantity'}
                               value={jobType.quantity}
                             />
                           </Grid>
-                          <Grid item xs={3}>
+                          <Grid item xs={3} className={'jobTypePriceContainer'}>
                             <Typography
                               variant={'caption'}
                               className={`${'previewCaption'}`}
@@ -1426,7 +1463,7 @@ function BCJobModal({
                             >
                               <AddCircleIcon />
                             </IconButton>
-                            {jobTypeIdx > 0 &&
+                          {(jobTypeIdx > 0 && jobType.status != 2 ) &&
                               <IconButton
                                 component="span"
                                 size="small"
@@ -1436,7 +1473,7 @@ function BCJobModal({
                               </IconButton>
                             }
                           </Grid>
-                        </>
+                        </Grid>
                     )}
                 </>
               )}
@@ -1451,7 +1488,6 @@ function BCJobModal({
                 >Add Technician</Button>
 
               </Grid>
-
               <Grid item xs={6}>
                 <Typography
                   variant={'caption'}
@@ -1817,7 +1853,7 @@ function BCJobModal({
                 onClick={() => closeModal()}
                 variant={'outlined'}
               >Close</Button>
-              {job._id &&
+              {(job._id) &&
                 <>
                   <Button
                     color={'secondary'}
@@ -1890,10 +1926,31 @@ const DataContainer = styled.div`
     font-size: 13px!important;
   }
 
+  .completedCaption{
+    font-size: 9px;
+    padding: 0px;
+    margin: 0px!important;
+    color: red!important;
+  }
+
   span.required:after {
     margin-left: 3px;
     content: "*";
     color: red;
+  }
+
+  .jobTypeContainer{
+    padding: 0px!important;
+    margin-top: 0px!important;
+    align-items: center;
+  }
+
+  .jobTypePriceContainer {
+    margin-top: 13px!important;
+  }
+
+  .jobTypeQuantityContainer {
+    margin-top: 13px!important;
   }
 `;
 
