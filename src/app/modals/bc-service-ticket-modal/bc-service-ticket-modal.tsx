@@ -85,6 +85,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import EditIcon from '@material-ui/icons/Edit';
 import { ability } from 'app/config/Can';
+import { updatePartialJob } from 'api/job.api';
 
 var initialJobType = {
   jobTypeId: undefined,
@@ -590,6 +591,8 @@ function BCServiceTicketModal(
         };
         dispatch(updateJobSiteAction(newJobSiteValue));
       };
+
+
       if (ticket._id) {
         editTicketObj.ticketId = ticket._id;
         editTicketObj.type = ticket.type;
@@ -760,6 +763,13 @@ function BCServiceTicketModal(
           }
         }
 
+        if (ticket.jobStatus == 7){
+          // When a ticket is created from a partially completed job
+          await updatePartialJob(ticket.partialJobPayload);
+          
+          formatedRequest.source = ticket.source;
+        }
+          
           callCreateTicketAPI(formatedRequest)
             .then((response: any) => {
               if (response.status === 0) {
@@ -769,6 +779,12 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
+              
+              if (ticket.jobStatus == 7) {
+                // When a ticket is created from a partially completed job
+                dispatch(refreshJobs(true))
+              }
+
               if (submitSelectedIndex === 0){
                 dispatch(closeModalAction());
                 setTimeout(() => {
@@ -1289,6 +1305,15 @@ function BCServiceTicketModal(
           </Grid>
         </Grid>
         <div className={'modalDataContainer'}>
+          {ticket.source?.includes("partially completed") && (
+            <Grid container
+              className={'modalContent'}
+              justify={'space-between'}
+              alignItems="flex-start"
+              style={{ paddingTop: 5, paddingBottom: 0, color: "#ef5350"}}
+              spacing={4}
+              >{ticket.type} Created from {ticket.source}</Grid>
+          )}
           <Grid
             container
             className={'modalContent'}

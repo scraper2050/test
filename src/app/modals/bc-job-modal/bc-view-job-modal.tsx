@@ -6,7 +6,9 @@ import {
   FormControlLabel,
   Grid,
   Typography,
-  withStyles
+  withStyles,
+  Tooltip,
+  CircularProgress
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,13 +29,16 @@ import {
   openModalAction,
   setModalDataAction
 } from '../../../actions/bc-modal/bc-modal.action';
-import { modalTypes } from '../../../constants';
-import { getContacts } from '../../../api/contacts.api';
-import { callUpdateJobAPI } from '../../../api/job.api';
-import { refreshJobs } from '../../../actions/job/job.action';
-import { error, success } from '../../../actions/snackbar/snackbar.action';
+import {modalTypes} from '../../../constants';
+import {getContacts} from '../../../api/contacts.api';
+import {callUpdateJobAPI, getAllJobTypesAPI, updatePartialJob} from '../../../api/job.api';
+import {refreshJobs} from '../../../actions/job/job.action';
+import {error, success} from '../../../actions/snackbar/snackbar.action';
 import BCJobStatus from '../../components/bc-job-status';
 import { Job } from 'actions/job/job.types';
+import BCMenuButton from 'app/components/bc-menu-more';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 
 const initialJobState = {
   'customer': {
@@ -73,6 +78,8 @@ function BCViewJobModal({
   job = initialJobState
 }: any): JSX.Element {
   const dispatch = useDispatch();
+  const [customerPORequired, setCustomerPORequired] = useState(false);
+  const [actionsLoading, setActionsLoading] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
 
@@ -81,9 +88,12 @@ function BCViewJobModal({
     if (task.jobTypes) {
       task.jobTypes.forEach((type: any) => {
         const jobType = {
-          'title': type.jobType?.title,
-          'quantity': type.quantity || 1,
-          'price': type.price || 0
+          title: type.jobType?.title,
+          quantity: type.quantity || 1,
+          price: type.price || 0,
+          status: type.status,
+          completedComment: type.completedComment,
+          completedCount: type.completedCount
         };
 
         if (!('price' in type)) {
@@ -290,12 +300,190 @@ function BCViewJobModal({
       dispatch(openModalAction());
     }, 200);
   };
+  
+  let ACTIONS_ITEM: any = [];
 
+  useEffect(() => {
+    const customer = customers.find((res: any) => res._id == job?.customer?._id);
+    setCustomerPORequired(customer.isPORequired);
+  }, [customers]);
+
+  if (job.status == 2){
+    ACTIONS_ITEM = [
+      { id: "create-new-ticket", title: 'Reopen Job-Create New Ticket' },
+      { id: "reschedule", title: 'Reopen Job-Reschedule' }
+    ];
+
+    if (customerPORequired) {
+      ACTIONS_ITEM.unshift({ id: "create-new-po-request", title: 'Reopen Job-Create New P0 Request' });
+    }
+  } else if(job.status == 7){
+    ACTIONS_ITEM = [
+      { id: "close-job", title: 'Close Job-No Further Action' },
+      { id: "create-new-ticket", title: 'Close Job-Create New Ticket' },
+      { id: "reschedule", title: 'Reschedule Job' }
+    ];
+
+    if (customerPORequired) {
+      ACTIONS_ITEM.splice(1,0,{ id: "create-new-po-request", title: 'Close Job-Create New PO Request' });
+    }
+  }
+
+  const handleMenuButtonClick = (event: any, id: string) => {
+    if (job.status == 2) {
+      dispatch(setModalDataAction({
+        'data': {
+          'job': job,
+          'action': id,
+          'modalTitle': `Edit Completed Job`,
+          'removeFooter': false,
+        },
+        'type': modalTypes.EDIT_COMPLETED_JOB
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      executeJobActions(id);
+    }
+  }
+
+  const executeJobActions = async (idAction:string) => {
+    let payload;
+    
+    setActionsLoading(true);
+    switch (idAction) {
+      case "close-job":
+        payload = {
+          jobId: job._id,
+          action: idAction
+        }
+        await updatePartialJob(payload);
+        dispatch(refreshJobs(true));
+        dispatch(closeModalAction());
+        setTimeout(() => {
+          dispatch(
+            setModalDataAction({
+              data: {},
+              type: '',
+            })
+          );
+        }, 200);
+        dispatch(success("Closed Job-No Further Action successfully"));
+        break;
+      case "create-new-ticket":
+      case "create-new-po-request":
+        const newTicketTasks: any = [];
+        job.tasks.forEach((task: any) => {
+          task.jobTypes.forEach((jobType: any) => {
+            if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
+              //Split Quantity
+              newTicketTasks.push({
+                quantity: jobType.quantity - (jobType.completedCount || 0),
+                jobType: jobType.jobType?._id,
+                price: jobType.price,
+                completedCount: (jobType.completedCount || 0),
+                allQuantitiy: jobType.quantity,
+                status: 7
+              });
+            }
+          });
+        });
+
+        const ticket = { 
+          ...job.ticketObj[0], 
+          tasks: newTicketTasks, 
+          _id: null, 
+          jobCreated: false,
+          customer: job.customerObj[0], 
+          source: `${job.jobId} partially completed`, 
+          customerPO: idAction == "create-new-po-request" ? null : job.ticketObj[0].customerPO,
+          images: job.images,
+          jobStatus: 7, 
+          jobId: job._id,
+          type: null,
+          partialJobPayload: {
+            jobId: job._id,
+            action: idAction
+          }
+        };
+
+        const reqObj = {
+          'customerId': ticket.customer?._id,
+          'locationId': ticket.jobLocation
+        };
+        /*
+         * Dispatch(loadingJobLocations());
+         * dispatch(getJobLocationsAction({customerId: reqObj.customerId}));
+         */
+        if (reqObj.locationId !== undefined && reqObj.locationId !== null) {
+          dispatch(loadingJobSites());
+          dispatch(getJobSites(reqObj));
+        } else {
+          dispatch(clearJobSiteStore());
+        }
+        dispatch(getAllJobTypesAPI());
+      
+        dispatch(setModalDataAction({
+          'data': {
+            'modalTitle': `Create ${idAction == "create-new-po-request" ? "PO Request" : "Ticket" }`,
+            'removeFooter': false,
+            'ticketData': ticket,
+            'className': 'serviceTicketTitle',
+            'maxHeight': '900px',
+          },
+          'type': modalTypes.CREATE_TICKET_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+      break;
+      case "reschedule":
+        const newJobTasks: any = [];
+
+        job.tasks.forEach((task: any) => {
+          const newJobTypes: any = [];
+          task.jobTypes.forEach((jobType: any) => {
+            if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
+              //Split Quantity
+              newJobTypes.push({
+                quantity: jobType.quantity - (jobType.completedCount || 0),
+                jobType: jobType.jobType,
+                price: jobType.price,
+                completedCount: (jobType.completedCount || 0),
+                allQuantitiy: jobType.quantity
+              });
+            }
+          });
+          if (newJobTypes.length) {
+            newJobTasks.push({ ...task, jobTypes: newJobTypes });
+          }
+        });
+
+        dispatch(setModalDataAction({
+          'data': {
+            'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasks },
+            'modalTitle': 'Reschedule Job',
+            'removeFooter': false
+          },
+          'type': modalTypes.EDIT_JOB_MODAL
+        }));
+        setTimeout(() => {
+          dispatch(openModalAction());
+        }, 200);
+        break;
+      default:
+        break;
+    }
+
+    setActionsLoading(false);
+  }
+  
   return (
     <DataContainer className={'new-modal-design'}>
       <Grid container className={'modalPreview'} justify={'space-around'}>
-        {vendorWithCommisionTier.length > 0 &&
-          <Grid item xs={12}>
+        <Grid container xs={12} className={classes.toolbarButton} >
+        {(vendorWithCommisionTier.length > 0 && job.status ==2) &&
             <Button
               color={'primary'}
               variant={'outlined'}
@@ -303,9 +491,23 @@ function BCViewJobModal({
               onClick={openEditJobCostingModal}>
               {'Job Costing'}
             </Button>
-          </Grid>
         }
-        <Grid item style={{ 'width': '40%' }}>
+        {(job.status == 7 || job.status == 2) && (
+          <div className={classes.actionButton}>
+            <span className={classes.actionButtonLabel}>Actions</span>
+              {actionsLoading && (
+                <CircularProgress size={17} />
+              )}
+              <BCMenuButton
+                icon={ArrowDropDownIcon}
+                items={ACTIONS_ITEM}
+                
+                handleClick={handleMenuButtonClick}
+              />
+          </div>
+        )}
+        </Grid>
+        <Grid item style={{width: '40%'}}>
           {canEdit &&
             <>
               <Button size={'small'}
@@ -339,35 +541,56 @@ function BCViewJobModal({
           <>
             <Grid container className={'modalContent'} justify={'space-around'}>
               <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>{'technician type'}</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>technician type</Typography>
               </Grid>
               <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>{'technician name'}</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>technician name</Typography>
               </Grid>
               <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>{'job type'}</Typography>
+                <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
               </Grid>
-              <Grid item style={{ 'width': 100 }}>
+              <Grid item style={{ width: 140 }}>
               </Grid>
             </Grid>
             <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
               <Grid container className={classNames(classes.task)}>
                 <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ 'borderTop': 1,
-                    'borderColor': 'black' }}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
+                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1, borderColor: 'black' }}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
                 </Grid>
                 <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ 'borderTop': 1 }}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
+                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
                 </Grid>
                 <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ 'borderTop': 1 }}>{calculateJobType(task).map((type: any, i: number) => <span key={i} className={'jobTypeText'}>{type.title}{' - '}{type.quantity}{' - $'}{type.price}</span>)}</Typography>
+                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{
+                    calculateJobType(task).map((type: any, i: number) => {
+                      if (type.completedCount || type.status == 7) {
+                        if (type.completedComment) {
+                          return <Tooltip
+                            arrow
+                            title={type.completedComment}
+                          >
+                            <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount || 0}/{type.quantity} - ${type.price}</span>
+                          </Tooltip>
+                        } else {
+                          if (type.completedCount != type.quantity) {
+                            return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount || 0}/{type.quantity} - ${type.price}</span>
+                          } else {
+                            return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.quantity} - ${type.price}</span>
+                          }
+                        }
+                      } else {
+                        return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.quantity} - ${type.price}</span>
+                      }
+                    })
+                  }</Typography>
                 </Grid>
-                <Grid item style={{ 'width': 100 }}>
-                  <BCJobStatus status={task.status || 0} size={'small'}/>
+                <Grid item style={{ width: 140 }}>
+                  <BCJobStatus status={task.status || 0} size={'small'} />
                 </Grid>
               </Grid>
             </Grid>
-          </>)}
+          </>
+        )}
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>{'Subdivision'}</Typography>
@@ -394,7 +617,7 @@ function BCViewJobModal({
                 <Typography variant={'h6'} className={'previewText'}>{job.ticket.customerPO || 'N/A'}</Typography>
               </Grid>
             </Grid>
-            <Grid container className={classes.innerRow} xs={12}>
+            <Grid container className={classes.innerRow} xs={6}>
               <Grid item xs>
                 <Typography variant={'caption'} className={'previewCaption'}>{'description'}</Typography>
                 <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.description || 'N/A'}</Typography>
@@ -533,7 +756,11 @@ const DataContainer = styled.div`
   .whiteButtonBg {
     background-color: #ffffff;
     border-radius: 8px;
-    margin-bottom: 10px
+    margin-right: 20px;
+  }
+
+  .jobTypeList{
+    cursor: pointer;
   }
 
   .MuiButton-containedSecondary {
