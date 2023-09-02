@@ -128,7 +128,6 @@ function PORequired({ classes, hidden }: any) {
             <div style={{ width: '500px', display: 'flex', justifyContent: 'space-between', }} >
                 <div  >
                     <Checkbox
-                        style={{ marginLeft: '10px', marginRight: '10px', alignItems: 'left' }}
                         checked={showAllPORequests}
                         onChange={() => {
                             dispatch(setCurrentPageIndex(0))
