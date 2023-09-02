@@ -12,6 +12,7 @@ import {
 } from 'actions/snackbar/snackbar.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import QbSyncDialog from '../bc-qbsync-popup';
+import { quickbooksItemSync } from 'api/quickbooks.api';
 
 
 interface Props {
@@ -36,14 +37,16 @@ function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) 
   const resyncItem = async (data: any) => {
     setResyncing(true);
 
-    const itemSynced = await quickbooksGetAccounts();
+    const itemSynced = await quickbooksItemSync({ itemId: data?._id });
     setResyncing(false);
-    qbAccounts = itemSynced.data.accounts;
+    const getAccounts = await quickbooksGetAccounts();
+    qbAccounts = getAccounts.data.accounts;
     console.log("qb_accounts", qbAccounts );
 
     if (itemSynced?.data?.status) {
       setResyncStatus(true);
       dispatch(success('Item synced successfully'));
+      
       // dispatch(loadInvoiceItems.fetch());
     }
     else {
