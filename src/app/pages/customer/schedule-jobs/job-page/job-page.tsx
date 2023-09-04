@@ -8,6 +8,10 @@ import BCTabs from '../../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import { getAllJobsAPI, getJobsListAPI } from 'api/job.api';
 import { getAllJobTypesAPI } from 'api/job.api';
+import { makeStyles } from '@material-ui/core/styles';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import * as CONSTANTS from '../../../../../../src/constants';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
 import { statusReference } from 'helpers/contants';
@@ -86,6 +90,18 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     }
     return cond;
   });
+
+  const useStyles = makeStyles({
+    root: {
+      color: CONSTANTS.OCCUPIED_ORANGE,
+      '&$checked': {
+        color: CONSTANTS.OCCUPIED_ORANGE,
+
+      },
+    },
+    checked: {},
+  });
+  const checkBoxClass = useStyles();
 
   function getJobLocation(originalRow: any, rowIndex: number) {
     return originalRow?.jobLocationObj[0]?.name || '-';
@@ -266,12 +282,43 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
       'width': 60
     },
     {
+      Cell ({row}:any){
+        const time = getJobTime(row.original,row.original.index);
+        return <div className={'flex items-center'}>
+          {time}
+          {
+            !row.original.isHomeOccupied &&
+            <>
+
+              {/* <Checkbox
+                classes={{
+                  root: checkBoxClass.root,
+                  checked: checkBoxClass.checked,
+                }}
+                checked={true}
+                disabled={false}
+                size='small'
+              /> */}
+              <Checkbox
+                classes={{
+                  root: checkBoxClass.root,
+                  checked: checkBoxClass.checked,
+                }}
+                checked={true}
+                icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 15 }} />}
+                checkedIcon={<CheckBoxIcon style={{ fontSize: 15 }} />}
+              />
+            </>
+          }
+        </div>
+      },
       'Header': 'Time',
       'id': 'job-time',
       'accessor': getJobTime,
       'sortable': true,
       'width': 40
     }
+    
   ];
 
   function Toolbar() {

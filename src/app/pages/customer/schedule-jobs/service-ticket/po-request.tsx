@@ -61,17 +61,11 @@ function PORequired({ classes, hidden }: any) {
     const useStyles = makeStyles({
         root: {
             color: CONSTANTS.OCCUPIED_ORANGE,
-            padding: '5px 10px',
-            borderRadius: '8px',
-            height: '30px',
-            margin: '0 15px 0 0',
-            
+            maxHeight: '20px',
+
             '&$checked': {
                 color: CONSTANTS.OCCUPIED_ORANGE,
-                padding: '5px 10px',
-                borderRadius: '8px',
-                height: '30px',
-                margin: '0 15px 0 0',
+                maxHeight: '20px',
             },
         },
         checked: {},
@@ -302,9 +296,9 @@ function PORequired({ classes, hidden }: any) {
                         row.original.isHomeOccupied == true ? 
                         
                         <>
-                            <span className={''} title='House is Occupied' >
+                            <span title='House is Occupied' >
                                 <Checkbox
-                                    size={"medium"}
+                                    size={"small"}
                                     classes={{
                                         root: checkBoxClass.root,
                                         checked: checkBoxClass.checked,

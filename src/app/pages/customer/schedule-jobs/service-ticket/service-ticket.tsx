@@ -69,17 +69,11 @@ function ServiceTicket({ classes, hidden }: any) {
   const useStyles = makeStyles({
     root: {
       color: CONSTANTS.OCCUPIED_ORANGE,
-      padding: '5px 10px',
-      borderRadius: '8px',
-      height: '30px',
-      margin: '0 15px 0 0',
+      maxHeight: '20px',
 
       '&$checked': {
         color: CONSTANTS.OCCUPIED_ORANGE,
-        padding: '5px 10px',
-        borderRadius: '8px',
-        height: '30px',
-        margin: '0 15px 0 0',
+        maxHeight: '20px',
       },
     },
     checked: {},
@@ -310,7 +304,7 @@ function ServiceTicket({ classes, hidden }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
+        return <div className={'flex items-center'}  style={{padding:0}} >
           <CSIconButton
             // Variant="contained"
             color={'primary'}
@@ -348,8 +342,8 @@ function ServiceTicket({ classes, hidden }: any) {
             row.original.isHomeOccupied == true ?
 
               <>
-                <span className={'ml-2'} title='House is Occupied' >
-                  <Checkbox
+                
+                   <Checkbox
                     classes={{
                       root: checkBoxClass.root,
                       checked: checkBoxClass.checked,
@@ -357,14 +351,13 @@ function ServiceTicket({ classes, hidden }: any) {
                     checked={true}
                     disabled={false}
                     name="checkedB"
-                    color="secondary"
+                    size={"small"}
                   />
-                </span>
               </>
 
               : null
           }
-        </div>;
+        </div>
       },
       'Header': 'Actions',
       'id': 'action-create-job',
@@ -479,6 +472,8 @@ const DataContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
 `;
+
+
 
 export default withStyles(
   styles,
