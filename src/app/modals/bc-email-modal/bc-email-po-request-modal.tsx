@@ -59,7 +59,6 @@ function EmailPORequestModal({ classes, data, type }: any) {
             );
         }, 200);
     };
-    
     const getEmailTemplate = async () => {
         const params: any = {
             ticketId: data._id
@@ -87,9 +86,9 @@ function EmailPORequestModal({ classes, data, type }: any) {
 
     useEffect(() => {
         getEmailTemplate();
-        
-        if (data.customer?._id !== '') {
-            getCustomersContact(data.customer?._id)
+
+        if (data.customer !== '') {
+            getCustomersContact(data.customer)
             .then((res: any) => {
                 if (res.status === 1) {
                     const custContacts = res.contacts
@@ -104,7 +103,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
                     setCustomerContacts(custContacts);
                     if (custContacts.length) {
                         const initialContact = custContacts.filter(
-                            (contact: any) => data.customerContactId?.email === contact.email || data.customerContactId?.name === contact.name
+                            (contact: any) => data.customerContactId?.email === contact.email || data.customerContactId?.name === contact.name || data.customerContactId === contact.id
                         );
 
                         // Set a timeout to ensure Formik is ready to accept changes to the value.
