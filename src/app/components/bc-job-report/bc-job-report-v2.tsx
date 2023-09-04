@@ -142,7 +142,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           'jobId': job._id,
           'customerId': job.customer._id,
         };
-    
+
         if(job?.customerContactId?._id) {
           invoiceObj.customerContactId = job.customerContactId._id;
         }
@@ -182,7 +182,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     },
   }))(Tooltip);
 
-  
+
   const getJobTypesQty = (job: any) => job.tasks.reduce((acc: number[], task: any) => {
     let qtyMaps: { [p: string]: number } = {};
     task.jobTypes.forEach((type: any) => {
@@ -214,6 +214,17 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       time = 'PM';
       break;
   }
+  let match = time.match(/(.*[APap][Mm]):(.*)/);
+
+  let startingTime = "N/A";
+  let closingTime = "N/A";
+
+  if (match) {
+    startingTime = match[1].trim();
+    closingTime = match[2].trim();
+  } else {
+    startingTime = inputTime.trim();
+  }
 
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
@@ -228,7 +239,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           >
             <ArrowBackIcon/>
           </IconButton>
-        </div>  
+        </div>
         <Grid
           className={classes.btn}
           container
@@ -470,13 +481,20 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                         xs={5}>
                         <div className={classes.addMargin}>
                           <p className={classes.attributeKey}>
-                            {'Time'}
+                            {'Starting Time'}
                           </p>
                           <p className={classes.grayBoldTextM_0}>
-                            {time}
+                            {startingTime}
+                          </p>
+
+                          <p className={classes.attributeKey}>
+                            {'Ending Time'}
+                          </p>
+                          <p className={classes.grayBoldTextM_0}>
+                            {closingTime}
                           </p>
                         </div>
-                        
+
                       </Grid>
                       { /* Customer contact info */}
                       {job.customerContactId && <Grid
@@ -703,7 +721,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                   </p>
                 </Grid>
               </Grid>
-            </DataContainer>  
+            </DataContainer>
           </Grid>
           <Grid container item xs={2}></Grid>
         </Grid>
