@@ -223,7 +223,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     startingTime = match[1].trim();
     closingTime = match[2].trim();
   } else {
-    startingTime = inputTime.trim();
+    startingTime = time.trim();
   }
 
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
