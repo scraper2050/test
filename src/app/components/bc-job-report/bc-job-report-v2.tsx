@@ -195,10 +195,24 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
         }
       }
     });
-
     acc = Object.values(qtyMaps);
     return acc;
   }, []);
+
+  const getJobAddress = () => {
+    const addressComponents = [
+      job?.jobSite?.address?.street,
+      job?.jobSite?.address?.city,
+      job?.jobSite?.address?.state,
+      job?.jobSite?.address?.zipcode
+    ].filter(Boolean);
+    const formattedAddress = addressComponents.join(', ');
+    if (!formattedAddress.trim()) {
+      return "N/A";
+    }
+
+    return formattedAddress;
+  };
 
   const endTime = job?.scheduledEndTime ? `:${formatTime(job?.scheduledEndTime)}` : '';
   const specificTime = `${formatTime(job?.scheduledStartTime)}${endTime}`
@@ -460,7 +474,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                             {'Job Address'}
                           </p>
                           <p className={classes.grayBoldTextM_0}>
-                            {job.jobSite.name}
+                            {getJobAddress()}
                           </p>
                         </div>
                       </Grid>}
