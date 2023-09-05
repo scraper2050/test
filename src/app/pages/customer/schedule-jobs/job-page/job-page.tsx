@@ -287,19 +287,9 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
         return <div className={'flex items-center'}>
           {time}
           {
-            !row.original.isHomeOccupied &&
+            row.original.isHomeOccupied &&
             <>
-
-              {/* <Checkbox
-                classes={{
-                  root: checkBoxClass.root,
-                  checked: checkBoxClass.checked,
-                }}
-                checked={true}
-                disabled={false}
-                size='small'
-              /> */}
-              <Checkbox
+            <Checkbox
                 classes={{
                   root: checkBoxClass.root,
                   checked: checkBoxClass.checked,
