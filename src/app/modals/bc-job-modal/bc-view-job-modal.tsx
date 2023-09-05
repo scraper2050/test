@@ -218,8 +218,13 @@ function BCViewJobModal({
       userName: task.technician?.profile?.displayName || ""
     }
   }) : [];
-  let rescheduleTrack = job.track.filter((res: { user: string, action: string, date: string, userName: string }) => res.action.includes("Rescheduling the job"));
 
+  let rescheduleTrack = job.track.filter((res: { user: string, action: string, date: string, userName: string }) => res.action.toLowerCase().includes("rescheduling"));
+  rescheduleTrack = rescheduleTrack.filter((item: { user: any; }, index: any, arr: any[]) => {
+    const currentIndex = arr.findIndex((obj) => obj.user === item.user);
+    return currentIndex === index;
+  });
+  
   const rescheduleJob = () => {
     dispatch(setModalDataAction({
       'data': {
