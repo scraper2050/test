@@ -417,15 +417,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
   const handleTabChange = (newValue: number) => {
   };
   const handleRowClick = (event: any, row: any) => {
-    if (
-      [0, 4].includes(row.original.status) &&
-      (!row.original.employeeType ||
-        row.original.createdBy?.profile?._id === _id)
-    ) {
-      openEditJobModal(row.original);
-    } else {
-      openDetailJobModal(row.original);
-    }
+    openDetailJobModal(row.original);
   };
 
   const desbouncedSearchFunction = debounce((keyword: string) => {
