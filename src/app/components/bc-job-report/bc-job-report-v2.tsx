@@ -142,7 +142,6 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           'jobId': job._id,
           'customerId': job.customer._id,
         };
-
         if(job?.customerContactId?._id) {
           invoiceObj.customerContactId = job.customerContactId._id;
         }
@@ -182,7 +181,6 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     },
   }))(Tooltip);
 
-
   const getJobTypesQty = (job: any) => job.tasks.reduce((acc: number[], task: any) => {
     let qtyMaps: { [p: string]: number } = {};
     task.jobTypes.forEach((type: any) => {
@@ -199,6 +197,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     return acc;
   }, []);
 
+  // function uses the jobsite property to display the job address in job details
   const getJobAddress = () => {
     const addressComponents = [
       job?.jobSite?.address?.street,
@@ -228,6 +227,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       time = 'PM';
       break;
   }
+  // using regular expression to divide the string of starting and ending time on the basis of AM/PM
   let match = time.match(/(.*[APap][Mm]):(.*)/);
 
   let startingTime = "N/A";
