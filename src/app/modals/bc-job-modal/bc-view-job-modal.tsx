@@ -499,7 +499,7 @@ function BCViewJobModal({
   return (
     <>
     <DataContainer className={'new-modal-design'}>
-      { (technicianImages.length > 0 || rescheduleTrack.length > 0 || technicianImages.length > 0) && 
+      {(technicianImages.length > 0 || rescheduleTrack.length > 0 || technicianNotes.length > 0) && 
         <Button
           color='primary'
           variant="outlined"
