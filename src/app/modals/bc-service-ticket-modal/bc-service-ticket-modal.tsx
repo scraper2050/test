@@ -872,6 +872,19 @@ function BCServiceTicketModal(
     }
   }, [homeOwners]);
 
+
+  useEffect(() => {
+    const shouldSetIsSubmitting = (!FormikValues.isHomeOccupied  ||
+        (
+          FormikValues.customerFirstName !== '' &&
+          FormikValues.customerLastName !== '' &&
+          formDataEmail.validate != false && formDataPhone.validate != false 
+        )
+      );
+      
+    setIsSubmitting(!shouldSetIsSubmitting);
+  }, [formDataEmail, formDataPhone, FormikValues]);
+
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);
   };
