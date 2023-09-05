@@ -37,7 +37,6 @@ export const quickbooksItemSync = async (data:any) => {
 };
 export const quickbooksGetAccounts = async () => {
   try {
-    console.log("qb tool");
     const response: any = await request("/getQBAccounts", "POST",{}, false);
     return response;
   } catch (err) {

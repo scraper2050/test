@@ -4,7 +4,7 @@ import qbLogo from "../../../assets/img/integration-bg/quickbooks.png";
 import { SyncProblem as SyncProblemIcon, Sync as SyncIcon } from '@material-ui/icons';
 import { CSButtonSmall } from '../../../helpers/custom';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { quickbooksItemSync } from 'api/quickbooks.api';
+import { quickbooksGetAccounts, quickbooksItemSync } from 'api/quickbooks.api';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   error as SnackBarError,
@@ -29,16 +29,19 @@ function BCQbSyncStatus({ data, itemName,hasError = false }: Props) {
   
   const dispatch = useDispatch();
 
+
+  const [resyncingQB, setResyncingQB] = useState(false);
+  const [resyncStatusQB, setResyncStatusQB] = useState(false);
+
   const [resyncing, setResyncing] = useState(false);
   const [resyncStatus, setResyncStatus] = useState(false);
+  const [qbAccounts, setqbAccounts] = useState([]);
   const [qbSyncDialogOpen,setQbSyncDialogOpen]=useState(false);
   const classes = useStyles({ isSynced: data.isSynced, hasError });
-  const resyncItem = async (data: any) => {
+  const resyncItem = async (account:any) => {
     setResyncing(true);
-
-    const itemSynced = await quickbooksItemSync({ itemId: data?._id });
+    const itemSynced = await quickbooksItemSync({ itemId: data?._id, account: account });
     setResyncing(false);
-
 
     if (itemSynced?.data?.status) {
       setResyncStatus(true);
@@ -54,9 +57,16 @@ function BCQbSyncStatus({ data, itemName,hasError = false }: Props) {
     handleCloseQbSyncDialog();
 
   }
-const handleOpenQbSyncDialog=()=>
+const handleOpenQbSyncDialog=async ()=>
 {
+
+  setResyncStatusQB(true);
   setQbSyncDialogOpen(true);
+
+  const itemSynced = await quickbooksGetAccounts();
+  setqbAccounts( itemSynced.data.accounts);
+  setResyncStatusQB(false);
+
   console.log("dialog open");
 };
 const handleCloseQbSyncDialog=()=>
@@ -109,10 +119,13 @@ const handleCloseQbSyncDialog=()=>
       }
       <QbSyncDialog
         open={qbSyncDialogOpen}
+        loading={resyncStatusQB}
         // @ts-ignore
         handleSync={resyncItem}    
         handleClose={handleCloseQbSyncDialog}
         itemName={itemName}
+        qbAccounts={qbAccounts}
+        resyncing={resyncing}
       />
     </div>
   );
