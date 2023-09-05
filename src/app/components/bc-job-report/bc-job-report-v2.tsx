@@ -556,13 +556,13 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                               <p className={classes.attributeKey}>
                                 {'Technician(s) Name(s)'}
                               </p>
-                              {job.tasks.map((task: any, idx: number) => <>
-                                <span className={classes.grayBoldTextM_0} key={idx}>
-                                  {task.technician?.profile?.displayName || 'N/A'}
-                                </span>
-                                <br />
-                              </>
-                              )}
+                                {job.tasks.map((task: any, idx: number, array: any[]) => (
+                                    <span key={idx}>
+                                        {task.technician?.profile?.displayName || 'N/A'}
+                                        {idx < array.length - 1 ? ' | ' : ''}
+                                        <br />
+                                    </span>
+                                ))}
                             </div>
                           </Grid>
                           <Grid
@@ -573,7 +573,12 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                                 {'Job Type(s)'}
                               </p>
                               <span className={classes.grayBoldTextM_0}>
-                                {getJobTypesFromJob(job).map((item: any) => { return <div>{item || 'N/A'}</div> })}
+                                {getJobTypesFromJob(job).map((item: any, idx: number, array: any[]) => (
+                                    <span key={idx}>
+                                        {item || 'N/A'}
+                                        {idx < array.length - 1 ? ' | ' : ''}
+                                    </span>
+                                ))}
                               </span>
                             </div>
                           </Grid>
@@ -585,7 +590,12 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                                 {'Quantity'}
                               </p>
                               <span className={classes.grayBoldTextM_0}>
-                                {getJobTypesQty(job).map((item: any) => { return <div>{item || '1'}</div> })}
+                                {getJobTypesQty(job).map((item: any, idx: number, array: any[]) => (
+                                    <div key={idx}>
+                                        {`${item || '1'}`}
+                                        {idx < array.length - 1 ? ' | ' : ''}
+                                    </div>
+                                ))}
                               </span>
                             </div>
                           </Grid>
