@@ -33,6 +33,7 @@ import PopupMark from 'app/components/bc-bounce-email-tooltip/bc-popup-mark';
 
 function PORequired({ classes, hidden }: any) {
     const filterIsHomeOccupied = useSelector((state: any) => state.PORequest.filterIsHomeOccupied);
+    const [bouncedEmailFlag, toggleBouncedEmailFlag] = useState(false);
     const dispatch = useDispatch();
     const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
