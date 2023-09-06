@@ -33,7 +33,7 @@ import PopupMark from 'app/components/bc-bounce-email-tooltip/bc-popup-mark';
 
 function PORequired({ classes, hidden }: any) {
     const filterIsHomeOccupied = useSelector((state: any) => state.PORequest.filterIsHomeOccupied);
-    const [bouncedEmailFlag, toggleBouncedEmailFlag] = useState(false);
+
     const dispatch = useDispatch();
     const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
@@ -43,7 +43,6 @@ function PORequired({ classes, hidden }: any) {
     const [selectionRange, setSelectionRange] = useState<Range | null>(null);
     const loadCount = useRef<number>(0);
     const customStyles = useCustomStyles(); 
-    const [filterHouseOccupied, toggleFilterHouseOccupied] = useState(false);
     const { isLoading = true, po_request, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(({ PORequest }: any) => ({
         isLoading: PORequest.isLoading,
         refresh: PORequest.refresh,
@@ -74,7 +73,7 @@ function PORequired({ classes, hidden }: any) {
     const checkBoxClass = useStyles();
 
     const handleFilter = (filterIsHomeOccupied: boolean) => {
-    dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
     }
 
     const openEditTicketModal = (ticket: any) => {
@@ -104,7 +103,7 @@ function PORequired({ classes, hidden }: any) {
             dispatch(openModalAction());
         }, 200);
     };
-    
+
     function Toolbar() {
         useEffect(() => {
             if (loadCount.current !== 0) {
@@ -115,7 +114,7 @@ function PORequired({ classes, hidden }: any) {
 
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag, filterIsHomeOccupied));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
                 dispatch(setCurrentPageIndex(0));
             }
         }, [selectionRange]);
@@ -176,7 +175,7 @@ function PORequired({ classes, hidden }: any) {
                 />
             </div>
 
-            
+
         </>
     }
 
@@ -236,15 +235,15 @@ function PORequired({ classes, hidden }: any) {
                     {row.original.lastEmailSent
                         ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
                         : 'N/A'}
-                    {row.original.bouncedEmailFlag 
+                    {row.original.bouncedEmailFlag
                         ? <PopupMark
                             data={row.original.emailHistory}
                             endpoint={'/mark-as-read-po'}
                             params={{ 'id': row.original._id }}
                             callback={
-                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag, filterIsHomeOccupied)
+                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied)
                             }
-                            />
+                        />
                         : ''}
                 </>
             ),
@@ -253,7 +252,7 @@ function PORequired({ classes, hidden }: any) {
             className: 'font-bold',
             sortable: true,
         }
-,
+        ,
         {
             'Cell'({ row }: any) {
                 return <div className={'flex items-center'}>
@@ -294,25 +293,25 @@ function PORequired({ classes, hidden }: any) {
                             : null
                     }
                     {
-                        row.original.isHomeOccupied == true ? 
-                        
-                        <>
-                            <span title='House is Occupied' >
-                                <Checkbox
-                                    size={"small"}
-                                    classes={{
-                                        root: checkBoxClass.root,
-                                        checked: checkBoxClass.checked,
-                                    }}
-                                    checked={true}
-                                    disabled={false}
-                                    name="checkedB"
-                                    color="secondary"
-                                />
-                            </span>
-                        </>
-                            
-                        : null
+                        row.original.isHomeOccupied == true ?
+
+                            <>
+                                <span title='House is Occupied' >
+                                    <Checkbox
+                                        size={"small"}
+                                        classes={{
+                                            root: checkBoxClass.root,
+                                            checked: checkBoxClass.checked,
+                                        }}
+                                        checked={true}
+                                        disabled={false}
+                                        name="checkedB"
+                                        color="secondary"
+                                    />
+                                </span>
+                            </>
+
+                            : null
                     }
                 </div>;
             },
@@ -325,7 +324,7 @@ function PORequired({ classes, hidden }: any) {
 
     useEffect(() => {
         if (refresh) {
-            dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange,currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
+            dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             dispatch(setCurrentPageIndex(0));
             dispatch(setCurrentPageSize(10));
         }
@@ -335,7 +334,7 @@ function PORequired({ classes, hidden }: any) {
     }, [refresh]);
 
     useEffect(() => {
-        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined,currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
         if (customers.length == 0) {
             dispatch(getCustomers());
         }
@@ -389,7 +388,6 @@ function PORequired({ classes, hidden }: any) {
                 dispatch(setCurrentPageIndex(0))
                 dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             }}
-            isBounceAlertVisible={true}
         />
     );
 }
