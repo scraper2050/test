@@ -878,7 +878,8 @@ function BCServiceTicketModal(
         (
           FormikValues.customerFirstName !== '' &&
           FormikValues.customerLastName !== '' &&
-          formDataEmail.validate != false && formDataPhone.validate != false 
+          formDataEmail.validate != false && formDataPhone.validate != false &&
+          formDataEmail.value != '' && formDataPhone.value != '' 
         )
       );
       

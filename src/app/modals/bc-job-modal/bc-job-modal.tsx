@@ -430,7 +430,7 @@ function BCJobModal({
     };
     dispatch(getContacts(data));
   }, []);
-
+  
   // Implements autocomplete for homeowner
   useEffect(() => {
     const filteredHomeOwners = homeOwners.filter((item: any) => {
@@ -596,6 +596,7 @@ function BCJobModal({
       return false;
     }
   }
+  
 
   const checkValidHomeOwner = () => {
     if (!jobSiteValue || jobSiteValue.length === 0) {
@@ -874,6 +875,19 @@ function BCJobModal({
     setFieldValue
   } = form;
 
+  useEffect(() => {
+    const shouldSetIsSubmitting = (!FormikValues.isHomeOccupied ||
+      (
+        FormikValues.homeOwnerFirstName !== '' &&
+        FormikValues.homeOwnerLastName !== '' &&
+        formDataEmail.validate != false && formDataPhone.validate != false &&
+        formDataEmail.value != '' && formDataPhone.value != ''
+      )
+    );
+
+    setIsSubmitting(!shouldSetIsSubmitting);
+  }, [formDataEmail, formDataPhone, FormikValues]);
+  
   const closeModal = () => {
     dispatch(clearHomeOwnerStore());
     dispatch(closeModalAction());
