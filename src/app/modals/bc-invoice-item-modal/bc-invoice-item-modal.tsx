@@ -45,6 +45,7 @@ const EditItemValidation = yup.object().shape({
     .required(),
   'description': yup
     .string(),
+  'incomeAccount': yup.string().required('Income Account is required'), 
   'isFixed': yup
     .boolean()
     .required(),
@@ -145,6 +146,7 @@ fetchQBAccounts();
       'itemId': _id,
       'name': name,
       'description': description,
+      'incomeAccount':'',
       'isFixed': `${isFixed}`,
       'isJobType': isJobType ,
       'tax': tax
@@ -333,11 +335,28 @@ let isFixedDisabled=false;
                 <p><b><i>Fetching Accounts..</i></b></p><br /><CircularProgress size={28} 
                 className={classes.accProgress} /></div>
                 : <>
-                  <Autocomplete
-                    value={selectedOption}
+                
+                 <Autocomplete
+                    style={{
+                      'margin-bottom': '5px',
+                      'margin-top': '5px',
+                      'width': '387px',
+                      "font- size": '13px',
+                  'font-family': 'inherit',}}
+                    value={formik.values.incomeAccount}
+                    name={'incomeAccount'}
                     options={qbAccounts}
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('incomeAccount', newValue);  // Update selectedOption when an option is selected
+                    }}
                     getOptionLabel={(account) => account.Name}
-                      renderInput={(params) => <TextField {...params} label="Select Account" variant="outlined"  />}
+                    renderInput={(params) => <TextField {...params} label="Select Account" 
+                    style={{ borderRadius: '8px' }} 
+                    variant={'outlined'}
+                      error={formik.touched.incomeAccount && Boolean(formik.errors.incomeAccount)}
+                      helperText={formik.touched.incomeAccount && formik.errors.incomeAccount}
+                  
+                    />}
                     renderOption={(account) => (
                       <MenuItem key={account.Name} value={account.Name}>
                         {account.Name}
@@ -346,6 +365,8 @@ let isFixedDisabled=false;
                     noOptionsText="No accounts available"
 
                   />
+                  
+
                 </>
               }
               
