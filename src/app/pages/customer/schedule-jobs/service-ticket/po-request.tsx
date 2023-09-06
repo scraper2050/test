@@ -1,7 +1,7 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import InfoIcon from '@material-ui/icons/Info';
 import {
-    getServiceTicketDetail
+  getServiceTicketDetail
 } from 'api/service-tickets.api';
 import { modalTypes } from '../../../../../constants';
 import { formatDate, formatDateMMMDDYYYY } from 'helpers/format';
@@ -288,7 +288,10 @@ function PORequired({ classes, hidden }: any) {
                 }
             }}
             currentPageSize={currentPageSize}
-            setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+            setCurrentPageSizeFunction={(num: number) => {
+              dispatch(setCurrentPageSize(num));
+              dispatch(getAllPORequestsAPI(num || currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
+            }}
             setKeywordFunction={(query: string) => {
                 dispatch(setKeyword(query));
                 dispatch(setCurrentPageIndex(0))

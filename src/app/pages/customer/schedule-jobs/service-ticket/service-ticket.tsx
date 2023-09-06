@@ -41,7 +41,6 @@ function ServiceTicket({ classes, hidden }: any) {
   const divisions = useSelector((state: any) => state.divisions);
   const divisionList = divisions.data as IDivision[];
   const history = useHistory();
-  
   const customers = useSelector(({ customers }: any) => customers.data);
   const [showAllTickets, toggleShowAllTickets] = useState(false);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
@@ -389,7 +388,10 @@ function ServiceTicket({ classes, hidden }: any) {
                   }
                 }}
                 currentPageSize={currentPageSize}
-                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+                setCurrentPageSizeFunction={(num: number) => {
+                  dispatch(setCurrentPageSize(num));
+                  dispatch(getAllServiceTicketsAPI(num || currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
+                }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
                   dispatch(setCurrentPageIndex(0));
