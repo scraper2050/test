@@ -289,6 +289,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
           {
             row.original.isHomeOccupied &&
             <>
+              <span title='House is Occupied' >
             <Checkbox
                 classes={{
                   root: checkBoxClass.root,
@@ -298,6 +299,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
                 icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 15 }} />}
                 checkedIcon={<CheckBoxIcon style={{ fontSize: 15 }} />}
               />
+              </span>
             </>
           }
         </div>

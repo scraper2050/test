@@ -119,7 +119,8 @@ function PORequired({ classes, hidden }: any) {
             }
         }, [selectionRange]);
         return <>
-            <div style={{ width: '500px', display: 'flex', justifyContent: 'space-between', }} >
+           
+            <div style={{ width: '320px', display: 'flex', justifyContent: "spacebetween", marginRight: '0px', paddingRight: '0px', marginLeft:"-25px" }} >
                 <div  >
                     <Checkbox
                         checked={showAllPORequests}
@@ -131,7 +132,7 @@ function PORequired({ classes, hidden }: any) {
                         color="primary"
                         id="DisplayAll"
                     />
-                    <label htmlFor="DisplayAll" style={{ marginLeft: '-10px' }}>Display All PO Requests</label>
+                    <label htmlFor="DisplayAll" style={{ marginLeft: '-10px' }}>Show All</label>
                 </div>
 
                 <div >
@@ -171,11 +172,11 @@ function PORequired({ classes, hidden }: any) {
                         setSelectionRange(range);
                     }}
                     showClearButton={true}
+                    smallerView={true}
                     title={'Filter by Due Date...'}
                 />
             </div>
-
-
+            
         </>
     }
 

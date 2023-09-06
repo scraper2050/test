@@ -189,6 +189,7 @@ function ServiceTicket({ classes, hidden }: any) {
         <label htmlFor="allTickets" style={{ marginLeft: '-10px' }}>Show All Tickets</label>
 
       </div>
+      
       <div>
         <Checkbox
           checked={filterIsHomeOccupied}
@@ -342,7 +343,7 @@ function ServiceTicket({ classes, hidden }: any) {
             row.original.isHomeOccupied == true ?
 
               <>
-                
+                <span title='House is Occupied' >
                    <Checkbox
                     classes={{
                       root: checkBoxClass.root,
@@ -353,6 +354,7 @@ function ServiceTicket({ classes, hidden }: any) {
                     name="checkedB"
                     size={"small"}
                   />
+                </span>
               </>
 
               : null
