@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useStyles } from './bc-qb-sync-status.style';
 import qbLogo from "../../../assets/img/integration-bg/quickbooks.png";
 import { SyncProblem as SyncProblemIcon, Sync as SyncIcon } from '@material-ui/icons';
 import { CSButtonSmall } from '../../../helpers/custom';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { quickbooksGetAccounts } from 'api/quickbooks.api';
+import { quickbooksGetAccounts, quickbooksItemSync } from 'api/quickbooks.api';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   error as SnackBarError,
@@ -12,11 +12,10 @@ import {
 } from 'actions/snackbar/snackbar.action';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import QbSyncDialog from '../bc-qbsync-popup';
-import { quickbooksItemSync } from 'api/quickbooks.api';
 
 
 interface Props {
-  qbAccounts:any;
+  getAccounts:any;
   data: any;
   itemName: string;   
   hasError?: boolean;
@@ -26,39 +25,51 @@ function isNotEmpty(str: string | undefined | null) {
   return !(!str || 0 === str.trim().length);
 }
 
-function BCQbSyncStatus({ data, qbAccounts, itemName,hasError = false }: Props) {
+function BCQbSyncStatus({ data, itemName,hasError = false }: Props) {
+  
   const dispatch = useDispatch();
 
 
+  const [resyncingQB, setResyncingQB] = useState(false);
+  const [resyncStatusQB, setResyncStatusQB] = useState(false);
+
   const [resyncing, setResyncing] = useState(false);
   const [resyncStatus, setResyncStatus] = useState(false);
+  const [qbAccounts, setqbAccounts] = useState([]);
   const [qbSyncDialogOpen,setQbSyncDialogOpen]=useState(false);
   const classes = useStyles({ isSynced: data.isSynced, hasError });
-  const resyncItem = async (data: any) => {
+  const resyncItem = async (account:any) => {
     setResyncing(true);
 
-    const itemSynced = await quickbooksItemSync({ itemId: data?._id });
+    const itemSynced = await quickbooksGetAccounts();
     setResyncing(false);
-    const getAccounts = await quickbooksGetAccounts();
-    qbAccounts = getAccounts.data.accounts;
-    console.log("qb_accounts", qbAccounts );
+
 
     if (itemSynced?.data?.status) {
       setResyncStatus(true);
       dispatch(success('Item synced successfully'));
       
       // dispatch(loadInvoiceItems.fetch());
+
     }
     else {
       setResyncStatus(false);
-
       dispatch(SnackBarError('Item sync failed'));
 
     }
+    handleCloseQbSyncDialog();
+
   }
-const handleOpenQbSyncDialog=()=>
+const handleOpenQbSyncDialog=async ()=>
 {
+
+  setResyncStatusQB(true);
   setQbSyncDialogOpen(true);
+
+  const itemSynced = await quickbooksGetAccounts();
+  setqbAccounts( itemSynced.data.accounts);
+  setResyncStatusQB(false);
+
   console.log("dialog open");
 };
 const handleCloseQbSyncDialog=()=>
@@ -95,7 +106,7 @@ const handleCloseQbSyncDialog=()=>
               <div className={'flex items-center'}>
               <CSButtonSmall
                 aria-label={'edit'}
-                onClick={() => {resyncItem(data);
+                onClick={() => {
                 handleOpenQbSyncDialog();
               }}
                 size={'small'}
@@ -111,9 +122,13 @@ const handleCloseQbSyncDialog=()=>
       }
       <QbSyncDialog
         open={qbSyncDialogOpen}
-        handleClose={handleCloseQbSyncDialog}    
+        loading={resyncStatusQB}
+        // @ts-ignore
+        handleSync={resyncItem}    
+        handleClose={handleCloseQbSyncDialog}
         itemName={itemName}
         qbAccounts={qbAccounts}
+        resyncing={resyncing}
       />
     </div>
   );

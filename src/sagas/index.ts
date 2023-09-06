@@ -16,6 +16,7 @@ import watchNotifications from './notification.saga';
 import watchSubscription from './subscriptions.saga';
 import watchLoadInvoiceDetail from './invoice.saga';
 import watchInvoiceLogsLoad from './logs.saga';
+import watchQBAccountLoad from './qb-accounts.saga';
 import watchEmailSend from './bc-email.saga';
 import watchSalesTax from './sales-tax-saga';
 
@@ -36,6 +37,7 @@ export default function *rootSaga() {
     watchLoadInvoiceDetail(),
     watchEmailSend(),
     watchInvoiceLogsLoad(),
+    watchQBAccountLoad(),
     watchSalesTax(),
     bcModalSaga()
   ]);

@@ -7,6 +7,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import { loadQBAccounts } from 'actions/quickbookAccount/quickbook.action';
 
 import {
   openModalAction,
@@ -17,7 +18,6 @@ import { Item } from 'actions/invoicing/items/items.types';
 import { getAllSalesTaxAPI } from 'api/tax.api';
 import BCDebouncedInput from 'app/components/bc-input/bc-debounced-input';
 import { updateItems } from 'api/items.api';
-import { quickbooksGetAccounts } from 'api/quickbooks.api';
 import {
   error as SnackBarError,
   success,
@@ -26,6 +26,7 @@ import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-
 import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 import { Can, ability } from 'app/config/Can';
+
 
 interface Props {
   classes: any;
@@ -71,8 +72,10 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [qbAccounts, setQBAccounts] = useState();
-
+  
+  const [qbAccounts, setQBAccounts] = useState([]);
+  const [accounts, setAccounts]=useState([]);
+  const { 'accounts': QB_Accounts, 'loading': loadingQB_Accounts, 'error': QB_AccountsError } = useSelector(({ accounts }: any) => accounts);
   const { loading: tiersLoading, error: tiersError, tiers } = useSelector(
     ({ invoiceItemsTiers }: any) => invoiceItemsTiers
   );
@@ -81,7 +84,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     ({ InvoiceJobCosting }: any) => InvoiceJobCosting.costingList
   );
   const activeJobCosts = costingList.filter(({ tier }: any) => tier.isActive);
-
+ 
   const handleTierChange = (id: number, value: string, tierId: string) => {
     const newItems: any = [...localItems];
     const index = newItems.findIndex((item: any) => item._id === id);
@@ -90,7 +93,6 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     newItems[index].tiers[tierId] = currentTier;
     setLocalItems(newItems);
   };
-
   const handleUpdateAllTiers = async () => {
     setUpdating(true);
     let hasError: any = '';
@@ -188,6 +190,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       </>
     );
   }
+  useEffect(() => { 
+    if (QB_Accounts){
+      setQBAccounts(QB_Accounts)
+
+    }
+  }, [QB_Accounts])
 
   useEffect(() => {
     if (items.length > 0) {
@@ -229,6 +237,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
             itemType: "",
             productCost: '',
             isJobType: true,
+            accounts: accounts,
             tax: 0,
             tiers: activeTiers.reduce(
               (total: any, currentValue: any) => ({
@@ -286,7 +295,8 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       const dbSync = [
         {
           Cell({ row }: any) {
-            return <BCQbSyncStatus data={row.original} qbAccounts={qbAccounts} itemName={row.original.name} />;
+            return <BCQbSyncStatus data={row.original}
+            itemName={row.original.name} getAccounts={undefined} />;
           },
           id: 'qbSync',
           sortable: false,
@@ -415,17 +425,17 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     }
   }, [tiers, editMode]);
 
-  useEffect(() => {
-    quickbooksGetAccounts().then((qb_accounts:any)=>{
-      const {data}=qb_accounts;
-      const { status, accounts }=data;
-      console.log('qb_accounts', accounts);
-      if (status){
-        setQBAccounts(accounts)
+  // useEffect(()=>{
+  //   if(qbAccounts){
+  //     console.log("qbAccounts", qbAccounts);
+  //   }
+  // }, [qbAccounts]);
 
-      }
-    });
+  useEffect(() => {
+ 
     dispatch(loadInvoiceItems.fetch());
+    dispatch(loadQBAccounts.fetch());
+
     dispatch(getAllSalesTaxAPI());
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
   }, []);

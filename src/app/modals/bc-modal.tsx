@@ -575,6 +575,7 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
+
         />);
         break;
       case modalTypes.ADD_ITEM_MODAL:

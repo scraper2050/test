@@ -18,6 +18,10 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
+  TextField,
+  CircularProgress,
+  Paper,
+  Popper,
 } from '@material-ui/core';
 
 import { validateDecimalAmount, replaceAmountToDecimal } from 'utils/validation'
@@ -33,7 +37,8 @@ import {
 import * as CONSTANTS from '../../../constants';
 import styles from './bc-invoice-item-modal.styles';
 import { updateItems, addItem, addItemProduct } from 'api/items.api';
-
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { quickbooksGetAccounts } from 'api/quickbooks.api';
 const EditItemValidation = yup.object().shape({
   'name': yup
     .string()
@@ -92,6 +97,9 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('Select');
+  const [isLoadingIncome, setIsLoadingIncome] = useState(true); 
+  const [qbAccounts, setQBAccounts] = useState([]);
   const dispatch = useDispatch();
   const isAdd = _id ? false : true;
 
@@ -102,7 +110,23 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
     }));
     dispatch(closeModalAction());
   };
+  useEffect(() => {
+    console.log("qbAccounts Income ",qbAccounts);
+  }, [qbAccounts]);
+  const fetchQBAccounts = async () => {
+    setIsLoadingIncome(true)
+      const response = await quickbooksGetAccounts(); 
+      const data = response.data.accounts; // Assuming your API response has an 'accounts' property
+      console.log("data",data);
+      setQBAccounts(data);
+    setIsLoadingIncome(false);  
+    console.log("in function", qbAccounts);
+    
 
+  };
+useEffect(()=>{
+fetchQBAccounts();
+  },[])
   const activeTiers = Object.keys(tiers)
     .map(tier_id => ({ ...tiers[tier_id].tier, charge: tiers[tier_id].charge !== null && typeof tiers[tier_id].charge !== 'undefined' ? `${tiers[tier_id].charge}` : '' }))
     .filter(tier => tier.isActive)
@@ -122,7 +146,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
       'name': name,
       'description': description,
       'isFixed': `${isFixed}`,
-      'isJobType': isJobType,
+      'isJobType': isJobType ,
       'tax': tax
         ? 1
         : 0,
@@ -184,6 +208,7 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
         isFixed: isProduct?true:values.isFixed === 'true' ? true : false,
         isJobType: isProduct?false:values.isJobType,
         tax: values.tax,
+
         itemType:values.itemType,
         productCost:values.productCost,
         tiers: tierArr,
@@ -255,8 +280,6 @@ let isFixedDisabled=false;
     }
 
   }, [formik.values.itemType]);
-
-
   return <DataContainer>
     <hr
       style={{ height: '1px', background: '#D0D3DC', borderWidth: '0px' }}
@@ -295,6 +318,39 @@ let isFixedDisabled=false;
                 }}
               />
             </Grid>
+             <Grid 
+              item
+              xs={12}
+              style={{ display: 'flex' }}
+            >
+            <Grid
+              classes={{ root: classes.labelText }}
+            >
+                INCOME
+              </Grid>
+              {isLoadingIncome ? 
+              <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }} >
+                <p><b><i>Fetching Accounts..</i></b></p><br /><CircularProgress size={28} 
+                className={classes.accProgress} /></div>
+                : <>
+                  <Autocomplete
+                    value={selectedOption}
+                    options={qbAccounts}
+                    getOptionLabel={(account) => account.Name}
+                      renderInput={(params) => <TextField {...params} label="Select Account" variant="outlined"  />}
+                    renderOption={(account) => (
+                      <MenuItem key={account.Name} value={account.Name}>
+                        {account.Name}
+                      </MenuItem>
+                    )}
+                    noOptionsText="No accounts available"
+
+                  />
+                </>
+              }
+              
+           
+          </Grid>
             <Grid
               item
               xs={12}
@@ -330,15 +386,16 @@ let isFixedDisabled=false;
                   },
                 }}
               />
+             
             </Grid>
+
             {formik.values.itemType == 'Service' &&
             <Grid
               item
               xs={12}
               style={{ display: 'flex' }}
             >
-              <Grid item xs={12} sm={3}>
-</Grid>
+              <Grid item xs={12} sm={3}></Grid>
               <FormControlLabel
                 classes={{ label: classes.checkboxLabel }}
                 control={
@@ -356,7 +413,6 @@ let isFixedDisabled=false;
               />
             </Grid>
             }
-           
           </Grid>
           <Grid item xs={12} sm={5} classes={{ root: classes.grid }}>
             <Grid
