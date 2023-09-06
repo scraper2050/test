@@ -704,7 +704,7 @@ function BCJobModal({
         employeeType: task.employeeType.toString(),
         contractorId: task.contractor ? task.contractor._id : '',
         technicianId: task.employee ? task.employee._id : '',
-        jobTypes: task.jobTypes.map((type: any) => ({ jobTypeId: type.jobTypeId?._id, quantity: Number(type.quantity), price: Number(type.price) }))
+        jobTypes: task.jobTypes.map((type: any) => ({ jobTypeId: type.jobTypeId?._id, quantity: Number(type.quantity), price: Number(type.price), status: type.status }))
       }))
 
       tempData.tasks = tasks;

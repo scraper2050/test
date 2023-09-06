@@ -195,8 +195,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
         }
       }
     });
-
-    acc = Object.values(qtyMaps);
+    acc = acc.concat(Object.values(qtyMaps));
     return acc;
   }, []);
 
@@ -345,6 +344,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                             ? formatDatTimell(job.scheduleDate)
                             : 'N/A'}
                         </p>
+                        {job.rescheduled && <span className={classes.rescheduled}>(Rescheduled)</span>}
                       </div>
                     </Grid>
                   </Grid>

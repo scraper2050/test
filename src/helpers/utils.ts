@@ -1,7 +1,9 @@
 export const getJobTypesFromJob = (job: any) => job.tasks.reduce((acc: string[], task: any) => {
+  const jobTitle: any = [];
   task.jobTypes.forEach((type: any) => {
-    if (type.jobType && acc.indexOf(type.jobType.title) === -1) acc.push(type.jobType.title)
+    if (type.jobType && !jobTitle.includes(type.jobType.title)) jobTitle.push(type.jobType.title)
   });
+  acc = acc.concat(jobTitle);
   return acc;
 }, []);
 
