@@ -149,7 +149,6 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           'jobId': job._id,
           'customerId': job.customer._id,
         };
-    
         if(job?.customerContactId?._id) {
           invoiceObj.customerContactId = job.customerContactId._id;
         }

@@ -193,7 +193,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
         }
       }
     });
-    acc = Object.values(qtyMaps);
+    acc.push(...Object.values(qtyMaps));
     return acc;
   }, []);
 
@@ -607,7 +607,6 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                                 {getJobTypesQty(job).map((item: any, idx: number, array: any[]) => (
                                     <div key={idx}>
                                         {`${item || '1'}`}
-                                        {idx < array.length - 1 ? ' | ' : ''}
                                     </div>
                                 ))}
                               </span>
