@@ -380,7 +380,7 @@ let isFixedDisabled=false;
                     style={{
                       'marginBottom': '5px',
                       'marginTop': '5px',
-                      'width': 'auto',
+                      'width': '100%',
                       "fontSize": '13px',
                       'fontFamily': 'inherit'
                     }
@@ -392,9 +392,9 @@ let isFixedDisabled=false;
                     }}
                     // @ts-ignore
                     // name={'incomeAccount'}
-
+                    placeholder='Select Income Account'
                     getOptionLabel={(account: any) => account.Name}
-                    renderInput={(params) => <TextField {...params} label="Select Account"
+                    renderInput={(params) => <TextField {...params} 
                       style={{ borderRadius: '8px', fontSize: "14px" }}
                       variant={'outlined'}
                       error={formik.touched.incomeAccount && Boolean(formik.errors.incomeAccount)}
