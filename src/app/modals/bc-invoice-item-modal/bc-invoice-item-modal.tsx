@@ -113,14 +113,15 @@ function BCInvoiceEditModal({ item, classes }: ModalProps) {
   };
   useEffect(() => {
     console.log("qbAccounts Income ",qbAccounts);
+    setIsLoadingIncome(false);  
+
   }, [qbAccounts]);
   const fetchQBAccounts = async () => {
     setIsLoadingIncome(true)
       const response = await quickbooksGetAccounts(); 
-      const data = response.data.accounts; // Assuming your API response has an 'accounts' property
+    const data = response?.data?.accounts; // Assuming your API response has an 'accounts' property
       console.log("data",data);
       setQBAccounts(data);
-    setIsLoadingIncome(false);  
     console.log("in function", qbAccounts);
     
 
@@ -210,14 +211,14 @@ fetchQBAccounts();
         isFixed: isProduct?true:values.isFixed === 'true' ? true : false,
         isJobType: isProduct?false:values.isJobType,
         tax: values.tax,
-
+        account: values.incomeAccount,
         itemType:values.itemType,
         productCost:values.productCost,
         tiers: tierArr,
         costing: costingArr,
       }
       let response;
-      
+      console.log("incomeAccount", values.incomeAccount)
        
       if (isAdd) {
         
@@ -320,58 +321,7 @@ let isFixedDisabled=false;
                 }}
               />
             </Grid>
-             <Grid 
-              item
-              xs={12}
-              style={{ display: 'flex' }}
-            >
-            <Grid
-              classes={{ root: classes.labelText }}
-            >
-                INCOME
-              </Grid>
-              {isLoadingIncome ? 
-              <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }} >
-                <p><b><i>Fetching Accounts..</i></b></p><br /><CircularProgress size={28} 
-                className={classes.accProgress} /></div>
-                : <>
-                
-                 <Autocomplete
-                    style={{
-                      'margin-bottom': '5px',
-                      'margin-top': '5px',
-                      'width': '387px',
-                      "font- size": '13px',
-                  'font-family': 'inherit',}}
-                    value={formik.values.incomeAccount}
-                    name={'incomeAccount'}
-                    options={qbAccounts}
-                    onChange={(event, newValue) => {
-                      formik.setFieldValue('incomeAccount', newValue);  // Update selectedOption when an option is selected
-                    }}
-                    getOptionLabel={(account) => account.Name}
-                    renderInput={(params) => <TextField {...params} label="Select Account" 
-                    style={{ borderRadius: '8px' }} 
-                    variant={'outlined'}
-                      error={formik.touched.incomeAccount && Boolean(formik.errors.incomeAccount)}
-                      helperText={formik.touched.incomeAccount && formik.errors.incomeAccount}
-                  
-                    />}
-                    renderOption={(account) => (
-                      <MenuItem key={account.Name} value={account.Name}>
-                        {account.Name}
-                      </MenuItem>
-                    )}
-                    noOptionsText="No accounts available"
-
-                  />
-                  
-
-                </>
-              }
-              
-           
-          </Grid>
+            
             <Grid
               item
               xs={12}
@@ -409,7 +359,63 @@ let isFixedDisabled=false;
               />
              
             </Grid>
+            <Grid
+              item
+              xs={12}
+              style={{ display: 'flex' }}
+            >
+              <Grid
+                classes={{ root: classes.labelText }}
+              >
+                INCOME ACCOUNTS
+              </Grid>
+              {isLoadingIncome ?
+                <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }} >
+                  <CircularProgress size={28}
+                    className={classes.accProgress} />
+                  <p><b><i>Fetching Accounts..</i></b></p></div>
+                : <>
 
+                  <Autocomplete
+                    style={{
+                      'marginBottom': '5px',
+                      'marginTop': '5px',
+                      'width': 'auto',
+                      "fontSize": '13px',
+                      'fontFamily': 'inherit'
+                    }
+                    }
+                    value={formik.values.incomeAccount}
+                    options={qbAccounts}
+                    onChange={(event, newValue) => {
+                      formik.setFieldValue('incomeAccount', newValue);  // Update selectedOption when an option is selected
+                    }}
+                    // @ts-ignore
+                    // name={'incomeAccount'}
+
+                    getOptionLabel={(account: any) => account.Name}
+                    renderInput={(params) => <TextField {...params} label="Select Account"
+                      style={{ borderRadius: '8px', fontSize: "14px" }}
+                      variant={'outlined'}
+                      error={formik.touched.incomeAccount && Boolean(formik.errors.incomeAccount)}
+                      helperText={formik.touched.incomeAccount && formik.errors.incomeAccount}
+
+                    />}
+                    renderOption={(account: any) => (
+                      <MenuItem key={account.Name} value={account.Name}>
+                        {account.Name}
+                      </MenuItem>
+                    )}
+                    noOptionsText="No accounts available"
+
+                  />
+
+
+                </>
+              }
+
+
+            </Grid>
             {formik.values.itemType == 'Service' &&
             <Grid
               item

@@ -25,11 +25,12 @@ const QbSyncDialog: React.FC<QbSyncDialogProps> = ({ open, handleClose, itemName
     const [selectedAccount, setSelectedAccount] = useState('Select');
     const classes = useStyles({ isSynced: false, hasError:false });
 
-    const handleOptionChange = (event: { target: { value: any; }; }) => {
-        let selected_account = qbAccounts[event.target.value];
-        setSelectedOption(event.target.value);
-        setSelectedAccount(selected_account);
-        console.log("Account on change", selected_account);
+    const handleOptionChange = (newValue:any) => {
+        // console.log("newValue", newValue);
+        // let selected_account = qbAccounts[event.target.value];
+        setSelectedOption(newValue);
+        // setSelectedAccount(newValue);
+        // console.log("Account on change", selected_account);
     };
 return(
     <Dialog open={open} onClose={handleClose} >
@@ -42,13 +43,14 @@ return(
             <Typography variant="h6" gutterBottom>
                 Sync Item {itemName ? itemName : ' '}
             </Typography>
+            <InputLabel id="demo-controlled-open-select-label">You must select which income account to map this item to</InputLabel>
 
             {loading ? <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }} ><p><b><i>Fetching Accounts List</i></b></p><br /><CircularProgress size={28} className={classes.accProgress} /></div> :<>
-                <InputLabel id="demo-controlled-open-select-label">You must select which income account to map this item to</InputLabel>
                 <Autocomplete
                     value={selectedOption}
                     fullWidth
                     options={qbAccounts}
+                    onChange={(event, newValue) => handleOptionChange(newValue)}
                     getOptionLabel={(account) => account.Name}
                     renderInput={(params) => <TextField {...params} label="Select Account" variant="outlined" style={{ marginTop: '20px' }} />}
                     renderOption={(account) => (
@@ -70,7 +72,7 @@ return(
                 Close
             </Button>
             <Button onClick={
-                () => handleSync(selectedAccount)
+                () => handleSync(selectedOption)
                 } color="primary">
                 {resyncing ? <CircularProgress size={28} className={classes.accProgress} /> :"Sync Item"}
             </Button>

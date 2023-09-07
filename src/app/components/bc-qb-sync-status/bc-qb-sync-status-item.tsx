@@ -41,7 +41,7 @@ function BCQbSyncStatus({ data, itemName,hasError = false }: Props) {
   const resyncItem = async (account:any) => {
     setResyncing(true);
 
-    const itemSynced = await quickbooksGetAccounts();
+    const itemSynced = await quickbooksItemSync({ itemId: data?._id,account });
     setResyncing(false);
 
 
@@ -67,7 +67,7 @@ const handleOpenQbSyncDialog=async ()=>
   setQbSyncDialogOpen(true);
 
   const itemSynced = await quickbooksGetAccounts();
-  setqbAccounts( itemSynced.data.accounts);
+  setqbAccounts(itemSynced?.data?.accounts);
   setResyncStatusQB(false);
 
   console.log("dialog open");
