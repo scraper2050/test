@@ -380,7 +380,7 @@ function ServiceTicket({ classes, hidden }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params,filterIsHomeOccupied));
+    dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, undefined, undefined, currentDivision.params,filterIsHomeOccupied));
     if (customers.length == 0) {
       dispatch(getCustomers());
     }
