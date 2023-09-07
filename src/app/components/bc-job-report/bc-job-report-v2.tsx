@@ -240,6 +240,31 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     startingTime = time.trim();
   }
 
+    // this function takes the job object and make an array to display technician name, jobType and quantity
+    const setJobDetailData = (jobs) => {
+        const transformedData = [];
+
+        jobs?.tasks?.forEach((task) => {
+            task?.jobTypes?.forEach((jobType) => {
+                const displayName = task?.technician?.profile?.displayName;
+                const jobTitle = jobType?.jobType?.title;
+                const quantity = jobType?.quantity;
+
+                if (displayName && jobTitle && quantity) {
+                    const row = {
+                        displayName,
+                        jobType: jobTitle,
+                        quantity,
+                    };
+
+                    transformedData.push(row);
+                }
+            });
+        });
+
+        return transformedData;
+    };
+
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
     <MainContainer>
