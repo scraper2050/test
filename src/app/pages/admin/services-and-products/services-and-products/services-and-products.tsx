@@ -173,7 +173,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
 
       <>
           <FormGroup>
-            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} label="Inactive/Active" />
+            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} label="Include Inactive" />
             </FormGroup>
         
        <Can I={'manage'} a={'Items'}>
@@ -224,11 +224,30 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       setModalDataAction({
         data: {
           item,
-          isView:true,
+          isView:false,
+
           modalTitle: 'Edit Item',
         
         },
         type: modalTypes.EDIT_ITEM_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const renderView = (item: Item) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          isView: true,
+          editHandler: renderEdit,
+          item,
+          modalTitle: 'View Item Details',
+
+        },
+        type: modalTypes.VIEW_ITEM_MODAL,
       })
     );
     setTimeout(() => {
@@ -276,30 +295,30 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   useEffect(() => {
     if (tiers.length || items) {
       const actions = [
-        {
-          Cell({ row }: any) {
-            return (
-              <div className={'flex items-center'}>
-                <CSButtonSmall
-                  aria-label={'edit'}
-                  color={'primary'}
-                  onClick={() => renderEdit(row.original)}
-                  size={'small'}
-                  style={{
-                    marginRight: 10,
-                    minWidth: 35,
-                    padding: '5px 10px',
-                  }}
-                >
-                  <EditIcon />
-                </CSButtonSmall>
-              </div>
-            );
-          },
-          id: 'action',
-          sortable: false,
-          width: 60,
-        },
+        // {
+        //   Cell({ row }: any) {
+        //     return (
+        //       <div className={'flex items-center'}>
+        //         <CSButtonSmall
+        //           aria-label={'edit'}
+        //           color={'primary'}
+        //           onClick={() => renderEdit(row.original)}
+        //           size={'small'}
+        //           style={{
+        //             marginRight: 10,
+        //             minWidth: 35,
+        //             padding: '5px 10px',
+        //           }}
+        //         >
+        //           <EditIcon />
+        //         </CSButtonSmall>
+        //       </div>
+        //     );
+        //   },
+        //   id: 'action',
+        //   sortable: false,
+        //   width: 60,
+        // },
 
       ];
 
@@ -354,10 +373,10 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           return(
         <div className = { 'flex items-center'} >
             {
-              row.original.isActive ? (
+              !row.original.isActive ? (
                 <ClearIcon
                   color="primary"
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer',color:"red" }}
                 />
               ) : null
             }
@@ -407,7 +426,21 @@ Header: '',
           sortable: true,
         
         },
-
+        {
+          Cell({ row }: any): JSX.Element {
+            return (
+              <div className={'flex items-center'} >
+                {
+                  row.original.IncomeAccountRef?.name
+                }
+              </div >
+            );
+          },
+          Header: 'Income Account',
+          accessor: 'IncomeAccountRef',
+          sortable: false,
+          width: 30,
+        },
         {
           Cell({ row }: any) {
             return (
@@ -525,7 +558,7 @@ Header: '',
             searchPlaceholder={'Search Items'}
             tableData={localItems}
             toolbar={Toolbar()}
-          onRowclick={renderEdit}
+          onRowClick={(ev: any, row: any) => { renderView(row.original)}}
           
           />
             </PageContainer>
