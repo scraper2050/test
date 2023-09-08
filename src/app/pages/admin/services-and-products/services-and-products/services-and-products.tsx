@@ -7,7 +7,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
-
+import ClearIcon from '@material-ui/icons/Clear';
 import {
   openModalAction,
   setModalDataAction,
@@ -25,11 +25,12 @@ import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-
 import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 import { Can, ability } from 'app/config/Can';
-
+import BCInvoiceEditModal from '../../../../modals/bc-invoice-item-modal/bc-invoice-item-modal';
 
 
 interface Props {
   classes: any;
+  isView:boolean,
 }
 
 const normalizeTiers = (tiers: any) => {
@@ -73,8 +74,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   const [editMode, setEditMode] = useState(false);
   const [includeDisabled, setIncludeDisabled] = useState<any>(false);
   const [updating, setUpdating] = useState(false);
-  const [isRowEnabled, setIsRowEnabled] = useState(true);
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
+  const closeEditPopup = () => {
+    setIsEditPopupOpen(false);
+  };
   const { loading: tiersLoading, error: tiersError, tiers } = useSelector(
     ({ invoiceItemsTiers }: any) => invoiceItemsTiers
   );
@@ -91,7 +96,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     newItems[index].tiers[tierId] = currentTier;
     setLocalItems(newItems);
   };
-
+ 
   const handleUpdateAllTiers = async () => {
     setUpdating(true);
     let hasError: any = '';
@@ -168,7 +173,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
 
       <>
           <FormGroup>
-            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} label="Include Disabled" />
+            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} label="Inactive/Active" />
             </FormGroup>
         
        <Can I={'manage'} a={'Items'}>
@@ -219,7 +224,9 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       setModalDataAction({
         data: {
           item,
+          isView:true,
           modalTitle: 'Edit Item',
+        
         },
         type: modalTypes.EDIT_ITEM_MODAL,
       })
@@ -265,7 +272,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       dispatch(openModalAction());
     }, 200);
   };
-
+ 
   useEffect(() => {
     if (tiers.length || items) {
       const actions = [
@@ -293,6 +300,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           sortable: false,
           width: 60,
         },
+
       ];
 
       // const activateButton=[
@@ -328,6 +336,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       //     width: 150, // Adjust the width as needed
       //   },  
       // ];
+
       const dbSync = [
         {
           Cell({ row }: any) {
@@ -340,6 +349,26 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       ];
 
       const columns: any = [
+        {
+        Cell({ row }: any): JSX.Element {
+          return(
+        <div className = { 'flex items-center'} >
+            {
+              row.original.isActive ? (
+                <ClearIcon
+                  color="primary"
+                  style={{ cursor: 'pointer' }}
+                />
+              ) : null
+            }
+        </div >
+      );
+},
+Header: '',
+  accessor: 'isActive',
+    sortable: false,
+      width: 30,
+  },
         {
           Header: 'Name',
           accessor: 'name',
@@ -366,6 +395,21 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         },
         {
           Cell({ row }: any) {
+
+            return (
+              <div className={'flex items-center'}>
+                {row.original.itemType =='Product' ? 'Product' : 'Service'}
+              </div>
+            );
+          },
+          Header: 'Product Type',
+          accessor: 'itemType',
+          sortable: true,
+        
+        },
+
+        {
+          Cell({ row }: any) {
             return (
               <div className={'flex items-center'}>
                 {row.original.isFixed ? 'Fixed' : 'Hourly'}
@@ -376,7 +420,6 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           accessor: 'isFixed',
           sortable: true,
         },
-
         {
           Cell({ row }: any) {
             return (
@@ -406,36 +449,36 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           sortable: true,
         },
       ];
-      const tierColumns =
-        activeTiers.map(({ tier }: any) => {
-          return {
-            Cell({ row }: any) {
-              const currentTier = row.original.tiers[tier._id];
-              return (
-                <>
-                  {!editMode ? (
-                    currentTier?.charge
-                  ) : (
-                    <BCDebouncedInput
-                      error={!currentTier?.charge}
-                      id={tier._id + tier.name}
-                      setValue={(val: string) =>
-                        handleTierChange(
-                          row.original._id,
-                          val,
-                          currentTier?.tier._id
-                        )
-                      }
-                      value={currentTier?.charge}
-                    />
-                  )}
-                </>
-              );
-            },
-            Header: `Tier ${tier.name} Price`,
-            accessor: tier.name,
-          };
-        }) || [];
+      // const tierColumns =
+      //   activeTiers.map(({ tier }: any) => {
+      //     return {
+      //       Cell({ row }: any) {
+      //         const currentTier = row.original.tiers[tier._id];
+      //         return (
+      //           <>
+      //             {!editMode ? (
+      //               currentTier?.charge
+      //             ) : (
+      //               <BCDebouncedInput
+      //                 error={!currentTier?.charge}
+      //                 id={tier._id + tier.name}
+      //                 setValue={(val: string) =>
+      //                   handleTierChange(
+      //                     row.original._id,
+      //                     val,
+      //                     currentTier?.tier._id
+      //                   )
+      //                 }
+      //                 value={currentTier?.charge}
+      //               />
+      //             )}
+      //           </>
+      //         );
+      //       },
+      //       Header: `Tier ${tier.name} Price`,
+      //       accessor: tier.name,
+      //     };
+      //   }) || [];
 
       let constructedColumns: any = [
         ...columns,
@@ -449,7 +492,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       if (tiers.length > 0) {
         constructedColumns = [
           ...columns,
-          ...tierColumns,
+          // ...tierColumns,
           ...ability.can('manage', 'Company')
             ? actions
             : [],
@@ -482,6 +525,8 @@ function AdminServiceAndProductsPage({ classes }: Props) {
             searchPlaceholder={'Search Items'}
             tableData={localItems}
             toolbar={Toolbar()}
+          onRowclick={renderEdit}
+          
           />
             </PageContainer>
     </MainContainer>
@@ -507,3 +552,4 @@ const PageContainer = styled.div`
 export default withStyles(styles, { withTheme: true })(
   AdminServiceAndProductsPage
 );
+
