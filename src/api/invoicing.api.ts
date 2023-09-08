@@ -283,7 +283,8 @@ export const getUnpaidInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keywor
         pageSize,
         currentPage: currentPageIndex,
         'status': JSON.stringify(['UNPAID']),
-        'isDraft': false
+        'isDraft': false,
+        'isVoid':false,
       };
       if (keyword) {
         optionObj.keyword = keyword;

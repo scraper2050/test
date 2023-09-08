@@ -149,6 +149,7 @@ export const modalTypes = {
   'TICKET_DETAILS_MODAL': 'ticket-details-modal',
   'VIEW_HISTORY_POPUP_MODAL':'view-history-modal',
   'WARNING_MODAL_V2': 'po-warning-modal-v2',
+  'EDIT_COMPLETED_JOB': 'edit-completed-job',
 };
 
 export const rejectionReason = [
