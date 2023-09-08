@@ -26,6 +26,7 @@ import BCDateRangePicker, { Range }
     from "../../../../components/bc-date-range-picker/bc-date-range-picker";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { getAllPORequestsAPI } from 'api/po-requests.api';
+import PopupMark from 'app/components/bc-bounce-email-tooltip/bc-popup-mark';
 
 function PORequired({ classes, hidden }: any) {
     const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function PORequired({ classes, hidden }: any) {
 
     const customers = useSelector(({ customers }: any) => customers.data);
     const [showAllPORequests, toggleShowAllPORequests] = useState(false);
+    const [bouncedEmailFlag, toggleBounceEmailFlag] = useState(false);
     const [selectionRange, setSelectionRange] = useState<Range | null>(null);
     const loadCount = useRef<number>(0);
     const customStyles = useCustomStyles();
@@ -83,10 +85,10 @@ function PORequired({ classes, hidden }: any) {
     function Toolbar() {
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag));
                 dispatch(setCurrentPageIndex(0));
             }
-        }, [showAllPORequests]);
+        }, [showAllPORequests, bouncedEmailFlag]);
 
         useEffect(() => {
             if (loadCount.current !== 0) {
@@ -96,7 +98,6 @@ function PORequired({ classes, hidden }: any) {
         }, [selectionRange]);
         return <>
             <FormControlLabel
-                classes={{ root: classes.noMarginRight }}
                 control={
                     <Checkbox
                         checked={showAllPORequests}
@@ -109,6 +110,21 @@ function PORequired({ classes, hidden }: any) {
                     />
                 }
                 label="Display All PO Requests"
+            />
+            <FormControlLabel
+                classes={{ root: classes.noMarginRight }}
+                control={
+                    <Checkbox
+                        checked={bouncedEmailFlag}
+                        onChange={() => {
+                            dispatch(setCurrentPageIndex(0))
+                            toggleBounceEmailFlag(!bouncedEmailFlag)
+                        }}
+                        name="checkedBouncedEmails"
+                        color="primary"
+                    />
+                }
+                label="Bounced Emails"
             />
             <BCDateRangePicker
                 range={selectionRange}
@@ -173,16 +189,29 @@ function PORequired({ classes, hidden }: any) {
             'sortable': true
         },
         {
-            Cell({ row }: any) {
-                return row.original.lastEmailSent
-                    ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
-                    : 'N/A';
-            },
-            'Header': 'Email Send Date ',
-            'accessor': 'lastEmailSent',
-            'className': 'font-bold',
-            'sortable': true
-        },
+            Cell: ({ row }: any) => (
+                <>
+                    {row.original.lastEmailSent
+                        ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
+                        : 'N/A'}
+                    {row.original.bouncedEmailFlag 
+                        ? <PopupMark
+                            data={row.original.emailHistory}
+                            endpoint={'/mark-as-read-po'}
+                            params={{ 'id': row.original._id }}
+                            callback={
+                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag)
+                            }
+                            />
+                        : ''}
+                </>
+            ),
+            Header: 'Email Send Date',
+            accessor: 'lastEmailSent',
+            className: 'font-bold',
+            sortable: true,
+        }
+,
         {
             'Cell'({ row }: any) {
                 return <div className={'flex items-center'}>
@@ -297,6 +326,7 @@ function PORequired({ classes, hidden }: any) {
                 dispatch(setCurrentPageIndex(0))
                 dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params));
             }}
+            isBounceAlertVisible={true}
         />
     );
 }

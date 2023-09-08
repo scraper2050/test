@@ -226,7 +226,16 @@ function InvoicingListListing({ classes, theme }: any) {
             row.original.issuedDate || row.original.createdAt
           )
           } { 
-            row.original.bouncedEmailFlag ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} /> : ''
+            row.original.bouncedEmailFlag
+              ? <PopupMark
+                  endpoint={'/mark-as-read-invoices'}
+                  data={row.original.emailHistory}
+                  params={{ 'invoiceId': row.original._id }}
+                  callback={
+                    getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params)
+                  }
+                  /> 
+              : ''
           }
         </div>
       ),
@@ -569,6 +578,7 @@ function InvoicingListListing({ classes, theme }: any) {
         search
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
+        isBounceAlertVisible={true}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
