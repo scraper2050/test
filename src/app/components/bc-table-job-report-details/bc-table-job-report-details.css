@@ -13,3 +13,7 @@
     color: #828282;
     font-weight: normal;
 }
+
+.no-left-padding {
+    padding-left: 0 !important;
+}
