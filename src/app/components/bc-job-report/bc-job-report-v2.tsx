@@ -251,7 +251,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       jobs?.tasks?.forEach(task => {
           task?.jobTypes?.forEach(jobType => {
             technicianName.push(task?.technician?.profile?.displayName);
-            jobTitle.push(task?.technician?.profile?.displayName);
+            jobTitle.push(jobType?.jobType?.title);
             quantity.push(jobType?.quantity);
           });
       });
@@ -593,17 +593,13 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           xs={3}>
                           <div className={classes.addMargin}>
                             <p className={classes.attributeKey}>
-                              {'Technician'}
+                              {'TECHNICIAN(S) NAME(S)'}
                             </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {technicianName[0]}
-                            </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {technicianName[1]}
-                            </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {technicianName[2]}
-                            </p>
+                            {technicianName.map((technician: any, index: number) => (
+                                <p key={index} className={classes.grayBoldTextM_0}>
+                                  {technician}
+                                </p>
+                            ))}
                           </div>
                         </Grid>}
                         {jobTitle.length > 0 && <Grid
@@ -611,17 +607,13 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           xs={2}>
                           <div className={classes.addMargin}>
                             <p className={classes.attributeKey}>
-                              {'Job Type'}
+                              {'JOB TYPE(S)'}
                             </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {jobTitle[0]}
-                            </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {jobTitle[1]}
-                            </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {jobTitle[2]}
-                            </p>
+                            {jobTitle.map((jobTitle: any, index: number) => (
+                                <p key={index} className={classes.grayBoldTextM_0}>
+                                  {jobTitle}
+                                </p>
+                            ))}
                           </div>
                         </Grid>}
                         {quantity.length > 0 && <Grid
@@ -629,17 +621,13 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           xs={3}>
                           <div className={classes.addMargin}>
                             <p className={classes.attributeKey}>
-                              {'Quantity'}
+                              {'QUANTITY'}
                             </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {quantity[0]}
-                            </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {quantity[1]}
-                            </p>
-                            <p className={classes.grayBoldTextM_0}>
-                              {quantity[2]}
-                            </p>
+                            {quantity.map((quantity: any, index: number) => (
+                                <p key={index} className={classes.grayBoldTextM_0}>
+                                  {quantity}
+                                </p>
+                            ))}
                           </div>
                         </Grid>}
                       </Grid>}
