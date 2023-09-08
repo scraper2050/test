@@ -575,10 +575,11 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
-          isView={data.isView}
+          isView={false}
+          editHandler={data.editHandler}
         />);
         break;
-      case modalTypes.ADD_ITEM_MODAL:
+      case modalTypes.VIEW_ITEM_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
           'disableEscapeKeyDown': true,
@@ -588,7 +589,22 @@ function BCModal() {
         setComponent(<BCInvoiceEditModal
           item={data.item}
           isView={true}
+          editHandler={data.editHandler}
         />);
+        break;
+
+      case modalTypes.ADD_ITEM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BCInvoiceEditModal
+          item={data.item}
+          isView={false}
+          editHandler={data.editHandler}
+                  />);
         break;
       case modalTypes.EDIT_DISCOUNT_MODAL:
         setModalOptions({
@@ -1030,6 +1046,7 @@ function BCModal() {
                 </strong>
               </Typography>
             ))}
+           
             {showCloseIcon && <IconButton
               aria-label={'close'}
               onClick={handleClose}

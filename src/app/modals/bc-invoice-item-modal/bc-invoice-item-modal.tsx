@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
 import styled from 'styled-components';
+import EditIcon from '@material-ui/icons/Edit';
 import * as yup from 'yup';
 import {
   Button,
@@ -91,13 +92,19 @@ export const StyledInput = withStyles((theme: Theme) =>
 interface ModalProps {
   item: Item;
   classes: any;
-  isView:boolean
+  isView:boolean;
+  editHandler:any;
 }
 
-function BCInvoiceEditModal({ item, classes,isView }: ModalProps) {
+function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) {
+  console.log("isViewOnly", isView);
   const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
+  const [timer, setTimer] = useState<any>(null)
+  const [itemExist, setItemExist] = useState<boolean>(false)
+  const [isViewOnly, setIsViewOnly] = useState<boolean>(isView)
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Select');
   const [isLoadingIncome, setIsLoadingIncome] = useState(true); 
@@ -309,7 +316,7 @@ let isFixedDisabled=false;
                 name={'name'}
                 value={formik.values.name}
                 margin={'none'}
-                disabled={isView}
+                disabled={isViewOnly}
                 inputProps={{
                   style: {
                     padding: '12px 14px',
@@ -346,7 +353,7 @@ let isFixedDisabled=false;
                 name={'description'}
                 value={formik.values.description}
                 multiline
-                disabled={isView}
+                disabled={isViewOnly}
                 margin={'none'}
                 inputProps={{
                   style: {
@@ -433,7 +440,7 @@ let isFixedDisabled=false;
                     // disabled={formik.values.itemType == 'Product'}
 
                     color={'primary'}
-                    disabled={isView}
+                    disabled={isViewOnly}
                     checked={formik.values.isJobType}
                     onChange={formik.handleChange}
                     name="isJobType"
@@ -469,7 +476,7 @@ let isFixedDisabled=false;
                 input={<StyledInput />}
                 name={'itemType'}
                 onChange={formik.handleChange}
-                disabled={isFixedDisabled}
+                disabled={isFixedDisabled||isViewOnly}
                 value={formik.values.itemType}
               >
                 <MenuItem value={'Service'} >{'Service'}</MenuItem>
@@ -519,6 +526,8 @@ let isFixedDisabled=false;
                     formik.touched.isFixed && Boolean(formik.errors.isFixed)
                   }
                   input={<StyledInput />}
+                  disabled={isViewOnly}
+
                   name={'isFixed'}
                   // disabled={formik.values.itemType=='Product'}
                   onChange={formik.handleChange}
@@ -549,6 +558,8 @@ let isFixedDisabled=false;
                 </div>
                 <FormControl>
                   <BCInput
+                    disabled={isViewOnly}
+
                     onBlur={(e: React.ChangeEvent<HTMLInputElement>) => {
                       formik.setFieldValue(
                         'productCost',
@@ -608,6 +619,8 @@ let isFixedDisabled=false;
                 </div>
                 <FormControl>
                   <Select
+                    disabled={isViewOnly}
+
                     error={formik.touched.tax && Boolean(formik.errors.tax)}
                     input={<StyledInput />}
                     name={'tax'}
@@ -649,6 +662,8 @@ let isFixedDisabled=false;
                   </Grid>
                   <FormControl>
                     <BCInput
+                      disabled={isViewOnly}
+
                       onBlur={(e: React.ChangeEvent<HTMLInputElement>) => {
                         formik.setFieldValue(
                           `tiers.${tier._id}.charge`,
@@ -717,6 +732,8 @@ let isFixedDisabled=false;
                     </Grid>
                     <FormControl>
                       <BCInput
+                        disabled={isViewOnly}
+
                         onBlur={(e: React.ChangeEvent<HTMLInputElement>) => {
                           formik.setFieldValue(
                             `costing.${jobCost._id}.charge`,
@@ -772,8 +789,22 @@ let isFixedDisabled=false;
         }}
       >
         <Grid container justify={'space-between'}>
-          <Grid item />
           <Grid item>
+            {
+            !isAdd && !isViewOnly && <Button
+              disabled={isSubmitting}
+              aria-label={'deactivate-item'}
+                onClick={() => setIsConfirmDialogOpen(true)}
+              classes={{
+                root: classes.closeButton,
+              }}
+              variant={'outlined'}
+            >
+              Deactivate
+            </Button>}
+            </Grid>
+          <Grid item>
+            {!isViewOnly &&<>
             <Button
               disabled={isSubmitting}
               aria-label={'record-payment'}
@@ -798,6 +829,23 @@ let isFixedDisabled=false;
             >
               Save
             </Button>
+            </>} 
+            {isViewOnly && <Button
+              aria-label={'create-job'}
+              classes={{
+                root: classes.submitButton,
+                disabled: classes.submitButtonDisabled,
+              }}
+              onClick={() => { 
+                editHandler(item)
+                setIsViewOnly(false) }}
+              color="primary"
+              type={'button'}
+              variant={'contained'}
+            >
+              <EditIcon /> Edit Item
+            </Button>}
+            
           </Grid>
         </Grid>
       </DialogActions>
