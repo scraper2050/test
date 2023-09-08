@@ -24,6 +24,7 @@ import {
   success,
 } from 'actions/snackbar/snackbar.action';
 import InfoIcon from '@material-ui/icons/Info';
+import JobReportTable  from "../bc-table-job-report-details/bc-table-job-report-details";
 
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
@@ -264,6 +265,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
 
         return transformedData;
     };
+  const jobDetails = setJobDetailData(job);
 
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
@@ -588,55 +590,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                         item
                         xs={12}>
                         <Grid container>
-                          <Grid
-                            item
-                            xs={3}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Technician(s) Name(s)'}
-                              </p>
-                                {job.tasks.map((task: any, idx: number, array: any[]) => (
-                                    <span key={idx}>
-                                        {task.technician?.profile?.displayName || 'N/A'}
-                                        {idx < array.length - 1 ? ' | ' : ''}
-                                        <br />
-                                    </span>
-                                ))}
-                            </div>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={2}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Job Type(s)'}
-                              </p>
-                              <span className={classes.grayBoldTextM_0}>
-                                {getJobTypesFromJob(job).map((item: any, idx: number, array: any[]) => (
-                                    <span key={idx}>
-                                        {item || 'N/A'}
-                                        {idx < array.length - 1 ? ' | ' : ''}
-                                    </span>
-                                ))}
-                              </span>
-                            </div>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={2}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Quantity'}
-                              </p>
-                              <span className={classes.grayBoldTextM_0}>
-                                {getJobTypesQty(job).map((item: any, idx: number, array: any[]) => (
-                                    <div key={idx}>
-                                        {`${item || '1'}`}
-                                    </div>
-                                ))}
-                              </span>
-                            </div>
-                          </Grid>
+                            <JobReportTable data={jobDetails} classes={classes}/>
                         </Grid>
                       </Grid>
                     </Grid>
