@@ -874,15 +874,21 @@ function BCServiceTicketModal(
 
 
   useEffect(() => {
-    const shouldSetIsSubmitting = (!FormikValues.isHomeOccupied  ||
+    var shouldSetIsSubmitting = (!FormikValues.isHomeOccupied ||
+      (
+        FormikValues.customerFirstName &&
         (
-          FormikValues.customerFirstName !== '' &&
-          FormikValues.customerLastName !== '' &&
-          formDataEmail.validate != false && formDataPhone.validate != false &&
-          formDataEmail.value != '' && formDataPhone.value != '' 
-        )
-      );
-      
+          (formDataEmail.validate && formDataEmail.value) ||
+          (formDataPhone.value && formDataPhone.validate))
+      )
+    );
+    
+    if (!FormikValues.isHomeOccupied && (formDataEmail.value && formDataEmail.errorMsg !== '')) {
+      shouldSetIsSubmitting = false
+    } else if (!FormikValues.isHomeOccupied && (formDataPhone.value && formDataPhone.errorMsg !== '')) {
+      shouldSetIsSubmitting = false
+    }
+
     setIsSubmitting(!shouldSetIsSubmitting);
   }, [formDataEmail, formDataPhone, FormikValues]);
 

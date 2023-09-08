@@ -876,16 +876,22 @@ function BCJobModal({
   } = form;
 
   useEffect(() => {
-    const shouldSetIsSubmitting = (!FormikValues.isHomeOccupied ||
+    var shouldSetIsSubmitting = (!FormikValues.isHomeOccupied ||
       (
-        FormikValues.homeOwnerFirstName !== '' &&
-        FormikValues.homeOwnerLastName !== '' &&
-        formDataEmail.validate != false && formDataPhone.validate != false &&
-        formDataEmail.value != '' && formDataPhone.value != ''
+        FormikValues.homeOwnerFirstName &&
+        (
+          (formDataEmail.validate && formDataEmail.value) ||
+          (formDataPhone.value && formDataPhone.validate))
       )
     );
+    if (!FormikValues.isHomeOccupied && (formDataEmail.value && formDataEmail.errorMsg !== '')) {
+      shouldSetIsSubmitting = false
+    } else if (!FormikValues.isHomeOccupied && (formDataPhone.value && formDataPhone.errorMsg !== '')) {
+      shouldSetIsSubmitting = false
+    }
 
     setIsSubmitting(!shouldSetIsSubmitting);
+    
   }, [formDataEmail, formDataPhone, FormikValues]);
   
   const closeModal = () => {
