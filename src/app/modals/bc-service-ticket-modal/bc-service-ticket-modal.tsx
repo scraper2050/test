@@ -882,10 +882,10 @@ function BCServiceTicketModal(
           (formDataPhone.value && formDataPhone.validate))
       )
     );
-    
-    if (!FormikValues.isHomeOccupied && (formDataEmail.value && formDataEmail.errorMsg !== '')) {
+
+    if (FormikValues.isHomeOccupied && (!formDataEmail.validate && formDataEmail.errorMsg !== '' && formDataEmail.value)) {
       shouldSetIsSubmitting = false
-    } else if (!FormikValues.isHomeOccupied && (formDataPhone.value && formDataPhone.errorMsg !== '')) {
+    } else if (FormikValues.isHomeOccupied && (!formDataPhone.validate && formDataPhone.errorMsg !== '' && formDataPhone.value)) {
       shouldSetIsSubmitting = false
     }
 
