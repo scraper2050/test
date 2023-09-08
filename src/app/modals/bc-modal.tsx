@@ -575,7 +575,7 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
-
+          isView={data.isView}
         />);
         break;
       case modalTypes.ADD_ITEM_MODAL:
@@ -587,6 +587,7 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
+          isView={true}
         />);
         break;
       case modalTypes.EDIT_DISCOUNT_MODAL:

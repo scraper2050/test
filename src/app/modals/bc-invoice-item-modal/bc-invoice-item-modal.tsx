@@ -91,9 +91,10 @@ export const StyledInput = withStyles((theme: Theme) =>
 interface ModalProps {
   item: Item;
   classes: any;
+  isView:boolean
 }
 
-function BCInvoiceEditModal({ item, classes }: ModalProps) {
+function BCInvoiceEditModal({ item, classes,isView }: ModalProps) {
   const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
@@ -308,6 +309,7 @@ let isFixedDisabled=false;
                 name={'name'}
                 value={formik.values.name}
                 margin={'none'}
+                disabled={isView}
                 inputProps={{
                   style: {
                     padding: '12px 14px',
@@ -344,6 +346,7 @@ let isFixedDisabled=false;
                 name={'description'}
                 value={formik.values.description}
                 multiline
+                disabled={isView}
                 margin={'none'}
                 inputProps={{
                   style: {
@@ -430,6 +433,7 @@ let isFixedDisabled=false;
                     // disabled={formik.values.itemType == 'Product'}
 
                     color={'primary'}
+                    disabled={isView}
                     checked={formik.values.isJobType}
                     onChange={formik.handleChange}
                     name="isJobType"
