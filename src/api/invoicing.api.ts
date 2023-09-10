@@ -214,12 +214,12 @@ export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?:
   };
 };
 
-export const markAsRead = (invoiceId?: string, advanceFilterInvoiceData?: any) => {
+export const markAsRead = (endpoint: string, params: {}, callback: any) => {
   return (dispatch: any): Promise<any> => {
     return new Promise((resolve, reject) => {
-      requestApiV2(`/mark-as-read`, 'post', { invoiceId })
+      requestApiV2(endpoint, 'post', params)
         .then((res: any) => {
-          dispatch(getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, undefined))
+          dispatch(callback)
         })
         .catch(err => {
           if (err.message !== 'axios canceled') {

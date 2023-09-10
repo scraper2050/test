@@ -45,7 +45,8 @@ function BCTableContainer({
   setCurrentPageSizeFunction = () => { },
   setKeywordFunction = () => { },
   disableInitialSearch = false,
-  rowTooltip
+  rowTooltip,
+  isBounceAlertVisible = false
 }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -167,7 +168,7 @@ function BCTableContainer({
         className={'actions-container'}
         item
         md={toolbar
-          ? 12
+          ? 10
           : 6}
         xs={12}>
         {search
@@ -209,6 +210,7 @@ function BCTableContainer({
               data={filteredData}
               defaultPageSize={pageSize}
               invoiceTable
+              isBounceAlertVisible={isBounceAlertVisible}
               isDefault={isDefault}
               isLoading={isLoading}
               isPageSaveEnabled={isPageSaveEnabled || false}

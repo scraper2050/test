@@ -187,6 +187,11 @@ function ServiceTicket({ classes, hidden }: any) {
   const openDetailTicketModal = async (ticket: any) => {
     const { serviceTicket, status, message } = await getServiceTicketDetail(ticket._id);
     if (status === 1) {
+
+      if (ticket.customerContactId){
+        serviceTicket.customerContactId = ticket.customerContactId
+      } 
+      
       dispatch(setModalDataAction({
         'data': {
           'modalTitle': 'Service Ticket Details',
