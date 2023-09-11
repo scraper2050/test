@@ -110,7 +110,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
                         );
                     setCustomerContacts(custContacts);
                     let initialContact = '';
-                    if (custContacts.length && data.customerContactId) {
+                    if (custContacts.length) {
                             initialContact = custContacts.filter(
                             (contact: any) => data.customerContactId?.email === contact.email || data.customerContactId?.name === contact.name
                         );

@@ -692,7 +692,9 @@ function BCServiceTicketModal(
                   setEmailTicketData({
                     data: {
                       _id: ticket._id,
-                      customer: values.customerId,
+                      customer: {
+                        _id: values.customerId
+                      },
                       customerContactId: values.customerContactId
                     },
                     type: tempData.type
@@ -766,10 +768,8 @@ function BCServiceTicketModal(
         if (ticket.jobStatus == 7){
           // When a ticket is created from a partially completed job
           await updatePartialJob(ticket.partialJobPayload);
-          
           formatedRequest.source = ticket.source;
         }
-          
           callCreateTicketAPI(formatedRequest)
             .then((response: any) => {
               if (response.status === 0) {
@@ -779,7 +779,6 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
-              
               if (ticket.jobStatus == 7) {
                 // When a ticket is created from a partially completed job
                 dispatch(refreshJobs(true))
@@ -804,7 +803,9 @@ function BCServiceTicketModal(
                   setEmailTicketData({
                     data: {
                       _id: response.createdID,
-                      customer: values.customerId,
+                      customer: {
+                        _id: values.customerId
+                      },
                       customerContactId: values.customerContactId
                     },
                     type: tempData.type
