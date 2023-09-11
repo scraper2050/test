@@ -368,26 +368,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       ];
 
       const columns: any = [
-        {
-        Cell({ row }: any): JSX.Element {
-          return(
-        <div className = { 'flex items-center'} >
-            {
-              !row.original.isActive ? (
-                <ClearIcon
-                  color="primary"
-                  style={{ cursor: 'pointer',color:"red" }}
-                />
-              ) : null
-            }
-        </div >
-      );
-},
-Header: '',
-  accessor: 'isActive',
-    sortable: false,
-      width: 30,
-  },
+  
         {
           Header: 'Name',
           accessor: 'name',
@@ -466,6 +447,28 @@ Header: '',
           sortable: true,
         },
       ];
+      if(includeDisabled){
+      columns.unshift({
+        Cell({ row }: any): JSX.Element {
+          return (
+            <div className={'flex items-center'} >
+              {
+                !row.original.isActive ? (
+                  <ClearIcon
+                    color="primary"
+                    style={{ cursor: 'pointer', color: "red" }}
+                  />
+                ) : null
+              }
+            </div >
+          );
+        },
+        Header: '',
+        accessor: 'isActive',
+        sortable: false,
+        width: 30,
+      })
+    }
 
       const chargeColumn = [
         {
