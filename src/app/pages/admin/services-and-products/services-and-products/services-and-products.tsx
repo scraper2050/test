@@ -294,7 +294,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
  
   useEffect(() => {
     if (tiers.length || items) {
-      const actions = [
+      const actions: never[] = [
         // {
         //   Cell({ row }: any) {
         //     return (
