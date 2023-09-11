@@ -584,13 +584,14 @@ export const updateJobCommission = (id: string, data: any) => {
   });
 };
 
-export const getCustomerInvoicesForBulkPaymentEdit= (showPaid = false, customerId: any, selectionRange?: { startDate: Date; endDate: Date } | null, dueDate?: Date | null) => {
+export const getCustomerInvoicesForBulkPaymentEdit = (showPaid = false, customerId: any, selectionRange?: { startDate: Date; endDate: Date } | null, dueDate?: Date | null, isVoid = false) => {
 
   return new Promise((resolve, reject) => {
 
       const optionObj: any = {
         pageSize:1000000,
         currentPage:0,
+        'isVoid':isVoid,
         'isDraft': false,
         'customerId': customerId
       };

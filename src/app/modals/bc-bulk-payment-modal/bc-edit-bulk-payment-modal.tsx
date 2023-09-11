@@ -57,6 +57,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   const dispatch = useDispatch();
   const [localPaymentList, setLocalPaymentList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [msgAfterUpdate, setMsgAfterUpdate] = useState('');
   const inputStyles = useInputStyles();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
@@ -136,6 +137,13 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
       dispatch(updatePayment(paramObj, currentDivision.params))
         .then((response: any) => {
           if (response.status === 1) {
+            setIsSuccess(true);
+            setMsgAfterUpdate('The payment and qbSync was successfully edited');
+            setSubmitting(false);
+          }
+          if(response?.quickbookPayment == null)
+          {
+            setMsgAfterUpdate("Payment Edited successfully but couldn't sync QB");
             setIsSuccess(true);
             setSubmitting(false);
           } else {
@@ -340,7 +348,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
           />
         )
       },
-      'Header': 'New Amount',
+      'Header': 'Amount to be applied',
       'accessor': 'amountToBeApplied'
     },
   ];
@@ -397,7 +405,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         {isSuccess ? (
-          <BCSent title={'The payment was successfully edited.'}/>
+          <BCSent title={msgAfterUpdate}/>
         ) : (
           <>
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
@@ -454,7 +462,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                     value={FormikValues.totalAmountToBePaid}
                     error={isSumAmountDifferent()}
                     // helperText={isSumAmountDifferent() && 'The total amount is not the same as the sum of all invoice payments'}
-                    helperText={isSumAmountDifferent() && "The total amount doesn't match"}
+                    helperText={isSumAmountDifferent() && "Total amount doesn't match"}
                   />
                   {!!FormikValues.totalAmount && (
                     <div style={{marginTop: 10}}>
