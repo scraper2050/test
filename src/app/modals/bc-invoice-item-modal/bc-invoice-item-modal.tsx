@@ -124,7 +124,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
     setIsLoadingIncome(false);
     if (qbAccounts.length) {
 
-      const accountExist = qbAccounts.filter((qb: any) => qb.Name == IncomeAccountRef.name)
+      const accountExist = qbAccounts.filter((qb: any) => qb.Name == IncomeAccountRef?.name)
       if (accountExist) {
         setSelectedIncomeAccount(accountExist[0]);
         formik.setFieldValue('incomeAccount', accountExist[0]);
@@ -441,7 +441,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
                 isViewOnly &&
                 <BCInput
 
-                  value={formik.values.incomeAccount.name}
+                  value={formik.values.incomeAccount?.name}
 
                   disabled={isViewOnly}
                   margin={'none'}
