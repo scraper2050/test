@@ -25,7 +25,9 @@ const QbSyncDialog: React.FC<QbSyncDialogProps> = ({ open, handleClose, itemName
     const [selectedAccount, setSelectedAccount] = useState('Select');
     const classes = useStyles({ isSynced: false, hasError:false });
 
-    const handleOptionChange = (newValue:any) => {
+    const handleOptionChange = (e:any,newValue:any) => {
+        e.stopPropagation(); // Stop the event from propagating to the TableRow
+
         // console.log("newValue", newValue);
         // let selected_account = qbAccounts[event.target.value];
         setSelectedOption(newValue);
@@ -33,9 +35,9 @@ const QbSyncDialog: React.FC<QbSyncDialogProps> = ({ open, handleClose, itemName
         // console.log("Account on change", selected_account);
     };
 return(
-    <Dialog open={open} onClose={handleClose} >
+    <Dialog open={open} onClose={handleClose} onClick={(event)=>(event.stopPropagation())}>
         <DialogTitle>
-            <IconButton aria-label="close" onClick={handleClose} style={{ position: 'absolute', top: '10px', right: '10px' }}>
+            <IconButton aria-label="close" onClick={(event) => { event.stopPropagation();handleClose() }} style={{ position: 'absolute', top: '10px', right: '10px' }}>
                 <CloseIcon />
             </IconButton>
         </DialogTitle>
@@ -50,7 +52,7 @@ return(
                     value={selectedOption}
                     fullWidth
                     options={qbAccounts}
-                    onChange={(event, newValue) => handleOptionChange(newValue)}
+                    onChange={(event, newValue) => handleOptionChange(event,newValue)}
                     getOptionLabel={(account) => account.Name}
                     renderInput={(params) => <TextField {...params} label="Select Account" variant="outlined" style={{ marginTop: '20px' }} />}
                     renderOption={(account) => (
@@ -68,11 +70,11 @@ return(
             
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={(event) => {event.stopPropagation();handleClose()}} color="primary">
                 Close
             </Button>
             <Button onClick={
-                () => handleSync(selectedOption)
+                (event) => {event.stopPropagation();handleSync(selectedOption)}
                 } color="primary">
                 {resyncing ? <CircularProgress size={28} className={classes.accProgress} /> :"Sync Item"}
             </Button>

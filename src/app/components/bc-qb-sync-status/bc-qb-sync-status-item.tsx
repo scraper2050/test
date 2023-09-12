@@ -60,8 +60,9 @@ function BCQbSyncStatus({ data, itemName,hasError = false }: Props) {
     handleCloseQbSyncDialog();
 
   }
-const handleOpenQbSyncDialog=async ()=>
+const handleOpenQbSyncDialog=async (e:any)=>
 {
+  e.stopPropagation(); // Stop the event from propagating to the TableRow
 
   setResyncStatusQB(true);
   setQbSyncDialogOpen(true);
@@ -70,10 +71,10 @@ const handleOpenQbSyncDialog=async ()=>
   setqbAccounts(itemSynced?.data?.accounts);
   setResyncStatusQB(false);
 
-  console.log("dialog open");
 };
 const handleCloseQbSyncDialog=()=>
 {
+
   setQbSyncDialogOpen(false);
   console.log("dialog close");
 };
@@ -106,8 +107,8 @@ const handleCloseQbSyncDialog=()=>
               <div className={'flex items-center'}>
               <CSButtonSmall
                 aria-label={'edit'}
-                onClick={() => {
-                handleOpenQbSyncDialog();
+                onClick={(event) => {
+                handleOpenQbSyncDialog(event);
               }}
                 size={'small'}
                 style={{
