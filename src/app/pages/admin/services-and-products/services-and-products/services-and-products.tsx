@@ -581,7 +581,6 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
-  padding: 30px;
   width: 100%;
 `;
 
