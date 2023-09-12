@@ -12,6 +12,7 @@ const initialPORequest = {
   'currentPageIndex': 0,
   'currentPageSize': 10,
   'keyword': '',
+  'filterIsHomeOccupied': false,
 };
 
 export default (state = initialPORequest, { payload, type }: ReducerParamsInterface) => {
@@ -61,6 +62,13 @@ export default (state = initialPORequest, { payload, type }: ReducerParamsInterf
         ...state,
         keyword: payload,
       };
+
+    case types.SET_IS_HOME_OCCUPIED:
+      return {
+        ...state,
+        filterIsHomeOccupied: payload,
+      };
+
     default:
       return state;
   }
