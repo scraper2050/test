@@ -98,7 +98,7 @@ interface ModalProps {
 
 function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) {
   console.log("isViewOnly", isView);
-  const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost } = item;
+  const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost, IncomeAccountRef } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [timer, setTimer] = useState<any>(null)
@@ -155,7 +155,7 @@ fetchQBAccounts();
       'itemId': _id,
       'name': name,
       'description': description,
-      'incomeAccount':'',
+      'incomeAccount': IncomeAccountRef,
       'isFixed': `${isFixed}`,
       'isJobType': isJobType ,
       'tax': tax
@@ -379,14 +379,14 @@ let isFixedDisabled=false;
               >
                 INCOME ACCOUNTS
               </Grid>
-              {isLoadingIncome ?
+              {isLoadingIncome && !isViewOnly ?
                 <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }} >
                   <CircularProgress size={28}
                     className={classes.accProgress} />
                   <p><b><i>Fetching Accounts..</i></b></p></div>
                 : <>
 
-                  <Autocomplete
+{!isViewOnly &&                  <Autocomplete
                     style={{
                       'marginBottom': '5px',
                       'marginTop': '5px',
@@ -395,6 +395,7 @@ let isFixedDisabled=false;
                       'fontFamily': 'inherit'
                     }
                     }
+                    disabled={isViewOnly}
                     value={formik.values.incomeAccount}
                     options={qbAccounts}
                     onChange={(event, newValue) => {
@@ -419,9 +420,31 @@ let isFixedDisabled=false;
                     noOptionsText="No accounts available"
 
                   />
+                    }
 
 
                 </>
+              }
+              {
+                isViewOnly&& 
+                <BCInput
+             
+                  value={formik.values.incomeAccount.name}
+                  
+                  disabled={isViewOnly}
+                  margin={'none'}
+                  inputProps={{
+                    style: {
+                      padding: '12px 14px',
+                    },
+                  }}
+                  InputProps={{
+                    style: {
+                      borderRadius: 8,
+                      marginTop: 10,
+                    },
+                  }}
+                />
               }
 
 
