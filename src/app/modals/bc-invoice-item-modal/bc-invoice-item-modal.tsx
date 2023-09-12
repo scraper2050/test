@@ -410,6 +410,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
                     // inputValue={selectedIncomeAccount}
                     options={qbAccounts}
                     onChange={(event, newValue) => {
+                      setSelectedIncomeAccount(newValue)
                       formik.setFieldValue('incomeAccount', newValue);  // Update selectedOption when an option is selected
                     }}
                     // @ts-ignore
