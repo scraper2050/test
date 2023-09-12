@@ -109,9 +109,8 @@ function EmailPORequestModal({ classes, data, type }: any) {
                             ) => index === self.findIndex((t) => t.email === contact.email)
                         );
                     setCustomerContacts(custContacts);
-                    let initialContact = '';
                     if (custContacts.length) {
-                            initialContact = custContacts.filter(
+                            const initialContact = custContacts.filter(
                             (contact: any) => data.customerContactId?.email === contact.email || data.customerContactId?.name === contact.name
                         );
 
