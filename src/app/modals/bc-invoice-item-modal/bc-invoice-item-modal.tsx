@@ -46,7 +46,7 @@ const EditItemValidation = yup.object().shape({
     .required(),
   'description': yup
     .string(),
-  'incomeAccount': yup.string().required('Income Account is required'), 
+  'incomeAccount': yup.string().required('Income Account is required'),
   'isFixed': yup
     .boolean()
     .required(),
@@ -92,12 +92,11 @@ export const StyledInput = withStyles((theme: Theme) =>
 interface ModalProps {
   item: Item;
   classes: any;
-  isView:boolean;
-  editHandler:any;
+  isView: boolean;
+  editHandler: any;
 }
 
 function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) {
-  console.log("isViewOnly", isView);
   const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost, IncomeAccountRef } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
@@ -107,7 +106,8 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Select');
-  const [isLoadingIncome, setIsLoadingIncome] = useState(true); 
+  const [selectedIncomeAccount, setSelectedIncomeAccount] = useState();
+  const [isLoadingIncome, setIsLoadingIncome] = useState(true);
   const [qbAccounts, setQBAccounts] = useState([]);
   const dispatch = useDispatch();
   const isAdd = _id ? false : true;
@@ -120,23 +120,33 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
     dispatch(closeModalAction());
   };
   useEffect(() => {
-    console.log("qbAccounts Income ",qbAccounts);
-    setIsLoadingIncome(false);  
+
+    setIsLoadingIncome(false);
+    if (qbAccounts.length) {
+
+      const accountExist = qbAccounts.filter((qb: any) => qb.Name == IncomeAccountRef.name)
+      if (accountExist) {
+        setSelectedIncomeAccount(accountExist[0]);
+        formik.setFieldValue('incomeAccount', accountExist[0]);
+
+      }
+    }
+
+
 
   }, [qbAccounts]);
   const fetchQBAccounts = async () => {
     setIsLoadingIncome(true)
-      const response = await quickbooksGetAccounts(); 
+    const response = await quickbooksGetAccounts();
     const data = response?.data?.accounts; // Assuming your API response has an 'accounts' property
-      console.log("data",data);
-      setQBAccounts(data);
-    console.log("in function", qbAccounts);
-    
+    setQBAccounts(data);
+
 
   };
-useEffect(()=>{
-fetchQBAccounts();
-  },[])
+  useEffect(() => {
+    fetchQBAccounts();
+
+  }, [])
   const activeTiers = Object.keys(tiers)
     .map(tier_id => ({ ...tiers[tier_id].tier, charge: tiers[tier_id].charge !== null && typeof tiers[tier_id].charge !== 'undefined' ? `${tiers[tier_id].charge}` : '' }))
     .filter(tier => tier.isActive)
@@ -157,11 +167,11 @@ fetchQBAccounts();
       'description': description,
       'incomeAccount': IncomeAccountRef,
       'isFixed': `${isFixed}`,
-      'isJobType': isJobType ,
+      'isJobType': isJobType,
       'tax': tax
         ? 1
         : 0,
-      "productCost": productCost ,
+      "productCost": productCost,
       'itemType': `${itemType}`,
       'tiers': activeTiers.reduce((total, currentValue) => ({
         ...total,
@@ -216,26 +226,26 @@ fetchQBAccounts();
         itemId: values.itemId,
         name: values.name,
         description: values.description || '',
-        isFixed: isProduct?true:values.isFixed === 'true' ? true : false,
-        isJobType: isProduct?false:values.isJobType,
+        isFixed: isProduct ? true : values.isFixed === 'true' ? true : false,
+        isJobType: isProduct ? false : values.isJobType,
         tax: values.tax,
         account: values.incomeAccount,
-        itemType:values.itemType,
-        productCost:values.productCost,
+        itemType: values.itemType,
+        productCost: values.productCost,
         tiers: tierArr,
         costing: costingArr,
       }
       let response;
-      console.log("incomeAccount", values.incomeAccount)
-       
+
+
       if (isAdd) {
-        
+
         if (isProduct) {
 
           response = await addItemProduct(itemObject).catch((err: { message: any }) => {
             dispatch(errorSnackBar(err.message));
           });
-        }else{
+        } else {
           response = await addItem(itemObject).catch((err: { message: any }) => {
             dispatch(errorSnackBar(err.message));
           });
@@ -282,12 +292,12 @@ fetchQBAccounts();
     }
   }, [itemObj]);
 
-let isFixedDisabled=false;
+  let isFixedDisabled = false;
   useEffect(() => {
     // Set default value for jobId and is Fixed based on item type
     if (formik.values.itemType === 'Product') {
       formik.setFieldValue('isFixed', true);
-      formik.setFieldValue('isJobType',false);
+      formik.setFieldValue('isJobType', false);
     }
 
   }, [formik.values.itemType]);
@@ -330,7 +340,7 @@ let isFixedDisabled=false;
                 }}
               />
             </Grid>
-            
+
             <Grid
               item
               xs={12}
@@ -367,7 +377,7 @@ let isFixedDisabled=false;
                   },
                 }}
               />
-             
+
             </Grid>
             <Grid
               item
@@ -386,7 +396,7 @@ let isFixedDisabled=false;
                   <p><b><i>Fetching Accounts..</i></b></p></div>
                 : <>
 
-{!isViewOnly &&                  <Autocomplete
+                  {!isViewOnly && !isLoadingIncome && <Autocomplete
                     style={{
                       'marginBottom': '5px',
                       'marginTop': '5px',
@@ -396,7 +406,8 @@ let isFixedDisabled=false;
                     }
                     }
                     disabled={isViewOnly}
-                    value={formik.values.incomeAccount}
+                    value={selectedIncomeAccount}
+                    // inputValue={selectedIncomeAccount}
                     options={qbAccounts}
                     onChange={(event, newValue) => {
                       formik.setFieldValue('incomeAccount', newValue);  // Update selectedOption when an option is selected
@@ -405,7 +416,7 @@ let isFixedDisabled=false;
                     // name={'incomeAccount'}
                     placeholder='Select Income Account'
                     getOptionLabel={(account: any) => account.Name}
-                    renderInput={(params) => <TextField {...params} 
+                    renderInput={(params) => <TextField {...params}
                       style={{ borderRadius: '8px', fontSize: "14px" }}
                       variant={'outlined'}
                       error={formik.touched.incomeAccount && Boolean(formik.errors.incomeAccount)}
@@ -420,17 +431,17 @@ let isFixedDisabled=false;
                     noOptionsText="No accounts available"
 
                   />
-                    }
+                  }
 
 
                 </>
               }
               {
-                isViewOnly&& 
+                isViewOnly &&
                 <BCInput
-             
+
                   value={formik.values.incomeAccount.name}
-                  
+
                   disabled={isViewOnly}
                   margin={'none'}
                   inputProps={{
@@ -450,29 +461,29 @@ let isFixedDisabled=false;
 
             </Grid>
             {formik.values.itemType == 'Service' &&
-            <Grid
-              item
-              xs={12}
-              style={{ display: 'flex' }}
-            >
-              <Grid item xs={12} sm={3}></Grid>
-              <FormControlLabel
-                classes={{ label: classes.checkboxLabel }}
-                control={
-                  <Checkbox
-                    // disabled={formik.values.itemType == 'Product'}
+              <Grid
+                item
+                xs={12}
+                style={{ display: 'flex' }}
+              >
+                <Grid item xs={12} sm={3}></Grid>
+                <FormControlLabel
+                  classes={{ label: classes.checkboxLabel }}
+                  control={
+                    <Checkbox
+                      // disabled={formik.values.itemType == 'Product'}
 
-                    color={'primary'}
-                    disabled={isViewOnly}
-                    checked={formik.values.isJobType}
-                    onChange={formik.handleChange}
-                    name="isJobType"
-                    classes={{ root: classes.checkboxInput }}
-                  />
-                }
-                label={`This Item is also a Job Type`}
-              />
-            </Grid>
+                      color={'primary'}
+                      disabled={isViewOnly}
+                      checked={formik.values.isJobType}
+                      onChange={formik.handleChange}
+                      name="isJobType"
+                      classes={{ root: classes.checkboxInput }}
+                    />
+                  }
+                  label={`This Item is also a Job Type`}
+                />
+              </Grid>
             }
           </Grid>
           <Grid item xs={12} sm={5} classes={{ root: classes.grid }}>
@@ -495,38 +506,38 @@ let isFixedDisabled=false;
                 TYPE
               </div>
               <Select
-               
+
                 input={<StyledInput />}
                 name={'itemType'}
                 onChange={formik.handleChange}
-                disabled={isFixedDisabled||isViewOnly}
+                disabled={isFixedDisabled || isViewOnly}
                 value={formik.values.itemType}
               >
                 <MenuItem value={'Service'} >{'Service'}</MenuItem>
                 <MenuItem value={'Product'}>{'Product'}</MenuItem>
               </Select>
-              
+
 
             </Grid>
             <Grid
               item
               xs={12}
               style={{
-                textAlign:"center"
+                textAlign: "center"
               }}
             >
 
               <Typography
                 color={'error'}
                 display={'block'}
-                style={{ 'lineHeight': '1' ,fontSize:"0.8rem",marginLeft:"50px"}}>
-                {formik.errors.itemType?.replace("itemType","Type")}
+                style={{ 'lineHeight': '1', fontSize: "0.8rem", marginLeft: "50px" }}>
+                {formik.errors.itemType?.replace("itemType", "Type")}
               </Typography>
 
             </Grid>
 
             <Grid container>
-              {formik.values.itemType == 'Service'&&<Grid
+              {formik.values.itemType == 'Service' && <Grid
                 item
                 xs={12}
                 style={{
@@ -655,7 +666,7 @@ let isFixedDisabled=false;
                   </Select>
                 </FormControl>
               </Grid>
-             
+
             </Grid>
           </Grid>
           <Grid container className="pricing">
@@ -727,11 +738,11 @@ let isFixedDisabled=false;
               ))}
             </Grid>
           </Grid>
-          {formik.values.itemType == 'Service' &&formik.values.isFixed !== '%' && !!activeJobCosts?.length && (
+          {formik.values.itemType == 'Service' && formik.values.isFixed !== '%' && !!activeJobCosts?.length && (
             <Grid container className="pricing">
               <Grid container justify="center">
                 <Typography variant={'h6'}>
-                   <strong>Job costing</strong>
+                  <strong>Job costing</strong>
                 </Typography>
               </Grid>
               <Grid container classes={{ root: classes.tiers }}>
@@ -814,61 +825,62 @@ let isFixedDisabled=false;
         <Grid container justify={'space-between'}>
           <Grid item>
             {
-            !isAdd && !isViewOnly && <Button
-              disabled={isSubmitting}
-              aria-label={'deactivate-item'}
+              !isAdd && !isViewOnly && <Button
+                disabled={isSubmitting}
+                aria-label={'deactivate-item'}
                 onClick={() => setIsConfirmDialogOpen(true)}
-              classes={{
-                root: classes.closeButton,
-              }}
-              variant={'outlined'}
-            >
-              Deactivate
-            </Button>}
-            </Grid>
+                classes={{
+                  root: classes.closeButton,
+                }}
+                variant={'outlined'}
+              >
+                Deactivate
+              </Button>}
+          </Grid>
           <Grid item>
-            {!isViewOnly &&<>
-            <Button
-              disabled={isSubmitting}
-              aria-label={'record-payment'}
-              onClick={closeModal}
-              classes={{
-                root: classes.closeButton,
-              }}
-              variant={'outlined'}
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={isSubmitting}
-              aria-label={'create-job'}
-              classes={{
-                root: classes.submitButton,
-                disabled: classes.submitButtonDisabled,
-              }}
-              color="primary"
-              type={'submit'}
-              variant={'contained'}
-            >
-              Save
-            </Button>
-            </>} 
+            {!isViewOnly && <>
+              <Button
+                disabled={isSubmitting}
+                aria-label={'record-payment'}
+                onClick={closeModal}
+                classes={{
+                  root: classes.closeButton,
+                }}
+                variant={'outlined'}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={isSubmitting}
+                aria-label={'create-job'}
+                classes={{
+                  root: classes.submitButton,
+                  disabled: classes.submitButtonDisabled,
+                }}
+                color="primary"
+                type={'submit'}
+                variant={'contained'}
+              >
+                Save
+              </Button>
+            </>}
             {isViewOnly && <Button
               aria-label={'create-job'}
               classes={{
                 root: classes.submitButton,
                 disabled: classes.submitButtonDisabled,
               }}
-              onClick={() => { 
+              onClick={() => {
                 editHandler(item)
-                setIsViewOnly(false) }}
+                setIsViewOnly(false)
+              }}
               color="primary"
               type={'button'}
               variant={'contained'}
             >
               <EditIcon /> Edit Item
             </Button>}
-            
+
           </Grid>
         </Grid>
       </DialogActions>
