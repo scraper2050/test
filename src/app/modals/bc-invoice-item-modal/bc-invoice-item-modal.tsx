@@ -94,7 +94,6 @@ interface ModalProps {
 }
 
 function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisabled }: ModalProps) {
-  console.log("includeDisabled", includeDisabled);
   const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost,isActive } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
@@ -238,7 +237,6 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisable
   });
 
   useEffect(() => {
-    console.log("error", error);
     if (error) {
       dispatch(errorSnackBar('Something went wrong, failed to update item'));
       return;
@@ -293,7 +291,6 @@ let isFixedDisabled=false;
     setIsConfirmDialogOpen(false);
   };
   const handleItemName=(name:string)=>{
-    console.log("Item Name",name);
     formik.setFieldValue(
       'name',
       name
@@ -302,7 +299,6 @@ let isFixedDisabled=false;
     clearTimeout(timer)
 
     const newTimer = setTimeout(async () => {
-      console.log("calling check item",name);
       const itemObject:any = {
         name: name
       }
@@ -311,7 +307,6 @@ let isFixedDisabled=false;
       });
 
       if (responseDisable) {
-        console.log("responseDisable", responseDisable);
         if(responseDisable?.status==1){
           setItemExist(true)
         }else{

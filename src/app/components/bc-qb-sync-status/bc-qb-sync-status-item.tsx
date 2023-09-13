@@ -32,11 +32,9 @@ function BCQbSyncStatus({ data, hasError = false }: Props) {
   const resyncItem = async (data: any) => {
     setResyncing(true);
 
-    console.log("resync item", data?._id);
     const itemSynced = await quickbooksItemSync({ itemId: data?._id });
     setResyncing(false);
 
-    console.log('itemSynced', itemSynced);
 
     if (itemSynced?.data?.status) {
       setResyncStatus(true);

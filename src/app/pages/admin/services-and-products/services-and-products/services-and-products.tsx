@@ -548,18 +548,14 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   }, [tiers, editMode, localItems]);
 
   useEffect(() => {
-    console.log("mounted");
     setItemsLoading(true);
     dispatch(loadInvoiceItems.fetch());
     dispatch(getAllSalesTaxAPI());
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
   }, []);
-  useEffect(()=>{
-    console.log("loading", loading)
-  },[loading])
+
 
   useEffect(() => {
-    console.log("include disable called");
     dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }))
   }, [includeDisabled]);
 
