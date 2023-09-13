@@ -769,6 +769,7 @@ let isFixedDisabled=false;
       >
         <Grid container justify={'space-between'}>
           <Grid item>
+            {!isActive && <span>This item is inactive, Click here to activate </span>}
             {
             !isAdd && <Button
               disabled={isSubmitting}
@@ -780,7 +781,12 @@ let isFixedDisabled=false;
               variant={'outlined'}
             >
               {isActive?"Deactivate":"Activate"}
-            </Button>}
+            </Button>
+            
+
+
+            }
+
             </Grid>
           <Grid item>
             {!isViewOnly &&<>
