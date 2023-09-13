@@ -67,14 +67,17 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   const { loading, error, items } = useSelector(
     ({ invoiceItems }: RootState) => invoiceItems
   );
-  const [localItems, setLocalItems] = useState(
-    stringSortCaseInsensitive(items, 'name')
+  const [localItems, setLocalItems] = useState<any>(
+    // stringSortCaseInsensitive(items, 'name')
+    []
   );
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
+
   const [includeDisabled, setIncludeDisabled] = useState<any>(false);
   const [updating, setUpdating] = useState(false);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [itemsLoading, setItemsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const closeEditPopup = () => {
@@ -141,7 +144,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     }
   };
   const handleDisableItemCheckBox=(event:any)=>{
-
+  
   setIncludeDisabled(event.target.checked);
 
 
@@ -206,6 +209,8 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   }
 
   useEffect(() => {
+    setItemsLoading(false);
+
     if (items.length > 0) {
       const activeJobCostsIDs = activeJobCosts.map((item: any) => item.tier._id)
       const newItems = items.map((item: any) => {
@@ -543,13 +548,19 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   }, [tiers, editMode, localItems]);
 
   useEffect(() => {
-    dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false }}));
+    console.log("mounted");
+    setItemsLoading(true);
+    dispatch(loadInvoiceItems.fetch());
     dispatch(getAllSalesTaxAPI());
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
   }, []);
+  useEffect(()=>{
+    console.log("loading", loading)
+  },[loading])
 
   useEffect(() => {
-    dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems:false } }))
+    console.log("include disable called");
+    dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }))
   }, [includeDisabled]);
 
   return (
@@ -557,7 +568,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       <PageContainer>
             <BCTableContainer
             columns={columns}
-            isLoading={loading || tiersLoading}
+          isLoading={loading || tiersLoading || itemsLoading}
             isPageSaveEnabled
           toolbarPositionSpaceBetween={true}
             search
