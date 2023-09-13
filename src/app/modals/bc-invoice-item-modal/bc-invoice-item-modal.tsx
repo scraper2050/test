@@ -238,6 +238,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisable
   });
 
   useEffect(() => {
+    console.log("error", error);
     if (error) {
       dispatch(errorSnackBar('Something went wrong, failed to update item'));
       return;
@@ -769,7 +770,7 @@ let isFixedDisabled=false;
         <Grid container justify={'space-between'}>
           <Grid item>
             {
-            !isAdd && !isViewOnly && <Button
+            !isAdd && <Button
               disabled={isSubmitting}
                 aria-label={isActive ? 'deactivate-item' :'activate-item'}
                 onClick={() => setIsConfirmDialogOpen(true)}
@@ -808,7 +809,7 @@ let isFixedDisabled=false;
               Save
             </Button>
             </>} 
-            {isViewOnly && <Button
+            {isViewOnly && isActive && <Button
               aria-label={'create-job'}
               classes={{
                 root: classes.submitButton,
