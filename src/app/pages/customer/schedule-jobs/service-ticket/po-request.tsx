@@ -292,7 +292,7 @@ function PORequired({ classes, hidden }: any) {
             currentPageSize={currentPageSize}
             setCurrentPageSizeFunction={(num: number) => {
               dispatch(setCurrentPageSize(num));
-              dispatch(getAllPORequestsAPI(num || currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
+              dispatch(getAllPORequestsAPI(num || currentPageSize, 0, showAllPORequests, keyword, selectionRange, currentDivision.params));
             }}
             setKeywordFunction={(query: string) => {
                 dispatch(setKeyword(query));

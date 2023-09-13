@@ -154,7 +154,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => {
           dispatch(setCurrentDraftPageSize(num))
-          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, undefined,currentDivision.params))
+          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, 0, keyword, undefined,currentDivision.params))
         }}
         setKeywordFunction={(query: string) => {
           desbouncedSearchFunction(query);

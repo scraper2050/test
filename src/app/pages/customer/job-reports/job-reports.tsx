@@ -293,7 +293,7 @@ function JobReportsPage({ classes, theme }: any) {
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, dateFilterRange, currentDivision.params))
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, 0, keyword, dateFilterRange, currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
