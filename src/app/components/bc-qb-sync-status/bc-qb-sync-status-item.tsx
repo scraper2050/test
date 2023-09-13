@@ -76,7 +76,6 @@ const handleCloseQbSyncDialog=()=>
 {
 
   setQbSyncDialogOpen(false);
-  console.log("dialog close");
 };
   return (
     <div className={classes.container} style={{ justifyContent: "center" }}>

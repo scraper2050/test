@@ -510,7 +510,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
             searchPlaceholder={'Search Items'}
             tableData={localItems}
             toolbar={Toolbar()}
-          onRowClick={(ev: any, row: any) => {console.log("event",ev); renderView(row.original)}}
+          onRowClick={(ev: any, row: any) => { renderView(row.original)}}
           
           />
             </PageContainer>
