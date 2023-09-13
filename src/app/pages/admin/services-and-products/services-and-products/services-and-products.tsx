@@ -176,7 +176,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
 
       <>
           <FormGroup>
-            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} disabled={loading} label="Include Inactive" />
+            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} disabled={loading || itemsLoading} label="Include Inactive" />
             </FormGroup>
         
        <Can I={'manage'} a={'Items'}>
