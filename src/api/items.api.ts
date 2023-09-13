@@ -65,7 +65,7 @@ export const checkItemExist = async (item: Item) => {
 
 export const disableItem = async (item: Item) => {
   try {
-    const response: any = await request('/disableItem', 'POST', item, false);
+    const response: any = await request('/toggleItemStatus', 'POST', item, false);
     return response.data;
   } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {

@@ -18,5 +18,6 @@ export interface Item {
     tiers: any;
     costing: any;
     itemType:string;
+    isActive:boolean;
     productCost:number,
 }

@@ -87,14 +87,15 @@ export const StyledInput = withStyles((theme: Theme) =>
 
 interface ModalProps {
   item: Item;
+  includeDisabled:boolean;
   classes: any;
   isView:boolean;
   editHandler:any;
 }
 
-function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) {
-  console.log("isViewOnly", isView);
-  const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost } = item;
+function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisabled }: ModalProps) {
+  console.log("includeDisabled", includeDisabled);
+  const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost,isActive } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [timer, setTimer] = useState<any>(null)
@@ -225,7 +226,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
         });
       }
       if (response) {
-        dispatch(loadInvoiceItems.fetch());
+        dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }));
         dispatch(success(`Items successfully ${isAdd ? 'added' : 'updated'}`));
         closeModal();
       }
@@ -282,8 +283,8 @@ let isFixedDisabled=false;
     });
   
     if (responseDisable) {
-    dispatch(loadInvoiceItems.fetch());
-    dispatch(success(`Items successfully deactivated`));
+      dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }));
+      dispatch(!responseDisable.itemStatus ? success(`Items successfully activated`) : success(`Items successfully deactivated`));
     closeModal();
   }
   };
@@ -770,14 +771,14 @@ let isFixedDisabled=false;
             {
             !isAdd && !isViewOnly && <Button
               disabled={isSubmitting}
-              aria-label={'deactivate-item'}
+                aria-label={isActive ? 'deactivate-item' :'activate-item'}
                 onClick={() => setIsConfirmDialogOpen(true)}
               classes={{
                 root: classes.closeButton,
               }}
               variant={'outlined'}
             >
-              Deactivate
+              {isActive?"Deactivate":"Activate"}
             </Button>}
             </Grid>
           <Grid item>
@@ -833,10 +834,10 @@ let isFixedDisabled=false;
       aria-labelledby="confirm-deactivate-title"
       aria-describedby="confirm-deactivate-description"
     >
-      <DialogTitle id="confirm-deactivate-title" style={{ textAlign: 'center' }}>Confirm Deactivation</DialogTitle>
+      <DialogTitle id="confirm-deactivate-title" style={{ textAlign: 'center' }}>Confirm {isActive?"Deactivation":"Activation"}</DialogTitle>
       <DialogContent>
         <Typography variant="body1" id="confirm-deactivate-description">
-          Do you still want to deactivate this item?
+          Do you still want to {isActive ? "deactivate" : "activate"} this item?
         </Typography>
       </DialogContent>
       <DialogActions>

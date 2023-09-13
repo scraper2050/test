@@ -224,6 +224,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       setModalDataAction({
         data: {
           item,
+          includeDisabled:includeDisabled,
           isView:false,
 
           modalTitle: 'Edit Item',
@@ -244,6 +245,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           isView: true,
           editHandler: renderEdit,
           item,
+          includeDisabled: includeDisabled,
           modalTitle: 'View Item Details',
 
         },
@@ -259,6 +261,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     dispatch(
       setModalDataAction({
         data: {
+          includeDisabled: includeDisabled,
           item: {
             name: '',
             description: '',
