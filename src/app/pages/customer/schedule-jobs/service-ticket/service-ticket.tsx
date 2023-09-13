@@ -312,7 +312,7 @@ function ServiceTicket({ classes, hidden }: any) {
     if (refresh) {
       dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(15));
+      dispatch(setCurrentPageSize(currentPageSize));
     }
     setTimeout(() => {
       loadCount.current++;
@@ -324,10 +324,12 @@ function ServiceTicket({ classes, hidden }: any) {
     if (customers.length == 0) {
       dispatch(getCustomers());
     }
-    dispatch(getAllJobTypesAPI());
-    dispatch(setKeyword(''));
-    dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(15));
+    return () => {
+      dispatch(getAllJobTypesAPI());
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
   }, [currentDivision.params]);
 
   const handleRowClick = (event: any, row: any) => {

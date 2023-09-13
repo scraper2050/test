@@ -232,7 +232,7 @@ function PORequired({ classes, hidden }: any) {
         if (refresh) {
             dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
             dispatch(setCurrentPageIndex(0));
-            dispatch(setCurrentPageSize(15));
+            dispatch(setCurrentPageSize(currentPageSize));
         }
         setTimeout(() => {
             loadCount.current++;
@@ -244,11 +244,13 @@ function PORequired({ classes, hidden }: any) {
         if (customers.length == 0) {
             dispatch(getCustomers());
         }
-        dispatch(getAllJobTypesAPI());
-        dispatch(setKeyword(''));
-        dispatch(setCurrentPageIndex(0));
-        dispatch(setCurrentPageSize(15));
-    }, [currentDivision.params])
+        return () => {
+          dispatch(getAllJobTypesAPI());
+          dispatch(setKeyword(''));
+          dispatch(setCurrentPageIndex(0));
+          dispatch(setCurrentPageSize(currentPageSize));
+        }
+    }, [currentDivision.params]);
 
     const handleRowClick = (event: any, row: any) => {
     };
