@@ -12,7 +12,6 @@ import EmailHistory from './email-history';
 import { CSButton } from '../../../helpers/custom';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getJobTypesFromJob } from '../../../helpers/utils';
 import classNames from 'classnames';
 import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,7 +23,6 @@ import {
   success
 } from 'actions/snackbar/snackbar.action';
 import InfoIcon from '@material-ui/icons/Info';
-import JobReportTable from '../bc-table-job-report-details/bc-table-job-report-details';
 
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
