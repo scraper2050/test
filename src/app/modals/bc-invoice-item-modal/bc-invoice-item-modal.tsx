@@ -764,20 +764,37 @@ let isFixedDisabled=false;
       >
         <Grid container justify={'space-between'}>
           <Grid item>
-            {!isActive && <span>This item is inactive, Click here to activate </span>}
+            {!isActive &&  <span>This item is inactive, Click here to activate </span>}
             {
-            !isAdd && <Button
+            !isAdd && !isActive&& <Button
               disabled={isSubmitting}
-                aria-label={isActive ? 'deactivate-item' :'activate-item'}
+                aria-label={'activate-item'}
                 onClick={() => setIsConfirmDialogOpen(true)}
               classes={{
                 root: classes.closeButton,
               }}
               variant={'outlined'}
             >
-              {isActive?"Deactivate":"Activate"}
+              {"Activate"}
             </Button>
             
+
+
+            }
+
+            {
+              !isAdd && isActive &&!isView&& <Button
+                disabled={isSubmitting}
+                aria-label={'deactivate-item'}
+                onClick={() => setIsConfirmDialogOpen(true)}
+                classes={{
+                  root: classes.closeButton,
+                }}
+                variant={'outlined'}
+              >
+                {"Dectivate"}
+              </Button>
+
 
 
             }
