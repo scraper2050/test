@@ -111,7 +111,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     let startTime = 'N/A';
     let endTime = 'N/A';
     // Case for specific time
-    if ((originalRow.scheduledStartTime !== undefined && originalRow.scheduledStartTime !== null ) && originalRow.scheduledEndTime !== undefined) {
+    if (originalRow.scheduledStartTime !== undefined && originalRow.scheduledStartTime !== null){
       if (originalRow.scheduledStartTime !== undefined) {
         const formatScheduledObj = formatSchedulingTime(originalRow.scheduledStartTime);
         startTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
@@ -310,7 +310,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
       'sortable': true,
       'width': 40
     }
-    
+
   ];
 
   function Toolbar() {
