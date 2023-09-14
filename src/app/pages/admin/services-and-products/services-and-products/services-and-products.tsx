@@ -459,7 +459,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       columns.unshift({
         Cell({ row }: any): JSX.Element {
           return (
-            <div className={'flex items-center'} >
+            <div className={'flex items-center'} style={{display:"flex",justifyContent:"center"}} >
               {
                 !row.original.isActive ? (
                   <ClearIcon
@@ -474,7 +474,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         Header: '',
         accessor: 'isActive',
         sortable: false,
-        width: 30,
+        width:'25px'
       })
     }
 
