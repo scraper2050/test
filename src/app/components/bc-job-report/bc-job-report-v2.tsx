@@ -24,6 +24,21 @@ import {
 } from 'actions/snackbar/snackbar.action';
 import InfoIcon from '@material-ui/icons/Info';
 
+interface IJob {
+  tasks?: {
+    technician?: {
+      profile?: {
+        displayName: string;
+      };
+    };
+    jobTypes?: {
+      jobType?: {
+        title: string;
+      };
+      quantity: number;
+    }[];
+  }[];
+}
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
   const titles: string[] = [];
@@ -241,7 +256,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
   }
 
   // This function takes the job object and make an array to display technician name, jobType and quantity
-  const getJobQuantityWithTechnician = jobs => {
+  const getJobQuantityWithTechnician = (jobs: IJob) => {
     const technicianName = [];
     const jobTitle = [];
     const quantity = [];
