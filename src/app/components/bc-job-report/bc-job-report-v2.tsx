@@ -261,13 +261,23 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     const jobTitle: string[] = [];
     const quantity: number[] = [];
 
-      jobs?.tasks?.forEach(task => {
-          task?.jobTypes?.forEach(jobType => {
-            technicianName.push(task?.technician?.profile?.displayName);
-            jobTitle.push(jobType?.jobType?.title);
-            quantity.push(jobType?.quantity);
-          });
-      });
+    jobs?.tasks?.forEach(task => {
+        task?.jobTypes?.forEach(jobType => {
+            const displayName = task?.technician?.profile?.displayName;
+            const title = jobType?.jobType?.title;
+            const jobQuantity = jobType?.quantity;
+
+            if (displayName !== undefined) {
+                technicianName.push(displayName);
+            }
+            if (title !== undefined) {
+                jobTitle.push(title);
+            }
+            if (jobQuantity !== undefined) {
+                quantity.push(jobQuantity);
+            }
+        });
+    });
 
       return {
         jobTitle,
