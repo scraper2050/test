@@ -257,9 +257,9 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
 
   // This function takes the job object and make an array to display technician name, jobType and quantity
   const getJobQuantityWithTechnician = (jobs: IJob) => {
-    const technicianName = [];
-    const jobTitle = [];
-    const quantity = [];
+    const technicianName: string[] = [];
+    const jobTitle: string[] = [];
+    const quantity: number[] = [];
 
       jobs?.tasks?.forEach(task => {
           task?.jobTypes?.forEach(jobType => {
