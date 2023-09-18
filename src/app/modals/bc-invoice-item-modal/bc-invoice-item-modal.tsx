@@ -764,7 +764,7 @@ let isFixedDisabled=false;
       >
         <Grid container justify={'space-between'}>
           <Grid item>
-            {!isActive &&  <span>This item is inactive, Click here to activate </span>}
+            {!isActive &&  !isAdd&& <span>This item is inactive, Click here to activate </span>}
             {
             !isAdd && !isActive&& <Button
               disabled={isSubmitting}
@@ -856,7 +856,7 @@ let isFixedDisabled=false;
       <DialogTitle id="confirm-deactivate-title" style={{ textAlign: 'center' }}>Confirm {isActive?"Deactivation":"Activation"}</DialogTitle>
       <DialogContent>
         <Typography variant="body1" id="confirm-deactivate-description">
-          Do you still want to {isActive ? "deactivate" : "activate"} this item?
+          Are you sure you want to {isActive ? "deactivate" : "activate"} this item?
         </Typography>
       </DialogContent>
       <DialogActions>
