@@ -7,7 +7,7 @@ import styled from "styled-components";
 import moment from "moment";
 
 import classNames from "classnames";
-import {formatCurrency} from "../../../helpers/format";
+import { formatCurrency, formatNumber } from "../../../helpers/format";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import BCTicketMessagesNotes
   from "../../modals/bc-add-ticket-details-modal/bc-ticket-messages-notes";
@@ -111,7 +111,7 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
       '& > div': {
         '& > small': {
           color: CONSTANTS.PRIMARY_DARK_GREY,
-          fontSize: 10,
+          fontSize: 30,
           marginBottom: 5
         },
       },
@@ -498,12 +498,12 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <div>
                     <VerticalCenterLabel>INVOICE #: <FixedWidthSpan>{invoiceDetail.invoiceId}</FixedWidthSpan></VerticalCenterLabel>
                     <VerticalCenterLabel>CUSTOMER P.O. : <FixedWidthSpan>{invoiceDetail.customerPO}</FixedWidthSpan></VerticalCenterLabel>
-                    <VerticalCenterLabel>Payment Terms : <FixedWidthSpan>{invoiceDetail?.paymentTerm?.name}</FixedWidthSpan></VerticalCenterLabel>
+                    <VerticalCenterLabel>PAYMENT TERMS : <FixedWidthSpan>{invoiceDetail?.paymentTerm?.name}</FixedWidthSpan></VerticalCenterLabel>
                   </div>
                   <Divider className={invoiceStyles.divider} orientation="vertical" flexItem/>
                   <div>
-                    <label>INVOICE DATE #: <span>{moment(invoiceDetail.issuedDate?.split('T')[0] || invoiceDetail.createdAt?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
-                    <label>DUE DATE #: <span>{moment(invoiceDetail.dueDate?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
+                    <label>INVOICE DATE : <span>{moment(invoiceDetail.issuedDate?.split('T')[0] || invoiceDetail.createdAt?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
+                    <label>DUE DATE : <span>{moment(invoiceDetail.dueDate?.split('T')[0]).format('MMM. DD, YYYY')}</span></label>
                   </div>
                 </div>
               </div>
@@ -559,7 +559,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>{row?.quantity}</span>
+                  )}>{formatNumber(row.quantity)}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
@@ -577,7 +577,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>{formatCurrency(row?.tax, 'N/A')}</span>
+                  )}>{row?.tax >0 ? row.tax+"%" : 'N/A'}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
@@ -589,7 +589,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextRight
-                  )}>{formatCurrency(row.subTotal)}</span>
+                  )}> {formatCurrency(row.subTotal)}</span>
                 </Grid>
               </Grid>
               {row?.description &&
@@ -610,20 +610,20 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
           <div className={invoiceStyles.invoiceBottomSubTotal}>
             <div>
               <span>SUBTOTAL</span>
-              <h3>${parseFloat(invoiceDetail.subTotal).toFixed(2)}</h3>
+              <h3>{formatCurrency(invoiceDetail.subTotal)}</h3>
             </div>
             <div>
               <h3>+</h3>
             </div>
             <div>
               <span>TAX</span>
-              <h3>${parseFloat(invoiceDetail.taxAmount).toFixed(2)}</h3>
+              <h3>{formatCurrency(invoiceDetail.taxAmount)}</h3>
             </div>
           </div>
           <div className={invoiceStyles.invoiceBottomTotal}>
             <div>
               <span>TOTAL</span>
-              <h2>${parseFloat(invoiceDetail.total).toFixed(2)}</h2>
+              <h2>{formatCurrency(invoiceDetail.total)}</h2>
             </div>
           </div>
         </div>
