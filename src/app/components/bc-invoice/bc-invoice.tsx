@@ -242,7 +242,7 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
       paddingRight: theme.spacing(10),
     },
     itemsTableBodyText: {
-      fontSize: 14,
+      fontSize: 12,
       fontWeight: 600,
       color: CONSTANTS.INVOICE_TABLE_HEADING,
       display: 'block',
@@ -410,7 +410,12 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <div className={invoiceStyles.companyInfo}>
                     <small>BILL TO</small>
                     <h4>{invoiceDetail?.customer?.profile?.displayName}</h4>
-                    <span>{composeAddress()}</span>
+                    <span> {invoiceDetail?.customer?.contact?.phone && invoiceDetail?.customer?.contact?.phone}</span>
+                    <span> {invoiceDetail?.customer?.info?.email && invoiceDetail?.customer?.info?.email}</span>
+                    <span> {invoiceDetail?.customer?.address?.street && invoiceDetail?.customer?.address?.street}</span>
+                    <span> {invoiceDetail?.customer?.address?.city && invoiceDetail?.customer?.address?.city}</span>
+                    <span> {invoiceDetail?.customer?.address?.state && invoiceDetail?.customer?.address?.state}</span>
+                    <span> {invoiceDetail?.customer?.address?.zipCode && invoiceDetail?.customer?.address?.zipCode}</span>
                   </div>
                   <div className={invoiceStyles.companyInfo}>
                     {!serviceAddressLocation &&!serviceAddressSite ? (
@@ -577,7 +582,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                   <span className={classNames(
                     invoiceTableStyle.itemsTableBodyText,
                     invoiceTableStyle.itemsTableHeaderTextCenter
-                  )}>{row?.tax >0 ? row.tax+"%" : 'N/A'}</span>
+                  )}>{row?.tax > 0 ? row.tax  +"%" : 'N/A'}</span>
                 </Grid>
                 <Grid item xs={12} lg={1}>
                   <span className={classNames(
