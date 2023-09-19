@@ -36,20 +36,23 @@ export const getAllServiceTicketAPI =  (param?: {pageSize: 2020}, division?: Div
   };
 };
 let cancelTokenGetAllServiceTicketsAPI:any;
-export const getAllServiceTicketsAPI = (pageSize = 10, currentPageIndex = 0, status = false, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: any) => {
+export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, status = false, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: any,filterIsHomeOccupied?: boolean) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setServiceTicketLoading(true));
       const optionObj:any = {
         pageSize,
         currentPage: currentPageIndex,
-        type: "Ticket"
+        type: "Ticket",
+        isHomeOccupied: filterIsHomeOccupied
       };
 
       if(status)
         optionObj.status = 1;
       else
         optionObj.status = 0;
+
+      
 
       if(keyword){
         optionObj.keyword = keyword
@@ -59,7 +62,7 @@ export const getAllServiceTicketsAPI = (pageSize = 10, currentPageIndex = 0, sta
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
-
+          
       if(cancelTokenGetAllServiceTicketsAPI) {
         cancelTokenGetAllServiceTicketsAPI.cancel('axios canceled');
         setTimeout(() => {

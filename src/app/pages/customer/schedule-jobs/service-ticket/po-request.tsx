@@ -3,13 +3,15 @@ import InfoIcon from '@material-ui/icons/Info';
 import {
     getServiceTicketDetail
 } from 'api/service-tickets.api';
+import { makeStyles } from '@material-ui/core/styles';
+import * as CONSTANTS from '../../../../../../src/constants';
 import { modalTypes } from '../../../../../constants';
 import { formatDate, formatDateMMMDDYYYY } from 'helpers/format';
 import styles from '../../customer.styles';
 import { Checkbox, FormControlLabel, withStyles, Grid } from "@material-ui/core";
 import React, { useEffect, useState, useRef } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/po-request/po-request.action';
+import { setCurrentPageIndex, setCurrentPageSize, setKeyword, setIsHomeOccupied } from 'actions/po-request/po-request.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
@@ -24,11 +26,14 @@ import {
 import { error, warning } from "../../../../../actions/snackbar/snackbar.action";
 import BCDateRangePicker, { Range }
     from "../../../../components/bc-date-range-picker/bc-date-range-picker";
+
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
 import { getAllPORequestsAPI } from 'api/po-requests.api';
 import PopupMark from 'app/components/bc-bounce-email-tooltip/bc-popup-mark';
 
 function PORequired({ classes, hidden }: any) {
+    const filterIsHomeOccupied = useSelector((state: any) => state.PORequest.filterIsHomeOccupied);
+
     const dispatch = useDispatch();
     const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
@@ -37,7 +42,7 @@ function PORequired({ classes, hidden }: any) {
     const [bouncedEmailFlag, toggleBounceEmailFlag] = useState(false);
     const [selectionRange, setSelectionRange] = useState<Range | null>(null);
     const loadCount = useRef<number>(0);
-    const customStyles = useCustomStyles();
+    const customStyles = useCustomStyles(); 
     const { isLoading = true, po_request, refresh = true, total, prevCursor, nextCursor, currentPageIndex, currentPageSize, keyword } = useSelector(({ PORequest }: any) => ({
         isLoading: PORequest.isLoading,
         refresh: PORequest.refresh,
@@ -53,6 +58,23 @@ function PORequired({ classes, hidden }: any) {
         let cond = true
         return cond;
     });
+    const useStyles = makeStyles({
+        root: {
+            color: CONSTANTS.OCCUPIED_ORANGE,
+            maxHeight: '20px',
+
+            '&$checked': {
+                color: CONSTANTS.OCCUPIED_ORANGE,
+                maxHeight: '20px',
+            },
+        },
+        checked: {},
+    });
+    const checkBoxClass = useStyles();
+
+    const handleFilter = (filterIsHomeOccupied: boolean) => {
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
+    }
 
     const openEditTicketModal = (ticket: any) => {
         const reqObj = {
@@ -85,20 +107,21 @@ function PORequired({ classes, hidden }: any) {
     function Toolbar() {
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
                 dispatch(setCurrentPageIndex(0));
             }
         }, [showAllPORequests, bouncedEmailFlag]);
 
         useEffect(() => {
             if (loadCount.current !== 0) {
-                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
                 dispatch(setCurrentPageIndex(0));
             }
         }, [selectionRange]);
         return <>
-            <FormControlLabel
-                control={
+           
+            <div style={{ width: '320px', display: 'flex', justifyContent: "spacebetween", marginRight: '0px', paddingRight: '0px', marginLeft:"-25px" }} >
+                <div  >
                     <Checkbox
                         checked={showAllPORequests}
                         onChange={() => {
@@ -107,34 +130,53 @@ function PORequired({ classes, hidden }: any) {
                         }}
                         name="checkedB"
                         color="primary"
+                        id="DisplayAll"
                     />
-                }
-                label="Display All PO Requests"
-            />
-            <FormControlLabel
-                classes={{ root: classes.noMarginRight }}
-                control={
+                    <label htmlFor="DisplayAll" style={{ marginLeft: '-10px' }}>Show All</label>
+                </div>
+
+                <div >
                     <Checkbox
                         checked={bouncedEmailFlag}
                         onChange={() => {
                             dispatch(setCurrentPageIndex(0))
                             toggleBounceEmailFlag(!bouncedEmailFlag)
                         }}
-                        name="checkedBouncedEmails"
+                        name="checkedB"
                         color="primary"
+                        id="BouncedEmails"
                     />
-                }
-                label="Bounced Emails"
-            />
-            <BCDateRangePicker
-                range={selectionRange}
-                onChange={(range: Range | null) => {
-                    dispatch(setCurrentPageIndex(0))
-                    setSelectionRange(range);
-                }}
-                showClearButton={true}
-                title={'Filter by Due Date...'}
-            />
+                    <label htmlFor="BouncedEmails" style={{ marginLeft: '-10px' }}>Bounced Emails</label>
+                </div>
+
+                <div >
+                    <Checkbox
+                        checked={filterIsHomeOccupied}
+                        onChange={() => {
+                            dispatch(setIsHomeOccupied(!filterIsHomeOccupied));
+                            dispatch(setCurrentPageIndex(0));
+                            handleFilter(!filterIsHomeOccupied)
+                        }}
+                        name="checkedB"
+                        color="primary"
+                        id="Occupied"
+                    />
+                    <label htmlFor="Occupied" style={{ marginLeft: '-10px' }}>Occupied</label>
+                </div>
+            </div>
+            <div >
+                <BCDateRangePicker
+                    range={selectionRange}
+                    onChange={(range: Range | null) => {
+                        dispatch(setCurrentPageIndex(0))
+                        setSelectionRange(range);
+                    }}
+                    showClearButton={true}
+                    smallerView={true}
+                    title={'Filter by Due Date...'}
+                />
+            </div>
+            
         </>
     }
 
@@ -166,7 +208,7 @@ function PORequired({ classes, hidden }: any) {
             'Header': 'Ticket ID',
             'accessor': 'ticketId',
             'className': 'font-bold',
-            'sortable': true
+            'sortable': true,
         },
         {
             'Header': 'Due Date',
@@ -194,15 +236,15 @@ function PORequired({ classes, hidden }: any) {
                     {row.original.lastEmailSent
                         ? formatDateMMMDDYYYY(row.original.lastEmailSent, true)
                         : 'N/A'}
-                    {row.original.bouncedEmailFlag 
+                    {row.original.bouncedEmailFlag
                         ? <PopupMark
                             data={row.original.emailHistory}
                             endpoint={'/mark-as-read-po'}
                             params={{ 'id': row.original._id }}
                             callback={
-                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag)
+                                getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied)
                             }
-                            />
+                        />
                         : ''}
                 </>
             ),
@@ -211,7 +253,7 @@ function PORequired({ classes, hidden }: any) {
             className: 'font-bold',
             sortable: true,
         }
-,
+        ,
         {
             'Cell'({ row }: any) {
                 return <div className={'flex items-center'}>
@@ -251,6 +293,27 @@ function PORequired({ classes, hidden }: any) {
                             </CSButtonSmall>
                             : null
                     }
+                    {
+                        row.original.isHomeOccupied == true ?
+
+                            <>
+                                <span title='House is Occupied' >
+                                    <Checkbox
+                                        size={"small"}
+                                        classes={{
+                                            root: checkBoxClass.root,
+                                            checked: checkBoxClass.checked,
+                                        }}
+                                        checked={true}
+                                        disabled={false}
+                                        name="checkedB"
+                                        color="secondary"
+                                    />
+                                </span>
+                            </>
+
+                            : null
+                    }
                 </div>;
             },
             'Header': 'Actions',
@@ -262,7 +325,7 @@ function PORequired({ classes, hidden }: any) {
 
     useEffect(() => {
         if (refresh) {
-            dispatch(getAllPORequestsAPI(undefined, undefined, showAllPORequests, keyword, selectionRange, currentDivision.params));
+            dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             dispatch(setCurrentPageIndex(0));
             dispatch(setCurrentPageSize(10));
         }
@@ -272,7 +335,7 @@ function PORequired({ classes, hidden }: any) {
     }, [refresh]);
 
     useEffect(() => {
-        dispatch(getAllPORequestsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params));
+        dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
         if (customers.length == 0) {
             dispatch(getCustomers());
         }
@@ -316,7 +379,7 @@ function PORequired({ classes, hidden }: any) {
             setCurrentPageIndexFunction={(num: number, apiCall: boolean) => {
                 dispatch(setCurrentPageIndex(num))
                 if (apiCall) {
-                    dispatch(getAllPORequestsAPI(currentPageSize, num, showAllPORequests, keyword, selectionRange, currentDivision.params))
+                    dispatch(getAllPORequestsAPI(currentPageSize, num, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied))
                 }
             }}
             currentPageSize={currentPageSize}
@@ -324,9 +387,8 @@ function PORequired({ classes, hidden }: any) {
             setKeywordFunction={(query: string) => {
                 dispatch(setKeyword(query));
                 dispatch(setCurrentPageIndex(0))
-                dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params));
+                dispatch(getAllPORequestsAPI(currentPageSize, 0, showAllPORequests, query, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             }}
-            isBounceAlertVisible={true}
         />
     );
 }

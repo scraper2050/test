@@ -13,13 +13,15 @@ import styles from '../../customer.styles';
 import { Checkbox, FormControlLabel, Grid, withStyles } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
-import { refreshServiceTickets, setCurrentPageIndex, setCurrentPageSize, setKeyword } from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setCurrentPageIndex, setCurrentPageSize, setKeyword, setFilterIsHomeOccupied } from 'actions/service-ticket/service-ticket.action';
 import { getCustomers } from 'actions/customer/customer.action';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
 import { getAllJobTypesAPI } from 'api/job.api';
 import '../../../../../scss/popup.scss';
 import EditIcon from '@material-ui/icons/Edit';
+import { makeStyles } from '@material-ui/core/styles';
+import * as CONSTANTS from '../../../../../../src/constants';
 import {
   CSButtonSmall,
   CSIconButton,
@@ -41,7 +43,7 @@ function ServiceTicket({ classes, hidden }: any) {
   const divisions = useSelector((state: any) => state.divisions);
   const divisionList = divisions.data as IDivision[];
   const history = useHistory();
-  
+  const filterIsHomeOccupied = useSelector((state: any) => state.serviceTicket.filterIsHomeOccupied);
   const customers = useSelector(({ customers }: any) => customers.data);
   const [showAllTickets, toggleShowAllTickets] = useState(false);
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
@@ -64,9 +66,24 @@ function ServiceTicket({ classes, hidden }: any) {
     // If (!showAllTickets) cond = cond && ticket.status !== 2 && !ticket.jobCreated;
     return cond;
   });
+  const useStyles = makeStyles({
+    root: {
+      color: CONSTANTS.OCCUPIED_ORANGE,
+      maxHeight: '20px',
+
+      '&$checked': {
+        color: CONSTANTS.OCCUPIED_ORANGE,
+        maxHeight: '20px',
+      },
+    },
+    checked: {},
+  });
+  const checkBoxClass = useStyles();
   const canManageTickets = ability.can('manage', 'Tickets');
   const canManageJobs = ability.can('manage', 'Jobs');
-
+  const handleFilter = (filterIsHomeOccupied: boolean) => {
+    dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
+  }
   const openCreateTicketModal = () => {
     // To ensure that all tickets are detected by the division, and check if the user has activated the division feature.
     if (currentDivision.isDivisionFeatureActivated && currentDivision.data?.name != 'All' || !currentDivision.isDivisionFeatureActivated) {
@@ -145,33 +162,50 @@ function ServiceTicket({ classes, hidden }: any) {
   function Toolbar() {
     useEffect(() => {
       if (loadCount.current !== 0) {
-        dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
+        dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
         dispatch(setCurrentPageIndex(0));
       }
-    }, [showAllTickets]);
+    }, [showAllTickets,filterIsHomeOccupied]);
 
     useEffect(() => {
       if (loadCount.current !== 0) {
-        dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params));
+        dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
         dispatch(setCurrentPageIndex(0));
       }
-    }, [selectionRange]);
+    }, [selectionRange,filterIsHomeOccupied]);
     return <>
-      <FormControlLabel
-        classes={{ 'root': classes.noMarginRight }}
-        control={
-          <Checkbox
-            checked={showAllTickets}
-            onChange={() => {
-              dispatch(setCurrentPageIndex(0));
-              toggleShowAllTickets(!showAllTickets);
-            }}
-            name={'checkedB'}
-            color={'primary'}
-          />
-        }
-        label={'Display All Tickets'}
-      />
+      <div>
+        <Checkbox
+          checked={showAllTickets}
+          onChange={() => {
+            dispatch(setCurrentPageIndex(0));
+            dispatch(setFilterIsHomeOccupied(false));
+            toggleShowAllTickets(!showAllTickets);
+          }}
+          name="checkedB"
+          color="primary"
+          id="allTickets"
+        />
+        <label htmlFor="allTickets" style={{ marginLeft: '-10px' }}>Show All Tickets</label>
+
+      </div>
+      
+      <div>
+        <Checkbox
+          checked={filterIsHomeOccupied}
+          onChange={() => {
+            dispatch(setFilterIsHomeOccupied(!filterIsHomeOccupied));
+            dispatch(setCurrentPageIndex(0));
+            handleFilter(filterIsHomeOccupied)
+          }}
+          name="checkedB"
+          color="primary"
+          id="Occupied"
+        />
+        <label htmlFor="Occupied" style={{ marginLeft: '-10px' }}>Occupied</label>
+
+      </div>
+      
       <BCDateRangePicker
         range={selectionRange}
         onChange={(range: Range | null) => {
@@ -271,7 +305,7 @@ function ServiceTicket({ classes, hidden }: any) {
     },
     {
       'Cell'({ row }: any) {
-        return <div className={'flex items-center'}>
+        return <div className={'flex items-center'}  style={{padding:0}} >
           <CSIconButton
             // Variant="contained"
             color={'primary'}
@@ -305,7 +339,27 @@ function ServiceTicket({ classes, hidden }: any) {
               </CSButtonSmall>
               : null
           }
-        </div>;
+          {
+            row.original.isHomeOccupied == true ?
+
+              <>
+                <span title='House is Occupied' >
+                   <Checkbox
+                    classes={{
+                      root: checkBoxClass.root,
+                      checked: checkBoxClass.checked,
+                    }}
+                    checked={true}
+                    disabled={false}
+                    name="checkedB"
+                    size={"small"}
+                  />
+                </span>
+              </>
+
+              : null
+          }
+        </div>
       },
       'Header': 'Actions',
       'id': 'action-create-job',
@@ -316,7 +370,7 @@ function ServiceTicket({ classes, hidden }: any) {
 
   useEffect(() => {
     if (refresh) {
-      dispatch(getAllServiceTicketsAPI(undefined, undefined, showAllTickets, keyword, selectionRange, currentDivision.params));
+      dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
       dispatch(setCurrentPageIndex(0));
       dispatch(setCurrentPageSize(10));
     }
@@ -326,7 +380,7 @@ function ServiceTicket({ classes, hidden }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    dispatch(getAllServiceTicketsAPI(undefined, undefined, undefined, undefined, undefined, currentDivision.params));
+    dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, undefined, undefined, currentDivision.params,filterIsHomeOccupied));
     if (customers.length == 0) {
       dispatch(getCustomers());
     }
@@ -390,7 +444,7 @@ function ServiceTicket({ classes, hidden }: any) {
                 setCurrentPageIndexFunction={(num: number, apiCall: boolean) => {
                   dispatch(setCurrentPageIndex(num));
                   if (apiCall) {
-                    dispatch(getAllServiceTicketsAPI(currentPageSize, num, showAllTickets, keyword, selectionRange, currentDivision.params));
+                    dispatch(getAllServiceTicketsAPI(currentPageSize, num, showAllTickets, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
                   }
                 }}
                 currentPageSize={currentPageSize}
@@ -398,7 +452,7 @@ function ServiceTicket({ classes, hidden }: any) {
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
                   dispatch(setCurrentPageIndex(0));
-                  dispatch(getAllServiceTicketsAPI(currentPageSize, 0, showAllTickets, query, selectionRange, currentDivision.params));
+                  dispatch(getAllServiceTicketsAPI(currentPageSize, 0, showAllTickets, query, selectionRange, currentDivision.params,filterIsHomeOccupied));
                 }}
               />
             </div>
@@ -406,7 +460,7 @@ function ServiceTicket({ classes, hidden }: any) {
               className={classes.dataContainer}
               hidden={false}
               id={'1'}>
-                <PORequest></PORequest>
+              <PORequest></PORequest>
             </div>
           </SwipeableViews>
         </div>
@@ -420,6 +474,8 @@ const DataContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
 `;
+
+
 
 export default withStyles(
   styles,
