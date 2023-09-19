@@ -187,7 +187,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisable
         return setIsSubmitting(false);
       }
       if (itemExist) {
-        dispatch(errorSnackBar('Item with the same name already exist'));
+        dispatch(errorSnackBar('This item name already exists'));
         return setIsSubmitting(false);
       }
       
@@ -237,7 +237,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisable
   });
 
   useEffect(() => {
-    if (error) {
+    if (error && !isViewOnly) {
       dispatch(errorSnackBar('Something went wrong, failed to update item'));
       return;
     }
@@ -343,7 +343,7 @@ let isFixedDisabled=false;
               <BCInput
                 error={formik.touched.name && Boolean(formik.errors.name) || itemExist}
                 handleChange={(event: React.ChangeEvent<HTMLInputElement>) =>handleItemName(event.target.value)}
-                helperText={formik.touched.name && formik.errors.name || itemExist&& "Item with this name already exists"}
+                helperText={formik.touched.name && formik.errors.name || itemExist && "This item name already exists"}
                 name={'name'}
                 value={formik.values.name}
                 margin={'none'}
@@ -792,7 +792,7 @@ let isFixedDisabled=false;
                 }}
                 variant={'outlined'}
               >
-                {"Dectivate"}
+                {"Deactivate"}
               </Button>
 
 
