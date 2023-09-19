@@ -7,6 +7,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import { loadQBAccounts } from 'actions/quickbookAccount/quickbook.action';
 
 import {
   openModalAction,
@@ -25,9 +26,11 @@ import BCQbSyncStatus from '../../../../components/bc-qb-sync-status/bc-qb-sync-
 import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 import { Can, ability } from 'app/config/Can';
+import BCInvoiceEditModal from '../../../../modals/bc-invoice-item-modal/bc-invoice-item-modal';
 
 interface Props {
   classes: any;
+  isView:boolean,
 }
 
 const normalizeTiers = (tiers: any) => {
@@ -70,7 +73,16 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
+  
+  const [qbAccounts, setQBAccounts] = useState([]);
+  const [accounts, setAccounts]=useState([]);
+  const { 'accounts': QB_Accounts, 'loading': loadingQB_Accounts, 'error': QB_AccountsError } = useSelector(({ accounts }: any) => accounts);
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
+  const closeEditPopup = () => {
+    setIsEditPopupOpen(false);
+  };
   const { loading: tiersLoading, error: tiersError, tiers } = useSelector(
     ({ invoiceItemsTiers }: any) => invoiceItemsTiers
   );
@@ -79,7 +91,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     ({ InvoiceJobCosting }: any) => InvoiceJobCosting.costingList
   );
   const activeJobCosts = costingList.filter(({ tier }: any) => tier.isActive);
-
+ 
   const handleTierChange = (id: number, value: string, tierId: string) => {
     const newItems: any = [...localItems];
     const index = newItems.findIndex((item: any) => item._id === id);
@@ -88,7 +100,6 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     newItems[index].tiers[tierId] = currentTier;
     setLocalItems(newItems);
   };
-
   const handleUpdateAllTiers = async () => {
     setUpdating(true);
     let hasError: any = '';
@@ -186,6 +197,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       </>
     );
   }
+  useEffect(() => { 
+    if (QB_Accounts){
+      setQBAccounts(QB_Accounts)
+
+    }
+  }, [QB_Accounts])
 
   useEffect(() => {
     if (items.length > 0) {
@@ -206,9 +223,30 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       setModalDataAction({
         data: {
           item,
+          isView:false,
+
           modalTitle: 'Edit Item',
+        
         },
         type: modalTypes.EDIT_ITEM_MODAL,
+      })
+    );
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200);
+  };
+
+  const renderView = (item: Item) => {
+    dispatch(
+      setModalDataAction({
+        data: {
+          isView: true,
+          editHandler: renderEdit,
+          item,
+          modalTitle: 'View Item Details',
+
+        },
+        type: modalTypes.VIEW_ITEM_MODAL,
       })
     );
     setTimeout(() => {
@@ -227,6 +265,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
             itemType: "",
             productCost: '',
             isJobType: true,
+            accounts: accounts,
             tax: 0,
             tiers: activeTiers.reduce(
               (total: any, currentValue: any) => ({
@@ -252,39 +291,41 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       dispatch(openModalAction());
     }, 200);
   };
-
+ 
   useEffect(() => {
     if (tiers.length || items) {
-      const actions = [
-        {
-          Cell({ row }: any) {
-            return (
-              <div className={'flex items-center'}>
-                <CSButtonSmall
-                  aria-label={'edit'}
-                  color={'primary'}
-                  onClick={() => renderEdit(row.original)}
-                  size={'small'}
-                  style={{
-                    marginRight: 10,
-                    minWidth: 35,
-                    padding: '5px 10px',
-                  }}
-                >
-                  <EditIcon />
-                </CSButtonSmall>
-              </div>
-            );
-          },
-          id: 'action',
-          sortable: false,
-          width: 60,
-        },
+      const actions: never[] = [
+        // {
+        //   Cell({ row }: any) {
+        //     return (
+        //       <div className={'flex items-center'}>
+        //         <CSButtonSmall
+        //           aria-label={'edit'}
+        //           color={'primary'}
+        //           onClick={() => renderEdit(row.original)}
+        //           size={'small'}
+        //           style={{
+        //             marginRight: 10,
+        //             minWidth: 35,
+        //             padding: '5px 10px',
+        //           }}
+        //         >
+        //           <EditIcon />
+        //         </CSButtonSmall>
+        //       </div>
+        //     );
+        //   },
+        //   id: 'action',
+        //   sortable: false,
+        //   width: 60,
+        // },
+
       ];
       const dbSync = [
         {
           Cell({ row }: any) {
-            return <BCQbSyncStatus data={row.original}  />;
+            return <BCQbSyncStatus data={row.original}
+            itemName={row.original.name} getAccounts={undefined} />;
           },
           id: 'qbSync',
           sortable: false,
@@ -293,6 +334,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       ];
 
       const columns: any = [
+    
         {
           Header: 'Name',
           accessor: 'name',
@@ -319,6 +361,35 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         },
         {
           Cell({ row }: any) {
+
+            return (
+              <div className={'flex items-center'}>
+                {row.original.itemType =='Product' ? 'Product' : 'Service'}
+              </div>
+            );
+          },
+          Header: 'Product Type',
+          accessor: 'itemType',
+          sortable: true,
+        
+        },
+        {
+          Cell({ row }: any): JSX.Element {
+            return (
+              <div className={'flex items-center'} >
+                {
+                  row.original.IncomeAccountRef?.name
+                }
+              </div >
+            );
+          },
+          Header: 'Income Account',
+          accessor: 'IncomeAccountRef',
+          sortable: false,
+          width: 30,
+        },
+        {
+          Cell({ row }: any) {
             return (
               <div className={'flex items-center'}>
                 {row.original.isFixed ? 'Fixed' : 'Hourly'}
@@ -329,7 +400,6 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           accessor: 'isFixed',
           sortable: true,
         },
-
         {
           Cell({ row }: any) {
             return (
@@ -359,36 +429,36 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           sortable: true,
         },
       ];
-      const tierColumns =
-        activeTiers.map(({ tier }: any) => {
-          return {
-            Cell({ row }: any) {
-              const currentTier = row.original.tiers[tier._id];
-              return (
-                <>
-                  {!editMode ? (
-                    currentTier?.charge
-                  ) : (
-                    <BCDebouncedInput
-                      error={!currentTier?.charge}
-                      id={tier._id + tier.name}
-                      setValue={(val: string) =>
-                        handleTierChange(
-                          row.original._id,
-                          val,
-                          currentTier?.tier._id
-                        )
-                      }
-                      value={currentTier?.charge}
-                    />
-                  )}
-                </>
-              );
-            },
-            Header: `Tier ${tier.name} Price`,
-            accessor: tier.name,
-          };
-        }) || [];
+      // const tierColumns =
+      //   activeTiers.map(({ tier }: any) => {
+      //     return {
+      //       Cell({ row }: any) {
+      //         const currentTier = row.original.tiers[tier._id];
+      //         return (
+      //           <>
+      //             {!editMode ? (
+      //               currentTier?.charge
+      //             ) : (
+      //               <BCDebouncedInput
+      //                 error={!currentTier?.charge}
+      //                 id={tier._id + tier.name}
+      //                 setValue={(val: string) =>
+      //                   handleTierChange(
+      //                     row.original._id,
+      //                     val,
+      //                     currentTier?.tier._id
+      //                   )
+      //                 }
+      //                 value={currentTier?.charge}
+      //               />
+      //             )}
+      //           </>
+      //         );
+      //       },
+      //       Header: `Tier ${tier.name} Price`,
+      //       accessor: tier.name,
+      //     };
+      //   }) || [];
 
       let constructedColumns: any = [
         ...columns,
@@ -402,7 +472,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       if (tiers.length > 0) {
         constructedColumns = [
           ...columns,
-          ...tierColumns,
+          // ...tierColumns,
           ...ability.can('manage', 'Company')
             ? actions
             : [],
@@ -413,8 +483,17 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     }
   }, [tiers, editMode]);
 
+  // useEffect(()=>{
+  //   if(qbAccounts){
+  //     console.log("qbAccounts", qbAccounts);
+  //   }
+  // }, [qbAccounts]);
+
   useEffect(() => {
+ 
     dispatch(loadInvoiceItems.fetch());
+    dispatch(loadQBAccounts.fetch());
+
     dispatch(getAllSalesTaxAPI());
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
   }, []);
@@ -422,16 +501,19 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   return (
     <MainContainer>
       <PageContainer>
-        <BCTableContainer
-          columns={columns}
-          isLoading={loading || tiersLoading}
-          isPageSaveEnabled
-          search
-          searchPlaceholder={'Search Items'}
-          tableData={localItems}
-          toolbar={Toolbar()}
-        />
-      </PageContainer>
+            <BCTableContainer
+            columns={columns}
+            isLoading={loading || tiersLoading}
+            isPageSaveEnabled
+          toolbarPositionSpaceBetween={true}
+            search
+            searchPlaceholder={'Search Items'}
+            tableData={localItems}
+            toolbar={Toolbar()}
+          onRowClick={(ev: any, row: any) => { renderView(row.original)}}
+          
+          />
+            </PageContainer>
     </MainContainer>
   );
 }
@@ -448,10 +530,10 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1 100%;
-  padding: 30px;
   width: 100%;
 `;
 
 export default withStyles(styles, { withTheme: true })(
   AdminServiceAndProductsPage
 );
+
