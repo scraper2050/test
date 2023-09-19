@@ -1,6 +1,6 @@
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {ERROR_RED, GRAY4, PRIMARY_GREEN} from "../../../constants";
-import { green } from '@material-ui/core/colors';
+import { blue,green } from '@material-ui/core/colors';
 
 interface STYLE_PROPS {
   isSynced: boolean;
@@ -24,6 +24,14 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     fabProgress: {
       color: green[500],
+      // position: 'absolute',
+      top: 0,
+      left: -6,
+      zIndex: 1, fontSize: 28,
+
+    },
+    accProgress: {
+      color: blue[500],
       // position: 'absolute',
       top: 0,
       left: -6,

@@ -7,6 +7,7 @@ export enum ItemActionTypes {
 
 
 export interface Item {
+  IncomeAccountRef:any;
     _id: string;
     name: string;
     description: string;
@@ -18,5 +19,6 @@ export interface Item {
     tiers: any;
     costing: any;
     itemType:string;
+    isActive:boolean;
     productCost:number,
 }
