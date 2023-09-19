@@ -577,6 +577,7 @@ function BCModal() {
         setComponent(<BCInvoiceEditModal
           item={data.item}
           isView={false}
+          includeDisabled={data.includeDisabled}
           editHandler={data.editHandler}
         />);
         break;
@@ -590,6 +591,7 @@ function BCModal() {
         setComponent(<BCInvoiceEditModal
           item={data.item}
           isView={true}
+          includeDisabled={data.includeDisabled}
           editHandler={data.editHandler}
         />);
         break;
@@ -603,6 +605,7 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
+          includeDisabled={data.includeDisabled}
           isView={false}
           editHandler={data.editHandler}
                   />);

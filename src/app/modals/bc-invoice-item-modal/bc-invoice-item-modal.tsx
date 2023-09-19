@@ -19,6 +19,8 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
+  Dialog,
+  DialogTitle,
   TextField,
   CircularProgress,
   Paper,
@@ -37,7 +39,7 @@ import {
 } from 'actions/snackbar/snackbar.action';
 import * as CONSTANTS from '../../../constants';
 import styles from './bc-invoice-item-modal.styles';
-import { updateItems, addItem, addItemProduct } from 'api/items.api';
+import { updateItems, addItem, addItemProduct, disableItem, checkItemExist } from 'api/items.api';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { quickbooksGetAccounts } from 'api/quickbooks.api';
 const EditItemValidation = yup.object().shape({
@@ -91,13 +93,15 @@ export const StyledInput = withStyles((theme: Theme) =>
 
 interface ModalProps {
   item: Item;
+  includeDisabled:boolean;
   classes: any;
-  isView: boolean;
-  editHandler: any;
+  isView:boolean;
+  editHandler:any;
 }
 
-function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) {
-  const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost, IncomeAccountRef } = item;
+
+function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisabled }: ModalProps) {
+  const { _id, name, isFixed, isJobType, description, tax, tiers, costing, itemType, productCost, isActive,IncomeAccountRef } = item;
   const { itemObj, error, loadingObj } = useSelector(({ invoiceItems }: RootState) => invoiceItems);
   const { 'data': taxes } = useSelector(({ tax }: any) => tax);
   const [timer, setTimer] = useState<any>(null)
@@ -110,6 +114,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
   const [isLoadingIncome, setIsLoadingIncome] = useState(true);
   const [qbAccounts, setQBAccounts] = useState([]);
   const dispatch = useDispatch();
+ 
   const isAdd = _id ? false : true;
 
   const closeModal = () => {
@@ -220,6 +225,10 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
         dispatch(errorSnackBar('Tier Prices cannot be empty'));
         return setIsSubmitting(false);
       }
+      if (itemExist) {
+        dispatch(errorSnackBar('This item name already exists'));
+        return setIsSubmitting(false);
+      }
       
       const isProduct=values.itemType=='Product';
       const itemObject = {
@@ -256,7 +265,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
         });
       }
       if (response) {
-        dispatch(loadInvoiceItems.fetch());
+        dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }));
         dispatch(success(`Items successfully ${isAdd ? 'added' : 'updated'}`));
         closeModal();
       }
@@ -268,7 +277,7 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
   });
 
   useEffect(() => {
-    if (error) {
+    if (error && !isViewOnly) {
       dispatch(errorSnackBar('Something went wrong, failed to update item'));
       return;
     }
@@ -301,6 +310,58 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
     }
 
   }, [formik.values.itemType]);
+
+
+  const handleDisableItem=async ()=>{
+    setIsConfirmDialogOpen(false);
+    const itemObject:any = {
+      itemId: _id
+}
+    let responseDisable = await disableItem(itemObject).catch((err: { message: any; }) => {
+      dispatch(errorSnackBar(err.message));
+    });
+  
+    if (responseDisable) {
+      dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }));
+      dispatch(!responseDisable.itemStatus ? success(`Items successfully activated`) : success(`Items successfully deactivated`));
+    closeModal();
+  }
+  };
+  const closeConfirmDialog = () => {
+    setIsConfirmDialogOpen(false);
+  };
+  const handleItemName=(name:string)=>{
+    formik.setFieldValue(
+      'name',
+      name
+    );
+
+    clearTimeout(timer)
+
+    const newTimer = setTimeout(async () => {
+      const itemObject:any = {
+        name: name
+      }
+      let responseDisable = await checkItemExist(itemObject).catch((err: { message: any; }) => {
+        dispatch(errorSnackBar(err.message));
+      });
+
+      if (responseDisable) {
+        if(responseDisable?.status==1){
+          setItemExist(true)
+        }else{
+          setItemExist(false)
+
+        }
+        // dispatch(loadInvoiceItems.fetch());
+        // dispatch(success(`Items successfully deactivated`));
+        // closeModal();
+      }
+    }, 250)
+
+    setTimer(newTimer)
+  }
+
   return <DataContainer>
     <hr
       style={{ height: '1px', background: '#D0D3DC', borderWidth: '0px' }}
@@ -320,9 +381,9 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
                 ITEM NAME
               </Grid>
               <BCInput
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                handleChange={formik.handleChange}
-                helperText={formik.touched.name && formik.errors.name}
+                error={formik.touched.name && Boolean(formik.errors.name) || itemExist}
+                handleChange={(event: React.ChangeEvent<HTMLInputElement>) =>handleItemName(event.target.value)}
+                helperText={formik.touched.name && formik.errors.name || itemExist && "This item name already exists"}
                 name={'name'}
                 value={formik.values.name}
                 margin={'none'}
@@ -812,8 +873,8 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
               </Grid>
             </Grid>
           )}
-         
         </Grid>
+      
       </DialogContent>
       <hr
         style={{ height: '1px', background: '#D0D3DC', borderWidth: '0px' }}
@@ -825,8 +886,26 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
       >
         <Grid container justify={'space-between'}>
           <Grid item>
+            {!isActive &&  !isAdd&& <span>This item is inactive, Click here to activate </span>}
             {
-              !isAdd && !isViewOnly && <Button
+            !isAdd && !isActive&& <Button
+              disabled={isSubmitting}
+                aria-label={'activate-item'}
+                onClick={() => setIsConfirmDialogOpen(true)}
+              classes={{
+                root: classes.closeButton,
+              }}
+              variant={'outlined'}
+            >
+              {"Activate"}
+            </Button>
+            
+
+
+            }
+
+            {
+              !isAdd && isActive &&!isView&& <Button
                 disabled={isSubmitting}
                 aria-label={'deactivate-item'}
                 onClick={() => setIsConfirmDialogOpen(true)}
@@ -835,57 +914,82 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler }: ModalProps) 
                 }}
                 variant={'outlined'}
               >
-                Deactivate
-              </Button>}
-          </Grid>
+                {"Deactivate"}
+              </Button>
+
+
+
+            }
+
+            </Grid>
           <Grid item>
-            {!isViewOnly && <>
-              <Button
-                disabled={isSubmitting}
-                aria-label={'record-payment'}
-                onClick={closeModal}
-                classes={{
-                  root: classes.closeButton,
-                }}
-                variant={'outlined'}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={isSubmitting}
-                aria-label={'create-job'}
-                classes={{
-                  root: classes.submitButton,
-                  disabled: classes.submitButtonDisabled,
-                }}
-                color="primary"
-                type={'submit'}
-                variant={'contained'}
-              >
-                Save
-              </Button>
-            </>}
-            {isViewOnly && <Button
+            {!isViewOnly &&<>
+            <Button
+              disabled={isSubmitting}
+              aria-label={'record-payment'}
+              onClick={closeModal}
+              classes={{
+                root: classes.closeButton,
+              }}
+              variant={'outlined'}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isSubmitting}
               aria-label={'create-job'}
               classes={{
                 root: classes.submitButton,
                 disabled: classes.submitButtonDisabled,
               }}
-              onClick={() => {
-                editHandler(item)
-                setIsViewOnly(false)
+              color="primary"
+              type={'submit'}
+              variant={'contained'}
+            >
+              Save
+            </Button>
+            </>} 
+            {isViewOnly && isActive && <Button
+              aria-label={'create-job'}
+              classes={{
+                root: classes.submitButton,
+                disabled: classes.submitButtonDisabled,
               }}
+              onClick={() => { 
+                editHandler(item)
+                setIsViewOnly(false) }}
               color="primary"
               type={'button'}
               variant={'contained'}
             >
               <EditIcon /> Edit Item
             </Button>}
-
+            
           </Grid>
         </Grid>
       </DialogActions>
     </form>
+    <Dialog
+      open={isConfirmDialogOpen}
+      onClose={closeConfirmDialog}
+      aria-labelledby="confirm-deactivate-title"
+      aria-describedby="confirm-deactivate-description"
+    >
+      <DialogTitle id="confirm-deactivate-title" style={{ textAlign: 'center' }}>Confirm {isActive?"Deactivation":"Activation"}</DialogTitle>
+      <DialogContent>
+        <Typography variant="body1" id="confirm-deactivate-description">
+          Are you sure you want to {isActive ? "deactivate" : "activate"} this item?
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={closeConfirmDialog} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleDisableItem} color="primary">
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
   </DataContainer>
 
 }

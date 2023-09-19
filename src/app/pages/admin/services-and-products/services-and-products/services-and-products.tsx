@@ -2,11 +2,12 @@ import BCTableContainer from 'app/components/bc-table-container/bc-table-contain
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import styles from './services-and-products.styles';
-import { Button, Fab, Grid, Tooltip, withStyles } from '@material-ui/core';
+import { Button, Checkbox, Fab, FormControlLabel, Grid, TextField, Tooltip, withStyles, FormGroup } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
+import ClearIcon from '@material-ui/icons/Clear';
 import { loadQBAccounts } from 'actions/quickbookAccount/quickbook.action';
 
 import {
@@ -67,12 +68,16 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   const { loading, error, items } = useSelector(
     ({ invoiceItems }: RootState) => invoiceItems
   );
-  const [localItems, setLocalItems] = useState(
-    stringSortCaseInsensitive(items, 'name')
+  const [localItems, setLocalItems] = useState<any>(
+    // stringSortCaseInsensitive(items, 'name')
+    []
   );
   const [columns, setColumns] = useState([]);
   const [editMode, setEditMode] = useState(false);
+
+  const [includeDisabled, setIncludeDisabled] = useState<any>(false);
   const [updating, setUpdating] = useState(false);
+  const [itemsLoading, setItemsLoading] = useState(false);
   
   const [qbAccounts, setQBAccounts] = useState([]);
   const [accounts, setAccounts]=useState([]);
@@ -143,7 +148,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       }
     }
   };
+  const handleDisableItemCheckBox=(event:any)=>{
+  
+  setIncludeDisabled(event.target.checked);
 
+
+  }
   function Toolbar() {
     return editMode ? (
       <>
@@ -168,8 +178,13 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         </CSButton>
       </>
     ) : (
+
       <>
-        <Can I={'manage'} a={'Items'}>
+          <FormGroup>
+            <FormControlLabel control={<Checkbox style={{ }} color="primary" onChange={handleDisableItemCheckBox}/>} disabled={loading || itemsLoading} label="Include Inactive" />
+            </FormGroup>
+        
+       <Can I={'manage'} a={'Items'}>
           {/* <CSButton
             disabled={updating}
             disableElevation
@@ -180,7 +195,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
             variant={'contained'}>
             {'Edit Prices'}
           </CSButton> */}
-          <CSButton
+         <CSButton
             color={'primary'}
             disabled={updating}
             disableElevation
@@ -205,6 +220,8 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   }, [QB_Accounts])
 
   useEffect(() => {
+    setItemsLoading(false);
+
     if (items.length > 0) {
       const activeJobCostsIDs = activeJobCosts.map((item: any) => item.tier._id)
       const newItems = items.map((item: any) => {
@@ -223,6 +240,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       setModalDataAction({
         data: {
           item,
+          includeDisabled:includeDisabled,
           isView:false,
 
           modalTitle: 'Edit Item',
@@ -243,6 +261,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           isView: true,
           editHandler: renderEdit,
           item,
+          includeDisabled: includeDisabled,
           modalTitle: 'View Item Details',
 
         },
@@ -258,6 +277,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     dispatch(
       setModalDataAction({
         data: {
+          includeDisabled: includeDisabled,
           item: {
             name: '',
             description: '',
@@ -321,6 +341,41 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         // },
 
       ];
+
+      // const activateButton=[
+      //   {
+      //     Cell({ row }: any) {
+      //       const handleActivateDeactivate = () => {
+
+      //         const updatedItem = { ...row.original, isActive: !row.original.isActive };
+      //         // Update the item in your localItems state
+      //         const updatedLocalItems = localItems.map((item: Item) =>
+      //           item._id === updatedItem._id ? updatedItem : item
+      //         );
+      //         setLocalItems(updatedLocalItems);
+      //         console.log(`Toggled activation for item: ${row.original._id}`);
+      //       };
+
+      //       return (
+      //         <div className="flex items-center">
+      //           <Button
+      //             variant="outlined"
+      //             color={row.original.isActive ? 'secondary' : 'primary'}
+      //             onClick={handleActivateDeactivate}
+      //             disabled={!isRowEnabled}
+      //           >
+      //             {row.original.isActive ? 'Deactivate' : 'Activate'}
+      //           </Button>
+      //         </div>
+      //       );
+      //     },
+      //     Header: 'Activate/Deactivate',
+      //     id: 'activateDeactivate',
+      //     sortable: false,
+      //     width: 150, // Adjust the width as needed
+      //   },  
+      // ];
+
       const dbSync = [
         {
           Cell({ row }: any) {
@@ -413,6 +468,28 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           sortable: true,
         },
       ];
+      if(includeDisabled){
+      columns.unshift({
+        Cell({ row }: any): JSX.Element {
+          return (
+            <div className={'flex items-center'} style={{display:"flex",justifyContent:"center"}} >
+              {
+                !row.original.isActive ? (
+                  <ClearIcon
+                    color="primary"
+                    style={{ cursor: 'pointer', color: "red" }}
+                  />
+                ) : null
+              }
+            </div >
+          );
+        },
+        Header: '',
+        accessor: 'isActive',
+        sortable: false,
+        width:'25px'
+      })
+    }
 
       const chargeColumn = [
         {
@@ -466,7 +543,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
         ...ability.can('manage', 'Company')
           ? actions
           : [],
-        ...dbSync
+        ...dbSync,
       ];
 
       if (tiers.length > 0) {
@@ -476,12 +553,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
           ...ability.can('manage', 'Company')
             ? actions
             : [],
-          ...dbSync
+          ...dbSync,
         ];
       }
       setColumns(constructedColumns);
     }
-  }, [tiers, editMode]);
+  }, [tiers, editMode, localItems]);
 
   // useEffect(()=>{
   //   if(qbAccounts){
@@ -490,6 +567,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
   // }, [qbAccounts]);
 
   useEffect(() => {
+    setItemsLoading(true);
  
     dispatch(loadInvoiceItems.fetch());
     dispatch(loadQBAccounts.fetch());
@@ -498,12 +576,17 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
   }, []);
 
+
+  useEffect(() => {
+    dispatch(loadInvoiceItems.fetch({ payload: { includeDisabled, includeDiscountItems: false } }))
+  }, [includeDisabled]);
+
   return (
     <MainContainer>
       <PageContainer>
             <BCTableContainer
             columns={columns}
-            isLoading={loading || tiersLoading}
+          isLoading={loading || tiersLoading || itemsLoading}
             isPageSaveEnabled
           toolbarPositionSpaceBetween={true}
             search
