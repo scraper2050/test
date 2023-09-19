@@ -942,12 +942,8 @@ function BCInvoiceEditModal({ item, classes, isView, editHandler, includeDisable
                 root: classes.submitButton,
                 disabled: classes.submitButtonDisabled,
               }}
-              onClick={() => {
-                editHandler(item)
-                setIsViewOnly(false)
-              }}
               color="primary"
-              type={'button'}
+              type={'submit'}
               variant={'contained'}
             >
               Save
