@@ -22,6 +22,16 @@ export interface Range {
   endDate: Date;
 }
 
+const calcWidth=(props:any)=>{
+  if(props.smallerView ){
+    return 320
+  }
+  if(props.showClearButton){
+    return 350;
+  }
+  return 315;
+}
+
 interface Props {
   range: Range|null;
   disabled?: boolean;
@@ -35,6 +45,7 @@ interface Props {
   placement?: 'bottom' | 'bottom-start' | 'right';
   preventOverflow?: boolean;
   biggerButton?: boolean;
+  smallerView?:boolean;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
       marginTop: -4,
       padding: 0,
     },
-    width: props.showClearButton ? 350 : 315,
+    width: calcWidth(props),
     justifyContent: 'flex-start',
   }),
   rangePickerPopup: {
@@ -85,9 +96,9 @@ const DEFAULT_RANGE = {
 }
 
 
-function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, placement = 'bottom', preventOverflow = false, biggerButton = false}: Props) {
+function BCDateRangePicker({classes, range, disabled = false, showClearButton = false, onChange, title, noDay = false, placement = 'bottom', preventOverflow = false, biggerButton = false, smallerView = false}: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const defaultClasses = useStyles({showClearButton});
+  const defaultClasses = useStyles({showClearButton,smallerView});
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
   const [selectionRange, setSelectionRange] = useState(range);
   const [tempSelectionRange, setTempSelectionRange] = useState(range ? range : {

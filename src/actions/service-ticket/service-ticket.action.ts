@@ -97,6 +97,13 @@ export const setCurrentPageIndex = (currentPageIndex: number) => {
   };
 };
 
+export const setFilterIsHomeOccupied = (filterIsHomeOccupied: boolean) => {
+  return {
+    'payload': filterIsHomeOccupied,
+    'type': types.IS_HOME_OCCUPIED
+  };
+};
+
 export const setCurrentPageSize = (currentPageSize: number) => {
   return {
     'payload': currentPageSize,

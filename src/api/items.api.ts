@@ -145,7 +145,7 @@ export const addItem = async (item:any) => {
     const response: any = await request(
       '/createJobType',
       'POST',
-      { title: item.name, description: item.description},
+      { title: item.name, description: item.description,account:item.account},
       false
     );
     if (response.data.status === 0) {

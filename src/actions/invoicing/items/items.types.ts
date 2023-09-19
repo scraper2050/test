@@ -7,6 +7,7 @@ export enum ItemActionTypes {
 
 
 export interface Item {
+  IncomeAccountRef:any;
     _id: string;
     name: string;
     description: string;

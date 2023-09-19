@@ -38,6 +38,9 @@ const getColor = (str: string) => {
   var colour = '#';
   for (var i = 0; i < 3; i++) {
     var value = (hash >> (i * 8)) & 0xff;
+    // Reduce the value to make the color darker
+    value = Math.max(0, value - 50); // Adjust the 50 to make it darker or lighter
+
     colour += ('00' + value.toString(16)).substr(-2);
   }
   return colour;

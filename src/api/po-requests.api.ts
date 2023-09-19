@@ -1,5 +1,5 @@
 import request, { requestApiV2 } from '../utils/http.service';
-import { refreshPORequests, setPORequest, setPORequestLoading, setPreviousPORequestCursor, setNextPORequestCursor, setTotal} from 'actions/po-request/po-request.action';
+import { refreshPORequests, setPORequest, setPORequestLoading, setPreviousPORequestCursor, setNextPORequestCursor, setTotal, setIsHomeOccupied} from 'actions/po-request/po-request.action';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -15,14 +15,16 @@ const compareByDate = (a: any, b: any) => {
 
 
 let cancelTokenGetAllPORequestsAPI: any;
-export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any) => {
+export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any, bouncedEmailFlag: boolean = false,filterIsHomeOccupied?:boolean) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setPORequestLoading(true));
       const optionObj: any = {
         pageSize,
         currentPage: currentPageIndex,
-        showAll: showAllPORequests
+        showAll: showAllPORequests,
+        bouncedEmailFlag,
+        isHomeOccupied:filterIsHomeOccupied
       };
 
       if (keyword) {
@@ -33,7 +35,7 @@ export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAll
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
-
+      
       if (cancelTokenGetAllPORequestsAPI) {
         cancelTokenGetAllPORequestsAPI.cancel('axios canceled');
         setTimeout(() => {

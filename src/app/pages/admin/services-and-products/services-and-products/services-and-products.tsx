@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'reducers';
 import { loadInvoiceItems } from 'actions/invoicing/items/items.action';
 import ClearIcon from '@material-ui/icons/Clear';
+import { loadQBAccounts } from 'actions/quickbookAccount/quickbook.action';
+
 import {
   openModalAction,
   setModalDataAction,
@@ -26,7 +28,6 @@ import { CSButton, CSButtonSmall } from '../../../../../helpers/custom';
 import { stringSortCaseInsensitive } from '../../../../../helpers/sort';
 import { Can, ability } from 'app/config/Can';
 import BCInvoiceEditModal from '../../../../modals/bc-invoice-item-modal/bc-invoice-item-modal';
-
 
 interface Props {
   classes: any;
@@ -76,8 +77,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
 
   const [includeDisabled, setIncludeDisabled] = useState<any>(false);
   const [updating, setUpdating] = useState(false);
-  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [itemsLoading, setItemsLoading] = useState(false);
+  
+  const [qbAccounts, setQBAccounts] = useState([]);
+  const [accounts, setAccounts]=useState([]);
+  const { 'accounts': QB_Accounts, 'loading': loadingQB_Accounts, 'error': QB_AccountsError } = useSelector(({ accounts }: any) => accounts);
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const closeEditPopup = () => {
@@ -91,6 +96,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     ({ InvoiceJobCosting }: any) => InvoiceJobCosting.costingList
   );
   const activeJobCosts = costingList.filter(({ tier }: any) => tier.isActive);
+ 
   const handleTierChange = (id: number, value: string, tierId: string) => {
     const newItems: any = [...localItems];
     const index = newItems.findIndex((item: any) => item._id === id);
@@ -99,7 +105,6 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     newItems[index].tiers[tierId] = currentTier;
     setLocalItems(newItems);
   };
- 
   const handleUpdateAllTiers = async () => {
     setUpdating(true);
     let hasError: any = '';
@@ -207,6 +212,12 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       </>
     );
   }
+  useEffect(() => { 
+    if (QB_Accounts){
+      setQBAccounts(QB_Accounts)
+
+    }
+  }, [QB_Accounts])
 
   useEffect(() => {
     setItemsLoading(false);
@@ -274,6 +285,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
             itemType: "",
             productCost: '',
             isJobType: true,
+            accounts: accounts,
             tax: 0,
             tiers: activeTiers.reduce(
               (total: any, currentValue: any) => ({
@@ -367,7 +379,8 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       const dbSync = [
         {
           Cell({ row }: any) {
-            return <BCQbSyncStatus data={row.original}  />;
+            return <BCQbSyncStatus data={row.original}
+            itemName={row.original.name} getAccounts={undefined} />;
           },
           id: 'qbSync',
           sortable: false,
@@ -376,7 +389,7 @@ function AdminServiceAndProductsPage({ classes }: Props) {
       ];
 
       const columns: any = [
-  
+    
         {
           Header: 'Name',
           accessor: 'name',
@@ -547,9 +560,18 @@ function AdminServiceAndProductsPage({ classes }: Props) {
     }
   }, [tiers, editMode, localItems]);
 
+  // useEffect(()=>{
+  //   if(qbAccounts){
+  //     console.log("qbAccounts", qbAccounts);
+  //   }
+  // }, [qbAccounts]);
+
   useEffect(() => {
     setItemsLoading(true);
+ 
     dispatch(loadInvoiceItems.fetch());
+    dispatch(loadQBAccounts.fetch());
+
     dispatch(getAllSalesTaxAPI());
     localStorage.setItem('nestedRouteKey', 'services/services-and-products');
   }, []);
