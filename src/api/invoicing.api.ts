@@ -184,6 +184,7 @@ export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?:
       }
       if (showPaid === false) {
         optionObj.status = JSON.stringify(['UNPAID', 'PARTIALLY_PAID']);
+        optionObj.isVoid = false;
       }
       if (cancelTokenGetAllInvoicesAPI) {
         cancelTokenGetAllInvoicesAPI.cancel('axios canceled');
