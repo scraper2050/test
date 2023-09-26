@@ -102,9 +102,11 @@ function InvoicingListListing({ classes, theme }: any) {
           }
         }
 
+        let jobAddressName;
         if (invoiceDetail?.jobLocation) {
           const jobLocation = invoiceDetail?.jobLocation;
           const jobLocationAddress = jobLocation?.address;
+          jobAddressName = jobLocation?.name;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
@@ -112,12 +114,12 @@ function InvoicingListListing({ classes, theme }: any) {
           //To check if invoice data is not provided with a job location, we can use the job field
           const jobLocation = invoiceDetail?.job?.jobLocation;
           const jobLocationAddress = jobLocation?.address;
+          jobAddressName = jobLocation?.name;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
         }
       
-        let jobAddressName;
         if (invoiceDetail?.jobSite) {
           const jobSite = invoiceDetail?.jobSite;
           const jobSiteAddress = jobSite?.address;
@@ -125,7 +127,7 @@ function InvoicingListListing({ classes, theme }: any) {
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
           }
-        } else {
+        } else if (invoiceDetail?.job?.jobSite){
           //To check if invoice data is not provided with a job site, we can use the job field
           const jobSite = invoiceDetail?.job?.jobSite;
           const jobSiteAddress = jobSite?.address;
