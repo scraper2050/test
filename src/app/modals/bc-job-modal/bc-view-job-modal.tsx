@@ -682,21 +682,21 @@ function BCViewJobModal({
                   <Typography variant={'caption'} className={'previewCaption'}>
                     {'First name'}
                   </Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.profile?.firstName || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.profile?.firstName || job?.homeOwner?.profile?.firstName) || 'N/A'}</Typography>
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>
                     {'Last name'}
                   </Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.profile?.lastName || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.profile?.lastName || job?.homeOwner?.profile?.lastName ) || 'N/A'}</Typography>
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>{'Email'}</Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.info?.email || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.info?.email || job?.homeOwner?.info?.email ) || 'N/A'}</Typography>
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>{'Phone'}</Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.contact?.phone || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.contact?.phone || job?.homeOwner?.contact?.phone ) || 'N/A'}</Typography>
                 </Grid>
               </Grid>
               : null
