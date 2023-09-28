@@ -1177,7 +1177,7 @@ function BCServiceTicketModal(
   }
 
   const getSubmtiButton = () => {
-    if (isPORequired && !bypassPORequired) {
+    if (isPORequired && !bypassPORequired && !FormikValues.customerPO) {
       return <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button" className={"groupBtnContainer"}>
         <Button onClick={handleSubmit} className={'groupBtnRight'} disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}>{submitOptions[submitSelectedIndex]}</Button>
         <Button
