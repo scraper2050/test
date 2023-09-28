@@ -280,7 +280,6 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
       return ""
     }
   }
-  
   const desbouncedSearchFunction = debounce((keyword: string) => {
     dispatch(setUnpaidKeyword(keyword));
     dispatch(setCurrentUnpaidPageIndex(0));
@@ -314,7 +313,7 @@ function InvoicingUnpaidListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => {
           dispatch(setCurrentUnpaidPageSize(num));
-          dispatch(getUnpaidInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, selectionRange,undefined,currentDivision.params))
+          dispatch(getUnpaidInvoicesAPI(num || currentPageSize, 0, keyword, selectionRange,undefined,currentDivision.params))
         }}
         setKeywordFunction={(query: string) => {
           desbouncedSearchFunction(query);

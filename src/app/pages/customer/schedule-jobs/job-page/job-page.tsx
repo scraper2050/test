@@ -436,7 +436,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     if (refresh && !currentDivision.isDivisionFeatureActivated || currentDivision.isDivisionFeatureActivated && (currentDivision.params?.workType || currentDivision.params?.companyLocation || currentDivision.data?.name == 'All')) {
       dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      dispatch(setCurrentPageSize(15));
     }
     setTimeout(() => {
       loadCount.current++;

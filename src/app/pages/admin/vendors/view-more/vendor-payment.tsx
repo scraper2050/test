@@ -41,7 +41,7 @@ function VendorPayment({classes}: Props) {
   const [filteredPayments, setFilteredPayments] = useState<ContractorPayment[]>([])
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
-    'pageSize': prevPage ? prevPage.pageSize : 10,
+    'pageSize': prevPage ? prevPage.pageSize : 15,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
 

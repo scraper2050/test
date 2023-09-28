@@ -136,7 +136,6 @@ function InvoicingListListing({ classes, theme }: any) {
             jobAddress = jobSiteAddress;
           }
         }
-        
         const arrFullJobAddress = [jobAddressName, jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
         const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
 
@@ -286,7 +285,7 @@ function InvoicingListListing({ classes, theme }: any) {
   useEffect(() => {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
-    dispatch(getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined,undefined,undefined, currentDivision.params));
+    dispatch(getAllInvoicesAPI(currentPageSize, currentPageIndex, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined,undefined,undefined, currentDivision.params));
     return () => {
       dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(currentPageIndex));
@@ -397,7 +396,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   /**
    * Receive the event when the modal filter is sumited by the user
-   * @param data 
+   * @param data
    */
   const handleFilterSubmit = async (data: any) => {
     dataModalFilter.data.loading = true;
@@ -435,7 +434,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const handleBouncedEmail = () => {
     advanceFilterInvoiceData.checkBouncedEmails = !advanceFilterInvoiceData.checkBouncedEmails
-    
+
     dispatch(getAllInvoicesAPI(currentPageSize, 0, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
   }
 
@@ -503,7 +502,7 @@ function InvoicingListListing({ classes, theme }: any) {
     const content = JSON.stringify(initialAdvanceFilterInvoiceState) !== JSON.stringify(advanceFilterInvoiceData)
     return (
       <div>
-        <Checkbox 
+        <Checkbox
           color="primary"
           className={classes.checkbox}
           checked={advanceFilterInvoiceData.checkBouncedEmails}
@@ -599,7 +598,7 @@ function InvoicingListListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => {
           dispatch(setCurrentPageSize(num));
-          dispatch(getAllInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
+          dispatch(getAllInvoicesAPI(num || currentPageSize, 0, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
         }}
         setKeywordFunction={(query: string) => {
           desbouncedSearchFunction(query);
