@@ -538,7 +538,7 @@ function ViewInvoice({ classes, theme }: any) {
               >Job Costing
               </Button>
             }
-            {invoiceDetail && (
+            {(invoiceDetail && invoiceDetail.job) && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
                   <Badge
