@@ -102,9 +102,11 @@ function InvoicingListListing({ classes, theme }: any) {
           }
         }
 
+        let jobAddressName;
         if (invoiceDetail?.jobLocation) {
           const jobLocation = invoiceDetail?.jobLocation;
           const jobLocationAddress = jobLocation?.address;
+          jobAddressName = jobLocation?.name;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
@@ -112,11 +114,12 @@ function InvoicingListListing({ classes, theme }: any) {
           //To check if invoice data is not provided with a job location, we can use the job field
           const jobLocation = invoiceDetail?.job?.jobLocation;
           const jobLocationAddress = jobLocation?.address;
+          jobAddressName = jobLocation?.name;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
         }
-        let jobAddressName;
+      
         if (invoiceDetail?.jobSite) {
           const jobSite = invoiceDetail?.jobSite;
           const jobSiteAddress = jobSite?.address;
@@ -124,7 +127,7 @@ function InvoicingListListing({ classes, theme }: any) {
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
           }
-        } else {
+        } else if (invoiceDetail?.job?.jobSite){
           //To check if invoice data is not provided with a job site, we can use the job field
           const jobSite = invoiceDetail?.job?.jobSite;
           const jobSiteAddress = jobSite?.address;
@@ -190,7 +193,7 @@ function InvoicingListListing({ classes, theme }: any) {
         const textStatus = status.split('_').join(' ').toLowerCase();
         return (
           <div className={customStyles.centerContainer}>
-           {!isVoid&& <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />}
+            {!isVoid ? <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} /> : "Void"}
           </div>
         )
       },
@@ -223,8 +226,17 @@ function InvoicingListListing({ classes, theme }: any) {
           formatDateMMMDDYYYY(
             row.original.issuedDate || row.original.createdAt
           )
-          } {
-            row.original.bouncedEmailFlag ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} /> : ''
+          } { 
+            row.original.bouncedEmailFlag
+              ? <PopupMark
+                  endpoint={'/mark-as-read-invoices'}
+                  data={row.original.emailHistory}
+                  params={{ 'invoiceId': row.original._id }}
+                  callback={
+                    getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params)
+                  }
+                  /> 
+              : ''
           }
         </div>
       ),
@@ -567,6 +579,7 @@ function InvoicingListListing({ classes, theme }: any) {
         search
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
+        isBounceAlertVisible={true}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination

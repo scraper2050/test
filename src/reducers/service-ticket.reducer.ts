@@ -27,6 +27,7 @@ const initialServiceTicket = {
   'currentPageIndex': 0,
   'currentPageSize': 15,
   'keyword': '',
+  'filterIsHomeOccupied':false
 };
 
 export default (state = initialServiceTicket, { payload, type }: ReducerParamsInterface) => {
@@ -135,6 +136,11 @@ export default (state = initialServiceTicket, { payload, type }: ReducerParamsIn
       return {
         ...state,
         'ticket2Job': payload
+      };
+    case types.IS_HOME_OCCUPIED:
+      return {
+        ...state,
+        'filterIsHomeOccupied': payload
       };
     default:
       return state;

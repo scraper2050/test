@@ -73,7 +73,15 @@ function InvoicingPaymentListing({ classes, theme }: any) {
       Cell({ row }: any) {
         return <div>
           <span>
-            {row.original.line?.length ? 'Multiple Invoices' : row.original.invoice?.invoiceId}
+            {
+              row.original.line?.length > 1 
+              ? 'Multiple Invoices' 
+              : (
+                  row.original.invoice?.invoiceId 
+                  ? row.original.invoice?.invoiceId
+                  : row.original.line[0]?.invoice.invoiceId
+                )
+            }
           </span>
         </div>;
       },

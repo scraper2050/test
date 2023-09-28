@@ -73,6 +73,7 @@ function BCTableContent({
                           currentPageSize,
                           setCurrentPageSizeFunction = () => {},
                           rowTooltip,
+                          isBounceAlertVisible = false,
                         }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -319,6 +320,8 @@ function BCTableContent({
 
   const tableClass = useStyles();
 
+  // this isBounceAlertVisible returns true incase of PO Requests and Invoice to set the height of table.
+  const customMarginBottom = { marginBottom : isBounceAlertVisible ? '190px' : '0' }
   // Render the UI for your table
   return (
     <TableContainer
@@ -326,7 +329,7 @@ function BCTableContent({
         ? `invoice-paper`
         : ''} ${className} `}
       component={StyledPaperContainer}
-      style={{marginBottom: '300px'}}
+      style={customMarginBottom}
       >
 
       <MaUTable

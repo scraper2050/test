@@ -444,3 +444,10 @@ body {
   color: #383838;
 }
 
+.MuiTooltip-tooltip {
+  background-color: white !important;
+  box-shadow: #000000 1px 1px 1px;
+}
+.MuiTooltip-tooltipArrow{
+    background-color: white !important;
+}

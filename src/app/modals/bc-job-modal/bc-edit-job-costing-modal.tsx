@@ -85,7 +85,7 @@ function BCEditJobCostingModal({
   const [jobCommisionHistory, setJobCommisionHistory] = useState([]);
 
   useEffect(() => {
-    const newTabsData: any = job.tasks.filter((res: any) => res.contractor?.commissionTier).map((res: any, index: number) => {
+    const newTabsData: any = job.tasks.filter((res: any) => res.contractorCommissionTier).map((res: any, index: number) => {
       return {
         label: "Task " + (index + 1),
         task: res,
@@ -136,13 +136,13 @@ function BCEditJobCostingModal({
     setCurTab(newValue);
     const res: any = tabsData.find((res: any) => res.value == newValue);
     if (res) {
-      const technicianTier = costingList?.find(({ tier }: { tier: any }) => tier?._id === (res.task?.contractor?.commissionTier))?.tier;
-
+      const technicianTier = costingList?.find(({ tier }: { tier: any }) => tier?._id === (res.task?.contractorCommissionTier))?.tier;
+  
       let jobCostingCharge = 0;
       res.task.jobTypes.forEach((taskJobType: any) => {
-        const costingList = items?.find(({ jobType }) => jobType === taskJobType?.jobType?._id)?.costing;
-        const charge = costingList?.find(({ tier }) => tier?._id === technicianTier?._id)?.charge
-        jobCostingCharge += Number(charge || 0) * (taskJobType.quantity || 1)
+        const itemCostingList = items?.find(({ jobType }) => jobType === taskJobType?.jobType?._id)?.costing;
+        const charge = itemCostingList?.find(({ tier }) => tier?._id === technicianTier?._id)?.charge
+        jobCostingCharge += Number(charge || 0) * (taskJobType.jobCostingQuantity ?? taskJobType.completedCount ?? (taskJobType.quantity || 1))
       });
 
       const commisionHistory: any = getCommissionHistory(res.task?.contractor?._id);
@@ -217,13 +217,13 @@ function BCEditJobCostingModal({
               />
               <SwipeableViews index={curTab}>
                 {tabsData.map((res: any) => {
-                  const technicianTier = costingList?.find(({ tier }: { tier: any }) => tier?._id === (res.task?.contractor?.commissionTier))?.tier;
+                  const technicianTier = costingList?.find(({ tier }: { tier: any }) => tier?._id === (res.task?.contractorCommissionTier))?.tier;
                   let jobCostingCharge = 0;
                   let jobTypesTitle: string[] = [];
                   res.task.jobTypes.forEach((taskJobType: any) => {
                     const costingList = items?.find(({ jobType }) => jobType === taskJobType?.jobType?._id)?.costing;
                     const charge = costingList?.find(({ tier }) => tier?._id === technicianTier?._id)?.charge
-                    jobCostingCharge += Number(charge || 0) * (taskJobType.quantity || 1);
+                    jobCostingCharge += Number(charge || 0) * (taskJobType.jobCostingQuantity ?? taskJobType.completedCount ?? (taskJobType.quantity || 1));
 
                     jobTypesTitle.push(taskJobType.jobType?.title);
                   });

@@ -20,13 +20,6 @@ export default function EmailReportButton({ jobReport, Component }: EmailReportP
   const { job, _id } = jobReport;
   const dispatch = useDispatch();
 
-  const sendReport = () => {
-    dispatch(sendEmailAction.fetch({ 'email': job.customer.info?.email,
-      data: {id: _id},
-      type: 'jobReport'
-    }));
-  };
-
   const errorDispatcher = (message:string) => {
     dispatch(errorSnackBar(message))
   }
@@ -65,14 +58,13 @@ export default function EmailReportButton({ jobReport, Component }: EmailReportP
   }
 
   const data = {
-    'customer': job?.customer?.profile
-      ? job?.customer?.profile?.displayName
-      : jobReport?.customerName,
+    'customerContactId': job?.customerContactId,
+    'customerId': job?.customer?._id,
     'customerEmail': job?.customer?.info
       ? job?.customer?.info?.email
       : '',
-    'handleClick': sendReport,
     'id': job?.jobId || job?._id,
+    'jobReportId': _id,
     'typeText': 'Job Report'
   };
 

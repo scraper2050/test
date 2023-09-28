@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Button, Grid, Theme, Tooltip, Typography, withStyles } from '@material-ui/core';
-import { formatDatTimell, formatDatTimelll } from 'helpers/format';
+import { formatDatTimell, formatTime } from 'helpers/format';
 import styles, {
   DataContainer,
   MainContainer,
@@ -9,27 +9,43 @@ import styles, {
 } from './job-reports.styles';
 import EmailReportButton from 'app/pages/customer/job-reports/email-job-report';
 import EmailHistory from './email-history';
-import {CSButton} from "../../../helpers/custom";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import {getJobTypesFromJob} from "../../../helpers/utils";
-import classNames from "classnames";
-import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop'
-import { useDispatch, useSelector } from "react-redux";
-import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
-import LogoSvg from "../../../assets/img/header-logo.svg";
+import { CSButton } from '../../../helpers/custom';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import classNames from 'classnames';
+import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop';
+import { useDispatch, useSelector } from 'react-redux';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import LogoSvg from '../../../assets/img/header-logo.svg';
 import { callGetJobReportPDF } from 'api/job.api';
 import {
   error as SnackBarError,
-  success,
+  success
 } from 'actions/snackbar/snackbar.action';
 import InfoIcon from '@material-ui/icons/Info';
 
+interface IJob {
+  tasks?: {
+    technician?: {
+      profile?: {
+        displayName: string;
+      };
+    };
+    jobTypes?: {
+      jobType?: {
+        title: string;
+      };
+      quantity: number;
+    }[];
+  }[];
+}
 const getJobs = (tasks:any = [], jobTypes:any) => {
   const ids: string[] = [];
   const titles: string[] = [];
   tasks.forEach((task:any) => task.jobTypes.forEach((type:any) => {
-    if (ids.indexOf(type.jobType) < 0) ids.push(type.jobType)
+    if (ids.indexOf(type.jobType) < 0) {
+      ids.push(type.jobType);
+    }
   }));
   return jobTypes.filter((jobType:any) => ids.includes(jobType._id));
 };
@@ -44,17 +60,17 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
 
   const { job, invoiceCreated, invoice } = jobReportData;
 
-  if(job && !job.ticket){
-    job.ticket = {}
+  if (job && !job.ticket) {
+    job.ticket = {};
   }
 
   useEffect(() => {
-    if(invoice) {
+    if (invoice) {
       getInvoiceDetailHandler(invoice._id).then((response:any) => {
         if (response.status === 1) {
           setInvoiceDetailResult(true);
         }
-      })
+      });
     }
   }, []);
 
@@ -62,7 +78,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     return null;
   }
 
-  const technicianNotes = job?.tasks?.length ?  job.tasks.filter((task: any) => task.comment).map((task: any) => {
+  const technicianNotes = job?.tasks?.length ? job.tasks.filter((task: any) => task.comment).map((task: any) => {
     return task.comment;
   }) : [];
   const technicianImages = job?.technicianImages?.length ? job.technicianImages : [];
@@ -72,30 +88,30 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     : [job.type];
 
   const listener = history.listen((loc, action) => {
-    if (action === 'POP'){
+    if (action === 'POP') {
       handleBackButtonClick();
       listener();
     }
   });
 
   const handleBackButtonClick = () => {
-    if(location?.state?.keyword || location?.state?.currentPageSize || location?.state?.dateFilterRange){
+    if (location?.state?.keyword || location?.state?.currentPageSize || location?.state?.dateFilterRange) {
       history.push({
-        'pathname': currentDivision.urlParams ?  `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`,
+        'pathname': currentDivision.urlParams ? `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`,
         'state': {
           'option': {
-            search: location?.state?.keyword || '',
-            pageIndex: location?.state?.currentPageIndex || 0,
-            pageSize: location?.state?.currentPageSize || 10,
-            dateFilterRange: location?.state?.dateFilterRange || null,
-          },
+            'search': location?.state?.keyword || '',
+            'pageIndex': location?.state?.currentPageIndex || 0,
+            'pageSize': location?.state?.currentPageSize || 10,
+            'dateFilterRange': location?.state?.dateFilterRange || null
+          }
         }
 
       });
     } else {
       history.goBack();
     }
-  }
+  };
 
   const goBack = () => {
     const prevKey: any = localStorage.getItem('prevNestedRouteKey');
@@ -112,123 +128,204 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       history.push({
         'pathname': `/main/customers/${job.customer._id}/job-equipment-info/reports`
       });
-    } else if(location?.state?.keyword || location?.state?.currentPageSize || location?.state?.dateFilterRange){
+    } else if (location?.state?.keyword || location?.state?.currentPageSize || location?.state?.dateFilterRange) {
       history.push({
-        'pathname': currentDivision.urlParams ?  `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`,
+        'pathname': currentDivision.urlParams ? `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`,
         'state': {
           'option': {
-            search: location?.state?.keyword || '',
-            pageSize: location?.state?.currentPageSize || 10,
-            pageIndex: location?.state?.pageIndex || 0,
-            dateFilterRange: location?.state?.dateFilterRange || null,
-          },
+            'search': location?.state?.keyword || '',
+            'pageSize': location?.state?.currentPageSize || 10,
+            'pageIndex': location?.state?.pageIndex || 0,
+            'dateFilterRange': location?.state?.dateFilterRange || null
+          }
         }
 
       });
     } else {
       history.push({
-        'pathname': currentDivision.urlParams ?  `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`
+        'pathname': currentDivision.urlParams ? `/main/customers/job-reports/${currentDivision.urlParams}` : `/main/customers/job-reports`
       });
     }
   };
 
   const generateInvoice = async () => {
-        const invoiceObj: {
+    const invoiceObj: {
           jobId: string;
           customerId: string;
           customerContactId?: string;
           customerPO?: string;
         } = {
           'jobId': job._id,
-          'customerId': job.customer._id,
+          'customerId': job.customer._id
         };
-    
-        if(job?.customerContactId?._id) {
-          invoiceObj.customerContactId = job.customerContactId._id;
-        }
-        if(job?.customerPO) {
-          invoiceObj.customerPO = job.customerPO;
-        }
-        generateInvoiceHandler(invoiceObj)
+    if (job?.customerContactId?._id) {
+      invoiceObj.customerContactId = job.customerContactId._id;
+    }
+    if (job?.customerPO) {
+      invoiceObj.customerPO = job.customerPO;
+    }
+    generateInvoiceHandler(invoiceObj);
   };
 
   const showInvoice = () => {
     history.push({
-      'pathname': `/main/customers/job-reports/view/${invoice._id}`,
+      'pathname': `/main/customers/job-reports/view/${invoice._id}`
     });
   };
 
   const downloadReport = async () => {
     const response : any = await callGetJobReportPDF(jobReportData._id);
-    if(response.status === 200) {
-      const blob = new Blob([response.data], { type: 'application/pdf' })
+    if (response.status === 200) {
+      const blob = new Blob([response.data], { 'type': 'application/pdf' });
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.download = `Report_${job.jobId}.pdf`;
       link.click();
-      dispatch(success("PDF generated. Check your downloads"));
+      dispatch(success('PDF generated. Check your downloads'));
+    } else {
+      dispatch(SnackBarError('Something went wrong during PDF generation'));
     }
-    else {
-      dispatch(SnackBarError("Something went wrong during PDF generation"));
-    }
-  }
+  };
 
   const LightTooltip = withStyles((theme: Theme) => ({
-    tooltip: {
-      backgroundColor: theme.palette.common.white,
-      color: 'rgba(0, 0, 0, 0.87)',
-      boxShadow: theme.shadows[1],
-      fontSize: "1rem",
-    },
+    'tooltip': {
+      'backgroundColor': theme.palette.common.white,
+      'color': 'rgba(0, 0, 0, 0.87)',
+      'boxShadow': theme.shadows[1],
+      'fontSize': '1rem'
+    }
   }))(Tooltip);
 
-  
   const getJobTypesQty = (job: any) => job.tasks.reduce((acc: number[], task: any) => {
+    const qtyMaps: { [p: string]: number } = {};
     task.jobTypes.forEach((type: any) => {
       if (type.jobType) {
-        acc.push(type.quantity || 1);
+        const qty = type.quantity || 1;
+        if (qtyMaps[type.jobType?._id]) {
+          qtyMaps[type.jobType?._id] += qty;
+        } else {
+          qtyMaps[type.jobType?._id] = qty;
+        }
       }
     });
+    acc.push(...Object.values(qtyMaps));
     return acc;
   }, []);
 
+  // Function uses the jobsite property to display the job address in job details
+  const getJobAddress = () => {
+    const addressComponents = [
+      job?.jobSite?.address?.street,
+      job?.jobSite?.address?.city,
+      job?.jobSite?.address?.state,
+      job?.jobSite?.address?.zipcode
+    ].filter(Boolean);
+    const formattedAddress = addressComponents.join(', ');
+    if (!formattedAddress.trim()) {
+      return 'N/A';
+    }
 
+    return formattedAddress;
+  };
+
+  const endTime = job?.scheduledEndTime ? `:${formatTime(job?.scheduledEndTime)}` : '';
+  const specificTime = `${formatTime(job?.scheduledStartTime)}${endTime}`;
+  let time = 'N/A';
+  switch (job?.scheduleTimeAMPM) {
+    case 0:
+      time = specificTime;
+      break;
+    case 1:
+      time = 'AM';
+      break;
+    case 2:
+      time = 'PM';
+      break;
+  }
+  // Using regular expression to divide the string of starting and ending time on the basis of AM/PM
+  const match = time.match(/(.*[APap][Mm]):(.*)/);
+
+  let startingTime = 'N/A';
+  let closingTime = 'N/A';
+
+  if (match) {
+    startingTime = match[1].trim();
+    closingTime = match[2].trim();
+  } else {
+    startingTime = time.trim();
+  }
+
+  // This function takes the job object and make an array to display technician name, jobType and quantity
+  const getJobQuantityWithTechnician = (jobs: IJob) => {
+    const technicianName: string[] = [];
+    const jobTitle: string[] = [];
+    const quantity: number[] = [];
+
+    jobs?.tasks?.forEach(task => {
+        task?.jobTypes?.forEach(jobType => {
+            const displayName = task?.technician?.profile?.displayName;
+            const title = jobType?.jobType?.title;
+            const jobQuantity = jobType?.quantity;
+
+            if (displayName !== undefined) {
+                technicianName.push(displayName);
+            }
+            if (title !== undefined) {
+                jobTitle.push(title);
+            }
+            if (jobQuantity !== undefined) {
+                quantity.push(jobQuantity);
+            }
+        });
+    });
+
+      return {
+        jobTitle,
+        quantity,
+        technicianName
+      };
+  };
+
+  const {
+    jobTitle,
+    quantity,
+    technicianName
+  } = getJobQuantityWithTechnician(job);
 
   const serviceTicketNotes = job.request?.requests?.filter((request: any) => request.note).map((request: any) => request.note).join('\n\n') || job.ticket?.note;
   return (
     <MainContainer>
       <PageContainer>
-        <div style={{ display: 'flex', alignItems: "flex-start"}}>
+        <div style={{ 'display': 'flex',
+          'alignItems': 'flex-start' }}>
           <IconButton
-            color="default"
-            size="small"
+            color={'default'}
+            size={'small'}
             className={classes.backButton}
-            onClick={handleBackButtonClick}
-          >
+            onClick={handleBackButtonClick}>
             <ArrowBackIcon/>
           </IconButton>
-        </div>  
+        </div>
         <Grid
           className={classes.btn}
           container
           item
           xs={12}>
-          {job.customer?.notes && (
+          {job.customer?.notes &&
             <LightTooltip title={job.customer?.notes}>
               <div className={classes.customerNoteContainer}>
                 <IconButton
-                  component="span"
+                  component={'span'}
                   color={'primary'}
-                  size="small"
-                >
+                  size={'small'}>
                   <InfoIcon></InfoIcon>
                 </IconButton>
                 <Typography variant={'subtitle1'} className={classes.customerNoteText}>
-                  Customer Notes
+                  {'Customer Notes'}
                 </Typography>
               </div>
             </LightTooltip>
-          )}
+          }
           <Button
             className={classes.cancelBtn}
             onClick={goBack}>
@@ -237,8 +334,8 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           <EmailReportButton
             Component={
               <CSButton
-                variant="contained"
-                color="primary">
+                variant={'contained'}
+                color={'primary'}>
                 {'Email Report'}
               </CSButton>
             }
@@ -247,22 +344,22 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           {
             invoiceCreated
               ? (invoice?.isDraft || invoiceDetailResult) && <CSButton
-                variant="contained"
+                variant={'contained'}
                 onClick={showInvoice}
-                color="primary">
-                {invoice?.isDraft ? 'View Draft' : (invoiceDetailResult ? 'View Invoice' : '')}
+                color={'primary'}>
+                {invoice?.isDraft ? 'View Draft' : invoiceDetailResult ? 'View Invoice' : ''}
               </CSButton>
               : <CSButton
-                variant="contained"
+                variant={'contained'}
                 onClick={generateInvoice}
-                color="primary">
+                color={'primary'}>
                 {'Generate Invoice'}
               </CSButton>
           }
           <CSButton
-            variant="contained"
+            variant={'contained'}
             onClick={downloadReport}
-            color="primary">
+            color={'primary'}>
             {'Download PDF'}
           </CSButton>
 
@@ -274,7 +371,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
             item
             xs={8}>
 
-            <DataContainer id="pdf">
+            <DataContainer id={'pdf'}>
               <Grid container>
                 {/* COMPANY INFO */}
                 <Grid container className={classes.headerBackground}>
@@ -301,7 +398,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                         {job.company.address.street || 'N/A' + ','}
                       </p>
                       <p className={classes.grayBoldTextM_0}>
-                        {(job.company.address.city || 'N/A') + ', ' + (job.company.address.state || 'N/A') + ', ' + (job.company.address.zipCode || 'N/A')}
+                        {`${job.company.address.city || 'N/A'}, ${job.company.address.state || 'N/A'}, ${job.company.address.zipCode || 'N/A'}`}
                       </p>
                       {job.company.contact?.phone && <p className={classes.grayBoldTextM_0}>
                         {job.company.contact.phone}
@@ -318,7 +415,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           {`Job Report - ${job.jobId}`}
                         </p>
                         <br />
-                        <p className={classes.attributeKey}>Job date</p>
+                        <p className={classes.attributeKey}>{'Job date'}</p>
                         <p className={classes.grayBoldTextM_0}>
                           {job.scheduleDate
                             ? formatDatTimell(job.scheduleDate)
@@ -363,7 +460,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                                 <br />
                               </>}
                               {job.customer?.address?.city && <>
-                                {job.customer?.address?.city + ', '}
+                                {`${job.customer?.address?.city}, `}
                               </>}
                               {job.customer?.address?.state && <>
                                 {job.customer?.address?.state}
@@ -428,7 +525,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                             {'Job Address'}
                           </p>
                           <p className={classes.grayBoldTextM_0}>
-                            {job.jobSite.name}
+                            {getJobAddress()}
                           </p>
                         </div>
                       </Grid>}
@@ -447,33 +544,22 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                       <Grid
                         item
                         xs={5}>
-                        <Grid container>
-                          {/* start & end time */}
-                          <Grid
-                            item
-                            xs={6}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Start time'}
-                              </p>
-                              <p className={classes.grayBoldTextM_0}>
-                                {formatDatTimelll(job.startTime) || 'N/A'}
-                              </p>
-                            </div>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={6}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'End time'}
-                              </p>
-                              <p className={classes.grayBoldTextM_0}>
-                                {formatDatTimelll(job.endTime) || 'N/A'}
-                              </p>
-                            </div>
-                          </Grid>
-                        </Grid>
+                        <div className={classes.addMargin}>
+                          <p className={classes.attributeKey}>
+                            {'Starting Time'}
+                          </p>
+                          <p className={classes.grayBoldTextM_0}>
+                            {startingTime}
+                          </p>
+
+                          <p className={classes.attributeKey}>
+                            {'Ending Time'}
+                          </p>
+                          <p className={classes.grayBoldTextM_0}>
+                            {closingTime}
+                          </p>
+                        </div>
+
                       </Grid>
                       { /* Customer contact info */}
                       {job.customerContactId && <Grid
@@ -524,52 +610,50 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                           </p>
                         </div>
                       </Grid>}
-                      <Grid
-                        item
-                        xs={12}>
-                        <Grid container>
-                          <Grid
-                            item
-                            xs={3}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Technician(s) Name(s)'}
-                              </p>
-                              {job.tasks.map((task: any, idx: number) => <>
-                                <span className={classes.grayBoldTextM_0} key={idx}>
-                                  {task.technician?.profile?.displayName || 'N/A'}
-                                </span>
-                                <br />
-                              </>
-                              )}
-                            </div>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={2}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Job Type(s)'}
-                              </p>
-                              <span className={classes.grayBoldTextM_0}>
-                                {getJobTypesFromJob(job).map((item: any) => { return <div>{item || 'N/A'}</div> })}
-                              </span>
-                            </div>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={2}>
-                            <div className={classes.addMargin}>
-                              <p className={classes.attributeKey}>
-                                {'Quantity'}
-                              </p>
-                              <span className={classes.grayBoldTextM_0}>
-                                {getJobTypesQty(job).map((item: any) => { return <div>{item || '1'}</div> })}
-                              </span>
-                            </div>
-                          </Grid>
-                        </Grid>
-                      </Grid>
+                      {<Grid container>
+                        {technicianName.length > 0 && <Grid
+                          item
+                          xs={3}>
+                          <div className={classes.addMargin}>
+                            <p className={classes.attributeKey}>
+                              {'TECHNICIAN(S) NAME(S)'}
+                            </p>
+                            {technicianName.map((technician: any, index: number) => (
+                                <p key={index} className={classes.grayBoldTextM_0}>
+                                  {technician}
+                                </p>
+                            ))}
+                          </div>
+                        </Grid>}
+                        {jobTitle.length > 0 && <Grid
+                          item
+                          xs={2}>
+                          <div className={classes.addMargin}>
+                            <p className={classes.attributeKey}>
+                              {'JOB TYPE(S)'}
+                            </p>
+                            {jobTitle.map((jobTitle: any, index: number) => (
+                                <p key={index} className={classes.grayBoldTextM_0}>
+                                  {jobTitle}
+                                </p>
+                            ))}
+                          </div>
+                        </Grid>}
+                        {quantity.length > 0 && <Grid
+                          item
+                          xs={3}>
+                          <div className={classes.addMargin}>
+                            <p className={classes.attributeKey}>
+                              {'QUANTITY'}
+                            </p>
+                            {quantity.map((quantity: any, index: number) => (
+                                <p key={index} className={classes.grayBoldTextM_0}>
+                                  {quantity}
+                                </p>
+                            ))}
+                          </div>
+                        </Grid>}
+                      </Grid>}
                     </Grid>
                     <hr className={classes.separator} />
                     {job.isHomeOccupied && <Grid container>
@@ -624,7 +708,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                     </Grid>}
                     <Grid container>
                       {/* Notes section */}
-                      <Grid item xs={!!technicianImages.length ? 6 : 12}>
+                      <Grid item xs={technicianImages.length ? 6 : 12}>
                         <Grid container>
                           <Grid
                             item
@@ -633,7 +717,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                               {'Notes'}
                             </p>
                           </Grid>
-                          {serviceTicketNotes &&<Grid item xs={12}>
+                          {serviceTicketNotes && <Grid item xs={12}>
                             <div className={classes.addMargin}>
                               <p className={classes.notesSubtitle}>
                                 {'Service Ticket Note'}
@@ -655,7 +739,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                               </p>
                             </div>
                           </Grid>}
-                          {technicianNotes.length > 0 &&<Grid
+                          {technicianNotes.length > 0 && <Grid
                             item
                             xs={12}>
                             <div className={classes.addMargin}>
@@ -663,8 +747,8 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                                 {'Technician\'s Comments'}
                               </p>
                               {
-                                  technicianNotes.map((note: string, index: number) =>
-                                    <p key={index} className={classNames(classes.noMargin, classes.noMarginBottom, classes.grayNormalText)}>{note}</p>)
+                                technicianNotes.map((note: string, index: number) =>
+                                  <p key={index} className={classNames(classes.noMargin, classes.noMarginBottom, classes.grayNormalText)}>{note}</p>)
                               }
                             </div>
                           </Grid>}
@@ -673,7 +757,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                       {/* Technician photos */}
                       <Grid item xs={6}>
                         <Grid container>
-                          {!!technicianImages.length && (
+                          {Boolean(technicianImages.length) &&
                             <Grid
                               item
                               xs={12}>
@@ -683,7 +767,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                                 </p>
                                 <BCDragAndDrop images={technicianImages.map((image: { imageUrl: string }) => image.imageUrl)} readonly={true} />
                               </div>
-                            </Grid>)}
+                            </Grid>}
                         </Grid>
                       </Grid>
                     </Grid>
@@ -700,7 +784,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                   </p>
                 </Grid>
               </Grid>
-            </DataContainer>  
+            </DataContainer>
           </Grid>
           <Grid container item xs={2}></Grid>
         </Grid>
@@ -717,8 +801,8 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           <EmailReportButton
             Component={
               <CSButton
-                variant="contained"
-                color="primary">
+                variant={'contained'}
+                color={'primary'}>
                 {'Email Report'}
               </CSButton>
             }
@@ -727,22 +811,22 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           {
             invoiceCreated
               ? (invoice?.isDraft || invoiceDetailResult) && <CSButton
-                variant="contained"
+                variant={'contained'}
                 onClick={showInvoice}
-                color="primary">
-                {invoice?.isDraft ? 'View Draft' : (invoiceDetailResult ? 'View Invoice' : '')}
+                color={'primary'}>
+                {invoice?.isDraft ? 'View Draft' : invoiceDetailResult ? 'View Invoice' : ''}
               </CSButton>
               : <CSButton
-                variant="contained"
+                variant={'contained'}
                 onClick={generateInvoice}
-                color="primary">
+                color={'primary'}>
                 {'Generate Invoice'}
               </CSButton>
           }
           <CSButton
-            variant="contained"
+            variant={'contained'}
             onClick={downloadReport}
-            color="primary">
+            color={'primary'}>
             {'Download PDF'}
           </CSButton>
 
