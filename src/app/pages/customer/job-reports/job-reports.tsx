@@ -10,11 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import EmailReportButton from './email-job-report';
 import { MailOutlineOutlined } from '@material-ui/icons';
-import {CSButtonSmall, CSChip, useCustomStyles} from "../../../../helpers/custom";
+import { CSButtonSmall, CSChip, useCustomStyles } from "../../../../helpers/custom";
 import moment from "moment";
-import BCDateRangePicker, {Range}
-  from "../../../components/bc-date-range-picker/bc-date-range-picker";
-import {getAllJobReportsAPI} from 'api/job-report.api'
+import BCDateRangePicker, { Range } from "../../../components/bc-date-range-picker/bc-date-range-picker";
+import { getAllJobReportsAPI } from 'api/job-report.api'
 import {
   setCurrentPageIndex,
   setCurrentPageSize,
@@ -89,9 +88,9 @@ function JobReportsPage({ classes, theme }: any) {
     {
       'Header': 'Technician',
       'accessor': (originalRow: any) => {
-        return originalRow?.contractorsObj?.length === 1 ? 
-          originalRow?.contractorsObj[0]?.info?.displayName || originalRow?.contractorsObj[0]?.info?.companyName : 
-          originalRow?.contractorsObj?.length > 1 ? 
+        return originalRow?.contractorsObj?.length === 1 ?
+          originalRow?.contractorsObj[0]?.info?.displayName || originalRow?.contractorsObj[0]?.info?.companyName :
+          originalRow?.contractorsObj?.length > 1 ?
             'Multiple Techs' :
             'N/A';
       },
@@ -178,7 +177,7 @@ function JobReportsPage({ classes, theme }: any) {
 
     if (!currentDivision.isDivisionFeatureActivated || (currentDivision.isDivisionFeatureActivated && ((currentDivision.params?.workType || currentDivision.params?.companyLocation) || currentDivision.data?.name == "All"))) {
       // dispatch(loadJobReportsActions.fetch());
-      dispatch(getAllJobReportsAPI(undefined,undefined,undefined,undefined,currentDivision.params));
+      dispatch(getAllJobReportsAPI(currentPageSize, currentPageIndex, undefined, undefined, currentDivision.params));
       return () => {
         dispatch(setKeyword(''));
         dispatch(setDateFilterRange(null));
@@ -284,7 +283,7 @@ function JobReportsPage({ classes, theme }: any) {
                 // }
                 total={total}
                 currentPageIndex={currentPageIndex}
-                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) => 
+                setCurrentPageIndexFunction={(num: number, apiCall: Boolean) =>
                   {
                     dispatch(setCurrentPageIndex(num));
                     if(apiCall)
@@ -293,7 +292,7 @@ function JobReportsPage({ classes, theme }: any) {
                 currentPageSize={currentPageSize}
                 setCurrentPageSizeFunction={(num: number) => {
                   dispatch(setCurrentPageSize(num));
-                  dispatch(getAllJobReportsAPI(num || currentPageSize, currentPageIndex, keyword, dateFilterRange, currentDivision.params))
+                  dispatch(getAllJobReportsAPI(num || currentPageSize, 0, keyword, dateFilterRange, currentDivision.params))
                 }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));

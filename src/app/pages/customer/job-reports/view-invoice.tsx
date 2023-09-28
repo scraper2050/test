@@ -4,20 +4,24 @@ import { Button, createStyles, withStyles, Grid, Paper, Badge, Tooltip, Typograp
 import styles from "../customer.styles";
 import BCInvoice from "../../../components/bc-invoice/bc-invoice";
 import IconButton from '@material-ui/core/IconButton';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import styled from "styled-components";
 import * as CONSTANTS from "../../../../constants";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PrintIcon from '@material-ui/icons/GetApp';
 import EmailIcon from '@material-ui/icons/Email';
+import AttachMoney from '@material-ui/icons/AttachMoney';
+
 import classNames from "classnames";
-import {useHistory, useLocation, useParams} from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { loadInvoiceDetail } from "../../../../actions/invoicing/invoicing.action";
+import { loadInvoiceLogs } from "../../../../actions/invoicing/logs/logs.action";
 import { getCompanyProfileAction } from "../../../../actions/user/user.action";
 import BCCircularLoader from "../../../components/bc-circular-loader/bc-circular-loader";
-import {CSChip} from "../../../../helpers/custom";
+import { CSChip } from "../../../../helpers/custom";
 import { generateInvoicePdfAPI, updateInvoice } from "../../../../api/invoicing.api";
-import {error} from "../../../../actions/snackbar/snackbar.action";
+import { error } from "../../../../actions/snackbar/snackbar.action";
 import EmailInvoiceButton from "../../invoicing/invoices-list/email.invoice";
 import { modalTypes } from "../../../../constants";
 import { setModalDataAction, openModalAction } from "actions/bc-modal/bc-modal.action";
@@ -39,8 +43,12 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     invoiceTop: {
       backgroundColor: CONSTANTS.PRIMARY_GRAY,
     },
+    invoiceCreatedBy: {
+      fontFamily: "Roboto",
+      fontSize: "18px"
+    },
     bgDark: {
-      backgroundColor: '#D0D3DC',
+      backgroundColor: '#fff',
     },
     extendedIcon: {
       marginRight: theme.spacing(1),
@@ -58,6 +66,21 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     buttonLabel: {
       textWrap: 'nowrap'
     },
+    textUnderlined: {
+      cursor: "pointer",
+      textDecoration: "underline",
+      "&:hover": {
+        color: "#00aaff"
+      }
+    },
+    tooltip: {
+      minWidth: 175,
+      // backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      // border: '1px solid #dadde9',
+    },
     customerNoteContainer: {
       display: "flex",
       alignItems: "center",
@@ -71,33 +94,76 @@ const invoicePageStyles = makeStyles((theme: Theme) =>
     }
   }),
 );
-
+const customTooltipStyle = makeStyles((theme: Theme) => ({
+  customTooltip: {
+    backgroundColor: 'white', // Set tooltip background color to white
+    color: '#000', // Set tooltip text color to black
+    fontSize: '14px',
+    border: '1px solid white', // Set tooltip border color to white
+    borderRadius: '4px', // Add border radius to the tooltip
+    padding: theme.spacing(1), // Add padding to the tooltip content
+  },
+}));
 function ViewInvoice({ classes, theme }: any) {
   const dispatch = useDispatch();
   const invoiceStyles = invoicePageStyles();
+  const TooltipStyle = customTooltipStyle();
   let history = useHistory();
   const location = useLocation<any>();
   let { invoice } = useParams<any>();
   const { user } = useSelector(({ auth }: any) => auth);
-  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }:any) => invoiceDetail);
+  const { 'data': invoiceDetail, 'loading': loadingInvoiceDetail, 'error': invoiceDetailError } = useSelector(({ invoiceDetail }: any) => invoiceDetail);
+  const { 'logs': invoiceLogs, 'loading': loadingInvoiceLogs, 'error': invoiceLogsError } = useSelector(({ invoiceLogs }: any) => invoiceLogs);
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
   const [showJobCosting, setShowJobCosting] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [invoiceLogsData, setInvoiceLogsData] = useState(null);
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
   useEffect(() => {
     if (invoice) {
       dispatch(loadInvoiceDetail.fetch(invoice));
+      dispatch(loadInvoiceLogs.fetch(invoice));
+
     }
 
     if (user) {
       dispatch(getCompanyProfileAction(user.company as string));
     }
   }, []);
+  useEffect(() => {
+    if (invoiceDetail?._id && invoiceLogs!=null) {
+      let logs = invoiceLogs;
+      if (logs.filter((logItem: any) => logItem.type == "INVOICE_CREATED" || logItem.type == "INVOICE_DUPLICATE").length==0) {
+        logs.push({
+          "_id": "64d165ba67441a506b9b0e94-invoice",
+          "invoiceId": invoiceDetail.invoiceId,
+          "invoice": invoiceDetail._id,
+          "type": "CREATED",
+          "info":"Invoice created",
+          "customer": invoiceDetail.customer,
+          "companyLocation": invoiceDetail.companyLocation,
+          "workType": invoiceDetail.workType,
+          "company": invoiceDetail.company,
+          "createdBy": invoiceDetail.createdBy,
+          "createdAt": invoiceDetail.createdAt,
+          "updatedAt": invoiceDetail.updatedAt,
+          "__v": 0
+        })
+      }
+
+      setInvoiceLogsData(logs);
+
+
+    }
+    // console.log("my logs",logs);
+  }, [invoiceLogs, invoiceDetail])
 
   useEffect(() => {
+
     if (invoiceDetail && invoiceDetail.job) {
       const vendorWithCommisionTier = invoiceDetail.job?.tasks?.filter((res: any) => res.contractor?.commissionTier);
       setShowJobCosting(vendorWithCommisionTier.length > 0);
-    }else{
+    } else {
       setShowJobCosting(false);
     }
   }, [invoiceDetail]);
@@ -107,7 +173,7 @@ function ViewInvoice({ classes, theme }: any) {
   }
 
   const goToEdit = () => {
-    if(invoiceDetail?.paid && invoiceDetail?.status === 'PAID') {
+    if (invoiceDetail?.paid && invoiceDetail?.status === 'PAID') {
       dispatch(
         setModalDataAction({
           'data': {
@@ -162,7 +228,7 @@ function ViewInvoice({ classes, theme }: any) {
       dispatch(openModalAction());
     }, 200);
 
-    const params ={
+    const params = {
       invoiceId: invoiceDetail._id,
       isDraft: false,
       charges: 0,
@@ -171,7 +237,7 @@ function ViewInvoice({ classes, theme }: any) {
 
     updateInvoice(params).then((response: any) => {
       if (response.status === 1) {
-        const {status, quickbookInvoice} = response;
+        const { status, quickbookInvoice } = response;
         dispatch(setModalDataAction({
           data: {
             modalTitle: 'Status',
@@ -201,7 +267,7 @@ function ViewInvoice({ classes, theme }: any) {
   // });
 
   const handleBackButtonClick = () => {
-    if (location?.state?.keyword || location?.state?.currentPageSize  || location?.state?.currentPageIndex
+    if (location?.state?.keyword || location?.state?.currentPageSize || location?.state?.currentPageIndex
       || location?.state?.lastNextCursor || location?.state?.lastPrevCursor || location?.state?.selectionRange
     ) {
       history.replace({
@@ -209,7 +275,7 @@ function ViewInvoice({ classes, theme }: any) {
         'state': {
           'option': {
             search: location?.state?.keyword || '',
-            pageSize: location?.state?.currentPageSize || 10,
+            pageSize: location?.state?.currentPageSize || 15,
             pageSizeIndex: location?.state?.currentPageIndex || 0,
             currentPageIndex: location?.state?.currentPageIndex || 0,
             lastNextCursor: location?.state?.lastNextCursor,
@@ -237,9 +303,9 @@ function ViewInvoice({ classes, theme }: any) {
       });
     }*/
 
-  const generatePDF = async() => {
+  const generatePDF = async () => {
     generateInvoicePdfAPI(invoiceDetail.customer?._id, invoice).then((response: any) => {
-      const {status, message, invoiceUrl} = response;
+      const { status, message, invoiceUrl } = response;
       if (status === 1) {
         window.open(invoiceUrl)
       } else {
@@ -286,6 +352,18 @@ function ViewInvoice({ classes, theme }: any) {
   };
 
 
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: '#ffffff',
+      padding: "10px 25px",
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: '1px solid #dadde9',
+    },
+  }))(Tooltip);
+
+
   const handleTicketClick = () => {
     dispatch(setModalDataAction({
       data: {
@@ -301,7 +379,38 @@ function ViewInvoice({ classes, theme }: any) {
       dispatch(openModalAction());
     }, 200);
   }
+  const handleViewHistoryClick = () => {
 
+    setIsInfoDialogOpen(false);
+    setOpen((prev) => !prev);
+
+    dispatch(setModalDataAction({
+      data: {
+        removeFooter: false,
+        maxHeight: '100%',
+        modalTitle: `History: ${invoiceDetail?.companyLocation?.name}/${invoiceDetail?.workType?.title} - ${invoiceDetail?.invoiceId}  `,
+        invoiceLogs: invoiceLogsData,
+        isEditing: false
+      },
+      type: modalTypes.VIEW_HISTORY_POPUP_MODAL
+    }));
+    setTimeout(() => {
+      dispatch(openModalAction());
+    }, 200)
+  };
+
+
+
+  const handleTooltipClose = () => {
+
+    setOpen((prev) => !prev);
+
+  };
+
+  const handleTooltipOpen = () => {
+    setOpen((prev) => !prev);
+
+  };
   const LightTooltip = withStyles((theme: Theme) => ({
     tooltip: {
       backgroundColor: theme.palette.common.white,
@@ -319,22 +428,11 @@ function ViewInvoice({ classes, theme }: any) {
             <IconButton
               color="default"
               size="small"
-              className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+              className={classNames(invoiceStyles.bgDark)}
               onClick={handleBackButtonClick}
             >
-              <ArrowBackIcon/>
+              <ArrowBackIcon />
             </IconButton>
-            {showJobCosting && 
-              <div>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={openEditJobCostingModal}
-                  classes={{ root: invoiceStyles.costingButton, label: invoiceStyles.buttonLabel }}
-                >Job Costing
-                </Button>
-              </div>
-            }
             {invoiceDetail?.isDraft ? (
               <CSChip
                 label={'Draft'}
@@ -353,7 +451,9 @@ function ViewInvoice({ classes, theme }: any) {
             )}
           </div>
           <div style={{ display: 'flex' }}>
-            {invoiceDetail.job?.customer?.notes && (
+            {
+            invoiceDetail.job?.customer?.notes && 
+            (
               <LightTooltip title={invoiceDetail.job?.customer?.notes}>
                 <div className={invoiceStyles.customerNoteContainer}>
                   <IconButton
@@ -368,7 +468,75 @@ function ViewInvoice({ classes, theme }: any) {
                   </Typography>
                 </div>
               </LightTooltip>
-            )}
+            )
+          }
+            <HtmlTooltip
+
+              PopperProps={{
+                disablePortal: true,
+              }}
+              onClick={handleTooltipClose}
+              open={open}
+              disableFocusListener
+              disableHoverListener
+              disableTouchListener
+              interactive={true}
+              arrow
+              title={
+                <React.Fragment>
+                  <Typography color="inherit">
+                    <IconButton
+                      color="default"
+                      size="medium"
+                      style={{ padding: "5px 0px" }}
+                      className={classNames(invoiceStyles.bgDark, invoiceStyles.white)}
+                    >
+                      <InfoOutlinedIcon style={{ color: 'grey', fontSize: '25px', }} />
+                    </IconButton><b> Created By</b>
+                  </Typography>
+                  <Typography color="inherit" className={invoiceStyles.invoiceCreatedBy}>
+                    {invoiceDetail?.createdBy?.profile?.displayName}
+                  </Typography>
+
+                  <div>
+                    <Typography color="inherit">
+                      {invoiceDetail?.companyLocation?.name}
+                    </Typography>
+
+                    <Typography color="inherit">
+                      {invoiceDetail?.workType?.title}
+                    </Typography>
+
+                  </div>
+                  <Typography>
+                    {HtmlTooltip && <Typography
+
+                      className={invoiceStyles.textUnderlined}
+                      onClick={handleViewHistoryClick}
+
+                    >
+                      View History
+                    </Typography>
+                    }
+                  </Typography>
+                </React.Fragment>
+              }
+            >
+              <Button onClick={handleTooltipOpen} style={{ minWidth: "40px", width: "40px" }} >
+                <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', minWidth: "40px", width: "40px" }} />
+              </Button>
+            </HtmlTooltip>
+          
+            {showJobCosting &&
+              <Button
+                variant="outlined"
+                color="default"
+                className={invoiceStyles.margin}
+                onClick={openEditJobCostingModal}
+                startIcon={<AttachMoney />}
+              >Job Costing
+              </Button>
+            }
             {invoiceDetail && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
@@ -376,7 +544,7 @@ function ViewInvoice({ classes, theme }: any) {
                     badgeContent={1}
                     color="secondary"
                     overlap="rectangle"
-                    anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                   >
                     <Button
                       variant="contained"
@@ -405,7 +573,7 @@ function ViewInvoice({ classes, theme }: any) {
                 variant="outlined"
                 color="default"
                 className={invoiceStyles.margin}
-                startIcon={<EmailIcon/>}
+                startIcon={<EmailIcon />}
               >
                 Email
               </Button>}
@@ -415,11 +583,11 @@ function ViewInvoice({ classes, theme }: any) {
             }
             {
               invoiceDetail && <Button
-              variant="outlined"
-              color="default"
-              className={invoiceStyles.margin}
-              onClick={generatePDF}
-              startIcon={<PrintIcon/>}
+                variant="outlined"
+                color="default"
+                className={invoiceStyles.margin}
+                onClick={generatePDF}
+                startIcon={<PrintIcon />}
               >Export
               </Button>
             }
@@ -435,19 +603,19 @@ function ViewInvoice({ classes, theme }: any) {
               </Button>
             }
             {invoiceDetail?.isDraft &&
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={invoiceDetail.paid}
-              className={classNames(invoiceStyles.margin, invoiceStyles.white)}
-              onClick={saveInvoice}
-            >
-              Save as Invoice
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={invoiceDetail.paid}
+                className={classNames(invoiceStyles.margin, invoiceStyles.white)}
+                onClick={saveInvoice}
+              >
+                Save as Invoice
+              </Button>
             }
           </div>
         </PageHeader>
-        { invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail}/> }
+        {invoiceDetail && <BCInvoice invoiceDetail={invoiceDetail} />}
       </PageContainer>
     </MainContainer>
   )

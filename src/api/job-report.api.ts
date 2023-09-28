@@ -1,7 +1,7 @@
 import moment from 'moment';
 import axios from 'axios';
 import request, { requestApiV2 } from 'utils/http.service';
-import { 
+import {
   setJobReportLoading,
   setJobReport,
   setPreviousJobReportsCursor,
@@ -11,7 +11,7 @@ import {
 import { DivisionParams } from 'app/models/division';
 
 let cancelTokenGetAllJobReportsAPI:any;
-export const getAllJobReportsAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: DivisionParams) => {
+export const getAllJobReportsAPI = (pageSize = 15, currentPageIndex = 0, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobReportLoading(true));
@@ -32,7 +32,7 @@ export const getAllJobReportsAPI = (pageSize = 10, currentPageIndex = 0, keyword
           dispatch(setJobReportLoading(true));
         }, 0);
       }
-      
+
       cancelTokenGetAllJobReportsAPI = axios.CancelToken.source();
       requestApiV2(`/getAllJobReports`, 'OPTIONS', optionObj, cancelTokenGetAllJobReportsAPI, division)
         .then((res: any) => {
@@ -51,9 +51,9 @@ export const getAllJobReportsAPI = (pageSize = 10, currentPageIndex = 0, keyword
               const currenttechnician = tempJob.technicianObj?.filter((item: any) => item._id == tempTask.technician)[0];
               const currentcontractor = tempJob.contractorsObj?.filter((item: any) => item._id == tempTask.contractor)[0];
               return {
-                ...tempTask, 
+                ...tempTask,
                 technician : currenttechnician,
-                contractor : currentcontractor,     
+                contractor : currentcontractor,
                 jobTypes: tempJobTypes,
               }
             })
@@ -61,12 +61,12 @@ export const getAllJobReportsAPI = (pageSize = 10, currentPageIndex = 0, keyword
             return {
               ...tempReport,
               invoice : tempReport.invoiceObj[0],
-              company : tempReport.companyObj[0],    
+              company : tempReport.companyObj[0],
               job : {
                 ...tempJob,
                 customer: tempReport.customerObj[0],
                 jobLocation: tempReport.jobLocationObj[0],
-                jobSite : tempReport.jobSiteObj[0],        
+                jobSite : tempReport.jobSiteObj[0],
                 tasks: tempTasks
               }
             }
@@ -107,22 +107,22 @@ export const getJobReports = async (data: any) => {
         const currenttechnician = tempJob.technicianObj?.filter((item: any) => item._id == tempTask.technician)[0];
         const currentcontractor = tempJob.contractorsObj?.filter((item: any) => item._id == tempTask.contractor)[0];
         return {
-          ...tempTask, 
+          ...tempTask,
           technician : currenttechnician,
-          contractor : currentcontractor,     
-          jobTypes: tempJobTypes,         
+          contractor : currentcontractor,
+          jobTypes: tempJobTypes,
         }
       })
 
       return {
         ...tempReport,
         invoice : tempReport.invoiceObj[0],
-        company : tempReport.companyObj[0],    
+        company : tempReport.companyObj[0],
         job : {
           ...tempJob,
           customer: tempReport.customerObj[0],
           jobLocation: tempReport.jobLocationObj[0],
-          jobSite : tempReport.jobSiteObj[0],        
+          jobSite : tempReport.jobSiteObj[0],
           tasks: tempTasks
         }
       }
@@ -141,7 +141,7 @@ export const getJobReports = async (data: any) => {
 
 export const emailJobReport = async (data: any) => {
   try {
-    const response: any = await request(`/sendJobReportEmail`, 'POST', { 'jobReportId': data.id }, false);
+    const response: any = await request(`/sendJobReportEmail`, 'POST', data, false);
     return response.data;
   } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {
@@ -153,6 +153,21 @@ export const emailJobReport = async (data: any) => {
     }
   }
 };
+
+export const getJobReportEmailTemplate = async (id: string) => {
+  try {
+    const response: any = await request(`/getJobReportEmailTemplate?jobReportId=${id}`, 'GET', false);
+    return response.data;
+  } catch (err) {
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(err.data.errors ||
+          err.data.message ||
+          `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+}
 
 export const getJobReportDetail = async (data: any) => {
   try {

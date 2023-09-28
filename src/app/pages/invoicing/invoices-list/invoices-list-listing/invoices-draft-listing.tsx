@@ -78,7 +78,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
   ];
 
   useEffect(() => {
-    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined,currentDivision.params));
+    dispatch(getAllDraftInvoicesAPI(undefined, undefined, undefined, undefined, currentDivision.params));
     return () => {
       dispatch(setDraftKeyword(''));
       dispatch(setCurrentDraftPageSize(currentPageSize));
@@ -106,7 +106,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         tab: 2,
         currentPageIndex,
         lastNextCursor,
-        lastPrevCursor, 
+        lastPrevCursor,
       }
     });
   };
@@ -154,7 +154,7 @@ function InvoicingDraftListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => {
           dispatch(setCurrentDraftPageSize(num))
-          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, undefined,currentDivision.params))
+          dispatch(getAllDraftInvoicesAPI(num || currentPageSize, 0, keyword, undefined,currentDivision.params))
         }}
         setKeywordFunction={(query: string) => {
           desbouncedSearchFunction(query);

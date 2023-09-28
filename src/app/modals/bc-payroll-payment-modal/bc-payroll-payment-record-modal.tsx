@@ -124,7 +124,6 @@ function BcPayrollPaymentRecordModal({
         } else {
           if (payroll.invoiceIds) params.invoiceIds = `["${payroll.invoiceIds.join('","')}"]`;
           if (payroll.jobIds) params.jobIds = `["${payroll.jobIds.join('","')}"]`;
-          console.log(payroll)
           const response = await recordPaymentContractorAPI(params);
           if (response.status === 1) {
             setSent(true);

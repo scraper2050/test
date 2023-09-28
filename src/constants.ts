@@ -105,10 +105,12 @@ export const modalTypes = {
   'CONTRACT_VIEW_MODAL': 'contract-view-modal',
   'SHARED_FORM_MODAL': 'shared-form-modal',
   'EDIT_ITEM_MODAL': 'edit-item-modal',
+  'VIEW_ITEM_MODAL': 'view-item-modal',
   'ADD_ITEM_MODAL': 'add-item-modal',
   'EDIT_DISCOUNT_MODAL': 'edit-discount-modal',
   'ADD_DISCOUNT_MODAL': 'add-discount-modal',
   'SALES_TAX_MODAL': 'sales-tax-modal',
+  'ADD_AND_EDIT_SALES_TAX_MODAL': 'add-and-edit-sales-tax-modal',
   'EDIT_INVOICE_NUMBER_MODAL': 'edit-invoice-number-modal',
   'PAYMENT_TERMS_MODAL': 'payment-terms-modal',
   'UPDATE_PAYMENT_TERMS_MODAL': 'update-payment-terms-modal',
@@ -146,6 +148,9 @@ export const modalTypes = {
   'EMAIL_PO_REQUEST_MODAL': 'email-po-request-modal',
   'PO_REQUEST_WARNING_MODAL': 'po-request-warning-modal',
   'TICKET_DETAILS_MODAL': 'ticket-details-modal',
+  'VIEW_HISTORY_POPUP_MODAL':'view-history-modal',
+  'WARNING_MODAL_V2': 'po-warning-modal-v2',
+  'EDIT_COMPLETED_JOB': 'edit-completed-job',
 };
 
 export const rejectionReason = [

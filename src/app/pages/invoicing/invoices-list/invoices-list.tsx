@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BCMenuToolbarButton from 'app/components/bc-menu-toolbar-button';
 import { info, warning } from 'actions/snackbar/snackbar.action';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { closeModalAction, openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../constants'
 import { getCustomers } from 'actions/customer/customer.action'
 import { Sync as SyncIcon, InsertDriveFile } from '@material-ui/icons';
@@ -22,6 +22,7 @@ import { Can, ability } from 'app/config/Can';
 import BCMenuButton from 'app/components/bc-menu-more';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { exportInvoicesToExcel } from 'api/invoicing.api';
+import { initialAdvanceFilterInvoiceState } from 'reducers/advance-filter.reducer';
 
 function InvoiceList({ classes }: any) {
   const dispatch = useDispatch();
@@ -119,33 +120,54 @@ function InvoiceList({ classes }: any) {
   }
 
   const INITIAL_ITEMS = [
-    { id: 0, title: 'Export Current' },
-    { id: 1, title: 'Export All' },
+    { id: 1, title: 'Export' },
   ]
 
   const handleMenuButtonClick = (event: any, id: number) => {
     event.stopPropagation();
-    setExportLoading(true);
+    const action = () => {
+      setExportLoading(true);
+      exportInvoicesToExcel(total, currentPageIndex, keyword, advanceFilterInvoiceData, currentDivision.params, false).then(({ data, fileName }: { data: Blob, fileName: string }) => {
+        const h = 0;
+        const href = window.URL.createObjectURL(data);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = href;
+        anchorElement.download = fileName;
 
-    const allData = id ? true : false;
-    exportInvoicesToExcel(currentPageSize, currentPageIndex, keyword, advanceFilterInvoiceData, currentDivision.params, allData).then(({ data, fileName }: { data: Blob, fileName: string }) => {
-      const h = 0;
-      const href = window.URL.createObjectURL(data);
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
 
-      const anchorElement = document.createElement('a');
+        document.body.removeChild(anchorElement);
+        window.URL.revokeObjectURL(href);
+        setExportLoading(false);
+      }).catch((error: any) => {
+        setExportLoading(false);
+      });
 
-      anchorElement.href = href;
-      anchorElement.download = fileName;
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
+    }
 
-      document.body.appendChild(anchorElement);
-      anchorElement.click();
-
-      document.body.removeChild(anchorElement);
-      window.URL.revokeObjectURL(href);
-      setExportLoading(false);
-    }).catch((error: any) => {
-      setExportLoading(false);
-    });
+    const content = JSON.stringify(initialAdvanceFilterInvoiceState) !== JSON.stringify(advanceFilterInvoiceData)
+    if (!keyword && !content) {
+      dispatch(setModalDataAction({
+        'data': {
+          'message': 'Are you sure you want to export all invoices?',
+          'action': action,
+        },
+        'type': modalTypes.WARNING_MODAL_V2
+      }));
+      setTimeout(() => {
+        dispatch(openModalAction());
+      }, 200);
+    } else {
+      action();
+    }
   }
 
 

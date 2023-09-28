@@ -86,6 +86,8 @@ import { DivisionReducer as divisions } from './division.reducer';
 import { FilterDivisionReducer as currentDivision } from "./filter-division.reducer";
 import homeOwner from './home-owner.reducer';
 import permissions from './permissions.reducer';
+import { InvoiceLogsState, InvoiceLogsReducer as invoiceLogs } from './logs.reducer';
+import { QBAccountsState, QBAccountsReducer as accounts } from './qbAccounts.reducer';
 
 export interface ReducerParamsInterface {
   payload: any;
@@ -101,6 +103,8 @@ export interface RootState {
   serviceTicket: any;
   PORequest: any;
   invoiceItems: InvoiceItemsState;
+  invoiceLog: InvoiceLogsState;
+  accounts: QBAccountsState;
   email: EmailState;
   quickbooks: QuickbooksState;
   map: mapState;
@@ -130,6 +134,8 @@ const appReducer = combineReducers({
   groups,
   image,
   inventory,
+  invoiceLogs,
+  accounts,
   invoiceDetail,
   invoiceItems,
   invoiceItemsTiers,

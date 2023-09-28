@@ -24,7 +24,9 @@ import BCItemsFilter from "../../components/bc-items-filter/bc-items-filter";
 import { getPayrollBalance, refreshContractorPayment } from "../../../actions/payroll/payroll.action";
 import { Contractor } from "../../../actions/payroll/payroll.types";
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
-import { warning } from 'actions/snackbar/snackbar.action';
+import { error, warning } from 'actions/snackbar/snackbar.action';
+import { exportVendorJobs } from 'api/payroll.api';
+import moment from 'moment';
 
 interface Props {
   classes: any;
@@ -33,6 +35,8 @@ interface Props {
 const ITEMS = [
   { id: 0, title: 'Record Payment' },
   { id: 1, title: 'Past Payment' },
+  { id: 2, title: 'Export Jobs' },
+
   // {id: 2, title:'View Details'},
 ]
 
@@ -48,7 +52,7 @@ function Payroll({ classes }: Props) {
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState({
     'page': prevPage ? prevPage.page : 0,
-    'pageSize': prevPage ? prevPage.pageSize : 10,
+    'pageSize': prevPage ? prevPage.pageSize : 15,
     'sortBy': prevPage ? prevPage.sortBy : []
   });
   const [selectionRange, setSelectionRange] = useState<Range | null>(null);
@@ -104,6 +108,39 @@ function Payroll({ classes }: Props) {
           }
         });
         break;
+      case 2:
+        const companyLocation = currentDivision.params?.companyLocation ? `&companyLocation=${currentDivision.params?.companyLocation}` : '';
+        const workType = currentDivision.params?.workType ? `&workType=${currentDivision.params?.workType}` : '';
+        let rangeQuery = '';
+        if (selectionRange) {
+          rangeQuery = `&startDate=${formatDateYMD(selectionRange.startDate)}&endDate=${formatDateYMD(selectionRange.endDate)}`
+        }else {
+          const now = new Date();
+          const startDate = moment().subtract(90, 'd').format();
+          rangeQuery = `&startDate=${formatDateYMD(startDate)}&endDate=${formatDateYMD(now)}`;
+        }
+        
+        const query = `?id=${row._id}${rangeQuery}${companyLocation}${workType}`;
+        exportVendorJobs(query).then(({ data, fileName }: { data: Blob, fileName: string }) => {
+          if (fileName == '') {
+            dispatch(warning('No payement found'));
+            return;
+          }
+          const href = window.URL.createObjectURL(data);
+
+          const anchorElement = document.createElement('a');
+
+          anchorElement.href = href;
+          anchorElement.download = fileName;
+
+          document.body.appendChild(anchorElement);
+          anchorElement.click();
+
+          document.body.removeChild(anchorElement);
+          window.URL.revokeObjectURL(href);
+        })
+        break;
+     
     }
   }
 
