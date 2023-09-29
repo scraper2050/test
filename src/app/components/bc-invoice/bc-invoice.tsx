@@ -246,7 +246,8 @@ const invoiceTableStyles = makeStyles((theme: Theme) =>
       fontWeight: 600,
       color: CONSTANTS.INVOICE_TABLE_HEADING,
       display: 'block',
-      borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`
+      borderRight: `1px solid ${CONSTANTS.PRIMARY_WHITE}`,
+      wordWrap: "break-word"
     },
     itemsTableBodyDescription: {
       fontSize: 14,
