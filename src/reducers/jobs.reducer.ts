@@ -92,7 +92,7 @@ const initialJob: JobsState = {
   nextCursor: '',
   total: 0,
   currentPageIndex: 0,
-  currentPageSize: 10,
+  currentPageSize: 15,
   keyword: '',
 };
 

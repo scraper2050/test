@@ -70,7 +70,7 @@ function AdminServicesAndProductsPage({ classes }: any) {
           >
             {views.map(({ Component }, i) => (
               <div key={i} className={classes.dataContainer} id={String(i)}>
-                <Component />
+                <Component isView={false} />
               </div>
             ))}
           </SwipeableViews>

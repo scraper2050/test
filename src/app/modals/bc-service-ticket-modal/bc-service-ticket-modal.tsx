@@ -673,7 +673,7 @@ function BCServiceTicketModal(
                 dispatch(refreshServiceTickets(true));
               }
               dispatch(refreshJobs(true));
-              if (submitSelectedIndex === 0) {
+              if (submitSelectedIndex === 0 || (submitSelectedIndex != 0 && ticket.type != "PO Request") || (!isPORequired || bypassPORequired || FormikValues.customerPO)) {
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
@@ -688,11 +688,13 @@ function BCServiceTicketModal(
               updateHomeOccupationStatus();
 
               if (response.message === 'Ticket updated successfully.' || response.message === 'PO Request updated successfully.') {
-                if (submitSelectedIndex === 1) {
+                if (submitSelectedIndex === 1 && tempData.type == "PO Request" && !(!isPORequired || bypassPORequired || FormikValues.customerPO)) {
                   setEmailTicketData({
                     data: {
                       _id: ticket._id,
-                      customer: values.customerId,
+                      customer: {
+                        _id: values.customerId
+                      },
                       customerContactId: values.customerContactId
                     },
                     type: tempData.type
@@ -766,10 +768,10 @@ function BCServiceTicketModal(
         if (ticket.jobStatus == 7){
           // When a ticket is created from a partially completed job
           await updatePartialJob(ticket.partialJobPayload);
-          
+
           formatedRequest.source = ticket.source;
         }
-          
+
           callCreateTicketAPI(formatedRequest)
             .then((response: any) => {
               if (response.status === 0) {
@@ -779,13 +781,13 @@ function BCServiceTicketModal(
               }
               dispatch(refreshPORequests(true))
               dispatch(refreshServiceTickets(true));
-              
+
               if (ticket.jobStatus == 7) {
                 // When a ticket is created from a partially completed job
                 dispatch(refreshJobs(true))
               }
 
-              if (submitSelectedIndex === 0){
+              if (submitSelectedIndex === 0 || (!isPORequired || bypassPORequired || FormikValues.customerPO)){
                 dispatch(closeModalAction());
                 setTimeout(() => {
                   dispatch(
@@ -800,11 +802,13 @@ function BCServiceTicketModal(
               updateHomeOccupationStatus();
 
               if (response.message === 'Service Ticket created successfully.' || response.message === 'Purchase Order Request created successfully.') {
-                if (submitSelectedIndex === 1) {
+                if (submitSelectedIndex === 1 && tempData.type == "PO Request" && !(!isPORequired || bypassPORequired || FormikValues.customerPO)) {
                   setEmailTicketData({
                     data: {
                       _id: response.createdID,
-                      customer: values.customerId,
+                      customer: {
+                        _id: values.customerId
+                      },
                       customerContactId: values.customerContactId
                     },
                     type: tempData.type
@@ -1212,6 +1216,37 @@ function BCServiceTicketModal(
     }
   }
 
+  const getSubmtiButton = () => {
+    if (isPORequired && !bypassPORequired && !FormikValues.customerPO) {
+      return <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button" className={"groupBtnContainer"}>
+        <Button onClick={handleSubmit} className={'groupBtnRight'} disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}>{submitOptions[submitSelectedIndex]}</Button>
+        <Button
+          color="primary"
+          size="small"
+          aria-controls={openSubmitBtn ? 'split-button-menu' : undefined}
+          aria-expanded={openSubmitBtn ? 'true' : undefined}
+          aria-label="select merge strategy"
+          aria-haspopup="menu"
+          className={'groupBtnLeft'}
+          onClick={handleSubmitToggle}
+          disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
+        >
+          <ArrowDropDownIcon />
+        </Button>
+      </ButtonGroup>
+    } else {
+      return <Button
+        color={'primary'}
+        disableElevation={true}
+        disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
+        onClick={handleSubmit}
+        variant={'contained'}
+      >
+        Submit
+      </Button>
+    }
+  }
+  
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }
@@ -1802,22 +1837,7 @@ function BCServiceTicketModal(
               </Button>
             )}
 
-            <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button" className={"groupBtnContainer"}>
-              <Button onClick={handleSubmit} className={'groupBtnRight'} disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}>{submitOptions[submitSelectedIndex]}</Button>
-              <Button
-                color="primary"
-                size="small"
-                aria-controls={openSubmitBtn ? 'split-button-menu' : undefined}
-                aria-expanded={openSubmitBtn ? 'true' : undefined}
-                aria-label="select merge strategy"
-                aria-haspopup="menu"
-                className={'groupBtnLeft'}
-                onClick={handleSubmitToggle}
-                disabled={isSubmitting || isLoadingDatas || isFieldsDisabled}
-              >
-                <ArrowDropDownIcon />
-              </Button>
-            </ButtonGroup>
+            {getSubmtiButton()}
             <Popper open={openSubmitBtn} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
               {({ TransitionProps, placement }) => (
                 <Grow

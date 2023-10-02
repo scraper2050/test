@@ -7,6 +7,9 @@ import {
   Grid,
   Typography,
   withStyles,
+  Dialog,
+  DialogTitle,
+  IconButton,
   Tooltip,
   CircularProgress
 } from '@material-ui/core';
@@ -36,6 +39,8 @@ import {refreshJobs} from '../../../actions/job/job.action';
 import {error, success} from '../../../actions/snackbar/snackbar.action';
 import BCJobStatus from '../../components/bc-job-status';
 import { Job } from 'actions/job/job.types';
+import CloseIcon from '@material-ui/icons/Close';
+import bcModalTransition from '../bc-modal-transition';
 import BCMenuButton from 'app/components/bc-menu-more';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
@@ -82,7 +87,8 @@ function BCViewJobModal({
   const [actionsLoading, setActionsLoading] = useState(false);
   const customers = useSelector(({ customers }: any) => customers.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
-
+  const [jobHistoryModal, setOpenJobHistoryModal] = useState(false);
+  
   const calculateJobType = (task: any) => {
     const title: any[] = [];
     if (task.jobTypes) {
@@ -202,16 +208,23 @@ function BCViewJobModal({
         : job.scheduleTimeAMPM === 3 ? 'All day' : 'N/A'
     : 'N/A';
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
-  let jobImages = job?.images?.length ? [...job.images] : [];
-  jobImages = job?.technicianImages?.length ? [...jobImages, ...job.technicianImages] : jobImages;
-  const technicianNotes = job?.tasks?.length ? job.tasks.filter((task: any) => task.comment).map((task: any) => {
+  const jobImages = job?.images?.length ? [...job.images] : [];
+  const technicianImages = job?.technicianImages?.length ? job.technicianImages : [];
+  let technicianNotes = job?.tasks?.length ? job.tasks.filter((task: any) => task.comment).map((task: any) => {
     return {
-      'user': 'tech',
-      'action': task.comment,
-      'date': ''
-    };
+      user: 'tech',
+      action: task.comment,
+      date: '',
+      userName: task.technician?.profile?.displayName || ""
+    }
   }) : [];
 
+  let rescheduleTrack = job.track.filter((res: { user: string, action: string, date: string, userName: string }) => res.action?.toLowerCase()?.includes("rescheduling"));
+  rescheduleTrack = rescheduleTrack.filter((item: { user: any; }, index: any, arr: any[]) => {
+    const currentIndex = arr.findIndex((obj) => obj.user === item.user);
+    return currentIndex === index;
+  });
+  
   const rescheduleJob = () => {
     dispatch(setModalDataAction({
       'data': {
@@ -479,8 +492,23 @@ function BCViewJobModal({
     setActionsLoading(false);
   }
   
+  const openJobHistory = () => {
+    setOpenJobHistoryModal(true);
+  }
+  
   return (
+    <>
     <DataContainer className={'new-modal-design'}>
+      {(technicianImages.length > 0 || rescheduleTrack.length > 0 || technicianNotes.length > 0) && 
+        <Button
+          color='primary'
+          variant="outlined"
+          className='jobCommentBtn'
+          onClick={openJobHistory}
+        >
+          Job History
+        </Button>
+      }
       <Grid container className={'modalPreview'} justify={'space-around'}>
         <Grid container xs={12} className={classes.toolbarButton} >
         {(vendorWithCommisionTier.length > 0 && job.status ==2) &&
@@ -654,21 +682,21 @@ function BCViewJobModal({
                   <Typography variant={'caption'} className={'previewCaption'}>
                     {'First name'}
                   </Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.profile?.firstName || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.profile?.firstName || job?.homeOwner?.profile?.firstName) || 'N/A'}</Typography>
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>
                     {'Last name'}
                   </Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.profile?.lastName || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.profile?.lastName || job?.homeOwner?.profile?.lastName ) || 'N/A'}</Typography>
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>{'Email'}</Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.info?.email || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.info?.email || job?.homeOwner?.info?.email ) || 'N/A'}</Typography>
                 </Grid>
                 <Grid justify={'space-between'} xs>
                   <Typography variant={'caption'} className={'previewCaption'}>{'Phone'}</Typography>
-                  <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj[0]?.contact?.phone || 'N/A'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.contact?.phone || job?.homeOwner?.contact?.phone ) || 'N/A'}</Typography>
                 </Grid>
               </Grid>
               : null
@@ -676,7 +704,7 @@ function BCViewJobModal({
         </Grid>
         <Grid container className={classNames('modalContent', classes.lastRow)} justify={'space-between'}>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>{'&nbsp;&nbsp;job history'}</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;job history Change Log</Typography>
             <div >
               <BCTableContainer
                 className={classes.tableContainer}
@@ -735,6 +763,80 @@ function BCViewJobModal({
         }
       </div>
     </DataContainer>
+
+    {/* Job History Modal. */ }
+    <Dialog
+      aria-labelledby={'responsive-dialog-title'}
+      disableEscapeKeyDown={true}
+      fullWidth={true}
+      maxWidth={"md"}
+      onClose={() => {
+        setOpenJobHistoryModal(false);
+      }}
+      open={jobHistoryModal}
+      PaperProps={{
+        'style': {
+          'maxHeight': `100%`
+        }
+      }}
+      scroll={'paper'}
+      TransitionComponent={bcModalTransition}>
+      <DialogTitle className='new-modal-design'>
+        <Typography
+          key={"sendPORequest"}
+          variant={'h6'}>
+          <strong>
+            Job History
+          </strong>
+        </Typography>
+        <IconButton
+          aria-label={'close'}
+          onClick={() => {
+            setOpenJobHistoryModal(false);
+          }}
+          style={{
+            'position': 'absolute',
+            'right': 1,
+            'top': 1
+          }}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DataContainer>
+          <Grid container className={'modalContent jobHistoryModal new-modal-design'} style={{padding: 15}} justify={'flex-start'} alignItems="flex-start">
+          <Grid item container xs={12} spacing={4} >
+              <Grid item xs={5}>
+                <Typography variant={'caption'} className={'previewCaption'}>Technician's Comments</Typography>
+                {
+                  technicianNotes.map((note: {user: string, action: string, date:string, userName: string}, index: number) => 
+                    <div>
+                      <Typography variant={'caption'} className={classes.jobHistoryTechName}>{note.userName}</Typography>
+                      <Typography variant={'caption'} className={classes.jobHistoryTechComment}>{note.action}</Typography>
+                    </div>
+                  )
+                }
+              </Grid>
+            <Grid item xs={5}>
+              <Typography variant={'caption'} className={'previewCaption'}>Technician's Photos</Typography>
+              <BCDragAndDrop images={technicianImages.map((image: any) => image.imageUrl)} readonly={true} />
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+              <Typography variant={'caption'} className={'previewCaption'}>Reschedule Notes</Typography>
+              <ul>
+                {
+                  rescheduleTrack.map((track: { user: string, action: string, date: string, userName: string, note: string}, index: number) =>
+                    <li>
+                      <Typography variant={'caption'} className={classes.jobHistoryTechComment}>{track.note}</Typography>
+                    </li>
+                  )
+                }
+              </ul>
+          </Grid>
+        </Grid>
+      </DataContainer>
+    </Dialog>
+    </>
   );
 }
 
@@ -765,8 +867,14 @@ const DataContainer = styled.div`
 
   .MuiButton-containedSecondary {
     margin-left: 15px !important;
-}
-
+  }
+  
+  .jobCommentBtn{
+    position: absolute;
+    top: 12px;
+    right: 55px;
+    background: #fff;
+  }
 `;
 
 export default withStyles(styles, { 'withTheme': true })(BCViewJobModal);

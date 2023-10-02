@@ -71,6 +71,19 @@ export default (theme: Theme): any => ({
     paddingTop: "20px",
     overflow: "hidden"
   },
+  jobHistoryTechName: {
+    marginBottom: "3px",
+    textTransform: "capitalize",
+    width: "100%",
+    display: "inline-block",
+    fontWeight: "bold",
+    fontSize: "0.9rem",
+    marginLeft: "15px"
+  },
+  jobHistoryTechComment: {
+    fontSize: "0.9rem",
+    marginLeft: "15px"
+  },
   actionButton: {
     marginRight: "10px",
     textTransform: 'capitalize',

@@ -17,7 +17,6 @@ import classNames from "classnames";
 import BCDragAndDrop from 'app/components/bc-drag-drop/bc-drag-drop'
 import { useDispatch, useSelector } from "react-redux";
 import { ISelectedDivision } from "actions/filter-division/fiter-division.types";
-import { warning } from "actions/snackbar/snackbar.action";
 
 
 const renderTime = (startTime:Date, endTime: Date) => {
@@ -149,7 +148,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
           'jobId': job._id,
           'customerId': job.customer._id,
         };
-    
+
         if(job?.customerContactId?._id) {
           invoiceObj.customerContactId = job.customerContactId._id;
         }

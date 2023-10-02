@@ -73,6 +73,7 @@ function BCTableContent({
                           currentPageSize,
                           setCurrentPageSizeFunction = () => {},
                           rowTooltip,
+                          isBounceAlertVisible = false,
                         }: any) {
   const location = useLocation<any>();
   const history = useHistory();
@@ -89,7 +90,7 @@ function BCTableContent({
 
   const initialPageIndex = prevPage ? prevPage.page : 0;
 
-  const initialPageSize = prevPage ? prevPage.pageSize : 10;
+  const initialPageSize = prevPage ? prevPage.pageSize : 15;
 
   const {
     getTableProps,
@@ -319,6 +320,8 @@ function BCTableContent({
 
   const tableClass = useStyles();
 
+  // this isBounceAlertVisible returns true incase of PO Requests and Invoice to set the height of table.
+  const customMarginBottom = { marginBottom : isBounceAlertVisible ? '190px' : '0' }
   // Render the UI for your table
   return (
     <TableContainer
@@ -326,9 +329,9 @@ function BCTableContent({
         ? `invoice-paper`
         : ''} ${className} `}
       component={StyledPaperContainer}
-      style={{marginBottom: '300px'}}
+      style={customMarginBottom}
       >
-        
+
       <MaUTable
         size="small"
         stickyHeader={stickyHeader}
@@ -418,7 +421,7 @@ function BCTableContent({
                   page={pageIndex}
                   rowsPerPage={pageSize}
                   rowsPerPageOptions={[
-                    5, 10, 25, {
+                    5, 10, 15, 25, {
                       'label': 'All',
                       'value': manualPagination ? total : data.length + 1
                     }
