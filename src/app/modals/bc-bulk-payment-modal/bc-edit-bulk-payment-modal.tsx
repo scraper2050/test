@@ -138,7 +138,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
         .then((response: any) => {
           if (response.status === 1) {
             setIsSuccess(true);
-            setMsgAfterUpdate('The payment and qbSync was successfully edited');
+            setMsgAfterUpdate('The payment and QB was successfully edited');
             setSubmitting(false);
           }
           if(response?.quickbookPayment == null)
@@ -146,7 +146,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             setMsgAfterUpdate("Payment Edited successfully but couldn't sync QB");
             setIsSuccess(true);
             setSubmitting(false);
-          } else {
+          } else if(response.status != 1) {
             dispatch(error(response.message))
             setSubmitting(false);
           }
