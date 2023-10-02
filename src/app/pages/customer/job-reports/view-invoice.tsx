@@ -275,7 +275,7 @@ function ViewInvoice({ classes, theme }: any) {
         'state': {
           'option': {
             search: location?.state?.keyword || '',
-            pageSize: location?.state?.currentPageSize || 10,
+            pageSize: location?.state?.currentPageSize || 15,
             pageSizeIndex: location?.state?.currentPageIndex || 0,
             currentPageIndex: location?.state?.currentPageIndex || 0,
             lastNextCursor: location?.state?.lastNextCursor,
@@ -433,7 +433,6 @@ function ViewInvoice({ classes, theme }: any) {
             >
               <ArrowBackIcon />
             </IconButton>
-
             {invoiceDetail?.isDraft ? (
               <CSChip
                 label={'Draft'}

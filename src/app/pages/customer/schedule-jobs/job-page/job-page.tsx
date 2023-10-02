@@ -111,7 +111,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     let startTime = 'N/A';
     let endTime = 'N/A';
     // Case for specific time
-    if ((originalRow.scheduledStartTime !== undefined && originalRow.scheduledStartTime !== null ) && originalRow.scheduledEndTime !== undefined) {
+    if (originalRow.scheduledStartTime !== undefined && originalRow.scheduledStartTime !== null){
       if (originalRow.scheduledStartTime !== undefined) {
         const formatScheduledObj = formatSchedulingTime(originalRow.scheduledStartTime);
         startTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
@@ -310,7 +310,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
       'sortable': true,
       'width': 40
     }
-    
+
   ];
 
   function Toolbar() {
@@ -436,7 +436,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     if (refresh && !currentDivision.isDivisionFeatureActivated || currentDivision.isDivisionFeatureActivated && (currentDivision.params?.workType || currentDivision.params?.companyLocation || currentDivision.data?.name == 'All')) {
       dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      dispatch(setCurrentPageSize(15));
     }
     setTimeout(() => {
       loadCount.current++;

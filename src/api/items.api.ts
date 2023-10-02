@@ -2,12 +2,24 @@ import { Item } from 'actions/invoicing/items/items.types';
 import request from 'utils/http.service';
 
 
-export const getItems = async (includeDiscountItems = false) => {
+export const getItems = async (data:any) => {
   try {
-    const requestObj:any = {}
-    if(includeDiscountItems){
-      requestObj.includeDiscountItems = true;
+    let requestObj:any={
+      includeDiscountItems: false, includeDisabled: false
     }
+    if(data){
+      const { payload } = data;
+
+      let { includeDiscountItems, includeDisabled } = payload ? payload : { includeDiscountItems: false, includeDisabled: false };
+      if (includeDiscountItems) {
+        requestObj.includeDiscountItems = true;
+      }
+      if (includeDisabled) {
+        requestObj.includeInactiveItems = true;
+      }
+    } 
+    
+  
     const response: any = await request('/getItems', 'POST', requestObj);
     return response.data;
   } catch (err) {
@@ -36,6 +48,35 @@ export const updateItem = async (item:Item) => {
   }
 };
 
+export const checkItemExist = async (item: Item) => {
+  try {
+    const response: any = await request('/checkItemExist', 'POST', item, false);
+    return response.data;
+  } catch (err) {
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+};
+
+export const disableItem = async (item: Item) => {
+  try {
+    const response: any = await request('/toggleItemStatus', 'POST', item, false);
+    return response.data;
+  } catch (err) {
+    if (err.response.status >= 400 || err.data.status === 0) {
+      throw new Error(err.data.errors ||
+        err.data.message ||
+        `${err.data['err.user.incorrect']}\nYou have ${err.data.retry} attempts left`);
+    } else {
+      throw new Error(`Something went wrong`);
+    }
+  }
+};
 
 export const getItemTierList = async () => {
   try {
@@ -104,7 +145,7 @@ export const addItem = async (item:any) => {
     const response: any = await request(
       '/createJobType',
       'POST',
-      { title: item.name, description: item.description},
+      { title: item.name, description: item.description,account:item.account},
       false
     );
     if (response.data.status === 0) {

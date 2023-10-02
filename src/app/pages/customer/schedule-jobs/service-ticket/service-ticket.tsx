@@ -372,7 +372,7 @@ function ServiceTicket({ classes, hidden }: any) {
     if (refresh) {
       dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, showAllTickets, keyword, selectionRange, currentDivision.params,filterIsHomeOccupied));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      dispatch(setCurrentPageSize(currentPageSize));
     }
     setTimeout(() => {
       loadCount.current++;
@@ -380,14 +380,16 @@ function ServiceTicket({ classes, hidden }: any) {
   }, [refresh]);
 
   useEffect(() => {
-    dispatch(getAllServiceTicketsAPI(currentPageSize, undefined, undefined, undefined, undefined, currentDivision.params,filterIsHomeOccupied));
+    dispatch(getAllServiceTicketsAPI(currentPageSize, currentPageIndex, undefined, undefined, undefined, currentDivision.params,filterIsHomeOccupied));
     if (customers.length == 0) {
       dispatch(getCustomers());
     }
-    dispatch(getAllJobTypesAPI());
-    dispatch(setKeyword(''));
-    dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
+    return () => {
+      dispatch(getAllJobTypesAPI());
+      dispatch(setKeyword(''));
+      dispatch(setCurrentPageIndex(0));
+      dispatch(setCurrentPageSize(currentPageSize));
+    }
   }, [currentDivision.params]);
 
   const handleRowClick = (event: any, row: any) => {
@@ -448,7 +450,10 @@ function ServiceTicket({ classes, hidden }: any) {
                   }
                 }}
                 currentPageSize={currentPageSize}
-                setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+                setCurrentPageSizeFunction={(num: number) => {
+                  dispatch(setCurrentPageSize(num));
+                  dispatch(getAllServiceTicketsAPI(num || currentPageSize, 0, showAllTickets, keyword, selectionRange, currentDivision.params));
+                }}
                 setKeywordFunction={(query: string) => {
                   dispatch(setKeyword(query));
                   dispatch(setCurrentPageIndex(0));

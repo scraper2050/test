@@ -44,7 +44,7 @@ export const getTodos = async (params = {}) => {
 };
 
 let cancelTokenGetAllInvoicesForBulkPaymentsAPI: any;
-export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
+export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 15, currentPageIndex = 0, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, customerId?: string, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesForBulkPaymentsLoading(true));
@@ -99,7 +99,7 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 10, currentPageIndex
 };
 
 let cancelTokenGetAllInvoicesAPI: any;
-export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, customerId?: string, customerContactId?: string, checkMissingPo?: boolean, invoicingModal?: boolean, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
+export const getAllInvoicesAPI = (pageSize = 15, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, customerId?: string, customerContactId?: string, checkMissingPo?: boolean, invoicingModal?: boolean, dueDate?: Date | null, showPaid?: boolean, division?: DivisionParams) => {
   return (dispatch: any): Promise<any> => {
     return new Promise((resolve, reject) => {
       dispatch(setInvoicesLoading(true));
@@ -184,6 +184,7 @@ export const getAllInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?:
       }
       if (showPaid === false) {
         optionObj.status = JSON.stringify(['UNPAID', 'PARTIALLY_PAID']);
+        optionObj.isVoid = false;
       }
       if (cancelTokenGetAllInvoicesAPI) {
         cancelTokenGetAllInvoicesAPI.cancel('axios canceled');
@@ -231,7 +232,7 @@ export const markAsRead = (endpoint: string, params: {}, callback: any) => {
 };
 
 let cancelTokenGetAllDraftInvoicesAPI: any;
-export const getAllDraftInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, recentOnly = false, division?: DivisionParams) => {
+export const getAllDraftInvoicesAPI = (pageSize = 15, currentPageIndex = 0, keyword?: string, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setDraftInvoicesLoading(true));
@@ -275,7 +276,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyw
 };
 
 let cancelTokenGetUnpaidInvoicesAPI: any;
-export const getUnpaidInvoicesAPI = (pageSize = 10, currentPageIndex = 0, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, recentOnly = false, division?: DivisionParams) => {
+export const getUnpaidInvoicesAPI = (pageSize = 15, currentPageIndex = 0, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, recentOnly = false, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setUnpaidInvoicesLoading(true));
@@ -589,7 +590,7 @@ export const updateJobCommission = (id: string, data: any) => {
  * Do the call to the endpoint for download the invoice as excel file
  * @returns { data: Blob, fileName: string }
  */
-export const exportInvoicesToExcel = async (pageSize = 10, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, division?: DivisionParams, allData?: boolean): Promise<{ data: Blob, fileName: string }> => {
+export const exportInvoicesToExcel = async (pageSize = 15, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, division?: DivisionParams, allData?: boolean): Promise<{ data: Blob, fileName: string }> => {
   const optionObj: any = {
     pageSize,
     currentPage: currentPageIndex,
