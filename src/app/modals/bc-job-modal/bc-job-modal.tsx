@@ -71,6 +71,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   error,
   success,
+  warning,
 } from 'actions/snackbar/snackbar.action';
 import {getContacts} from 'api/contacts.api';
 import {modalTypes} from '../../../constants';
@@ -600,11 +601,11 @@ function BCJobModal({
 
   const checkValidHomeOwner = () => {
     if (!jobSiteValue || jobSiteValue.length === 0) {
-      dispatch(error("Address is required when house is occupied"));
+      dispatch(warning("Address is required when house is occupied"));
       return false;
     }
     if (!formDataPhone.value && !formDataEmail.value) {
-      dispatch(error("Occupied house must have email or phone number"));
+      dispatch(warning("Occupied house must have email or phone number"));
       return false;
     }
     return true;
@@ -1560,7 +1561,10 @@ function BCJobModal({
               <Grid item xs={6}>
                 <Typography
                   variant={'caption'}
-                  className={' previewCaption'}
+                  className={
+                    FormikValues.isHomeOccupied
+                      ? `required ${'previewCaption'}`
+                      : 'previewCaption'}
                 >
                   Job Address
                 </Typography>
@@ -1684,7 +1688,10 @@ function BCJobModal({
                       name="isHomeOccupied"
                       classes={{ root: classes.checkboxInput }}
                       onChange={(e) => {
-                        formikChange(e)
+                        formikChange(e);
+                        if (!FormikValues.isHomeOccupied) {
+                          checkValidHomeOwner();
+                        }
                       }}
                     />
                   }
