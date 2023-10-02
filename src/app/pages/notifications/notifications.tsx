@@ -41,7 +41,7 @@ function NotificationPage() {
   const dispatch = useDispatch();
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [currentPageSize, setCurrentPageSize] = useState(10);
+  const [currentPageSize, setCurrentPageSize] = useState(15);
   const { notifications, total, loading } = useSelector((state: any) => state.notifications);
   const [searchText, setSearchText] = useState('');
 

@@ -1,7 +1,7 @@
 import BCTableContainer from '../../../../components/bc-table-container/bc-table-container';
 import InfoIcon from '@material-ui/icons/Info';
 import {
-    getServiceTicketDetail
+  getServiceTicketDetail
 } from 'api/service-tickets.api';
 import { makeStyles } from '@material-ui/core/styles';
 import * as CONSTANTS from '../../../../../../src/constants';
@@ -327,7 +327,7 @@ function PORequired({ classes, hidden }: any) {
         if (refresh) {
             dispatch(getAllPORequestsAPI(currentPageSize, currentPageIndex, showAllPORequests, keyword, selectionRange, currentDivision.params, bouncedEmailFlag,filterIsHomeOccupied));
             dispatch(setCurrentPageIndex(0));
-            dispatch(setCurrentPageSize(10));
+            dispatch(setCurrentPageSize(currentPageSize));
         }
         setTimeout(() => {
             loadCount.current++;
@@ -339,11 +339,13 @@ function PORequired({ classes, hidden }: any) {
         if (customers.length == 0) {
             dispatch(getCustomers());
         }
-        dispatch(getAllJobTypesAPI());
-        dispatch(setKeyword(''));
-        dispatch(setCurrentPageIndex(0));
-        dispatch(setCurrentPageSize(10));
-    }, [currentDivision.params])
+        return () => {
+          dispatch(getAllJobTypesAPI());
+          dispatch(setKeyword(''));
+          dispatch(setCurrentPageIndex(0));
+          dispatch(setCurrentPageSize(currentPageSize));
+        }
+    }, [currentDivision.params]);
 
     const handleRowClick = (event: any, row: any) => {
     };
@@ -383,7 +385,10 @@ function PORequired({ classes, hidden }: any) {
                 }
             }}
             currentPageSize={currentPageSize}
-            setCurrentPageSizeFunction={(num: number) => dispatch(setCurrentPageSize(num))}
+            setCurrentPageSizeFunction={(num: number) => {
+              dispatch(setCurrentPageSize(num));
+              dispatch(getAllPORequestsAPI(num || currentPageSize, 0, showAllPORequests, keyword, selectionRange, currentDivision.params));
+            }}
             setKeywordFunction={(query: string) => {
                 dispatch(setKeyword(query));
                 dispatch(setCurrentPageIndex(0))

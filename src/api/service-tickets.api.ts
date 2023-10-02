@@ -69,7 +69,6 @@ export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, sta
           dispatch(setServiceTicketLoading(true));
         }, 0);
       }
-      
       cancelTokenGetAllServiceTicketsAPI = axios.CancelToken.source();
 
       requestApiV2(`/getServiceTickets`, 'post', optionObj, cancelTokenGetAllServiceTicketsAPI, division)
@@ -80,7 +79,6 @@ export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, sta
             createdAt: tempServiceTicket.createdAt
           }));
           tempServiceTickets.sort(compareByDate);
-          
           dispatch(setServiceTicket(tempServiceTickets.reverse()));
           dispatch(setPreviousServiceTicketCursor(res.data.previousCursor ? res.data.previousCursor : ''));
           dispatch(setNextServiceTicketCursor(res.data.nextCursor ? res.data.nextCursor : ''));

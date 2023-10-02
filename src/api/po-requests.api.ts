@@ -15,7 +15,7 @@ const compareByDate = (a: any, b: any) => {
 
 
 let cancelTokenGetAllPORequestsAPI: any;
-export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any, bouncedEmailFlag: boolean = false,filterIsHomeOccupied?:boolean) => {
+export const getAllPORequestsAPI = (pageSize = 15, currentPageIndex = 0, showAllPORequests = false, keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: any, bouncedEmailFlag: boolean = false,filterIsHomeOccupied?:boolean) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setPORequestLoading(true));
@@ -53,7 +53,7 @@ export const getAllPORequestsAPI = (pageSize = 10, currentPageIndex = 0, showAll
             createdAt: tempPORequest.createdAt
           }));
           tempPORequests.sort(compareByDate);
-          
+
           dispatch(setPORequest(tempPORequests.reverse()));
           dispatch(setPreviousPORequestCursor(res.data.previousCursor ? res.data.previousCursor : ''));
           dispatch(setNextPORequestCursor(res.data.nextCursor ? res.data.nextCursor : ''));
