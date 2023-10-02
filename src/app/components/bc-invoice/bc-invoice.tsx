@@ -414,9 +414,7 @@ function BCInvoice({ classes, invoiceDetail }: Props) {
                     <span> {invoiceDetail?.customer?.contact?.phone && invoiceDetail?.customer?.contact?.phone}</span>
                     <span> {invoiceDetail?.customer?.info?.email && invoiceDetail?.customer?.info?.email}</span>
                     <span> {invoiceDetail?.customer?.address?.street && invoiceDetail?.customer?.address?.street}</span>
-                    <span> {invoiceDetail?.customer?.address?.city && invoiceDetail?.customer?.address?.city}</span>
-                    <span> {invoiceDetail?.customer?.address?.state && invoiceDetail?.customer?.address?.state}</span>
-                    <span> {invoiceDetail?.customer?.address?.zipCode && invoiceDetail?.customer?.address?.zipCode}</span>
+                    <span> {invoiceDetail?.customer?.address?.city && invoiceDetail?.customer?.address?.city}, {invoiceDetail?.customer?.address?.state && invoiceDetail?.customer?.address?.state} {invoiceDetail?.customer?.address?.zipCode && invoiceDetail?.customer?.address?.zipCode}</span>
                   </div>
                   <div className={invoiceStyles.companyInfo}>
                     {!serviceAddressLocation &&!serviceAddressSite ? (
