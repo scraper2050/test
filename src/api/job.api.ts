@@ -65,7 +65,7 @@ export const getAllJobTypes = () => {
   });
 };
 let cancelTokenGetAllJobsAPI: any;
-export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: DivisionParams) => {
+export const getAllJobsAPI = (pageSize = 15, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null, division?: DivisionParams) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
@@ -142,7 +142,7 @@ export const getAllJobsAPI = (pageSize = 10, currentPageIndex = 0, status = '-1'
     });
   };
 };
-export const getJobsListAPI = (pageSize = 10, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null) => {
+export const getJobsListAPI = (pageSize = 15, currentPageIndex = 0, status = '-1', keyword?: string, selectionRange?: { startDate: Date; endDate: Date } | null) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
@@ -567,3 +567,27 @@ export const callGetJobReportPDF = (id: string) => {
       });
   });
 };
+
+export const updatePartialJob: any = (payload: any) => {
+  return new Promise((resolve, reject) => {
+    requestApiV2(`/updatePartialJob`, 'POST', payload)
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+export const getJobInvoice: any = (jobID: string) => {
+  return new Promise((resolve, reject) => {
+    requestApiV2(`/getJobInvoice/${jobID}`, 'GET')
+      .then((res: any) => {
+        return resolve(res.data);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+}

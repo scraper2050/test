@@ -102,9 +102,11 @@ function InvoicingListListing({ classes, theme }: any) {
           }
         }
 
+        let jobAddressName;
         if (invoiceDetail?.jobLocation) {
           const jobLocation = invoiceDetail?.jobLocation;
           const jobLocationAddress = jobLocation?.address;
+          jobAddressName = jobLocation?.name;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
@@ -112,12 +114,12 @@ function InvoicingListListing({ classes, theme }: any) {
           //To check if invoice data is not provided with a job location, we can use the job field
           const jobLocation = invoiceDetail?.job?.jobLocation;
           const jobLocationAddress = jobLocation?.address;
+          jobAddressName = jobLocation?.name;
           if (jobLocationAddress?.street || jobLocationAddress?.city || jobLocationAddress?.state || jobLocationAddress?.zipcode) {
             jobAddress = jobLocationAddress;
           }
         }
       
-        let jobAddressName;
         if (invoiceDetail?.jobSite) {
           const jobSite = invoiceDetail?.jobSite;
           const jobSiteAddress = jobSite?.address;
@@ -125,7 +127,7 @@ function InvoicingListListing({ classes, theme }: any) {
           if (jobSiteAddress?.street || jobSiteAddress?.city || jobSiteAddress?.state || jobSiteAddress?.zipcode) {
             jobAddress = jobSiteAddress;
           }
-        } else {
+        } else if (invoiceDetail?.job?.jobSite){
           //To check if invoice data is not provided with a job site, we can use the job field
           const jobSite = invoiceDetail?.job?.jobSite;
           const jobSiteAddress = jobSite?.address;
@@ -134,7 +136,6 @@ function InvoicingListListing({ classes, theme }: any) {
             jobAddress = jobSiteAddress;
           }
         }
-        
         const arrFullJobAddress = [jobAddressName, jobAddress?.street, jobAddress?.city, jobAddress?.state, `${jobAddress?.zipcode || jobAddress?.zipCode || ""}`]
         const fullJobAddress = arrFullJobAddress.filter(res => res).join(", ");
 
@@ -192,7 +193,7 @@ function InvoicingListListing({ classes, theme }: any) {
         const textStatus = status.split('_').join(' ').toLowerCase();
         return (
           <div className={customStyles.centerContainer}>
-           {!isVoid&& <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} />}
+            {!isVoid ? <BCMenuButton status={status} handleClick={(e, id) => handleMenuButtonClick(e, id, row.original)} /> : "Void"}
           </div>
         )
       },
@@ -226,7 +227,16 @@ function InvoicingListListing({ classes, theme }: any) {
             row.original.issuedDate || row.original.createdAt
           )
           } { 
-            row.original.bouncedEmailFlag ? <PopupMark data={row.original.emailHistory} invoiceId={row.original._id} /> : ''
+            row.original.bouncedEmailFlag
+              ? <PopupMark
+                  endpoint={'/mark-as-read-invoices'}
+                  data={row.original.emailHistory}
+                  params={{ 'invoiceId': row.original._id }}
+                  callback={
+                    getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params)
+                  }
+                  /> 
+              : ''
           }
         </div>
       ),
@@ -275,7 +285,7 @@ function InvoicingListListing({ classes, theme }: any) {
   useEffect(() => {
     // dispatch(getInvoicingList());
     // dispatch(loadingInvoicingList());
-    dispatch(getAllInvoicesAPI(undefined, undefined, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined,undefined,undefined, currentDivision.params));
+    dispatch(getAllInvoicesAPI(currentPageSize, currentPageIndex, undefined, advanceFilterInvoiceData, undefined, undefined, undefined, undefined,undefined,undefined, currentDivision.params));
     return () => {
       dispatch(setKeyword(''));
       dispatch(setCurrentPageIndex(currentPageIndex));
@@ -386,7 +396,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   /**
    * Receive the event when the modal filter is sumited by the user
-   * @param data 
+   * @param data
    */
   const handleFilterSubmit = async (data: any) => {
     dataModalFilter.data.loading = true;
@@ -424,7 +434,7 @@ function InvoicingListListing({ classes, theme }: any) {
 
   const handleBouncedEmail = () => {
     advanceFilterInvoiceData.checkBouncedEmails = !advanceFilterInvoiceData.checkBouncedEmails
-    
+
     dispatch(getAllInvoicesAPI(currentPageSize, 0, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
   }
 
@@ -492,7 +502,7 @@ function InvoicingListListing({ classes, theme }: any) {
     const content = JSON.stringify(initialAdvanceFilterInvoiceState) !== JSON.stringify(advanceFilterInvoiceData)
     return (
       <div>
-        <Checkbox 
+        <Checkbox
           color="primary"
           className={classes.checkbox}
           checked={advanceFilterInvoiceData.checkBouncedEmails}
@@ -569,6 +579,7 @@ function InvoicingListListing({ classes, theme }: any) {
         search
         searchPlaceholder={'Search Invoices...'}
         tableData={invoiceList}
+        isBounceAlertVisible={true}
         toolbarPositionLeft={true}
         toolbar={Toolbar()}
         manualPagination
@@ -587,7 +598,7 @@ function InvoicingListListing({ classes, theme }: any) {
         currentPageSize={currentPageSize}
         setCurrentPageSizeFunction={(num: number) => {
           dispatch(setCurrentPageSize(num));
-          dispatch(getAllInvoicesAPI(num || currentPageSize, currentPageIndex, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
+          dispatch(getAllInvoicesAPI(num || currentPageSize, 0, keyword, advanceFilterInvoiceData, undefined, undefined, undefined, undefined, undefined, undefined, currentDivision.params))
         }}
         setKeywordFunction={(query: string) => {
           desbouncedSearchFunction(query);

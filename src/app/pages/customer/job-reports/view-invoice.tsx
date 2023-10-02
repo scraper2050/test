@@ -133,7 +133,7 @@ function ViewInvoice({ classes, theme }: any) {
   useEffect(() => {
     if (invoiceDetail?._id && invoiceLogs!=null) {
       let logs = invoiceLogs;
-      if (logs.filter((logItem: any) => logItem.type == "INVOICE_CREATED").length==0) {
+      if (logs.filter((logItem: any) => logItem.type == "INVOICE_CREATED" || logItem.type == "INVOICE_DUPLICATE").length==0) {
         logs.push({
           "_id": "64d165ba67441a506b9b0e94-invoice",
           "invoiceId": invoiceDetail.invoiceId,
@@ -275,7 +275,7 @@ function ViewInvoice({ classes, theme }: any) {
         'state': {
           'option': {
             search: location?.state?.keyword || '',
-            pageSize: location?.state?.currentPageSize || 10,
+            pageSize: location?.state?.currentPageSize || 15,
             pageSizeIndex: location?.state?.currentPageIndex || 0,
             currentPageIndex: location?.state?.currentPageIndex || 0,
             lastNextCursor: location?.state?.lastNextCursor,
@@ -433,7 +433,6 @@ function ViewInvoice({ classes, theme }: any) {
             >
               <ArrowBackIcon />
             </IconButton>
-
             {invoiceDetail?.isDraft ? (
               <CSChip
                 label={'Draft'}

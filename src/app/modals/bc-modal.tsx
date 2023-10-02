@@ -2,6 +2,7 @@ import BCAddVendorModal from './bc-add-vendor-modal/bc-add-vendor-modal';
 import BCJobModal from './bc-job-modal/bc-job-modal';
 import BCViewJobModal from './bc-job-modal/bc-view-job-modal';
 import BCEditJobCostingModal from './bc-job-modal/bc-edit-job-costing-modal';
+import BCEditCompletedJobModal from './bc-job-modal/bc-edit-completed-job-modal';
 import BCViewJobRequestModal from './bc-job-request-modal/bc-view-job-request-modal';
 import BCCancelJobRequestModal from './bc-job-request-modal/bc-cancel-job-request-modal';
 import BCDeleteJobModal from './bc-job-modal/bc-delete-job-modal';
@@ -133,7 +134,7 @@ function BCModal() {
           'fullWidth': true,
           'maxWidth': 'lg'
         });
-        setComponent(<BCServiceTicketModal error={data.error} />);
+        setComponent(<BCServiceTicketModal error={data.error} ticket={data.ticketData}/>);
         break;
       case modalTypes.EDIT_TICKET_MODAL:
         setModalOptions({
@@ -575,8 +576,26 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
+          isView={false}
+          includeDisabled={data.includeDisabled}
+          editHandler={data.editHandler}
         />);
         break;
+      case modalTypes.VIEW_ITEM_MODAL:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BCInvoiceEditModal
+          item={data.item}
+          isView={true}
+          includeDisabled={data.includeDisabled}
+          editHandler={data.editHandler}
+        />);
+        break;
+
       case modalTypes.ADD_ITEM_MODAL:
         setModalOptions({
           'disableBackdropClick': true,
@@ -586,7 +605,10 @@ function BCModal() {
         });
         setComponent(<BCInvoiceEditModal
           item={data.item}
-        />);
+          includeDisabled={data.includeDisabled}
+          isView={false}
+          editHandler={data.editHandler}
+                  />);
         break;
       case modalTypes.EDIT_DISCOUNT_MODAL:
         setModalOptions({
@@ -978,7 +1000,24 @@ function BCModal() {
         });
         setComponent(<BCWarningModalV2
           action={data.action}
+          disableAutoCloseModal={data.disableAutoCloseModal}
+          actionText={data.actionText}
+          closeAction={data.closeAction}
+          closeText={data.closeText}
           message={data.message}
+        />);
+        break;
+      case modalTypes.EDIT_COMPLETED_JOB:
+        setModalOptions({
+          'disableBackdropClick': true,
+          'disableEscapeKeyDown': true,
+          'newDesign': true,
+          'fullWidth': true,
+          'maxWidth': 'md'
+        });
+        setComponent(<BCEditCompletedJobModal
+          job={data.job}
+          action={data.action}
         />);
         break;
       default:
@@ -1028,6 +1067,7 @@ function BCModal() {
                 </strong>
               </Typography>
             ))}
+           
             {showCloseIcon && <IconButton
               aria-label={'close'}
               onClick={handleClose}

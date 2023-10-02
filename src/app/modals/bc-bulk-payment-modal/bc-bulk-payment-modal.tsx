@@ -71,6 +71,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
   const [customerValue, setCustomerValue] = useState<any>(null);
   const [localInvoiceList, setLocalInvoiceList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const customers = useSelector(({ customers }: any) => customers.data);
   const debounceInputStyles = useDebounceInputStyles();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
@@ -160,6 +161,9 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
           if (response.status === 1) {
             setIsSuccess(true);
             setSubmitting(false);
+            if (response.message != "Payment successfully created.") {
+              setSuccessMsg(response.message);
+            }
           } else {
             dispatch(error(response.message))
             setSubmitting(false);
@@ -411,7 +415,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         {isSuccess ? (
-          <BCSent title={'The payment was recorded.'}/>
+          <BCSent title={successMsg ? successMsg : 'The payment was recorded.'}/>
         ) : (
           <>
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>

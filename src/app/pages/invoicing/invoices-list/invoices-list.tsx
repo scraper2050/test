@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BCMenuToolbarButton from 'app/components/bc-menu-toolbar-button';
 import { info, warning } from 'actions/snackbar/snackbar.action';
-import { openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { closeModalAction, openModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
 import { modalTypes } from '../../../../constants'
 import { getCustomers } from 'actions/customer/customer.action'
 import { Sync as SyncIcon, InsertDriveFile } from '@material-ui/icons';
@@ -143,6 +143,14 @@ function InvoiceList({ classes }: any) {
       }).catch((error: any) => {
         setExportLoading(false);
       });
+
+      dispatch(closeModalAction());
+      setTimeout(() => {
+        dispatch(setModalDataAction({
+          'data': {},
+          'type': ''
+        }));
+      }, 200);
     }
 
     const content = JSON.stringify(initialAdvanceFilterInvoiceState) !== JSON.stringify(advanceFilterInvoiceData)

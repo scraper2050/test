@@ -241,7 +241,7 @@ function JobRequest({ classes, hidden }: any) {
         dispatch(getAllJobRequestAPI(undefined, undefined, undefined, selectedStatus, keyword, selectionRange));
       }
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      dispatch(setCurrentPageSize(15));
     }
     setTimeout(() => {
       loadCount.current++;
@@ -252,7 +252,7 @@ function JobRequest({ classes, hidden }: any) {
     if (activeJobRequest) dispatch(getAllJobRequestAPI());
     dispatch(setKeyword(''));
     dispatch(setCurrentPageIndex(0));
-    dispatch(setCurrentPageSize(10));
+    dispatch(setCurrentPageSize(15));
   }, [])
 
   const handleTabChange = (newValue: number) => {
