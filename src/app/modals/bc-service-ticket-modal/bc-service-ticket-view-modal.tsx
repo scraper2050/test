@@ -257,18 +257,26 @@ function BCViewServiceTicketModal({
             <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.name || 'N/A'}</Typography>
           </Grid>
           <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>contact number</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customerContactId?.phone || 'N/A'}</Typography>
           </Grid>
           <Grid item style={{ width: '50%' }}>
-            <Typography variant={'caption'} className={'previewCaption'}>note</Typography>
-            <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.note || 'N/A'}</Typography>
+            <Typography variant={'caption'} className={'previewCaption'}>contact email</Typography>
+            <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.customerContactId?.email || 'N/A'}</Typography>
           </Grid>
         </Grid>
         <Grid container className={'modalContent'} justify={'space-around'}>
           <Grid item xs>
             <Typography variant={'caption'} className={'previewCaption'}>house is occupied</Typography>
             <Typography variant={'h6'} className={'previewText'}>{job?.isHomeOccupied ? 'YES' : 'NO'}</Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography variant={'caption'} className={'previewCaption'}>Customer PO</Typography>
+            <Typography variant={'h6'} className={'previewText'}>{job.customerPO || 'N/A'}</Typography>
+          </Grid>
+          <Grid item style={{ width: '50%' }}>
+            <Typography variant={'caption'} className={'previewCaption'}>note</Typography>
+            <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.note || 'N/A'}</Typography>
           </Grid>
         </Grid>
         {

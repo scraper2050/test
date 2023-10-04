@@ -71,6 +71,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   error,
   success,
+  warning,
 } from 'actions/snackbar/snackbar.action';
 import {getContacts} from 'api/contacts.api';
 import {modalTypes} from '../../../constants';
@@ -145,7 +146,7 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
   if (!jobTypes) {
     return;
   }
-  return jobTypes.map((task: any) => {    
+  return jobTypes.map((task: any) => {
     const currentItem = items.find((item: { jobType: string }) => item.jobType === (task.jobType._id || task.jobType));
 
     let jobType = {
@@ -164,7 +165,7 @@ const getJobData = (jobTypes: any, items: any, customers: any[], customerId: str
     if (!("price" in task)){
       const item = items.find((res: any) => res.jobType == (task.jobType._id || task.jobType));
       const customer = customers.find((res: any) => res._id == customerId);
-      
+
       if (item) {
         let price = item?.tiers?.find((res: any) => res.tier?._id == customer?.itemTier)
         if (customer && price) {
@@ -266,9 +267,9 @@ function BCJobModal({
   ];
 
   const timeRangeOptions = [
-    {name: 'N/A', index: 0}, 
-    {name: 'AM', index: 1}, 
-    {name: 'PM', index: 2}, 
+    {name: 'N/A', index: 0},
+    {name: 'AM', index: 1},
+    {name: 'PM', index: 2},
   ];
 
   /**
@@ -414,11 +415,11 @@ function BCJobModal({
     let divisionParams: DivisionParams = {};
     if (jobValue?.ticket && currentDivision.isDivisionFeatureActivated) {
       divisionParams = {
-        workType: jobValue?.ticket?.workType, 
+        workType: jobValue?.ticket?.workType,
         companyLocation: jobValue?.ticket?.companyLocation
       };
-    }  
-    
+    }
+
     dispatch(getEmployeesForJobAction(divisionParams));
     dispatch(getVendors(divisionParams));
     dispatch(getAllJobTypesAPI());
@@ -430,7 +431,7 @@ function BCJobModal({
     };
     dispatch(getContacts(data));
   }, []);
-
+  
   // Implements autocomplete for homeowner
   useEffect(() => {
     const filteredHomeOwners = homeOwners.filter((item: any) => {
@@ -553,7 +554,7 @@ function BCJobModal({
     if (isHomeOwnerAutocompleted === true) {
       return (
         FormikValues.homeOwnerFirstName !== homeOwnerAutocompleted?.profile?.firstName ||
-        (homeOwnerAutocompleted?.profile?.lastName ? 
+        (homeOwnerAutocompleted?.profile?.lastName ?
           FormikValues.homeOwnerLastName !== homeOwnerAutocompleted?.profile?.lastName :
           FormikValues.homeOwnerLastName !== ''
         ) ||
@@ -596,14 +597,15 @@ function BCJobModal({
       return false;
     }
   }
+  
 
   const checkValidHomeOwner = () => {
     if (!jobSiteValue || jobSiteValue.length === 0) {
-      dispatch(error("Address is required when house is occupied"));
+      dispatch(warning("Address is required when house is occupied"));
       return false;
     }
     if (!formDataPhone.value && !formDataEmail.value) {
-      dispatch(error("Occupied house must have email or phone number"));
+      dispatch(warning("Occupied house must have email or phone number"));
       return false;
     }
     return true;
@@ -679,7 +681,7 @@ function BCJobModal({
       const tempData = {...values};
       tempData.scheduleTimeAMPM = tempData.scheduleTimeAMPM?.index || 0;
       tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
-      tempData.customerId = customer?._id; 
+      tempData.customerId = customer?._id;
 
       if (values.scheduledStartTime){
         // format local time as UTC without time adjustments (i.e. no timezone conversion)
@@ -874,6 +876,26 @@ function BCJobModal({
     setFieldValue
   } = form;
 
+  useEffect(() => {
+    var shouldSetIsSubmitting = (!FormikValues.isHomeOccupied ||
+      (
+        FormikValues.homeOwnerFirstName &&
+        (
+          (formDataEmail.validate && formDataEmail.value) ||
+          (formDataPhone.value && formDataPhone.validate))
+      )
+    );
+    
+    if (FormikValues.isHomeOccupied && (!formDataEmail.validate && formDataEmail.errorMsg !== '' && formDataEmail.value)) {
+      shouldSetIsSubmitting = false
+    } else if (FormikValues.isHomeOccupied && (!formDataPhone.validate && formDataPhone.errorMsg !== '' && formDataPhone.value)) {
+      shouldSetIsSubmitting = false
+    }
+
+    setIsSubmitting(!shouldSetIsSubmitting);
+    
+  }, [formDataEmail, formDataPhone, FormikValues]);
+  
   const closeModal = () => {
     dispatch(clearHomeOwnerStore());
     dispatch(closeModalAction());
@@ -1031,7 +1053,7 @@ function BCJobModal({
   const filteredJobRescheduleHistory: any[] = job.track
     ? job.track.filter((history: { action: string; }) => history.action.includes('rescheduling'))
     : []
-  
+
   const handleJobTypeChange = (fieldName: string, value: any, index: number, taskIndex: number) => {
     const jobTypes: any[] = [...FormikValues.tasks[taskIndex]?.jobTypes];
     switch (fieldName) {
@@ -1060,10 +1082,10 @@ function BCJobModal({
     newTasks[taskIndex].jobTypes = jobTypes;
     setFieldValue('tasks', newTasks);
   };
-  
+
   /**
-   * 
-   * @param jobType 
+   *
+   * @param jobType
    * Assign a price to each job item
    */
   const _setJobTypePrice = (jobType: any) => {
@@ -1192,7 +1214,7 @@ function BCJobModal({
                     variant={'outlined'}
                   />
                 )}
-                value={FormikValues.scheduleTimeAMPM} 
+                value={FormikValues.scheduleTimeAMPM}
                 onChange={(ev: any, newValue: any) =>
                   setFieldValue('scheduleTimeAMPM', newValue)
                 }
@@ -1216,7 +1238,7 @@ function BCJobModal({
               {FormikValues.tasks.map((task: any, index) =>
                 <>
                     <Grid item xs={6}>
-                      <Typography 
+                      <Typography
                         variant={'caption'}
                         className={' required previewCaption'}
                       >
@@ -1243,7 +1265,7 @@ function BCJobModal({
                       />
                     </Grid>
                     <Grid item xs={5}>
-                      <Typography 
+                      <Typography
                         variant={'caption'}
                         className={' required previewCaption'}
                       >
@@ -1313,7 +1335,7 @@ function BCJobModal({
                       }
                     </Grid>
                     {index > 0 && !jobTypesLoading &&
-                      <Grid 
+                      <Grid
                         container
                         xs={1}
                         justify={"flex-start"}
@@ -1539,7 +1561,10 @@ function BCJobModal({
               <Grid item xs={6}>
                 <Typography
                   variant={'caption'}
-                  className={' previewCaption'}
+                  className={
+                    FormikValues.isHomeOccupied
+                      ? `required ${'previewCaption'}`
+                      : 'previewCaption'}
                 >
                   Job Address
                 </Typography>
@@ -1663,7 +1688,10 @@ function BCJobModal({
                       name="isHomeOccupied"
                       classes={{ root: classes.checkboxInput }}
                       onChange={(e) => {
-                        formikChange(e)
+                        formikChange(e);
+                        if (!FormikValues.isHomeOccupied) {
+                          checkValidHomeOwner();
+                        }
                       }}
                     />
                   }

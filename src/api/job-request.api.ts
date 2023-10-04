@@ -1,7 +1,7 @@
 import request from 'utils/http.service';
 import axios from 'axios'
 import moment from 'moment';
-import { 
+import {
   refreshJobRequests,
   setJobRequestsLoading,
   setJobRequests,
@@ -23,7 +23,7 @@ const compareByDate = (a: any, b: any) => {
 };
 
 let cancelTokenGetAllJobRequestAPI:any;
-export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, lastPageCursor = '') => {
+export const getAllJobRequestAPI = (pageSize = 15, previousCursor = '', nextCursor = '', status = '-1', keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, lastPageCursor = '') => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobRequestsLoading(true));
@@ -52,7 +52,7 @@ export const getAllJobRequestAPI = (pageSize = 10, previousCursor = '', nextCurs
           dispatch(setJobRequestsLoading(true));
         }, 0);
       }
-      
+
       cancelTokenGetAllJobRequestAPI = axios.CancelToken.source();
 
       request(`/getJobRequests`, 'OPTIONS', optionObj, undefined, undefined, cancelTokenGetAllJobRequestAPI, true)

@@ -11,7 +11,7 @@ const initialJobRequests: JobRequestState = {
   lastPageCursor: '',
   total: 0,
   currentPageIndex: 0,
-  currentPageSize: 10,
+  currentPageSize: 15,
   keyword: '',
   numberOfJobRequest: 0,
 };

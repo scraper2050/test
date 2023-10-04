@@ -35,6 +35,14 @@ export const quickbooksItemSync = async (data:any) => {
     throw new Error(`Something went wrong`);
   }
 };
+export const quickbooksGetAccounts = async () => {
+  try {
+    const response: any = await request("/getQBAccounts", "POST",{}, false);
+    return response;
+  } catch (err) {
+    throw new Error(`Something went wrong`);
+  }
+};
 
 export const quickbooksItemsSync = async () => {
   try {

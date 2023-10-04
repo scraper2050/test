@@ -8,6 +8,10 @@ import BCTabs from '../../../../components/bc-tab/bc-tab';
 import SwipeableViews from 'react-swipeable-views';
 import { getAllJobsAPI, getJobsListAPI } from 'api/job.api';
 import { getAllJobTypesAPI } from 'api/job.api';
+import { makeStyles } from '@material-ui/core/styles';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import * as CONSTANTS from '../../../../../../src/constants';
 import { modalTypes } from '../../../../../constants';
 import styles from '../../customer.styles';
 import { statusReference } from 'helpers/contants';
@@ -87,6 +91,18 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     return cond;
   });
 
+  const useStyles = makeStyles({
+    root: {
+      color: CONSTANTS.OCCUPIED_ORANGE,
+      '&$checked': {
+        color: CONSTANTS.OCCUPIED_ORANGE,
+
+      },
+    },
+    checked: {},
+  });
+  const checkBoxClass = useStyles();
+
   function getJobLocation(originalRow: any, rowIndex: number) {
     return originalRow?.jobLocationObj[0]?.name || '-';
   }
@@ -95,12 +111,12 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     let startTime = 'N/A';
     let endTime = 'N/A';
     // Case for specific time
-    if (originalRow.scheduledStartTime !== undefined || originalRow.scheduledEndTime !== undefined) {
+    if (originalRow.scheduledStartTime !== undefined && originalRow.scheduledStartTime !== null){
       if (originalRow.scheduledStartTime !== undefined) {
         const formatScheduledObj = formatSchedulingTime(originalRow.scheduledStartTime);
         startTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
       }
-      if (originalRow.scheduledEndTime !== undefined) {
+      if (originalRow.scheduledEndTime !== undefined && originalRow.scheduledEndTime !== null ) {
         const formatScheduledObj = formatSchedulingTime(originalRow.scheduledEndTime);
         endTime = convertMilitaryTime(`${formatScheduledObj.hours}:${formatScheduledObj.minutes}`);
       }
@@ -266,12 +282,35 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
       'width': 60
     },
     {
+      Cell ({row}:any){
+        const time = getJobTime(row.original,row.original.index);
+        return <div className={'flex items-center'}>
+          {time}
+          {
+            row.original.isHomeOccupied &&
+            <>
+              <span title='House is Occupied' >
+            <Checkbox
+                classes={{
+                  root: checkBoxClass.root,
+                  checked: checkBoxClass.checked,
+                }}
+                checked={true}
+                icon={<CheckBoxOutlineBlankIcon style={{ fontSize: 15 }} />}
+                checkedIcon={<CheckBoxIcon style={{ fontSize: 15 }} />}
+              />
+              </span>
+            </>
+          }
+        </div>
+      },
       'Header': 'Time',
       'id': 'job-time',
       'accessor': getJobTime,
       'sortable': true,
       'width': 40
     }
+
   ];
 
   function Toolbar() {
@@ -397,7 +436,7 @@ function JobsPage({ classes, hidden, currentPage, setCurrentPage }: any) {
     if (refresh && !currentDivision.isDivisionFeatureActivated || currentDivision.isDivisionFeatureActivated && (currentDivision.params?.workType || currentDivision.params?.companyLocation || currentDivision.data?.name == 'All')) {
       dispatch(getAllJobsAPI(undefined, currentPageIndex, selectedStatus, keyword, selectionRange, currentDivision.params));
       dispatch(setCurrentPageIndex(0));
-      dispatch(setCurrentPageSize(10));
+      dispatch(setCurrentPageSize(15));
     }
     setTimeout(() => {
       loadCount.current++;
