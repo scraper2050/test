@@ -51,7 +51,8 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 15, currentPageIndex
       const optionObj: any = {
         pageSize,
         currentPage: currentPageIndex,
-        'isDraft': false
+        'isDraft': false,
+        isVoid : false
       };
       if (keyword) {
         optionObj.keyword = keyword;
@@ -586,6 +587,49 @@ export const updateJobCommission = (id: string, data: any) => {
   });
 };
 
+export const getCustomerInvoicesForBulkPaymentEdit = (showPaid = false, customerId: any, selectionRange?: { startDate: Date; endDate: Date } | null, dueDate?: Date | null, isVoid = false) => {
+
+  return new Promise((resolve, reject) => {
+
+      const optionObj: any = {
+        pageSize:1000000,
+        currentPage:0,
+        'isVoid':isVoid,
+        'isDraft': false,
+        'customerId': customerId
+      };
+
+      if (selectionRange) {
+        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+        optionObj.endDate = moment(selectionRange.endDate).add(1, 'day')
+          .format('YYYY-MM-DD');
+      }
+
+      if (dueDate) {
+        optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
+      }
+      if (showPaid === false) {
+        optionObj.status = JSON.stringify(['UNPAID', 'PARTIALLY_PAID']);
+      }
+
+      cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
+
+      requestApiV2(`/getInvoices`, 'post', optionObj, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
+        .then((res: any) => {
+          const tempInvoices = res.data.invoices;
+
+          return resolve(res.data);
+        })
+        .catch(err => {
+
+          if (err.message !== 'axios canceled') {
+            return reject(err);
+          }
+        });
+    });
+
+};
+
 /**
  * Do the call to the endpoint for download the invoice as excel file
  * @returns { data: Blob, fileName: string }
@@ -672,6 +716,4 @@ export const exportInvoicesToExcel = async (pageSize = 15, currentPageIndex = 0,
       reject(error);
     })
   });
-}
-
-
+};

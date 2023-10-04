@@ -31,6 +31,8 @@ import { error } from "actions/snackbar/snackbar.action";
 import { voidPayment } from 'api/payment.api';
 import { modalTypes } from '../../../constants';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import axios from 'axios';
+import { getCustomerInvoicesForBulkPaymentEdit } from 'api/invoicing.api';
 
 const StyledGrid = withStyles(() => ({
   item: {
@@ -55,6 +57,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
   const dispatch = useDispatch();
   const [localPaymentList, setLocalPaymentList] = useState<any[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [msgAfterUpdate, setMsgAfterUpdate] = useState('');
   const inputStyles = useInputStyles();
   const currentDivision: ISelectedDivision = useSelector((state: any) => state.currentDivision);
 
@@ -135,8 +138,15 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
         .then((response: any) => {
           if (response.status === 1) {
             setIsSuccess(true);
+            setMsgAfterUpdate('The payment and QB was successfully edited');
             setSubmitting(false);
-          } else {
+          }
+          if(response?.quickbookPayment == null)
+          {
+            setMsgAfterUpdate("Payment Edited successfully but couldn't sync QB");
+            setIsSuccess(true);
+            setSubmitting(false);
+          } else if(response.status != 1) {
             dispatch(error(response.message))
             setSubmitting(false);
           }
@@ -153,13 +163,13 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     if(!FormikValues.customerId) {
       return false;
     }
-    // if(localPaymentList.filter(payment => payment.checked && !payment.amountToBeApplied).length){
-    //   return false
-    // }
-    if(localPaymentList.filter(payment => payment.checked && payment.amountToBeApplied).length === 0){
+    if (localPaymentList.filter(payment => payment.checked && !payment.amountToBeApplied).length) {
       return false
     }
-    if(isSumAmountDifferent()){
+    if (localPaymentList.filter(payment => payment.checked && payment.amountToBeApplied).length === 0) {
+      return false
+    }
+    if (isSumAmountDifferent()) {
       return false
     }
     return true;
@@ -171,7 +181,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
 
   const handleAmountToBeAppliedChange = (id: string, value: string) => {
     let newPaymentList: any = [...localPaymentList];
-    const index = newPaymentList.findIndex((payment: any) => payment._id === id);
+    const index = newPaymentList.findIndex((payment: any) => payment.invoice._id === id);
     newPaymentList[index].amountToBeApplied = parseFloat(value);
     const parsedValue = parseFloat(value);
     if (!isNaN(parsedValue)) {
@@ -179,8 +189,8 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     } else {
       newPaymentList[index].amountToBeApplied = 0;
     }
-    // newPaymentList = newPaymentList.map((payment:any) => ({...payment, checked: payment.amountToBeApplied ? 1 : 0}));
-    // newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked);
+    newPaymentList = newPaymentList.map((payment:any) => ({...payment, checked: payment.amountToBeApplied ? 1 : 0}));
+    newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked);
     setLocalPaymentList(newPaymentList);
   };
 
@@ -190,16 +200,16 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     }
   };
 
-  // const handleCheckedChange = (id: string, checkedValue: boolean) => {
-  //   const newPaymentList: any = [...localPaymentList];
-  //   const index = newPaymentList.findIndex((payment: any) => payment._id === id);
-  //   newPaymentList[index].checked = checkedValue ? 1 : 0;
-  //   if(!checkedValue){
-  //     newPaymentList[index].amountToBeApplied = 0;
-  //   }
-  //   newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked)
-  //   setLocalPaymentList(newPaymentList);
-  // }
+  const handleCheckedChange = (id: string, checkedValue: boolean) => {
+    const newPaymentList: any = [...localPaymentList];
+    const index = newPaymentList.findIndex((payment: any) => payment.invoice._id === id);
+    newPaymentList[index].checked = checkedValue ? 1 : 0;
+    if (!checkedValue) {
+      newPaymentList[index].amountToBeApplied = 0;
+    }
+    newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked)
+    setLocalPaymentList(newPaymentList);
+  }
 
   const handleVoidPaymentButtonClick = () => {
     const closeAction = setModalDataAction({
@@ -236,18 +246,18 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     {
       Cell({ row }: any) {
         return <div>
-          {/* <FormControlLabel
+          <FormControlLabel
             control={
               <Checkbox
                 disabled={row.original.status === "PAID"}
                 checked={!!row.original.checked}
-                // onChange={(event) => handleCheckedChange(row.original._id, event.target.checked)}
+                onChange={(event) => handleCheckedChange(row.original.invoice._id, event.target.checked)}
                 name="checkedB"
                 color="primary"
               />
             }
             label=""
-          /> */}
+          />
           {row.original.invoice?.dueDate
             ? formatShortDateNoDay(row.original.invoice.dueDate)
             : 'N/A'}
@@ -330,7 +340,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
             disabled={row.original.status === "PAID"}
             classes={{ root: inputStyles.textField }}
             onFocus={(event: any)=> handleOnFocus(setCellValue, event.target.value)}
-            onBlur={(event: any) => handleAmountToBeAppliedChange(row.original._id, event.target.value)}
+            onBlur={(event: any) => handleAmountToBeAppliedChange(row.original.invoice._id, event.target.value)}
             onChange={(event: any) => setCellValue(event.target.value)}
             type={'number'}
             value={cellValue}
@@ -338,22 +348,51 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
           />
         )
       },
-      'Header': 'New Amount',
+      'Header': 'Amount to be applied',
       'accessor': 'amountToBeApplied'
     },
   ];
 
   useEffect(() => {
-    if (paymentList.length > 0) {
-      const newPaymentList = paymentList.map((item: any) => ({
-        ...item,
-        'amountToBeApplied': item.amountPaid,
-        'checked': 1,
-      }));
-      setLocalPaymentList([...newPaymentList]);
-    } else {
-      setLocalPaymentList([]);
-    }
+
+    let allInvoices: any = [];
+    getCustomerInvoicesForBulkPaymentEdit(false, payments.customer._id).then((invoices:any) => {
+      allInvoices = invoices.invoices;
+
+      if (allInvoices.length > 0) {
+        const uncheckedPaymentInvoices = allInvoices.map((invoice: any) => ({
+          'invoice': invoice,
+          'amountToBeApplied': 0,
+          'checked': 0,
+          'amountPaid': 0
+        }));
+
+        if (paymentList.length > 0) {
+          const checkedPaymentInvoices = paymentList.map((item: any) => ({
+            ...item,
+            'amountToBeApplied': item.amountPaid,
+            'checked': 1
+          }));
+
+          const totallpayments = checkedPaymentInvoices.concat(uncheckedPaymentInvoices).reduce((accumulater: any, currentPayment: any) => {
+            if (!accumulater.some((payment: any) => payment.invoice._id === currentPayment.invoice._id)) {
+              accumulater.push(currentPayment);
+            }
+            return accumulater;
+          }, []);
+
+          setLocalPaymentList([...totallpayments]);
+        } else {
+          setLocalPaymentList([...allInvoices]);
+        }
+
+      }
+    })
+      .catch((error) => {
+        setLocalPaymentList([...allInvoices]);
+        console.error('Error occurred:', error);
+      });
+
   }, [paymentList])
 
   useEffect(() => {
@@ -366,7 +405,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     <DataContainer className={'new-modal-design'}>
       <form onSubmit={FormikSubmit}>
         {isSuccess ? (
-          <BCSent title={'The payment was successfully edited.'}/>
+          <BCSent title={msgAfterUpdate}/>
         ) : (
           <>
             <Grid container className={'modalPreview'} justify={'space-between'} spacing={4}>
@@ -423,7 +462,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
                     value={FormikValues.totalAmountToBePaid}
                     error={isSumAmountDifferent()}
                     // helperText={isSumAmountDifferent() && 'The total amount is not the same as the sum of all invoice payments'}
-                    helperText={isSumAmountDifferent() && 'The total amount is not match'}
+                    helperText={isSumAmountDifferent() && "Total amount doesn't match"}
                   />
                   {!!FormikValues.totalAmount && (
                     <div style={{marginTop: 10}}>
