@@ -95,7 +95,6 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
     }
   }) : [];
 
-
   const {loading, data} = useSelector(
     ({employeesForJob}: any) => employeesForJob
   );
@@ -127,7 +126,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
     }
     const data: any = {
       type: 'Customer',
-      referenceNumber: invoiceData.job.customer,
+      referenceNumber: invoiceData.job?.customer,
     };
     dispatch(getContacts(data));
     dispatch(getEmployeesForJobAction());
@@ -265,7 +264,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
 
   return <>
     <DataContainer className={'new-modal-design'}>
-      {invoiceData?.job._id &&
+      {invoiceData?.job?._id &&
         <Typography variant={'caption'} className={'jobIdText'}>{invoiceData?.job.jobId}
           {
             isEditing && invoiceData?.job._id && <>
@@ -504,7 +503,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
                 pagination={true}
                 noPadding={true}
                 stickyHeader
-                tableData={[...invoiceData.job.track, ...technicianNotes]}
+                tableData={[...(invoiceData?.job?.track || []), ...technicianNotes]}
               />
             </div>
 

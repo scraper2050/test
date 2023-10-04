@@ -852,31 +852,37 @@ function BCEditInvoice({
                   }
                 </div>
                 <div>
-                  {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
-                    <Badge
-                      badgeContent={1}
-                      color="secondary"
-                      overlap="rectangle"
-                      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
-                    >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                        onClick={handleTicketClick}
-                      >
-                        Job Details
-                      </Button>
-                    </Badge>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                      onClick={handleTicketClick}
-                    >
-                      Job Details
-                    </Button>
+                  {(invoiceData && invoiceData.job) && (
+                    <>
+                      {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
+                        <Badge
+                          badgeContent={1}
+                          color="secondary"
+                          overlap="rectangle"
+                          anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                        >
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                            onClick={handleTicketClick}
+                            style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
+                          >
+                            Job Details
+                          </Button>
+                        </Badge>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                          onClick={handleTicketClick}
+                          style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
+                        >
+                          Job Details
+                        </Button>
+                      )}
+                    </>
                   )}
                   {!invoiceData?.isDraft && !invoiceData?.isVoid && (
                     <Button
@@ -1440,31 +1446,37 @@ function BCEditInvoice({
                   }
                 </div>
                 <div>
-                  {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
-                    <Badge
-                      badgeContent={1}
-                      color="secondary"
-                      overlap="rectangle"
-                      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
-                    >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                        onClick={handleTicketClick}
-                      >
-                        Job Details
-                      </Button>
-                    </Badge>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
-                      onClick={handleTicketClick}
-                    >
-                      Job Details
-                    </Button>
+                  {(invoiceData && invoiceData.job) && (
+                    <>
+                      {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
+                        <Badge
+                          badgeContent={1}
+                          color="secondary"
+                          overlap="rectangle"
+                          anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                        >
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                            onClick={handleTicketClick}
+                            style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
+                          >
+                            Job Details
+                          </Button>
+                        </Badge>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          className={classNames(invoiceStyles.bcButton, invoiceStyles.bcTransparentBorder, invoiceStyles.bcRMargin)}
+                          onClick={handleTicketClick}
+                          style = {{display: invoiceData.isDraft ? 'none' : 'block'}}
+                        >
+                          Job Details
+                        </Button>
+                      )}
+                    </>
                   )}
                   {!invoiceData?.isDraft && !invoiceData?.isVoid && (
                     <Button

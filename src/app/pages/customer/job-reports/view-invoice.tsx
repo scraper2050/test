@@ -452,7 +452,7 @@ function ViewInvoice({ classes, theme }: any) {
           </div>
           <div style={{ display: 'flex' }}>
             {
-            invoiceDetail.job?.customer?.notes && 
+            invoiceDetail.job?.customer?.notes &&
             (
               <LightTooltip title={invoiceDetail.job?.customer?.notes}>
                 <div className={invoiceStyles.customerNoteContainer}>
@@ -526,7 +526,7 @@ function ViewInvoice({ classes, theme }: any) {
                 <InfoOutlinedIcon style={{ color: 'grey', fontSize: '36px', minWidth: "40px", width: "40px" }} />
               </Button>
             </HtmlTooltip>
-          
+
             {showJobCosting &&
               <Button
                 variant="outlined"
@@ -537,7 +537,7 @@ function ViewInvoice({ classes, theme }: any) {
               >Job Costing
               </Button>
             }
-            {invoiceDetail && (
+            {(invoiceDetail && invoiceDetail.job) && (
               <>
                 {technicianData.commentValues.length > 0 || technicianData.images.length > 0 ? (
                   <Badge
@@ -551,6 +551,8 @@ function ViewInvoice({ classes, theme }: any) {
                       color="primary"
                       className={classNames(invoiceStyles.white)}
                       onClick={handleTicketClick}
+                      style = {{display: invoiceDetail.isDraft ? 'none' : 'block'}}
+
                     >
                       Job Details
                     </Button>
@@ -561,6 +563,7 @@ function ViewInvoice({ classes, theme }: any) {
                     color="primary"
                     className={classNames(invoiceStyles.margin, invoiceStyles.white)}
                     onClick={handleTicketClick}
+                    style = {{display: invoiceDetail.isDraft ? 'none' : 'block'}}
                   >
                     Job Details
                   </Button>
