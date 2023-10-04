@@ -92,13 +92,18 @@ export const formatCurrency = (value: number | null | undefined, nullValue?: str
   return formatted;
 }
 
-const formatNumber = (number: number) => {
-  return number.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-    useGrouping: true,
-  })
+// export const formatNumber = (number: number) => {
+//   return number.toLocaleString('en-US', {
+//     minimumFractionDigits: 2,
+//     maximumFractionDigits: 2,
+//     useGrouping: true,
+//   })
+// }
+
+export const formatNumber=(number : number) => {
+  return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '\$1,')
 }
+
 
 export const convertMilitaryTime = (time: string) => {
   let timeAr = time.match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
