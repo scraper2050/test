@@ -421,6 +421,7 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
                             ? formatDatTimell(job.scheduleDate)
                             : 'N/A'}
                         </p>
+                        {job.rescheduled && <span className={classes.rescheduled}>(Rescheduled)</span>}
                       </div>
                     </Grid>
                   </Grid>
