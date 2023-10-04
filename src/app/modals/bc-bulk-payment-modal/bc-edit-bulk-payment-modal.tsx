@@ -189,8 +189,8 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions, payments }
     } else {
       newPaymentList[index].amountToBeApplied = 0;
     }
-    // newPaymentList = newPaymentList.map((payment:any) => ({...payment, checked: payment.amountToBeApplied ? 1 : 0}));
-    // newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked);
+    newPaymentList = newPaymentList.map((payment:any) => ({...payment, checked: payment.amountToBeApplied ? 1 : 0}));
+    newPaymentList.sort((paymentA: any, paymentB: any) => paymentB.checked - paymentA.checked);
     setLocalPaymentList(newPaymentList);
   };
 

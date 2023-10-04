@@ -51,7 +51,8 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 15, currentPageIndex
       const optionObj: any = {
         pageSize,
         currentPage: currentPageIndex,
-        'isDraft': false
+        'isDraft': false,
+        isVoid : false
       };
       if (keyword) {
         optionObj.keyword = keyword;
