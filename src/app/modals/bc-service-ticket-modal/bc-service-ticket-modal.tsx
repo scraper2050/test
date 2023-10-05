@@ -876,6 +876,26 @@ function BCServiceTicketModal(
     }
   }, [homeOwners]);
 
+
+  useEffect(() => {
+    var shouldSetIsSubmitting = (!FormikValues.isHomeOccupied ||
+      (
+        FormikValues.customerFirstName &&
+        (
+          (formDataEmail.validate && formDataEmail.value) ||
+          (formDataPhone.value && formDataPhone.validate))
+      )
+    );
+
+    if (FormikValues.isHomeOccupied && (!formDataEmail.validate && formDataEmail.errorMsg !== '' && formDataEmail.value)) {
+      shouldSetIsSubmitting = false
+    } else if (FormikValues.isHomeOccupied && (!formDataPhone.validate && formDataPhone.errorMsg !== '' && formDataPhone.value)) {
+      shouldSetIsSubmitting = false
+    }
+
+    setIsSubmitting(!shouldSetIsSubmitting);
+  }, [formDataEmail, formDataPhone, FormikValues]);
+
   const dateChangeHandler = (date: string) => {
     setFieldValue('dueDate', date);
   };

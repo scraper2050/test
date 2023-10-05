@@ -69,9 +69,10 @@ const initialJobState = {
 };
 
 const getJobTasks = (job: any) => {
-    const tasks = job.tasks.map((task: any) => ({...task, jobTypes: getJobData(task.jobTypes)
-    }));
-    return tasks;
+  const tasks = job.tasks.map((task: any) => ({
+    ...task, jobTypes: getJobData(task.jobTypes)
+  }));
+  return tasks;
 };
 
 
@@ -101,6 +102,7 @@ function BCEditCompletedJobModal({
 }: any): JSX.Element {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [isUpdateable, setIsUpdateable] = useState(false);
   const [tabsData, setTabsData] = useState([]);
   const [curTab, setCurTab] = useState(0);
   const customers = useSelector(({ customers }: any) => customers.data);
@@ -111,24 +113,7 @@ function BCEditCompletedJobModal({
     },
     onSubmit: async (values: any) => {
       setLoading(true);
-
-      const newTasks:any[] = [];
-      let isUpdateable = false;
-
-      values.tasks.forEach((task: any) => {
-        const jobTypes:any[] = [];
-        task.jobTypes.forEach((jobType: any) => {
-          if (Number(jobType.completedCount) < jobType.quantity) {
-            jobType.completedCount = Number(jobType.completedCount);
-            jobTypes.push(jobType);
-          }
-        })
-
-        if (jobTypes.length) {
-          newTasks.push({...task,jobTypes: jobTypes});
-          isUpdateable = true;
-        }
-      })
+      const newTasks = validateQuantity();
 
       if (isUpdateable) {
         const { invoice } = await getJobInvoice(job._id);
@@ -164,6 +149,34 @@ function BCEditCompletedJobModal({
     handleSubmit: FormikSubmit,
     setFieldValue
   } = form;
+
+  const validateQuantity = (parseValue: boolean = true) => {
+    const newTasks: any[] = [];
+    const allJobTypes: any[] = [];
+
+    FormikValues.tasks.forEach((task: any) => {
+      const jobTypes: any[] = [];
+      task.jobTypes.forEach((jobType: any) => {
+        if (Number(jobType.completedCount) < jobType.quantity && (Number(jobType.completedCount) % 1 === 0)) {
+          if(parseValue) jobType.completedCount = Number(jobType.completedCount);
+          jobTypes.push(jobType);
+          allJobTypes.push(jobType);
+        }
+      })
+
+      if (jobTypes.length) {
+        newTasks.push({ ...task, jobTypes: jobTypes });
+      }
+    })
+
+    if (allJobTypes.length) {
+      setIsUpdateable(true);
+    } else {
+      setIsUpdateable(false);
+    };
+
+    return newTasks;
+  }
 
 
   useEffect(() => {
@@ -296,9 +309,6 @@ function BCEditCompletedJobModal({
             newJobTasksMapped.push({ ...task, jobTypes: newJobTypes, status: 0 });
           }
         });
-
-        console.log(newJobTasksMapped);
-        
         dispatch(setModalDataAction({
           'data': {
             'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasksMapped, isCompletedJob: true, status: 7, newJobTasks: JSON.stringify(tasks) },
@@ -329,6 +339,7 @@ function BCEditCompletedJobModal({
     let newTasks = [...FormikValues.tasks];
     newTasks[taskIndex].jobTypes = jobTypes;
     setFieldValue('tasks', newTasks);
+    validateQuantity(false);
   };
 
   return (
@@ -368,9 +379,9 @@ function BCEditCompletedJobModal({
                       {
                         FormikValues.tasks.map((task: any, index: number) => {
                           if (task._id == res.task._id) {
-                           return <>
+                            return <>
                               {
-                               task?.jobTypes?.map((jobType: any, jobTypeIdx: number) =>{
+                                task?.jobTypes?.map((jobType: any, jobTypeIdx: number) => {
                                   return <Grid container alignItems='center' spacing={4} style={{ paddingBottom: 0 }}>
                                     <Grid item xs={3} style={{ paddingBottom: 0 }}>
                                       <Typography variant={'body1'} className={'previewCaption'}>{jobType.jobType?.title}</Typography>
@@ -409,7 +420,7 @@ function BCEditCompletedJobModal({
                               }
                             </>
                           } else {
-                           return  <></>
+                            return <></>
                           }
                         })
                       }
@@ -429,7 +440,7 @@ function BCEditCompletedJobModal({
             </Button>
             <Button
               color='primary'
-              disabled={loading}
+              disabled={loading || !isUpdateable}
               type='submit'
               variant='contained'
             >Submit</Button>

@@ -503,7 +503,7 @@ function BCBulkPaymentModal({ classes, modalOptions, setModalOptions }: any): JS
                     value={FormikValues.totalAmountToBePaid}
                     error={isSumAmountDifferent()}
                     // helperText={isSumAmountDifferent() && 'The total amount is not the same as the sum of all invoice payments'}
-                    helperText={isSumAmountDifferent() && 'The total amount is not match'}
+                    helperText={isSumAmountDifferent() && "Total amount doesn't match"}
                   />
                   {!!FormikValues.totalAmount && (
                     <div style={{marginTop: 10}}>

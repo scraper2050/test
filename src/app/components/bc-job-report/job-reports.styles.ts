@@ -1,6 +1,7 @@
 import { Theme } from '@material-ui/core/styles';
 import * as CONSTANTS from '../../../constants';
 import styled from 'styled-components';
+import { grey } from '@material-ui/core/colors';
 
 export default (theme: Theme): any => ({
   'label': {
@@ -220,6 +221,10 @@ export default (theme: Theme): any => ({
     "color": "#626262",
     "cursor": "pointer"
   },
+  "rescheduled": {
+    "color": "grey",
+    "font-size": "0.8rems"
+  }
 });
 
 export const MainContainer = styled.div`
