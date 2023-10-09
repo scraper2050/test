@@ -327,14 +327,99 @@ function BCJobModal({
       })
     );
   };
+
+  /**
+   * Get Request Object to update job details
+   * @returns {
+   *  requestObj
+   * }
+   */
+  const getRequestPayload = async () => {
+    const tempData: any = { ...FormikValues };
+    tempData.scheduleTimeAMPM = tempData.scheduleTimeAMPM?.index || 0;
+    tempData.scheduleDate = moment(FormikValues.scheduleDate).format('YYYY-MM-DD');
+    tempData.customerId = customer?._id;
+
+    if (FormikValues.scheduledStartTime) {
+      // format local time as UTC without time adjustments (i.e. no timezone conversion)
+      tempData.scheduledStartTime = moment(FormikValues.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    }
+    if (FormikValues.scheduledEndTime) {
+      // format local time as UTC without time adjustments (i.e. no timezone conversion)
+      tempData.scheduledEndTime = moment(FormikValues.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    }
+
+    if (FormikValues.customerContactId?._id) tempData.customerContactId = FormikValues.customerContactId?._id;
+
+    const newImages = FormikValues.images.filter((image: any) => image instanceof File);
+    if (newImages.length > 0)
+      tempData.images = newImages;
+    else
+      delete tempData.images;
+
+    delete tempData.dueDate;
+
+    const tasks = FormikValues.tasks.map((task: any) => ({
+      employeeType: task.employeeType.toString(),
+      contractorId: task.contractor ? task.contractor._id : '',
+      technicianId: task.employee ? task.employee._id : '',
+      jobTypes: task.jobTypes.map((type: any) => ({ jobTypeId: type.jobTypeId?._id, quantity: Number(type.quantity), price: Number(type.price), status: type.status }))
+    }))
+
+    tempData.tasks = tasks;
+
+    if (job.jobFromRequest || job.request) {
+      tempData.jobRequestId = tempData.ticketId;
+      delete tempData.ticketId;
+    }
+
+    // Handle home owner creation / update on job modal
+    if (isNewHomeOwner()) {
+      if (FormikValues.isHomeOccupied === false) {
+        tempData.homeOwnerId = null;
+      }
+      else {
+        if (!checkValidHomeOwner()) return;
+        // Create new homeowner
+        let homeOwnerData: any = {
+          firstName: tempData.homeOwnerFirstName ?? '',
+          lastName: tempData.homeOwnerLastName ?? '',
+          address: tempData.jobSiteId ?? '',
+          ...(
+            (tempData.jobLocationId && tempData.jobLocationId.length > 0) &&
+            { subdivision: tempData.jobLocationId }
+          ),
+          ...((formDataEmail.value && formDataEmail.value.length > 0) && { email: formDataEmail.value }),
+          ...((formDataPhone.value && formDataPhone.value.length > 0) && { phone: formDataPhone.value }),
+
+        };
+        const homOwnerResult = await callCreateHomeOwner(homeOwnerData)
+          .then((response: any) => {
+            if (response.status !== 1) {
+              dispatch(error("Could not create home owner"));
+              return false;
+            }
+            tempData.homeOwnerId = response.homeOwner._id;
+            return true;
+          });
+        if (!homOwnerResult) { return; }
+      }
+    }
+    return formatRequestObj(tempData);
+  }
+
   /**
    * Handle mark complete job modal
    */
   const openMarkCompleteJobModal = async (job: any) => {
+    const jobRequestPayload = await getRequestPayload();
+    jobRequestPayload["jobId"] = job._id;
+    
     dispatch(
       setModalDataAction({
         data: {
           job: job,
+          jobRequest: jobRequestPayload,
           modalTitle: `Mark Job as Complete`,
           removeFooter: false,
         },
@@ -677,78 +762,7 @@ function BCJobModal({
     validateOnBlur: false,
     onSubmit: async(values: any, {setSubmitting}: any) => {
       setIsSubmitting(true);
-
-      const tempData = {...values};
-      tempData.scheduleTimeAMPM = tempData.scheduleTimeAMPM?.index || 0;
-      tempData.scheduleDate = moment(values.scheduleDate).format('YYYY-MM-DD');
-      tempData.customerId = customer?._id;
-
-      if (values.scheduledStartTime){
-        // format local time as UTC without time adjustments (i.e. no timezone conversion)
-        tempData.scheduledStartTime = moment(values.scheduledStartTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-      }
-      if (values.scheduledEndTime){
-        // format local time as UTC without time adjustments (i.e. no timezone conversion)
-        tempData.scheduledEndTime = moment(values.scheduledEndTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-      }
-
-      if (values.customerContactId?._id) tempData.customerContactId = values.customerContactId?._id;
-
-      const newImages = values.images.filter((image: any) => image instanceof File);
-      if (newImages.length > 0)
-        tempData.images = newImages;
-      else
-        delete tempData.images;
-
-      delete tempData.dueDate;
-
-      const tasks = values.tasks.map((task: any) => ({
-        employeeType: task.employeeType.toString(),
-        contractorId: task.contractor ? task.contractor._id : '',
-        technicianId: task.employee ? task.employee._id : '',
-        jobTypes: task.jobTypes.map((type: any) => ({ jobTypeId: type.jobTypeId?._id, quantity: Number(type.quantity), price: Number(type.price), status: type.status }))
-      }))
-
-      tempData.tasks = tasks;
-
-      if (job.jobFromRequest || job.request) {
-        tempData.jobRequestId = tempData.ticketId;
-        delete tempData.ticketId;
-      }
-
-      // Handle home owner creation / update on job modal
-      if (isNewHomeOwner()) {
-        if(FormikValues.isHomeOccupied === false) {
-          tempData.homeOwnerId = null;
-        }
-        else {
-          if (!checkValidHomeOwner()) return;
-          // Create new homeowner
-          let homeOwnerData: any = {
-            firstName: tempData.homeOwnerFirstName ?? '',
-            lastName: tempData.homeOwnerLastName ?? '',
-            address: tempData.jobSiteId ?? '',
-            ...(
-              (tempData.jobLocationId && tempData.jobLocationId.length > 0) &&
-              { subdivision: tempData.jobLocationId }
-            ),
-            ...((formDataEmail.value && formDataEmail.value.length > 0) && { email: formDataEmail.value }),
-            ...((formDataPhone.value && formDataPhone.value.length > 0) && { phone: formDataPhone.value }),
-
-          };
-          const homOwnerResult = await callCreateHomeOwner(homeOwnerData)
-            .then((response: any) => {
-              if (response.status !== 1) {
-                dispatch(error("Could not create home owner"));
-                return false;
-              }
-              tempData.homeOwnerId = response.homeOwner._id;
-              return true;
-            });
-          if (!homOwnerResult) { return; }
-        }
-      }
-      const requestObj = formatRequestObj(tempData)
+      const requestObj = await getRequestPayload();
 
       const editJob = async (tempData: any) => {
         tempData.jobId = job._id;

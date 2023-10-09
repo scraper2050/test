@@ -15,7 +15,7 @@ import {
 import BCInput from 'app/components/bc-input/bc-input';
 import { useDispatch } from 'react-redux';
 import styled from "styled-components";
-import { callUpdateJobAPI } from "api/job.api";
+import { callEditJobAPI, callUpdateJobAPI } from "api/job.api";
 import { modalTypes } from "../../../constants";
 import { refreshServiceTickets, } from 'actions/service-ticket/service-ticket.action';
 import { refreshJobs } from 'actions/job/job.action';
@@ -27,7 +27,7 @@ function BCMarkCompleteJobModal({
   props,
 }: any): JSX.Element {
   const dispatch = useDispatch();
-  const { job } = props;
+  const { job, jobRequest } = props;
   const canEdit = job.status === 0 || job.status === 4;
 
   const closeModal = () => {
@@ -84,8 +84,14 @@ function BCMarkCompleteJobModal({
     'onSubmit': async (values, { setSubmitting }) => {
       try {
         setSubmitting(true);
+        if (jobRequest){
+          await callEditJobAPI(jobRequest)
+            .catch((err: any) => {
+              dispatch(error("The job property update failed due to some reason!"));
+            })
+        }
+        
         const response: any = await callUpdateJobAPI(values);
-    
         if (response.status) {
             await dispatch(refreshServiceTickets(true));
             await dispatch(refreshJobs(true));
