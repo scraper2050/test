@@ -221,8 +221,20 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       job?.jobSite?.address?.zipcode
     ].filter(Boolean);
     const formattedAddress = addressComponents.join(', ');
+    
     if (!formattedAddress.trim()) {
-      return 'N/A';
+      const addressSubdivisiomComponents = [
+        job?.jobLocation?.address?.street,
+        job?.jobLocation?.address?.city,
+        job?.jobLocation?.address?.state,
+        job?.jobLocation?.address?.zipcode
+      ].filter(Boolean);
+      const formattedSubdivisionAddress = addressSubdivisiomComponents.join(', ');
+      if (formattedSubdivisionAddress.trim()){
+        return formattedSubdivisionAddress;
+      } else {
+        return 'N/A';
+      }
     }
 
     return formattedAddress;
