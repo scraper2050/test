@@ -223,6 +223,10 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
     const formattedAddress = addressComponents.join(', ');
     
     if (!formattedAddress.trim()) {
+      if (job?.jobSite?.name) {
+        return job?.jobSite?.name
+      }
+
       const addressSubdivisiomComponents = [
         job?.jobLocation?.address?.street,
         job?.jobLocation?.address?.city,
@@ -233,6 +237,10 @@ function BCJobReport({ classes, jobReportData, jobTypes, generateInvoiceHandler,
       if (formattedSubdivisionAddress.trim()){
         return formattedSubdivisionAddress;
       } else {
+        if (job?.jobLocation?.name) {
+          return job?.jobLocation?.name
+        }
+
         return 'N/A';
       }
     }
