@@ -51,6 +51,7 @@ export  interface FilterJobs {
 export  interface FilterRoutes {
   technician?: any,
   jobType?: any[],
+  jobAddress?: string,
 }
 
 const StatusContainer = withTheme(styled('div')`
@@ -150,6 +151,7 @@ function TicketsWithMapView({ classes }: any) {
   const [filterRoutes, setFilterRoutes] = useState<FilterRoutes>({
     'technician': null,
     'jobType': [],
+    'jobAddress': ""
   });
 
   const allFilters = [

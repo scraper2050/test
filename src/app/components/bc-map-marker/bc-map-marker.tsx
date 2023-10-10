@@ -360,6 +360,7 @@ function BCMapMarker({
         justifyContent: 'center',
         alignItems: 'center',
       }}
+      className={ticket.jobAddressFlag ? "filteredJob" : ""}
       onClick={(e) => setShowInfo({ show: true, inside: true })}>
       <CustomIcon />
     </span>

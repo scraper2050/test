@@ -55,6 +55,7 @@ function BCMapFilterRoute({
     initialValues: {
       technician: currentFilter.technician || '',
       jobType: currentFilter.jobType || [],
+      jobAddress: currentFilter.jobAddress || "",
     },
     onSubmit
   });
@@ -135,6 +136,22 @@ function BCMapFilterRoute({
                     placeholder={'Job Type'}
                   />
                 )}
+              />
+            </FormGroup>
+            <FormGroup>
+              <TextField
+                name={'jobAddress'}
+                placeholder="Job Address"
+                variant={'outlined'}
+                onChange={form.handleChange}
+                value={form.values.jobAddress}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <i className="material-icons">search</i>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormGroup>
           </Grid>

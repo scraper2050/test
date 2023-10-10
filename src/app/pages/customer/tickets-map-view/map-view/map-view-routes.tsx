@@ -47,6 +47,41 @@ function MapViewRoutesScreen({ selectedDate, filter: routeFilter }: any) {
             });
           });
       }
+
+      if (routeFilter.jobAddress) {
+        filter =
+          filter &&
+          route.routes.some((r: any) => {
+            const locationName = [
+              r.job?.jobSite?.name || "", 
+              r.job?.jobLocation?.name || "", 
+              r.job?.jobSite?.address?.city || "", 
+              r.job?.jobSite?.address?.state || "", 
+              r.job?.jobSite?.address?.street || "", 
+              r.job?.jobSite?.address?.zipCode || "",
+              r.job?.jobLocation?.address?.city || "",
+              r.job?.jobLocation?.address?.state || "",
+              r.job?.jobLocation?.address?.street || "",
+              r.job?.jobLocation?.address?.zipCode || "",
+            ];
+
+            const filteredArray = locationName.filter(item => item?.toLowerCase()?.includes(routeFilter.jobAddress?.toLowerCase()));
+            if(filteredArray.length) {
+              r.job["jobAddressFlag"] = true;
+              route["jobAddressFlag"] = true;
+              return true;
+            } else {
+              delete r.job.jobAddressFlag;
+              return false;
+            }
+          });
+      } else if (route.jobAddressFlag) {
+        route.routes.forEach((item: any) => {
+          delete item.job.jobAddressFlag;
+        });
+        delete route.jobAddressFlag;
+      }
+
       return filter;
     });
   };

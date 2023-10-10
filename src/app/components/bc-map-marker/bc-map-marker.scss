@@ -138,3 +138,16 @@
   top: -60px !important;
   border: 0 !important;
 }
+
+
+.filteredJob  {
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    border: 2px solid red;
+    width: 50px;
+    height: 51px;
+    border-radius: 9px;
+  }
+}
