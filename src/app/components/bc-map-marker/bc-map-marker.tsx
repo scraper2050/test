@@ -108,10 +108,6 @@ function BCMapMarker({
   }
 
   const calculateMarkerBorder = (ticket : any) : string => {
-    if (ticket.jobAddressFlag) {
-      return '3px solid red';
-    }    
-
     if(!isTicket && ticket?.jobId) {
       if(ticket?.scheduleTimeAMPM !== 0) {
         switch(ticket?.scheduleTimeAMPM) {
@@ -364,6 +360,7 @@ function BCMapMarker({
         justifyContent: 'center',
         alignItems: 'center',
       }}
+      className={ticket.jobAddressFlag ? "filteredJob" : ""}
       onClick={(e) => setShowInfo({ show: true, inside: true })}>
       <CustomIcon />
     </span>
