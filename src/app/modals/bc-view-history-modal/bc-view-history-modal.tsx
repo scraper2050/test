@@ -178,12 +178,16 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
             Cell({ row }: any) {
                 const splittedActions = row?.original?.info?.split(',');
                 const actions = splittedActions?.filter((info: any) => info !== ''); // Remove empty actions
-             
+
                 return (
                     <ul style={{ listStyleType: 'circle' }}>
-                        {actions?.map((type: any, index: number) => (
-                            <li key={index}>{type.trim()}</li>
-                        ))}
+                        {row.original.type == "EMAIL_SENT" 
+                            ?  <li>Sent the email</li>
+                            :
+                            actions?.map((type: any, index: number) => (
+                                <li key={index}>{type.trim()}</li>
+                            ))
+                        }
                     </ul>
                 );
             },
