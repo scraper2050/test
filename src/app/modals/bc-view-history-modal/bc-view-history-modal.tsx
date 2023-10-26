@@ -181,7 +181,7 @@ function ViewHistoryTable({ classes, data, job = initialJobState }: any): JSX.El
 
                 return (
                     <ul style={{ listStyleType: 'circle' }}>
-                        {row.original.type == "EMAIL_SENT" 
+                        {row?.original?.type == "EMAIL_SENT" 
                             ?  <li>Sent the email</li>
                             :
                             actions?.map((type: any, index: number) => (
