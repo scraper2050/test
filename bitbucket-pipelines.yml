@@ -26,6 +26,7 @@ pipelines:
           - build/**
     - step:
         name: pushing to s3
+        size: "2x"
         deployment: production
         script:
           - pipe: atlassian/aws-s3-deploy:0.4.5
@@ -58,6 +59,7 @@ pipelines:
           - build/**
     - step:
         name: pushing to s3
+        size: "2x"
         deployment: production
         script:
           - pipe: atlassian/aws-s3-deploy:0.4.5
@@ -90,6 +92,7 @@ pipelines:
           - build/**
     - step:
         name: pushing to s3
+        size: "2x"
         deployment: production
         script:
           - pipe: atlassian/aws-s3-deploy:0.4.5
@@ -109,11 +112,11 @@ pipelines:
               DISTRIBUTION_ID: 'E17AYQHQYHYHNY'
     - step:
         name: E2E-Tests
+        size: "2x"
         script:
-          - pipe: atlassian/trigger-pipeline:5.0.1
+          - pipe: atlassian/trigger-pipeline:5.4.1
             variables:
-              BITBUCKET_USERNAME: $BITBUCKET_USERNAME
-              BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+              BITBUCKET_ACCESS_TOKEN: $BITBUCKET_ACCESS_TOKEN
               REPOSITORY: 'blueclerk-e2e'
               REF_TYPE: 'branch'
               REF_NAME: 'master'
@@ -132,6 +135,7 @@ pipelines:
           - build/**
     - step:
         name: pushing to s3
+        size: "2x"
         deployment: production
         script:
           - pipe: atlassian/aws-s3-deploy:0.4.5
