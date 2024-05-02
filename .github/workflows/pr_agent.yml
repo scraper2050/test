@@ -16,7 +16,7 @@ jobs:
         id: pragent
         uses: Codium-ai/pr-agent@main
         env:
-#          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          OPENAI_KEY: ${{ secrets.AZURE_AI_PR_REVIEWER_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           key: ${{ secrets.AZURE_AI_PR_REVIEWER_KEY }}
           api_type: "azure"
