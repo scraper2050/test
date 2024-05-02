@@ -18,8 +18,3 @@ jobs:
         env:
           OPENAI_KEY: ${{ secrets.AZURE_AI_PR_REVIEWER_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          key: ${{ secrets.AZURE_AI_PR_REVIEWER_KEY }}
-          api_type: "azure"
-          api_version: '2024-02-01'  # Check Azure documentation for the current API version
-          api_base: "https://blueclerk-open-ai-2.openai.azure.com/"  # The base URL for your Azure OpenAI resource. e.g. "https://<your resource name>.openai.azure.com"
-          deployment_id: "blueclerk-gpt4-2"  # The deployment name you chose when you deployed the engine
