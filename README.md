@@ -1,4 +1,62 @@
-## What to Follow
+# Project Title
+
+## Description
+A brief description of what the project does, its features, and its benefits.
+
+## Table of Contents
+- [Installation](#installation)
+- [Style and other guidelines](#style-and-other-guidelines)
+- [Available Scripts](#available-scripts)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
+- [License](#license)
+- [Authors and Acknowledgments](#authors-and-acknowledgments)
+- [Contact Information](#contact-information)
+- [Changelog](#changelog)
+- [FAQ](#faq)
+
+## Installation
+### Prerequisites
+Operating system:
+- Linux-based distributions: Ubuntu, Mint, etc. (recommended).
+- MacOS.
+- Windows (not recommended): in the past it has caused some problems when it comes to installing node-gyp packages. Using a virtual machine running a Linux-based distribution is a good option if you have enough hardware resources.
+
+Mandatory software:
+- Git.
+- Node / npm **version 14**.
+- yarn.
+
+Recommended software:
+- Github desktop client.
+- Visual studio code.
+- Nvm to manage multiple node versions.
+
+### Steps
+1. Make sure you were granted **permissions to the corresponding Github repository** and you can access it in the browser: [https://github.com/blueclerk/blueclerk_react_web.git](https://github.com/blueclerk/blueclerk-node-api.git)
+2. **Clone the repository**. You can use Github desktop or the CLI command. In the second scenario, make sure you configured one of these authentication methods: [Github SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) or [Github tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+```bash
+git clone https://github.com/blueclerk/blueclerk_react_web.git
+```
+3. Check node and npm versions:
+```bash
+node -v
+# 14.*.*
+npm -v
+# 6.*.*
+```
+4. Install the project dependencies:
+```bash
+yarn install
+```
+6. All good so far? Then you are ready to **run the project**:
+```bash
+npm run start
+```
+8. App will start running in [http://localhost:3000](http://localhost:3000).
+
+## Style and other guidelines
 
 ### `Structure`
 
@@ -110,10 +168,26 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
+## Usage
+Provide usage examples, screenshots, and instructions.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Configuration
+Explain configuration options.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Contributing
+Explain how to contribute and include a link to the code of conduct.
 
-Testing to add PR Agent.
+## License
+State the license and link to the full text.
+
+## Authors and Acknowledgments
+List main contributors and acknowledge others.
+
+## Contact Information
+Provide contact details.
+
+## Changelog
+Document version history.
+
+## FAQ
+Address common questions.
