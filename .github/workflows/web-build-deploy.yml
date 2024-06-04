@@ -1,0 +1,47 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+      - staging
+      - test
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+            node-version: 14
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Build React Web
+        run: |
+          export CI=false
+          if [ "${{ github.ref_name }}" != "test" ]; then
+            yarn add env-cmd
+          fi
+          yarn build:${{ github.ref_name == 'master' && 'production' || github.ref_name }}
+
+      - name: Deploy React Web to S3 Bucket and Invalidate Cloudfront
+        uses: reggionick/s3-deploy@v4
+        with:
+          folder: build
+          bucket: ${{ vars.S3_BUCKET }}
+          bucket-region: ${{ vars.AWS_DEFAULT_REGION }}
+          dist-id: ${{ vars.DISTRIBUTION_ID }}
+          invalidation: '/*'
+          no-cache: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
