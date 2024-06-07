@@ -4,14 +4,9 @@ import axios, { AxiosRequestConfig, AxiosResponse, CancelTokenSource, Method } f
 
 const api = config.apiBaseURL;
 const apiv2 = config.apiV2BaseURL;
-const customerApi = config.apiCustomerURL;
-// Api v2 URL
 const apiV2 = config.apiV2BaseURL;
 
 const fetchToken = (isCustomerAPI = false) => {
-  if (isCustomerAPI) {
-    return localStorage.getItem('tokenCustomerAPI') || '';
-  }
   let token = '';
   if (getLocalStorageToken()) {
     token = getLocalStorageToken();
@@ -43,21 +38,21 @@ const makeRequest = (request: AxiosRequestConfig): Promise<AxiosResponse<any>> =
   });
 };
 
-export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = '', cancelTokenSource?: CancelTokenSource, isCustomerAPI = false, queryParams?: any): Promise<AxiosResponse<any>> => {
+export default (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = '', cancelTokenSource?: CancelTokenSource, queryParams?: any): Promise<AxiosResponse<any>> => {
   let token = '';
 
+
   if (!noHeaders) {
-    token = fetchToken(isCustomerAPI);
+    token = fetchToken();
   }
+
 
   const request: AxiosRequestConfig = {
     'headers': {},
     'method': type === 'OPTIONS'
       ? 'get'
       : type,
-    'url': isCustomerAPI
-      ? customerApi + url
-      : api + url
+    'url': api + url
   };
 
   if (type !== 'get') {
@@ -79,10 +74,11 @@ export default (url: string, type: Method, data?: any, noHeaders?: boolean, enct
     request.cancelToken = cancelTokenSource.token;
   }
 
-  //add current division params
+  // Add current division params
   if (queryParams) {
     try {
-      request.params = { ...request.params, ...queryParams };
+      request.params = { ...request.params,
+        ...queryParams };
     } catch (error) { }
   }
   return makeRequest(request);
@@ -117,21 +113,24 @@ export const requestApiV2 = (uri: string, type: Method, data?: any, cancelTokenS
     request.cancelToken = cancelTokenSource.token;
   }
 
-  //add current division params
+  // Add current division params
   if (queryParams) {
     try {
-      request.params = { ...request.params, ...queryParams };
+      request.params = { ...request.params,
+        ...queryParams };
     } catch (error) { }
   }
   return makeRequest(request);
 };
 
-export const pdfRequest = (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = '', cancelTokenSource?: CancelTokenSource, isCustomerAPI = false, queryParams?: any): Promise<AxiosResponse<any>> => {
+export const pdfRequest = (url: string, type: Method, data?: any, noHeaders?: boolean, enctype = '', cancelTokenSource?: CancelTokenSource, queryParams?: any): Promise<AxiosResponse<any>> => {
   let token = '';
 
+
   if (!noHeaders) {
-    token = fetchToken(isCustomerAPI);
+    token = fetchToken();
   }
+
 
   const request: AxiosRequestConfig = {
     'headers': {},
@@ -139,38 +138,37 @@ export const pdfRequest = (url: string, type: Method, data?: any, noHeaders?: bo
     'method': type === 'OPTIONS'
       ? 'get'
       : type,
-    'url': isCustomerAPI
-      ? customerApi + url
-      : api + url
-    };
-
-    if (type !== 'get') {
-      if (type === 'OPTIONS') {
-        request.params = data;
-      } else {
-        request.data = data;
-      }
-    }
-  
-    if (!noHeaders) {
-      request.headers = {
-        ...request.headers,
-        'Authorization': token
-      };
-    }
-  
-    if (cancelTokenSource) {
-      request.cancelToken = cancelTokenSource.token;
-    }
-  
-    //add current division params
-    if (queryParams) {
-      try {
-        request.params = { ...request.params, ...queryParams };
-      } catch (error) { }
-    }
-    return makeRequest(request);
+    'url': api + url
   };
+
+  if (type !== 'get') {
+    if (type === 'OPTIONS') {
+      request.params = data;
+    } else {
+      request.data = data;
+    }
+  }
+
+  if (!noHeaders) {
+    request.headers = {
+      ...request.headers,
+      'Authorization': token
+    };
+  }
+
+  if (cancelTokenSource) {
+    request.cancelToken = cancelTokenSource.token;
+  }
+
+  // Add current division params
+  if (queryParams) {
+    try {
+      request.params = { ...request.params,
+        ...queryParams };
+    } catch (error) { }
+  }
+  return makeRequest(request);
+};
 
 /**
  * Download file from specific uri
@@ -187,7 +185,7 @@ export const downloadFile = (uri: string, type: Method, data?: any): Promise<Axi
       ? 'get'
       : type,
     'url': `${api}${uri}`,
-    responseType: 'blob',
+    'responseType': 'blob'
   };
 
   if (type !== 'get') {
@@ -217,7 +215,7 @@ export const downloadFileV2 = (uri: string, type: Method, data?: any): Promise<A
       ? 'get'
       : type,
     'url': `${apiv2}${uri}`,
-    responseType: 'blob',
+    'responseType': 'blob'
   };
 
   if (type !== 'get') {
