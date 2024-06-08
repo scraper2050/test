@@ -9,9 +9,6 @@ const config = {
   'apiBaseURL':
     process.env.REACT_APP_API_URL ||
     'https://blueclerk-node-api.deploy.blueclerk.com/api/v1/',
-  'apiCustomerURL':
-    process.env.REACT_APP_CUSTOMER_API_URL ||
-    'https://staging-customer.blueclerk.com/api/v1/',
   'apiV2BaseURL':
     process.env.REACT_APP_API_V2_URL ||
     'https://blueclerk-node-api.deploy.blueclerk.com/api/v2',
