@@ -129,10 +129,10 @@ function ViewMorePage({ classes }: any) {
               {`${row.value && row.value.street ? row.value.street : ''}` + ' '}
             </span>
             <span>
-              {`${row.value && row.value.city ? row.value.city : ''}` + ' '}
+              {`${row.value && row.value.city ? row.value.city : ''}` + ', '}
             </span>
             <span>
-              {`${row.value && row.value.state && row.value.state !== 'none' ? row.value.state : ''}` + ' '}
+              {`${row.value && row.value.state && row.value.state !== 'none' ? row.value.state : ''}` + ', '}
             </span>
             <span>
               {`${row.value && row.value.zipcode ? row.value.zipcode : ''}` + ' '}

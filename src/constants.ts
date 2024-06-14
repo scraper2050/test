@@ -167,3 +167,10 @@ export const rejectionReason = [
     label: 'Other',
   },
 ]
+
+export const customerCompanyTypes = [
+  {
+    name: 'Builder',
+    value: 4
+  },
+]
