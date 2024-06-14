@@ -168,7 +168,7 @@ export const rejectionReason = [
   },
 ]
 
-export const customerCompanyTypes = [
+export const customerTypes = [
   {
     name: 'Builder',
     value: 4

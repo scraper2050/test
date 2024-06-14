@@ -79,7 +79,7 @@ function NewCustomerPage({ classes }: Props) {
     profile: { displayName: "" },
     id: 1,
   });
-  const accountTypes = [...CONSTANTS.customerCompanyTypes];
+  const accountTypes = [...CONSTANTS.customerTypes];
   const updateMap = (
     values: any,
     street?: any,
