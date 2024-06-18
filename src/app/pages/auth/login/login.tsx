@@ -26,8 +26,8 @@ import {
   openModalAction,
   setModalDataAction
 } from 'actions/bc-modal/bc-modal.action';
-import {error, info} from 'actions/snackbar/snackbar.action';
-import AuthTemplatePage from "../template";
+import { error, info } from 'actions/snackbar/snackbar.action';
+import AuthTemplatePage from '../template';
 import { callSelectDivisionModal } from 'actions/filter-division/filter-division.action';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
@@ -71,7 +71,7 @@ function LoginPage({
       localStorage.setItem('user', JSON.stringify(user));
       dispatch(callSelectDivisionModal(true));
     }
-  }, [token,tokenCustomerAPI,  user]);
+  }, [token, tokenCustomerAPI, user]);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -153,7 +153,7 @@ function LoginPage({
     return () => {
       dispatch(info(''));
       loginActionClear('');
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -384,6 +384,7 @@ function LoginPage({
 
               <Button
                 color={'primary'}
+                style={{ 'color': 'white' }}
                 fullWidth
                 size={'large'}
                 type={'submit'}
@@ -393,9 +394,9 @@ function LoginPage({
             </Grid>
             <Grid
               item
-              style={{display: 'flex'}}
+              style={{ 'display': 'flex' }}
               container
-              justify='flex-end'
+              justify={'flex-end'}
               md={6}
               xs={12}>
               <BCSocialButton

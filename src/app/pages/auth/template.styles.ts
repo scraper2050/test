@@ -1,6 +1,6 @@
 import BackImg from '../../../assets/img/signup/bg.png';
 import { Theme } from '@material-ui/core/styles';
-import {PRIMARY_BLUE} from "../../../constants";
+import { PRIMARY_BLUE } from '../../../constants';
 export default (theme: Theme): any => ({
   'root': {
     '& .MuiButton-containedPrimary': {
@@ -24,6 +24,19 @@ export default (theme: Theme): any => ({
     '@media(max-width: 1280px)': {
       'display': 'none'
     }
+  },
+  'landingLogo': {
+    'backgroundImage': `url(${BackImg})`,
+    'width': '47.5%',
+    'backgroundSize': 'contain',
+    'height': '97.9vh'
+  },
+  'landingContainer': {
+    'flex': '1 1 100%',
+    'backgroundColor': '#000',
+    'display': 'flex',
+    'flexDirection': 'row',
+    'alignItems': 'center'
   },
   'footer': {
     '@media(max-width: 479px)': {
@@ -59,5 +72,5 @@ export default (theme: Theme): any => ({
     'display': 'flex',
     'flexDirection': 'column',
     'justifyContent': 'center'
-  },
+  }
 });
