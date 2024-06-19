@@ -27,8 +27,8 @@ export default (theme: Theme): any => ({
   },
   'landingLogo': {
     'backgroundImage': `url(${BackImg})`,
-    'width': '47.5%',
-    'backgroundSize': 'contain',
+    'width': '50%',
+    'backgroundSize': 'cover',
     'height': '97.9vh'
   },
   'landingContainer': {

@@ -47,7 +47,7 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
     try {
       const invoices = await getUnsyncedInvoices(currentDivision.params);
       setInvoices(invoices);
-    } catch (e) {
+    } catch (e:any) {
       dispatch(error(e));
     } finally {
       setLoading(false);
@@ -102,7 +102,7 @@ function BcManualSyncInvoices({classes, action, closeAction}: any): JSX.Element 
       setSyncing(true);
       const res: any = await dispatch(SyncInvoices(ids));
       handleSyncResponse(res);
-    } catch (e) {
+    } catch (e:any) {
       dispatch(error(e));
     }
   }

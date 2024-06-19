@@ -59,7 +59,7 @@ function BCActivateJobSiteModal({
         dispatch(getJobSites(requestObj));
         setIsSubmitting(false);
       }))
-    } catch (err) {
+    } catch (err:any) {
       dispatch(error("Something's wrong"));
       setIsSubmitting(false);
     }

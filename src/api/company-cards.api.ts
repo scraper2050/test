@@ -21,7 +21,7 @@ export const getCompanyCards = () => {
           await dispatch(setCompanyCards([]));
           return reject({ statusText: "Something went wrong" });
         }
-      } catch (err) {
+      } catch (err:any) {
         await dispatch(setCompanyCards([]));
         return reject(err);
       }

@@ -21,7 +21,7 @@ import {
 } from 'actions/job/job.action';
 import {
   setMapTechnicianJobs
-} from 'actions/map-technician-jobs/map-technician-jobs.action'
+} from 'actions/map-technician-jobs/map-technician-jobs.action';
 import { DivisionParams } from 'app/models/division';
 
 const compareByDate = (a: any, b: any) => {
@@ -70,14 +70,14 @@ export const getAllJobsAPI = (pageSize = 15, currentPageIndex = 0, status = '-1'
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
       const optionObj: any = {
-        pageSize: pageSize,
-        currentPage: currentPageIndex
+        'pageSize': pageSize,
+        'currentPage': currentPageIndex
       };
       if (status !== '-1') {
         optionObj.status = Number(status);
       }
       if (keyword) {
-        optionObj.keyword = keyword
+        optionObj.keyword = keyword;
       }
       if (selectionRange) {
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
@@ -96,34 +96,34 @@ export const getAllJobsAPI = (pageSize = 15, currentPageIndex = 0, status = '-1'
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any) => {
-            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+            const tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
                 const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
                 return {
                   ...tempJobType,
-                  jobType: currentItem
-                }
+                  'jobType': currentItem
+                };
               });
               const technician = tempJob.technicianObj.find((res:any) => res._id == tempTask.technician);
               const contractor = tempJob.contractorsObj.find((res: any) => res._id == tempTask.contractor);
               // Jobs data to be sent on List Page
               return {
                 ...tempTask,
-                technician: technician || null,
-                contractor: contractor || null,
-                jobTypes: tempJobTypes,
-              }
-            })
+                'technician': technician || null,
+                'contractor': contractor || null,
+                'jobTypes': tempJobTypes
+              };
+            });
 
             return {
               ...tempJob,
-              customer: tempJob.customerObj[0],
-              jobLocation: tempJob.jobLocationObj[0],
-              jobSite: tempJob.jobSiteObj[0],
-              ticket: tempJob.ticketObj[0],
-              updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-              tasks: tempTasks
-            }
+              'customer': tempJob.customerObj[0],
+              'jobLocation': tempJob.jobLocationObj[0],
+              'jobSite': tempJob.jobSiteObj[0],
+              'ticket': tempJob.ticketObj[0],
+              'updatedAt': tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+              'tasks': tempTasks
+            };
           });
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs));
@@ -147,14 +147,14 @@ export const getJobsListAPI = (pageSize = 15, currentPageIndex = 0, status = '-1
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
       const optionObj: any = {
-        pageSize: pageSize,
-        currentPage: currentPageIndex
+        'pageSize': pageSize,
+        'currentPage': currentPageIndex
       };
       if (status !== '-1') {
         optionObj.status = Number(status);
       }
       if (keyword) {
-        optionObj.keyword = keyword
+        optionObj.keyword = keyword;
       }
       if (selectionRange) {
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
@@ -171,7 +171,7 @@ export const getJobsListAPI = (pageSize = 15, currentPageIndex = 0, status = '-1
 
       requestApiV2(`/getJobs`, 'post', optionObj, cancelTokenGetAllJobsAPI)
         .then((res: any) => {
-          let tempJobs = res.data.jobs;
+          const tempJobs = res.data.jobs;
           tempJobs.sort(compareByDate);
           dispatch(setJobsList(tempJobs.reverse()));
           dispatch(setTotal(res.data.total ? res.data.total : 0));
@@ -218,31 +218,31 @@ export const getTodaysJobsAPI = (status = '-1', keyword?: string, division?: Div
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any) => {
-            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+            const tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
                 const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
                 return {
                   ...tempJobType,
-                  jobType: currentItem
-                }
+                  'jobType': currentItem
+                };
               });
               return {
                 ...tempTask,
-                technician: tempJob.technicianObj[index],
-                contractor: tempJob.contractorsObj[index],
-                jobTypes: tempJobTypes,
-              }
-            })
+                'technician': tempJob.technicianObj[index],
+                'contractor': tempJob.contractorsObj[index],
+                'jobTypes': tempJobTypes
+              };
+            });
 
             return {
               ...tempJob,
-              customer: tempJob.customerObj[0],
-              jobLocation: tempJob.jobLocationObj[0],
-              jobSite: tempJob.jobSiteObj[0],
-              ticket: tempJob.ticketObj[0],
-              updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-              tasks: tempTasks
-            }
+              'customer': tempJob.customerObj[0],
+              'jobLocation': tempJob.jobLocationObj[0],
+              'jobSite': tempJob.jobSiteObj[0],
+              'ticket': tempJob.ticketObj[0],
+              'updatedAt': tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+              'tasks': tempTasks
+            };
           });
           tempJobs.sort(compareByDate);
           dispatch(setTodaysJobs(tempJobs.reverse()));
@@ -265,35 +265,36 @@ export const getAllJobsByCustomerAPI = (pageSize = 2020, customerId: string, div
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setJobLoading(true));
-      requestApiV2(`/getJobs`, 'post', { customerId, pageSize }, undefined, division)
+      requestApiV2(`/getJobs`, 'post', { customerId,
+        pageSize }, undefined, division)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any) => {
-            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+            const tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
                 const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
                 return {
                   ...tempJobType,
-                  jobType: currentItem
-                }
+                  'jobType': currentItem
+                };
               });
               return {
                 ...tempTask,
-                technician: tempJob.technicianObj[index],
-                contractor: tempJob.contractorsObj[index],
-                jobTypes: tempJobTypes,
-              }
-            })
+                'technician': tempJob.technicianObj[index],
+                'contractor': tempJob.contractorsObj[index],
+                'jobTypes': tempJobTypes
+              };
+            });
 
             return {
               ...tempJob,
-              customer: tempJob.customerObj[0],
-              jobLocation: tempJob.jobLocationObj[0],
-              jobSite: tempJob.jobSiteObj[0],
-              ticket: tempJob.ticketObj[0],
-              updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-              tasks: tempTasks
-            }
+              'customer': tempJob.customerObj[0],
+              'jobLocation': tempJob.jobLocationObj[0],
+              'jobSite': tempJob.jobSiteObj[0],
+              'ticket': tempJob.ticketObj[0],
+              'updatedAt': tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+              'tasks': tempTasks
+            };
           });
           tempJobs.sort(compareByDate);
           dispatch(setJobs(tempJobs.reverse()));
@@ -313,42 +314,42 @@ export const getAllJobsByTechnicianAndDateAPI = (technicianIds: any, jobDate: an
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       const optionObj: any = {
-        pageSize: 2020,
-      }
+        'pageSize': 2020
+      };
       if (jobDate) {
         optionObj.startDate = moment(jobDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(jobDate).format('YYYY-MM-DD');
       }
-      optionObj.technicianIds = technicianIds.map((tech: any) => tech.id)
+      optionObj.technicianIds = technicianIds.map((tech: any) => tech.id);
       requestApiV2(`/getJobs`, 'post', optionObj)
         .then((res: any) => {
           let tempJobs = res.data.jobs;
           tempJobs = tempJobs.map((tempJob: any) => {
-            let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+            const tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+              const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
                 const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
                 return {
                   ...tempJobType,
-                  jobType: currentItem
-                }
+                  'jobType': currentItem
+                };
               });
               return {
                 ...tempTask,
-                technician: tempJob.technicianObj[index],
-                contractor: tempJob.contractorsObj[index],
-                jobTypes: tempJobTypes,
-              }
-            })
+                'technician': tempJob.technicianObj[index],
+                'contractor': tempJob.contractorsObj[index],
+                'jobTypes': tempJobTypes
+              };
+            });
 
             return {
               ...tempJob,
-              customer: tempJob.customerObj[0],
-              jobLocation: tempJob.jobLocationObj[0],
-              jobSite: tempJob.jobSiteObj[0],
-              ticket: tempJob.ticketObj[0],
-              updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-              tasks: tempTasks
-            }
+              'customer': tempJob.customerObj[0],
+              'jobLocation': tempJob.jobLocationObj[0],
+              'jobSite': tempJob.jobSiteObj[0],
+              'ticket': tempJob.ticketObj[0],
+              'updatedAt': tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+              'tasks': tempTasks
+            };
           });
           dispatch(setMapTechnicianJobs(tempJobs));
           return resolve(res.data);
@@ -367,35 +368,35 @@ export const getAllJobAPI = async (param?: {}, division?: DivisionParams) => {
     const response: any = await requestApiV2('/getJobs', 'POST', body, undefined, division);
     let tempJobs = response.data.jobs;
     tempJobs = tempJobs.map((tempJob: any) => {
-      let tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
-        let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+      const tempTasks = tempJob.tasks.map((tempTask: any, index: any) => {
+        const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
           const currentItem = tempJob.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
           return {
             ...tempJobType,
-            jobType: currentItem
-          }
+            'jobType': currentItem
+          };
         });
         return {
           ...tempTask,
-          technician: tempJob.technicianObj[index],
-          contractor: tempJob.contractorsObj[index],
-          jobTypes: tempJobTypes,
-        }
-      })
+          'technician': tempJob.technicianObj[index],
+          'contractor': tempJob.contractorsObj[index],
+          'jobTypes': tempJobTypes
+        };
+      });
 
       return {
         ...tempJob,
-        customer: tempJob.customerObj[0],
-        jobLocation: tempJob.jobLocationObj[0],
-        jobSite: tempJob.jobSiteObj[0],
-        ticket: tempJob.ticketObj[0],
-        updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
-        tasks: tempTasks
-      }
+        'customer': tempJob.customerObj[0],
+        'jobLocation': tempJob.jobLocationObj[0],
+        'jobSite': tempJob.jobSiteObj[0],
+        'ticket': tempJob.ticketObj[0],
+        'updatedAt': tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt,
+        'tasks': tempTasks
+      };
     });
     responseData = response.data;
     responseData.jobs = tempJobs;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -417,7 +418,7 @@ export const getjobDetailAPI = async (data: any) => {
   try {
     const response: any = await request('/getJobDetails', 'POST', body, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -477,7 +478,7 @@ export const saveJobType = async (body: { title: string, description?: string })
   try {
     const response: any = await request('/createJobType', 'POST', body, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -495,7 +496,7 @@ export const editJobType = async (body: { jobTypeId: string, title: string, desc
   try {
     const response: any = await request('/editJobType', 'POST', body, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -537,7 +538,7 @@ export const getSearchJobs = async (data: {
        *   return resolve(res.data?.filter((job: any) => formatDateYMD(job.scheduleDate) !== formatDateYMD(new Date())));
        * }
        */
-    } catch (err) {
+    } catch (err:any) {
       return reject(err);
     }
   });
@@ -557,7 +558,6 @@ export const getJobsStream: any = (actionId: string) => {
 
 export const callGetJobReportPDF = (id: string) => {
   return new Promise((resolve, reject) => {
-
     pdfRequest(`/getJobReportPDF/${id}`, 'get', {}, false)
       .then((res: any) => {
         return resolve(res);
@@ -590,4 +590,4 @@ export const getJobInvoice: any = (jobID: string) => {
         return reject(err);
       });
   });
-}
+};

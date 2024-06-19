@@ -80,7 +80,7 @@ function BCAddAndEditSalesTaxModal({ item } : ModalProps) {
         } else {
           response = await updateSalesTax(taxObj);
         }
-      } catch (err) {
+      } catch (err:any) {
         dispatch(errorSnackBar(err.message));
       }
       

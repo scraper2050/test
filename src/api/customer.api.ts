@@ -4,7 +4,7 @@ import request, { downloadFile } from 'utils/http.service';
 export const getCustomers = async (active = true, inactive = false) => {
   const body = {
     'includeActive': active.toString(),
-    'includeNonActive': inactive.toString(),
+    'includeNonActive': inactive.toString()
   };
   let responseData;
   try {
@@ -16,7 +16,7 @@ export const getCustomers = async (active = true, inactive = false) => {
         'customers': response.data.customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0)
       };
     }
-  } catch (err) {
+  } catch (err: any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -31,7 +31,7 @@ export const getCustomers = async (active = true, inactive = false) => {
 
 export const getCustomersContact = async (customerId: string) => {
   const body = {
-    'customerId': customerId,
+    'customerId': customerId
   };
   let responseData;
   try {
@@ -40,10 +40,10 @@ export const getCustomersContact = async (customerId: string) => {
     responseData = response.data;
     if (response.status === 200) {
       responseData = {
-        ...response.data,
+        ...response.data
       };
     }
-  } catch (err) {
+  } catch (err: any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -70,7 +70,7 @@ export const getCustomerDetail = async (data: any) => {
       false
     );
     responseData = response.data;
-  } catch (err) {
+  } catch (err: any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -92,7 +92,7 @@ export const updateCustomers = async (data: any) => {
   try {
     const response: any = await request('/updateCustomer', 'POST', data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err: any) {
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -108,7 +108,7 @@ export const createCustomer = async (data: any) => {
   try {
     const response: any = await request('/createCustomer', 'POST', data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err: any) {
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -129,7 +129,7 @@ export const updateCustomPrices = async (customerId: string, customPrices: any) 
       throw new Error('Quantity must be in sequence');
     }
     return response.data;
-  } catch (err) {
+  } catch (err:any) {
     if (err.response.status >= 400 || err.response.status === 0) {
       throw err;
     } else {
@@ -150,11 +150,13 @@ export const exportCustomersToExcel = async (): Promise<{ data: Blob, fileName: 
       if (contentDisposition) {
         fileName = contentDisposition.split('=')[1].replace(/"/g, '');
       }
-      resolve({ data: value.data, fileName });
-    }).catch((error) => {
-      reject(error);
+      resolve({ 'data': value.data,
+        fileName });
     })
+      .catch(error => {
+        reject(error);
+      });
   });
-}
+};
 
 

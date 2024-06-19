@@ -258,7 +258,7 @@ function BCMapMarker({
       if (status === 1) {
         data = serviceTicket;
       }
-    } catch (e) {
+    } catch (e:any) {
     }
     const modalDataAction = {
       'data': {

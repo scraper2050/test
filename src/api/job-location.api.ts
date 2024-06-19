@@ -5,8 +5,9 @@ export const createJobLocation = async (data: any) => {
   try {
     const response: any = await request('/jobLocation', 'POST', data, false);
     responseData = response.data;
-  } catch (err) {
-    responseData = { status: 0, message: '' };
+  } catch (err:any) {
+    responseData = { 'status': 0,
+      'message': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.message = 'We are facing some issues, please try again.';
     } else {
@@ -18,13 +19,14 @@ export const createJobLocation = async (data: any) => {
 
 
 export const getJobLocations = async (data: any) => {
-  const {customerId, isActive = 'ALL'} = data;
+  const { customerId, isActive = 'ALL' } = data;
   let responseData;
   try {
     const response: any = await request(`/jobLocation?customerId=${customerId}&isActive=${isActive}`, 'GET', {}, false);
     responseData = response.data;
-  } catch (err) {
-    responseData = { status: 0, message: '' };
+  } catch (err:any) {
+    responseData = { 'status': 0,
+      'message': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.message = 'We are facing some issues, please try again.';
     } else {
@@ -39,7 +41,7 @@ export const getJobLocation = async (id: string) => {
   try {
     const response: any = await request(`/jobLocation/${id}`, 'GET', {}, false);
     return response.data;
-  } catch (err) {
+  } catch (err:any) {
     const responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -51,13 +53,14 @@ export const getJobLocation = async (id: string) => {
 };
 
 export const updateJobLocation = async (data: any) => {
-  const {jobLocationId: id} = data;
+  const { 'jobLocationId': id } = data;
   delete data.id;
   try {
     const response: any = await request(`/jobLocation/${id}`, 'PUT', data, false);
     return response.data;
-  } catch (err) {
-    const responseData = { status: 0, message: '' };
+  } catch (err:any) {
+    const responseData = { 'status': 0,
+      'message': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.message = 'We are facing some issues, please try again.';
     } else {

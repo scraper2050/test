@@ -84,7 +84,7 @@ function AdminAddNewEmployeePage({ classes, children }: Props) {
     if (response.employee?._id) {
       try {
         dispatch(updateUserPermissionsAction(response.employee._id, roles));
-      } catch (err) {
+      } catch (err:any) {
         dispatch(info('Something went wrong.'));
       }
     }

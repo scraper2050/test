@@ -84,7 +84,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
                     form.validateForm()
                 }, 100)
             }
-        } catch (e) {
+        } catch (e:any) {
             dispatch(error(e.message));
             closeModal();
         } finally {
@@ -168,7 +168,7 @@ function EmailPORequestModal({ classes, data, type }: any) {
                 } else {
                     dispatch(error(message));
                 }
-            } catch (e) {
+            } catch (e:any) {
                 dispatch(error(e.message));
                 closeModal();
             } finally {

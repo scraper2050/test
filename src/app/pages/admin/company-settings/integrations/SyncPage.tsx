@@ -152,7 +152,7 @@ function SyncPage() {
       setSynced(syncStatus);
       setSyncProfile(`${qbCompanyName}, ${qbCompanyEmail}`);
       dispatch(setQuickbooksConnection({qbAuthorized, qbCompanyName, qbCompanyEmail}));
-    } catch (e) {
+    } catch (e:any) {
       dispatch(error(e.message));
     }
   }

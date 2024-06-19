@@ -22,7 +22,7 @@ import {
   setNextInvoicesCursor as setNextInvoicesForBulkPaymentsCursor,
   setPreviousInvoicesCursor as setPreviousInvoicesForBulkPaymentsCursor
 } from 'actions/invoicing/invoices-for-bulk-payments/invoices-for-bulk-payments.action';
-import { SYNC_RESPONSE } from "../app/models/invoices";
+import { SYNC_RESPONSE } from '../app/models/invoices';
 import { DivisionParams } from 'app/models/division';
 
 export const getTodos = async (params = {}) => {
@@ -30,7 +30,7 @@ export const getTodos = async (params = {}) => {
   try {
     const response: any = await requestApiV2('/getJobs', 'POST', params);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -50,9 +50,9 @@ export const getAllInvoicesForBulkPaymentsAPI = (pageSize = 15, currentPageIndex
       dispatch(setInvoicesForBulkPaymentsLoading(true));
       const optionObj: any = {
         pageSize,
-        currentPage: currentPageIndex,
+        'currentPage': currentPageIndex,
         'isDraft': false,
-        isVoid : false
+        'isVoid': false
       };
       if (keyword) {
         optionObj.keyword = keyword;
@@ -106,7 +106,7 @@ export const getAllInvoicesAPI = (pageSize = 15, currentPageIndex = 0, keyword?:
       dispatch(setInvoicesLoading(true));
       const optionObj: any = {
         pageSize,
-        currentPage: currentPageIndex,
+        'currentPage': currentPageIndex,
         'isDraft': false
       };
       if (keyword) {
@@ -221,7 +221,7 @@ export const markAsRead = (endpoint: string, params: {}, callback: any) => {
     return new Promise((resolve, reject) => {
       requestApiV2(endpoint, 'post', params)
         .then((res: any) => {
-          dispatch(callback)
+          dispatch(callback);
         })
         .catch(err => {
           if (err.message !== 'axios canceled') {
@@ -239,7 +239,7 @@ export const getAllDraftInvoicesAPI = (pageSize = 15, currentPageIndex = 0, keyw
       dispatch(setDraftInvoicesLoading(true));
       const optionObj: any = {
         pageSize,
-        currentPage: currentPageIndex,
+        'currentPage': currentPageIndex,
         'isDraft': true
       };
       if (keyword) {
@@ -283,10 +283,10 @@ export const getUnpaidInvoicesAPI = (pageSize = 15, currentPageIndex = 0, keywor
       dispatch(setUnpaidInvoicesLoading(true));
       const optionObj: any = {
         pageSize,
-        currentPage: currentPageIndex,
+        'currentPage': currentPageIndex,
         'status': JSON.stringify(['UNPAID']),
         'isDraft': false,
-        'isVoid':false,
+        'isVoid': false
       };
       if (keyword) {
         optionObj.keyword = keyword;
@@ -337,7 +337,7 @@ export const getInvoicingList = async (params = {}) => {
   try {
     const response: any = await requestApiV2('/getInvoices', 'POST', params);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -354,9 +354,11 @@ export const getUnsyncedInvoices = async (division?: DivisionParams) => {
   try {
     const response: any = await request('/getUnsyncedInvoices', 'GET', undefined, undefined, undefined, undefined, undefined, division);
     const { status, message, invoices } = response.data;
-    if (status === 1) return invoices;
-    throw ({ message });
-  } catch (e) {
+    if (status === 1) {
+      return invoices;
+    }
+    throw { message };
+  } catch (e:any) {
     throw e.message;
   }
 };
@@ -386,7 +388,7 @@ export const SyncInvoices = (ids: string[] = []) => async (dispatch: any): Promi
       };
     }
     throw new Error(message);
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response?.status >= 400 || err.data?.status === 0) {
       throw new Error(err.data.errors ||
@@ -404,7 +406,7 @@ export const getPurchaseOrder = async (params = {}) => {
   try {
     const response: any = await request('/getAllPurchaseOrder', 'POST', params, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -422,7 +424,7 @@ export const getInvoicingEstimates = async (params = {}) => {
   try {
     const response: any = await request('/getEstimate', 'POST', params, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -439,7 +441,7 @@ export const getInvoiceDetail = async (invoiceId: string) => {
   try {
     const response: any = await request('/getInvoiceDetail', 'POST', { invoiceId }, false);
     return response.data;
-  } catch (err) {
+  } catch (err:any) {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
@@ -474,11 +476,12 @@ export const updateInvoice = (data: any) => {
   });
 };
 
-export const updateInvoiceMessages = ({invoiceId, notes, images, showJobId}: any) => {
+export const updateInvoiceMessages = ({ invoiceId, notes, images, showJobId }: any) => {
   return new Promise((resolve, reject) => {
     request(`/updateInvoiceMessages`, 'post', {
       invoiceId,
-      technicianMessages: {notes, images},
+      'technicianMessages': { notes,
+        images },
       showJobId
     })
       .then((res: any) => {
@@ -577,7 +580,7 @@ export const callCreateEstimatesAPI = (data: any) => {
 
 export const updateJobCommission = (id: string, data: any) => {
   return new Promise((resolve, reject) => {
-    request(`/updateJobCommission/` + id, 'put', data)
+    request(`/updateJobCommission/${id}`, 'put', data)
       .then((res: any) => {
         return resolve(res.data);
       })
@@ -588,46 +591,42 @@ export const updateJobCommission = (id: string, data: any) => {
 };
 
 export const getCustomerInvoicesForBulkPaymentEdit = (showPaid = false, customerId: any, selectionRange?: { startDate: Date; endDate: Date } | null, dueDate?: Date | null, isVoid = false) => {
-
   return new Promise((resolve, reject) => {
+    const optionObj: any = {
+      'pageSize': 1000000,
+      'currentPage': 0,
+      'isVoid': isVoid,
+      'isDraft': false,
+      'customerId': customerId
+    };
 
-      const optionObj: any = {
-        pageSize:1000000,
-        currentPage:0,
-        'isVoid':isVoid,
-        'isDraft': false,
-        'customerId': customerId
-      };
+    if (selectionRange) {
+      optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
+      optionObj.endDate = moment(selectionRange.endDate).add(1, 'day')
+        .format('YYYY-MM-DD');
+    }
 
-      if (selectionRange) {
-        optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
-        optionObj.endDate = moment(selectionRange.endDate).add(1, 'day')
-          .format('YYYY-MM-DD');
-      }
+    if (dueDate) {
+      optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
+    }
+    if (showPaid === false) {
+      optionObj.status = JSON.stringify(['UNPAID', 'PARTIALLY_PAID']);
+    }
 
-      if (dueDate) {
-        optionObj.dueDate = moment(dueDate).format('YYYY-MM-DD');
-      }
-      if (showPaid === false) {
-        optionObj.status = JSON.stringify(['UNPAID', 'PARTIALLY_PAID']);
-      }
+    cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
 
-      cancelTokenGetAllInvoicesForBulkPaymentsAPI = axios.CancelToken.source();
+    requestApiV2(`/getInvoices`, 'post', optionObj, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
+      .then((res: any) => {
+        const tempInvoices = res.data.invoices;
 
-      requestApiV2(`/getInvoices`, 'post', optionObj, cancelTokenGetAllInvoicesForBulkPaymentsAPI)
-        .then((res: any) => {
-          const tempInvoices = res.data.invoices;
-
-          return resolve(res.data);
-        })
-        .catch(err => {
-
-          if (err.message !== 'axios canceled') {
-            return reject(err);
-          }
-        });
-    });
-
+        return resolve(res.data);
+      })
+      .catch(err => {
+        if (err.message !== 'axios canceled') {
+          return reject(err);
+        }
+      });
+  });
 };
 
 /**
@@ -637,9 +636,9 @@ export const getCustomerInvoicesForBulkPaymentEdit = (showPaid = false, customer
 export const exportInvoicesToExcel = async (pageSize = 15, currentPageIndex = 0, keyword?: string, advanceFilterInvoiceData?: any, division?: DivisionParams, allData?: boolean): Promise<{ data: Blob, fileName: string }> => {
   const optionObj: any = {
     pageSize,
-    currentPage: currentPageIndex,
+    'currentPage': currentPageIndex,
     'isDraft': false,
-    allData: allData
+    'allData': allData
   };
   if (keyword) {
     optionObj.keyword = keyword;
@@ -711,9 +710,11 @@ export const exportInvoicesToExcel = async (pageSize = 15, currentPageIndex = 0,
       if (contentDisposition) {
         fileName = contentDisposition.split('=')[1].replace(/"/g, '');
       }
-      resolve({ data: value.data, fileName });
-    }).catch((error) => {
-      reject(error);
+      resolve({ 'data': value.data,
+        fileName });
     })
+      .catch(error => {
+        reject(error);
+      });
   });
 };

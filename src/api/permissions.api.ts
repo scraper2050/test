@@ -8,7 +8,7 @@ export const getUserPermissions = async (userId: string) => {
   try {
     const response = await requestApiV2(`/getUserPermission/${userId}`, 'GET');
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''
@@ -23,7 +23,7 @@ export const updateUserPermissions = async (userId: string, permissions: RolesAn
   try {
     const response = await requestApiV2(`/updateUserPermission/${userId}`, 'POST', { permissions });
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''

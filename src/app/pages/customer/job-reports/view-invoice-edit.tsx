@@ -96,7 +96,7 @@ function ViewInvoice() {
       } else {
         dispatch(errorSnackBar(message));
       }
-    } catch (e) {
+    } catch (e:any) {
       dispatch(errorSnackBar('Something went wrong. Please try again'));
     }
   }

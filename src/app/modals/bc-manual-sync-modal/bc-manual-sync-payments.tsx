@@ -47,7 +47,7 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
     try {
       const payments = await getUnsyncedPayments(currentDivision.params);
       setPayments(payments.reverse());
-    } catch (e) {
+    } catch (e:any) {
       dispatch(error(e));
     } finally {
       setLoading(false);
@@ -102,7 +102,7 @@ function BcManualSyncPayment({classes, closeAction}: any): JSX.Element {
       setSyncing(true);
       const res: any= await dispatch(SyncPayments(ids));
       handleSyncResponse(res);
-    } catch (e) {
+    } catch (e:any) {
       dispatch(error(e));
     }
   }

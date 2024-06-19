@@ -222,7 +222,7 @@ function BCViewJobRequestModal({
         const lastMessage = chatContent[chatContent.length - 1];
         if (!lastMessage.readStatus.isRead) markJobRequestChatRead(jobRequest._id, lastMessage._id);
         setUnreadChatCount(0);
-      } catch (e) {
+      } catch (e:any) {
         console.log(e.message)
       }
     }

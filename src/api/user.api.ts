@@ -6,7 +6,7 @@ export const updateCompanyProfile = async (data: CompanyProfile) => {
   try {
     const response: any = await request("/updateCompanyProfile", "POST", data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = { message: '' };
     responseData.message = 'We are facing some issues, please try again.'
   }
@@ -20,7 +20,7 @@ export const getCompanyProfile = async (companyId: string) => {
     const response: any = await request(`/getCompanyProfile/${companyId}`, "GET", false);
     responseData = response.data;
 
-  } catch (err) {
+  } catch (err:any) {
     responseData = { message: '' };
     responseData.message = 'Sorry, we were un able to load your profile, please try again'
   }
@@ -40,7 +40,7 @@ export const updateProfile = async (data: any) => {
   try {
     const response: any = await request("/updateProfile", "POST", formData, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = { message: '' };
     responseData.message = 'We are facing some issues, please try again.'
   }
@@ -54,7 +54,7 @@ export const getCompanyLocations = async () => {
   try {
     const response: any = await request("/getCompanyLocations", "GET", {}, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''
@@ -69,7 +69,7 @@ export const createCompanyLocation = async (data: any) => {
   try {
     const response: any = await request("/createCompanyLocation", "POST", data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''
@@ -84,7 +84,7 @@ export const updateCompanyLocation = async (data: any) => {
   try {
     const response: any = await request("/updateCompanyLocation", "PUT", data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''
@@ -99,7 +99,7 @@ export const updateCompanyLocationAssignments = async (data: any) => {
   try {
     const response: any = await request("/updateCompanyLocationAssignments", "PUT", data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''
@@ -114,7 +114,7 @@ export const updateCompanyLocationBillingAddress = async (data: any) => {
   try {
     const response: any = await request("/updateCompanyLocationBillingAddress", "PUT", data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err:any) {
     responseData = {
       status: 0,
       message: 'We are facing some issues, please try again.\''

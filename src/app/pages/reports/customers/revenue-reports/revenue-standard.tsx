@@ -139,7 +139,7 @@ const RevenueStandardReport = ({classes}:RevenueStandardProps) => {
       } else {
         dispatch(error(message));
       }
-    } catch (e) {
+    } catch (e:any) {
       dispatch(error(e.message));
     } finally {
       setIsLoading(false);

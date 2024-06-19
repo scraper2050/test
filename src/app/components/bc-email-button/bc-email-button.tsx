@@ -33,7 +33,7 @@ export default function EmailButton({ data, Component, showLoader = true, errorD
         } else {
           errorDispatcher(message);
         }
-      } catch (e) {
+      } catch (e:any) {
         setIsLoading(false);
         let message = 'Unknown Error'
         if (e instanceof Error) {

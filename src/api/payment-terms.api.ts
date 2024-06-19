@@ -29,7 +29,7 @@ export const updateDefaultPaymentTermAPI = async ({ paymentTermId }:PaymentTerms
   try {
     const response: any = await request(`/setCompanyDefaultPaymentTerm`, 'POST', { 'paymentTermId': paymentTermId}, false);
     responseData = response.data.companyPaymentTerm;
-  } catch (err) {
+  } catch (err:any) {
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -56,7 +56,7 @@ export const updateCustomerDefaultPaymentTermAPI = async ({ paymentTermId, custo
     } else {
       responseData = response.data;
     }
-  } catch (err) {
+  } catch (err:any) {
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
