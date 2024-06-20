@@ -25,7 +25,6 @@ import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MaskedInput from 'react-text-mask';
-import './new-customer.css';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getCompaniesAutoComplete, getCompanyDetail } from 'api/company.api';
 
