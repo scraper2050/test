@@ -38,6 +38,11 @@ export default (theme: Theme): any => ({
     'flexDirection': 'row',
     'alignItems': 'center'
   },
+  'landingContent': {
+    'display': 'flex',
+    'alignItems': 'center',
+    'justifyContent': 'center'
+  },
   'footer': {
     '@media(max-width: 479px)': {
       'paddingLeft': theme.spacing(1),

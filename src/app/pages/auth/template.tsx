@@ -38,7 +38,8 @@ function AuthTemplatePage({ isLoading, children, success = false, classes }: Pro
             <div className={classes.landingLogo}></div>
             <Grid
               item
-              md={6}>
+              md={6}
+              className={classes.landingContent}>
               {children}
             </Grid>
           </Grid>

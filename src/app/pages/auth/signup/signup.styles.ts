@@ -88,5 +88,14 @@ export default (theme: Theme): any => ({
   'successLogIn': {
     'color': 'white',
     'fontSize': 12
-  }
+  },
+  'orContainer': {
+    'display': 'flex',
+    'flexDirection': 'row',
+    'alignItems': 'center',
+    'paddingBottom': '10px'
+  },
+  'orDividerLeft': { 'width': '45%' },
+  'orDividerRight': { 'width': '43%' },
+  'orText': { 'margin': '0 8px 0 8px' }
 });

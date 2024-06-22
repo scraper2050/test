@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ButtonProps } from '@material-ui/core';
+import { Button, ButtonProps, Chip, Divider } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import styles from '../signup.styles';
 import { withStyles } from '@material-ui/core/styles';
@@ -85,8 +85,14 @@ function SignUpCompany({ onSelect, accountType, classes }: Props): JSX.Element {
                 className={'serviceTicketLabel'}
                 margin={'dense'}
               />{ accountType === 1 && <>
-                <p style={{ 'width': '100%',
-                  'textAlign': 'center' }}>{'OR'}</p>
+                <div className={classes.orContainer}>
+                  <Divider className={classes.orDividerLeft}/>
+                  <p
+                    className={classes.orText}>{'or'}</p>
+                  <Divider
+                    className={classes.orDividerRight}
+                  />
+                </div>
                 <Button
                   onClick={() => onSelect('NEW')}
                   color={'primary'}
