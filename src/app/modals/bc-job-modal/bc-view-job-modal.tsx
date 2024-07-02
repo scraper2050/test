@@ -11,7 +11,8 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
-  CircularProgress
+  CircularProgress,
+  Box
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,19 +33,19 @@ import {
   openModalAction,
   setModalDataAction
 } from '../../../actions/bc-modal/bc-modal.action';
-import {modalTypes} from '../../../constants';
-import {getContacts} from '../../../api/contacts.api';
-import {callUpdateJobAPI, getAllJobTypesAPI, updatePartialJob} from '../../../api/job.api';
-import {refreshJobs} from '../../../actions/job/job.action';
-import {error, success} from '../../../actions/snackbar/snackbar.action';
+import { modalTypes } from '../../../constants';
+import { getContacts } from '../../../api/contacts.api';
+import { callUpdateJobAPI, getAllJobTypesAPI, updatePartialJob } from '../../../api/job.api';
+import { refreshJobs } from '../../../actions/job/job.action';
+import { error, success } from '../../../actions/snackbar/snackbar.action';
 import BCJobStatus from '../../components/bc-job-status';
 import { Job } from 'actions/job/job.types';
 import CloseIcon from '@material-ui/icons/Close';
+import ErrorIcon from '@material-ui/icons/Error';
 import bcModalTransition from '../bc-modal-transition';
 import BCMenuButton from 'app/components/bc-menu-more';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { clearJobSiteStore, getJobSites, loadingJobSites } from 'actions/job-site/job-site.action';
-
 const initialJobState = {
   'customer': {
     '_id': ''
@@ -88,18 +89,18 @@ function BCViewJobModal({
   const customers = useSelector(({ customers }: any) => customers.data);
   const items = useSelector((state: any) => state.invoiceItems.items);
   const [jobHistoryModal, setOpenJobHistoryModal] = useState(false);
-  
+
   const calculateJobType = (task: any) => {
     const title: any[] = [];
     if (task.jobTypes) {
       task.jobTypes.forEach((type: any) => {
         const jobType = {
-          title: type.jobType?.title,
-          quantity: type.quantity || 1,
-          price: type.price || 0,
-          status: type.status,
-          completedComment: type.completedComment,
-          completedCount: type.completedCount
+          'title': type.jobType?.title,
+          'quantity': type.quantity || 1,
+          'price': type.price || 0,
+          'status': type.status,
+          'completedComment': type.completedComment,
+          'completedCount': type.completedCount
         };
 
         if (!('price' in type)) {
@@ -210,21 +211,22 @@ function BCViewJobModal({
   const canEdit = [0, 4, 6].indexOf(job.status) >= 0;
   const jobImages = job?.images?.length ? [...job.images] : [];
   const technicianImages = job?.technicianImages?.length ? job.technicianImages : [];
-  let technicianNotes = job?.tasks?.length ? job.tasks.filter((task: any) => task.comment).map((task: any) => {
+  const technicianNotes = job?.tasks?.length ? job.tasks.filter((task: any) => task.comment).map((task: any) => {
     return {
-      user: 'tech',
-      action: task.comment,
-      date: '',
-      userName: task.technician?.profile?.displayName || ""
-    }
+      'user': 'tech',
+      'action': task.comment,
+      'date': '',
+      'userName': task.technician?.profile?.displayName || '',
+      'isTranslated': task.isTranslated
+    };
   }) : [];
 
-  let rescheduleTrack = job.track.filter((res: { user: string, action: string, date: string, userName: string }) => res.action?.toLowerCase()?.includes("rescheduling"));
+  let rescheduleTrack = job.track.filter((res: { user: string, action: string, date: string, userName: string }) => res.action?.toLowerCase()?.includes('rescheduling'));
   rescheduleTrack = rescheduleTrack.filter((item: { user: any; }, index: any, arr: any[]) => {
-    const currentIndex = arr.findIndex((obj) => obj.user === item.user);
+    const currentIndex = arr.findIndex(obj => obj.user === item.user);
     return currentIndex === index;
   });
-  
+
   const rescheduleJob = () => {
     dispatch(setModalDataAction({
       'data': {
@@ -313,7 +315,7 @@ function BCViewJobModal({
       dispatch(openModalAction());
     }, 200);
   };
-  
+
   let ACTIONS_ITEM: any = [];
 
   useEffect(() => {
@@ -321,24 +323,31 @@ function BCViewJobModal({
     setCustomerPORequired(customer.isPORequired);
   }, [customers]);
 
-  if (job.status == 2){
+  if (job.status == 2) {
     ACTIONS_ITEM = [
-      { id: "create-new-ticket", title: 'Reopen Job-Create New Ticket' },
-      { id: "reschedule", title: 'Reopen Job-Reschedule' }
+      { 'id': 'create-new-ticket',
+        'title': 'Reopen Job-Create New Ticket' },
+      { 'id': 'reschedule',
+        'title': 'Reopen Job-Reschedule' }
     ];
 
     if (customerPORequired) {
-      ACTIONS_ITEM.unshift({ id: "create-new-po-request", title: 'Reopen Job-Create New P0 Request' });
+      ACTIONS_ITEM.unshift({ 'id': 'create-new-po-request',
+        'title': 'Reopen Job-Create New P0 Request' });
     }
-  } else if(job.status == 7){
+  } else if (job.status == 7) {
     ACTIONS_ITEM = [
-      { id: "close-job", title: 'Close Job-No Further Action' },
-      { id: "create-new-ticket", title: 'Close Job-Create New Ticket' },
-      { id: "reschedule", title: 'Reschedule Job' }
+      { 'id': 'close-job',
+        'title': 'Close Job-No Further Action' },
+      { 'id': 'create-new-ticket',
+        'title': 'Close Job-Create New Ticket' },
+      { 'id': 'reschedule',
+        'title': 'Reschedule Job' }
     ];
 
     if (customerPORequired) {
-      ACTIONS_ITEM.splice(1,0,{ id: "create-new-po-request", title: 'Close Job-Create New PO Request' });
+      ACTIONS_ITEM.splice(1, 0, { 'id': 'create-new-po-request',
+        'title': 'Close Job-Create New PO Request' });
     }
   }
 
@@ -349,7 +358,7 @@ function BCViewJobModal({
           'job': job,
           'action': id,
           'modalTitle': `Edit Completed Job`,
-          'removeFooter': false,
+          'removeFooter': false
         },
         'type': modalTypes.EDIT_COMPLETED_JOB
       }));
@@ -359,65 +368,63 @@ function BCViewJobModal({
     } else {
       executeJobActions(id);
     }
-  }
+  };
 
   const executeJobActions = async (idAction:string) => {
     let payload;
-    
+
     setActionsLoading(true);
     switch (idAction) {
-      case "close-job":
+      case 'close-job':
         payload = {
-          jobId: job._id,
-          action: idAction
-        }
+          'jobId': job._id,
+          'action': idAction
+        };
         await updatePartialJob(payload);
         dispatch(refreshJobs(true));
         dispatch(closeModalAction());
         setTimeout(() => {
-          dispatch(
-            setModalDataAction({
-              data: {},
-              type: '',
-            })
-          );
+          dispatch(setModalDataAction({
+            'data': {},
+            'type': ''
+          }));
         }, 200);
-        dispatch(success("Closed Job-No Further Action successfully"));
+        dispatch(success('Closed Job-No Further Action successfully'));
         break;
-      case "create-new-ticket":
-      case "create-new-po-request":
+      case 'create-new-ticket':
+      case 'create-new-po-request':
         const newTicketTasks: any = [];
         job.tasks.forEach((task: any) => {
           task.jobTypes.forEach((jobType: any) => {
             if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
-              //Split Quantity
+              // Split Quantity
               newTicketTasks.push({
-                quantity: jobType.quantity - (jobType.completedCount || 0),
-                jobType: jobType.jobType?._id,
-                price: jobType.price,
-                completedCount: (jobType.completedCount || 0),
-                allQuantitiy: jobType.quantity,
-                status: 7
+                'quantity': jobType.quantity - (jobType.completedCount || 0),
+                'jobType': jobType.jobType?._id,
+                'price': jobType.price,
+                'completedCount': jobType.completedCount || 0,
+                'allQuantitiy': jobType.quantity,
+                'status': 7
               });
             }
           });
         });
 
-        const ticket = { 
-          ...job.ticketObj[0], 
-          tasks: newTicketTasks, 
-          _id: null, 
-          jobCreated: false,
-          customer: job.customerObj[0], 
-          source: `${job.jobId} partially completed`, 
-          customerPO: idAction == "create-new-po-request" ? null : job.ticketObj[0].customerPO,
-          images: job.images,
-          jobStatus: 7, 
-          jobId: job._id,
-          type: null,
-          partialJobPayload: {
-            jobId: job._id,
-            action: idAction
+        const ticket = {
+          ...job.ticketObj[0],
+          'tasks': newTicketTasks,
+          '_id': null,
+          'jobCreated': false,
+          'customer': job.customerObj[0],
+          'source': `${job.jobId} partially completed`,
+          'customerPO': idAction == 'create-new-po-request' ? null : job.ticketObj[0].customerPO,
+          'images': job.images,
+          'jobStatus': 7,
+          'jobId': job._id,
+          'type': null,
+          'partialJobPayload': {
+            'jobId': job._id,
+            'action': idAction
           }
         };
 
@@ -436,46 +443,51 @@ function BCViewJobModal({
           dispatch(clearJobSiteStore());
         }
         dispatch(getAllJobTypesAPI());
-      
+
         dispatch(setModalDataAction({
           'data': {
-            'modalTitle': `Create ${idAction == "create-new-po-request" ? "PO Request" : "Ticket" }`,
+            'modalTitle': `Create ${idAction == 'create-new-po-request' ? 'PO Request' : 'Ticket'}`,
             'removeFooter': false,
             'ticketData': ticket,
             'className': 'serviceTicketTitle',
-            'maxHeight': '900px',
+            'maxHeight': '900px'
           },
           'type': modalTypes.CREATE_TICKET_MODAL
         }));
         setTimeout(() => {
           dispatch(openModalAction());
         }, 200);
-      break;
-      case "reschedule":
+        break;
+      case 'reschedule':
         const newJobTasks: any = [];
 
         job.tasks.forEach((task: any) => {
           const newJobTypes: any = [];
           task.jobTypes.forEach((jobType: any) => {
             if ((jobType.completedCount || 0) < jobType.quantity && jobType.status != 2) {
-              //Split Quantity
+              // Split Quantity
               newJobTypes.push({
-                quantity: jobType.quantity - (jobType.completedCount || 0),
-                jobType: jobType.jobType,
-                price: jobType.price,
-                completedCount: (jobType.completedCount || 0),
-                allQuantitiy: jobType.quantity
+                'quantity': jobType.quantity - (jobType.completedCount || 0),
+                'jobType': jobType.jobType,
+                'price': jobType.price,
+                'completedCount': jobType.completedCount || 0,
+                'allQuantitiy': jobType.quantity
               });
             }
           });
           if (newJobTypes.length) {
-            newJobTasks.push({ ...task, jobTypes: newJobTypes });
+            newJobTasks.push({ ...task,
+              'jobTypes': newJobTypes });
           }
         });
 
         dispatch(setModalDataAction({
           'data': {
-            'job': { ...job, oldJobId: job._id, _id: null, scheduleDate: null, tasks: newJobTasks },
+            'job': { ...job,
+              'oldJobId': job._id,
+              '_id': null,
+              'scheduleDate': null,
+              'tasks': newJobTasks },
             'modalTitle': 'Reschedule Job',
             'removeFooter': false
           },
@@ -490,28 +502,29 @@ function BCViewJobModal({
     }
 
     setActionsLoading(false);
-  }
-  
+  };
+
   const openJobHistory = () => {
     setOpenJobHistoryModal(true);
-  }
-  
+  };
+
+  console.log('****', technicianNotes);
+
   return (
     <>
-    <DataContainer className={'new-modal-design'}>
-      {(technicianImages.length > 0 || rescheduleTrack.length > 0 || technicianNotes.length > 0) && 
+      <DataContainer className={'new-modal-design'}>
+        {(technicianImages.length > 0 || rescheduleTrack.length > 0 || technicianNotes.length > 0) &&
         <Button
-          color='primary'
-          variant="outlined"
-          className='jobCommentBtn'
-          onClick={openJobHistory}
-        >
-          Job History
+          color={'primary'}
+          variant={'outlined'}
+          className={'jobCommentBtn'}
+          onClick={openJobHistory}>
+          {'Job History'}
         </Button>
-      }
-      <Grid container className={'modalPreview'} justify={'space-around'}>
-        <Grid container xs={12} className={classes.toolbarButton} >
-        {(vendorWithCommisionTier.length > 0 && job.status ==2) &&
+        }
+        <Grid container className={'modalPreview'} justify={'space-around'}>
+          <Grid container xs={12} className={classes.toolbarButton} >
+            {vendorWithCommisionTier.length > 0 && job.status == 2 &&
             <Button
               color={'primary'}
               variant={'outlined'}
@@ -519,209 +532,213 @@ function BCViewJobModal({
               onClick={openEditJobCostingModal}>
               {'Job Costing'}
             </Button>
-        }
-        {(job.status == 7 || job.status == 2) && (
-          <div className={classes.actionButton}>
-            <span className={classes.actionButtonLabel}>Actions</span>
-              {actionsLoading && (
-                <CircularProgress size={17} />
-              )}
+            }
+            {(job.status == 7 || job.status == 2) &&
+            <div className={classes.actionButton}>
+              <span className={classes.actionButtonLabel}>{'Actions'}</span>
+              {actionsLoading &&
+              <CircularProgress size={17} />
+              }
               <BCMenuButton
                 icon={ArrowDropDownIcon}
                 items={ACTIONS_ITEM}
-                
+
                 handleClick={handleMenuButtonClick}
               />
-          </div>
-        )}
-        </Grid>
-        <Grid item style={{width: '40%'}}>
-          {canEdit &&
+            </div>
+            }
+          </Grid>
+          <Grid item style={{ 'width': '40%' }}>
+            {canEdit &&
             <>
               <Button size={'small'}
                 classes={{ 'root': classes.editButton,
                   'label': classes.editButtonText }}
                 startIcon={<EditIcon />}
                 onClick={openEditJobModal}>{'Edit Job '}{job.jobId.replace('Job ', '#')}</Button><br/></>
-          }
-          <Typography variant={'caption'} className={'previewCaption'}>{'customer'}</Typography>
-          <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
+            }
+            <Typography variant={'caption'} className={'previewCaption'}>{'customer'}</Typography>
+            <Typography variant={'h6'} className={'bigText'}>{job.customer?.profile?.displayName || 'N/A'}</Typography>
+          </Grid>
+          <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
+            <Typography variant={'caption'} className={'previewCaption'}>{'schedule date'}</Typography>
+            <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
+          </Grid>
+          <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
+            <Typography variant={'caption'} className={'previewCaption'}>{'open time'}</Typography>
+            <Typography variant={'h6'} className={'previewTextTitle'}>{startTime}</Typography>
+          </Grid>
+          <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
+            <Typography variant={'caption'} className={'previewCaption'}>{'close time'}</Typography>
+            <Typography variant={'h6'} className={'previewTextTitle'}>{endTime}</Typography>
+          </Grid>
+          <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
+            <Typography variant={'caption'} className={'previewCaption'}>{'time range'}</Typography>
+            <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleTimeAMPM}</Typography>
+          </Grid>
         </Grid>
-        <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
-          <Typography variant={'caption'} className={'previewCaption'}>{'schedule date'}</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleDate ? formatDate(scheduleDate) : 'N/A'}</Typography>
-        </Grid>
-        <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
-          <Typography variant={'caption'} className={'previewCaption'}>{'open time'}</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{startTime}</Typography>
-        </Grid>
-        <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
-          <Typography variant={'caption'} className={'previewCaption'}>{'close time'}</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{endTime}</Typography>
-        </Grid>
-        <Grid item xs className={classNames({ [classes.editButtonPadding]: canEdit })}>
-          <Typography variant={'caption'} className={'previewCaption'}>{'time range'}</Typography>
-          <Typography variant={'h6'} className={'previewTextTitle'}>{scheduleTimeAMPM}</Typography>
-        </Grid>
-      </Grid>
-      <div className={'modalDataContainer'}>
-        {job.tasks.map((task: any) =>
-          <>
-            <Grid container className={'modalContent'} justify={'space-around'}>
-              <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>technician type</Typography>
-              </Grid>
-              <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>technician name</Typography>
-              </Grid>
-              <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>job type</Typography>
-              </Grid>
-              <Grid item style={{ width: 140 }}>
-              </Grid>
-            </Grid>
-            <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
-              <Grid container className={classNames(classes.task)}>
+        <div className={'modalDataContainer'}>
+          {job.tasks.map((task: any) =>
+            <>
+              <Grid container className={'modalContent'} justify={'space-around'}>
                 <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1, borderColor: 'black' }}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
+                  <Typography variant={'caption'} className={'previewCaption'}>{'technician type'}</Typography>
                 </Grid>
                 <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
+                  <Typography variant={'caption'} className={'previewCaption'}>{'technician name'}</Typography>
                 </Grid>
                 <Grid item xs>
-                  <Typography variant={'h6'} className={'previewText'} style={{ borderTop: 1 }}>{
-                    calculateJobType(task).map((type: any, i: number) => {
-                      if (type.completedCount || type.status == 7) {
-                        if (type.completedComment) {
-                          return <Tooltip
-                            arrow
-                            title={type.completedComment}
-                          >
-                            <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount || 0}/{type.quantity} - ${type.price}</span>
-                          </Tooltip>
-                        } else {
-                          if (type.completedCount != type.quantity) {
-                            return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.completedCount || 0}/{type.quantity} - ${type.price}</span>
-                          } else {
-                            return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.quantity} - ${type.price}</span>
+                  <Typography variant={'caption'} className={'previewCaption'}>{'job type'}</Typography>
+                </Grid>
+                <Grid item style={{ 'width': 140 }}>
+                </Grid>
+              </Grid>
+              <Grid container className={classNames(classes.taskList)} justify={'space-around'}>
+                <Grid container className={classNames(classes.task)}>
+                  <Grid item xs>
+                    <Typography variant={'h6'} className={'previewText'} style={{ 'borderTop': 1,
+                      'borderColor': 'black' }}>{task.employeeType ? 'Contractor' : 'Employee'}</Typography>
+                  </Grid>
+                  <Grid item xs>
+                    <Typography variant={'h6'} className={'previewText'} style={{ 'borderTop': 1 }}>{task.technician?.profile?.displayName || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid item xs>
+                    <Typography variant={'h6'} className={'previewText'} style={{ 'borderTop': 1 }}>{
+                      calculateJobType(task).map((type: any, i: number) => {
+                        if (type.completedCount || type.status == 7) {
+                          if (type.completedComment) {
+                            return <Tooltip
+                              arrow
+                              title={type.completedComment}>
+                              <span key={i} className={'jobTypeText jobTypeList'}>{type.title}{' - '}{type.completedCount || 0}{'/'}{type.quantity}{' - $'}{type.price}</span>
+                            </Tooltip>;
                           }
+                          if (type.completedCount != type.quantity) {
+                            return <span key={i} className={'jobTypeText jobTypeList'}>{type.title}{' - '}{type.completedCount || 0}{'/'}{type.quantity}{' - $'}{type.price}</span>;
+                          }
+                          return <span key={i} className={'jobTypeText jobTypeList'}>{type.title}{' - '}{type.quantity}{' - $'}{type.price}</span>;
                         }
-                      } else {
-                        return <span key={i} className={'jobTypeText jobTypeList'}>{type.title} - {type.quantity} - ${type.price}</span>
-                      }
-                    })
-                  }</Typography>
+                        return <span key={i} className={'jobTypeText jobTypeList'}>{type.title}{' - '}{type.quantity}{' - $'}{type.price}</span>;
+                      })
+                    }</Typography>
+                  </Grid>
+                  <Grid item style={{ 'width': 140 }}>
+                    <BCJobStatus status={task.status || 0} size={'small'} />
+                  </Grid>
                 </Grid>
-                <Grid item style={{ width: 140 }}>
-                  <BCJobStatus status={task.status || 0} size={'small'} />
-                </Grid>
               </Grid>
-            </Grid>
-          </>
-        )}
-        <Grid container className={'modalContent'} justify={'space-around'}>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>{'Subdivision'}</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>{'Job Address'}</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
-          </Grid>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>{'equipment'}</Typography>
-            <Typography variant={'h6'} className={'previewText'}>{'N/A'}</Typography>
-          </Grid>
-        </Grid>
-        <Grid container className={'modalContent'} justify={'space-around'}>
-          <Grid container xs={8}>
-            <Grid container xs={12}>
-              <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>{'contact associated'}</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{customerContact || 'N/A'}</Typography>
-              </Grid>
-              <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>{'Customer PO'}</Typography>
-                <Typography variant={'h6'} className={'previewText'}>{job.ticket.customerPO || 'N/A'}</Typography>
-              </Grid>
-            </Grid>
-            <Grid container className={classes.innerRow} xs={6}>
-              <Grid item xs>
-                <Typography variant={'caption'} className={'previewCaption'}>{'description'}</Typography>
-                <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.description || 'N/A'}</Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item container xs={4}>
+            </>)}
+          <Grid container className={'modalContent'} justify={'space-around'}>
             <Grid item xs>
-              <Typography variant={'caption'} className={'previewCaption'}>{'photo(s);'}</Typography>
-              <BCDragAndDrop images={jobImages.map((image: any) => image.imageUrl)} readonly={true} />
+              <Typography variant={'caption'} className={'previewCaption'}>{'Subdivision'}</Typography>
+              <Typography variant={'h6'} className={'previewText'}>{job.jobLocation?.name || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>{'Job Address'}</Typography>
+              <Typography variant={'h6'} className={'previewText'}>{job.jobSite?.name || 'N/A'}</Typography>
+            </Grid>
+            <Grid item xs>
+              <Typography variant={'caption'} className={'previewCaption'}>{'equipment'}</Typography>
+              <Typography variant={'h6'} className={'previewText'}>{'N/A'}</Typography>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid container className={'modalContent'} justify={'space-between'}>
-          <Grid container xs={12}>
-            <FormControlLabel
-              classes={{ 'label': classes.checkboxLabel }}
-              control={
-                <Checkbox
-                  color={'primary'}
-                  checked={job.isHomeOccupied }
-                  name={'isHomeOccupied'}
-                  classes={{ 'root': classes.checkboxInput }}
-                  disabled={true}
-                />
-              }
-              label={`HOUSE IS OCCUPIED`}
-            />
-          </Grid>
-          {
-            job.isHomeOccupied
-              ? <Grid container xs={12}>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>
-                    {'First name'}
-                  </Typography>
-                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.profile?.firstName || job?.homeOwner?.profile?.firstName) || 'N/A'}</Typography>
+          <Grid container className={'modalContent'} justify={'space-around'}>
+            <Grid container xs={8}>
+              <Grid container xs={12}>
+                <Grid item xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>{'contact associated'}</Typography>
+                  <Typography variant={'h6'} className={'previewText'}>{customerContact || 'N/A'}</Typography>
                 </Grid>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>
-                    {'Last name'}
-                  </Typography>
-                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.profile?.lastName || job?.homeOwner?.profile?.lastName ) || 'N/A'}</Typography>
-                </Grid>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>{'Email'}</Typography>
-                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.info?.email || job?.homeOwner?.info?.email ) || 'N/A'}</Typography>
-                </Grid>
-                <Grid justify={'space-between'} xs>
-                  <Typography variant={'caption'} className={'previewCaption'}>{'Phone'}</Typography>
-                    <Typography variant={'h6'} className={'previewText'}>{(job?.homeOwnerObj?.[0]?.contact?.phone || job?.homeOwner?.contact?.phone ) || 'N/A'}</Typography>
+                <Grid item xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>{'Customer PO'}</Typography>
+                  <Typography variant={'h6'} className={'previewText'}>{job.ticket.customerPO || 'N/A'}</Typography>
                 </Grid>
               </Grid>
-              : null
-          }
-        </Grid>
-        <Grid container className={classNames('modalContent', classes.lastRow)} justify={'space-between'}>
-          <Grid item xs>
-            <Typography variant={'caption'} className={'previewCaption'}>&nbsp;&nbsp;job history Change Log</Typography>
-            <div >
-              <BCTableContainer
-                className={classes.tableContainer}
-                columns={columns}
-                initialMsg={'No history yet'}
-                isDefault
-                isLoading={loading}
-                onRowClick={() => {}}
-                pageSize={5}
-                pagination={true}
-                stickyHeader
-                tableData={[...job.track, ...technicianNotes]}
-              />
-            </div>
+              <Grid container className={classes.innerRow} xs={6}>
+                <Grid item xs>
+                  <Typography variant={'caption'} className={'previewCaption'}>{'description'}</Typography>
+                  <Typography variant={'h6'} className={classNames('previewText', 'description')}>{job.description || 'N/A'}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item container xs={4}>
+              <Grid item xs>
+                <Typography variant={'caption'} className={'previewCaption'}>{'photo(s);'}</Typography>
+                <BCDragAndDrop images={jobImages.map((image: any) => image.imageUrl)} readonly={true} />
+              </Grid>
+            </Grid>
           </Grid>
-        </Grid>
-        {job.status === 1 &&
+          <Grid container className={'modalContent'} justify={'space-between'}>
+            <Grid container xs={12}>
+              <FormControlLabel
+                classes={{ 'label': classes.checkboxLabel }}
+                control={
+                  <Checkbox
+                    color={'primary'}
+                    checked={job.isHomeOccupied }
+                    name={'isHomeOccupied'}
+                    classes={{ 'root': classes.checkboxInput }}
+                    disabled={true}
+                  />
+                }
+                label={`HOUSE IS OCCUPIED`}
+              />
+            </Grid>
+            {
+              job.isHomeOccupied
+                ? <Grid container xs={12}>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>
+                      {'First name'}
+                    </Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj?.[0]?.profile?.firstName || job?.homeOwner?.profile?.firstName || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>
+                      {'Last name'}
+                    </Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj?.[0]?.profile?.lastName || job?.homeOwner?.profile?.lastName || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>{'Email'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj?.[0]?.info?.email || job?.homeOwner?.info?.email || 'N/A'}</Typography>
+                  </Grid>
+                  <Grid justify={'space-between'} xs>
+                    <Typography variant={'caption'} className={'previewCaption'}>{'Phone'}</Typography>
+                    <Typography variant={'h6'} className={'previewText'}>{job?.homeOwnerObj?.[0]?.contact?.phone || job?.homeOwner?.contact?.phone || 'N/A'}</Typography>
+                  </Grid>
+                </Grid>
+                : null
+            }
+          </Grid>
+          <Grid container className={classNames('modalContent', classes.lastRow)} justify={'space-between'}>
+            <Grid item xs>
+              <Box display={'flex'} alignItems={'center'} style={{
+                'gap': 12 }}>
+                <Typography variant={'caption'} style={{ 'marginBottom': 0 }} className={'previewCaption'}>{'&nbsp;&nbsp;job history Change Log'}</Typography>
+                { technicianNotes.length > 0 && technicianNotes.some((note: {isTranslated: boolean}) => note.isTranslated) &&
+                  <Tooltip title={'technician Notes/comments are translated to english!'} placement={'right'}>
+                    <ErrorIcon style={{ 'color': '#fcba03' }}/>
+                  </Tooltip>
+                }
+              </Box>
+              <div >
+                <BCTableContainer
+                  className={classes.tableContainer}
+                  columns={columns}
+                  initialMsg={'No history yet'}
+                  isDefault
+                  isLoading={loading}
+                  onRowClick={() => {}}
+                  pageSize={5}
+                  pagination={true}
+                  stickyHeader
+                  tableData={[...job.track, ...technicianNotes]}
+                />
+              </div>
+            </Grid>
+          </Grid>
+          {job.status === 1 &&
           <DialogActions>
             <div className={classes.markCompleteContainer}>
               <Button
@@ -732,110 +749,118 @@ function BCViewJobModal({
                 variant={'contained'}>{'Mark as Complete'}</Button>
             </div>
           </DialogActions>
-        }
-        {job.status === 6 &&
-        <DialogActions>
-          <Button
-            disabled={isSubmitting}
-            color={'secondary'}
-            onClick={() => openCancelJobModal(true)}
-            variant={'contained'}>{'Cancel Job'}</Button>
-          {job?.ticket?.ticketId &&
+          }
+          {job.status === 6 &&
+          <DialogActions>
+            <Button
+              disabled={isSubmitting}
+              color={'secondary'}
+              onClick={() => openCancelJobModal(true)}
+              variant={'contained'}>{'Cancel Job'}</Button>
+            {job?.ticket?.ticketId &&
             <Button
               disabled={isSubmitting}
               color={'secondary'}
               onClick={() => openCancelJobModal(false)}
               variant={'contained'}>{'Cancel Job and Service Ticket'}</Button>
-          }
-          <Button
-            disabled={isSubmitting}
-            color={'primary'}
-            onClick={completeJob}
-            variant={'contained'}
-            style={{ 'marginLeft': 30 }}>{'Complete'}</Button>
-          {/* <Button
+            }
+            <Button
+              disabled={isSubmitting}
+              color={'primary'}
+              onClick={completeJob}
+              variant={'contained'}
+              style={{ 'marginLeft': 30 }}>{'Complete'}</Button>
+            {/* <Button
             disabled={isSubmitting}
             color={'primary'}
             onClick={completeJob}
             variant={'contained'}
           >Reschedule</Button>*/}
-        </DialogActions>
-        }
-      </div>
-    </DataContainer>
+          </DialogActions>
+          }
+        </div>
+      </DataContainer>
 
-    {/* Job History Modal. */ }
-    <Dialog
-      aria-labelledby={'responsive-dialog-title'}
-      disableEscapeKeyDown={true}
-      fullWidth={true}
-      maxWidth={"md"}
-      onClose={() => {
-        setOpenJobHistoryModal(false);
-      }}
-      open={jobHistoryModal}
-      PaperProps={{
-        'style': {
-          'maxHeight': `100%`
-        }
-      }}
-      scroll={'paper'}
-      TransitionComponent={bcModalTransition}>
-      <DialogTitle className='new-modal-design'>
-        <Typography
-          key={"sendPORequest"}
-          variant={'h6'}>
-          <strong>
-            Job History
-          </strong>
-        </Typography>
-        <IconButton
-          aria-label={'close'}
-          onClick={() => {
-            setOpenJobHistoryModal(false);
-          }}
-          style={{
-            'position': 'absolute',
-            'right': 1,
-            'top': 1
-          }}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DataContainer>
-          <Grid container className={'modalContent jobHistoryModal new-modal-design'} style={{padding: 15}} justify={'flex-start'} alignItems="flex-start">
-          <Grid item container xs={12} spacing={4} >
+      {/* Job History Modal. */ }
+      <Dialog
+        aria-labelledby={'responsive-dialog-title'}
+        disableEscapeKeyDown={true}
+        fullWidth={true}
+        maxWidth={'md'}
+        onClose={() => {
+          setOpenJobHistoryModal(false);
+        }}
+        open={jobHistoryModal}
+        PaperProps={{
+          'style': {
+            'maxHeight': `100%`
+          }
+        }}
+        scroll={'paper'}
+        TransitionComponent={bcModalTransition}>
+        <DialogTitle className={'new-modal-design'}>
+          <Typography
+            key={'sendPORequest'}
+            variant={'h6'}>
+            <strong>
+              {'Job History'}
+            </strong>
+          </Typography>
+          <IconButton
+            aria-label={'close'}
+            onClick={() => {
+              setOpenJobHistoryModal(false);
+            }}
+            style={{
+              'position': 'absolute',
+              'right': 1,
+              'top': 1
+            }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DataContainer>
+          <Grid container className={'modalContent jobHistoryModal new-modal-design'} style={{ 'padding': 15 }} justify={'flex-start'} alignItems={'flex-start'}>
+            <Grid item container xs={12} spacing={4} >
               <Grid item xs={5}>
-                <Typography variant={'caption'} className={'previewCaption'}>Technician's Comments</Typography>
+                <Box display={'flex'} alignItems={'center'} style={{
+                  'gap': 12,
+                  'marginBottom': 10
+                }}>
+                  <Typography variant={'caption'} style={{ 'marginBottom': 0 }} className={'previewCaption'}>{"Technician's Comments"}</Typography>
+                  {technicianNotes.length > 0 && technicianNotes.some((note: {isTranslated: boolean}) => note.isTranslated) &&
+                  <Tooltip title={'technician Notes/comments are translated to english!'} placement={'right'}>
+                    <ErrorIcon style={{ 'color': '#fcba03' }} />
+                  </Tooltip>
+                  }
+                </Box>
                 {
-                  technicianNotes.map((note: {user: string, action: string, date:string, userName: string}, index: number) => 
+                  technicianNotes.map((note: {user: string, action: string, date:string, userName: string}, index: number) =>
                     <div>
                       <Typography variant={'caption'} className={classes.jobHistoryTechName}>{note.userName}</Typography>
                       <Typography variant={'caption'} className={classes.jobHistoryTechComment}>{note.action}</Typography>
-                    </div>
-                  )
+                    </div>)
                 }
               </Grid>
-            <Grid item xs={5}>
-              <Typography variant={'caption'} className={'previewCaption'}>Technician's Photos</Typography>
-              <BCDragAndDrop images={technicianImages.map((image: any) => image.imageUrl)} readonly={true} />
+              <Grid item xs={5}>
+                <Typography variant={'caption'} className={'previewCaption'}>{"Technician's Photos"}</Typography>
+                <BCDragAndDrop images={technicianImages.map((image: any) => image.imageUrl)} readonly={true} />
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
-              <Typography variant={'caption'} className={'previewCaption'}>Reschedule Notes</Typography>
+            <Grid item xs={12}>
+              <Typography variant={'caption'} className={'previewCaption'}>{'Reschedule Notes'}</Typography>
               <ul>
                 {
                   rescheduleTrack.map((track: { user: string, action: string, date: string, userName: string, note: string}, index: number) =>
                     <li>
                       <Typography variant={'caption'} className={classes.jobHistoryTechComment}>{track.note}</Typography>
-                    </li>
-                  )
+                    </li>)
                 }
               </ul>
+            </Grid>
           </Grid>
-        </Grid>
-      </DataContainer>
-    </Dialog>
+        </DataContainer>
+      </Dialog>
     </>
   );
 }
