@@ -1,18 +1,18 @@
 import BCTableContainer from 'app/components/bc-table-container/bc-table-container';
 import styles from './bc-job-modal.styles';
 import {
-  Button, Checkbox,
+  Box, Button,
+  Checkbox,
+  CircularProgress,
+  Dialog,
   DialogActions,
+  DialogTitle,
   FormControlLabel,
   Grid,
-  Typography,
-  withStyles,
-  Dialog,
-  DialogTitle,
   IconButton,
   Tooltip,
-  CircularProgress,
-  Box
+  Typography,
+  withStyles
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -507,8 +507,6 @@ function BCViewJobModal({
   const openJobHistory = () => {
     setOpenJobHistoryModal(true);
   };
-
-  console.log('****', technicianNotes);
 
   return (
     <>
