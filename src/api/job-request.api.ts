@@ -1,15 +1,15 @@
 import request from 'utils/http.service';
-import axios from 'axios'
+import axios from 'axios';
 import moment from 'moment';
 import {
   refreshJobRequests,
-  setJobRequestsLoading,
   setJobRequests,
-  setPreviousJobRequestsCursor,
-  setNextJobRequestsCursor,
+  setJobRequestsLoading,
   setLastPageJobRequestsCursor,
-  setTotal,
+  setNextJobRequestsCursor,
   setNumberOfOpenJobRequest,
+  setPreviousJobRequestsCursor,
+  setTotal
 } from 'actions/job-request/job-request.action';
 
 const compareByDate = (a: any, b: any) => {
@@ -32,21 +32,21 @@ export const getAllJobRequestAPI = (pageSize = 15, previousCursor = '', nextCurs
         previousCursor,
         nextCursor
       };
-      if(lastPageCursor){
+      if (lastPageCursor) {
         delete optionObj.previousCursor;
         optionObj.nextCursor = lastPageCursor;
       }
-      if(status !== '-1'){
+      if (status !== '-1') {
         optionObj.status = Number(status);
       }
-      if(keyword){
-        optionObj.keyword = keyword
+      if (keyword) {
+        optionObj.keyword = keyword;
       }
-      if(selectionRange){
+      if (selectionRange) {
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
-      if(cancelTokenGetAllJobRequestAPI) {
+      if (cancelTokenGetAllJobRequestAPI) {
         cancelTokenGetAllJobRequestAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setJobRequestsLoading(true));
@@ -55,12 +55,12 @@ export const getAllJobRequestAPI = (pageSize = 15, previousCursor = '', nextCurs
 
       cancelTokenGetAllJobRequestAPI = axios.CancelToken.source();
 
-      request(`/getJobRequests`, 'OPTIONS', optionObj, undefined, undefined, cancelTokenGetAllJobRequestAPI, true)
+      request(`/getJobRequests`, 'OPTIONS', optionObj, undefined, undefined, cancelTokenGetAllJobRequestAPI)
         .then((res: any) => {
           let tempJobRequests = res.data.jobRequests || [];
-          tempJobRequests = tempJobRequests.map((tempJob: {updatedAt?:string;createdAt:string})=>({
+          tempJobRequests = tempJobRequests.map((tempJob: {updatedAt?:string;createdAt:string}) => ({
             ...tempJob,
-            updatedAt: tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
+            'updatedAt': tempJob.updatedAt ? tempJob.updatedAt : tempJob.createdAt
           }));
           tempJobRequests.sort(compareByDate);
           dispatch(setJobRequests(tempJobRequests.reverse()));
@@ -76,7 +76,7 @@ export const getAllJobRequestAPI = (pageSize = 15, previousCursor = '', nextCurs
         .catch(err => {
           dispatch(setJobRequestsLoading(false));
           dispatch(setJobRequests([]));
-          if(err.message !== 'axios canceled'){
+          if (err.message !== 'axios canceled') {
             return reject(err);
           }
         });
