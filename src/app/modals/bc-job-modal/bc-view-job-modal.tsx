@@ -41,7 +41,7 @@ import { error, success } from '../../../actions/snackbar/snackbar.action';
 import BCJobStatus from '../../components/bc-job-status';
 import { Job } from 'actions/job/job.types';
 import CloseIcon from '@material-ui/icons/Close';
-import ErrorIcon from '@material-ui/icons/Error';
+import TranslateIcon from '@material-ui/icons/Translate';
 import bcModalTransition from '../bc-modal-transition';
 import BCMenuButton from 'app/components/bc-menu-more';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -717,8 +717,8 @@ function BCViewJobModal({
                 'gap': 12 }}>
                 <Typography variant={'caption'} style={{ 'marginBottom': 0 }} className={'previewCaption'}>{'&nbsp;&nbsp;job history Change Log'}</Typography>
                 { technicianNotes.length > 0 && technicianNotes.some((note: {isTranslated: boolean}) => note.isTranslated) &&
-                  <Tooltip title={'technician Notes/comments are translated to english!'} placement={'right'}>
-                    <ErrorIcon style={{ 'color': '#fcba03' }}/>
+                  <Tooltip title={'technician notes/comments are translated to english!'} placement={'right'}>
+                    <TranslateIcon />
                   </Tooltip>
                 }
               </Box>
@@ -829,8 +829,8 @@ function BCViewJobModal({
                 }}>
                   <Typography variant={'caption'} style={{ 'marginBottom': 0 }} className={'previewCaption'}>{"Technician's Comments"}</Typography>
                   {technicianNotes.length > 0 && technicianNotes.some((note: {isTranslated: boolean}) => note.isTranslated) &&
-                  <Tooltip title={'technician Notes/comments are translated to english!'} placement={'right'}>
-                    <ErrorIcon style={{ 'color': '#fcba03' }} />
+                  <Tooltip title={'technician notes/comments are translated to english!'} placement={'right'}>
+                    <TranslateIcon />
                   </Tooltip>
                   }
                 </Box>
