@@ -97,7 +97,7 @@
     "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts --openssl-legacy-provider build",
     "build:staging": "env-cmd -f .env.staging react-scripts build",
-    "build:test": "env-cmd -f .env.test react-scripts build",
+    "build:test": "env-cmd -f .env.test react-scripts --openssl-legacy-provider build",
     "build:release": "env-cmd -f .env.release react-scripts build",
     "build:production": "env-cmd -f .env.production react-scripts build",
     "lint": "node ./node_modules/eslint/bin/eslint",
