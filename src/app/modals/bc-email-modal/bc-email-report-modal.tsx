@@ -79,7 +79,7 @@ function EmailReportModal({ classes, reportData, reportName }: any) {
       } else {
         setEmailTemplate(data);
       }
-    } catch (e:any) {
+    } catch (e) {
       dispatch(error(e.message));
       closeModal();
     } finally {
@@ -120,7 +120,7 @@ function EmailReportModal({ classes, reportData, reportName }: any) {
         } else {
           dispatch(error(message));
         }
-      } catch (e:any) {
+      } catch (e) {
         dispatch(error(e.message));
         closeModal();
       } finally {

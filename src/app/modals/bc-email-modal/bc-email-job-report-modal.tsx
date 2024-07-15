@@ -75,7 +75,7 @@ function EmailJobReportModal({ classes, data }: any) {
                     form.validateForm()
                 }, 100)
             }
-        } catch (e:any) {
+        } catch (e) {
             dispatch(error(e.message));
             closeModal();
         } finally {
@@ -152,7 +152,7 @@ function EmailJobReportModal({ classes, data }: any) {
                 } else {
                     dispatch(error(message));
                 }
-            } catch (e:any) {
+            } catch (e) {
                 dispatch(error(e.message));
                 closeModal();
             } finally {

@@ -10,7 +10,7 @@ export const getInvoiceEmailTemplate = async (invoiceId: string|string[]) => {
     }
     const response: any = await request(`/getInvoiceEmailTemplate?${params}`, "GET", {}, false);
     return response;
-  } catch (err:any) {
+  } catch (err){
     throw new Error(`Something went wrong`);
   }
 };

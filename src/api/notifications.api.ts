@@ -5,7 +5,7 @@ export const getNotifications = async (pageSize: number = 10, currentPage: numbe
     const response: any = await request('/getNotifications', 'GET', undefined, undefined, undefined, undefined,
       undefined, { pageSize, currentPage, isDismissed, search });
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
@@ -25,7 +25,7 @@ export const updateNotification = async ({ id, isRead = true, isDismissed = fals
 
     }, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||

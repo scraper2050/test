@@ -16,7 +16,7 @@ export const getCustomers = async (active = true, inactive = false) => {
         'customers': response.data.customers.sort((a: any, b: any) => a.profile.displayName > b.profile.displayName ? 1 : b.profile.displayName > a.profile.displayName ? -1 : 0)
       };
     }
-  } catch (err: any) {
+  } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -43,7 +43,7 @@ export const getCustomersContact = async (customerId: string) => {
         ...response.data
       };
     }
-  } catch (err: any) {
+  } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -70,7 +70,7 @@ export const getCustomerDetail = async (data: any) => {
       false
     );
     responseData = response.data;
-  } catch (err: any) {
+  } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -92,7 +92,7 @@ export const updateCustomers = async (data: any) => {
   try {
     const response: any = await request('/updateCustomer', 'POST', data, false);
     responseData = response.data;
-  } catch (err: any) {
+  } catch (err) {
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -108,7 +108,7 @@ export const createCustomer = async (data: any) => {
   try {
     const response: any = await request('/createCustomer', 'POST', data, false);
     responseData = response.data;
-  } catch (err: any) {
+  } catch (err) {
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -129,7 +129,7 @@ export const updateCustomPrices = async (customerId: string, customPrices: any) 
       throw new Error('Quantity must be in sequence');
     }
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.response.status === 0) {
       throw err;
     } else {

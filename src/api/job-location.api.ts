@@ -5,7 +5,7 @@ export const createJobLocation = async (data: any) => {
   try {
     const response: any = await request('/jobLocation', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = { 'status': 0,
       'message': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
@@ -24,7 +24,7 @@ export const getJobLocations = async (data: any) => {
   try {
     const response: any = await request(`/jobLocation?customerId=${customerId}&isActive=${isActive}`, 'GET', {}, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = { 'status': 0,
       'message': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
@@ -41,7 +41,7 @@ export const getJobLocation = async (id: string) => {
   try {
     const response: any = await request(`/jobLocation/${id}`, 'GET', {}, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     const responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
       responseData.msg = 'We are facing some issues, please try again.';
@@ -58,7 +58,7 @@ export const updateJobLocation = async (data: any) => {
   try {
     const response: any = await request(`/jobLocation/${id}`, 'PUT', data, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     const responseData = { 'status': 0,
       'message': '' };
     if (err.response.status >= 400 || err.response.status === 0) {

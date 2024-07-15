@@ -101,7 +101,7 @@ function BCMarkCompleteJobModal({
           setSubmitting(false);
           dispatch(error("Something went wrong!"));
         }
-      } catch (err:any) {
+      } catch (err){
         setSubmitting(false);
         dispatch(error("Something went wrong!"));
       }

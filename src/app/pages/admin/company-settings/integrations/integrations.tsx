@@ -68,7 +68,7 @@ function AdminIntegrationsPage({ classes, callbackUrl }: any) {
             }
             // window.location.reload();
           }
-        } catch (e:any) {
+        } catch (e) {
           console.log(e);
         }
       }, 100);

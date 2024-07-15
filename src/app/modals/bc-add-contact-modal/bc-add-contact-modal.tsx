@@ -215,7 +215,7 @@ function BCAddContactModal({
           try {
             const unSelectedContacts = res?.data?.result?.filter((selectedContact: Record<string, string>) => !props?.contacts?.find((unSelectedContact: Record<string, string>) => selectedContact._id === unSelectedContact._id ));
             setContacts(unSelectedContacts.filter((contact: Record<string, string>) => contact?.isActive ))
-          } catch (err:any) {
+          } catch (err){
             console.log(err)
           }
         })
@@ -238,7 +238,7 @@ function BCAddContactModal({
       setFieldValue('name', baseValue.name);
       setFieldValue('email', baseValue.email);
       setFieldValue('phone', baseValue.phone);
-    } catch (err:any) {
+    } catch (err){
       setInitValues(null)
 
       setFieldValue('contactId', null);
@@ -316,7 +316,7 @@ function BCAddContactModal({
                 dispatch(error("Something went wrong!"))
               }
             }
-          } catch (err:any) {
+          } catch (err){
             if (err.message === "Contact already added") {
 
               dispatch(error(err.message))

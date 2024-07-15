@@ -12,7 +12,7 @@ export const getEmployeesForJob = async (filter?: any) => {
 
     const response: any = await request('/getEmployeesForJob', 'POST', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -30,7 +30,7 @@ export const getEmployees = async () => {
   try {
     const response: any = await request('/getAllEmployees', 'POST', null, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     /*
      *ResponseData = err.data;
      *if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
@@ -56,7 +56,7 @@ export const getEmployeeDetail = async (data: any) => {
   try {
     const response: any = await request('/getEmployeeDetail', 'OPTIONS', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -75,7 +75,7 @@ export const addTechnician = async (data: UserProfile) => {
   try {
     const response: any = await request('/createTechnician', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     /*
      *ResponseData = err.data;
      *if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
@@ -97,7 +97,7 @@ export const addManager = async (data: UserProfile) => {
   try {
     const response: any = await request('/createManager', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     /*
      *ResponseData = err.data;
      *if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
@@ -119,7 +119,7 @@ export const addOfficeAdmin = async (data: UserProfile) => {
   try {
     const response: any = await request('/createOfficeAdmin', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     /*
      *ResponseData = err.data;
      *if (err.response.status >= 400 || (!responseData && responseData.status === 0)) {
@@ -141,7 +141,7 @@ export const addAdministrator = async (data: UserProfile) => {
   try {
     const response: any = await request('/createAdminEmployee', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err) {
       throw new Error(`Something went wrong`);
     }
@@ -154,7 +154,7 @@ export const updateAdminRole = async (data: UserProfile) => {
   try {
     const response: any = await request('/updateEmployeeRole', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err) {
       throw new Error(`Something went wrong`);
     }
@@ -167,7 +167,7 @@ export const updateLocPermission = async (data: updateEmployeeLocPermParam) => {
   try {
     const response: any = await request('/updateEmployeeLocPermission', 'POST', data, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err) {
       throw new Error(`Something went wrong`);
     }

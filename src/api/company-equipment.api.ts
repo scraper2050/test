@@ -5,7 +5,7 @@ export const getAllCompanyEquipments = async () => {
   try {
     const response: any = await request('/getCompanyEquipments', 'POST', {}, false);
     responseData = response.data;
-  } catch (err: any) {
+  } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||

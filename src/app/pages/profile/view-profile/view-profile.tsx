@@ -124,7 +124,7 @@ function ViewProfilePage() {
         dispatch(error(response.message))
       }
 
-    } catch (err:any) {
+    } catch (err){
       console.log(err)
     }
     setUpdate(!update);

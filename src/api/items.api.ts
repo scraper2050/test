@@ -24,7 +24,7 @@ export const getItems = async (data:any) => {
 
     const response: any = await request('/getItems', 'POST', requestObj);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
             err.data.message ||
@@ -39,7 +39,7 @@ export const updateItem = async (item:Item) => {
   try {
     const response: any = await request('/updateItem', 'POST', item, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
             err.data.message ||
@@ -54,7 +54,7 @@ export const checkItemExist = async (item: Item) => {
   try {
     const response: any = await request('/checkItemExist', 'POST', item, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
@@ -69,7 +69,7 @@ export const disableItem = async (item: Item) => {
   try {
     const response: any = await request('/toggleItemStatus', 'POST', item, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
@@ -84,7 +84,7 @@ export const getItemTierList = async () => {
   try {
     const response: any = await request('/getItemTierList', 'GET', false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
             err.data.message ||
@@ -100,7 +100,7 @@ export const addTierApi = async () => {
   try {
     const response: any = await request('/addItemTier', 'POST', false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
             err.data.message ||
@@ -115,7 +115,7 @@ export const updateTier = async (data:any) => {
   try {
     const response: any = await request('/updateItemTier', 'PUT', data, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
             err.data.message ||
@@ -131,7 +131,7 @@ export const updateItems = async (items:any) => {
   try {
     const response: any = await request('/updateItems', 'POST', { 'items': JSON.stringify(items) }, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
             err.data.message ||
@@ -163,7 +163,7 @@ export const addItem = async (item:any) => {
       throw responseUpdate;
     }
     return responseUpdate.data;
-  } catch (err:any) {
+  } catch (err){
     if (err?.response?.status >= 400 || err?.data?.status === 0) {
       throw new Error(err?.data?.errors ||
             err?.data?.message ||
@@ -207,7 +207,7 @@ export const addItemProduct = async (item: any) => {
       throw responseUpdate;
     }
     return responseUpdate.data;
-  } catch (err:any) {
+  } catch (err){
     if (err?.response?.status >= 400 || err?.data?.status === 0) {
       throw new Error(err?.data?.errors ||
         err?.data?.message ||
@@ -222,7 +222,7 @@ export const getJobCostingList = async () => {
   try {
     const response: any = await request('/getJobCostingList', 'GET', false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -236,7 +236,7 @@ export const addJobCostingApi = async () => {
   try {
     const response: any = await request('/addJobCosting', 'POST', false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -255,7 +255,7 @@ export const updateJobCosting = async (data: any) => {
       false
     );
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||

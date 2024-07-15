@@ -9,7 +9,7 @@ export const getEquipmentType = async (param?: {}) => {
   try {
     const response: any = await request('/getEquipmentTypes', 'POST', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -27,7 +27,7 @@ export const saveEquipmentType = async (body: { title: string }) => {
   try {
     const response: any = await request('/createEquipmentType', 'POST', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||

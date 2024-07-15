@@ -234,7 +234,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
               invoicesToDispatchClone.push(combined)
 
             }
-          } catch (e:any) {
+          } catch (e) {
             //setIsLoading(false);
             console.log(e)
 
@@ -275,7 +275,7 @@ function BcSendInvoicesModal({ classes, modalOptions, setModalOptions }: any): J
                 invoicesToDispatchClone.push(combined)
 
               }
-            } catch (e:any) {
+            } catch (e) {
               console.log(e)
             }
 

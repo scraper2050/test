@@ -19,7 +19,7 @@ const login = async (param: Auth) => {
      * loginData = {...loginData, tokenCustomerAPI: responseCustomerAPI.data.token}
      */
     loginData.tokenCustomerAPI = response.data.token;
-  } catch (err: any) {
+  } catch (err) {
     loginData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -41,7 +41,7 @@ export const changePassword = async ({ currentPassword, newPassword }:ChangePass
     const response: any = await request('/changePassword', 'POST', { currentPassword,
       newPassword }, false);
     return response.data;
-  } catch (err: any) {
+  } catch (err) {
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||

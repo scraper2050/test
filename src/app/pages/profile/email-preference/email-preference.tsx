@@ -72,7 +72,7 @@ function EmailPreferencePage() {
         dispatch(error("Something went wrong, please try again later."));
         return true;
       }
-    } catch (err:any) {
+    } catch (err){
       return true;
     }
   }

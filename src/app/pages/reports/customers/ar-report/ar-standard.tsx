@@ -233,7 +233,7 @@ const ARStandardReport = ({classes}: RevenueStandardProps) => {
       } else {
         dispatch(error(message));
       }
-    } catch (e:any) {
+    } catch (e) {
       dispatch(error(e.message));
     } finally {
       setIsLoading(false);

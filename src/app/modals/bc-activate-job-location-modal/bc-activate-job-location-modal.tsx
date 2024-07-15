@@ -58,7 +58,7 @@ function BCActivateJobLocationModal({
         }
         setIsSubmitting(false);
       }))
-    } catch (err:any) {
+    } catch (err){
       dispatch(error("Something's wrong"));
       setIsSubmitting(false);
     }

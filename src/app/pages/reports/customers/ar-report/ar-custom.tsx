@@ -563,7 +563,7 @@ const ARCustomReport = ({classes}: any) => {
       } else {
         dispatch(error(message));
       }
-    } catch (e:any) {
+    } catch (e) {
       dispatch(error(e.message));
     } finally {
       setIsLoading(false);
@@ -584,7 +584,7 @@ const ARCustomReport = ({classes}: any) => {
       } else {
         dispatch(error(message));
       }
-    } catch (e:any) {
+    } catch (e) {
       dispatch(error(e.message));
     } finally {
       setIsLoading(false);
@@ -693,7 +693,7 @@ const ARCustomReport = ({classes}: any) => {
       } else {
         dispatch(error(message));
       }
-    } catch (e:any) {
+    } catch (e) {
       dispatch(error(e.message))
     } finally {
       setIsLoading(false);

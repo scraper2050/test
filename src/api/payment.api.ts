@@ -157,7 +157,7 @@ export const getUnsyncedPayments = async (division?: DivisionParams) => {
       return payments.reverse();
     }
     throw { message };
-  } catch (e:any) {
+  } catch (e) {
     throw e.message;
   }
 };
@@ -185,7 +185,7 @@ export const SyncPayments = (ids: string[] = []) => async (dispatch: any): Promi
         totalPaymentUnsynced };
     }
     throw new Error(message);
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response?.status >= 400 || err.data?.status === 0) {
       throw new Error(err.data.errors ||

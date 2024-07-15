@@ -396,7 +396,7 @@ export const getAllJobAPI = async (param?: {}, division?: DivisionParams) => {
     });
     responseData = response.data;
     responseData.jobs = tempJobs;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -418,7 +418,7 @@ export const getjobDetailAPI = async (data: any) => {
   try {
     const response: any = await request('/getJobDetails', 'POST', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -478,7 +478,7 @@ export const saveJobType = async (body: { title: string, description?: string })
   try {
     const response: any = await request('/createJobType', 'POST', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -496,7 +496,7 @@ export const editJobType = async (body: { jobTypeId: string, title: string, desc
   try {
     const response: any = await request('/editJobType', 'POST', body, false);
     responseData = response.data;
-  } catch (err:any) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -538,7 +538,7 @@ export const getSearchJobs = async (data: {
        *   return resolve(res.data?.filter((job: any) => formatDateYMD(job.scheduleDate) !== formatDateYMD(new Date())));
        * }
        */
-    } catch (err:any) {
+    } catch (err){
       return reject(err);
     }
   });

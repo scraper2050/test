@@ -5,7 +5,7 @@ export const getCommissionHistoryByJob = async (jobId: string) => {
   try {
     const response: any = await request(`/getCommissionHistoryByJob/${jobId}`, 'GET', false);
     responseData = response.data;
-  } catch (err: any) {
+  } catch (err) {
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||

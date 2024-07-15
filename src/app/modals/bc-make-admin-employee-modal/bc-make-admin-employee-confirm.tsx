@@ -69,7 +69,7 @@ function BCMakeAdminConfirmModal({classes, data}: Props):JSX.Element {
       } else if (!!response?.message) {
         dispatch(info(response.message));
       }
-    } catch (err:any) {
+    } catch (err){
       dispatch(error('Something went wrong, please try other role'));
     }
   }

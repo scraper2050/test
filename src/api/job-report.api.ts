@@ -126,7 +126,7 @@ export const getJobReports = async (data: any) => {
       };
     });
     return tempReports;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -141,7 +141,7 @@ export const emailJobReport = async (data: any) => {
   try {
     const response: any = await request(`/sendJobReportEmail`, 'POST', data, false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -156,7 +156,7 @@ export const getJobReportEmailTemplate = async (id: string) => {
   try {
     const response: any = await request(`/getJobReportEmailTemplate?jobReportId=${id}`, 'GET', false);
     return response.data;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -171,7 +171,7 @@ export const getJobReportDetail = async (data: any) => {
   try {
     const response: any = await request(`/getJobReport?jobReportId=${data.jobReportId}`, 'GET', false);
     return response.data.report;
-  } catch (err:any) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
