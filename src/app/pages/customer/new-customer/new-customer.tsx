@@ -173,11 +173,14 @@ function NewCustomerPage({ classes }: Props) {
     setFieldValue('companyId', '');
   };
 
+
+
   const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
     updateMap(values, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
   };
+
 
     useEffect(() => {
     let timeoutId:any;
@@ -188,12 +191,14 @@ function NewCustomerPage({ classes }: Props) {
         setOptions(data);
       }, 500);
     }
+      
 
     return () => clearTimeout(timeoutId);
   }, [inputValue, dispatch]);
 
   const hanldeFetchCustomerDetail = async (companyId: string) => {
     const data = await getCompanyDetail(companyId);
+
     return data;
   }
 
@@ -256,6 +261,7 @@ function NewCustomerPage({ classes }: Props) {
             }) =>
               <Form>
                 <Grid container>
+               
                   <Grid
                     item
                     sm={6}
@@ -275,6 +281,22 @@ function NewCustomerPage({ classes }: Props) {
                       item
                       sm={12}
                       xs={12}>
+                    
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Type'}
+                          </InputLabel>
+
+                          <BCTextField
+                            name={'type'}
+                            onChange={handleChange}
+                            placeholder={'Builder'}
+                            disabled={true}
+                            variant={'filled'}
+                          />
+                        </FormGroup>
+
+                   
                       <FormGroup className={'required'}>
                         <InputLabel className={classes.label}>
                           {'Name'}
@@ -287,11 +309,15 @@ function NewCustomerPage({ classes }: Props) {
                           onInputChange={(event, newInputValue) => {
                             setInputValue(newInputValue);
                             handleChange(newInputValue);
+                            if (!options.some(option => option.info.companyName === newInputValue)) {
+                              handleCancelForm(setFieldValue);
+                            }
+                        
                           }}
                           onChange={async (event, newValue: any) => {
                             if (newValue) {
                               try {
-                                setFieldValue("companyId", newValue._id);
+                                // setFieldValue("companyId", newValue._id);
                                 const data = await hanldeFetchCustomerDetail(newValue._id);
                                 const {
                                   info,
@@ -323,7 +349,7 @@ function NewCustomerPage({ classes }: Props) {
                                   setFieldValue("city", address?.state ?? "");
                                   setFieldValue("zipCode", address?.zipCode ?? "");
                                 }
-                                                                                                                                                               if (contact) {
+                                                                                                                                                      if (contact) {
                                   setFieldValue("phone", contact?.phone ?? "");
                                 }
                                 if (location && location?.coordinates) {
@@ -333,7 +359,7 @@ function NewCustomerPage({ classes }: Props) {
                                   });
                                 }
                               } catch (e) { }
-                            }
+                            } 
                           }}
                           options={options}
                           getOptionLabel={(option: any) => option?.info?.companyName}
@@ -544,26 +570,7 @@ function NewCustomerPage({ classes }: Props) {
                       </Grid>
                     </Grid>
                     <Grid container>
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={6}
-                        xs={12}>
-                        <FormGroup>
-                          <InputLabel className={classes.label}>
-                            {'Type'}
-                          </InputLabel>
-
-                          <BCTextField
-                            name={'type'}
-                            onChange={handleChange}
-                            placeholder={'Builder'}
-                            disabled={true}
-                            variant={'filled'}
-                          />
-                        </FormGroup>
-                       
-                      </Grid>
+                    
                       <Grid
                         className={classes.paper}
                         item
@@ -750,3 +757,7 @@ export const DataContainer = styled.div`
 `;
 
 export default withStyles(styles, { 'withTheme': true })(NewCustomerPage);
+// function setFieldValue(arg0: string, arg1: string) {
+//   throw new Error('Function not implemented.');
+// }
+
