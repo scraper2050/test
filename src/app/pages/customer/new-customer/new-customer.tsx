@@ -57,7 +57,7 @@ function NewCustomerPage({ classes }: Props) {
     'zipCode': '',
     'vendorId': '',
     'itemTierId': '',
-    'type': '',
+    'type': 'Builder',
     'companyId': ''
   };
 
@@ -78,6 +78,7 @@ function NewCustomerPage({ classes }: Props) {
     profile: { displayName: "" },
     id: 1,
   });
+  const [fieldsUpdated, setFieldsUpdated] = useState({ name: false, email: false, phone: false });
   const accountTypes = [...CONSTANTS.customerTypes];
   const updateMap = (
     values: any,
@@ -235,7 +236,6 @@ function NewCustomerPage({ classes }: Props) {
               
               reqObj.type = accountTypes[0].name;
               const { companyId, ...restData } = reqObj;
-
               const customer: any = await createCustomer(companyId === '' ? restData : reqObj);
               // eslint-disable-next-line no-prototype-builtins
               if (customer.hasOwnProperty('msg')) {
@@ -302,6 +302,10 @@ function NewCustomerPage({ classes }: Props) {
                                 } = data;
                                 if (info) {
                                   setFieldValue(
+                                    "name",
+                                    info?.companyName ?? ""
+                                  );
+                                  setFieldValue(
                                     "email",
                                     info?.companyEmail ?? ""
                                   );
@@ -319,7 +323,7 @@ function NewCustomerPage({ classes }: Props) {
                                   setFieldValue("city", address?.state ?? "");
                                   setFieldValue("zipCode", address?.zipCode ?? "");
                                 }
-                                if (contact) {
+                                                                                                                                                               if (contact) {
                                   setFieldValue("phone", contact?.phone ?? "");
                                 }
                                 if (location && location?.coordinates) {
@@ -339,9 +343,14 @@ function NewCustomerPage({ classes }: Props) {
                             <TextField
                               {...params}
                               placeholder={
-                                inputValue ? "" : "Enter Customer name"
+                                inputValue ? "" : "Customer Name"
                               }
                               variant="outlined"
+                              name={'name'}
+                              onChange={handleChange}
+                              className={classes.customTextField}
+                              required                            
+
                             />
                           )}
                         />
@@ -369,7 +378,7 @@ function NewCustomerPage({ classes }: Props) {
                     <Grid container>
                       <Grid
                         className={classes.paper}
-                        item
+                        item    
                         sm={6}
                         xs={12}>
                         <FormGroup>
@@ -542,6 +551,26 @@ function NewCustomerPage({ classes }: Props) {
                         xs={12}>
                         <FormGroup>
                           <InputLabel className={classes.label}>
+                            {'Type'}
+                          </InputLabel>
+
+                          <BCTextField
+                            name={'type'}
+                            onChange={handleChange}
+                            placeholder={'Builder'}
+                            disabled={true}
+                            variant={'filled'}
+                          />
+                        </FormGroup>
+                       
+                      </Grid>
+                      <Grid
+                        className={classes.paper}
+                        item
+                        sm={6}
+                        xs={12}>
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
                             {'Vendor Number'}
                           </InputLabel>
 
@@ -551,7 +580,10 @@ function NewCustomerPage({ classes }: Props) {
                             placeholder={'Vendor Number'}
                           />
                         </FormGroup>
+
                       </Grid>
+
+
                     </Grid>
 
                     {/* <pre>
@@ -631,7 +663,7 @@ function NewCustomerPage({ classes }: Props) {
                         color={'primary'}
                         type={'submit'}
                         disabled={isSubmitting}
-                        variant={'contained'}>
+                        variant={'contained'}>            
                         {'Save'}
                       </Button>
                       <Button
