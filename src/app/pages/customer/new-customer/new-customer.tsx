@@ -236,9 +236,7 @@ function NewCustomerPage({ classes }: Props) {
               
               reqObj.type = accountTypes[0].name;
               const { companyId, ...restData } = reqObj;
-              console.log("data",restData)
               const customer: any = await createCustomer(companyId === '' ? restData : reqObj);
-              console.log("cus", customer)
               // eslint-disable-next-line no-prototype-builtins
               if (customer.hasOwnProperty('msg')) {
                 dispatch(error(customer.msg));
@@ -380,7 +378,7 @@ function NewCustomerPage({ classes }: Props) {
                     <Grid container>
                       <Grid
                         className={classes.paper}
-                        item
+                        item    
                         sm={6}
                         xs={12}>
                         <FormGroup>
@@ -665,7 +663,7 @@ function NewCustomerPage({ classes }: Props) {
                         color={'primary'}
                         type={'submit'}
                         disabled={isSubmitting}
-                        variant={'contained'}>
+                        variant={'contained'}>            
                         {'Save'}
                       </Button>
                       <Button
