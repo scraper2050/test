@@ -275,6 +275,7 @@ function NewCustomerPage({ classes }: Props) {
             }) =>
               <Form>
                 <Grid container>
+               
                   <Grid
                     item
                     sm={6}
@@ -294,6 +295,22 @@ function NewCustomerPage({ classes }: Props) {
                       item
                       sm={12}
                       xs={12}>
+                    
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Type'}
+                          </InputLabel>
+
+                          <BCTextField
+                            name={'type'}
+                            onChange={handleChange}
+                            placeholder={'Builder'}
+                            disabled={true}
+                            variant={'filled'}
+                          />
+                        </FormGroup>
+
+                   
                       <FormGroup className={'required'}>
                         <InputLabel className={classes.label}>
                           {'Name'}
@@ -314,7 +331,7 @@ function NewCustomerPage({ classes }: Props) {
                           onChange={async (event, newValue: any) => {
                             if (newValue) {
                               try {
-                                setFieldValue("companyId", newValue._id);
+                                // setFieldValue("companyId", newValue._id);
                                 const data = await hanldeFetchCustomerDetail(newValue._id);
                                 const {
                                   info,
@@ -567,26 +584,7 @@ function NewCustomerPage({ classes }: Props) {
                       </Grid>
                     </Grid>
                     <Grid container>
-                      <Grid
-                        className={classes.paper}
-                        item
-                        sm={6}
-                        xs={12}>
-                        <FormGroup>
-                          <InputLabel className={classes.label}>
-                            {'Type'}
-                          </InputLabel>
-
-                          <BCTextField
-                            name={'type'}
-                            onChange={handleChange}
-                            placeholder={'Builder'}
-                            disabled={true}
-                            variant={'filled'}
-                          />
-                        </FormGroup>
-                       
-                      </Grid>
+                    
                       <Grid
                         className={classes.paper}
                         item
