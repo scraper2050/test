@@ -173,18 +173,7 @@ function NewCustomerPage({ classes }: Props) {
     setFieldValue('companyId', '');
   };
 
-  const clearAllFields = (setFieldValue: any) => {
-    setFieldValue("companyId", "");
-    setFieldValue("name", "");
-    setFieldValue("email", "");
-    setFieldValue("contactName", "");
-    setFieldValue("street", "");
-    setFieldValue("city", "");
-    setFieldValue("state", "");
-    setFieldValue("zipCode", "");
-    setFieldValue("phone", "");
-    setPositionValue({ lang: 0, lat: 0 }); 
-  };
+
 
   const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
@@ -209,7 +198,6 @@ function NewCustomerPage({ classes }: Props) {
 
   const hanldeFetchCustomerDetail = async (companyId: string) => {
     const data = await getCompanyDetail(companyId);
-    console.log('data', data);
 
     return data;
   }
@@ -253,8 +241,6 @@ function NewCustomerPage({ classes }: Props) {
               
               reqObj.type = accountTypes[0].name;
               const { companyId, ...restData } = reqObj;
-              console.log('companyID',companyId)
-              console.log('restData', restData);
               const customer: any = await createCustomer(companyId === '' ? restData : reqObj);
               // eslint-disable-next-line no-prototype-builtins
               if (customer.hasOwnProperty('msg')) {
