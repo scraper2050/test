@@ -173,11 +173,25 @@ function NewCustomerPage({ classes }: Props) {
     setFieldValue('companyId', '');
   };
 
+  const clearAllFields = (setFieldValue: any) => {
+    setFieldValue("companyId", "");
+    setFieldValue("name", "");
+    setFieldValue("email", "");
+    setFieldValue("contactName", "");
+    setFieldValue("street", "");
+    setFieldValue("city", "");
+    setFieldValue("state", "");
+    setFieldValue("zipCode", "");
+    setFieldValue("phone", "");
+    setPositionValue({ lang: 0, lat: 0 }); 
+  };
+
   const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
     updateMap(values, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
   };
+
 
     useEffect(() => {
     let timeoutId:any;
@@ -188,12 +202,15 @@ function NewCustomerPage({ classes }: Props) {
         setOptions(data);
       }, 500);
     }
+      
 
     return () => clearTimeout(timeoutId);
   }, [inputValue, dispatch]);
 
   const hanldeFetchCustomerDetail = async (companyId: string) => {
     const data = await getCompanyDetail(companyId);
+    console.log('data', data);
+
     return data;
   }
 
@@ -236,6 +253,8 @@ function NewCustomerPage({ classes }: Props) {
               
               reqObj.type = accountTypes[0].name;
               const { companyId, ...restData } = reqObj;
+              console.log('companyID',companyId)
+              console.log('restData', restData);
               const customer: any = await createCustomer(companyId === '' ? restData : reqObj);
               // eslint-disable-next-line no-prototype-builtins
               if (customer.hasOwnProperty('msg')) {
@@ -287,6 +306,10 @@ function NewCustomerPage({ classes }: Props) {
                           onInputChange={(event, newInputValue) => {
                             setInputValue(newInputValue);
                             handleChange(newInputValue);
+                            if (!options.some(option => option.info.companyName === newInputValue)) {
+                              handleCancelForm(setFieldValue);
+                            }
+                        
                           }}
                           onChange={async (event, newValue: any) => {
                             if (newValue) {
@@ -323,7 +346,7 @@ function NewCustomerPage({ classes }: Props) {
                                   setFieldValue("city", address?.state ?? "");
                                   setFieldValue("zipCode", address?.zipCode ?? "");
                                 }
-                                                                                                                                                               if (contact) {
+                                                                                                                                                      if (contact) {
                                   setFieldValue("phone", contact?.phone ?? "");
                                 }
                                 if (location && location?.coordinates) {
@@ -333,7 +356,7 @@ function NewCustomerPage({ classes }: Props) {
                                   });
                                 }
                               } catch (e) { }
-                            }
+                            } 
                           }}
                           options={options}
                           getOptionLabel={(option: any) => option?.info?.companyName}
@@ -750,3 +773,7 @@ export const DataContainer = styled.div`
 `;
 
 export default withStyles(styles, { 'withTheme': true })(NewCustomerPage);
+// function setFieldValue(arg0: string, arg1: string) {
+//   throw new Error('Function not implemented.');
+// }
+
