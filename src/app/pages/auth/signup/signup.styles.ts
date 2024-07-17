@@ -68,7 +68,8 @@ export default (theme: Theme): any => ({
     'flex': 1,
     'flexDirection': 'column',
     'alignItems': 'center',
-    'justifyContent': 'space-between'
+    'justifyContent': 'space-between',
+    'height': '97.9vh'
   },
   'logoimg': {
     'margin': '20vh auto 0',

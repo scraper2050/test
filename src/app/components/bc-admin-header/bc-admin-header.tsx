@@ -185,6 +185,8 @@ function BCAdminHeader({
   const auth = useSelector((state: any) => state.auth);
   const permissions = useSelector((state: any) => state.permissions.rolesAndPermissions);
 
+  const isAdmin = auth.user?.permissions?.role === 3 || auth.user?.permissions?.role === 4;
+
   useEffect(() => {
     initialLoad();
     if (user?._id && divisions.refresh) {
@@ -251,8 +253,9 @@ function BCAdminHeader({
         }, 200);
       }
     }
+    console.log('--->', auth.user?.permissions?.role)
 
-    if (!divisionList.length && !divisions.loading) {
+    if (!divisionList.length && !divisions.loading && !isAdmin ) {
       history.push({
         'pathname': `/main/no-locations-assigned`,
         'state': {}

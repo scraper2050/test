@@ -26,6 +26,7 @@ import SignUpDetail from './components/signup_detail';
 import BCModal from '../../../modals/bc-modal';
 import BCSpinnerer from '../../../components/bc-spinner/bc-spinner';
 import { error } from '../../../../actions/snackbar/snackbar.action';
+import { validate } from '@material-ui/pickers';
 
 const SOCIAL_FACEBOOK_CONNECT_TYPE = 0;
 const SOCIAL_GOOGLE_CONNECT_TYPE = 1;
@@ -77,9 +78,17 @@ function SignUpPage({ classes }: Props): JSX.Element {
       ...initFormData(),
       'showModal': false
     },
-    'companyName': { ...initFormData()
+    'companyName': { ...initFormData(), validate: false 
     }
   });
+  useEffect(()=>{
+    setFormData((prev)=>{
+      return {
+        ...prev,
+        companyName: {...initFormData, validate: true}
+      }
+    })
+  },[companyId])
 
   const handleFormDataChange = (key: string, value: any) => {
     setFormData({
@@ -126,7 +135,7 @@ function SignUpPage({ classes }: Props): JSX.Element {
   const checkSubmitDisabled = (): boolean => {
     for (const item of Object.keys(formData)) {
       if (item !== 'cid' && item !== 'isci') {
-        if (formData[item].value.length === 0 || !formData[item].validate) {
+        if (formData[item].validate && formData[item].value?.length === 0) {
           return true;
         }
       }
