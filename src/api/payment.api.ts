@@ -13,8 +13,8 @@ import {
   getUnpaidInvoicesAPI
 } from './invoicing.api';
 import {
-  setPaymentsLoading,
-  setPayments, updateSyncedPayments
+  setPayments,
+  setPaymentsLoading, updateSyncedPayments
   /*
    * SetPaymentsTotal,
    * setNextPaymentsCursor,
@@ -126,7 +126,7 @@ export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor
 
       cancelTokenGetAllPaymentsAPI = axios.CancelToken.source();
 
-      request(`/getPayments`, 'GET', optionObj, undefined, undefined, cancelTokenGetAllPaymentsAPI, undefined, division)
+      request(`/getPayments`, 'GET', optionObj, undefined, undefined, cancelTokenGetAllPaymentsAPI, division)
         .then((res: any) => {
           const { payment, unsyncedPayments } = res.data;
           dispatch(setPayments(payment.reverse(), unsyncedPayments));
@@ -151,7 +151,7 @@ export const getAllPaymentsAPI = (pageSize = 10, previousCursor = '', nextCursor
 
 export const getUnsyncedPayments = async (division?: DivisionParams) => {
   try {
-    const response: any = await request('/getUnsyncedPayments', 'GET', undefined, undefined, undefined, undefined, undefined, division);
+    const response: any = await request('/getUnsyncedPayments', 'GET', undefined, undefined, undefined, undefined, division);
     const { status, message, payments } = response.data;
     if (status === 1) {
       return payments.reverse();
@@ -185,7 +185,7 @@ export const SyncPayments = (ids: string[] = []) => async (dispatch: any): Promi
         totalPaymentUnsynced };
     }
     throw new Error(message);
-  } catch (err){
+  } catch (err) {
     responseData = err.data;
     if (err.response?.status >= 400 || err.data?.status === 0) {
       throw new Error(err.data.errors ||

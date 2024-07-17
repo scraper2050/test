@@ -253,7 +253,6 @@ function BCAdminHeader({
         }, 200);
       }
     }
-    console.log('--->', auth.user?.permissions?.role)
 
     if (!divisionList.length && !divisions.loading && !isAdmin ) {
       history.push({
