@@ -317,7 +317,7 @@ function NewCustomerPage({ classes }: Props) {
                           onChange={async (event, newValue: any) => {
                             if (newValue) {
                               try {
-                                // setFieldValue("companyId", newValue._id);
+                                setFieldValue("companyId", newValue._id);
                                 const data = await hanldeFetchCustomerDetail(newValue._id);
                                 const {
                                   info,
