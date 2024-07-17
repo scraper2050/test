@@ -7,24 +7,26 @@ import {
 import Grid from '@material-ui/core/Grid';
 import styles from '../signup.styles';
 import { withStyles } from '@material-ui/core/styles';
-import {modalTypes, PRIMARY_BLUE} from "../../../../../constants";
+import { PRIMARY_BLUE, modalTypes } from '../../../../../constants';
 import BCEmailValidateInput from '../../../../components/bc-email-validate-input/bc-email-validate-input';
 import PasswordInput from '../../../../components/bc-password-input/bc-password-input';
 import BCPhoneNumberInput from '../../../../components/bc-phone-number-input/bc-phone-number-input';
-import {FormDataModel} from "../../../../models/form-data";
+import { FormDataModel } from '../../../../models/form-data';
 import {
   openModalAction,
   setModalDataAction
-} from "../../../../../actions/bc-modal/bc-modal.action";
-import {useDispatch} from "react-redux";
+} from '../../../../../actions/bc-modal/bc-modal.action';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   formData: any;
   onChange: (key: string, value: any) => void;
   classes: any
+  accountType: number
+  companyId: string | null
 }
 
-function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
+function SignUpDetail({ formData, accountType, onChange, classes, companyId }: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const handleClickOpen = () => {
@@ -43,10 +45,10 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
   const handleTextField = (key: string, value: string) => {
     onChange(key, {
       value,
-      errorMsg: value.length > 0 ? '' : 'This field is required',
-      validate: value.length > 0,
-    })
-  }
+      'errorMsg': value.length > 0 ? '' : 'This field is required',
+      'validate': value.length > 0
+    });
+  };
 
   return (
     <>
@@ -67,7 +69,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             helperText={formData.firstName.errorMsg}
             id={'firstname'}
             label={'First Name'}
-            onChange={(e) => handleTextField('firstName', e.target.value)}
+            onChange={e => handleTextField('firstName', e.target.value)}
             size={'small'}
             type={'text'}
             value={formData.firstName.value}
@@ -84,7 +86,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             helperText={formData.lastName.errorMsg}
             id={'lastName'}
             label={'Last Name'}
-            onChange={(e) => handleTextField('lastName', e.target.value)}
+            onChange={e => handleTextField('lastName', e.target.value)}
             size={'small'}
             type={'text'}
             value={formData.lastName.value}
@@ -126,7 +128,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
           <BCEmailValidateInput
             id={'recoveryEmail'}
             inputData={formData.recoveryEmail}
-            // disabled={formData.isci.value}
+            // Disabled={formData.isci.value}
             label={'Recovery Email'}
             onChange={(newEmail: FormDataModel) => onChange('recoveryEmail', newEmail)}
             size={'small'}
@@ -147,6 +149,28 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
             size={'small'}
           />
         </Grid>
+        {accountType === 1 && companyId === 'NEW' &&
+        <>
+          <Grid
+            item
+            md={6}
+            xs={12}>
+            <TextField
+              error={!formData.companyName.validate}
+              fullWidth
+              helperText={formData.companyName.errorMsg}
+              id={'firstname'}
+              label={'Company name'}
+              onChange={e => handleTextField('companyName', e.target.value)}
+              size={'small'}
+              type={'text'}
+              value={formData.companyName.value}
+              variant={'outlined'}
+            />
+          </Grid>
+        </>
+        }
+
         <Grid
           item
           md={12}
@@ -160,11 +184,11 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
               checked={formData.agreeTerm.value === 'Yes'}
               color={'primary'}
               name={'agree-term'}
-              onChange={(e) => handleTextField('agreeTerm', e.target.checked ? 'Yes' : '')}
+              onChange={e => handleTextField('agreeTerm', e.target.checked ? 'Yes' : '')}
             />
-            I agree to the 
+            {'I agree to the '}
             <span
-              style={{marginLeft: 5}}
+              style={{ 'marginLeft': 5 }}
               onClick={handleClickOpen}
               role={'button'}>
               {'terms of use and privacy'}
@@ -181,7 +205,7 @@ function SignUpDetail({formData, onChange, classes }: Props): JSX.Element {
 
       </Grid>
     </>
-  )
+  );
 }
 
 export default withStyles(

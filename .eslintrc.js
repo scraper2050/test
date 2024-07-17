@@ -152,12 +152,14 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/jsx-props-no-spreading": 0,
     "react/jsx-curly-newline": 0,
-    "sort-imports": [
-      "error",
-      {
-        memberSyntaxSortOrder: ["all", "single", "multiple", "none"],
-      },
-    ],
+    // "sort-imports": [
+    //   "error",
+    //   {
+    //     memberSyntaxSortOrder: ["all", "single", "multiple", "none"],
+    //   },
+    // ],
+    "sort-imports": 0,
+    "sort-keys": 0,
     "default-param-last": 0,
     "no-empty-function": 0,
     "lines-around-comment": [

@@ -4,7 +4,7 @@ import request, { downloadFile } from 'utils/http.service';
 export const getCustomers = async (active = true, inactive = false) => {
   const body = {
     'includeActive': active.toString(),
-    'includeNonActive': inactive.toString(),
+    'includeNonActive': inactive.toString()
   };
   let responseData;
   try {
@@ -31,7 +31,7 @@ export const getCustomers = async (active = true, inactive = false) => {
 
 export const getCustomersContact = async (customerId: string) => {
   const body = {
-    'customerId': customerId,
+    'customerId': customerId
   };
   let responseData;
   try {
@@ -40,7 +40,7 @@ export const getCustomersContact = async (customerId: string) => {
     responseData = response.data;
     if (response.status === 200) {
       responseData = {
-        ...response.data,
+        ...response.data
       };
     }
   } catch (err) {
@@ -129,7 +129,7 @@ export const updateCustomPrices = async (customerId: string, customPrices: any) 
       throw new Error('Quantity must be in sequence');
     }
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.response.status === 0) {
       throw err;
     } else {
@@ -150,11 +150,13 @@ export const exportCustomersToExcel = async (): Promise<{ data: Blob, fileName: 
       if (contentDisposition) {
         fileName = contentDisposition.split('=')[1].replace(/"/g, '');
       }
-      resolve({ data: value.data, fileName });
-    }).catch((error) => {
-      reject(error);
+      resolve({ 'data': value.data,
+        fileName });
     })
+      .catch(error => {
+        reject(error);
+      });
   });
-}
+};
 
 

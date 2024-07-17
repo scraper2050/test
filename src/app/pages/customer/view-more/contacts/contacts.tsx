@@ -141,7 +141,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
     try {
       const response = await dispatch(addContact(values));
       return response;
-    } catch (err) {
+    } catch (err){
       throw new Error(err);
     }
 
@@ -152,7 +152,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
     try {
       const response = await dispatch(updateContact(values));
       return response;
-    } catch (err) {
+    } catch (err){
       throw new Error(err);
     }
 
@@ -169,7 +169,7 @@ function CustomerContactsPage({ classes, id, type, customerId }: any) {
         const response = await dispatch(updateContact(values));
         return response;
       }
-    } catch (err) {
+    } catch (err){
       throw new Error(err);
     }
   }

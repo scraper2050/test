@@ -5,7 +5,7 @@ export const getDivision = async (userId: string) => {
    try {
       const response: any = await request(`/getUserDivisions`, "POST", {userId: userId}, false);
       responseData = response.data;
-   } catch (err) {
+   } catch (err){
       responseData = { message: '' };
       responseData.message = 'We are facing some issues, please try again.'
    }

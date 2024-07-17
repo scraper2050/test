@@ -5,7 +5,7 @@ export const getTechnicians = async () => {
     try {
         const response: any = await request("/getTechnicians", "POST", {}, false);
         responseData = response.data;
-    } catch (err) {
+    } catch (err){
         responseData = err.data;
         if (err.response.status >= 400 || err.data.status === 0) {
             throw new Error(

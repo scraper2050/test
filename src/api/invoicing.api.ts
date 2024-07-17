@@ -30,7 +30,7 @@ export const getTodos = async (params = {}) => {
   try {
     const response: any = await requestApiV2('/getJobs', 'POST', params);
     responseData = response.data;
-  } catch (err) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -337,7 +337,7 @@ export const getInvoicingList = async (params = {}) => {
   try {
     const response: any = await requestApiV2('/getInvoices', 'POST', params);
     responseData = response.data;
-  } catch (err) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -388,7 +388,7 @@ export const SyncInvoices = (ids: string[] = []) => async (dispatch: any): Promi
       };
     }
     throw new Error(message);
-  } catch (err) {
+  } catch (err){
     responseData = err.data;
     if (err.response?.status >= 400 || err.data?.status === 0) {
       throw new Error(err.data.errors ||
@@ -406,7 +406,7 @@ export const getPurchaseOrder = async (params = {}) => {
   try {
     const response: any = await request('/getAllPurchaseOrder', 'POST', params, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -424,7 +424,7 @@ export const getInvoicingEstimates = async (params = {}) => {
   try {
     const response: any = await request('/getEstimate', 'POST', params, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err){
     responseData = err.data;
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
@@ -441,7 +441,7 @@ export const getInvoiceDetail = async (invoiceId: string) => {
   try {
     const response: any = await request('/getInvoiceDetail', 'POST', { invoiceId }, false);
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||

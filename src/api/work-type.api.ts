@@ -5,7 +5,7 @@ export const getWorkType = async (params?: {}) => {
    try {
       const response: any = await request(`/getWorkTypes?${params}`, "GET", {}, false);
       responseData = response.data;
-   } catch (err) {
+   } catch (err){
       responseData = err.data;
       if (err.response.status >= 400 || err.data.status === 0) {
          throw new Error(

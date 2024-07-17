@@ -196,7 +196,7 @@ function BcAddTicketDetailsModal({classes, props}: any): JSX.Element {
         }
         setIsSubmitting(false);
       }))
-    } catch (err) {
+    } catch (err){
       dispatch(errorSnackBar("Something's wrong"));
       setIsSubmitting(false);
     }
