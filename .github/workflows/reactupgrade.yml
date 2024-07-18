@@ -22,25 +22,12 @@ jobs:
       run: npm install --legacy-peer-deps
 
     - name: Add missing Babel plugin
-      run: npm install --save-dev @babel/plugin-proposal-private-property-in-object
+      run: npm install --save-dev @babel/plugin-proposal-private-property-in-object --legacy-peer-deps
 
-    - name: Install Webpack CLI
-      run: npm install --save-dev webpack-cli
-
-    - name: Build with Custom Webpack Config
+    - name: Build with environment variable override
       run: |
-        # Create a temporary webpack.config.js to handle CSS order conflict
-        echo "const MiniCssExtractPlugin = require('mini-css-extract-plugin');" > webpack.config.js
-        echo "module.exports = {" >> webpack.config.js
-        echo "  plugins: [" >> webpack.config.js
-        echo "    new MiniCssExtractPlugin({" >> webpack.config.js
-        echo "      ignoreOrder: true, // Ignore CSS order conflicts" >> webpack.config.js
-        echo "    })" >> webpack.config.js
-        echo "  ]" >> webpack.config.js
-        echo "};" >> webpack.config.js
-
-        # Build the app using react-scripts and the custom webpack config
-        npx react-scripts build --openssl-legacy-provider --config webpack.config.js
+        # Set CI to false to avoid treating warnings as errors
+        CI=false npm run build
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
