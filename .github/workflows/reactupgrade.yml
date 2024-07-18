@@ -11,25 +11,43 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3  # Use the latest version
+      uses: actions/checkout@v3
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3  # Use the latest version
+      uses: actions/setup-node@v3
       with:
         node-version: 18
 
     - name: Install dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Build
-      run: npm run build
+    - name: Add missing Babel plugin
+      run: npm install --save-dev @babel/plugin-proposal-private-property-in-object
+
+    - name: Install Webpack CLI
+      run: npm install --save-dev webpack-cli
+
+    - name: Build with Custom Webpack Config
+      run: |
+        # Create a temporary webpack.config.js to handle CSS order conflict
+        echo "const MiniCssExtractPlugin = require('mini-css-extract-plugin');" > webpack.config.js
+        echo "module.exports = {" >> webpack.config.js
+        echo "  plugins: [" >> webpack.config.js
+        echo "    new MiniCssExtractPlugin({" >> webpack.config.js
+        echo "      ignoreOrder: true, // Ignore CSS order conflicts" >> webpack.config.js
+        echo "    })" >> webpack.config.js
+        echo "  ]" >> webpack.config.js
+        echo "};" >> webpack.config.js
+
+        # Build the app using react-scripts and the custom webpack config
+        npx react-scripts build --openssl-legacy-provider --config webpack.config.js
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1  # Replace with your desired AWS region
+        aws-region: us-east-1
 
     - name: Deploy to S3
       run: |
