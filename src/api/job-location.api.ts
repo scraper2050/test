@@ -69,3 +69,37 @@ export const updateJobLocation = async (data: any) => {
     return responseData;
   }
 };
+
+
+export const getSubdivision = async (
+  customerId?: string,
+  builderId?: string,
+  isActive: string = 'ALL',
+  keyword: string = ''
+) => {
+  try {
+    const queryParams = new URLSearchParams({
+      isActive,
+      keyword
+    });
+
+    if (customerId) {
+      queryParams.append('customerId', customerId);
+    }
+    if (builderId) {
+      queryParams.append('builderId', builderId);
+    }
+
+    const url = `/jobLocation/name?${queryParams.toString()}`;
+    const response = await request(url, 'GET', {}, false);
+
+    // Log the response for debugging
+    console.log('Raw API response:', response);
+
+    // Access jobLocations from the response data
+    return response.data.jobLocations || []; // Adjust based on actual response structure
+  } catch (err) {
+    console.error('Error fetching data:', err);
+    throw err;
+  }
+};

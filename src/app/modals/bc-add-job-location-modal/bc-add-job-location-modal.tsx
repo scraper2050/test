@@ -12,6 +12,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormGroup,
   Grid,
@@ -20,7 +21,7 @@ import {
   Typography
 } from '@material-ui/core';
 import {Form, Formik} from 'formik';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {closeModalAction, setModalDataAction} from 'actions/bc-modal/bc-modal.action';
 import {useDispatch} from 'react-redux';
 import {
@@ -35,8 +36,8 @@ import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import {error, success} from 'actions/snackbar/snackbar.action';
 import {useHistory, useLocation} from 'react-router-dom';
 import debounce from 'lodash.debounce';
-
 import '../../../scss/index.scss';
+import { getSubdivision } from 'api/job-location.api';
 
 interface Props {
   classes: any
@@ -47,9 +48,15 @@ interface AllStateTypes {
   abbreviation: string,
   name: string,
 }
+interface Subdivision {
+  _id: string;
+  name: string;
+  // Add other properties as needed
+}
 
 
-function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
+
+function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId, isActive, keyword }: any) {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
@@ -195,7 +202,46 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
       'state': state,
     });
   }
-  return (
+  const [inputValue, setInputValue] = useState<string>('');
+  const [options, setOptions] = useState<Subdivision[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchSubdivisions = async () => {
+      if (inputValue.length < 2) { // Start fetching after 2 characters
+        setOptions([]);
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const data = await getSubdivision(undefined, undefined, 'ALL', inputValue);
+        //console.log('Raw API response:', data);
+
+
+        // Assuming `data.jobLocations` contains the array of locations
+        //const jobLocations = data.jobLocations || [];
+
+        if (Array.isArray(data)) {
+          setOptions(data);
+          console.log('Fetched data:', data); // Log the fetched data
+        } else {
+          setOptions([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubdivisions();
+  }, [inputValue]);
+
+
+console.log('jobLocationInfo', options);
+    return (
     <>
       <MainContainer>
         <PageContainer className="map_modal__wrapper">
@@ -267,15 +313,40 @@ function BCAddJobLocationModal({classes, jobLocationInfo}: any) {
                           <InputLabel className={classes.label}>
                             {'Subdivision Name'}
                           </InputLabel>
-
-                          <BCTextField
+                            <Autocomplete
+                              freeSolo
+                              options={options}
+                              getOptionLabel={(option) => option.name || ''}
+                              loading={loading}
+                              noOptionsText={error || 'No options'}
+                              onInputChange={(event, newInputValue) => {
+                                setInputValue(newInputValue);
+                              }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="Search Subdivisions"
+                                  variant="outlined"
+                                  InputProps={{
+                                    ...params.InputProps,
+                                    endAdornment: (
+                                      <>
+                                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                        {params.InputProps.endAdornment}
+                                      </>
+                                    ),
+                                  }}
+                                />
+                              )}
+                            />
+                          {/* <BCTextField
                             name={'name'}
                             placeholder={'Subdivision Name'}
                             required
                             onChange={(e: any) => {
                               setFieldValue('name', e.target.value)
                             }}
-                          />
+                          /> */}
                           {nameLabelState ? <label>Required</label> : ''}
                         </FormGroup>
                       </Grid>
