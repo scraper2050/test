@@ -45,5 +45,12 @@ export default (theme: Theme): any => ({
   },
   'marginLeft': {
     marginLeft: '10px',
-  }
+  },
+  'customModalTitle': {
+    '& .MuiPaper-root .MuiDialogTitle-root': {
+      padding: '20px 0px 0px 0px',
+    },
+  },
+
+  
 });
