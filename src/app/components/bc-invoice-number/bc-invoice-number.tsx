@@ -160,7 +160,7 @@ function BCInvoiceNumber({classes}: any): JSX.Element {
           dispatch(error("Something went wrong!"));
           setSubmitting(false);
         }
-      } catch (err) {
+      } catch (err){
         dispatch(error("Something went wrong!"));
         setSubmitting(false);
       }

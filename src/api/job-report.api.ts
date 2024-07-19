@@ -17,16 +17,16 @@ export const getAllJobReportsAPI = (pageSize = 15, currentPageIndex = 0, keyword
       dispatch(setJobReportLoading(true));
       const optionObj:any = {
         pageSize,
-        currentPage: currentPageIndex
+        'currentPage': currentPageIndex
       };
-      if(keyword){
-        optionObj.keyword = keyword
+      if (keyword) {
+        optionObj.keyword = keyword;
       }
-      if(selectionRange){
+      if (selectionRange) {
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
-      if(cancelTokenGetAllJobReportsAPI) {
+      if (cancelTokenGetAllJobReportsAPI) {
         cancelTokenGetAllJobReportsAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setJobReportLoading(true));
@@ -37,39 +37,38 @@ export const getAllJobReportsAPI = (pageSize = 15, currentPageIndex = 0, keyword
       requestApiV2(`/getAllJobReports`, 'OPTIONS', optionObj, cancelTokenGetAllJobReportsAPI, division)
         .then((res: any) => {
           let tempReports = res.data.reports;
-          tempReports = tempReports.map((tempReport: any)=>
-          {
-            let tempJob = tempReport.jobObj[0];
-            let tempTasks = tempJob?.tasks.map((tempTask: any, index: any) => {
-              let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+          tempReports = tempReports.map((tempReport: any) => {
+            const tempJob = tempReport.jobObj[0];
+            const tempTasks = tempJob?.tasks.map((tempTask: any, index: any) => {
+              const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
                 const currentItem = tempReport?.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
                 return {
                   ...tempJobType,
-                  jobType : currentItem
-                }
+                  'jobType': currentItem
+                };
               });
               const currenttechnician = tempJob.technicianObj?.filter((item: any) => item._id == tempTask.technician)[0];
               const currentcontractor = tempJob.contractorsObj?.filter((item: any) => item._id == tempTask.contractor)[0];
               return {
                 ...tempTask,
-                technician : currenttechnician,
-                contractor : currentcontractor,
-                jobTypes: tempJobTypes,
-              }
-            })
+                'technician': currenttechnician,
+                'contractor': currentcontractor,
+                'jobTypes': tempJobTypes
+              };
+            });
 
             return {
               ...tempReport,
-              invoice : tempReport.invoiceObj[0],
-              company : tempReport.companyObj[0],
-              job : {
+              'invoice': tempReport.invoiceObj[0],
+              'company': tempReport.companyObj[0],
+              'job': {
                 ...tempJob,
-                customer: tempReport.customerObj[0],
-                jobLocation: tempReport.jobLocationObj[0],
-                jobSite : tempReport.jobSiteObj[0],
-                tasks: tempTasks
+                'customer': tempReport.customerObj[0],
+                'jobLocation': tempReport.jobLocationObj[0],
+                'jobSite': tempReport.jobSiteObj[0],
+                'tasks': tempTasks
               }
-            }
+            };
           });
           dispatch(setJobReport(tempReports));
           dispatch(setPreviousJobReportsCursor(res.data.previousCursor ? res.data.previousCursor : ''));
@@ -81,7 +80,7 @@ export const getAllJobReportsAPI = (pageSize = 15, currentPageIndex = 0, keyword
         .catch(err => {
           dispatch(setJobReportLoading(false));
           dispatch(setJobReport([]));
-          if(err.message !== 'axios canceled'){
+          if (err.message !== 'axios canceled') {
             return reject(err);
           }
         });
@@ -93,42 +92,41 @@ export const getJobReports = async (data: any) => {
   try {
     const response: any = await requestApiV2('/getAllJobReports', 'GET', {});
     let tempReports = response.data.reports;
-    tempReports = tempReports.map((tempReport: any)=>
-    {
-      let tempJob = tempReport.jobObj[0];
-      let tempTasks = tempJob?.tasks.map((tempTask: any, index: any) => {
-        let tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
+    tempReports = tempReports.map((tempReport: any) => {
+      const tempJob = tempReport.jobObj[0];
+      const tempTasks = tempJob?.tasks.map((tempTask: any, index: any) => {
+        const tempJobTypes = tempTask.jobTypes.map((tempJobType: any, index: any) => {
           const currentItem = tempReport?.jobTypeObj?.filter((item: any) => item._id == tempJobType.jobType)[0];
           return {
             ...tempJobType,
-            jobType : currentItem
-          }
+            'jobType': currentItem
+          };
         });
         const currenttechnician = tempJob.technicianObj?.filter((item: any) => item._id == tempTask.technician)[0];
         const currentcontractor = tempJob.contractorsObj?.filter((item: any) => item._id == tempTask.contractor)[0];
         return {
           ...tempTask,
-          technician : currenttechnician,
-          contractor : currentcontractor,
-          jobTypes: tempJobTypes,
-        }
-      })
+          'technician': currenttechnician,
+          'contractor': currentcontractor,
+          'jobTypes': tempJobTypes
+        };
+      });
 
       return {
         ...tempReport,
-        invoice : tempReport.invoiceObj[0],
-        company : tempReport.companyObj[0],
-        job : {
+        'invoice': tempReport.invoiceObj[0],
+        'company': tempReport.companyObj[0],
+        'job': {
           ...tempJob,
-          customer: tempReport.customerObj[0],
-          jobLocation: tempReport.jobLocationObj[0],
-          jobSite : tempReport.jobSiteObj[0],
-          tasks: tempTasks
+          'customer': tempReport.customerObj[0],
+          'jobLocation': tempReport.jobLocationObj[0],
+          'jobSite': tempReport.jobSiteObj[0],
+          'tasks': tempTasks
         }
-      }
+      };
     });
     return tempReports;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -143,7 +141,7 @@ export const emailJobReport = async (data: any) => {
   try {
     const response: any = await request(`/sendJobReportEmail`, 'POST', data, false);
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -158,7 +156,7 @@ export const getJobReportEmailTemplate = async (id: string) => {
   try {
     const response: any = await request(`/getJobReportEmailTemplate?jobReportId=${id}`, 'GET', false);
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -167,13 +165,13 @@ export const getJobReportEmailTemplate = async (id: string) => {
       throw new Error(`Something went wrong`);
     }
   }
-}
+};
 
 export const getJobReportDetail = async (data: any) => {
   try {
     const response: any = await request(`/getJobReport?jobReportId=${data.jobReportId}`, 'GET', false);
     return response.data.report;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||

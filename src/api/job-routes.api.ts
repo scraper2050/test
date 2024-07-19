@@ -10,7 +10,7 @@ export const getAllRoutes = async (date: string) => {
       if (res.status === 200) {
         return resolve(res);
       }
-    } catch (err) {
+    } catch (err){
       return reject(err);
     }
   });
@@ -31,7 +31,7 @@ export const getTecnicianRoutes = async (date: string) => {
       if (res.status === 200) {
         return resolve(res);
       }
-    } catch (err) {
+    } catch (err){
       return reject(err);
     }
   });

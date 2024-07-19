@@ -1,5 +1,5 @@
 import request, { requestApiV2 } from '../utils/http.service';
-import { refreshServiceTickets, setOpenServiceTicket, setOpenServiceTicketLoading, setServiceTicket, setServiceTicketLoading, setPreviousServiceTicketCursor, setNextServiceTicketCursor, setTotal} from 'actions/service-ticket/service-ticket.action';
+import { refreshServiceTickets, setNextServiceTicketCursor, setOpenServiceTicket, setOpenServiceTicketLoading, setPreviousServiceTicketCursor, setServiceTicket, setServiceTicketLoading, setTotal } from 'actions/service-ticket/service-ticket.action';
 import moment from 'moment';
 import axios from 'axios';
 import { DivisionParams } from 'app/models/division';
@@ -14,12 +14,12 @@ const compareByDate = (a: any, b: any) => {
   return 0;
 };
 
-export const getAllServiceTicketAPI =  (param?: {pageSize: 2020}, division?: DivisionParams) => {
-  const body = param || {pageSize: 2020};
+export const getAllServiceTicketAPI = (param?: {pageSize: 2020}, division?: DivisionParams) => {
+  const body = param || { 'pageSize': 2020 };
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setServiceTicketLoading(true));
-      requestApiV2(`/getServiceTickets`, 'post', body, undefined,division)
+      requestApiV2(`/getServiceTickets`, 'post', body, undefined, division)
         .then((res: any) => {
           const tempJobs = res.data.serviceTickets?.filter((ticket: any) => ticket.status !== 1);
 
@@ -36,34 +36,34 @@ export const getAllServiceTicketAPI =  (param?: {pageSize: 2020}, division?: Div
   };
 };
 let cancelTokenGetAllServiceTicketsAPI:any;
-export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, status = false, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: any,filterIsHomeOccupied?: boolean) => {
+export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, status = false, keyword?: string, selectionRange?:{startDate:Date;endDate:Date}|null, division?: any, filterIsHomeOccupied?: boolean) => {
   return (dispatch: any) => {
     return new Promise((resolve, reject) => {
       dispatch(setServiceTicketLoading(true));
       const optionObj:any = {
         pageSize,
-        currentPage: currentPageIndex,
-        type: "Ticket",
-        isHomeOccupied: filterIsHomeOccupied
+        'currentPage': currentPageIndex,
+        'type': 'Ticket',
+        'isHomeOccupied': filterIsHomeOccupied
       };
 
-      if(status)
+      if (status) {
         optionObj.status = 1;
-      else
+      } else {
         optionObj.status = 0;
-
-      
-
-      if(keyword){
-        optionObj.keyword = keyword
       }
 
-      if(selectionRange){
+
+      if (keyword) {
+        optionObj.keyword = keyword;
+      }
+
+      if (selectionRange) {
         optionObj.startDate = moment(selectionRange.startDate).format('YYYY-MM-DD');
         optionObj.endDate = moment(selectionRange.endDate).format('YYYY-MM-DD');
       }
-          
-      if(cancelTokenGetAllServiceTicketsAPI) {
+
+      if (cancelTokenGetAllServiceTicketsAPI) {
         cancelTokenGetAllServiceTicketsAPI.cancel('axios canceled');
         setTimeout(() => {
           dispatch(setServiceTicketLoading(true));
@@ -74,9 +74,9 @@ export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, sta
       requestApiV2(`/getServiceTickets`, 'post', optionObj, cancelTokenGetAllServiceTicketsAPI, division)
         .then((res: any) => {
           let tempServiceTickets = res.data.serviceTickets;
-          tempServiceTickets = tempServiceTickets.map((tempServiceTicket: {createdAt:string})=>({
+          tempServiceTickets = tempServiceTickets.map((tempServiceTicket: {createdAt:string}) => ({
             ...tempServiceTicket,
-            createdAt: tempServiceTicket.createdAt
+            'createdAt': tempServiceTicket.createdAt
           }));
           tempServiceTickets.sort(compareByDate);
           dispatch(setServiceTicket(tempServiceTickets.reverse()));
@@ -90,7 +90,7 @@ export const getAllServiceTicketsAPI = (pageSize = 15, currentPageIndex = 0, sta
         .catch(err => {
           dispatch(setServiceTicketLoading(false));
           dispatch(setServiceTicket([]));
-          if(err.message !== 'axios canceled'){
+          if (err.message !== 'axios canceled') {
             return reject(err);
           }
         });
@@ -103,7 +103,7 @@ export const callCreateTicketAPI = (data: any) => {
 
     Object.keys(data).forEach(key => {
       if (key === 'images') {
-        data.images.forEach((image: any) => formData.append(key, image))
+        data.images.forEach((image: any) => formData.append(key, image));
       } else {
         formData.append(key, data[key]);
       }
@@ -124,7 +124,7 @@ export const callEditTicketAPI = (data: any) => {
 
     Object.keys(data).forEach(key => {
       if (key === 'images') {
-        data.images.forEach((image: any) => formData.append(key, image))
+        data.images.forEach((image: any) => formData.append(key, image));
       } else {
         formData.append(key, data[key]);
       }
@@ -192,7 +192,8 @@ export const getServiceTicketDetail:any = (ticketId:string) => {
 
 export const getOpenServiceTicketsStream:any = (actionId: string, division?: DivisionParams) => {
   return new Promise((resolve, reject) => {
-    request(`/getOpenServiceTicketsStream`, 'OPTIONS', {actionId, includeOpenJobRequest: true}, false,undefined,undefined,undefined,division)
+    request(`/getOpenServiceTicketsStream`, 'OPTIONS', { actionId,
+      'includeOpenJobRequest': true }, false, undefined, undefined, division)
       .then((res: any) => {
         return resolve(res.data);
       })

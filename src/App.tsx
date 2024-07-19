@@ -20,7 +20,7 @@ function App() {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const { user, token } = useSelector(({ auth }: RootState) => auth);
-  const { type: modalType, data: dataType } = useSelector(({ modal }: any) => modal);
+  const { 'type': modalType, 'data': dataType } = useSelector(({ modal }: any) => modal);
 
   const dispatch = useDispatch();
   const AuthenticationCheck =
@@ -81,7 +81,7 @@ function App() {
         dispatch(pushNotification(data));
       });
 
-      const customerSocket = io(`${Config.customerSocketServer}`, {
+      const customerSocket = io(`${Config.socketServer}`, {
         'extraHeaders': { 'Authorization': token }
       });
       customerSocket.on(SocketMessage.CREATENOTIFICATION, data => {
@@ -95,7 +95,6 @@ function App() {
         } else {
           dispatch(pushNotification(data));
         }
-
       });
 
       return () => {

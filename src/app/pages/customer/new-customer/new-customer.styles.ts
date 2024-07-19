@@ -1,5 +1,8 @@
 import * as CONSTANTS from '../../../../constants';
 import { Theme } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import styled from 'styled-components';
+
 export default (theme: Theme): any => ({
   'label': {
     'fontSize': '16px !important',
@@ -31,5 +34,13 @@ export default (theme: Theme): any => ({
     'lineHeight': '26px',
     'margin': 0,
     'textDecoration': 'underline'
-  }
+  },
+  'customTextField': {
+    '& .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"]': {
+      padding: '2px 0px 10px 8px',
+    },
+  },
 });
+
+
+

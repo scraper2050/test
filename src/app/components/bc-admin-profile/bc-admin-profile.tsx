@@ -77,7 +77,7 @@ function BCAdminProfile(props: Props) {
       } else if (!!response?.message) {
         dispatch(info(response.message));
       }
-    } catch (err) {
+    } catch (err){
       dispatch(error('Something went wrong, please try other role'));
     }
   }

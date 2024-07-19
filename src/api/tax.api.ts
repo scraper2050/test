@@ -32,7 +32,7 @@ export const createSalesTax = async ({ state, tax }:SalesTaxProps) => {
     const response: any = await request(`/createSalesTax`, 'POST', { state,
       tax }, false);
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||
@@ -50,7 +50,7 @@ export const updateSalesTax = async ({ id, state, tax }:SalesTaxProps) => {
       state,
       tax }, false);
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
           err.data.message ||

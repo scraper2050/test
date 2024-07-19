@@ -2,10 +2,12 @@ import request from 'utils/http.service';
 
 export const getNotifications = async (pageSize: number = 10, currentPage: number = 0, search?: string, isDismissed: boolean = false) => {
   try {
-    const response: any = await request('/getNotifications', 'GET', undefined, undefined, undefined, undefined,
-      undefined, { pageSize, currentPage, isDismissed, search });
+    const response: any = await request('/getNotifications', 'GET', undefined, undefined, undefined, undefined, { pageSize,
+      currentPage,
+      isDismissed,
+      search });
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
@@ -25,7 +27,7 @@ export const updateNotification = async ({ id, isRead = true, isDismissed = fals
 
     }, false);
     return response.data;
-  } catch (err) {
+  } catch (err){
     if (err.response.status >= 400 || err.data.status === 0) {
       throw new Error(err.data.errors ||
         err.data.message ||
