@@ -342,19 +342,25 @@ console.log('jobLocationInfo', options);
                               }}
                               onChange={(event, value) => {
                                 if (typeof value !== 'string' && value?.address) {
+                                  setFieldValue('name', value.name)
                                   setFieldValue('address.street', value.address.street);
                                   setFieldValue('address.city', value.address.city);
                                   setFieldValue('address.state', {
                                     id: allStates.findIndex(x => x.name === value.address.state || x.abbreviation === value.address.state)
-                                  });                                  setFieldValue('address.zipcode', value.address.zipcode);
+                                  });
+                                  setFieldValue('address.zipcode', value.address.zipcode);
                                   updateMap(values, value.address.street);
                                 }
                               }}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
+                                  name={'name'}
                                   variant="outlined"
                                   className={classes.customTextField}
+                                  onChange={(e: any) => {
+                                    setFieldValue('name', e.target.value)
+                                  }}
                                   required
                                 />
                               )}
