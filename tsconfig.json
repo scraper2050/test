@@ -23,6 +23,7 @@
       "./types",
       "node_module/@types"
     ],
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"
