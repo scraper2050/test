@@ -351,14 +351,6 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                               />
                             )}
                           />
-                          {/* <BCTextField
-                            name={'name'}
-                            placeholder={'Subdivision Name'}
-                            required
-                            onChange={(e: any) => {
-                              setFieldValue('name', e.target.value)
-                            }}
-                          /> */}
                           {nameLabelState ? <label>Required</label> : ''}
                         </FormGroup>
                       </Grid>
