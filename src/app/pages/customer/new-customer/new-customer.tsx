@@ -196,7 +196,7 @@ function NewCustomerPage({ classes }: Props) {
     return () => clearTimeout(timeoutId);
   }, [inputValue, dispatch]);
 
-  const hanldeFetchCustomerDetail = async (companyId: string) => {
+  const handleFetchCustomerDetail = async (companyId: string) => {
     const data = await getCompanyDetail(companyId);
 
     return data;
@@ -318,7 +318,7 @@ function NewCustomerPage({ classes }: Props) {
                             if (newValue) {
                               try {
                                 setFieldValue("companyId", newValue._id);
-                                const data = await hanldeFetchCustomerDetail(newValue._id);
+                                const data = await handleFetchCustomerDetail(newValue._id);
                                 const {
                                   info,
                                   contact,

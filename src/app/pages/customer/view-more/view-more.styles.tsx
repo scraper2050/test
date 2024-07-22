@@ -45,5 +45,5 @@ export default (theme: Theme): any => ({
   },
   'marginLeft': {
     marginLeft: '10px',
-  }
+  }, 
 });
