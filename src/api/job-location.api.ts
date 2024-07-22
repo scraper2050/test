@@ -93,11 +93,8 @@ export const getSubdivision = async (
     const url = `/jobLocation/name?${queryParams.toString()}`;
     const response = await request(url, 'GET', {}, false);
 
-    // Log the response for debugging
-    console.log('Raw API response:', response);
-
     // Access jobLocations from the response data
-    return response.data.jobLocations || []; // Adjust based on actual response structure
+    return response.data.jobLocations || [];
   } catch (err) {
     console.error('Error fetching data:', err);
     throw err;

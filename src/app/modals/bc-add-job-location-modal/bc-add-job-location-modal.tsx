@@ -3,11 +3,11 @@ import BCMapWithMarker from '../../components/bc-map-with-marker/bc-map-with-mar
 import BCTextField from '../../components/bc-text-field/bc-text-field';
 import Config from '../../../config';
 import Geocode from 'react-geocode';
-import {allStates} from 'utils/constants';
+import { allStates } from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './bc-add-job-location-modal.style';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
   Button,
@@ -20,10 +20,10 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
-import {Form, Formik} from 'formik';
-import React, {useEffect, useState} from 'react';
-import {closeModalAction, setModalDataAction} from 'actions/bc-modal/bc-modal.action';
-import {useDispatch} from 'react-redux';
+import { Form, Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { closeModalAction, setModalDataAction } from 'actions/bc-modal/bc-modal.action';
+import { useDispatch } from 'react-redux';
 import {
   createJobLocationAction,
   refreshJobLocation,
@@ -32,9 +32,9 @@ import {
 import {
   Position,
 } from 'actions/job-location/job-location.types';
-import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
-import {error, success} from 'actions/snackbar/snackbar.action';
-import {useHistory, useLocation} from 'react-router-dom';
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import { error, success } from 'actions/snackbar/snackbar.action';
+import { useHistory, useLocation } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import '../../../scss/index.scss';
 import { getSubdivision } from 'api/job-location.api';
@@ -63,7 +63,7 @@ interface Subdivision {
 }
 
 
-function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId, isActive, keyword }: any) {
+function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId, isActive, keyword }: any) {
   const [inputValue, setInputValue] = useState<string>('');
   const [options, setOptions] = useState<Subdivision[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -85,7 +85,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
     "address": {
       "city": jobLocationInfo?.address?.city,
       'state': {
-        'id': jobLocationInfo?.address?.state ? allStates.findIndex(x => x.name === jobLocationInfo.address.state || x.abbreviation === jobLocationInfo.address.state) : -1
+        'id': jobLocationInfo?.address?.state ? allStates.findIndex(x => x.name === jobLocationInfo.address.state || x.abbreviation === jobLocationInfo.address.state) : -1             
       },
       "street": jobLocationInfo?.address?.street,
       "zipcode": jobLocationInfo?.address?.zipcode,
@@ -95,7 +95,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
     "isActive": jobLocationInfo?.isActive ?? true,
   }
 
-  const inActiveMessage= jobLocationInfo?.isActive ? 'Your are about to make this location inactive' : 'This location is inactive';
+  const inActiveMessage = jobLocationInfo?.isActive ? 'Your are about to make this location inactive' : 'This location is inactive';
 
   const filterOptions = createFilterOptions({
     stringify: (option: AllStateTypes) => option.abbreviation + option.name,
@@ -104,7 +104,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
   const updateMap = (values: any, street?: any, city?: any, zipCode?: number, state?: number): void => {
     let stateVal: any = '';
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
-    if (state !== undefined && state >=0 ) {
+    if (state !== undefined && state >= 0) {
       stateVal = allStates[state].name;
     }
 
@@ -113,7 +113,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
 
     Geocode.fromAddress(fullAddr).then(
       (response: { results: { geometry: { location: { lat: any; lng: any; }; }; }[]; }) => {
-        const {lat, lng} = response.results[0].geometry.location;
+        const { lat, lng } = response.results[0].geometry.location;
         setPositionValue({
           'long': lng,
           'lat': lat
@@ -128,10 +128,10 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
   const updateMapFromLatLng = (name: string, value: any): void => {
     Geocode.setApiKey(Config.REACT_APP_GOOGLE_KEY);
 
-    const newPosition: Position = {...positionValue};
+    const newPosition: Position = { ...positionValue };
     newPosition[name === 'lng' ? 'long' : name] = value ? parseFloat(value) : value === 0 ? 0 : ''
     setPositionValue(newPosition);
-    Geocode.fromLatLng(`${newPosition.lat}`,`${newPosition.long}`).then(
+    Geocode.fromLatLng(`${newPosition.lat}`, `${newPosition.long}`).then(
       (response) => {
         const index = response.results.length > 1 && response.results[0].types[0] === 'plus_code' ? 1 : 0;
         const tempLocation = response.results[index];
@@ -196,22 +196,22 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
   }
 
 
- const handleSelectState = (value: AllStateTypes | null, updateMap: any, setFieldValue: any, values: any) => {
-  if (value !== null) {
-    const index = allStates.findIndex((state: AllStateTypes) => state === value);
-    updateMap(values, undefined, undefined, undefined, index);
-    setFieldValue("address.state.id", index);
-  } else {
-    setFieldValue("address.state.id", -1);
-  }
-};
+  const handleSelectState = (value: AllStateTypes | null, updateMap: any, setFieldValue: any, values: any) => {
+    if (value !== null) {
+      const index = allStates.findIndex((state: AllStateTypes) => state === value);
+      updateMap(values, undefined, undefined, undefined, index);
+      setFieldValue("address.state.id", index);
+    } else {
+      setFieldValue("address.state.id", -1);
+    }
+  };
 
   const refreshPage = (jobLocationUpdated: any) => {
-    const obj = {...jobLocationUpdated, customerId: jobLocationInfo.customerId}
-    const {name: locationName} = jobLocationUpdated;
+    const obj = { ...jobLocationUpdated, customerId: jobLocationInfo.customerId }
+    const { name: locationName } = jobLocationUpdated;
     const locationNameLink = locationName !== undefined ? locationName.replace(/[\/ ]/g, '') : 'locationName';
-    const {currentPage, customerName} = location.state;
-    const state = {...obj, currentPage, customerName};
+    const { currentPage, customerName } = location.state;
+    const state = { ...obj, currentPage, customerName };
     history.replace({
       'pathname': `/main/customers/location/${locationNameLink}`,
       'state': state,
@@ -229,15 +229,8 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
 
       try {
         const data = await getSubdivision(undefined, undefined, 'ALL', inputValue);
-        //console.log('Raw API response:', data);
-
-
-        // Assuming `data.jobLocations` contains the array of locations
-        //const jobLocations = data.jobLocations || [];
-
         if (Array.isArray(data)) {
           setOptions(data);
-          console.log('Fetched data:', data); // Log the fetched data
         } else {
           setOptions([]);
         }
@@ -251,13 +244,7 @@ function BCAddJobLocationModal({classes, jobLocationInfo, customerId, builderId,
     fetchSubdivisions();
   }, [inputValue]);
 
-
-console.log('jobLocationInfo', options);
-  function showSnackbarAction(arg0: string, arg1: string): any {
-    throw new Error('Function not implemented.');
-  }
-
-    return (
+  return (
     <>
       <MainContainer>
         <PageContainer className="map_modal__wrapper">
@@ -265,7 +252,7 @@ console.log('jobLocationInfo', options);
             id={'0'}>
             <Formik
               initialValues={initialValues}
-              onSubmit={debounce(async (values, {setSubmitting}) => {
+              onSubmit={debounce(async (values, { setSubmitting }) => {
                 let state = values.address.state.id;
                 values.locationLat = positionValue.lat;
                 values.locationLong = positionValue.long;
@@ -282,11 +269,11 @@ console.log('jobLocationInfo', options);
                 requestObj.street = values.address.street;
                 requestObj.zipcode = values.address.zipcode;
                 delete requestObj.address;
-               
+
                 if (isValidate(requestObj)) {
                   if (jobLocationInfo._id) {
                     await dispatch(updateJobLocationAction(requestObj,
-                      ({status, message, jobLocation}: { status: number, message: string, jobLocation: any }) => {
+                      ({ status, message, jobLocation }: { status: number, message: string, jobLocation: any }) => {
                         if (status === 1) {
                           refreshPage(jobLocation);
                           dispatch(success(message));
@@ -301,12 +288,11 @@ console.log('jobLocationInfo', options);
                   } else {
                     delete requestObj.jobLocationId;
                     await dispatch(createJobLocationAction(requestObj,
-                      ({status, message}: { status: number, message: string }) => {
+                      ({ status, message }: { status: number, message: string }) => {
                         if (status === 1) {
                           dispatch(success(message));
                           dispatch(refreshJobLocation(true));
                           closeModal();
-                          console.log("obj",requestObj)
 
                         } else {
                           dispatch(error(message));
@@ -319,7 +305,7 @@ console.log('jobLocationInfo', options);
                 }
               }, 400)}
               validateOnChange>
-              {({handleChange, values, errors, isSubmitting, setFieldValue}) =>
+              {({ handleChange, values, errors, isSubmitting, setFieldValue }) =>
                 <Form>
                   <Grid container spacing={2}>
                     <Grid container item xs={6}>
@@ -331,40 +317,40 @@ console.log('jobLocationInfo', options);
                           <InputLabel className={classes.label}>
                             {'Subdivision Name'}
                           </InputLabel>
-                            <Autocomplete
-                              freeSolo
-                              options={options}
-                              getOptionLabel={(option) => option.name || ''}
-                              loading={loading}
-                              noOptionsText={error || 'No options'}
-                              onInputChange={(event, newInputValue) => {
-                                setInputValue(newInputValue);
-                              }}
-                              onChange={(event, value) => {
-                                if (typeof value !== 'string' && value?.address) {
-                                  setFieldValue('name', value.name)
-                                  setFieldValue('address.street', value.address.street);
-                                  setFieldValue('address.city', value.address.city);
-                                  setFieldValue('address.state', {
-                                    id: allStates.findIndex(x => x.name === value.address.state || x.abbreviation === value.address.state)
-                                  });
-                                  setFieldValue('address.zipcode', value.address.zipcode);
-                                  updateMap(values, value.address.street);
-                                }
-                              }}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  name={'name'}
-                                  variant="outlined"
-                                  className={classes.customTextField}
-                                  onChange={(e: any) => {
-                                    setFieldValue('name', e.target.value)
-                                  }}
-                                  required
-                                />
-                              )}
-                            />
+                          <Autocomplete
+                            freeSolo
+                            options={options}
+                            getOptionLabel={(option) => option.name || ''}
+                            loading={loading}
+                            noOptionsText={error || 'No options'}
+                            onInputChange={(event, newInputValue) => {
+                              setInputValue(newInputValue);
+                            }}
+                            onChange={(event, value) => {
+                              if (typeof value !== 'string' && value?.address) {
+                                setFieldValue('name', value.name)
+                                setFieldValue('address.street', value.address.street);
+                                setFieldValue('address.city', value.address.city);
+                                setFieldValue('address.state', {
+                                  id: allStates.findIndex(x => x.name === value.address.state || x.abbreviation === value.address.state)
+                                });
+                                setFieldValue('address.zipcode', value.address.zipcode);
+                                updateMap(values, value.address.street);
+                              }
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                name={'name'}
+                                variant="outlined"
+                                className={classes.customTextField}
+                                onChange={(e: any) => {
+                                  setFieldValue('name', e.target.value)
+                                }}
+                                required
+                              />
+                            )}
+                          />
                           {/* <BCTextField
                             name={'name'}
                             placeholder={'Subdivision Name'}
@@ -442,70 +428,32 @@ console.log('jobLocationInfo', options);
                                     </MenuItem>)
                                   }
                                 </Field> */}
-                              <div className="search_form_wrapper">
-                                <Autocomplete
-                                  id="tags-standard"
-                                  options={allStates}
-                                  getOptionLabel={(option) => option.name}
-                                  autoHighlight
-                                  filterOptions={filterOptions}
-                                  onChange={(ev, newValue) => {
-                                    if (newValue) {
-                                      handleSelectState(
-                                        newValue,
-                                        updateMap,
-                                        setFieldValue,
-                                        values
-                                      );
-                                      setFieldValue('address.state', {
-                                        id: allStates.findIndex(x => x.name === newValue.name || x.abbreviation === newValue.abbreviation)
-                                      });
-                                    } else {
-                                      setFieldValue('address.state', {
-                                        id: -1
-                                      });
-                                    }
-                                  }}
-                                  getOptionSelected={(option, value) => option.name.toLowerCase() === (allStates[values.address.state.id]?.name.toLowerCase() || '')}
-                                  value={allStates[values.address.state.id] || null}
-                                  renderInput={(params) => (
-                                    <>
-                                      <InputLabel className={`${classes.label} state-label`}>
-                                        {"State"}
-                                      </InputLabel>
-                                      <TextField
-                                        {...params}
-                                        onChange={(e) => {
-                                          const newState = e.target.value;
-                                          const stateIndex = allStates.findIndex(x => x.name.toLowerCase() === newState.toLowerCase() || x.abbreviation.toLowerCase() === newState.toLowerCase());
-                                          setFieldValue('address.state', {
-                                            id: stateIndex !== -1 ? stateIndex : -1
-                                          });
-                                          updateMap(values, newState);
-                                        }}
-                                        name={'address.state'}
-                                        variant="standard"
-                                      />
-                                    </>
-                                  )}
-                                />
-                            
-                            
-                              {/* <Autocomplete
+                            <div className="search_form_wrapper">
+                              <Autocomplete
                                 id="tags-standard"
-                                defaultValue={jobLocationInfo?._id && allStates[values.address.state.id]}
                                 options={allStates}
                                 getOptionLabel={(option) => option.name}
                                 autoHighlight
                                 filterOptions={filterOptions}
-                                onChange={(ev: any, newValue: any) => handleSelectState(
-                                  newValue,
-                                  updateMap,
-                                  setFieldValue,
-                                  values
-                                )}
-                                getOptionSelected={(option) => option.name.toLowerCase() === allStates[values.address.state.id]?.name.toLowerCase()}
-                                value={allStates[values.address.state.id] || ''}
+                                onChange={(ev, newValue) => {
+                                  if (newValue) {
+                                    handleSelectState(
+                                      newValue,
+                                      updateMap,
+                                      setFieldValue,
+                                      values
+                                    );
+                                    setFieldValue('address.state', {
+                                      id: allStates.findIndex(x => x.name === newValue.name || x.abbreviation === newValue.abbreviation)
+                                    });
+                                  } else {
+                                    setFieldValue('address.state', {
+                                      id: -1
+                                    });
+                                  }
+                                }}
+                                getOptionSelected={(option, value) => option.name.toLowerCase() === (allStates[values.address.state.id]?.name.toLowerCase() || '')}
+                                value={allStates[values.address.state.id] || null}
                                 renderInput={(params) => (
                                   <>
                                     <InputLabel className={`${classes.label} state-label`}>
@@ -513,9 +461,13 @@ console.log('jobLocationInfo', options);
                                     </InputLabel>
                                     <TextField
                                       {...params}
-                                      onChange={(e: any) => {
-                                        setFieldValue('address.state', e.target.value)
-                                        updateMap(values, e.target.value);
+                                      onChange={(e) => {
+                                        const newState = e.target.value;
+                                        const stateIndex = allStates.findIndex(x => x.name.toLowerCase() === newState.toLowerCase() || x.abbreviation.toLowerCase() === newState.toLowerCase());
+                                        setFieldValue('address.state', {
+                                          id: stateIndex !== -1 ? stateIndex : -1
+                                        });
+                                        updateMap(values, newState);
                                       }}
                                       name={'address.state'}
                                       variant="standard"
@@ -523,9 +475,8 @@ console.log('jobLocationInfo', options);
                                   </>
                                 )}
                               />
-                                */}
-                              </div>
-                 
+                            </div>
+
                           </FormGroup>
                         </Grid>
                         <Grid
@@ -548,10 +499,10 @@ console.log('jobLocationInfo', options);
                           </FormGroup>
                         </Grid>
                         {jobLocationInfo?._id &&
-                        <Grid
-                          className={classes.paper}
-                          item
-                          sm={12}>
+                          <Grid
+                            className={classes.paper}
+                            item
+                            sm={12}>
                             <FormControlLabel control={
                               <Checkbox
                                 onChange={(e: any) => {
@@ -561,17 +512,17 @@ console.log('jobLocationInfo', options);
                                 color={'primary'}
                                 checked={values.isActive}
                               />
-                            } label=""/>
-                          <span
-                            style={{color: '#383838', fontSize: '1rem', marginLeft: -15}}>
-                            Active</span>
+                            } label="" />
+                            <span
+                              style={{ color: '#383838', fontSize: '1rem', marginLeft: -15 }}>
+                              Active</span>
                             {!values.isActive &&
-                            <Typography
-                              variant={'subtitle1'}
-                              style={{color: 'red', marginTop: -5}}>
-                              {inActiveMessage}</Typography>
+                              <Typography
+                                variant={'subtitle1'}
+                                style={{ color: 'red', marginTop: -5 }}>
+                                {inActiveMessage}</Typography>
                             }
-                        </Grid>
+                          </Grid>
                         }
                         {localLocationObj && (
                           <>
@@ -797,6 +748,6 @@ const InfoContent = styled.span`
 
 export default withStyles(
   styles,
-  {'withTheme': true}
+  { 'withTheme': true }
 )(BCAddJobLocationModal);
 
