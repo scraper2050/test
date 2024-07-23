@@ -28,7 +28,7 @@ jobs:
       - name: Build React Web
         run: |
           export CI=false
-          if [ "${{ github.ref_name }}" != "test" ]; then
+          if [ "${{ github.ref_name }}" != "staging" ]; then
             yarn add env-cmd
           fi
           yarn build:${{ github.ref_name == 'master' && 'production' || github.ref_name }}
