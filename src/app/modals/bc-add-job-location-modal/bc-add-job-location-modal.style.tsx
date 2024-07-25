@@ -26,5 +26,10 @@ export default (theme: Theme): any => ({
     'lineHeight': '26px',
     'margin': 0,
     'textDecoration': 'underline'
-  }
+  },
+   'customTextField': {
+    '& .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"]': {
+      padding: '2px 0px 10px 8px',
+    },
+  },
 });

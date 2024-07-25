@@ -1,6 +1,6 @@
 import BackImg from '../../../../assets/img/signup/bg.png';
 import { Theme } from '@material-ui/core/styles';
-import {LIGHT_GREY, PRIMARY_BLUE} from "../../../../constants";
+import { LIGHT_GREY, PRIMARY_BLUE } from '../../../../constants';
 export default (theme: Theme): any => ({
   'AgreeTermDiv': {
     '@media(max-width: 540px)': {
@@ -42,7 +42,7 @@ export default (theme: Theme): any => ({
       'paddingLeft': '10px',
       'paddingRight': '10px'
     },
-    'backgroundImage': `url(${BackImg})`,
+    // 'backgroundImage': `url(${BackImg})`,
     'backgroundSize': 'contain',
     'display': 'flex',
     'flexDirection': 'column',
@@ -62,31 +62,41 @@ export default (theme: Theme): any => ({
       'fontSize': '1.7rem'
     }
   },
-  successContainer: {
-    backgroundImage: 'linear-gradient(transparent, black)',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  'successContainer': {
+    'backgroundImage': 'linear-gradient(transparent, black)',
+    'display': 'flex',
+    'flex': 1,
+    'flexDirection': 'column',
+    'alignItems': 'center',
+    'justifyContent': 'space-between',
+    'height': '97.9vh'
   },
-  logoimg: {
-    margin: '20vh auto 0',
-    width: '20vw',
+  'logoimg': {
+    'margin': '20vh auto 0',
+    'width': '20vw'
   },
-  successTitle: {
-    color: PRIMARY_BLUE,
-    fontWeight: '700',
-    fontSize: 30,
-    textAlign: 'center',
+  'successTitle': {
+    'color': PRIMARY_BLUE,
+    'fontWeight': '700',
+    'fontSize': 30,
+    'textAlign': 'center'
   },
-  successText: {
-    color: LIGHT_GREY,
-    fontSize: 18,
-    textAlign: 'center',
+  'successText': {
+    'color': LIGHT_GREY,
+    'fontSize': 18,
+    'textAlign': 'center'
   },
-  successLogIn: {
-    color: 'white',
-    fontSize: 12,
-  }
+  'successLogIn': {
+    'color': 'white',
+    'fontSize': 12
+  },
+  'orContainer': {
+    'display': 'flex',
+    'flexDirection': 'row',
+    'alignItems': 'center',
+    'paddingBottom': '10px'
+  },
+  'orDividerLeft': { 'width': '45%' },
+  'orDividerRight': { 'width': '43%' },
+  'orText': { 'margin': '0 8px 0 8px' }
 });

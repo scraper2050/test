@@ -3,14 +3,14 @@ import BCMapWithMarker
   from '../../../components/bc-map-with-marker/bc-map-with-marker';
 import BCTextField from '../../../components/bc-text-field/bc-text-field';
 import Config from '../../../../config';
-import {createCustomer} from '../../../../api/customer.api';
+import {createCustomer, getCustomerDetail} from '../../../../api/customer.api';
 import Geocode from 'react-geocode';
-import {allStates} from 'utils/constants';
+import { allStates } from 'utils/constants';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import styles from './new-customer.styles';
-import {error, info} from '../../../../actions/snackbar/snackbar.action';
-import {withStyles} from '@material-ui/core/styles';
+import { error, info } from '../../../../actions/snackbar/snackbar.action';
+import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
   Button,
@@ -20,12 +20,18 @@ import {
   TextField
 } from '@material-ui/core';
 import { Form, Formik} from 'formik';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MaskedInput from 'react-text-mask';
+import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
+import { getCompaniesAutoComplete, getCompanyDetail } from 'api/company.api';
 
+interface CustomerAutoComplete {
+  id: number;
+  profile: { displayName: string; }
+}
 interface Props {
   classes: any;
 }
@@ -35,7 +41,7 @@ interface AllStateTypes {
   name: string,
 }
 
-function NewCustomerPage({classes}: Props) {
+function NewCustomerPage({ classes }: Props) {
   const initialValues = {
     'city': '',
     'name': '',
@@ -50,7 +56,9 @@ function NewCustomerPage({classes}: Props) {
     'street': '',
     'zipCode': '',
     'vendorId': '',
-    'itemTierId': ''
+    'itemTierId': '',
+    'type': 'Builder',
+    'companyId': ''
   };
 
   const [positionValue, setPositionValue] = useState({
@@ -63,7 +71,15 @@ function NewCustomerPage({classes}: Props) {
   const filterOptions = createFilterOptions({
     'stringify': (option: AllStateTypes) => option.abbreviation + option.name
   });
-
+  const [inputValue, setInputValue] = useState("");
+  const [options, setOptions] = useState<any[]>([])
+  const [selectedCustomerDetail, setSelectedCustomerDetail] = useState<any>();
+  const [selectedOption, setSelectedOption] = useState<CustomerAutoComplete>({
+    profile: { displayName: "" },
+    id: 1,
+  });
+  const [fieldsUpdated, setFieldsUpdated] = useState({ name: false, email: false, phone: false });
+  const accountTypes = [...CONSTANTS.customerTypes];
   const updateMap = (
     values: any,
     street?: any,
@@ -95,7 +111,7 @@ function NewCustomerPage({classes}: Props) {
       (response: {
         results: { geometry: { location: { lat: any; lng: any } } }[];
       }) => {
-        const {lat, lng} = response.results[0].geometry.location;
+        const { lat, lng } = response.results[0].geometry.location;
         setPositionValue({
           'lang': lng,
           'lat': lat
@@ -154,13 +170,38 @@ function NewCustomerPage({classes}: Props) {
       'lang': 0,
       'lat': 0
     });
+    setFieldValue('companyId', '');
   };
+
+
 
   const handleSelectState = (value: AllStateTypes, updateMap: any, setFieldValue: any, values: any) => {
     const index = allStates.findIndex((state: AllStateTypes) => state === value);
     updateMap(values, undefined, undefined, undefined, index);
     setFieldValue('state.id', index);
   };
+
+
+    useEffect(() => {
+    let timeoutId:any;
+
+    if (inputValue && inputValue.length > 2) {
+      timeoutId = setTimeout(async () => {
+        const data = await getCompaniesAutoComplete(inputValue);
+        setOptions(data);
+      }, 500);
+    }
+      
+
+    return () => clearTimeout(timeoutId);
+  }, [inputValue, dispatch]);
+
+  const handleFetchCustomerDetail = async (companyId: string) => {
+    const data = await getCompanyDetail(companyId);
+
+    return data;
+  }
+
 
 
   return (
@@ -173,16 +214,16 @@ function NewCustomerPage({classes}: Props) {
               const val = values.phone;
               let count = 0;
               for (let i = 0; i < val.length; i++)
-                if (val.charAt(i) in [0,1,2,3,4,5,6,7,8,9])
+                if (val.charAt(i) in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
                   count++
               const isValid = (count === 0 || count === 10) ? true : false;
 
-              if(!isValid) {
+              if (!isValid) {
                 dispatch(error('Please enter a valid phone number.'));
                 return;
               }
 
-              if(count === 0) {
+              if (count === 0) {
                 values.phone = '';
               }
               const state = values.state.id;
@@ -197,9 +238,10 @@ function NewCustomerPage({classes}: Props) {
                 !allStates[state]
                   ? ''
                   : allStates[state].name;
-
-
-              const customer: any = await createCustomer(reqObj);
+              
+              reqObj.type = accountTypes[0].name;
+              const { companyId, ...restData } = reqObj;
+              const customer: any = await createCustomer(companyId === '' ? restData : reqObj);
               // eslint-disable-next-line no-prototype-builtins
               if (customer.hasOwnProperty('msg')) {
                 dispatch(error(customer.msg));
@@ -212,13 +254,14 @@ function NewCustomerPage({classes}: Props) {
             }}
             validateOnChange>
             {({
-                handleChange,
-                values,
-                setFieldValue,
-                isSubmitting,
-              }) =>
+              handleChange,
+              values,
+              setFieldValue,
+              isSubmitting,
+            }) =>
               <Form>
                 <Grid container>
+               
                   <Grid
                     item
                     sm={6}
@@ -238,16 +281,104 @@ function NewCustomerPage({classes}: Props) {
                       item
                       sm={12}
                       xs={12}>
+                    
+                        <FormGroup>
+                          <InputLabel className={classes.label}>
+                            {'Type'}
+                          </InputLabel>
+
+                          <BCTextField
+                            name={'type'}
+                            onChange={handleChange}
+                            placeholder={'Builder'}
+                            disabled={true}
+                            variant={'filled'}
+                          />
+                        </FormGroup>
+
+                   
                       <FormGroup className={'required'}>
                         <InputLabel className={classes.label}>
                           {'Name'}
                         </InputLabel>
 
-                        <BCTextField
-                          name={'name'}
-                          onChange={handleChange}
-                          placeholder={'Customer Name'}
-                          required
+                        <Autocomplete
+                          freeSolo={true}
+                          defaultValue={selectedOption || ""}
+                          inputValue={inputValue}
+                          onInputChange={(event, newInputValue) => {
+                            setInputValue(newInputValue);
+                            handleChange(newInputValue);
+                            if (!options.some(option => option.info.companyName === newInputValue)) {
+                              handleCancelForm(setFieldValue);
+                            }
+                        
+                          }}
+                          onChange={async (event, newValue: any) => {
+                            if (newValue) {
+                              try {
+                                setFieldValue("companyId", newValue._id);
+                                const data = await handleFetchCustomerDetail(newValue._id);
+                                const {
+                                  info,
+                                  contact,
+                                  address,
+                                  profile,
+                                  location
+                                } = data;
+                                if (info) {
+                                  setFieldValue(
+                                    "name",
+                                    info?.companyName ?? ""
+                                  );
+                                  setFieldValue(
+                                    "email",
+                                    info?.companyEmail ?? ""
+                                  );
+                                }
+                                if (profile) {
+                                  setFieldValue(
+                                    "contactName",
+                                    profile?.firstName ?? ""
+                                  );
+
+                                }
+                                if (address) {
+                                  setFieldValue("street", address?.street ?? "");
+                                  setFieldValue("city", address?.city ?? "");
+                                  setFieldValue("city", address?.state ?? "");
+                                  setFieldValue("zipCode", address?.zipCode ?? "");
+                                }
+                                                                                                                                                      if (contact) {
+                                  setFieldValue("phone", contact?.phone ?? "");
+                                }
+                                if (location && location?.coordinates) {
+                                  setPositionValue({
+                                    'lang': location?.coordinates[0] ?? 0,
+                                    'lat': location?.coordinates[1] ?? 0
+                                  });
+                                }
+                              } catch (e) { }
+                            } 
+                          }}
+                          options={options}
+                          getOptionLabel={(option: any) => option?.info?.companyName}
+                          style={{ fontSize: 10, padding: "0 !important" }}
+                          classes={{ inputRoot: "custom-input-root" }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              placeholder={
+                                inputValue ? "" : "Customer Name"
+                              }
+                              variant="outlined"
+                              name={'name'}
+                              onChange={handleChange}
+                              className={classes.customTextField}
+                              required                            
+
+                            />
+                          )}
                         />
                       </FormGroup>
                     </Grid>
@@ -273,7 +404,7 @@ function NewCustomerPage({classes}: Props) {
                     <Grid container>
                       <Grid
                         className={classes.paper}
-                        item
+                        item    
                         sm={6}
                         xs={12}>
                         <FormGroup>
@@ -439,6 +570,7 @@ function NewCustomerPage({classes}: Props) {
                       </Grid>
                     </Grid>
                     <Grid container>
+                    
                       <Grid
                         className={classes.paper}
                         item
@@ -455,7 +587,10 @@ function NewCustomerPage({classes}: Props) {
                             placeholder={'Vendor Number'}
                           />
                         </FormGroup>
+
                       </Grid>
+
+
                     </Grid>
 
                     {/* <pre>
@@ -535,7 +670,7 @@ function NewCustomerPage({classes}: Props) {
                         color={'primary'}
                         type={'submit'}
                         disabled={isSubmitting}
-                        variant={'contained'}>
+                        variant={'contained'}>            
                         {'Save'}
                       </Button>
                       <Button
@@ -621,4 +756,8 @@ export const DataContainer = styled.div`
   }
 `;
 
-export default withStyles(styles, {'withTheme': true})(NewCustomerPage);
+export default withStyles(styles, { 'withTheme': true })(NewCustomerPage);
+// function setFieldValue(arg0: string, arg1: string) {
+//   throw new Error('Function not implemented.');
+// }
+

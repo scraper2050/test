@@ -5,7 +5,7 @@ export const getOfficeAdmin = async () => {
     try {
         const response: any = await request("/getOfficeAdmins", "POST", {}, false);
         responseData = response.data;
-    } catch (err) {
+    } catch (err){
         responseData = err.data;
         if (err.response.status >= 400 || err.data.status === 0) {
             throw new Error(

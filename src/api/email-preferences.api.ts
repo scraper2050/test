@@ -6,7 +6,7 @@ export const updateEmployeeEmailPreferences = async (data: any) => {
   try {
     const response: any = await request("/updateEmployeeEmailPreferences", "POST", data, false);
     responseData = response.data;
-  } catch (err) {
+  } catch (err){
     responseData = { message: '' };
     responseData.message = 'We are facing some issues, please try again.'
   }
