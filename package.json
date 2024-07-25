@@ -139,5 +139,6 @@
   },
   "pre-commit": [
     "lint-src"
-  ]
+  ],
+  "packageManager": "yarn@v1.22.22"
 }
