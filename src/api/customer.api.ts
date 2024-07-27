@@ -109,11 +109,12 @@ export const createCustomer = async (data: any) => {
     const response: any = await request('/createCustomer', 'POST', data, false);
     responseData = response.data;
   } catch (err) {
-    responseData = { 'msg': '' };                                             
+    responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
+        responseData.msg = err.response.data.status 
+      }    
+    else {
       responseData.msg = 'We are facing some issues, please try again.';
-    } else {
-      responseData.msg = 'Something went wrong';
     }
   }
   return responseData;

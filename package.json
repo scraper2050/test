@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-private-methods": "^7.18.6",
     "@casl/ability": "^6.5.0",
     "@casl/react": "^3.1.0",
     "@date-io/date-fns": "1.x",
@@ -36,9 +34,9 @@
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.groupby": "^4.6.7",
     "@types/node": "^14.0.13",
-    "@types/react": "^18.0.0",
+    "@types/react": "^16.9.36",
     "@types/react-date-range": "^1.4.3",
-    "@types/react-dom": "^18.0.0",
+    "@types/react-dom": "^16.9.8",
     "@types/react-geocode": "^0.2.0",
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.5",
@@ -60,16 +58,16 @@
     "lodash.groupby": "^4.6.0",
     "moment": "^2.27.0",
     "notistack": "^1.0.0",
-    "react": "18",
+    "react": "^16.13.1",
     "react-apexcharts": "^1.4.0",
     "react-date-range": "^1.4.0",
-    "react-dom": "18",
+    "react-dom": "^16.13.1",
     "react-geocode": "^0.2.1",
     "react-hot-loader": "^4.12.21",
     "react-material-ui-carousel": "v2",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "3.4.1",
     "react-social-login": "^3.4.9",
     "react-swipeable-views": "^0.13.9",
     "react-table": "^7.5.0",
@@ -81,7 +79,6 @@
     "redux-saga": "^1.1.3",
     "redux-thunk": "^2.3.0",
     "rounded-bar-chartjs": "^1.0.2",
-    "sass": "^1.77.6",
     "scoped-css-loader": "^1.0.0",
     "socket.io-client": "^4.0.0",
     "spinkit": "^2.0.1",
@@ -94,24 +91,28 @@
     "yup": "^0.29.3"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "build:staging": "env-cmd -f .env.staging react-scripts build",
-    "build:test": "env-cmd -f .env.test react-scripts --openssl-legacy-provider build",
+    "build:test": "env-cmd -f .env.test react-scripts build",
     "build:release": "env-cmd -f .env.release react-scripts build",
     "build:production": "env-cmd -f .env.production react-scripts build",
     "lint": "node ./node_modules/eslint/bin/eslint",
     "lint-src": "npm run lint -- src/**/*.ts{,x}"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   },
   "devDependencies": {
@@ -123,10 +124,9 @@
     "@types/yup": "^0.29.7",
     "@typescript-eslint/eslint-plugin": "^3.9.1",
     "@typescript-eslint/parser": "^3.9.1",
-    "eslint": "7.11.0",
+    "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.10.0",
-    "eslint-config-react-app": "^7.0.1",
     "eslint-import-resolver-node": "^0.3.3",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
@@ -134,11 +134,11 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^1.7.0",
     "husky": "^4.2.5",
+    "node-sass": "^4.14.1",
     "pre-commit": "^1.2.2",
     "prettier": "^2.0.5"
   },
   "pre-commit": [
     "lint-src"
-  ],
-  "packageManager": "yarn@v1.22.22"
+  ]
 }
