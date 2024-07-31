@@ -109,7 +109,7 @@ function CustomerInfoPage({ classes }: any) {
       location,
       vendorId,
       itemTierId,
-      isActive: row.isActive,
+      isActive: row?.isActive,
     };
     return customerObj;
   };

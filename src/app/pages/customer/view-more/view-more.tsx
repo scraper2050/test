@@ -26,6 +26,8 @@ import { loadTierListItems } from 'actions/invoicing/items/items.action';
 import {CSButton, CSIconButton, useCustomStyles} from "helpers/custom";
 import EditIcon from '@material-ui/icons/Edit';
 import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { error, info } from '../../../../actions/snackbar/snackbar.action';
+
 
 function ViewMorePage({ classes }: any) {
   const dispatch = useDispatch();
@@ -37,7 +39,6 @@ function ViewMorePage({ classes }: any) {
   const customerObject = location.state;
   const history = useHistory();
   const [curTab, setCurTab] = useState(0);
-
   const prevPage = customerObject && customerObject.prevPage ? customerObject.prevPage : null;
   const filteredJobLocations = showLocation === 'all' ? jobLocations.data :
     jobLocations.data.filter((location: any) => showLocation === 'active' ? location.isActive : !location.isActive)
@@ -60,6 +61,7 @@ function ViewMorePage({ classes }: any) {
       customerName !== undefined
         ? customerName.replace(/[\/ ]/g, '')
         : 'customername';*/
+
 
     const locationName = jobLocation.name;
     const locationNameLink = locationName !== undefined ? locationName.replace(/[\/ ]/g, '') : 'locationName';
@@ -223,6 +225,13 @@ function ViewMorePage({ classes }: any) {
     dispatch(loadTierListItems.fetch());
   }, []);
 
+  useEffect(() => {
+    if (!customerState.loading && (!customerState.customerObj || !customerState.customerObj.profile)) {
+      dispatch(error('Customer profile information is not available.'));
+    }
+  }, [customerState.loading, customerState.customerObj, dispatch]);
+
+
   const handleTabChange = (newValue: number) => {
     const state = {
       ...customerObject,
@@ -330,7 +339,8 @@ function ViewMorePage({ classes }: any) {
             </div>
             <div className={classes.viewingName}>
               {'Viewing: '}
-              <strong className={classes.marginLeft}>{`${customerState.customerObj.profile ? customerState.customerObj.profile.displayName : 'N/A' }`}</strong>
+                    <strong className={classes.marginLeft}>{customerState.customerObj?.profile?.displayName ?? 'N/A'}
+                    </strong>
             </div>
           </Grid>
 
@@ -451,6 +461,7 @@ function ViewMorePage({ classes }: any) {
         </div>
       </div>
     </div>
+
   );
 }
 

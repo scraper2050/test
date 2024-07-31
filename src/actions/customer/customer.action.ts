@@ -40,16 +40,25 @@ export const setCustomers = (customers: any) => {
     'type': types.SET_CUSTOMERS,
     'payload': customers
   };
-};
+}; 
 
 export const getCustomerDetailAction = (data: any) => {
   return async (dispatch: any) => {
-    const customer: any = await getCustomerDetail(data);
+    try {
+      const customer: any = await getCustomerDetail(data);
 
-    dispatch({ 'type': types.SET_SINGLE_CUSTOMER,
-      'payload': customer });
+      // Dispatch the action to set the customer in the state
+      dispatch({
+        type: types.SET_SINGLE_CUSTOMER,
+        payload: customer,
+      });
+    } catch (error) {
+      // Handle error (optional)
+      console.error('Failed to fetch customer details:', error);
+    }
   };
 };
+
 
 export const resetCustomer = () => {
   return async (dispatch: any) => {
