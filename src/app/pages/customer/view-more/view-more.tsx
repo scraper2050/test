@@ -25,7 +25,7 @@ import Settings from './settings/settings';
 import { loadTierListItems } from 'actions/invoicing/items/items.action';
 import {CSButton, CSIconButton, useCustomStyles} from "helpers/custom";
 import EditIcon from '@material-ui/icons/Edit';
-import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';
+import { ISelectedDivision } from 'actions/filter-division/fiter-division.types';                                                       
 import { error, info } from '../../../../actions/snackbar/snackbar.action';
 
 
@@ -195,6 +195,8 @@ function ViewMorePage({ classes }: any) {
       'sortable': false,
       'width': 40,
     },
+ 
+  
   ];
 
   useEffect(() => {

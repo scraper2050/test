@@ -2,8 +2,10 @@ import request from 'utils/http.service';
 
 export const getJobSites = async (data: any) => {
   let responseData;
+  const customerIdParam = data.customerId ? `customerId=${data.customerId}` : '';
+  const locationIdParam = `locationId=${data.locationId}`;
   try {
-    const response: any = await request(`/jobSite?customerId=${data.customerId}&locationId=${data.locationId}`, 'GET', {}, false);
+    const response: any = await request(`/jobSite?${customerIdParam}&${locationIdParam}`, 'GET', {}, false);
     responseData = response.data;
   } catch (err){
     responseData = { 'msg': '' };
