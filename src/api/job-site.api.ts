@@ -3,8 +3,14 @@ import request from 'utils/http.service';
 export const getJobSites = async (data: any) => {
   let responseData;
   try {
-    const response: any = await request(`/jobSite?customerId=${data.customerId}&locationId=${data.locationId}`, 'GET', {}, false);
-    responseData = response.data;
+    // if (data.customerId) {
+    //   const response: any = await request(`/jobSite?customerId=${data.customerId}&locationId=${data.locationId}`, 'GET', {}, false);
+    //   responseData = response.data;
+    // } 
+    // else {
+      const response: any = await request(`/jobSite?locationId=${data.locationId}`, 'GET', {}, false);
+      responseData = response.data;
+    // }
   } catch (err){
     responseData = { 'msg': '' };
     if (err.response.status >= 400 || err.response.status === 0) {
