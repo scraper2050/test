@@ -1,6 +1,7 @@
 import { createApiAction } from '../action.utils';
 import { getJobLocations, createJobLocation, updateJobLocation, } from 'api/job-location.api';
 import { JobLocationActionType, types } from './job-location.types';
+import { error } from 'actions/snackbar/snackbar.action';
 
 
 export const loadingJobLocations = () => {
@@ -43,6 +44,7 @@ export const createJobLocationAction = (data: any, callback: any) => {
     const jobLocation: any = await createJobLocation(data);
     if (jobLocation.status === 0) {
       dispatch({ type: JobLocationActionType.ADD_NEW_JOB_LOCATION_FAILED, payload: jobLocation.message });
+      dispatch(error(jobLocation.message));
     } else {
       const {status, message} = jobLocation;
       dispatch(setJobLocationNew(jobLocation));
