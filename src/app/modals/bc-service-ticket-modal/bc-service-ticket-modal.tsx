@@ -191,9 +191,9 @@ function BCServiceTicketModal(
     setFieldValue: any,
     newValue: any
   ) => {
-    setIsPORequired(newValue?.isPORequired || false);
-    setCustomerNote(newValue?.notes);
-    setItemTier(newValue?.itemTierObj?.[0]?.name || "");
+    setIsPORequired(newValue?.isPORequired ?? false);
+    setCustomerNote(newValue?.notes ?? '');
+    setItemTier(newValue?.itemTierObj?.[0]?.name ?? "");
 
     const customerId = newValue ? newValue._id : '';
     await setFieldValue(fieldName, customerId);
@@ -939,9 +939,9 @@ function BCServiceTicketModal(
       };
       dispatch(getContacts(data));
 
-      setIsPORequired(ticket.customer?.isPORequired || false);
-      setCustomerNote(ticket.customer?.notes);
-      setItemTier(ticket?.customer?.itemTierObj?.[0]?.name || "");
+      setIsPORequired(ticket.customer?.isPORequired ?? false);
+      setCustomerNote(ticket.customer?.notes ?? '');
+      setItemTier(ticket?.customer?.itemTierObj?.[0]?.name ?? '');
     }
   }, []);
 
@@ -1246,7 +1246,7 @@ function BCServiceTicketModal(
       </Button>
     }
   }
-  
+
   if (error.status) {
     return <ErrorMessage>{error.message}</ErrorMessage>;
   }

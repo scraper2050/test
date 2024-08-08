@@ -13,7 +13,7 @@ interface PORequiredProps {
 }
 
 export default function PORequired({ customer, header, dispatch }:PORequiredProps) {
-  const [value, setValue] = useState(customer.isPORequired ? "Yes" : "No");
+  const [value, setValue] = useState(customer?.isPORequired ? "Yes" : "No");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [isSubmiting, setIsSubmiting] = useState(false);
 
@@ -69,7 +69,7 @@ export default function PORequired({ customer, header, dispatch }:PORequiredProp
           </MenuItem>
         </Select>
       </FormControl>
-    
+
       <Can I={'edit'} a={'CustomerSettings'}>
         <Fab
           color={'primary'}
@@ -93,7 +93,7 @@ const PORequiredContainer = styled.div`
         max-width: 400px;
         margin: 40px auto ;
     }
-    
+
     button {
         margin-top: 30px;
         color: #fff;
