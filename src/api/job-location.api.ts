@@ -90,6 +90,7 @@ export const getSubdivision = async (
       queryParams.append('builderId', builderId);
     }
 
+
     const url = `/jobLocation/name?${queryParams.toString()}`;
     const response = await request(url, 'GET', {}, false);
 
