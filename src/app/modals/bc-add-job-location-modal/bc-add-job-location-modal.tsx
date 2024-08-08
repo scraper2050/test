@@ -60,6 +60,8 @@ interface Subdivision {
     coordinates: [number, number];
   };
   _id: string;
+  jobLocationId: string;
+
 }
 
 
@@ -91,7 +93,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
       "zipcode": jobLocationInfo?.address?.zipcode,
     },
     "customerId": jobLocationInfo?.customerId ?? '',
-    "jobLocationId": jobLocationInfo?._id,
+    "jobLocationId": jobLocationInfo?.jobLocationId,
     "isActive": jobLocationInfo?.isActive ?? true,
   }
 
@@ -155,6 +157,8 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
     setFieldValue('address.street', localLocationObj.street);
     setFieldValue('address.city', localLocationObj.city);
     setFieldValue('address.zipcode', localLocationObj.zipcode);
+    setFieldValue('jobLocationId', localLocationObj.jobLocationId);
+
   }
 
   const closeModal = () => {
@@ -261,13 +265,16 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                   city: '',
                   state: '',
                   street: '',
-                  zipcode: ''
+                  zipcode: '',
+                  jobLocationId: ''
+
 
                 };
                 requestObj.city = values.address.city;
                 requestObj.state = state >= 0 ? allStates[state].name : '';
                 requestObj.street = values.address.street;
                 requestObj.zipcode = values.address.zipcode;
+                requestObj.jobLocationId = values.jobLocationId;
                 delete requestObj.address;
 
                 if (isValidate(requestObj)) {
@@ -286,7 +293,6 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                       }
                     ));
                   } else {
-                    delete requestObj.jobLocationId;
                     await dispatch(createJobLocationAction(requestObj,
                       ({ status, message }: { status: number, message: string }) => {
                         if (status === 1) {
@@ -322,7 +328,6 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                             options={options}
                             getOptionLabel={(option) => option.name || ''}
                             loading={loading}
-                            noOptionsText={error || 'No options'}
                             onInputChange={(event, newInputValue) => {
                               setInputValue(newInputValue);
                             }}
@@ -335,6 +340,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                                   id: allStates.findIndex(x => x.name === value.address.state || x.abbreviation === value.address.state)
                                 });
                                 setFieldValue('address.zipcode', value.address.zipcode);
+                                setFieldValue('jobLocationId', value._id); 
                                 updateMap(values, value.address.street);
                               }
                             }}
@@ -568,7 +574,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
 
                       {!localLocationObj && (
                         <Grid
-                          className={classNames(classes.paper, 'form_button_wrapper-desktop')}
+                          className={classNames(classes.paper)}
                           item
                           md={12}>
                           <Box mt={2}>
