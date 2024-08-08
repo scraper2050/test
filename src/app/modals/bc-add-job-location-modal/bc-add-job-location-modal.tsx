@@ -291,7 +291,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                       }
                     ));
                   } else {
-                    await dispatch(createJobLocationAction(requestObj,
+                     await dispatch(createJobLocationAction(requestObj,
                       ({ status, message }: { status: number, message: string }) => {
                         if (status === 1) {
                           dispatch(success(message));

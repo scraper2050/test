@@ -6,9 +6,11 @@ export const createJobLocation = async (data: any) => {
     const response: any = await request('/jobLocation', 'POST', data, false);
     responseData = response.data;
   } catch (err){
-    responseData = { 'status': 0,
-      'message': '' };
-    if (err.response.status >= 400 || err.response.status === 0) {
+    responseData = {
+      'status': 0,
+      'message': ''
+    };
+    if (err.responseData.status >= 400 || err.responseData.status === 0) {
       responseData.message = 'We are facing some issues, please try again.';
     } else {
       responseData.message = 'Something went wrong';
