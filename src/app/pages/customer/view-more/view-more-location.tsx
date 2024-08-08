@@ -194,9 +194,10 @@ function ViewMoreLocationPage({ classes }: any) {
   const openJobSiteModal = () => {
     const obj: any = location.state;
     const locationId = obj._id;
+    const customerId = obj.customerId;
     dispatch(setModalDataAction({
       'data': {
-        'jobSiteInfo': { locationId },
+        'jobSiteInfo': { locationId, customerId },
         'modalTitle': 'New Job Address',
         'removeFooter': false
       },
