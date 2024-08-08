@@ -36,6 +36,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    # - name: Deploy to S3
-    #   run: |
-    #     aws s3 sync build/ s3://blueclerk-react-upgrade-deployment --acl public-read --delete
+    - name: Deploy to S3
+      run: |
+        aws s3 sync build/ s3://blueclerk-react-upgrade-deployment --acl public-read --delete
