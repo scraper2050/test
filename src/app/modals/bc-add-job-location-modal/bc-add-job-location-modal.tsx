@@ -65,7 +65,6 @@ interface Subdivision {
 
 
 function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId, isActive, keyword }: any) {
-  const [inputValue, setInputValue] = useState<string>('');
   const [options, setOptions] = useState<Subdivision[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -219,32 +218,27 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
     });
   }
 
-  useEffect(() => {
-    const fetchSubdivisions = async () => {
-      if (inputValue.length < 2) { // Start fetching after 2 characters
+  const fetchSubdivisions = async (inputValue: any) => {
+    if (inputValue.length < 2) { // Start fetching after 2 characters
+      setOptions([]);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = await getSubdivision(undefined, undefined, 'ALL', inputValue);
+      if (Array.isArray(data)) {
+        setOptions(data);
+      } else {
         setOptions([]);
-        return;
       }
-
-      setLoading(true);
-
-      try {
-        const data = await getSubdivision(undefined, undefined, 'ALL', inputValue);
-        if (Array.isArray(data)) {
-          setOptions(data);
-        } else {
-          setOptions([]);
-        }
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubdivisions();
-  }, [inputValue]);
-
+    } catch (err) {
+      console.error('Failed to fetch data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <MainContainer>
@@ -330,7 +324,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                             getOptionLabel={(option) => option.name || ''}
                             loading={loading}
                             onInputChange={(event, newInputValue) => {
-                              setInputValue(newInputValue);
+                              fetchSubdivisions(newInputValue);
                             }}
                             onChange={(event, value) => {
                               if (typeof value !== 'string' && value?.address) {
