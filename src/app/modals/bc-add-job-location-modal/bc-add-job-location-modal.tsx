@@ -61,8 +61,6 @@ interface Subdivision {
   };
   _id: string;
   jobLocationId: string;
-
-  jobLocationId: string;
 }
 
 
