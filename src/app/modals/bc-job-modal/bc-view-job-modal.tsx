@@ -320,7 +320,8 @@ function BCViewJobModal({
 
   useEffect(() => {
     const customer = customers.find((res: any) => res._id == job?.customer?._id);
-    setCustomerPORequired(customer.isPORequired);
+    setCustomerPORequired(customer?.isPORequired ?? false);
+
   }, [customers]);
 
   if (job.status == 2) {
@@ -891,7 +892,7 @@ const DataContainer = styled.div`
   .MuiButton-containedSecondary {
     margin-left: 15px !important;
   }
-  
+
   .jobCommentBtn{
     position: absolute;
     top: 12px;

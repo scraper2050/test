@@ -61,6 +61,8 @@ interface Subdivision {
   };
   _id: string;
   jobLocationId: string;
+
+  jobLocationId: string;
 }
 
 
@@ -263,7 +265,9 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                   state: '',
                   street: '',
                   zipcode: '',
-                  jobLocationId:''
+                  jobLocationId: ''
+
+
                 };
             
                 requestObj.city = values.address.city;
@@ -291,7 +295,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                       }
                     ));
                   } else {
-                     await dispatch(createJobLocationAction(requestObj,
+                    await dispatch(createJobLocationAction(requestObj,
                       ({ status, message }: { status: number, message: string }) => {
                         if (status === 1) {
                           dispatch(success(message));
@@ -339,8 +343,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                                   id: allStates.findIndex(x => x.name === value.address.state || x.abbreviation === value.address.state)
                                 });
                                 setFieldValue('address.zipcode', value.address.zipcode);
-                                setFieldValue('jobLocationId', value._id); // Setting jobLocationId to the id of the selected value
-
+                                setFieldValue('jobLocationId', value._id); 
                                 updateMap(values, value.address.street);
                               }
                             }}
