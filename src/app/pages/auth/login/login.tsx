@@ -339,7 +339,7 @@ function LoginPage({
                   }}
                 />
               }
-              label={'Remember Me.'}
+              label={'Remember Me'}
             />
 
             <div className={classes.AgreeTermDiv}>
