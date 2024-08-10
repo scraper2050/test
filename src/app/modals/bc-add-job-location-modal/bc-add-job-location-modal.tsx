@@ -61,12 +61,10 @@ interface Subdivision {
   };
   _id: string;
   jobLocationId: string;
-
 }
 
 
 function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId, isActive, keyword }: any) {
-  const [inputValue, setInputValue] = useState<string>('');
   const [options, setOptions] = useState<Subdivision[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -158,7 +156,6 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
     setFieldValue('address.city', localLocationObj.city);
     setFieldValue('address.zipcode', localLocationObj.zipcode);
     setFieldValue('jobLocationId', localLocationObj.jobLocationId);
-
   }
 
   const closeModal = () => {
@@ -195,7 +192,6 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
       setLongLabelState(false);
 
     }
-
     return validateFlag;
   }
 
@@ -222,32 +218,27 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
     });
   }
 
-  useEffect(() => {
-    const fetchSubdivisions = async () => {
-      if (inputValue.length < 2) { // Start fetching after 2 characters
+  const fetchSubdivisions = async (inputValue: any) => {
+    if (inputValue.length < 2) { // Start fetching after 2 characters
+      setOptions([]);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = await getSubdivision(undefined, undefined, 'ALL', inputValue);
+      if (Array.isArray(data)) {
+        setOptions(data);
+      } else {
         setOptions([]);
-        return;
       }
-
-      setLoading(true);
-
-      try {
-        const data = await getSubdivision(undefined, undefined, 'ALL', inputValue);
-        if (Array.isArray(data)) {
-          setOptions(data);
-        } else {
-          setOptions([]);
-        }
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubdivisions();
-  }, [inputValue]);
-
+    } catch (err) {
+      console.error('Failed to fetch data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <MainContainer>
@@ -270,21 +261,24 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
 
 
                 };
+            
                 requestObj.city = values.address.city;
                 requestObj.state = state >= 0 ? allStates[state].name : '';
                 requestObj.street = values.address.street;
                 requestObj.zipcode = values.address.zipcode;
                 requestObj.jobLocationId = values.jobLocationId;
                 delete requestObj.address;
-
+    
                 if (isValidate(requestObj)) {
                   if (jobLocationInfo._id) {
+                
                     await dispatch(updateJobLocationAction(requestObj,
                       ({ status, message, jobLocation }: { status: number, message: string, jobLocation: any }) => {
                         if (status === 1) {
                           refreshPage(jobLocation);
                           dispatch(success(message));
                           dispatch(refreshJobLocation(true));
+                     
                           closeModal();
                         } else {
                           dispatch(error(message));
@@ -299,18 +293,19 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                           dispatch(success(message));
                           dispatch(refreshJobLocation(true));
                           closeModal();
-
                         } else {
                           dispatch(error(message));
                         }
                         setSubmitting(false);
-                      }))
+                      }));
+
                   }
                 } else {
                   setSubmitting(false);
                 }
               }, 400)}
-              validateOnChange>
+              validateOnChange
+            >
               {({ handleChange, values, errors, isSubmitting, setFieldValue }) =>
                 <Form>
                   <Grid container spacing={2}>
@@ -329,7 +324,7 @@ function BCAddJobLocationModal({ classes, jobLocationInfo, customerId, builderId
                             getOptionLabel={(option) => option.name || ''}
                             loading={loading}
                             onInputChange={(event, newInputValue) => {
-                              setInputValue(newInputValue);
+                              fetchSubdivisions(newInputValue);
                             }}
                             onChange={(event, value) => {
                               if (typeof value !== 'string' && value?.address) {

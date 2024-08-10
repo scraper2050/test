@@ -12,6 +12,7 @@ import styles from './new-customer.styles';
 import { error, info } from '../../../../actions/snackbar/snackbar.action';
 import { withStyles } from '@material-ui/core/styles';
 import {
+  Badge,
   Box,
   Button,
   FormGroup,
@@ -27,6 +28,10 @@ import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MaskedInput from 'react-text-mask';
 import BCSelectOutlined from 'app/components/bc-select-outlined/bc-select-outlined';
 import { getCompaniesAutoComplete, getCompanyDetail } from 'api/company.api';
+import {
+  getCustomers,
+} from 'api/customer.api';
+
 
 interface CustomerAutoComplete {
   id: number;
@@ -40,6 +45,7 @@ interface AllStateTypes {
   abbreviation: string,
   name: string,
 }
+
 
 function NewCustomerPage({ classes }: Props) {
   const initialValues = {
@@ -61,6 +67,7 @@ function NewCustomerPage({ classes }: Props) {
     'companyId': ''
   };
 
+
   const [positionValue, setPositionValue] = useState({
     'lang': 0.0,
     'lat': 0.0
@@ -73,12 +80,10 @@ function NewCustomerPage({ classes }: Props) {
   });
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<any[]>([])
-  const [selectedCustomerDetail, setSelectedCustomerDetail] = useState<any>();
   const [selectedOption, setSelectedOption] = useState<CustomerAutoComplete>({
     profile: { displayName: "" },
     id: 1,
   });
-  const [fieldsUpdated, setFieldsUpdated] = useState({ name: false, email: false, phone: false });
   const accountTypes = [...CONSTANTS.customerTypes];
   const updateMap = (
     values: any,
@@ -196,13 +201,38 @@ function NewCustomerPage({ classes }: Props) {
     return () => clearTimeout(timeoutId);
   }, [inputValue, dispatch]);
 
+  const [customers, setCustomers] = useState<CustomerAutoComplete[]>([]); // Define the state type
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const data = await getCustomers(true, false); // Fetch only active customers
+        setCustomers(data.customers);
+      } catch (err) {
+   
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []); // Empty dependency array to run only on mount
+
+  const isCustomerByCompanyName = (option: any): boolean => {
+    if (!option || !option.info?.companyName) return false;
+
+    return customers.some((customer) =>
+      customer.profile.displayName.toLowerCase() === option.info.companyName.toLowerCase()
+    );
+  };
+
+
   const handleFetchCustomerDetail = async (companyId: string) => {
     const data = await getCompanyDetail(companyId);
 
     return data;
   }
-
-
 
   return (
     <MainContainer>
@@ -362,7 +392,8 @@ function NewCustomerPage({ classes }: Props) {
                             } 
                           }}
                           options={options}
-                          getOptionLabel={(option: any) => option?.info?.companyName}
+                          getOptionLabel={(option: any) => option?.info?.companyName}  
+                          getOptionDisabled={(option) => isCustomerByCompanyName(option)}      
                           style={{ fontSize: 10, padding: "0 !important" }}
                           classes={{ inputRoot: "custom-input-root" }}
                           renderInput={(params) => (
@@ -376,10 +407,34 @@ function NewCustomerPage({ classes }: Props) {
                               onChange={handleChange}
                               className={classes.customTextField}
                               required                            
-
                             />
                           )}
-                        />
+                          renderOption={(option) => (
+                            <div
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                boxSizing: 'border-box',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingRight: '15px',
+                              }}
+                            >
+                              <span>{option.info?.companyName}</span>
+
+                              {isCustomerByCompanyName(option) && (
+                                <Badge
+                                  badgeContent="Added"
+                                  color="error"
+                                  variant="standard"
+                           
+                                />
+                              )}
+                             </div>
+                          )}
+
+                          />
                       </FormGroup>
                     </Grid>
 

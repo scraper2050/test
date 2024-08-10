@@ -68,7 +68,7 @@ function LocationInfoPage({ classes }: any) {
           </div>
           <div className={'name_wrapper customer_details'}>
             <strong>
-              {'Location Name: '}&nbsp;
+              {'Location Name:'}&nbsp;
             </strong>
             {locationData.locationName}
           </div>
