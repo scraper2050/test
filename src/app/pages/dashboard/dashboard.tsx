@@ -44,7 +44,7 @@ function DashboardPage({ classes }: any): JSX.Element {
 
   const buttonLinks = [
     {
-      'text': 'Customers',
+      'text': 'Customer',
       'icon': <CustomersIcon className={classes.icons} />,
       'link': '/main/customers'
     },
