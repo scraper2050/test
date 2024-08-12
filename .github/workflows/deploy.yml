@@ -23,7 +23,15 @@ jobs:
       run: yarn build
       env:
         CI: false  # This prevents treating warnings as errors
-
+        REACT_APP_BASE_URL: ${{ secrets.REACT_APP_BASE_URL }}
+        REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+        REACT_APP_API_V2_URL: ${{ secrets.REACT_APP_API_V2_URL }}
+        REACT_APP_GOOGLE_APP_ID: ${{ secrets.REACT_APP_GOOGLE_APP_ID }}
+        REACT_APP_FACEBOOK_APP_ID: ${{ secrets.REACT_APP_FACEBOOK_APP_ID }}
+        REACT_APP_GOOGLE_KEY: ${{ secrets.REACT_APP_GOOGLE_KEY }}
+        REACT_APP_SOCKET_URL: ${{ secrets.REACT_APP_SOCKET_URL }}
+        REACT_APP_TELEMETRY_KEY: ${{ secrets.REACT_APP_TELEMETRY_KEY }}
+        REACT_APP_LAMBDA_URL: ${{ secrets.REACT_APP_LAMBDA_URL }}
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
